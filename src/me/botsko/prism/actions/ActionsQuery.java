@@ -275,14 +275,14 @@ public class ActionsQuery {
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
 		if(parameters.getLookup_type().equals("rollback") && parameters.getAction_type().contains("block-place")){
-			query += "JOIN (" +
-					"SELECT x, y, z, max(action_time) as action_time" +
-					" FROM prism_actions" +
-					" GROUP BY x, y, z) latest" +
-					" ON prism_actions.action_time = latest.action_time" +
-					" AND prism_actions.x = latest.x" +
-					" AND prism_actions.y = latest.y" +
-					" AND prism_actions.z = latest.z";
+			query += " JOIN (" +
+						"SELECT x, y, z, max(action_time) as action_time" +
+						" FROM prism_actions" +
+						" GROUP BY x, y, z) latest" +
+						" ON prism_actions.action_time = latest.action_time" +
+						" AND prism_actions.x = latest.x" +
+						" AND prism_actions.y = latest.y" +
+						" AND prism_actions.z = latest.z";
 		}
 		
 		// World
@@ -325,14 +325,14 @@ public class ActionsQuery {
 		 */
 		Location loc = parameters.getLoc();
 		if(loc != null){
-			query += " AND x = " +(int)loc.getBlockX()+ " AND y = " +(int)loc.getBlockY()+ " AND z = " +(int)loc.getBlockZ();
+			query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
 		}
 		
 		/**
 		 * Order by
 		 */
 		String sort_dir = parameters.getSortDirection();
-		query += " ORDER BY action_time "+sort_dir;
+		query += " ORDER BY prism_actions.action_time "+sort_dir;
 		
 		/**
 		 * LIMIT
@@ -391,9 +391,9 @@ public class ActionsQuery {
 				Vector minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
 				Vector maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
 				
-				where += " AND (x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
-				where += " AND (y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
-				where += " AND (z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
+				where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
+				where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
+				where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
 
 			}
 //		}

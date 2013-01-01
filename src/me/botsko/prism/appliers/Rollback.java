@@ -1,4 +1,4 @@
-package me.botsko.prism.rollback;
+package me.botsko.prism.appliers;
 
 import java.util.List;
 
@@ -78,8 +78,10 @@ public class Rollback {
 					// @todo it may not always be air that was replaced. we should log that
 					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
 						// @todo ensure we're not removing a new block that's been placed by someone else
-						block.setType(Material.AIR);
-						rolled_back_count++;
+						if(!block.getType().equals(Material.AIR)){
+							block.setType(Material.AIR);
+							rolled_back_count++;
+						}
 					} else {
 						
 						/**

@@ -5,7 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionsQuery;
-import me.botsko.prism.rollback.Rollback;
+import me.botsko.prism.appliers.Rollback;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
