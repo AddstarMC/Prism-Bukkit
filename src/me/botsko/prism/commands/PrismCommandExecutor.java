@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 public class PrismCommandExecutor implements CommandExecutor {
 	
 	private Prism plugin;
+	private CommandHelp help;
 	
 	/**
 	 * 
@@ -24,6 +25,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	 */
 	public PrismCommandExecutor(Prism plugin) {
 		this.plugin = plugin;
+		this.help = new CommandHelp(plugin);
 	}
 	
 	
@@ -156,6 +158,13 @@ public class PrismCommandExecutor implements CommandExecutor {
 					sender.sendMessage( plugin.playerMsg("Configuration reloaded successfully.") );
 					return true;
 				}
+			}
+		}
+		
+		if(args.length == 0 || (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?"))){
+			if (args.length == 0){
+				help.generalHelp(sender);
+				// TODO /prism help [command]
 			}
 		}
 		return false;

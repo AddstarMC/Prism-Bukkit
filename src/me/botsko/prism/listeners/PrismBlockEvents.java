@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,6 +15,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -126,4 +128,17 @@ public class PrismBlockEvents implements Listener {
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
 		
 	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
+		Player player = event.getPlayer();
+		String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
+		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+	}
+	
 }
