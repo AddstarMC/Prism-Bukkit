@@ -6,6 +6,8 @@ import org.bukkit.util.Vector;
 public class QueryParameters {
 	
 	
+	protected String lookup_type = "lookup";
+	
 	protected Location loc;
 	protected Vector player_location;
 	
@@ -17,7 +19,7 @@ public class QueryParameters {
 	protected String entity;
 	protected String block;
 	
-	protected int limit = 1000;
+	protected int limit = 1000000;
 //	protected int offset = 0;
 	
 	
@@ -178,5 +180,36 @@ public class QueryParameters {
 	 */
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+
+
+	/**
+	 * @return the lookup_type
+	 */
+	public String getLookup_type() {
+		return lookup_type;
+	}
+
+
+	/**
+	 * @param lookup_type the lookup_type to set
+	 */
+	public void setLookup_type(String lookup_type) {
+		this.lookup_type = lookup_type;
+	}
+	
+	
+	/**
+	 * If we're doing a lookup, we want the most
+	 * recent actions available. However, if we're
+	 * doing a rollback we want them applied in order.
+	 * 
+	 * @return
+	 */
+	public String getSortDirection(){
+		if(this.lookup_type.equals("lookup")){
+			return "DESC";
+		}
+		return "ASC";
 	}
 }

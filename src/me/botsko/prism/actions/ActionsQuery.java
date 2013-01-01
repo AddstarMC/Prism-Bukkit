@@ -46,6 +46,28 @@ public class ActionsQuery {
 	 * so we can pass that object in.
 	 * @return
 	 */
+	public List<Action> rollback( Player player, String[] args ){
+		
+		// Pull results
+		List<Action> actions = new ArrayList<Action>();
+				
+		QueryParameters parameters = preprocessArguments( player, args );
+		parameters.setLookup_type("rollback");
+		
+		// If no args, return
+		if(foundArgs.isEmpty()){
+			return actions;
+		}
+		return lookup(parameters);
+	}
+	
+	
+	/**
+	 * If we receive a player and arguments, it's being run from the
+	 * command line. We must convert these into a QueryParameter class
+	 * so we can pass that object in.
+	 * @return
+	 */
 	public List<Action> lookup( Player player, String[] args ){
 		
 		// Pull results
@@ -86,7 +108,7 @@ public class ActionsQuery {
 	    		while(rs.next()){
 	    			
 	    			// @todo this needs more cleanup
-	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow"};
+	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay"};
 	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
 		    			actions.add( new BlockAction(
 		    					rs.getString("action_time"),
@@ -168,6 +190,16 @@ public class ActionsQuery {
 				// Action
 				if(arg_type.equals("a")){
 					parameters.setAction_type( val );
+				}
+				
+				// Player
+				if(arg_type.equals("p")){
+					parameters.setPlayer( val );
+				}
+				
+				// World
+				if(arg_type.equals("w")){
+					parameters.setWorld( val );
 				}
 				
 				// Radius
@@ -260,7 +292,7 @@ public class ActionsQuery {
 		/**
 		 * Timeframe
 		 */
-		String time = parameters.getPlayer();
+		String time = parameters.getTime();
 		if(time != null){
 			query += buildTimeCondition(time);
 		}
@@ -276,7 +308,8 @@ public class ActionsQuery {
 		/**
 		 * Order by
 		 */
-		query += " ORDER BY action_time DESC";
+		String sort_dir = parameters.getSortDirection();
+		query += " ORDER BY action_time "+sort_dir;
 		
 		/**
 		 * LIMIT

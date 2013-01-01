@@ -121,11 +121,11 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.rollback") ){
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( player, args );
+		    			List<Action> results = aq.rollback( player, args );
 		    			if(!results.isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 		    				
-		    				Rollback rb = new Rollback( plugin, results );
+		    				Rollback rb = new Rollback( plugin, player, results );
 		    				rb.rollback();
 		    				
 		    			} else {

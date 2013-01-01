@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.LeavesDecayEvent;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -72,6 +73,16 @@ public class PrismBlockEvents implements Listener {
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-fade", event.getBlock(), "Environment") );
 	}
 	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onLeavesDecay(LeavesDecayEvent event) {
+		plugin.actionsRecorder.addToQueue( new BlockAction("leaf-decay", event.getBlock(), "Environment") );
+	}
+	
 
 	/**
 	 * 
@@ -83,7 +94,6 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	//onSignChange
-	//onLeavesDecay
 	//onBlockFromTo
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
