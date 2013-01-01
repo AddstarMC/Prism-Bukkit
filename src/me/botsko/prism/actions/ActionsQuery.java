@@ -245,7 +245,7 @@ public class ActionsQuery {
 		 * Players
 		 */
 		String player = parameters.getPlayer();
-		if(action_type != null){
+		if(player != null){
 			query += buildOrQuery("player", player.split(","));
 		}
 		
@@ -253,7 +253,7 @@ public class ActionsQuery {
 		 * Radius
 		 */
 		int radius = parameters.getRadius();
-		if(action_type != null){
+		if(radius > 0){
 			query += buildRadiusCondition(radius, parameters.getPlayer_location());
 		}
 		
@@ -261,7 +261,7 @@ public class ActionsQuery {
 		 * Timeframe
 		 */
 		String time = parameters.getPlayer();
-		if(action_type != null){
+		if(time != null){
 			query += buildTimeCondition(time);
 		}
 		

@@ -110,7 +110,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerHeaderMsg(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + ""+msg_name+" // " + ChatColor.WHITE + msg;
+			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.WHITE + msg;
 		}
 		return "";
 	}
@@ -136,7 +136,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerError(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + "["+msg_name+"]: " + ChatColor.RED + msg;
+			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.RED + msg;
 		}
 		return "";
 	}
