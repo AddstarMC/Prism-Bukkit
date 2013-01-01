@@ -58,7 +58,9 @@ public class ActionsQuery {
     					|| rs.getString("action_type").equals("block-burn")
     					|| rs.getString("action_type").equals("block-fade")
     					|| rs.getString("action_type").equals("block-ignite")
-    					|| rs.getString("action_type").equals("flint-steel")){
+    					|| rs.getString("action_type").equals("flint-steel")
+    					|| rs.getString("action_type").equals("tree-grow")
+    					|| rs.getString("action_type").equals("mushroom-grow")){
 	    			actions.add( new BlockAction(
 	    					rs.getString("action_time"),
 	    					rs.getString("action_type"),

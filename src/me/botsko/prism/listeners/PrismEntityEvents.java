@@ -14,6 +14,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public class PrismEntityEvents implements Listener {
 
+	/**
+	 * 
+	 */
 	private Prism plugin;
 	
 	

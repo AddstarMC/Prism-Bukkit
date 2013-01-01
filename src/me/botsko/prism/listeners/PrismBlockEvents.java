@@ -16,6 +16,9 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PrismBlockEvents implements Listener {
 	
+	/**
+	 * 
+	 */
 	private Prism plugin;
 	
 	
@@ -37,7 +40,6 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-break", event.getBlock(), player.getName()) );
 	}
-	
 	
 	
 	/**
