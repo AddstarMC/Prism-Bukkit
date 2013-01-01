@@ -32,7 +32,7 @@ public class PrismEntityEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityDeath(EntityDeathEvent event) {
 
 		Entity entity = event.getEntity();
