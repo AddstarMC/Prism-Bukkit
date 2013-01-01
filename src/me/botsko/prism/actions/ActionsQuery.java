@@ -45,7 +45,6 @@ public class ActionsQuery {
             
 			plugin.dbc();
 			
-			// Pull the IPs first
             PreparedStatement s;
     		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions" + where + " ORDER BY action_time DESC");
     		s.executeQuery();
@@ -53,7 +52,13 @@ public class ActionsQuery {
     		
     		while(rs.next()){
     			
-    			if( rs.getString("action_type").equals("block-break") || rs.getString("action_type").equals("block-place") ){
+    			// @todo this needs major cleanup
+    			if( rs.getString("action_type").equals("block-break") 
+    					|| rs.getString("action_type").equals("block-place")
+    					|| rs.getString("action_type").equals("block-burn")
+    					|| rs.getString("action_type").equals("block-fade")
+    					|| rs.getString("action_type").equals("block-ignite")
+    					|| rs.getString("action_type").equals("flint-steel")){
 	    			actions.add( new BlockAction(
 	    					rs.getString("action_time"),
 	    					rs.getString("action_type"),
@@ -66,7 +71,7 @@ public class ActionsQuery {
 	    				) );
     			}
     			
-    			if( rs.getString("action_type").equals("entity-kill") ){
+    			else if( rs.getString("action_type").equals("entity-kill") ){
 	    			actions.add( new EntityKillAction(
 	    					rs.getString("action_time"),
 	    					rs.getString("action_type"),
@@ -77,6 +82,8 @@ public class ActionsQuery {
 	    					rs.getInt("z"),
 	    					rs.getString("data")
 	    				) );
+    			} else {
+    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
     			}
     		}
     		

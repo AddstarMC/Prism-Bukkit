@@ -91,17 +91,24 @@ public class PrismBlockEvents implements Listener {
 		switch (event.getCause()){
 			case FIREBALL:
 				cause = "fireball";
+				break;
 			case FLINT_AND_STEEL:
 				cause = "flint-steel";
+				break;
 			case LAVA:
 				cause = "lava-ignite";
+				break;
 			case LIGHTNING:
 				cause = "lightning";
+				break;
 			case SPREAD:
 				cause = "fire-spread";
+				break;
 			default:
 				cause = "block-ignite";
 		}
+		
+		plugin.debug("Fire cause is " + event.getCause().name());
 		
 		Player player = event.getPlayer();
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );

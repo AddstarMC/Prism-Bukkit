@@ -54,7 +54,7 @@ public class Rollback {
 				 */
 				if( a instanceof BlockAction ){
 					
-					plugin.debug("Rolling back blocks");
+//					plugin.debug("Rolling back blocks");
 					
 					BlockAction b = (BlockAction) a;
 					

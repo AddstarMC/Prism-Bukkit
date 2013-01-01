@@ -1,7 +1,5 @@
 package me.botsko.prism.listeners;
 
-import java.text.SimpleDateFormat;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.EntityKillAction;
 
@@ -36,8 +34,6 @@ public class PrismEntityEvents implements Listener {
 	public void onEntityDeath(EntityDeathEvent event) {
 
 		Entity entity = event.getEntity();
-		java.util.Date date= new java.util.Date();
-		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		
 		// Mob Death
 		if(!(entity instanceof Player)){
@@ -48,18 +44,7 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					plugin.actionsRecorder.addToQueue( 
-						new EntityKillAction(
-							action_time,
-							"entity-kill",
-							entity.getWorld().getName(),
-							player.getName(),
-							entity.getLocation().getX(),
-							entity.getLocation().getY(),
-							entity.getLocation().getZ(),
-							entity
-						)
-					);
+					plugin.actionsRecorder.addToQueue( new EntityKillAction("entity-kill", entity, player.getName()) );
 		        	
 				}
 				// Mob shot by an arrow
@@ -68,19 +53,7 @@ public class PrismEntityEvents implements Listener {
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						
-						plugin.actionsRecorder.addToQueue( 
-								new EntityKillAction(
-									action_time,
-									"entity-kill",
-									entity.getWorld().getName(),
-									player.getName(),
-									entity.getLocation().getX(),
-									entity.getLocation().getY(),
-									entity.getLocation().getZ(),
-									entity
-								)
-							);
+						plugin.actionsRecorder.addToQueue( new EntityKillAction("entity-kill", entity, player.getName()) );
 			        	
 					}
 				}

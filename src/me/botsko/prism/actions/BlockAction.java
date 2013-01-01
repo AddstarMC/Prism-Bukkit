@@ -66,34 +66,13 @@ public class BlockAction implements Action {
 	
 	/**
 	 * 
-	 * @param action_time
 	 * @param action_type
-	 * @param world_name
-	 * @param player_name
-	 * @param x
-	 * @param y
-	 * @param z
 	 * @param block
+	 * @param player
 	 */
 	public BlockAction( String action_type, Block block, String player ){
 		this(null, action_type, block.getWorld().getName(), player, block.getX(), block.getY(), block.getZ(), block, null);
 	}
-	
-	
-//	/**
-//	 * 
-//	 * @param action_time
-//	 * @param action_type
-//	 * @param world_name
-//	 * @param player_name
-//	 * @param x
-//	 * @param y
-//	 * @param z
-//	 * @param block
-//	 */
-//	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block ){
-//		this(action_time, action_type, world_name, player_name, x, y, z, block, null);
-//	}
 
 
 	/**
