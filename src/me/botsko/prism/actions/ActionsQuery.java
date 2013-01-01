@@ -54,7 +54,6 @@ public class ActionsQuery {
     		while(rs.next()){
     			
     			if( rs.getString("action_type").equals("block-break") || rs.getString("action_type").equals("block-place") ){
-    			
 	    			actions.add( new BlockAction(
 	    					rs.getString("action_time"),
 	    					rs.getString("action_type"),
@@ -67,9 +66,8 @@ public class ActionsQuery {
 	    				) );
     			}
     			
-    			else if( rs.getString("action_type").equals("entity-kill") ){
-    				
-    				actions.add( new EntityKillAction(
+    			if( rs.getString("action_type").equals("entity-kill") ){
+	    			actions.add( new EntityKillAction(
 	    					rs.getString("action_time"),
 	    					rs.getString("action_type"),
 	    					rs.getString("world"),
@@ -79,7 +77,6 @@ public class ActionsQuery {
 	    					rs.getInt("z"),
 	    					rs.getString("data")
 	    				) );
-    				
     			}
     		}
     		

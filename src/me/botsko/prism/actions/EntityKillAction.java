@@ -109,7 +109,6 @@ public class EntityKillAction implements Action {
 		
 		// We either received a block or a data string. We need both, so make whichever we need.
 		setDataFromEntity();
-//		setEntityFromData();
 		
 	}
 	
@@ -122,19 +121,6 @@ public class EntityKillAction implements Action {
 			data = entity.getType().getName();
 		}
 	}
-	
-	
-//	/**
-//	 * 
-//	 */
-//	protected void setEntityFromData(){
-//		if(entity == null){
-//			EntityType mob = EntityType.fromName(data);
-//			if(mob != null){
-//				
-//			}
-//		}
-//	}
 	
 	
 	/**

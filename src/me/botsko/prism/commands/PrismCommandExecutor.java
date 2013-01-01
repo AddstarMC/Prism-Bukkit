@@ -7,6 +7,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.rollback.Rollback;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -69,7 +70,16 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    			if(!results.isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
 		    				for(Action a : results){
-		    					player.sendMessage( plugin.playerMsg( a.getPlayer_name() + " " + a.getAction_type() + " at " + a.getAction_time() ) );
+		    					
+		    					// user
+		    					String msg = ChatColor.BLUE + a.getPlayer_name();
+		    					msg += " " + ChatColor.GRAY + a.getAction_type();
+		    					msg += " " + ChatColor.RED + a.getData();
+		    					msg += " " + ChatColor.RED + (int)a.getX();
+		    					msg += " " + ChatColor.RED + (int)a.getY();
+		    					msg += " " + ChatColor.RED + (int)a.getZ();
+		    					
+		    					player.sendMessage( plugin.playerMsg( msg ) );
 		    				}
 		    			} else {
 		    				// @todo no results

@@ -52,7 +52,7 @@ public class Rollback {
 				/**
 				 * Rollback block changes
 				 */
-				if(a instanceof BlockAction){
+				if( a instanceof BlockAction ){
 					
 					plugin.debug("Rolling back blocks");
 					
@@ -70,7 +70,7 @@ public class Rollback {
 				/**
 				 * Rollback entity kills
 				 */
-				if(a instanceof EntityKillAction){
+				if( a instanceof EntityKillAction ){
 					
 					EntityKillAction b = (EntityKillAction) a;
 					world.spawnEntity(loc, b.getEntityTypeFromData());

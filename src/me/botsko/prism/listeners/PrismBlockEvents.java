@@ -11,6 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PrismBlockEvents implements Listener {
@@ -103,4 +106,92 @@ public class PrismBlockEvents implements Listener {
 			)
 		);
 	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockForm(BlockFormEvent event) {
+		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		
+		Block block = event.getBlock();
+		
+		plugin.actionsRecorder.addToQueue( 
+				new BlockAction(
+					action_time,
+					"block-form",
+					block.getWorld().getName(),
+					"Environment",
+					block.getX(),
+					block.getY(),
+					block.getZ(),
+					block
+				)
+			);
+//		event.getBlock().getState(), event.getNewState()
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockFade(BlockFadeEvent event) {
+		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		
+		Block block = event.getBlock();
+		
+		plugin.actionsRecorder.addToQueue( 
+				new BlockAction(
+					action_time,
+					"block-fade",
+					block.getWorld().getName(),
+					"Environment",
+					block.getX(),
+					block.getY(),
+					block.getZ(),
+					block
+				)
+			);
+//		event.getBlock().getState(), event.getNewState()
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onBlockBurn(BlockBurnEvent event) {
+		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		
+		Block block = event.getBlock();
+		
+		plugin.actionsRecorder.addToQueue( 
+				new BlockAction(
+					action_time,
+					"block-burn",
+					block.getWorld().getName(),
+					"Environment",
+					block.getX(),
+					block.getY(),
+					block.getZ(),
+					block
+				)
+			);
+//		event.getBlock().getState(), event.getNewState()
+	}
+	
+	//onSignChange
+	//onLeavesDecay
+	//onBlockFromTo
 }
