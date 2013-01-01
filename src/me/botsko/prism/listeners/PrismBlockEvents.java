@@ -56,11 +56,10 @@ public class PrismBlockEvents implements Listener {
 				"block-break",
 				block.getWorld().getName(),
 				player.getName(),
-				block.getTypeId(),
-				block.getData(),
 				block.getX(),
 				block.getY(),
-				block.getZ()
+				block.getZ(),
+				block
 			)
 		);
 		
@@ -97,13 +96,11 @@ public class PrismBlockEvents implements Listener {
 				"block-place",
 				block.getWorld().getName(),
 				player.getName(),
-				block.getTypeId(),
-				block.getData(),
 				block.getX(),
 				block.getY(),
-				block.getZ()
+				block.getZ(),
+				block
 			)
 		);
-		
 	}
 }

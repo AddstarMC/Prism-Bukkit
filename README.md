@@ -4,6 +4,8 @@
 Permissions:
 - prism.*
 - prism.reload
+- prism.lookup
+- prism.rollback
 
 
 

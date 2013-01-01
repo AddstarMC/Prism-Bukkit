@@ -10,7 +10,14 @@ import me.botsko.prism.actions.BlockAction;
 
 public class ActionRecorder {
 	
+	/**
+	 * 
+	 */
 	private Prism plugin;
+	
+	/**
+	 * 
+	 */
 	private static final LinkedBlockingQueue<Action> queue = new LinkedBlockingQueue<Action>();
 	
 	
@@ -67,16 +74,15 @@ public class ActionRecorder {
 	protected void insertActionIntoDatabase( BlockAction a){
 		try {
 			plugin.dbc();
-	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,block_id,block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?)");
+	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
 	        s.setString(1,a.getAction_time());
 	        s.setString(2,a.getAction_type());
 	        s.setString(3,a.getPlayer_name());
 	        s.setString(4,a.getWorld_name());
-	        s.setInt(5,a.getBlock_id());
-	        s.setInt(6,a.getBlock_subid());
-	        s.setInt(7,(int)a.getX());
-	        s.setInt(8,(int)a.getY());
-	        s.setInt(9,(int)a.getZ());
+	        s.setInt(5,(int)a.getX());
+	        s.setInt(6,(int)a.getY());
+	        s.setInt(7,(int)a.getZ());
+	        s.setString(8,a.getData());
 	        s.executeUpdate();
     		s.close();
             plugin.conn.close();

@@ -51,5 +51,12 @@ public interface Action {
 	 */
 	public double getZ();
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getData();
+	
 
 }

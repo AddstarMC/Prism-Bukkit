@@ -57,11 +57,10 @@ public class ActionsQuery {
     					rs.getString("action_type"),
     					rs.getString("world"),
     					rs.getString("player"),
-    					rs.getInt("block_id"),
-    					rs.getByte("block_subid"),
     					rs.getInt("x"),
     					rs.getInt("y"),
-    					rs.getInt("z")
+    					rs.getInt("z"),
+    					rs.getString("data")
     				) );
     		}
     		

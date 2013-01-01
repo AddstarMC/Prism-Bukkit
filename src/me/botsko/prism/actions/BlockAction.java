@@ -1,5 +1,9 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.utils.TypeUtils;
+
+import org.bukkit.block.Block;
+
 public class BlockAction implements Action {
 	
 	/**
@@ -25,16 +29,6 @@ public class BlockAction implements Action {
 	/**
 	 * 
 	 */
-	protected int block_id;
-	
-	/**
-	 * 
-	 */
-	protected byte block_subid;
-	
-	/**
-	 * 
-	 */
 	protected double x;
 	
 	/**
@@ -46,28 +40,113 @@ public class BlockAction implements Action {
 	 * 
 	 */
 	protected double z;
+	
+	/**
+	 * 
+	 */
+	protected Block block;
+	
+	/**
+	 * 
+	 */
+	protected String data;
+	
+	/**
+	 * 
+	 */
+	protected int block_id;
+	
+	/**
+	 * 
+	 */
+	protected byte block_subid;
+	
+	
+	/**
+	 * 
+	 * @param action_time
+	 * @param action_type
+	 * @param world_name
+	 * @param player_name
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param block
+	 */
+	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block ){
+		this(action_time, action_type, world_name, player_name, x, y, z, block, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param action_time
+	 * @param action_type
+	 * @param world_name
+	 * @param player_name
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param data
+	 */
+	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
+		this(action_time, action_type, world_name, player_name, x, y, z, null, data);
+	}
 
 
 	/**
 	 * 
+	 * @param action_time
+	 * @param action_type
 	 * @param world_name
 	 * @param player_name
-	 * @param block_id
-	 * @param block_subid
 	 * @param x
 	 * @param y
 	 * @param z
+	 * @param block
+	 * @param data
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, int block_id, byte block_subid, double x, double y, double z ){
+	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block, String data ){
+		
 		this.action_time = action_time;
 		this.action_type = action_type;
 		this.world_name = world_name;
 		this.player_name = player_name;
-		this.block_id = block_id;
-		this.block_subid = block_subid;
+		this.data = data;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		
+		// We either received a block or a data string. We need both, so make whichever we need.
+		setDataFromBlock();
+		setBlockIdsFromData();
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void setDataFromBlock(){
+		if(data == null){
+			data = block.getTypeId() + ":" + block.getData();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void setBlockIdsFromData(){
+		if(block == null){
+			String[] blockArr = data.split(":");
+			if (!TypeUtils.isNumeric(blockArr[0])) return;
+			
+			block_id = Integer.parseInt(blockArr[0]);
+			if (blockArr.length > 1){
+				block_subid = (byte) Integer.parseInt(blockArr[1]);
+			}
+		}
 	}
 	
 	
@@ -106,22 +185,6 @@ public class BlockAction implements Action {
 
 	
 	/**
-	 * @return the block_id
-	 */
-	public int getBlock_id() {
-		return block_id;
-	}
-
-	
-	/**
-	 * @return the block_subid
-	 */
-	public int getBlock_subid() {
-		return block_subid;
-	}
-
-	
-	/**
 	 * @return the x
 	 */
 	public double getX() {
@@ -142,5 +205,29 @@ public class BlockAction implements Action {
 	 */
 	public double getZ() {
 		return z;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public String getData(){
+		return data;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int getBlock_id(){
+		return block_id;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public byte getBlock_subid(){
+		return block_subid;
 	}
 }

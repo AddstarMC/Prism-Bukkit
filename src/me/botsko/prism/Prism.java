@@ -136,6 +136,16 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String msgNoPermission(){
+		return playerError("You don't have permission to perform this action.");
+	}
+	
+	
+	/**
+	 * 
 	 * @param message
 	 */
 	public void log(String message){

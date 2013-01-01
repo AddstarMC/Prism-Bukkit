@@ -57,23 +57,28 @@ public class PrismCommandExecutor implements CommandExecutor {
     		 */
     		if(args.length >= 1){
     		
+    			
 	    		/**
 	    		 * Lookup
 	    		 */
 	    		if( args[0].equalsIgnoreCase("lookup") || args[0].equalsIgnoreCase("l") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
 	    			
-	    			ActionsQuery aq = new ActionsQuery(plugin);
-	    			List<Action> results = aq.lookup( player, args);
-	    			if(!results.isEmpty()){
-	    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
-	    				for(Action a : results){
-	    					player.sendMessage( plugin.playerMsg( a.getPlayer_name() + " " + a.getAction_type() + " at " + a.getAction_time() ) );
-	    				}
+		    			ActionsQuery aq = new ActionsQuery(plugin);
+		    			List<Action> results = aq.lookup( player, args);
+		    			if(!results.isEmpty()){
+		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+		    				for(Action a : results){
+		    					player.sendMessage( plugin.playerMsg( a.getPlayer_name() + " " + a.getAction_type() + " at " + a.getAction_time() ) );
+		    				}
+		    			} else {
+		    				// @todo no results
+		    			}
 	    			} else {
-	    				// @todo no results
+	    				player.sendMessage( plugin.msgNoPermission() );
 	    			}
-	    			
-	    			return true;
+		    			
+		    		return true;
 	    			
 	    		}
 	    		
@@ -82,17 +87,21 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		 * Rollback
 	    		 */
 	    		if( args[0].equalsIgnoreCase("rollback") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.rollback") ){
 	    			
-	    			ActionsQuery aq = new ActionsQuery(plugin);
-	    			List<Action> results = aq.lookup( player, args);
-	    			if(!results.isEmpty()){
-	    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
-	    				
-	    				Rollback rb = new Rollback( plugin, results );
-	    				rb.rollback();
-	    				
+		    			ActionsQuery aq = new ActionsQuery(plugin);
+		    			List<Action> results = aq.lookup( player, args);
+		    			if(!results.isEmpty()){
+		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
+		    				
+		    				Rollback rb = new Rollback( plugin, results );
+		    				rb.rollback();
+		    				
+		    			} else {
+		    				// @todo no results
+		    			}
 	    			} else {
-	    				// @todo no results
+	    				player.sendMessage( plugin.msgNoPermission() );
 	    			}
 	    			
 	    			return true;

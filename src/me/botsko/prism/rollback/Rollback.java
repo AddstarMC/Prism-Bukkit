@@ -56,9 +56,8 @@ public class Rollback {
 					Block block = world.getBlockAt(loc);
 //					BlockState state = block.getState();
 					
-					// @todo add ability to undo
-					
 					block.setTypeId( b.getBlock_id() );
+					block.setData( b.getBlock_subid() );
 					
 				}
 			}
