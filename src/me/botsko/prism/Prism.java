@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actions.ActionsQuery;
@@ -8,6 +9,7 @@ import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismPlayerInteractEvent;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.recorders.ActionRecorder;
 
@@ -26,6 +28,7 @@ public class Prism extends JavaPlugin {
 	
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
+	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
 	
 	
     /**
@@ -50,6 +53,7 @@ public class Prism extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismWorldEvents( this ), this);
+		getServer().getPluginManager().registerEvents(new PrismPlayerInteractEvent( this ), this);
 		
 		// Add commands
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );

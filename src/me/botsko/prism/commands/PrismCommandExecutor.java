@@ -95,6 +95,26 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		
 	    		
 	    		/**
+	    		 * Inspector
+	    		 */
+	    		if( args[0].equalsIgnoreCase("inspect") || args[0].equalsIgnoreCase("i") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
+	    				// If already on, turn it off
+	    				if(plugin.playersWithActiveTools.contains(player.getName())){
+	    					plugin.playersWithActiveTools.remove(player.getName());
+	    					player.sendMessage( plugin.playerHeaderMsg("Inspection mode disabled.") );
+	    				} else {
+	    					plugin.playersWithActiveTools.add(player.getName());
+	    					player.sendMessage( plugin.playerHeaderMsg("Inspection mode enabled.") );
+	    				}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+		    		return true;
+	    		}
+	    		
+	    		
+	    		/**
 	    		 * Rollback
 	    		 */
 	    		if( args[0].equalsIgnoreCase("rollback") ){
