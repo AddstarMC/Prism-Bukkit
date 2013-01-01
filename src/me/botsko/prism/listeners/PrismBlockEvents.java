@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PrismBlockEvents implements Listener {
@@ -31,13 +32,8 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
-		
-		// Someone cancelled this before we did 
-		if ( event.isCancelled() ) {
-			return;
-		}
 		
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -71,13 +67,8 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
-		
-		// Someone cancelled this before we did 
-		if ( event.isCancelled() ) {
-			return;
-		}
 		
 		Block block = event.getBlock();
 		Player player = event.getPlayer();
@@ -103,4 +94,49 @@ public class PrismBlockEvents implements Listener {
 			)
 		);
 	}
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSetFire(final BlockIgniteEvent event){
+		String data;
+		switch (event.getCause()){
+			case FIREBALL:
+				data = "Fireball";
+			case FLINT_AND_STEEL:
+				data = "Player lit";
+			case LAVA:
+				data = "Lit by lava";
+			case LIGHTNING:
+				data = "Lightning strike";
+			case SPREAD:
+				data = "Fire spread";
+			default:
+				data = "Unknown cause";
+		
+		}
+		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		
+		Block block = event.getBlock();
+		Player player = event.getPlayer();
+		
+		this.plugin.actionsRecorder.addToQueue( 
+				new BlockAction(
+					action_time,
+					"block-ignite",
+					block.getWorld().getName(),
+					(player == null ? null : player.getName()),
+					block.getX(),
+					block.getY(),
+					block.getZ(),
+					block,
+					data
+				)
+		);
+	}
+	
 }
