@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -27,7 +27,7 @@ public class ActionsQuery {
 	/**
 	 * 
 	 */
-	private HashMap<String,String> foundArgs;
+	private HashMap<String,String> foundArgs = new HashMap<String,String>();
 	
 	
 	/**
@@ -41,11 +41,23 @@ public class ActionsQuery {
 	
 	
 	/**
-	 * 
+	 * If we receive a player and arguments, it's being run from the
+	 * command line. We must convert these into a QueryParameter class
+	 * so we can pass that object in.
 	 * @return
 	 */
-	public List<Action> lookup( Player player, String where ){
-		return lookup(player, null, where);
+	public List<Action> lookup( Player player, String[] args ){
+		
+		// Pull results
+		List<Action> actions = new ArrayList<Action>();
+				
+		QueryParameters parameters = preprocessArguments( player, args );
+		
+		// If no args, return
+		if(foundArgs.isEmpty()){
+			return actions;
+		}
+		return lookup(parameters);
 	}
 	
 	
@@ -53,24 +65,21 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	public List<Action> lookup( Player player, String[] args, String where ){
+	public List<Action> lookup( QueryParameters parameters ){
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
 		
-		// Preprocess all args and validate them
-		preprocessArguments(args);
-		
 		// Build conditions based off final args
-		if(where == null) where = getArgumentConditions(player,args);
+		String query = getArgumentConditions(parameters);
 		
-		if(where!= null){
+		if(query!= null){
 			try {
 	            
 				plugin.dbc();
 				
 	            PreparedStatement s;
-	    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions" + where + " ORDER BY action_time DESC");
+	    		s = plugin.conn.prepareStatement(query);
 	    		s.executeQuery();
 	    		ResultSet rs = s.getResultSet();
 	    		
@@ -123,9 +132,9 @@ public class ActionsQuery {
 	 * 
 	 * @param args
 	 */
-	protected void preprocessArguments( String[] args ){
+	protected QueryParameters preprocessArguments( Player player, String[] args ){
 		
-		foundArgs = new HashMap<String,String>();
+		QueryParameters parameters = new QueryParameters();
 		
 		if(args != null){
 		
@@ -143,16 +152,46 @@ public class ActionsQuery {
 					throw new IllegalArgumentException("Invalid argument format: " + arg);
 				}
 				
-				// Split parameter and value, split values by commas
+				// Split parameter and values
 				String arg_type = arg.substring(0,1).toLowerCase();
+				String val = arg.substring(2);
 				String[] possibleArgs = {"a","r","t","p","w","b","e"};
 				if(Arrays.asList(possibleArgs).contains(arg_type)){
-					String val = arg.substring(2);
 					if(!val.isEmpty()){
+						plugin.debug("Found arg type " + arg_type + " with value: " + val);
 						foundArgs.put(arg_type, val);
 					} else {
 						throw new IllegalArgumentException("You must supply at least one argument.");
 					}
+				}
+				
+				// Action
+				if(arg_type.equals("a")){
+					parameters.setAction_type( val );
+				}
+				
+				// Radius
+				if(arg_type.equals("r")){
+					if(TypeUtils.isNumeric(val)){
+						parameters.setRadius( Integer.parseInt(val) );
+					} else {
+						throw new IllegalArgumentException("Invalid argument format: " + arg);
+					}
+				}
+				
+				// Entity
+				if(arg_type.equals("e")){
+					parameters.setEntity( val );
+				}
+				
+				// Block
+				if(arg_type.equals("b")){
+					parameters.setBlock( val );
+				}
+				
+				// Time
+				if(arg_type.equals("t")){
+					parameters.setTime( val );
 				}
 			}
 			
@@ -161,12 +200,28 @@ public class ActionsQuery {
 				throw new IllegalArgumentException("You must supply at least one argument.");
 			}
 			
-			// Set defaults
+			/**
+			 * Set defaults
+			 */
+			// Radius default
 			if(!foundArgs.containsKey("r")){
 				plugin.debug("Setting default radius to " + plugin.getConfig().getString("default-radius"));
-				foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
+				parameters.setRadius( Integer.parseInt( plugin.getConfig().getString("prism.default-radius") ) );
+				
+				// Add the default radius to the foundArgs so even a parameter-less query will
+				// return something.
+				// @todo this should only happen on lookup
+//				foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
+				
 			}
+			// World default
+			if(!foundArgs.containsKey("w")){
+				parameters.setWorld( player.getWorld().getName() );
+			}
+			// Player location
+			parameters.setPlayer_location( player.getLocation().toVector() );
 		}
+		return parameters;
 	}
 	
 	
@@ -174,69 +229,66 @@ public class ActionsQuery {
 	 * 
 	 * @param args
 	 */
-	public String getArgumentConditions( Player player, String[] args ){
+	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String where = null;
-		
-		if(!foundArgs.isEmpty()){
-			
-			// Begin base condition
-			where = " WHERE 1=1";
-			
-			// Iterate final arguments
-			for (Entry<String, String> entry : foundArgs.entrySet()){
-				// entry.getKey() entry.getValue()
-				
-				String arg_type = entry.getKey();
-				String[] arg_values = entry.getValue().split(",");
-			   
+		String query = "SELECT * FROM prism_actions WHERE world = '"+parameters.getWorld()+"'";
 
-				/**
-				 * Actions
-				 */
-				if(arg_type.equalsIgnoreCase("a")){
-					where += buildOrQuery("action_type", arg_values);
-				}
-				
-				
-				/**
-				 * Players
-				 */
-				else if(arg_type.equalsIgnoreCase("p")){
-					where += buildOrQuery("player", arg_values);
-				}
-				
-				
-				/**
-				 * World
-				 */
-				else if(arg_type.equalsIgnoreCase("w")){
-					where += buildOrQuery("world", arg_values);
-				}
-			
-			
-				/**
-				 * Radius
-				 */
-				else if(arg_type.equalsIgnoreCase("r")){
-					where += buildRadiusCondition(arg_values, player);
-				}
-				
-				
-				/**
-				 * Timeframe
-				 */
-				else if(arg_type.equalsIgnoreCase("t")){
-					where += buildTimeCondition(arg_values[0]);
-				}
-			
-				plugin.debug("Found arg type " + arg_type + " with value: " + entry.getValue());
-				plugin.debug("Query conditions: " + where);
-
-			}
+		/**
+		 * Actions
+		 */
+		String action_type = parameters.getAction_type();
+		if(action_type != null){
+			query += buildOrQuery("action_type", action_type.split(","));
 		}
 		
-		return where;
+		/**
+		 * Players
+		 */
+		String player = parameters.getPlayer();
+		if(action_type != null){
+			query += buildOrQuery("player", player.split(","));
+		}
+		
+		/**
+		 * Radius
+		 */
+		int radius = parameters.getRadius();
+		if(action_type != null){
+			query += buildRadiusCondition(radius, parameters.getPlayer_location());
+		}
+		
+		/**
+		 * Timeframe
+		 */
+		String time = parameters.getPlayer();
+		if(action_type != null){
+			query += buildTimeCondition(time);
+		}
+		
+		/**
+		 * Specific coords
+		 */
+		Location loc = parameters.getLoc();
+		if(loc != null){
+			query += " AND x = " +(int)loc.getBlockX()+ " AND y = " +(int)loc.getBlockY()+ " AND z = " +(int)loc.getBlockZ();
+		}
+		
+		/**
+		 * Order by
+		 */
+		query += " ORDER BY action_time DESC";
+		
+		/**
+		 * LIMIT
+		 */
+		int limit = parameters.getLimit();
+		if(limit > 0){
+			query += " LIMIT 0,"+limit;
+		}
+
+		plugin.debug("Query conditions: " + query);
+		
+		return query;
 		
 	}
 	
@@ -268,25 +320,18 @@ public class ActionsQuery {
 	 * @param player
 	 * @return
 	 */
-	protected String buildRadiusCondition( String[] arg_values, Player player ){
+	protected String buildRadiusCondition( int radius, Vector loc ){
 		String where = "";
-		if(arg_values[0].equalsIgnoreCase("world")){
-			// @todo force bypassing max radius
-		} else {
-		
-			if(!TypeUtils.isNumeric(arg_values[0])){
-				throw new IllegalArgumentException("Not an integer " + arg_values[0]);
-			}
-			
-			int radius = Integer.parseInt(arg_values[0]);
-	
+//		if(arg_values[0].equalsIgnoreCase("world")){
+//			// @todo force bypassing max radius
+//		} else {
+
 			// @todo allow for worldedit selections
 
 			//If the radius is set we need to format the min and max locations
 			if (radius > 0) {
 
 				//Check if location and world are supplied
-				Vector loc = player.getLocation().toVector();
 				Vector minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
 				Vector maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
 				
@@ -295,7 +340,7 @@ public class ActionsQuery {
 				where += " AND (z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
 
 			}
-		}
+//		}
 		return where;
 	}
 	

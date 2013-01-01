@@ -4,6 +4,7 @@ import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.actions.QueryParameters;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -47,23 +48,17 @@ public class PrismPlayerInteractEvent implements Listener {
 	
 				Location loc = event.getClickedBlock().getLocation();
 				plugin.debug("Running history search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-			
-				event.setCancelled(true);
-					
-			}
-			
-			// Player right click on block, get last action
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-	
-				Location loc = event.getClickedBlock().getLocation();
-				plugin.debug("Running last action search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 				
-				String where = " WHERE x = " +(int)loc.getBlockX()+ " AND y = " +(int)loc.getBlockY()+ " AND z = " +(int)loc.getBlockZ();
+				// Build params
+				QueryParameters params = new QueryParameters();
+				params.setWorld( player.getWorld().getName() );
+				params.setLoc(loc);
 				
+				// Query
 				ActionsQuery aq = new ActionsQuery(plugin);
-    			List<me.botsko.prism.actions.Action> results = aq.lookup( player, where );
+    			List<me.botsko.prism.actions.Action> results = aq.lookup( params );
     			if(!results.isEmpty()){
-    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+    				player.sendMessage( plugin.playerHeaderMsg("Recent history for this block:") );
     				for(me.botsko.prism.actions.Action a : results){
     					
     					// user
@@ -77,7 +72,43 @@ public class PrismPlayerInteractEvent implements Listener {
     					player.sendMessage( plugin.playerMsg( msg ) );
     				}
     			} else {
-    				// @todo no results
+    				player.sendMessage( plugin.playerError( "No results found." ) );
+    			}
+			
+				event.setCancelled(true);
+					
+			}
+			
+			// Player right click on block, get last action
+			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+	
+				Location loc = event.getClickedBlock().getLocation();
+				plugin.debug("Running last action search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+				
+				// Build params
+				QueryParameters params = new QueryParameters();
+				params.setWorld( player.getWorld().getName() );
+				params.setLoc(loc);
+				params.setLimit(1);
+				
+				// Query
+				ActionsQuery aq = new ActionsQuery(plugin);
+    			List<me.botsko.prism.actions.Action> results = aq.lookup( params );
+    			if(!results.isEmpty()){
+    				player.sendMessage( plugin.playerHeaderMsg("Last action of this block:") );
+    				for(me.botsko.prism.actions.Action a : results){
+    					
+    					// user
+    					String msg = ChatColor.BLUE + a.getPlayer_name();
+    					msg += " " + ChatColor.GRAY + a.getAction_type();
+    					msg += " " + ChatColor.RED + a.getData();
+    					msg += " " + ChatColor.RED + (int)a.getX();
+    					msg += " " + ChatColor.RED + (int)a.getY();
+    					msg += " " + ChatColor.RED + (int)a.getZ();
+    					
+    					player.sendMessage( plugin.playerMsg( msg ) );
+    				}
+    			} else {
     				player.sendMessage( plugin.playerError( "No results found." ) );
     			}
 				
