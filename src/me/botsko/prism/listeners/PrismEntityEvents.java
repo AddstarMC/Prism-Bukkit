@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityKillAction;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 
 public class PrismEntityEvents implements Listener {
 
@@ -85,5 +87,19 @@ public class PrismEntityEvents implements Listener {
 		plugin.actionsRecorder.addToQueue( new BlockAction("entity-action", event.getBlock(), entity) );
 	}
 	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
+		
+		String entity = event.getEntityType().getName();
+		entity = entity.toLowerCase();
+		
+		for(Block block : event.blockList()){	
+			plugin.actionsRecorder.addToQueue( new BlockAction("entity-explode", block, entity) );
+		}
+	}
 	
 }
