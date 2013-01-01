@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import java.text.SimpleDateFormat;
+
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.block.Block;
@@ -73,12 +75,29 @@ public class BlockAction implements Action {
 	 * @param z
 	 * @param block
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block ){
-		this(action_time, action_type, world_name, player_name, x, y, z, block, null);
+	public BlockAction( String action_type, Block block, String player ){
+		this(null, action_type, block.getWorld().getName(), player, block.getX(), block.getY(), block.getZ(), block, null);
 	}
 	
 	
+//	/**
+//	 * 
+//	 * @param action_time
+//	 * @param action_type
+//	 * @param world_name
+//	 * @param player_name
+//	 * @param x
+//	 * @param y
+//	 * @param z
+//	 * @param block
+//	 */
+//	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block ){
+//		this(action_time, action_type, world_name, player_name, x, y, z, block, null);
+//	}
+
+
 	/**
+	 * Called when returned results from the database.
 	 * 
 	 * @param action_time
 	 * @param action_type
@@ -107,6 +126,12 @@ public class BlockAction implements Action {
 	 * @param data
 	 */
 	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block, String data ){
+		
+		// @todo has to be a better place for this
+		if(action_time == null){
+			java.util.Date date= new java.util.Date();
+			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		}
 		
 		this.action_time = action_time;
 		this.action_type = action_type;
