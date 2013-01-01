@@ -1,0 +1,57 @@
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+
+# OS or Editor folders
+.DS_Store
+.cache
+.project
+.settings
+.tmproj
+nbproject
+Thumbs.db
+
+# Dreamweaver added files
+_notes
+dwsync.xml
+
+# Komodo
+*.komodoproject
+.komodotools
+
+# Folders to ignore
+.hg
+.svn
+.CVS
+intermediate
+publish
+.idea
+
+
+# Eclipse stuff
+.classpath
+.project
+.settings
+nbproject
+build.xml
+target
+
+# various other potential build files
+build
+bin
+dist
+manifest.mf
+
+# Mac filesystem dust
+.DS_Store
+
+# Other Libraries
+*.jar
+
