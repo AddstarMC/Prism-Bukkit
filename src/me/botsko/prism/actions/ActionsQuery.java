@@ -263,7 +263,30 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT * FROM prism_actions WHERE world = '"+parameters.getWorld()+"'";
+		String query = "SELECT * FROM prism_actions";
+		
+		// If we're rolling back, we need to exclude records
+		// at exact coords that have new entries there. So if
+		// player A placed a block, then removes it, and player
+		// B places a block at the same place, a rollback of
+		// all player A's block-places won't damage what
+		// player B added
+		//
+		// By default block-break rollbacks don't need this because
+		// they won't restore when a new block is present.
+		if(parameters.getLookup_type().equals("rollback") && parameters.getAction_type().contains("block-place")){
+			query += "JOIN (" +
+					"SELECT x, y, z, max(action_time) as action_time" +
+					" FROM prism_actions" +
+					" GROUP BY x, y, z) latest" +
+					" ON prism_actions.action_time = latest.action_time" +
+					" AND prism_actions.x = latest.x" +
+					" AND prism_actions.y = latest.y" +
+					" AND prism_actions.z = latest.z";
+		}
+		
+		// World
+		query += " WHERE world = '"+parameters.getWorld()+"'";
 
 		/**
 		 * Actions

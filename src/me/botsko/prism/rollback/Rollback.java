@@ -77,13 +77,21 @@ public class Rollback {
 					// If the block was placed, we need to remove it
 					// @todo it may not always be air that was replaced. we should log that
 					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
+						// @todo ensure we're not removing a new block that's been placed by someone else
 						block.setType(Material.AIR);
+						rolled_back_count++;
 					} else {
-						// Otherwise, add it back
-						block.setTypeId( b.getBlock_id() );
-						block.setData( b.getBlock_subid() );
+						
+						/**
+						 * Restore the block that was removed, unless something
+						 * other than air occupies the spot.
+						 */
+						if(block.getType().equals(Material.AIR)){
+							block.setTypeId( b.getBlock_id() );
+							block.setData( b.getBlock_subid() );
+							rolled_back_count++;
+						}
 					}
-					rolled_back_count++;
 				}
 				
 				
