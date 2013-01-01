@@ -66,7 +66,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( player, args);
+		    			List<Action> results = aq.lookup( player, args, null );
 		    			if(!results.isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
 		    				for(Action a : results){
@@ -121,7 +121,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.rollback") ){
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( player, args);
+		    			List<Action> results = aq.lookup( player, args, null );
 		    			if(!results.isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 		    				

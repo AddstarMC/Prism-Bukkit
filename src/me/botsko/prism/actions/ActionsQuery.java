@@ -44,7 +44,16 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	public List<Action> lookup( Player player, String[] args ){
+	public List<Action> lookup( Player player, String where ){
+		return lookup(player, null, where);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public List<Action> lookup( Player player, String[] args, String where ){
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
@@ -53,7 +62,7 @@ public class ActionsQuery {
 		preprocessArguments(args);
 		
 		// Build conditions based off final args
-		String where = getArgumentConditions(player,args);
+		if(where == null) where = getArgumentConditions(player,args);
 		
 		if(where!= null){
 			try {
@@ -67,15 +76,9 @@ public class ActionsQuery {
 	    		
 	    		while(rs.next()){
 	    			
-	    			// @todo this needs major cleanup
-	    			if(    rs.getString("action_type").equals("block-break") 
-						|| rs.getString("action_type").equals("block-place")
-						|| rs.getString("action_type").equals("block-burn")
-						|| rs.getString("action_type").equals("block-fade")
-						|| rs.getString("action_type").equals("block-ignite")
-						|| rs.getString("action_type").equals("flint-steel")
-						|| rs.getString("action_type").equals("tree-grow")
-						|| rs.getString("action_type").equals("mushroom-grow")){
+	    			// @todo this needs more cleanup
+	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow"};
+	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
 		    			actions.add( new BlockAction(
 		    					rs.getString("action_time"),
 		    					rs.getString("action_type"),
@@ -124,42 +127,45 @@ public class ActionsQuery {
 		
 		foundArgs = new HashMap<String,String>();
 		
-		// Iterate over arguments
-		for (int i = 1; i < args.length; i++) {
-			
-			String arg = args[i];
-			if (arg.isEmpty()) continue;
-			
-			// Verify they're formatting like a:[val]
-			if(!arg.contains(":")){
-				throw new IllegalArgumentException("Invalid argument format: " + arg);
-			}
-			if (!arg.substring(1,2).equals(":")) {
-				throw new IllegalArgumentException("Invalid argument format: " + arg);
-			}
-			
-			// Split parameter and value, split values by commas
-			String arg_type = arg.substring(0,1).toLowerCase();
-			String[] possibleArgs = {"a","r","t","p","w","b","e"};
-			if(Arrays.asList(possibleArgs).contains(arg_type)){
-				String val = arg.substring(2);
-				if(!val.isEmpty()){
-					foundArgs.put(arg_type, val);
-				} else {
-					throw new IllegalArgumentException("You must supply at least one argument.");
+		if(args != null){
+		
+			// Iterate over arguments
+			for (int i = 1; i < args.length; i++) {
+				
+				String arg = args[i];
+				if (arg.isEmpty()) continue;
+				
+				// Verify they're formatting like a:[val]
+				if(!arg.contains(":")){
+					throw new IllegalArgumentException("Invalid argument format: " + arg);
+				}
+				if (!arg.substring(1,2).equals(":")) {
+					throw new IllegalArgumentException("Invalid argument format: " + arg);
+				}
+				
+				// Split parameter and value, split values by commas
+				String arg_type = arg.substring(0,1).toLowerCase();
+				String[] possibleArgs = {"a","r","t","p","w","b","e"};
+				if(Arrays.asList(possibleArgs).contains(arg_type)){
+					String val = arg.substring(2);
+					if(!val.isEmpty()){
+						foundArgs.put(arg_type, val);
+					} else {
+						throw new IllegalArgumentException("You must supply at least one argument.");
+					}
 				}
 			}
-		}
-		
-		// Validate any required args are set
-		if(foundArgs.isEmpty()){
-			throw new IllegalArgumentException("You must supply at least one argument.");
-		}
-		
-		// Set defaults
-		if(!foundArgs.containsKey("r")){
-			plugin.debug("Setting default radius to " + plugin.getConfig().getString("default-radius"));
-			foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
+			
+			// Validate any required args are set
+			if(foundArgs.isEmpty()){
+				throw new IllegalArgumentException("You must supply at least one argument.");
+			}
+			
+			// Set defaults
+			if(!foundArgs.containsKey("r")){
+				plugin.debug("Setting default radius to " + plugin.getConfig().getString("default-radius"));
+				foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
+			}
 		}
 	}
 	

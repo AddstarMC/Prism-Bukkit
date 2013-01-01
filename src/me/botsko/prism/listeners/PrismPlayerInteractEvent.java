@@ -1,7 +1,11 @@
 package me.botsko.prism.listeners;
 
-import me.botsko.prism.Prism;
+import java.util.List;
 
+import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionsQuery;
+
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,6 +57,29 @@ public class PrismPlayerInteractEvent implements Listener {
 	
 				Location loc = event.getClickedBlock().getLocation();
 				plugin.debug("Running last action search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
+				
+				String where = " WHERE x = " +(int)loc.getBlockX()+ " AND y = " +(int)loc.getBlockY()+ " AND z = " +(int)loc.getBlockZ();
+				
+				ActionsQuery aq = new ActionsQuery(plugin);
+    			List<me.botsko.prism.actions.Action> results = aq.lookup( player, where );
+    			if(!results.isEmpty()){
+    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+    				for(me.botsko.prism.actions.Action a : results){
+    					
+    					// user
+    					String msg = ChatColor.BLUE + a.getPlayer_name();
+    					msg += " " + ChatColor.GRAY + a.getAction_type();
+    					msg += " " + ChatColor.RED + a.getData();
+    					msg += " " + ChatColor.RED + (int)a.getX();
+    					msg += " " + ChatColor.RED + (int)a.getY();
+    					msg += " " + ChatColor.RED + (int)a.getZ();
+    					
+    					player.sendMessage( plugin.playerMsg( msg ) );
+    				}
+    			} else {
+    				// @todo no results
+    				player.sendMessage( plugin.playerError( "No results found." ) );
+    			}
 				
 				event.setCancelled(true);
 				
