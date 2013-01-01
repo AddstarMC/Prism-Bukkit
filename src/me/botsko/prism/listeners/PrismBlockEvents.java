@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 public class PrismBlockEvents implements Listener {
@@ -31,23 +32,10 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
-		
-		// Someone cancelled this before we did 
-		if ( event.isCancelled() ) {
-			return;
-		}
-		
 		Player player = event.getPlayer();
-		
-//		// skip if we don't track creative mode
-//		if(player.getGameMode() == GameMode.CREATIVE){
-//			return;
-//		}
-
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-break", event.getBlock(), player.getName()) );
-		
 	}
 	
 	
@@ -56,21 +44,9 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
-		
-		// Someone cancelled this before we did 
-		if ( event.isCancelled() ) {
-			return;
-		}
-		
 		Player player = event.getPlayer();
-		
-//		// skip if we don't track creative mode
-//		if(player.getGameMode() == GameMode.CREATIVE){
-//			return;
-//		}
-		
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-place", event.getBlock(), player.getName()) );
 	}
 	
@@ -79,7 +55,7 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-form", event.getBlock(), "Environment") );
 	}
@@ -89,17 +65,17 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-fade", event.getBlock(), "Environment") );
 	}
 	
-	
+
 	/**
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction("block-burn", event.getBlock(), "Environment") );
 	}
@@ -107,4 +83,28 @@ public class PrismBlockEvents implements Listener {
 	//onSignChange
 	//onLeavesDecay
 	//onBlockFromTo
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSetFire(final BlockIgniteEvent event){
+		
+		String cause;
+		switch (event.getCause()){
+			case FIREBALL:
+				cause = "fireball";
+			case FLINT_AND_STEEL:
+				cause = "flint-steel";
+			case LAVA:
+				cause = "lava-ignite";
+			case LIGHTNING:
+				cause = "lightning";
+			case SPREAD:
+				cause = "fire-spread";
+			default:
+				cause = "block-ignite";
+		}
+		
+		Player player = event.getPlayer();
+		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
+		
+	}
 }
