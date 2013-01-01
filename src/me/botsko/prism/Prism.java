@@ -7,6 +7,7 @@ import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.recorders.ActionRecorder;
 
 import org.bukkit.ChatColor;
@@ -46,6 +47,7 @@ public class Prism extends JavaPlugin {
 		
 		// Assign event listeners
 		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
+		getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
 		
 		// Add commands
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );

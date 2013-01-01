@@ -52,16 +52,35 @@ public class ActionsQuery {
     		ResultSet rs = s.getResultSet();
     		
     		while(rs.next()){
-    			actions.add( new BlockAction(
-    					rs.getString("action_time"),
-    					rs.getString("action_type"),
-    					rs.getString("world"),
-    					rs.getString("player"),
-    					rs.getInt("x"),
-    					rs.getInt("y"),
-    					rs.getInt("z"),
-    					rs.getString("data")
-    				) );
+    			
+    			if( rs.getString("action_type").equals("block-break") || rs.getString("action_type").equals("block-place") ){
+    			
+	    			actions.add( new BlockAction(
+	    					rs.getString("action_time"),
+	    					rs.getString("action_type"),
+	    					rs.getString("world"),
+	    					rs.getString("player"),
+	    					rs.getInt("x"),
+	    					rs.getInt("y"),
+	    					rs.getInt("z"),
+	    					rs.getString("data")
+	    				) );
+    			}
+    			
+    			else if( rs.getString("action_type").equals("entity-kill") ){
+    				
+    				actions.add( new EntityKillAction(
+	    					rs.getString("action_time"),
+	    					rs.getString("action_type"),
+	    					rs.getString("world"),
+	    					rs.getString("player"),
+	    					rs.getInt("x"),
+	    					rs.getInt("y"),
+	    					rs.getInt("z"),
+	    					rs.getString("data")
+	    				) );
+    				
+    			}
     		}
     		
     		rs.close();

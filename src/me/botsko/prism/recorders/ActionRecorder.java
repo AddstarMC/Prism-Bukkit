@@ -6,7 +6,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.BlockAction;
 
 public class ActionRecorder {
 	
@@ -54,12 +53,8 @@ public class ActionRecorder {
 		if(!queue.isEmpty()){
 			while (!queue.isEmpty()) {
 				Action a = queue.poll();
-				
-				// Block actions
-				if(a instanceof BlockAction){
-					insertActionIntoDatabase( (BlockAction) a );
-				}
-				queue.remove(a);
+				insertActionIntoDatabase( a );
+				queue.remove(a); //@todo unecessary?
 			}
 		} else {
 			plugin.debug("Action queue empty when save() called.");
@@ -71,7 +66,7 @@ public class ActionRecorder {
 	 * 
 	 * @param a
 	 */
-	protected void insertActionIntoDatabase( BlockAction a){
+	protected void insertActionIntoDatabase( Action a){
 		try {
 			plugin.dbc();
 	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");

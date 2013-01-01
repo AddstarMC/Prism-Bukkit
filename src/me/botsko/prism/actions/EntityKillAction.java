@@ -1,10 +1,9 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.utils.TypeUtils;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
-import org.bukkit.block.Block;
-
-public class BlockAction implements Action {
+public class EntityKillAction implements Action {
 	
 	/**
 	 * 
@@ -44,22 +43,12 @@ public class BlockAction implements Action {
 	/**
 	 * 
 	 */
-	protected Block block;
+	protected Entity entity;
 	
 	/**
 	 * 
 	 */
 	protected String data;
-	
-	/**
-	 * 
-	 */
-	protected int block_id;
-	
-	/**
-	 * 
-	 */
-	protected byte block_subid;
 	
 	
 	/**
@@ -73,8 +62,8 @@ public class BlockAction implements Action {
 	 * @param z
 	 * @param block
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block ){
-		this(action_time, action_type, world_name, player_name, x, y, z, block, null);
+	public EntityKillAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Entity entity ){
+		this(action_time, action_type, world_name, player_name, x, y, z, entity, null);
 	}
 	
 	
@@ -89,7 +78,7 @@ public class BlockAction implements Action {
 	 * @param z
 	 * @param data
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
+	public EntityKillAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
 		this(action_time, action_type, world_name, player_name, x, y, z, null, data);
 	}
 
@@ -106,21 +95,21 @@ public class BlockAction implements Action {
 	 * @param block
 	 * @param data
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block, String data ){
+	public EntityKillAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Entity entity, String data ){
 		
 		this.action_time = action_time;
 		this.action_type = action_type;
 		this.world_name = world_name;
 		this.player_name = player_name;
 		this.data = data;
-		this.block = block;
+		this.entity = entity;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		
 		// We either received a block or a data string. We need both, so make whichever we need.
-		setDataFromBlock();
-		setBlockIdsFromData();
+		setDataFromEntity();
+//		setEntityFromData();
 		
 	}
 	
@@ -128,26 +117,37 @@ public class BlockAction implements Action {
 	/**
 	 * 
 	 */
-	protected void setDataFromBlock(){
+	protected void setDataFromEntity(){
 		if(data == null){
-			data = block.getTypeId() + ":" + block.getData();
+			data = entity.getType().getName();
 		}
 	}
+	
+	
+//	/**
+//	 * 
+//	 */
+//	protected void setEntityFromData(){
+//		if(entity == null){
+//			EntityType mob = EntityType.fromName(data);
+//			if(mob != null){
+//				
+//			}
+//		}
+//	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setBlockIdsFromData(){
-		if(block == null){
-			String[] blockArr = data.split(":");
-			if (!TypeUtils.isNumeric(blockArr[0])) return;
-			
-			block_id = Integer.parseInt(blockArr[0]);
-			if (blockArr.length > 1){
-				block_subid = (byte) Integer.parseInt(blockArr[1]);
+	public EntityType getEntityTypeFromData(){
+		if(entity == null){
+			EntityType mob = EntityType.fromName(data);
+			if(mob != null){
+				return mob;
 			}
 		}
+		return null;
 	}
 	
 	
@@ -214,21 +214,5 @@ public class BlockAction implements Action {
 	 */
 	public String getData(){
 		return data;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public int getBlock_id(){
-		return block_id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public byte getBlock_subid(){
-		return block_subid;
 	}
 }

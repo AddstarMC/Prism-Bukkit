@@ -15,3 +15,4 @@ Permissions:
 - r:[radius|world]
 - t:[timeframe]
 - w:[world]
+- e:[mob]
