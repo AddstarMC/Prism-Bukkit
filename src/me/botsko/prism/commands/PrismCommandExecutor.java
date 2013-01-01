@@ -83,6 +83,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				}
 		    			} else {
 		    				// @todo no results
+		    				player.sendMessage( plugin.playerError( "No results found." ) );
 		    			}
 	    			} else {
 	    				player.sendMessage( plugin.msgNoPermission() );

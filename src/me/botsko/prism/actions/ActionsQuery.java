@@ -46,69 +46,72 @@ public class ActionsQuery {
 	 */
 	public List<Action> lookup( Player player, String[] args ){
 		
+		// Pull results
+		List<Action> actions = new ArrayList<Action>();
+		
 		// Preprocess all args and validate them
 		preprocessArguments(args);
 		
 		// Build conditions based off final args
 		String where = getArgumentConditions(player,args);
 		
-		// Pull results
-		List<Action> actions = new ArrayList<Action>();
-		try {
-            
-			plugin.dbc();
-			
-            PreparedStatement s;
-    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions" + where + " ORDER BY action_time DESC");
-    		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
-    		
-    		while(rs.next()){
-    			
-    			// @todo this needs major cleanup
-    			if(    rs.getString("action_type").equals("block-break") 
-					|| rs.getString("action_type").equals("block-place")
-					|| rs.getString("action_type").equals("block-burn")
-					|| rs.getString("action_type").equals("block-fade")
-					|| rs.getString("action_type").equals("block-ignite")
-					|| rs.getString("action_type").equals("flint-steel")
-					|| rs.getString("action_type").equals("tree-grow")
-					|| rs.getString("action_type").equals("mushroom-grow")){
-	    			actions.add( new BlockAction(
-	    					rs.getString("action_time"),
-	    					rs.getString("action_type"),
-	    					rs.getString("world"),
-	    					rs.getString("player"),
-	    					rs.getInt("x"),
-	    					rs.getInt("y"),
-	    					rs.getInt("z"),
-	    					rs.getString("data")
-	    				) );
-    			}
-    			
-    			else if( rs.getString("action_type").equals("entity-kill") ){
-	    			actions.add( new EntityKillAction(
-	    					rs.getString("action_time"),
-	    					rs.getString("action_type"),
-	    					rs.getString("world"),
-	    					rs.getString("player"),
-	    					rs.getInt("x"),
-	    					rs.getInt("y"),
-	    					rs.getInt("z"),
-	    					rs.getString("data")
-	    				) );
-    			} else {
-    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
-    			}
-    		}
-    		
-    		rs.close();
-    		s.close();
-            plugin.conn.close();
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+		if(where!= null){
+			try {
+	            
+				plugin.dbc();
+				
+	            PreparedStatement s;
+	    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions" + where + " ORDER BY action_time DESC");
+	    		s.executeQuery();
+	    		ResultSet rs = s.getResultSet();
+	    		
+	    		while(rs.next()){
+	    			
+	    			// @todo this needs major cleanup
+	    			if(    rs.getString("action_type").equals("block-break") 
+						|| rs.getString("action_type").equals("block-place")
+						|| rs.getString("action_type").equals("block-burn")
+						|| rs.getString("action_type").equals("block-fade")
+						|| rs.getString("action_type").equals("block-ignite")
+						|| rs.getString("action_type").equals("flint-steel")
+						|| rs.getString("action_type").equals("tree-grow")
+						|| rs.getString("action_type").equals("mushroom-grow")){
+		    			actions.add( new BlockAction(
+		    					rs.getString("action_time"),
+		    					rs.getString("action_type"),
+		    					rs.getString("world"),
+		    					rs.getString("player"),
+		    					rs.getInt("x"),
+		    					rs.getInt("y"),
+		    					rs.getInt("z"),
+		    					rs.getString("data")
+		    				) );
+	    			}
+	    			
+	    			else if( rs.getString("action_type").equals("entity-kill") ){
+		    			actions.add( new EntityKillAction(
+		    					rs.getString("action_time"),
+		    					rs.getString("action_type"),
+		    					rs.getString("world"),
+		    					rs.getString("player"),
+		    					rs.getInt("x"),
+		    					rs.getInt("y"),
+		    					rs.getInt("z"),
+		    					rs.getString("data")
+		    				) );
+	    			} else {
+	    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
+	    			}
+	    		}
+	    		
+	    		rs.close();
+	    		s.close();
+	            plugin.conn.close();
+	            
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+		}
 		return actions;
 	}
 	
@@ -221,10 +224,8 @@ public class ActionsQuery {
 					where += buildTimeCondition(arg_values[0]);
 				}
 			
-				
-				plugin.debug("Found arg type " + arg_type + " with value: " + entry.getValue().substring(2));
+				plugin.debug("Found arg type " + arg_type + " with value: " + entry.getValue());
 				plugin.debug("Query conditions: " + where);
-				
 
 			}
 		}
