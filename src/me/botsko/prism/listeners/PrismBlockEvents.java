@@ -1,5 +1,7 @@
 package me.botsko.prism.listeners;
 
+import java.text.SimpleDateFormat;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
 
@@ -45,9 +47,12 @@ public class PrismBlockEvents implements Listener {
 //			return;
 //		}
 		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		
-		plugin.actionRecorder.addToQueue( 
+		plugin.actionsRecorder.addToQueue( 
 			new BlockAction(
+				action_time,
 				"block-break",
 				block.getWorld().getName(),
 				player.getName(),
@@ -83,9 +88,12 @@ public class PrismBlockEvents implements Listener {
 //			return;
 //		}
 		
+		java.util.Date date= new java.util.Date();
+		String action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		
-		plugin.actionRecorder.addToQueue( 
+		plugin.actionsRecorder.addToQueue( 
 			new BlockAction(
+				action_time,
 				"block-place",
 				block.getWorld().getName(),
 				player.getName(),

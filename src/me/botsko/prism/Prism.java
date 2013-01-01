@@ -3,23 +3,27 @@ package me.botsko.prism;
 import java.sql.Connection;
 import java.util.logging.Logger;
 
+import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.recorders.ActionRecorder;
 
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Prism extends JavaPlugin {
 
-	protected String msg_name = "Mythos";
+	protected String msg_name = "Prism";
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
 	protected Language language;
 	public Connection conn = null;
 	
-	public ActionRecorder actionRecorder;
+	public ActionRecorder actionsRecorder;
+	public ActionsQuery actionsQuery;
 	
 	
     /**
@@ -44,9 +48,10 @@ public class Prism extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
 		
 		// Add commands
-//		getCommand("dm").setExecutor( (CommandExecutor) new DmCommandExecutor(this) );
+		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
 		
-		actionRecorder = new ActionRecorder(this);
+		actionsRecorder = new ActionRecorder(this);
+		actionsQuery = new ActionsQuery(this);
 		
 	}
 	
@@ -95,9 +100,22 @@ public class Prism extends JavaPlugin {
 	 * @param msg
 	 * @return
 	 */
+	public String playerHeaderMsg(String msg){
+		if(msg != null){
+			return ChatColor.LIGHT_PURPLE + ""+msg_name+" // " + ChatColor.WHITE + msg;
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
 	public String playerMsg(String msg){
 		if(msg != null){
-			return ChatColor.GOLD + "["+msg_name+"]: " + ChatColor.WHITE + msg;
+			return ChatColor.WHITE + msg;
 		}
 		return "";
 	}
@@ -110,7 +128,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerError(String msg){
 		if(msg != null){
-			return ChatColor.GOLD + "["+msg_name+"]: " + ChatColor.RED + msg;
+			return ChatColor.LIGHT_PURPLE + "["+msg_name+"]: " + ChatColor.RED + msg;
 		}
 		return "";
 	}

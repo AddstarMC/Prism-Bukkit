@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 public class BlockAction implements Action {
 	
 	/**
@@ -60,11 +58,8 @@ public class BlockAction implements Action {
 	 * @param y
 	 * @param z
 	 */
-	public BlockAction( String action_type, String world_name, String player_name, int block_id, byte block_subid, double x, double y, double z ){
-		
-		java.util.Date date= new java.util.Date();
-		action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
-		
+	public BlockAction( String action_time, String action_type, String world_name, String player_name, int block_id, byte block_subid, double x, double y, double z ){
+		this.action_time = action_time;
 		this.action_type = action_type;
 		this.world_name = world_name;
 		this.player_name = player_name;
