@@ -4,14 +4,49 @@ import java.text.SimpleDateFormat;
 
 public class BlockAction implements Action {
 	
+	/**
+	 * 
+	 */
 	protected String action_time;
+	
+	/**
+	 * 
+	 */
 	protected String action_type;
+	
+	/**
+	 * 
+	 */
 	protected String world_name;
+	
+	/**
+	 * 
+	 */
 	protected String player_name;
+	
+	/**
+	 * 
+	 */
 	protected int block_id;
+	
+	/**
+	 * 
+	 */
 	protected byte block_subid;
+	
+	/**
+	 * 
+	 */
 	protected double x;
+	
+	/**
+	 * 
+	 */
 	protected double y;
+	
+	/**
+	 * 
+	 */
 	protected double z;
 
 
@@ -66,6 +101,7 @@ public class BlockAction implements Action {
 		return world_name;
 	}
 
+	
 	/**
 	 * @return the player_name
 	 */
@@ -73,6 +109,7 @@ public class BlockAction implements Action {
 		return player_name;
 	}
 
+	
 	/**
 	 * @return the block_id
 	 */
@@ -80,6 +117,7 @@ public class BlockAction implements Action {
 		return block_id;
 	}
 
+	
 	/**
 	 * @return the block_subid
 	 */
@@ -87,6 +125,7 @@ public class BlockAction implements Action {
 		return block_subid;
 	}
 
+	
 	/**
 	 * @return the x
 	 */
@@ -94,6 +133,7 @@ public class BlockAction implements Action {
 		return x;
 	}
 
+	
 	/**
 	 * @return the y
 	 */
@@ -101,6 +141,7 @@ public class BlockAction implements Action {
 		return y;
 	}
 
+	
 	/**
 	 * @return the z
 	 */

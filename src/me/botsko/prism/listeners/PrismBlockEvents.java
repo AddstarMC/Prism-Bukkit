@@ -9,21 +9,26 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 
-public class PrismBlockBreakEvent implements Listener {
+public class PrismBlockEvents implements Listener {
 	
 	private Prism plugin;
+	
 	
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public PrismBlockBreakEvent( Prism plugin ){
+	public PrismBlockEvents( Prism plugin ){
 		this.plugin = plugin;
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param event
+	 */
 	@EventHandler(priority = EventPriority.NORMAL)
     public void onBlockBreak(final BlockBreakEvent event){
 		
@@ -44,6 +49,44 @@ public class PrismBlockBreakEvent implements Listener {
 		plugin.actionRecorder.addToQueue( 
 			new BlockAction(
 				"block-break",
+				block.getWorld().getName(),
+				player.getName(),
+				block.getTypeId(),
+				block.getData(),
+				block.getX(),
+				block.getY(),
+				block.getZ()
+			)
+		);
+		
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+    public void onBlockPlace(final BlockPlaceEvent event){
+		
+		// Someone cancelled this before we did 
+		if ( event.isCancelled() ) {
+			return;
+		}
+		
+		Block block = event.getBlock();
+		Player player = event.getPlayer();
+		
+//		// skip if we don't track creative mode
+//		if(player.getGameMode() == GameMode.CREATIVE){
+//			return;
+//		}
+		
+		
+		plugin.actionRecorder.addToQueue( 
+			new BlockAction(
+				"block-place",
 				block.getWorld().getName(),
 				player.getName(),
 				block.getTypeId(),

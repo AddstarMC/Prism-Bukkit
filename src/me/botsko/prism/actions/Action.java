@@ -2,9 +2,12 @@ package me.botsko.prism.actions;
 
 public interface Action {
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getAction_time();
-	public int getBlock_id();
-	public int getBlock_subid();
 	
 	
 	/**
