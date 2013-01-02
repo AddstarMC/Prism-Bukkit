@@ -14,6 +14,7 @@ import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.utils.TypeUtils;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -80,21 +81,65 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				if(parameters == null){
 	    					return true;
 	    				}
-	    				parameters.setLimit(1000); // @todo config this?
+	    				parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			QueryResult results = aq.lookup( player, parameters );
 		    			if(!results.getActionResults().isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
-		    				for(Action a : results.getActionResults()){
+		    				for(Action a : results.getPaginatedActionResults()){
 		    					ActionMessage am = new ActionMessage(a);
 //		    					am.hideId(true); // @todo set this if doing a global search
 		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 		    				}
 		    			} else {
-		    				// @todo no results
-		    				player.sendMessage( plugin.playerError( "No results found." ) );
+		    				player.sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 		    			}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+		    			
+		    		return true;
+	    			
+	    		}
+	    		
+	    		
+	    		/**
+	    		 * Paginated lookup
+	    		 */
+	    		if( args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("p") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
+	    				
+	    				if(args.length != 2){
+	    					player.sendMessage( plugin.playerError( "Please specify a page number. Like /prism page 2" ) );
+	    					return true;
+	    				}
+	    				
+	    				if(!TypeUtils.isNumeric(args[1])){
+	    					player.sendMessage( plugin.playerError( "Page numbers need to actually be numbers. Like /prism page 2" ) );
+	    					return true;
+	    				}
+	    				
+	    				int page = Integer.parseInt(args[1]);
+	    				
+	    				// Is anything even cached?
+    					if(plugin.cachedQueries.containsKey(player.getName())){
+    						QueryResult results = plugin.cachedQueries.get(player.getName());
+    						results.setPage(page);
+    						
+    						// Results?
+    						if(!results.getActionResults().isEmpty()){
+    		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+    		    				for(Action a : results.getPaginatedActionResults()){
+    		    					ActionMessage am = new ActionMessage(a);
+    		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
+    		    				}
+    		    			} else {
+    		    				player.sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+    		    			}
+    					} else {
+    						player.sendMessage( plugin.playerError( "There's no lookup results to show. They may have expired." ) );
+    					}
 	    			} else {
 	    				player.sendMessage( plugin.msgNoPermission() );
 	    			}

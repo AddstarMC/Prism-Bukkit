@@ -21,12 +21,17 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected int per_page;
+	protected int per_page = 5;
 	
 	/**
 	 * 
 	 */
-	protected int page;
+	protected int total_pages = 0;
+	
+	/**
+	 * 
+	 */
+	protected int page = 1;
 	
 	
 	/**
@@ -40,6 +45,10 @@ public class QueryResult {
 		java.util.Date date= new java.util.Date();
 		queryTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		
+		// set counts
+		int total_results = actionResults.size();
+		total_pages = (int) Math.ceil( ((double)total_results / (double)per_page) );
+		
 	}
 
 
@@ -48,6 +57,16 @@ public class QueryResult {
 	 */
 	public List<Action> getActionResults() {
 		return actionResults;
+	}
+	
+	
+	/**
+	 * @return the actionResults
+	 */
+	public List<Action> getPaginatedActionResults() {
+		int limit = (page * per_page);
+		int offset = (limit - per_page);
+		return actionResults.subList(offset, limit);
 	}
 
 
