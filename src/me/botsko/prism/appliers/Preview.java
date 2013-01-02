@@ -17,7 +17,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-public class Preview {
+public class Preview extends Applier {
 	
 	/**
 	 * 
@@ -56,7 +56,7 @@ public class Preview {
 			
 			ArrayList<Undo> undo = new ArrayList<Undo>();
 			
-			int rolled_back_count = 0;
+			int rolled_back_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){
 				
@@ -94,6 +94,12 @@ public class Preview {
 						 * other than air occupies the spot.
 						 */
 						if(block.getType().equals(Material.AIR)){
+							
+							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+								skipped_block_count++;
+								continue;
+							}
+							
 							player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
 							rolled_back_count++;
 						}
@@ -107,7 +113,15 @@ public class Preview {
 				
 			}
 			
-			player.sendMessage( plugin.playerHeaderMsg( rolled_back_count + " planned reversals." + ChatColor.GRAY + " Use /prism preview apply to confirm this rollback." ) );
+			// Build the results message
+			String msg = rolled_back_count + " planned reversals.";
+			if(skipped_block_count > 0){
+				msg += " " + skipped_block_count + " skipped.";
+			}
+			if(rolled_back_count > 0){
+				msg += ChatColor.GRAY + " Use /prism preview apply to confirm this rollback.";
+			}
+			player.sendMessage( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
 			player.sendMessage( plugin.playerError( "Nothing found to preview. Try using /prism l (args) first." ) );

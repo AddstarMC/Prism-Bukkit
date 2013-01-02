@@ -13,7 +13,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 
-public class Restore {
+public class Restore extends Applier {
 
 	
 	/**
@@ -51,7 +51,7 @@ public class Restore {
 		
 		if(!results.isEmpty()){
 			
-			int restored_count = 0;
+			int restored_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){
 				
@@ -70,11 +70,16 @@ public class Restore {
 					Block block = world.getBlockAt(loc);
 //					BlockState state = block.getState();
 					
-					
 					// If the block was placed, we must replace it
 					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(block.getType().equals(Material.AIR)){
+							
+							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+								skipped_block_count++;
+								continue;
+							}
+							
 							block.setTypeId( b.getBlock_id() );
 							block.setData( b.getBlock_subid() );
 							restored_count++;
@@ -92,7 +97,15 @@ public class Restore {
 				}
 			}
 			
-			player.sendMessage( plugin.playerHeaderMsg( restored_count + " events restored." + ChatColor.GRAY + " It's like it was always there." ) );
+			// Build the results message
+			String msg = restored_count + " events restored.";
+			if(skipped_block_count > 0){
+				msg += " " + skipped_block_count + " skipped.";
+			}
+			if(restored_count > 0){
+				msg += ChatColor.GRAY + " It's like it was always there.";
+			}
+			player.sendMessage( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
 			player.sendMessage( plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );

@@ -14,7 +14,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 
-public class Rollback {
+public class Rollback extends Applier {
 
 	
 	/**
@@ -52,7 +52,7 @@ public class Rollback {
 		
 		if(!results.isEmpty()){
 			
-			int rolled_back_count = 0;
+			int rolled_back_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){
 				
@@ -66,13 +66,10 @@ public class Rollback {
 				 */
 				if( a instanceof BlockAction ){
 					
-//					plugin.debug("Rolling back blocks");
-					
 					BlockAction b = (BlockAction) a;
 					
 					Block block = world.getBlockAt(loc);
 //					BlockState state = block.getState();
-					
 					
 					// If the block was placed, we need to remove it
 					if(a.getType().doesCreateBlock()){
@@ -88,6 +85,12 @@ public class Rollback {
 						 * other than air occupies the spot.
 						 */
 						if(block.getType().equals(Material.AIR)){
+							
+							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+								skipped_block_count++;
+								continue;
+							}
+							
 							block.setTypeId( b.getBlock_id() );
 							block.setData( b.getBlock_subid() );
 							rolled_back_count++;
@@ -111,7 +114,15 @@ public class Rollback {
 				}
 			}
 			
-			player.sendMessage( plugin.playerHeaderMsg( rolled_back_count + " reversals." + ChatColor.GRAY + " It's like it never happened." ) );
+			// Build the results message
+			String msg = rolled_back_count + " reversals.";
+			if(skipped_block_count > 0){
+				msg += " " + skipped_block_count + " skipped.";
+			}
+			if(rolled_back_count > 0){
+				msg += ChatColor.GRAY + " It's like it never happened.";
+			}
+			player.sendMessage( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
 			player.sendMessage( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );

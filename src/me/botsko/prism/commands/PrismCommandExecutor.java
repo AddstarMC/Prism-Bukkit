@@ -105,6 +105,41 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		
 	    		
 	    		/**
+	    		 * Near
+	    		 */
+	    		if( args[0].equalsIgnoreCase("near") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
+	    				
+	    				// Build params
+	    				QueryParameters parameters = new QueryParameters();
+	    				parameters.setWorld( player.getWorld().getName() );
+	    				parameters.setPlayer_location(player.getLocation().toVector());
+	    				parameters.setRadius(5); // @todo config this
+	    				
+	    				parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
+	    			
+		    			ActionsQuery aq = new ActionsQuery(plugin);
+		    			QueryResult results = aq.lookup( player, parameters );
+		    			if(!results.getActionResults().isEmpty()){
+		    				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+		    				for(Action a : results.getPaginatedActionResults()){
+		    					ActionMessage am = new ActionMessage(a);
+//		    					am.hideId(true); // @todo set this if doing a global search
+		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
+		    				}
+		    			} else {
+		    				player.sendMessage( plugin.playerError( "Couldn't find any nearby changes." ) );
+		    			}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+		    			
+		    		return true;
+	    			
+	    		}
+	    		
+	    		
+	    		/**
 	    		 * Paginated lookup
 	    		 */
 	    		if( args[0].equalsIgnoreCase("page") || args[0].equalsIgnoreCase("p") ){
@@ -334,10 +369,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 		
 		player.sendMessage( plugin.playerHelp("prism (lookup|l) (params)", "Perform a search using (params)"));
 		player.sendMessage( plugin.playerHelp("prism (inspect|i)", "Toggles the block/space inspector onto your hand."));
+		player.sendMessage( plugin.playerHelp("prism near", "Perform a search for all nearby changes."));
 //		player.sendMessage( plugin.playerHelp("prism params", "Lists parameter help."));
 		player.sendMessage( plugin.playerHelp("prism preview (params)", "Preview a rollback using (params). Only shows you, doesn't apply rollback."));
 		player.sendMessage( plugin.playerHelp("prism preview apply", "Applies the last preview you did to the world."));
 		player.sendMessage( plugin.playerHelp("prism preview cancels", "Cancels the last preview you ran."));
+		player.sendMessage( plugin.playerHelp("prism rollback (params)", "Reverses changes to the world using (params)"));
 		player.sendMessage( plugin.playerHelp("prism restore (params)", "Re-applies changes to the world using (params)"));
 		player.sendMessage( plugin.playerHelp("prism ?", "This. Helpception!"));
 		player.sendMessage( plugin.playerHelp("prism reload", "Reloads config/language files."));
