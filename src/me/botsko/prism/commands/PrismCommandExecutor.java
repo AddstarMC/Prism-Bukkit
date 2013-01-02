@@ -126,21 +126,29 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				// Cancel or Apply
 	    				if( args.length == 2){
 	    					
+	    					// Apply
+	    					if(args[1].equalsIgnoreCase("apply") ){
+	    						Preview pv = new Preview( plugin, player, null );
+	    						pv.apply_preview();
+	    						return true;
+	    					}
+	    					
 	    					// Cancel
 	    					if(args[1].equalsIgnoreCase("cancel") ){
-	    						
 	    						Preview pv = new Preview( plugin, player, null );
 	    						pv.cancel_preview();
 	    						return true;
-	    						
 	    					}
 	    				}
 	    				
+	    				
+	    				// Ensure user has no current preview
 	    				if(plugin.playerActivePreviews.containsKey(player.getName())){
 	    					player.sendMessage( plugin.playerError("You have an existing preview pending. Please apply or cancel before moving on.") );
 	    					return true;
 	    				}
 	    			
+	    				// Perform preview
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			List<Action> results = aq.rollback( player, args );
 		    			if(!results.isEmpty()){
@@ -148,7 +156,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback preview...") );
 		    				
 		    				Preview pv = new Preview( plugin, player, results );
-		    				pv.preview();
+		    				pv.preview( args );
 		    				
 		    			} else {
 		    				// @todo no results
@@ -171,8 +179,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			List<Action> results = aq.rollback( player, args );
 		    			if(!results.isEmpty()){
-		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 		    				
+		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 		    				Rollback rb = new Rollback( plugin, player, results );
 		    				rb.rollback();
 		    				

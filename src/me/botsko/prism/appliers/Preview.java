@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.actions.BlockAction;
 
 import org.bukkit.ChatColor;
@@ -47,7 +48,7 @@ public class Preview {
 	/**
 	 * 
 	 */
-	public void preview(){
+	public void preview( String[] original_args ){
 		
 		if(!results.isEmpty()){
 			
@@ -81,8 +82,8 @@ public class Preview {
 					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(!block.getType().equals(Material.AIR)){
-//							block.setType(Material.AIR);
-//							rolled_back_count++;
+							player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+							rolled_back_count++;
 						}
 					} else {
 						
@@ -97,15 +98,17 @@ public class Preview {
 					}
 				}
 				
+				PreviewSession ps = new PreviewSession( player, undo, original_args );
+				
 				// Append the preview and blocks temporarily
-				plugin.playerActivePreviews.put(player.getName(), undo);
+				plugin.playerActivePreviews.put(player.getName(), ps);
 				
 			}
 			
 			player.sendMessage( plugin.playerHeaderMsg( rolled_back_count + " planned reversals." + ChatColor.GRAY + " Use /prism preview apply to confirm this rollback." ) );
 			
 		} else {
-			player.sendMessage( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
+			player.sendMessage( plugin.playerError( "Nothing found to preview. Try using /prism l (args) first." ) );
 		}
 	}
 	
@@ -116,15 +119,43 @@ public class Preview {
 	public void cancel_preview(){
 		if(plugin.playerActivePreviews.containsKey(player.getName())){
 			
-			ArrayList<Undo> undo = plugin.playerActivePreviews.get( player.getName() );
+			PreviewSession previewSession = plugin.playerActivePreviews.get( player.getName() );
 			
-			if(!undo.isEmpty()){
-				for(Undo u : undo){
+			if(!previewSession.getUndo_queue().isEmpty()){
+				for(Undo u : previewSession.getUndo_queue()){
 					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getData());
 				}
 			}
 			
 			player.sendMessage( plugin.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
+			
+			plugin.playerActivePreviews.remove( player.getName() );
+			
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void apply_preview(){
+		if(plugin.playerActivePreviews.containsKey(player.getName())){
+			
+			// Get preview session
+			PreviewSession ps = plugin.playerActivePreviews.get(player.getName());
+			
+			// Forward as a rollback
+			ActionsQuery aq = new ActionsQuery(plugin);
+			List<Action> results = aq.rollback( player, ps.getArgs() );
+			if(!results.isEmpty()){
+				
+				player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
+				Rollback rb = new Rollback( plugin, player, results );
+				rb.rollback();
+				
+			} else {
+				// @todo no results
+			}
 			
 			plugin.playerActivePreviews.remove( player.getName() );
 			
