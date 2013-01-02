@@ -15,6 +15,11 @@ public class EntityKillAction implements Action {
 	/**
 	 * 
 	 */
+	protected String display_date;
+	
+	/**
+	 * 
+	 */
 	protected String action_type;
 	
 	/**
@@ -60,7 +65,7 @@ public class EntityKillAction implements Action {
 	 * @param player
 	 */
 	public EntityKillAction( String action_type, Entity entity, String player ){
-		this(null, action_type, entity.getWorld().getName(), player, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), entity, null);
+		this(null, null, action_type, entity.getWorld().getName(), player, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), entity, null);
 	}
 	
 	
@@ -76,8 +81,8 @@ public class EntityKillAction implements Action {
 	 * @param z
 	 * @param data
 	 */
-	public EntityKillAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
-		this(action_time, action_type, world_name, player_name, x, y, z, null, data);
+	public EntityKillAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
+		this(action_time, display_date, action_type, world_name, player_name, x, y, z, null, data);
 	}
 
 
@@ -93,7 +98,7 @@ public class EntityKillAction implements Action {
 	 * @param block
 	 * @param data
 	 */
-	public EntityKillAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Entity entity, String data ){
+	public EntityKillAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, Entity entity, String data ){
 		
 		// @todo has to be a better place for this
 		if(action_time == null){
@@ -102,6 +107,7 @@ public class EntityKillAction implements Action {
 		}
 		
 		this.action_time = action_time;
+		this.display_date = display_date;
 		this.action_type = action_type;
 		this.world_name = world_name;
 		this.player_name = player_name;
@@ -147,6 +153,15 @@ public class EntityKillAction implements Action {
 	 */
 	public String getAction_time(){
 		return action_time;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDisplay_date(){
+		return display_date;
 	}
 	
 	

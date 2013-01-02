@@ -3,10 +3,10 @@ package me.botsko.prism.listeners;
 import java.util.List;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionMessage;
 import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.actions.QueryParameters;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -82,16 +82,8 @@ public class PrismPlayerInteractEvent implements Listener {
 		List<me.botsko.prism.actions.Action> results = aq.lookup( params );
 		if(!results.isEmpty()){
 			for(me.botsko.prism.actions.Action a : results){
-				
-				// user
-				String msg = ChatColor.BLUE + a.getPlayer_name();
-				msg += " " + ChatColor.GRAY + a.getAction_type();
-				msg += " " + ChatColor.RED + a.getData();
-				msg += " " + ChatColor.RED + (int)a.getX();
-				msg += " " + ChatColor.RED + (int)a.getY();
-				msg += " " + ChatColor.RED + (int)a.getZ();
-				
-				player.sendMessage( plugin.playerMsg( msg ) );
+				ActionMessage am = new ActionMessage(a);
+				player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 			}
 		} else {
 			player.sendMessage( plugin.playerError( "No results found." ) );

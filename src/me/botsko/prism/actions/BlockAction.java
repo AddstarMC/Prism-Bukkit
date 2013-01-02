@@ -16,6 +16,11 @@ public class BlockAction implements Action {
 	/**
 	 * 
 	 */
+	protected String display_date;
+	
+	/**
+	 * 
+	 */
 	protected String action_type;
 	
 	/**
@@ -71,7 +76,7 @@ public class BlockAction implements Action {
 	 * @param player
 	 */
 	public BlockAction( String action_type, Block block, String player ){
-		this(null, action_type, block.getWorld().getName(), player, block.getX(), block.getY(), block.getZ(), block, null);
+		this(null, null, action_type, block.getWorld().getName(), player, block.getX(), block.getY(), block.getZ(), block, null);
 	}
 
 
@@ -87,8 +92,8 @@ public class BlockAction implements Action {
 	 * @param z
 	 * @param data
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
-		this(action_time, action_type, world_name, player_name, x, y, z, null, data);
+	public BlockAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
+		this(action_time, display_date, action_type, world_name, player_name, x, y, z, null, data);
 	}
 
 
@@ -104,7 +109,7 @@ public class BlockAction implements Action {
 	 * @param block
 	 * @param data
 	 */
-	public BlockAction( String action_time, String action_type, String world_name, String player_name, double x, double y, double z, Block block, String data ){
+	public BlockAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, Block block, String data ){
 		
 		// @todo has to be a better place for this
 		if(action_time == null){
@@ -113,6 +118,7 @@ public class BlockAction implements Action {
 		}
 		
 		this.action_time = action_time;
+		this.display_date = display_date;
 		this.action_type = action_type;
 		this.world_name = world_name;
 		this.player_name = player_name;
@@ -161,6 +167,15 @@ public class BlockAction implements Action {
 	 */
 	public String getAction_time(){
 		return action_time;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDisplay_date(){
+		return display_date;
 	}
 	
 	

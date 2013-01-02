@@ -57,6 +57,12 @@ public interface Action {
 	 * @return
 	 */
 	public String getData();
-	
 
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDisplay_date();
+	
 }

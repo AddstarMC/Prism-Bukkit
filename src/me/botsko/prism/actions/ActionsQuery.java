@@ -112,6 +112,7 @@ public class ActionsQuery {
 	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
 		    			actions.add( new BlockAction(
 		    					rs.getString("action_time"),
+		    					rs.getString("display_date"),
 		    					rs.getString("action_type"),
 		    					rs.getString("world"),
 		    					rs.getString("player"),
@@ -125,6 +126,7 @@ public class ActionsQuery {
 	    			else if( rs.getString("action_type").equals("entity-kill") ){
 		    			actions.add( new EntityKillAction(
 		    					rs.getString("action_time"),
+		    					rs.getString("display_date"),
 		    					rs.getString("action_type"),
 		    					rs.getString("world"),
 		    					rs.getString("player"),
@@ -263,7 +265,7 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT * FROM prism_actions";
+		String query = "SELECT id, action_time, action_type, player, world, x, y, z, data, DATE_FORMAT(action_time, '%c/%e/%y at %l:%i:%s %p') display_date FROM prism_actions";
 		
 		// If we're rolling back, we need to exclude records
 		// at exact coords that have new entries there. So if
