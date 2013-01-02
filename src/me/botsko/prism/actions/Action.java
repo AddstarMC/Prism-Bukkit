@@ -71,5 +71,12 @@ public interface Action {
 	 * @return
 	 */
 	public String getDisplay_time();
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	public int getId();
 	
 }

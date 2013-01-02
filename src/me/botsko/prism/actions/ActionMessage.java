@@ -26,7 +26,9 @@ public class ActionMessage {
 		
 		ChatColor highlight = ChatColor.DARK_AQUA;
 		
-		String msg = getPosNegPrefix();
+		String msg = "";
+		msg += ChatColor.GRAY + "" + a.getId() + " ";
+		msg += getPosNegPrefix();
 		msg += highlight + a.getPlayer_name();
 		msg += " " + ChatColor.WHITE + getNiceActionType();
 		msg += " " + highlight + getNiceData();

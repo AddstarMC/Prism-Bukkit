@@ -126,6 +126,7 @@ public class ActionsQuery {
 	    				
 	    				
 	    				// Set all shared values
+	    				baseAction.setId( rs.getInt("id") );
 	    				baseAction.setAction_type( rs.getString("action_type") );
 	    				baseAction.setAction_time( rs.getString("action_time") );
 	    				baseAction.setDisplay_date( rs.getString("display_date") );
@@ -268,7 +269,7 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT id, action_time, action_type, player, world, x, y, z, data, DATE_FORMAT(action_time, '%c/%e/%y') display_date, DATE_FORMAT(action_time, '%l:%i:%s %p') display_time FROM prism_actions";
+		String query = "SELECT prism_actions.id, prism_actions.action_time, action_type, player, world, prism_actions.x, prism_actions.y, prism_actions.z, data, DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, DATE_FORMAT(prism_actions.action_time, '%l:%i:%s %p') display_time FROM prism_actions";
 		
 		// If we're rolling back, we need to exclude records
 		// at exact coords that have new entries there. So if

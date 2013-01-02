@@ -2,6 +2,11 @@ package me.botsko.prism.actions;
 
 
 public class BaseAction implements Action {
+	
+	/**
+	 * 
+	 */
+	protected int id;
 
 	/**
 	 * 
@@ -53,7 +58,21 @@ public class BaseAction implements Action {
 	 */
 	protected String data;
 
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
 	
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	/**
 	 * @return the action_time
 	 */

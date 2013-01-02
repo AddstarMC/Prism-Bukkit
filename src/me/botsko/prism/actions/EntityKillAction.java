@@ -40,6 +40,16 @@ public class EntityKillAction extends BaseAction {
 		}
 		// Save entity data from current entity
 		setDataFromEntity();
+		getEntityTypeFromData();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setData( String data ){
+		this.data = data;
+		getEntityTypeFromData();
 	}
 	
 	
@@ -57,7 +67,7 @@ public class EntityKillAction extends BaseAction {
 	 * 
 	 */
 	public EntityType getEntityTypeFromData(){
-		if(entity == null){
+		if(entity == null && data != null){
 			EntityType mob = EntityType.fromName(data);
 			if(mob != null){
 				return mob;

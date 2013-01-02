@@ -51,6 +51,16 @@ public class BlockAction extends BaseAction {
 		}
 		// Set data from current block
 		setDataFromBlock();
+		setBlockIdsFromData();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setData( String data ){
+		this.data = data;
+		setBlockIdsFromData();
 	}
 	
 	
@@ -68,7 +78,7 @@ public class BlockAction extends BaseAction {
 	 * 
 	 */
 	protected void setBlockIdsFromData(){
-		if(block == null){
+		if(block == null && data != null){
 			String[] blockArr = data.split(":");
 			if (!TypeUtils.isNumeric(blockArr[0])) return;
 			
