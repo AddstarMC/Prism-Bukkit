@@ -110,7 +110,7 @@ public class ActionsQuery {
 	    			BaseAction baseAction = null;
 	    			
 	    			// @todo this needs more cleanup
-	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay"};
+	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay","entity-explode"};
 	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
 	    				BlockAction b = new BlockAction(null, null, null);
 	    				baseAction = b;
@@ -123,7 +123,6 @@ public class ActionsQuery {
 	    			}
 	    			
 	    			if(baseAction != null){
-	    				
 	    				
 	    				// Set all shared values
 	    				baseAction.setId( rs.getInt("id") );
