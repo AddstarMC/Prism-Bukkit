@@ -1,4 +1,4 @@
-package me.botsko.prism.actions;
+package me.botsko.prism.actionlibs;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;

@@ -1,4 +1,6 @@
-package me.botsko.prism.actions;
+package me.botsko.prism.actionlibs;
+
+import me.botsko.prism.actions.Action;
 
 import org.bukkit.ChatColor;
 

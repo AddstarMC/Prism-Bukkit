@@ -3,9 +3,9 @@ package me.botsko.prism.listeners;
 import java.util.List;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionMessage;
-import me.botsko.prism.actions.ActionsQuery;
-import me.botsko.prism.actions.QueryParameters;
+import me.botsko.prism.actionlibs.ActionMessage;
+import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryParameters;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

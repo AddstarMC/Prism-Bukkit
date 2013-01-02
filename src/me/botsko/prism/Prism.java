@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.actionlibs.ActionRecorder;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.actiontypes.BlockBreakType;
 import me.botsko.prism.actiontypes.GenericActionType;
@@ -16,7 +17,6 @@ import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismPlayerInteractEvent;
 import me.botsko.prism.listeners.PrismWorldEvents;
-import me.botsko.prism.recorders.ActionRecorder;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;

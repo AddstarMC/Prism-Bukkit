@@ -3,9 +3,9 @@ package me.botsko.prism.commands;
 import java.util.List;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionMessage;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionMessage;
-import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;

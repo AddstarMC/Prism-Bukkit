@@ -1,4 +1,4 @@
-package me.botsko.prism.recorders;
+package me.botsko.prism.actionlibs;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

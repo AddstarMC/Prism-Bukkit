@@ -1,4 +1,4 @@
-package me.botsko.prism.actions;
+package me.botsko.prism.actionlibs;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 

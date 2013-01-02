@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.actions.BlockAction;
 
 import org.bukkit.ChatColor;
