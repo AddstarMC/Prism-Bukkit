@@ -13,6 +13,7 @@ import me.botsko.prism.actiontypes.BlockBurnType;
 import me.botsko.prism.actiontypes.BlockFadeType;
 import me.botsko.prism.actiontypes.BlockFormType;
 import me.botsko.prism.actiontypes.BlockPlaceType;
+import me.botsko.prism.actiontypes.CreeperExplodeType;
 import me.botsko.prism.actiontypes.EndermanPickupType;
 import me.botsko.prism.actiontypes.EndermanPlaceType;
 import me.botsko.prism.actiontypes.EntityExplodeType;
@@ -26,6 +27,7 @@ import me.botsko.prism.actiontypes.LeafDecayType;
 import me.botsko.prism.actiontypes.LightningType;
 import me.botsko.prism.actiontypes.MushroomGrowType;
 import me.botsko.prism.actiontypes.SheepEatType;
+import me.botsko.prism.actiontypes.TntExplodeType;
 import me.botsko.prism.actiontypes.TreeGrowType;
 import me.botsko.prism.actiontypes.WaterBucketType;
 import me.botsko.prism.appliers.PreviewSession;
@@ -142,6 +144,7 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("block-fade", new BlockFadeType());
 		actionTypes.put("block-form", new BlockFormType());
 		actionTypes.put("block-place", new BlockPlaceType());
+		actionTypes.put("creeper-explode", new CreeperExplodeType());
 		actionTypes.put("enderman-pickup", new EndermanPickupType());
 		actionTypes.put("enderman-place", new EndermanPlaceType());
 		actionTypes.put("entity-explode", new EntityExplodeType());
@@ -154,6 +157,7 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("lightning", new LightningType());
 		actionTypes.put("mushroom-grow", new MushroomGrowType());
 		actionTypes.put("sheep-eat", new SheepEatType());
+		actionTypes.put("tnt-explode", new TntExplodeType());
 		actionTypes.put("tree-grow", new TreeGrowType());
 		actionTypes.put("water-bucket", new WaterBucketType());
 		

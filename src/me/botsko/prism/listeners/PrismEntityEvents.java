@@ -7,10 +7,12 @@ import me.botsko.prism.actions.EntityAction;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -112,11 +114,19 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
 		
-		String entity = event.getEntityType().getName();
-		entity = entity.toLowerCase();
+		String action = "entity-explode";
+		String name = event.getEntityType().getName().toLowerCase();
+		if(event.getEntity() instanceof Creeper){
+			action = "creeper-explode";
+			name = "creeper";
+		}
+		else if(event.getEntity() instanceof TNTPrimed){
+			action = "tnt-explode";
+			name = "tnt";
+		}
 		
-		for(Block block : event.blockList()){	
-			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("entity-explode"), block, entity) );
+		for(Block block : event.blockList()){
+			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(action), block, name) );
 		}
 	}
 }
