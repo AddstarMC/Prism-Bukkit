@@ -68,8 +68,14 @@ public class QueryResult {
 	 * @return the actionResults
 	 */
 	public List<Action> getPaginatedActionResults() {
+		
 		int limit = (page * per_page);
 		int offset = (limit - per_page);
+		
+		if(limit > total_results){
+			limit = total_results;
+		}
+		
 		return actionResults.subList(offset, limit);
 	}
 	
