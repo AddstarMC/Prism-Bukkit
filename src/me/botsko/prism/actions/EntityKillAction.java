@@ -5,59 +5,15 @@ import java.text.SimpleDateFormat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-public class EntityKillAction implements Action {
-	
-	/**
-	 * 
-	 */
-	protected String action_time;
-	
-	/**
-	 * 
-	 */
-	protected String display_date;
-	
-	/**
-	 * 
-	 */
-	protected String action_type;
-	
-	/**
-	 * 
-	 */
-	protected String world_name;
-	
-	/**
-	 * 
-	 */
-	protected String player_name;
-	
-	/**
-	 * 
-	 */
-	protected double x;
-	
-	/**
-	 * 
-	 */
-	protected double y;
-	
-	/**
-	 * 
-	 */
-	protected double z;
+public class EntityKillAction extends BaseAction {
+
 	
 	/**
 	 * 
 	 */
 	protected Entity entity;
-	
-	/**
-	 * 
-	 */
-	protected String data;
-	
-	
+
+
 	/**
 	 * 
 	 * @param action_type
@@ -65,61 +21,25 @@ public class EntityKillAction implements Action {
 	 * @param player
 	 */
 	public EntityKillAction( String action_type, Entity entity, String player ){
-		this(null, null, action_type, entity.getWorld().getName(), player, entity.getLocation().getX(), entity.getLocation().getY(), entity.getLocation().getZ(), entity, null);
-	}
-	
-	
-	/**
-	 * Called when returned results from the database
-	 * 
-	 * @param action_time
-	 * @param action_type
-	 * @param world_name
-	 * @param player_name
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param data
-	 */
-	public EntityKillAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, String data ){
-		this(action_time, display_date, action_type, world_name, player_name, x, y, z, null, data);
-	}
-
-
-	/**
-	 * 
-	 * @param action_time
-	 * @param action_type
-	 * @param world_name
-	 * @param player_name
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param block
-	 * @param data
-	 */
-	public EntityKillAction( String action_time, String display_date, String action_type, String world_name, String player_name, double x, double y, double z, Entity entity, String data ){
-		
-		// @todo has to be a better place for this
+		if(action_type != null){
+			this.action_type = action_type;
+		}
+		if(entity != null){
+			this.entity = entity;
+			this.world_name = entity.getWorld().getName();
+			this.x = entity.getLocation().getX();
+			this.y = entity.getLocation().getY();
+			this.z = entity.getLocation().getZ();
+		}
+		if(player != null){
+			this.player_name = player;
+		}
 		if(action_time == null){
 			java.util.Date date= new java.util.Date();
 			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
-		
-		this.action_time = action_time;
-		this.display_date = display_date;
-		this.action_type = action_type;
-		this.world_name = world_name;
-		this.player_name = player_name;
-		this.data = data;
-		this.entity = entity;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		
-		// We either received a block or a data string. We need both, so make whichever we need.
+		// Save entity data from current entity
 		setDataFromEntity();
-		
 	}
 	
 	
@@ -127,7 +47,7 @@ public class EntityKillAction implements Action {
 	 * 
 	 */
 	protected void setDataFromEntity(){
-		if(data == null){
+		if(data == null && entity != null){
 			data = entity.getType().getName();
 		}
 	}
@@ -144,80 +64,5 @@ public class EntityKillAction implements Action {
 			}
 		}
 		return null;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getAction_time(){
-		return action_time;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDisplay_date(){
-		return display_date;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getAction_type(){
-		return action_type;
-	}
-	
-	
-	/**
-	 * @return the world_name
-	 */
-	public String getWorld_name() {
-		return world_name;
-	}
-
-	
-	/**
-	 * @return the player_name
-	 */
-	public String getPlayer_name() {
-		return player_name;
-	}
-
-	
-	/**
-	 * @return the x
-	 */
-	public double getX() {
-		return x;
-	}
-
-	
-	/**
-	 * @return the y
-	 */
-	public double getY() {
-		return y;
-	}
-
-	
-	/**
-	 * @return the z
-	 */
-	public double getZ() {
-		return z;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public String getData(){
-		return data;
 	}
 }

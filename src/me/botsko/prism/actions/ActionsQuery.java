@@ -107,37 +107,39 @@ public class ActionsQuery {
 	    		
 	    		while(rs.next()){
 	    			
+	    			BaseAction baseAction = null;
+	    			
 	    			// @todo this needs more cleanup
 	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay"};
 	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
-		    			actions.add( new BlockAction(
-		    					rs.getString("action_time"),
-		    					rs.getString("display_date"),
-		    					rs.getString("action_type"),
-		    					rs.getString("world"),
-		    					rs.getString("player"),
-		    					rs.getInt("x"),
-		    					rs.getInt("y"),
-		    					rs.getInt("z"),
-		    					rs.getString("data")
-		    				) );
+	    				BlockAction b = new BlockAction(null, null, null);
+	    				baseAction = b;
 	    			}
-	    			
 	    			else if( rs.getString("action_type").equals("entity-kill") ){
-		    			actions.add( new EntityKillAction(
-		    					rs.getString("action_time"),
-		    					rs.getString("display_date"),
-		    					rs.getString("action_type"),
-		    					rs.getString("world"),
-		    					rs.getString("player"),
-		    					rs.getInt("x"),
-		    					rs.getInt("y"),
-		    					rs.getInt("z"),
-		    					rs.getString("data")
-		    				) );
+	    				EntityKillAction eka = new EntityKillAction(null, null, null);
+	    				baseAction = eka;
 	    			} else {
 	    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
 	    			}
+	    			
+	    			if(baseAction != null){
+	    				
+	    				
+	    				// Set all shared values
+	    				baseAction.setAction_time( rs.getString("action_time") );
+	    				baseAction.setDisplay_date( rs.getString("display_date") );
+	    				baseAction.setDisplay_time( rs.getString("display_time") );
+	    				baseAction.setWorld_name( rs.getString("world") );
+	    				baseAction.setPlayer_name( rs.getString("player") );
+	    				baseAction.setX( rs.getInt("x") );
+	    				baseAction.setY( rs.getInt("y") );
+	    				baseAction.setZ( rs.getInt("z") );
+	    				baseAction.setData( rs.getString("data") );
+	    				
+	    				actions.add(baseAction);
+	    				
+	    			}
+	    			
 	    		}
 	    		
 	    		rs.close();
@@ -265,7 +267,7 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT id, action_time, action_type, player, world, x, y, z, data, DATE_FORMAT(action_time, '%c/%e/%y at %l:%i:%s %p') display_date FROM prism_actions";
+		String query = "SELECT id, action_time, action_type, player, world, x, y, z, data, DATE_FORMAT(action_time, '%c/%e/%y') display_date, DATE_FORMAT(action_time, '%l:%i:%s %p') display_time FROM prism_actions";
 		
 		// If we're rolling back, we need to exclude records
 		// at exact coords that have new entries there. So if
