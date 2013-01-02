@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -70,8 +71,7 @@ public class PrismPlayerInteractEvent implements Listener {
 	protected void showBlockHistory( Player player, Block block, Location loc ){
 		
 		plugin.debug("Running history search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-		player.sendMessage( plugin.playerHeaderMsg("Recent history for this " + block.getType().toString().toLowerCase() + " block: " ) );
-		
+
 		// Build params
 		QueryParameters params = new QueryParameters();
 		params.setWorld( player.getWorld().getName() );
@@ -83,10 +83,11 @@ public class PrismPlayerInteractEvent implements Listener {
 		if(!results.isEmpty()){
 			for(me.botsko.prism.actions.Action a : results){
 				ActionMessage am = new ActionMessage(a);
-				player.sendMessage( plugin.playerMsg( am.getMessage() ) );
+				player.sendMessage( plugin.playerHeaderMsg( am.getMessage() ) );
 			}
 		} else {
-			player.sendMessage( plugin.playerError( "No results found." ) );
+			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
+			player.sendMessage( plugin.playerError( "No history for this " + space_name + " found." ) );
 		}
 	}
 }

@@ -11,6 +11,11 @@ public class ActionMessage {
 	 */
 	protected Action a;
 	
+	/**
+	 * 
+	 */
+	private boolean hide_id = true;
+	
 	
 	/**
 	 * 
@@ -29,7 +34,9 @@ public class ActionMessage {
 		ChatColor highlight = ChatColor.DARK_AQUA;
 		
 		String msg = "";
-		msg += ChatColor.GRAY + "" + a.getId() + " ";
+		if(!hide_id){
+			msg += ChatColor.GRAY + "" + a.getId() + " ";
+		}
 		msg += getPosNegPrefix();
 		msg += highlight + a.getPlayer_name();
 		msg += " " + ChatColor.WHITE + a.getType().getNiceWordOfAction();
@@ -55,5 +62,13 @@ public class ActionMessage {
 		else {
 			return ChatColor.RED + "- " + ChatColor.WHITE;
 		}
+	}
+
+
+	/**
+	 * @param hide_id the hide_id to set
+	 */
+	public void hideId(boolean hide_id) {
+		this.hide_id = hide_id;
 	}
 }

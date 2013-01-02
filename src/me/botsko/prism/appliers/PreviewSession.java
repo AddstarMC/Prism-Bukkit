@@ -2,6 +2,8 @@ package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
 
+import me.botsko.prism.actionlibs.QueryParameters;
+
 import org.bukkit.entity.Player;
 
 public class PreviewSession {
@@ -19,7 +21,7 @@ public class PreviewSession {
 	/**
 	 * 
 	 */
-	protected String[] args;
+	protected QueryParameters parameters;
 	
 	
 	/**
@@ -28,10 +30,10 @@ public class PreviewSession {
 	 * @param undo
 	 * @param args
 	 */
-	public PreviewSession( Player player, ArrayList<Undo> undo, String[] args ){
+	public PreviewSession( Player player, ArrayList<Undo> undo, QueryParameters parameters ){
 		this.undo_queue = undo;
 		this.player = player;
-		this.args = args;
+		this.parameters = parameters;
 	}
 
 
@@ -54,7 +56,7 @@ public class PreviewSession {
 	/**
 	 * @return the args
 	 */
-	public String[] getArgs() {
-		return args;
+	public QueryParameters getArgs() {
+		return parameters;
 	}
 }

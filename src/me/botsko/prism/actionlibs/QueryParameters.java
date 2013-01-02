@@ -1,11 +1,13 @@
 package me.botsko.prism.actionlibs;
 
+import java.util.HashMap;
+
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
 public class QueryParameters {
 	
-	
+	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
 	protected String lookup_type = "lookup";
 	
 	protected Location loc;
@@ -188,6 +190,22 @@ public class QueryParameters {
 	 */
 	public String getLookup_type() {
 		return lookup_type;
+	}
+
+
+	/**
+	 * @return the foundArgs
+	 */
+	public HashMap<String, String> getFoundArgs() {
+		return foundArgs;
+	}
+
+
+	/**
+	 * @param foundArgs the foundArgs to set
+	 */
+	public void setFoundArgs(HashMap<String, String> foundArgs) {
+		this.foundArgs = foundArgs;
 	}
 
 

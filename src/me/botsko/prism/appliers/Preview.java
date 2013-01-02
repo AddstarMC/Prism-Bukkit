@@ -5,6 +5,7 @@ import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 
@@ -48,7 +49,7 @@ public class Preview {
 	/**
 	 * 
 	 */
-	public void preview( String[] original_args ){
+	public void preview( QueryParameters parameters ){
 		
 		if(!results.isEmpty()){
 			
@@ -98,7 +99,7 @@ public class Preview {
 					}
 				}
 				
-				PreviewSession ps = new PreviewSession( player, undo, original_args );
+				PreviewSession ps = new PreviewSession( player, undo, parameters );
 				
 				// Append the preview and blocks temporarily
 				plugin.playerActivePreviews.put(player.getName(), ps);
@@ -146,7 +147,7 @@ public class Preview {
 			
 			// Forward as a rollback
 			ActionsQuery aq = new ActionsQuery(plugin);
-			List<Action> results = aq.rollback( player, ps.getArgs() );
+			List<Action> results = aq.lookup( ps.getArgs() );
 			if(!results.isEmpty()){
 				
 				player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );

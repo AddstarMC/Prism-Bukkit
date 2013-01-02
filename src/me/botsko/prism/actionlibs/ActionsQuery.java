@@ -5,13 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
@@ -29,11 +26,6 @@ public class ActionsQuery {
 	 */
 	private Prism plugin;
 	
-	/**
-	 * 
-	 */
-	private HashMap<String,String> foundArgs = new HashMap<String,String>();
-	
 	
 	/**
 	 * 
@@ -46,49 +38,6 @@ public class ActionsQuery {
 	
 	
 	/**
-	 * If we receive a player and arguments, it's being run from the
-	 * command line. We must convert these into a QueryParameter class
-	 * so we can pass that object in.
-	 * @return
-	 */
-	public List<Action> rollback( Player player, String[] args ){
-		
-		// Pull results
-		List<Action> actions = new ArrayList<Action>();
-				
-		QueryParameters parameters = preprocessArguments( player, args );
-		parameters.setLookup_type("rollback");
-		
-		// If no args, return
-		if(foundArgs.isEmpty()){
-			return actions;
-		}
-		return lookup(parameters);
-	}
-	
-	
-	/**
-	 * If we receive a player and arguments, it's being run from the
-	 * command line. We must convert these into a QueryParameter class
-	 * so we can pass that object in.
-	 * @return
-	 */
-	public List<Action> lookup( Player player, String[] args ){
-		
-		// Pull results
-		List<Action> actions = new ArrayList<Action>();
-				
-		QueryParameters parameters = preprocessArguments( player, args );
-		
-		// If no args, return
-		if(foundArgs.isEmpty()){
-			return actions;
-		}
-		return lookup(parameters);
-	}
-	
-	
-	/**
 	 * 
 	 * @return
 	 */
@@ -96,6 +45,11 @@ public class ActionsQuery {
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
+		
+		// If no args, return
+		if(parameters.getFoundArgs().isEmpty()){
+			return actions;
+		}
 		
 		// Build conditions based off final args
 		String query = getArgumentConditions(parameters);
@@ -161,112 +115,6 @@ public class ActionsQuery {
 	}
 	
 	
-	/**
-	 * 
-	 * @param args
-	 */
-	protected QueryParameters preprocessArguments( Player player, String[] args ){
-		
-		QueryParameters parameters = new QueryParameters();
-		
-		if(args != null){
-		
-			// Iterate over arguments
-			for (int i = 1; i < args.length; i++) {
-				
-				String arg = args[i];
-				if (arg.isEmpty()) continue;
-				
-				// Verify they're formatting like a:[val]
-				if(!arg.contains(":")){
-					throw new IllegalArgumentException("Invalid argument format: " + arg);
-				}
-				if (!arg.substring(1,2).equals(":")) {
-					throw new IllegalArgumentException("Invalid argument format: " + arg);
-				}
-				
-				// Split parameter and values
-				String arg_type = arg.substring(0,1).toLowerCase();
-				String val = arg.substring(2);
-				String[] possibleArgs = {"a","r","t","p","w","b","e"};
-				if(Arrays.asList(possibleArgs).contains(arg_type)){
-					if(!val.isEmpty()){
-						plugin.debug("Found arg type " + arg_type + " with value: " + val);
-						foundArgs.put(arg_type, val);
-					} else {
-						throw new IllegalArgumentException("You must supply at least one argument.");
-					}
-				}
-				
-				// Action
-				if(arg_type.equals("a")){
-					parameters.setAction_type( val );
-				}
-				
-				// Player
-				if(arg_type.equals("p")){
-					parameters.setPlayer( val );
-				}
-				
-				// World
-				if(arg_type.equals("w")){
-					parameters.setWorld( val );
-				}
-				
-				// Radius
-				if(arg_type.equals("r")){
-					if(TypeUtils.isNumeric(val)){
-						parameters.setRadius( Integer.parseInt(val) );
-					} else {
-						throw new IllegalArgumentException("Invalid argument format: " + arg);
-					}
-				}
-				
-				// Entity
-				if(arg_type.equals("e")){
-					parameters.setEntity( val );
-				}
-				
-				// Block
-				if(arg_type.equals("b")){
-					parameters.setBlock( val );
-				}
-				
-				// Time
-				if(arg_type.equals("t")){
-					parameters.setTime( val );
-				}
-			}
-			
-			// Validate any required args are set
-			if(foundArgs.isEmpty()){
-				throw new IllegalArgumentException("You must supply at least one argument.");
-			}
-			
-			/**
-			 * Set defaults
-			 */
-			// Radius default
-			if(!foundArgs.containsKey("r")){
-				plugin.debug("Setting default radius to " + plugin.getConfig().getString("default-radius"));
-				parameters.setRadius( Integer.parseInt( plugin.getConfig().getString("prism.default-radius") ) );
-				
-				// Add the default radius to the foundArgs so even a parameter-less query will
-				// return something.
-				// @todo this should only happen on lookup
-//				foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
-				
-			}
-			// World default
-			if(!foundArgs.containsKey("w")){
-				parameters.setWorld( player.getWorld().getName() );
-			}
-			// Player location
-			parameters.setPlayer_location( player.getLocation().toVector() );
-		}
-		return parameters;
-	}
-	
 	
 	/**
 	 * 
@@ -285,7 +133,11 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-		if(parameters.getLookup_type().equals("rollback") && parameters.getAction_type().contains("block-place")){
+//		String action_type = "";
+//		if(parameters.getAction_type() != null && parameters.getAction_type().contains("block-break")){
+//			action_type = "block-break";
+//		}
+		if(parameters.getLookup_type().equals("rollback")){
 			query += " JOIN (" +
 						"SELECT x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions" +
