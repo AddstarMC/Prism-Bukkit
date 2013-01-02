@@ -5,6 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 
 import org.bukkit.ChatColor;
@@ -127,6 +128,33 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				
 		    				Rollback rb = new Rollback( plugin, player, results );
 		    				rb.rollback();
+		    				
+		    			} else {
+		    				// @todo no results
+		    			}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+	    			
+	    			return true;
+	    			
+	    		}
+	    		
+	    		
+	    		/**
+	    		 * Restore
+	    		 */
+	    		if( args[0].equalsIgnoreCase("restore") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.restore") ){
+	    			
+		    			ActionsQuery aq = new ActionsQuery(plugin);
+		    			List<Action> results = aq.rollback( player, args );
+		    			if(!results.isEmpty()){
+		    				
+		    				player.sendMessage( plugin.playerHeaderMsg("Restoring changes...") );
+		    				
+		    				Restore rs = new Restore( plugin, player, results );
+		    				rs.restore();
 		    				
 		    			} else {
 		    				// @todo no results

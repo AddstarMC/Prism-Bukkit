@@ -6,7 +6,7 @@ Permissions:
 - prism.reload
 - prism.lookup
 - prism.rollback
-
+- prism.restore
 
 
 - a:[action]
