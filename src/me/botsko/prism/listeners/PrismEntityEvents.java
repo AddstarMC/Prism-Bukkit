@@ -11,6 +11,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -88,6 +89,10 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
 		String entity = event.getEntityType().getName().toLowerCase();
+		
+		if(event.getEntity() instanceof FallingSand){
+			return;
+		}
 		
 		// Technically I think that I really should name it "entity-eat" for better consistency and 
 		// in case other mobs ever are made to eat. But that's not as fun
