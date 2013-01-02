@@ -24,7 +24,9 @@ import me.botsko.prism.actiontypes.LavaBucketType;
 import me.botsko.prism.actiontypes.LavaIgniteType;
 import me.botsko.prism.actiontypes.LeafDecayType;
 import me.botsko.prism.actiontypes.LightningType;
+import me.botsko.prism.actiontypes.MushroomGrowType;
 import me.botsko.prism.actiontypes.SheepEatType;
+import me.botsko.prism.actiontypes.TreeGrowType;
 import me.botsko.prism.actiontypes.WaterBucketType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
@@ -150,7 +152,9 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("lava-ignite", new LavaIgniteType());
 		actionTypes.put("leaf-decay", new LeafDecayType());
 		actionTypes.put("lightning", new LightningType());
+		actionTypes.put("mushroom-grow", new MushroomGrowType());
 		actionTypes.put("sheep-eat", new SheepEatType());
+		actionTypes.put("tree-grow", new TreeGrowType());
 		actionTypes.put("water-bucket", new WaterBucketType());
 		
 	}

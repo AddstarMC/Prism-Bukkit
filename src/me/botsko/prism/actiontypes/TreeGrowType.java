@@ -1,6 +1,6 @@
 package me.botsko.prism.actiontypes;
 
-public class BlockFormType extends GenericActionType {
+public class TreeGrowType extends GenericActionType {
 	
 	
 	/**
@@ -8,7 +8,7 @@ public class BlockFormType extends GenericActionType {
 	 * @return
 	 */
 	public String getActionType(){
-		return "block-form";
+		return "tree-grow";
 	}
 	
 	
@@ -26,6 +26,6 @@ public class BlockFormType extends GenericActionType {
 	 * @return
 	 */
 	public String getNiceWordOfAction(){
-		return "formed";
+		return "grew";
 	}
 }

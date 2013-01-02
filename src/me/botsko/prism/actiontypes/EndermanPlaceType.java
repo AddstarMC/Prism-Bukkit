@@ -17,7 +17,7 @@ public class EndermanPlaceType extends GenericActionType {
 	 * @return
 	 */
 	public boolean doesCreateBlock(){
-		return false;
+		return true;
 	}
 	
 	
