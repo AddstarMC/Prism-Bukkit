@@ -287,7 +287,14 @@ public class PrismCommandExecutor implements CommandExecutor {
 		player.sendMessage( plugin.playerHeaderMsg( "How to use Prism" ) );
 		
 		player.sendMessage( plugin.playerHelp("/prism (lookup|l) (params)", "Perform a search using (params)"));
-		// @todo finish this
+		player.sendMessage( plugin.playerHelp("/prism (inspect|i)", "Toggles the block/space inspector onto your hand."));
+//		player.sendMessage( plugin.playerHelp("/prism params", "Lists parameter help."));
+		player.sendMessage( plugin.playerHelp("/prism preview (params)", "Preview a rollback using (params). Only shows you, doesn't apply rollback."));
+		player.sendMessage( plugin.playerHelp("/prism preview apply", "Applies the last preview you did to the world."));
+		player.sendMessage( plugin.playerHelp("/prism preview cancels", "Cancels the last preview you ran."));
+		player.sendMessage( plugin.playerHelp("/prism restore (params)", "Re-applies changes to the world using (params)"));
+		player.sendMessage( plugin.playerHelp("/prism ?", "This. Helpception!"));
+		player.sendMessage( plugin.playerHelp("/prism reload", "Reloads config/language files."));
 		
 	}
 	
@@ -311,10 +318,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 				
 				// Verify they're formatting like a:[val]
 				if(!arg.contains(":")){
-					throw new IllegalArgumentException("Invalid argument format: " + arg);
+					player.sendMessage( plugin.playerError("Parameter format error for '"+arg+"'. Use /prism ? for a assitance.") );
+					return null;
 				}
 				if (!arg.substring(1,2).equals(":")) {
-					throw new IllegalArgumentException("Invalid argument format: " + arg);
+					player.sendMessage( plugin.playerError("Misplaced ':' (colon) error for '"+arg+"'. Use /prism ? for a assitance.") );
+					return null;
 				}
 				
 				// Split parameter and values
@@ -327,7 +336,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 						foundArgs.put(arg_type, val);
 						parameters.setFoundArgs(foundArgs);
 					} else {
-						throw new IllegalArgumentException("You must supply at least one argument.");
+						player.sendMessage( plugin.playerError("You must supply at least one parameter value. Use /prism ? for a assitance.") );
+						return null;
 					}
 				}
 				
@@ -351,7 +361,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 					if(TypeUtils.isNumeric(val)){
 						parameters.setRadius( Integer.parseInt(val) );
 					} else {
-						throw new IllegalArgumentException("Invalid argument format: " + arg);
+						player.sendMessage( plugin.playerError("Radius must be a number or 'global'. Use /prism ? for a assitance.") );
+						return null;
 					}
 				}
 				
@@ -373,7 +384,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 			
 			// Validate any required args are set
 			if(foundArgs.isEmpty()){
-				throw new IllegalArgumentException("You must supply at least one argument.");
+				player.sendMessage( plugin.playerError("You're missing parameters. Use /prism ? for a assitance.") );
+				return null;
 			}
 			
 			/**
