@@ -102,7 +102,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSetFire(final BlockIgniteEvent event){
 		
-		String cause;
+		String cause = null;
 		switch (event.getCause()){
 			case FIREBALL:
 				cause = "fireball";
@@ -117,17 +117,15 @@ public class PrismBlockEvents implements Listener {
 				cause = "lightning";
 				break;
 			case SPREAD:
-				cause = "fire-spread";
+//				cause = "fire-spread";
 				break;
 			default:
-				cause = "block-ignite";
+//				cause = "block-ignite";
 		}
-		
-		plugin.debug("Fire cause is " + event.getCause().name());
-		
-		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlock(), (player == null ? "Environment" : player.getName())) );
-		
+		if(cause != null){
+			Player player = event.getPlayer();
+			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlock(), (player == null ? "Environment" : player.getName())) );
+		}
 	}
 	
 	

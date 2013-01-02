@@ -14,6 +14,20 @@ public interface ActionType {
 	 * 
 	 * @return
 	 */
+	public boolean isBlockAction();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isEntityAction();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean doesCreateBlock();
 	
 	

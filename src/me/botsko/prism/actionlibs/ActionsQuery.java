@@ -117,27 +117,21 @@ public class ActionsQuery {
 	    			// Pull the proper action type class
 	    			ActionType actionType = plugin.getActionType(rs.getString("action_type"));
     				
-
-	    			
-	    			// @todo this needs more cleanup
-	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay","entity-explode"};
-	    			if(Arrays.asList(possibleArgs).contains(rs.getString("action_type"))){
+	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);
 	    				baseAction = b;
 	    			}
-	    			else if( rs.getString("action_type").equals("entity-kill") ){
+	    			else if( actionType.isEntityAction() ){
 	    				EntityAction eka = new EntityAction(null, null, null);
 	    				baseAction = eka;
 	    			} else {
-	    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
+	    				plugin.log("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}
 	    			
 	    			if(baseAction == null){
 	    				baseAction = new GenericAction();
 	    			}
 	    				
-    				
-    				
     				// Set all shared values
     				baseAction.setType( actionType );
     				baseAction.setId( rs.getInt("id") );

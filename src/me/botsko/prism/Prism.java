@@ -9,7 +9,17 @@ import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.actiontypes.BlockBreakType;
+import me.botsko.prism.actiontypes.BlockBurnType;
+import me.botsko.prism.actiontypes.BlockFadeType;
+import me.botsko.prism.actiontypes.BlockFormType;
+import me.botsko.prism.actiontypes.BlockPlaceType;
+import me.botsko.prism.actiontypes.EntityKillType;
+import me.botsko.prism.actiontypes.FireballType;
+import me.botsko.prism.actiontypes.FlintSteelType;
 import me.botsko.prism.actiontypes.GenericActionType;
+import me.botsko.prism.actiontypes.LavaIgniteType;
+import me.botsko.prism.actiontypes.LeafDecayType;
+import me.botsko.prism.actiontypes.LightningType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
@@ -66,7 +76,7 @@ public class Prism extends JavaPlugin {
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
 		
 		// Register all known action types
-		actionTypes.put("block-break", new BlockBreakType());
+		registerActionTypes();
 		
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
@@ -111,6 +121,26 @@ public class Prism extends JavaPlugin {
 	 */
 	public Language getLang(){
 		return this.language;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void registerActionTypes(){
+		
+		actionTypes.put("block-break", new BlockBreakType());
+		actionTypes.put("block-burn", new BlockBurnType());
+		actionTypes.put("block-fade", new BlockFadeType());
+		actionTypes.put("block-form", new BlockFormType());
+		actionTypes.put("block-place", new BlockPlaceType());
+		actionTypes.put("entity-kill", new EntityKillType());
+		actionTypes.put("flint-steel", new FlintSteelType());
+		actionTypes.put("fireball", new FireballType());
+		actionTypes.put("lava-ignite", new LavaIgniteType());
+		actionTypes.put("leaf-decay", new LeafDecayType());
+		actionTypes.put("lightning", new LightningType());
+		
 	}
 	
 	
