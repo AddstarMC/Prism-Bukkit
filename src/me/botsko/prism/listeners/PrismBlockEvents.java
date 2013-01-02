@@ -41,7 +41,8 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction("block-break", event.getBlock(), player.getName()) );
+		// Pull the proper action type class
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-break"), event.getBlock(), player.getName()) );
 	}
 	
 	
@@ -52,7 +53,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction("block-place", event.getBlock(), player.getName()) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-place"), event.getBlock(), player.getName()) );
 	}
 	
 	
@@ -62,7 +63,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction("block-form", event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-form"), event.getBlock(), "Environment") );
 	}
 	
 	
@@ -72,7 +73,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction("block-fade", event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-fade"), event.getBlock(), "Environment") );
 	}
 	
 	
@@ -82,7 +83,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onLeavesDecay(LeavesDecayEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction("leaf-decay", event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("leaf-decay"), event.getBlock(), "Environment") );
 	}
 	
 
@@ -92,7 +93,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction("block-burn", event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-burn"), event.getBlock(), "Environment") );
 	}
 	
 	//onSignChange
@@ -125,7 +126,7 @@ public class PrismBlockEvents implements Listener {
 		plugin.debug("Fire cause is " + event.getCause().name());
 		
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlock(), (player == null ? "Environment" : player.getName())) );
 		
 	}
 	
@@ -138,7 +139,6 @@ public class PrismBlockEvents implements Listener {
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
 		Player player = event.getPlayer();
 		String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
-		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 	}
-	
 }

@@ -47,11 +47,11 @@ public class PrismWorldEvents implements Listener {
 	
 			//If a player did it
 			if (event.getPlayer() != null) {
-				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), event.getPlayer().getName()) );
+				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(type), block.getBlock(), event.getPlayer().getName()) );
 			}
 			//If the environment did it
 			else {
-				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), "Environment") );
+				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(type), block.getBlock(), "Environment") );
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
 public class ActionsQuery {
@@ -107,7 +108,12 @@ public class ActionsQuery {
 	    		
 	    		while(rs.next()){
 	    			
-	    			BaseAction baseAction = null;
+	    			GenericAction baseAction = null;
+	    			
+	    			// Pull the proper action type class
+	    			ActionType actionType = plugin.getActionType(rs.getString("action_type"));
+    				
+
 	    			
 	    			// @todo this needs more cleanup
 	    			String[] possibleArgs = {"block-break","block-place","block-burn","block-fade","block-ignite","flint-steel","tree-grow","mushroom-grow","leaf-decay","entity-explode"};
@@ -116,30 +122,32 @@ public class ActionsQuery {
 	    				baseAction = b;
 	    			}
 	    			else if( rs.getString("action_type").equals("entity-kill") ){
-	    				EntityKillAction eka = new EntityKillAction(null, null, null);
+	    				EntityAction eka = new EntityAction(null, null, null);
 	    				baseAction = eka;
 	    			} else {
 	    				plugin.log("Error: Unhandled action type: " + rs.getString("action_type") );
 	    			}
 	    			
-	    			if(baseAction != null){
-	    				
-	    				// Set all shared values
-	    				baseAction.setId( rs.getInt("id") );
-	    				baseAction.setAction_type( rs.getString("action_type") );
-	    				baseAction.setAction_time( rs.getString("action_time") );
-	    				baseAction.setDisplay_date( rs.getString("display_date") );
-	    				baseAction.setDisplay_time( rs.getString("display_time") );
-	    				baseAction.setWorld_name( rs.getString("world") );
-	    				baseAction.setPlayer_name( rs.getString("player") );
-	    				baseAction.setX( rs.getInt("x") );
-	    				baseAction.setY( rs.getInt("y") );
-	    				baseAction.setZ( rs.getInt("z") );
-	    				baseAction.setData( rs.getString("data") );
-	    				
-	    				actions.add(baseAction);
-	    				
+	    			if(baseAction == null){
+	    				baseAction = new GenericAction();
 	    			}
+	    				
+    				
+    				
+    				// Set all shared values
+    				baseAction.setType( actionType );
+    				baseAction.setId( rs.getInt("id") );
+    				baseAction.setAction_time( rs.getString("action_time") );
+    				baseAction.setDisplay_date( rs.getString("display_date") );
+    				baseAction.setDisplay_time( rs.getString("display_time") );
+    				baseAction.setWorld_name( rs.getString("world") );
+    				baseAction.setPlayer_name( rs.getString("player") );
+    				baseAction.setX( rs.getInt("x") );
+    				baseAction.setY( rs.getInt("y") );
+    				baseAction.setZ( rs.getInt("z") );
+    				baseAction.setData( rs.getString("data") );
+    				
+    				actions.add(baseAction);
 	    			
 	    		}
 	    		

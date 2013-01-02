@@ -37,7 +37,7 @@ public class ActionRecorder {
 		
 		queue.add(a);
 		
-		plugin.debug( a.getAction_type() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
+		plugin.debug( a.getType().getActionType() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
 		
 		// @todo for now, we're just calling save immediately. but we could
 		// make this work on a timer, pool, etc
@@ -71,7 +71,7 @@ public class ActionRecorder {
 			plugin.dbc();
 	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
 	        s.setString(1,a.getAction_time());
-	        s.setString(2,a.getAction_type());
+	        s.setString(2,a.getType().getActionType());
 	        s.setString(3,a.getPlayer_name());
 	        s.setString(4,a.getWorld_name());
 	        s.setInt(5,(int)a.getX());

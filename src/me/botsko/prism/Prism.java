@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.actiontypes.ActionType;
+import me.botsko.prism.actiontypes.BlockBreakType;
+import me.botsko.prism.actiontypes.GenericActionType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
@@ -28,6 +31,7 @@ public class Prism extends JavaPlugin {
 	protected Language language;
 	public Connection conn = null;
 	
+	public HashMap<String,ActionType> actionTypes = new HashMap<String,ActionType>();
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
@@ -61,6 +65,10 @@ public class Prism extends JavaPlugin {
 		// Add commands
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
 		
+		// Register all known action types
+		actionTypes.put("block-break", new BlockBreakType());
+		
+		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
 		
@@ -103,6 +111,23 @@ public class Prism extends JavaPlugin {
 	 */
 	public Language getLang(){
 		return this.language;
+	}
+	
+	
+	/**
+	 * Pulls either a generic or a specific action type
+	 * for assignment to a block, entity, etc action.
+	 * 
+	 * @todo Might wanna move this to a registry class
+	 * @param type
+	 * @return
+	 */
+	public ActionType getActionType(String type){
+		ActionType actionType = new GenericActionType();
+		if( actionTypes.containsKey(type) ){
+			actionType = actionTypes.get(type);
+		}
+		return actionType;
 	}
 	
 	

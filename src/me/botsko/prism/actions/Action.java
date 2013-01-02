@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.actiontypes.ActionType;
+
 public interface Action {
 	
 	
@@ -14,7 +16,7 @@ public interface Action {
 	 * 
 	 * @return
 	 */
-	public String getAction_type();
+	public ActionType getType();
 	
 	
 	/**
@@ -78,5 +80,12 @@ public interface Action {
 	 * @return
 	 */
 	public int getId();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNiceName();
 	
 }

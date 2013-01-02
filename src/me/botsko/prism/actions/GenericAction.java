@@ -1,12 +1,20 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.actiontypes.ActionType;
 
-public class BaseAction implements Action {
+
+public class GenericAction implements Action {
+	
+	/**
+	 * 
+	 */
+	protected ActionType type;
 	
 	/**
 	 * 
 	 */
 	protected int id;
+
 
 	/**
 	 * 
@@ -22,11 +30,6 @@ public class BaseAction implements Action {
 	 * 
 	 */
 	protected String display_time;
-	
-	/**
-	 * 
-	 */
-	protected String action_type;
 	
 	/**
 	 * 
@@ -66,6 +69,7 @@ public class BaseAction implements Action {
 		return id;
 	}
 	
+	
 	/**
 	 * @param id the id to set
 	 */
@@ -73,6 +77,7 @@ public class BaseAction implements Action {
 		this.id = id;
 	}
 
+	
 	/**
 	 * @return the action_time
 	 */
@@ -80,6 +85,7 @@ public class BaseAction implements Action {
 		return action_time;
 	}
 
+	
 	/**
 	 * @param action_time the action_time to set
 	 */
@@ -87,6 +93,7 @@ public class BaseAction implements Action {
 		this.action_time = action_time;
 	}
 
+	
 	/**
 	 * @return the display_date
 	 */
@@ -94,6 +101,7 @@ public class BaseAction implements Action {
 		return display_date;
 	}
 
+	
 	/**
 	 * @param display_date the display_date to set
 	 */
@@ -101,6 +109,7 @@ public class BaseAction implements Action {
 		this.display_date = display_date;
 	}
 
+	
 	/**
 	 * @return the display_time
 	 */
@@ -108,6 +117,7 @@ public class BaseAction implements Action {
 		return display_time;
 	}
 
+	
 	/**
 	 * @param display_time the display_time to set
 	 */
@@ -115,20 +125,24 @@ public class BaseAction implements Action {
 		this.display_time = display_time;
 	}
 
+	
 	/**
 	 * @return the action_type
 	 */
-	public String getAction_type() {
-		return action_type;
+	public ActionType getType() {
+		return type;
 	}
-
+	
+	
 	/**
-	 * @param action_type the action_type to set
+	 * 
+	 * @param type
 	 */
-	public void setAction_type(String action_type) {
-		this.action_type = action_type;
+	public void setType( ActionType type ){
+		this.type = type;
 	}
 
+	
 	/**
 	 * @return the world_name
 	 */
@@ -136,6 +150,7 @@ public class BaseAction implements Action {
 		return world_name;
 	}
 
+	
 	/**
 	 * @param world_name the world_name to set
 	 */
@@ -143,6 +158,7 @@ public class BaseAction implements Action {
 		this.world_name = world_name;
 	}
 
+	
 	/**
 	 * @return the player_name
 	 */
@@ -150,6 +166,7 @@ public class BaseAction implements Action {
 		return player_name;
 	}
 
+	
 	/**
 	 * @param player_name the player_name to set
 	 */
@@ -157,6 +174,7 @@ public class BaseAction implements Action {
 		this.player_name = player_name;
 	}
 
+	
 	/**
 	 * @return the x
 	 */
@@ -164,6 +182,7 @@ public class BaseAction implements Action {
 		return x;
 	}
 
+	
 	/**
 	 * @param x the x to set
 	 */
@@ -171,6 +190,7 @@ public class BaseAction implements Action {
 		this.x = x;
 	}
 
+	
 	/**
 	 * @return the y
 	 */
@@ -178,6 +198,7 @@ public class BaseAction implements Action {
 		return y;
 	}
 
+	
 	/**
 	 * @param y the y to set
 	 */
@@ -185,6 +206,7 @@ public class BaseAction implements Action {
 		this.y = y;
 	}
 
+	
 	/**
 	 * @return the z
 	 */
@@ -192,6 +214,7 @@ public class BaseAction implements Action {
 		return z;
 	}
 
+	
 	/**
 	 * @param z the z to set
 	 */
@@ -199,6 +222,7 @@ public class BaseAction implements Action {
 		this.z = z;
 	}
 
+	
 	/**
 	 * @return the data
 	 */
@@ -206,6 +230,7 @@ public class BaseAction implements Action {
 		return data;
 	}
 
+	
 	/**
 	 * @param data the data to set
 	 */
@@ -213,4 +238,11 @@ public class BaseAction implements Action {
 		this.data = data;
 	}
 	
+	
+	/**
+	 * 
+	 */
+	public String getNiceName(){
+		return "something";
+	}
 }

@@ -2,7 +2,7 @@ package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.EntityKillAction;
+import me.botsko.prism.actions.EntityAction;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
@@ -51,7 +51,7 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					plugin.actionsRecorder.addToQueue( new EntityKillAction("entity-kill", entity, player.getName()) );
+					plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-kill"), entity, player.getName()) );
 		        	
 				}
 				// Mob shot by an arrow
@@ -60,7 +60,7 @@ public class PrismEntityEvents implements Listener {
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						plugin.actionsRecorder.addToQueue( new EntityKillAction("entity-kill", entity, player.getName()) );
+						plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-kill"), entity, player.getName()) );
 			        	
 					}
 				}
@@ -84,7 +84,7 @@ public class PrismEntityEvents implements Listener {
 	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
 		String entity = event.getEntityType().getName();
 		entity = entity.toLowerCase();
-		plugin.actionsRecorder.addToQueue( new BlockAction("entity-action", event.getBlock(), entity) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("entity-action"), event.getBlock(), entity) );
 	}
 	
 	/**
@@ -98,8 +98,7 @@ public class PrismEntityEvents implements Listener {
 		entity = entity.toLowerCase();
 		
 		for(Block block : event.blockList()){	
-			plugin.actionsRecorder.addToQueue( new BlockAction("entity-explode", block, entity) );
+			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("entity-explode"), block, entity) );
 		}
 	}
-	
 }

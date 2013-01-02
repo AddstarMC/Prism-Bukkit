@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.EntityKillAction;
+import me.botsko.prism.actions.EntityAction;
 
 public class Rollback {
 
@@ -75,8 +75,7 @@ public class Rollback {
 					
 					
 					// If the block was placed, we need to remove it
-					// @todo it may not always be air that was replaced. we should log that
-					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
+					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(!block.getType().equals(Material.AIR)){
 							block.setType(Material.AIR);
@@ -100,9 +99,9 @@ public class Rollback {
 				/**
 				 * Rollback entity kills
 				 */
-				if( a instanceof EntityKillAction ){
+				if( a instanceof EntityAction ){
 					
-					EntityKillAction b = (EntityKillAction) a;
+					EntityAction b = (EntityAction) a;
 					world.spawnEntity(loc, b.getEntityTypeFromData());
 					
 					plugin.debug("Rolling back entity " + b.getEntityTypeFromData().getName());

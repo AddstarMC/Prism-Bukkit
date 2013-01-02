@@ -1,7 +1,6 @@
 package me.botsko.prism.actions;
 
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
 
 public class ActionMessage {
 	
@@ -9,6 +8,7 @@ public class ActionMessage {
 	 * 
 	 */
 	protected Action a;
+	
 	
 	/**
 	 * 
@@ -30,8 +30,8 @@ public class ActionMessage {
 		msg += ChatColor.GRAY + "" + a.getId() + " ";
 		msg += getPosNegPrefix();
 		msg += highlight + a.getPlayer_name();
-		msg += " " + ChatColor.WHITE + getNiceActionType();
-		msg += " " + highlight + getNiceData();
+		msg += " " + ChatColor.WHITE + a.getType().getNiceWordOfAction();
+		msg += " " + highlight + a.getNiceName();
 		msg += ChatColor.WHITE + " on " + ChatColor.GRAY + a.getDisplay_date();
 		msg += ChatColor.WHITE + " at " + ChatColor.GRAY + a.getDisplay_time();
 		
@@ -47,57 +47,11 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix(){
 		
-		if(a.getAction_type().equals("block-break") || a.getAction_type().equals("entity-kill")){
-			return ChatColor.RED + "- " + ChatColor.WHITE;
-		}
-		else if(a.getAction_type().equals("block-place")){
+		if(a.getType().doesCreateBlock()){
 			return ChatColor.GREEN + "+ " + ChatColor.WHITE;
 		}
-		return "";
-	}
-	
-	
-	/**
-	 * 
-	 * @param type
-	 * @return
-	 */
-	protected String getNiceActionType(){
-		
-		if(a.getAction_type().equals("block-break")){
-			return "broke";
+		else {
+			return ChatColor.RED + "- " + ChatColor.WHITE;
 		}
-		if(a.getAction_type().equals("block-place")){
-			return "placed";
-		}
-		if(a.getAction_type().equals("entity-kill")){
-			return "killed a";
-		}
-		return "did mystery stuff to";
-	}
-	
-	
-	/**
-	 * 
-	 * @param data
-	 * @return
-	 */
-	protected String getNiceData(){
-		
-		String name = "something";
-		
-		if(a.getAction_type().equals("block-break") || a.getAction_type().equals("block-place")){
-			String[] blockdata = a.getData().split(":");
-			if(blockdata.length == 2){
-				ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));
-				name = i.getType().name().toLowerCase();
-			}
-		}
-		if(a.getAction_type().equals("entity-kill")){
-			name = a.getData().toLowerCase();
-		}
-		
-		return name;
-		
 	}
 }

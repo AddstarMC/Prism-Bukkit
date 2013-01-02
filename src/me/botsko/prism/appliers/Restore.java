@@ -72,7 +72,7 @@ public class Restore {
 					
 					
 					// If the block was placed, we must replace it
-					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
+					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(block.getType().equals(Material.AIR)){
 							block.setTypeId( b.getBlock_id() );

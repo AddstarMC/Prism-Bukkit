@@ -2,12 +2,13 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
+import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
-public class BlockAction extends BaseAction {
-	
+public class BlockAction extends GenericAction {
 	
 	/**
 	 * 
@@ -31,9 +32,9 @@ public class BlockAction extends BaseAction {
 	 * @param block
 	 * @param player
 	 */
-	public BlockAction( String action_type, Block block, String player ){
+	public BlockAction( ActionType action_type, Block block, String player ){
 		if(action_type != null){
-			this.action_type = action_type;
+			this.type = action_type;
 		}
 		if(block != null){
 			this.block = block;
@@ -103,5 +104,20 @@ public class BlockAction extends BaseAction {
 	 */
 	public byte getBlock_subid(){
 		return block_subid;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNiceName(){
+		String name = "block";
+		String[] blockdata = getData().split(":");
+		if(blockdata.length == 2){
+			ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));
+			name = i.getType().name().toLowerCase();
+		}
+		return name;
 	}
 }

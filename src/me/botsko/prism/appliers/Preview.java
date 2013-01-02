@@ -79,7 +79,7 @@ public class Preview {
 					
 					// If the block was placed, we need to remove it
 					// @todo it may not always be air that was replaced. we should log that
-					if(a.getAction_type().equals("block-place") || a.getAction_type().equals("block-form")){
+					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(!block.getType().equals(Material.AIR)){
 							player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);

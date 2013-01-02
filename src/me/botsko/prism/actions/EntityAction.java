@@ -2,10 +2,12 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
+import me.botsko.prism.actiontypes.ActionType;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-public class EntityKillAction extends BaseAction {
+public class EntityAction extends GenericAction {
 
 	
 	/**
@@ -20,9 +22,9 @@ public class EntityKillAction extends BaseAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityKillAction( String action_type, Entity entity, String player ){
+	public EntityAction( ActionType action_type, Entity entity, String player ){
 		if(action_type != null){
-			this.action_type = action_type;
+			this.type = action_type;
 		}
 		if(entity != null){
 			this.entity = entity;
@@ -74,5 +76,15 @@ public class EntityKillAction extends BaseAction {
 			}
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNiceName(){
+		String name = getData().toLowerCase();
+		return name;
 	}
 }
