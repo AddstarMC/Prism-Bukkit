@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.actiontypes.BlockBreakType;
 import me.botsko.prism.actiontypes.BlockBurnType;
@@ -56,6 +57,7 @@ public class Prism extends JavaPlugin {
 	public ActionsQuery actionsQuery;
 	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
 	public HashMap<String,PreviewSession> playerActivePreviews = new HashMap<String,PreviewSession>();
+	public HashMap<String,QueryResult> cachedQueries = new HashMap<String,QueryResult>();
 	
 	
     /**

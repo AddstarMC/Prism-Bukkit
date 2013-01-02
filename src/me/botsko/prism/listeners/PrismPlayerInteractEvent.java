@@ -1,11 +1,10 @@
 package me.botsko.prism.listeners;
 
-import java.util.List;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -79,9 +78,9 @@ public class PrismPlayerInteractEvent implements Listener {
 		
 		// Query
 		ActionsQuery aq = new ActionsQuery(plugin);
-		List<me.botsko.prism.actions.Action> results = aq.lookup( params );
-		if(!results.isEmpty()){
-			for(me.botsko.prism.actions.Action a : results){
+		QueryResult results = aq.lookup( player, params );
+		if(!results.getActionResults().isEmpty()){
+			for(me.botsko.prism.actions.Action a : results.getActionResults()){
 				ActionMessage am = new ActionMessage(a);
 				player.sendMessage( plugin.playerHeaderMsg( am.getMessage() ) );
 			}

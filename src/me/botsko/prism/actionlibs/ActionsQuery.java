@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
@@ -41,7 +42,7 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	public List<Action> lookup( QueryParameters parameters ){
+	public QueryResult lookup( Player player, QueryParameters parameters ){
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
@@ -106,7 +107,19 @@ public class ActionsQuery {
 	            e.printStackTrace();
 	        }
 		}
-		return actions;
+		
+		// Build result object
+		QueryResult res = new QueryResult( actions );
+		
+		// Cache it
+		if(plugin.cachedQueries.containsKey(player.getName())){
+			plugin.cachedQueries.remove(player.getName());
+		}
+		plugin.cachedQueries.put(player.getName(), res);
+		
+		// Return it
+		return res;
+		
 	}
 	
 	

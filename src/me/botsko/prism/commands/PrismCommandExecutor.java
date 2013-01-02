@@ -2,12 +2,12 @@ package me.botsko.prism.commands;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
@@ -80,12 +80,13 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				if(parameters == null){
 	    					return true;
 	    				}
+	    				parameters.setLimit(1000); // @todo config this?
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( parameters );
-		    			if(!results.isEmpty()){
+		    			QueryResult results = aq.lookup( player, parameters );
+		    			if(!results.getActionResults().isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
-		    				for(Action a : results){
+		    				for(Action a : results.getActionResults()){
 		    					ActionMessage am = new ActionMessage(a);
 //		    					am.hideId(true); // @todo set this if doing a global search
 		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
@@ -163,12 +164,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			
 	    				// Perform preview
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( parameters );
-		    			if(!results.isEmpty()){
+		    			QueryResult results = aq.lookup( player, parameters );
+		    			if(!results.getActionResults().isEmpty()){
 		    				
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback preview...") );
 		    				
-		    				Preview pv = new Preview( plugin, player, results );
+		    				Preview pv = new Preview( plugin, player, results.getActionResults() );
 		    				pv.preview( parameters );
 		    				
 		    			} else {
@@ -196,11 +197,11 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				parameters.setLookup_type("rollback");
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( parameters );
-		    			if(!results.isEmpty()){
+		    			QueryResult results = aq.lookup( player, parameters );
+		    			if(!results.getActionResults().isEmpty()){
 		    				
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
-		    				Rollback rb = new Rollback( plugin, player, results );
+		    				Rollback rb = new Rollback( plugin, player, results.getActionResults() );
 		    				rb.rollback();
 		    				
 		    			} else {
@@ -228,12 +229,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				parameters.setLookup_type("rollback");
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
-		    			List<Action> results = aq.lookup( parameters );
-		    			if(!results.isEmpty()){
+		    			QueryResult results = aq.lookup( player, parameters );
+		    			if(!results.getActionResults().isEmpty()){
 		    				
 		    				player.sendMessage( plugin.playerHeaderMsg("Restoring changes...") );
 		    				
-		    				Restore rs = new Restore( plugin, player, results );
+		    				Restore rs = new Restore( plugin, player, results.getActionResults() );
 		    				rs.restore();
 		    				
 		    			} else {
