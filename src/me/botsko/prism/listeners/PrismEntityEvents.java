@@ -11,7 +11,6 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.FallingSand;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -90,22 +89,21 @@ public class PrismEntityEvents implements Listener {
 	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
 		String entity = event.getEntityType().getName().toLowerCase();
 		
-		if(event.getEntity() instanceof FallingSand){
-			return;
-		}
-		
 		// Technically I think that I really should name it "entity-eat" for better consistency and 
 		// in case other mobs ever are made to eat. But that's not as fun
 		if(event.getEntityType().equals(EntityType.SHEEP)){
 			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("sheep-eat"), event.getBlock(), entity) );
 		} else {
+			
+			if(event.getEntity() instanceof Enderman){
 	
-			if (event.getTo() == Material.AIR){
-				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
-			} else {
-				Enderman enderman = (Enderman) event.getEntity();
-				if (enderman.getCarriedMaterial() != null) {
+				if (event.getTo() == Material.AIR){
 					plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+				} else {
+					Enderman enderman = (Enderman) event.getEntity();
+					if (enderman.getCarriedMaterial() != null) {
+						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+					}
 				}
 			}
 		}

@@ -46,11 +46,6 @@ public class ActionsQuery {
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
 		
-		// If no args, return
-		if(parameters.getFoundArgs().isEmpty()){
-			return actions;
-		}
-		
 		// Build conditions based off final args
 		String query = getArgumentConditions(parameters);
 		

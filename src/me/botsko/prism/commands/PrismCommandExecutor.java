@@ -286,15 +286,15 @@ public class PrismCommandExecutor implements CommandExecutor {
 		
 		player.sendMessage( plugin.playerHeaderMsg( "How to use Prism" ) );
 		
-		player.sendMessage( plugin.playerHelp("/prism (lookup|l) (params)", "Perform a search using (params)"));
-		player.sendMessage( plugin.playerHelp("/prism (inspect|i)", "Toggles the block/space inspector onto your hand."));
-//		player.sendMessage( plugin.playerHelp("/prism params", "Lists parameter help."));
-		player.sendMessage( plugin.playerHelp("/prism preview (params)", "Preview a rollback using (params). Only shows you, doesn't apply rollback."));
-		player.sendMessage( plugin.playerHelp("/prism preview apply", "Applies the last preview you did to the world."));
-		player.sendMessage( plugin.playerHelp("/prism preview cancels", "Cancels the last preview you ran."));
-		player.sendMessage( plugin.playerHelp("/prism restore (params)", "Re-applies changes to the world using (params)"));
-		player.sendMessage( plugin.playerHelp("/prism ?", "This. Helpception!"));
-		player.sendMessage( plugin.playerHelp("/prism reload", "Reloads config/language files."));
+		player.sendMessage( plugin.playerHelp("prism (lookup|l) (params)", "Perform a search using (params)"));
+		player.sendMessage( plugin.playerHelp("prism (inspect|i)", "Toggles the block/space inspector onto your hand."));
+//		player.sendMessage( plugin.playerHelp("prism params", "Lists parameter help."));
+		player.sendMessage( plugin.playerHelp("prism preview (params)", "Preview a rollback using (params). Only shows you, doesn't apply rollback."));
+		player.sendMessage( plugin.playerHelp("prism preview apply", "Applies the last preview you did to the world."));
+		player.sendMessage( plugin.playerHelp("prism preview cancels", "Cancels the last preview you ran."));
+		player.sendMessage( plugin.playerHelp("prism restore (params)", "Re-applies changes to the world using (params)"));
+		player.sendMessage( plugin.playerHelp("prism ?", "This. Helpception!"));
+		player.sendMessage( plugin.playerHelp("prism reload", "Reloads config/language files."));
 		
 	}
 	
