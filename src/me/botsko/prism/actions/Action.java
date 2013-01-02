@@ -64,5 +64,12 @@ public interface Action {
 	 * @return
 	 */
 	public String getDisplay_date();
+
+
+	/**
+	 * 
+	 * @return
+	 */
+	public String getDisplay_time();
 	
 }

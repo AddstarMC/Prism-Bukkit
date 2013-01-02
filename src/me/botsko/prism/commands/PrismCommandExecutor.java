@@ -4,12 +4,12 @@ import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionMessage;
 import me.botsko.prism.actions.ActionsQuery;
 import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -72,16 +72,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    			if(!results.isEmpty()){
 		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
 		    				for(Action a : results){
-		    					
-		    					// user
-		    					String msg = ChatColor.BLUE + a.getPlayer_name();
-		    					msg += " " + ChatColor.GRAY + a.getAction_type();
-		    					msg += " " + ChatColor.RED + a.getData();
-		    					msg += " " + ChatColor.RED + (int)a.getX();
-		    					msg += " " + ChatColor.RED + (int)a.getY();
-		    					msg += " " + ChatColor.RED + (int)a.getZ();
-		    					
-		    					player.sendMessage( plugin.playerMsg( msg ) );
+		    					ActionMessage am = new ActionMessage(a);
+		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 		    				}
 		    			} else {
 		    				// @todo no results

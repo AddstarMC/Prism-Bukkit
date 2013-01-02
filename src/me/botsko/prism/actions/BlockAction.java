@@ -58,7 +58,7 @@ public class BlockAction extends BaseAction {
 	 * 
 	 */
 	protected void setDataFromBlock(){
-		if(data == null){
+		if(data == null && block != null){
 			data = block.getTypeId() + ":" + block.getData();
 		}
 	}

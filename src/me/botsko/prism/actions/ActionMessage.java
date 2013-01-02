@@ -24,11 +24,14 @@ public class ActionMessage {
 	 */
 	public String getMessage(){
 		
+		ChatColor highlight = ChatColor.DARK_AQUA;
+		
 		String msg = getPosNegPrefix();
-		msg += ChatColor.LIGHT_PURPLE + a.getPlayer_name();
+		msg += highlight + a.getPlayer_name();
 		msg += " " + ChatColor.WHITE + getNiceActionType();
-		msg += " " + ChatColor.LIGHT_PURPLE + getNiceData();
+		msg += " " + highlight + getNiceData();
 		msg += ChatColor.WHITE + " on " + ChatColor.GRAY + a.getDisplay_date();
+		msg += ChatColor.WHITE + " at " + ChatColor.GRAY + a.getDisplay_time();
 		
 		return msg;
 		
@@ -42,7 +45,7 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix(){
 		
-		if(a.getAction_type().equals("block-break")){
+		if(a.getAction_type().equals("block-break") || a.getAction_type().equals("entity-kill")){
 			return ChatColor.RED + "- " + ChatColor.WHITE;
 		}
 		else if(a.getAction_type().equals("block-place")){
@@ -65,7 +68,10 @@ public class ActionMessage {
 		if(a.getAction_type().equals("block-place")){
 			return "placed";
 		}
-		return "unknown";
+		if(a.getAction_type().equals("entity-kill")){
+			return "killed a";
+		}
+		return "did mystery stuff to";
 	}
 	
 	
@@ -76,7 +82,7 @@ public class ActionMessage {
 	 */
 	protected String getNiceData(){
 		
-		String name = "";
+		String name = "something";
 		
 		if(a.getAction_type().equals("block-break") || a.getAction_type().equals("block-place")){
 			String[] blockdata = a.getData().split(":");
@@ -84,6 +90,9 @@ public class ActionMessage {
 				ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));
 				name = i.getType().name().toLowerCase();
 			}
+		}
+		if(a.getAction_type().equals("entity-kill")){
+			name = a.getData().toLowerCase();
 		}
 		
 		return name;

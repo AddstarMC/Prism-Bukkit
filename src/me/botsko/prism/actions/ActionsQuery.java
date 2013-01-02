@@ -126,6 +126,7 @@ public class ActionsQuery {
 	    				
 	    				
 	    				// Set all shared values
+	    				baseAction.setAction_type( rs.getString("action_type") );
 	    				baseAction.setAction_time( rs.getString("action_time") );
 	    				baseAction.setDisplay_date( rs.getString("display_date") );
 	    				baseAction.setDisplay_time( rs.getString("display_time") );
