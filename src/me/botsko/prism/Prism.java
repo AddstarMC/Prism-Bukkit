@@ -13,13 +13,19 @@ import me.botsko.prism.actiontypes.BlockBurnType;
 import me.botsko.prism.actiontypes.BlockFadeType;
 import me.botsko.prism.actiontypes.BlockFormType;
 import me.botsko.prism.actiontypes.BlockPlaceType;
+import me.botsko.prism.actiontypes.EndermanPickupType;
+import me.botsko.prism.actiontypes.EndermanPlaceType;
+import me.botsko.prism.actiontypes.EntityExplodeType;
 import me.botsko.prism.actiontypes.EntityKillType;
 import me.botsko.prism.actiontypes.FireballType;
 import me.botsko.prism.actiontypes.FlintSteelType;
 import me.botsko.prism.actiontypes.GenericActionType;
+import me.botsko.prism.actiontypes.LavaBucketType;
 import me.botsko.prism.actiontypes.LavaIgniteType;
 import me.botsko.prism.actiontypes.LeafDecayType;
 import me.botsko.prism.actiontypes.LightningType;
+import me.botsko.prism.actiontypes.SheepEatType;
+import me.botsko.prism.actiontypes.WaterBucketType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
@@ -134,12 +140,18 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("block-fade", new BlockFadeType());
 		actionTypes.put("block-form", new BlockFormType());
 		actionTypes.put("block-place", new BlockPlaceType());
+		actionTypes.put("enderman-pickup", new EndermanPickupType());
+		actionTypes.put("enderman-place", new EndermanPlaceType());
+		actionTypes.put("entity-explode", new EntityExplodeType());
 		actionTypes.put("entity-kill", new EntityKillType());
 		actionTypes.put("flint-steel", new FlintSteelType());
 		actionTypes.put("fireball", new FireballType());
+		actionTypes.put("lava-bucket", new LavaBucketType());
 		actionTypes.put("lava-ignite", new LavaIgniteType());
 		actionTypes.put("leaf-decay", new LeafDecayType());
 		actionTypes.put("lightning", new LightningType());
+		actionTypes.put("sheep-eat", new SheepEatType());
+		actionTypes.put("water-bucket", new WaterBucketType());
 		
 	}
 	

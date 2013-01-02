@@ -4,9 +4,12 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -82,10 +85,25 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
-		String entity = event.getEntityType().getName();
-		entity = entity.toLowerCase();
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("entity-action"), event.getBlock(), entity) );
+		String entity = event.getEntityType().getName().toLowerCase();
+		
+		// Technically I think that I really should name it "entity-eat" for better consistency and 
+		// in case other mobs ever are made to eat. But that's not as fun
+		if(event.getEntityType().equals(EntityType.SHEEP)){
+			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("sheep-eat"), event.getBlock(), entity) );
+		} else {
+	
+			if (event.getTo() == Material.AIR){
+				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+			} else {
+				Enderman enderman = (Enderman) event.getEntity();
+				if (enderman.getCarriedMaterial() != null) {
+					plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+				}
+			}
+		}
 	}
+	
 	
 	/**
 	 * 
