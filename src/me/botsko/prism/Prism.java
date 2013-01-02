@@ -3,6 +3,8 @@ package me.botsko.prism;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
@@ -42,11 +44,13 @@ import me.botsko.prism.listeners.PrismWorldEvents;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Prism extends JavaPlugin {
 
 	protected String msg_name = "Prism";
+	public Prism prism;
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
 	protected Language language;
@@ -56,8 +60,8 @@ public class Prism extends JavaPlugin {
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
-	public HashMap<String,PreviewSession> playerActivePreviews = new HashMap<String,PreviewSession>();
-	public HashMap<String,QueryResult> cachedQueries = new HashMap<String,QueryResult>();
+	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
+	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	
 	
     /**
@@ -65,6 +69,8 @@ public class Prism extends JavaPlugin {
      */
 	@Override
 	public void onEnable(){
+		
+		prism = this;
 		
 		this.log("Initializing plugin. By Viveleroi (and team), Darkhelmet Minecraft: s.dhmc.us");
 		
@@ -93,6 +99,10 @@ public class Prism extends JavaPlugin {
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
+		
+		// Init scheduled events
+		endExpiredQueryCaches();
+		endExpiredPreviews();
 		
 	}
 	
@@ -180,6 +190,55 @@ public class Prism extends JavaPlugin {
 			actionType = actionTypes.get(type);
 		}
 		return actionType;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void endExpiredQueryCaches(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+		    	java.util.Date date = new java.util.Date();
+		    	prism.debug("Removing expired lookup queries from cache");
+		    	for (Map.Entry<String, QueryResult> query : cachedQueries.entrySet()){
+		    		QueryResult result = query.getValue();
+		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
+		    		if(diff >= 300){
+		    			prism.debug("Removing cached query from "+result.getQueryTime()+" with " + result.getTotal_results() + " results.");
+		    			cachedQueries.remove(query.getKey());
+		    		}
+		    	}
+		    }
+		}, 6000L, 6000L);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void endExpiredPreviews(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+		    	java.util.Date date = new java.util.Date();
+		    	prism.debug("Removing expired previews from cache");
+		    	for (Map.Entry<String, PreviewSession> query : playerActivePreviews.entrySet()){
+		    		PreviewSession result = query.getValue();
+		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
+		    		if(diff >= 60){
+		    			// inform player
+		    			Player player = prism.getServer().getPlayer(result.getPlayer().getName());
+		    			if(player != null){
+		    				player.sendMessage( prism.playerHeaderMsg("Canceling forgotten preview.") );
+		    			}
+		    			prism.debug("Removing cached preview from "+result.getQueryTime()+" by " + result.getPlayer().getName() + ".");
+		    			playerActivePreviews.remove(query.getKey());
+		    		}
+		    	}
+		    }
+		}, 1200L, 1200L);
 	}
 	
 	

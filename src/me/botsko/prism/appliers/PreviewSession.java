@@ -23,6 +23,11 @@ public class PreviewSession {
 	 */
 	protected QueryParameters parameters;
 	
+	/**
+	 * 
+	 */
+	protected long queryTime;
+	
 	
 	/**
 	 * 
@@ -34,6 +39,8 @@ public class PreviewSession {
 		this.undo_queue = undo;
 		this.player = player;
 		this.parameters = parameters;
+		java.util.Date date = new java.util.Date();
+		this.queryTime = date.getTime();
 	}
 
 
@@ -50,6 +57,14 @@ public class PreviewSession {
 	 */
 	public Player getPlayer() {
 		return player;
+	}
+
+
+	/**
+	 * @return the queryTime
+	 */
+	public long getQueryTime() {
+		return queryTime;
 	}
 
 

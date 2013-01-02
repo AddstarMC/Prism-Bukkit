@@ -86,7 +86,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			QueryResult results = aq.lookup( player, parameters );
 		    			if(!results.getActionResults().isEmpty()){
-		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+		    				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 		    				for(Action a : results.getPaginatedActionResults()){
 		    					ActionMessage am = new ActionMessage(a);
 //		    					am.hideId(true); // @todo set this if doing a global search
@@ -129,7 +129,7 @@ public class PrismCommandExecutor implements CommandExecutor {
     						
     						// Results?
     						if(!results.getActionResults().isEmpty()){
-    		    				player.sendMessage( plugin.playerHeaderMsg("Search Results:") );
+    							player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
     		    				for(Action a : results.getPaginatedActionResults()){
     		    					ActionMessage am = new ActionMessage(a);
     		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );

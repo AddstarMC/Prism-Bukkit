@@ -1,6 +1,5 @@
 package me.botsko.prism.actionlibs;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,12 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected String queryTime;
+	protected long queryTime;
+	
+	/**
+	 * 
+	 */
+	protected int total_results;
 	
 	/**
 	 * 
@@ -41,12 +45,12 @@ public class QueryResult {
 	public QueryResult( List<Action> actions ){
 		
 		this.actionResults = actions;
-		
-		java.util.Date date= new java.util.Date();
-		queryTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+
+		java.util.Date date = new java.util.Date();
+		this.queryTime = date.getTime();
 		
 		// set counts
-		int total_results = actionResults.size();
+		total_results = actionResults.size();
 		total_pages = (int) Math.ceil( ((double)total_results / (double)per_page) );
 		
 	}
@@ -68,12 +72,20 @@ public class QueryResult {
 		int offset = (limit - per_page);
 		return actionResults.subList(offset, limit);
 	}
+	
+
+	/**
+	 * @return the total_results
+	 */
+	public int getTotal_results() {
+		return total_results;
+	}
 
 
 	/**
 	 * @return the queryTime
 	 */
-	public String getQueryTime() {
+	public long getQueryTime() {
 		return queryTime;
 	}
 
@@ -107,5 +119,13 @@ public class QueryResult {
 	 */
 	public void setPage(int page) {
 		this.page = page;
+	}
+
+
+	/**
+	 * @return the total_pages
+	 */
+	public int getTotal_pages() {
+		return total_pages;
 	}
 }
