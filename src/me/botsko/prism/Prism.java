@@ -134,6 +134,17 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
+	 * @param player
+	 * @param cmd
+	 * @param help
+	 */
+	public String playerHelp( String cmd, String help ){
+		return ChatColor.LIGHT_PURPLE + "/" + cmd + ": " + ChatColor.WHITE + help;
+	}
+	
+	
+	/**
+	 * 
 	 * @param msg
 	 * @return
 	 */

@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 public class PrismCommandExecutor implements CommandExecutor {
 	
 	private Prism plugin;
-	private CommandHelp help;
 	
 	/**
 	 * 
@@ -27,7 +26,6 @@ public class PrismCommandExecutor implements CommandExecutor {
 	 */
 	public PrismCommandExecutor(Prism plugin) {
 		this.plugin = plugin;
-		this.help = new CommandHelp(plugin);
 	}
 	
 	
@@ -215,6 +213,14 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			return true;
 	    			
 	    		}
+	    		
+	    		
+	    		// Help
+    			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
+    				help(player);
+    				return true;
+    			}
+    			
     		} else {
     			// @todo message?
     		}
@@ -235,13 +241,20 @@ public class PrismCommandExecutor implements CommandExecutor {
 				}
 			}
 		}
-		
-		if(args.length == 0 || (args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?"))){
-			if (args.length == 0){
-				help.generalHelp(sender);
-				// TODO /prism help [command]
-			}
-		}
 		return false;
+	}
+	
+	
+	/**
+	 * Displays help
+	 * @param player
+	 */
+	protected void help( Player player ){
+		
+		player.sendMessage( plugin.playerHeaderMsg( "How to use Prism" ) );
+		
+		player.sendMessage( plugin.playerHelp("/prism (lookup|l) (params)", "Perform a search using (params)"));
+		// @todo finish this
+		
 	}
 }
