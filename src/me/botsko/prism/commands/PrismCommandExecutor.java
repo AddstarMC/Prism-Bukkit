@@ -5,6 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 
@@ -112,6 +113,52 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				player.sendMessage( plugin.msgNoPermission() );
 	    			}
 		    		return true;
+	    		}
+	    		
+	    		
+	    		/**
+	    		 * Preview
+	    		 */
+	    		if( args[0].equalsIgnoreCase("preview") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.preview") ){
+	    				
+	    				
+	    				// Cancel or Apply
+	    				if( args.length == 2){
+	    					
+	    					// Cancel
+	    					if(args[1].equalsIgnoreCase("cancel") ){
+	    						
+	    						Preview pv = new Preview( plugin, player, null );
+	    						pv.cancel_preview();
+	    						return true;
+	    						
+	    					}
+	    				}
+	    				
+	    				if(plugin.playerActivePreviews.containsKey(player.getName())){
+	    					player.sendMessage( plugin.playerError("You have an existing preview pending. Please apply or cancel before moving on.") );
+	    					return true;
+	    				}
+	    			
+		    			ActionsQuery aq = new ActionsQuery(plugin);
+		    			List<Action> results = aq.rollback( player, args );
+		    			if(!results.isEmpty()){
+		    				
+		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback preview...") );
+		    				
+		    				Preview pv = new Preview( plugin, player, results );
+		    				pv.preview();
+		    				
+		    			} else {
+		    				// @todo no results
+		    			}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+	    			
+	    			return true;
+	    			
 	    		}
 	    		
 	    		

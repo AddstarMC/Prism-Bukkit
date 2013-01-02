@@ -7,7 +7,7 @@ Permissions:
 - prism.lookup
 - prism.rollback
 - prism.restore
-
+- prism.preview
 
 - a:[action]
 - b:[block-id]:[sub-id]

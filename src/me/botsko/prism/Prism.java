@@ -2,9 +2,11 @@ package me.botsko.prism;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actions.ActionsQuery;
+import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
@@ -29,6 +31,7 @@ public class Prism extends JavaPlugin {
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
+	public HashMap<String,ArrayList<Undo>> playerActivePreviews = new HashMap<String,ArrayList<Undo>>();
 	
 	
     /**
