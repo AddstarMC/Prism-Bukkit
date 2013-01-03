@@ -10,9 +10,11 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.ChatColor;
@@ -263,6 +265,39 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		
 	    		
 	    		/**
+	    		 * Some utility commands for doing stuff
+	    		 */
+	    		{
+	    		
+	    			/**
+	    			 * Extinguish fire
+	    			 */
+	    			if( args[0].equalsIgnoreCase("ex") || args[0].equalsIgnoreCase("extinguish")){
+	    				int radius = 10;
+	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+	    					radius = Integer.parseInt(args[1]);
+	    				}
+	    				BlockUtils.extinguish(player.getLocation(), radius);
+	    				sender.sendMessage(plugin.playerHeaderMsg("Extinguished nearby fire."));
+	    				return true;
+	    			}
+	    			
+	    			/**
+	    			 * Drain water or lava
+	    			 */
+	    			if( args[0].equalsIgnoreCase("dr") || args[0].equalsIgnoreCase("drain")){
+	    				int radius = 10;
+	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+	    					radius = Integer.parseInt(args[1]);
+	    				}
+	    				BlockUtils.drain(player.getLocation(), radius);
+	    				sender.sendMessage(plugin.playerHeaderMsg("Drained nearby fluids."));
+	    				return true;
+	    			}
+	    		
+	    		}
+	    		
+	    		/**
 	    		 * Preview
 	    		 */
 	    		if( args[0].equalsIgnoreCase("preview") ){
@@ -406,6 +441,10 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		
 	    		// Help
     			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
+    				if(args.length == 2 && args[0].equalsIgnoreCase("params")){
+    					helpParams(player);
+    					return true;
+    				}
     				help(player);
     				return true;
     			}
@@ -434,6 +473,29 @@ public class PrismCommandExecutor implements CommandExecutor {
 	}
 	
 	
+	/**
+	 * Display param help
+	 * @param player
+	 */
+	private void helpParams(Player player) {
+		player.sendMessage(plugin.playerHeaderMsg("Prism parameters"));
+		String actions = "";
+		for(ActionType ac : ActionType.values()){
+			actions += ac.name().replace("_", "-").toLowerCase() + ", ";
+		}
+		actions = actions.substring(0, actions.length() - 2);
+		player.sendMessage( plugin.playerHelp("a:[action]", "Restrict a rollback or search to an action. Actions supported: " + actions));
+		player.sendMessage( plugin.playerHelp("r:[radius]", "Restrict a rollback or search to a radius around you.") );
+		player.sendMessage( plugin.playerHelp("w:[world]", "Restrict a rollback or search to a world.") );
+		player.sendMessage( plugin.playerHelp("t:[time]", "Restrict a rollback to a certain amount of time ago. In the format 0s0m0h0d0w") );
+		player.sendMessage( plugin.playerHelp("p:[player]", "Restrict a rollback to a certain player.") );
+		player.sendMessage( plugin.playerHelp("e:[entity]", "Restrict a rollback to a certain entity's name.") );
+		player.sendMessage( plugin.playerHelp("b:[block-id:sub-id]", "Restrict a rollback to a certain block.") );
+		
+		
+	}
+
+
 	/**
 	 * Displays help
 	 * @param player
