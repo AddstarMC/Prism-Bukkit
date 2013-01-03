@@ -399,7 +399,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				
 		    				player.sendMessage( plugin.playerHeaderMsg("Restoring changes...") );
 		    				
-		    				Restore rs = new Restore( plugin, player, results.getActionResults() );
+		    				Restore rs = new Restore( plugin, player, results.getActionResults(), parameters );
 		    				rs.restore();
 		    				
 		    			} else {

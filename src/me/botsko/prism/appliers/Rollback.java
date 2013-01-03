@@ -69,6 +69,9 @@ public class Rollback extends Applier {
 		// Rollback blocks
 		if(!results.isEmpty()){
 			
+			// Inform nearby players
+			plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a rollback nearby. Just so you know.");
+			
 			int rolled_back_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){

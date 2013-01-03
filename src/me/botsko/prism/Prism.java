@@ -279,6 +279,27 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
+	 * @param player
+	 * @param msg
+	 */
+	public void notifyNearby( Player player, int radius, String msg ) {
+		if(!getConfig().getBoolean("prism.appliers.notify-nearby.enabled")){
+			return;
+		}
+        for (Player p : player.getServer().getOnlinePlayers()) {
+        	if( !p.equals( player ) ){
+        		if(player.getWorld().equals(p.getWorld())){
+		        	if(player.getLocation().distance( p.getLocation() ) <= (radius+config.getInt("prism.appliers.notify-nearby.additional-radius"))){
+		                p.sendMessage(playerHeaderMsg(msg));
+		        	}
+        		}
+        	}
+        }
+    }
+	
+	
+	/**
+	 * 
 	 * @param message
 	 */
 	public void log(String message){

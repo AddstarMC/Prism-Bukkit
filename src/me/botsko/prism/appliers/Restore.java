@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 
@@ -30,6 +31,11 @@ public class Restore extends Applier {
 	 * 
 	 */
 	private List<Action> results;
+
+	/**
+	 * 
+	 */
+	private QueryParameters parameters;
 	
 	
 	/**
@@ -37,10 +43,11 @@ public class Restore extends Applier {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, Player player, List<Action> results ) {
+	public Restore( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
 		this.plugin = plugin;
 		this.player = player;
 		this.results = results;
+		this.parameters = parameters;
 	}
 	
 	
@@ -50,6 +57,9 @@ public class Restore extends Applier {
 	public void restore(){
 		
 		if(!results.isEmpty()){
+			
+			// Inform nearby players
+			plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
 			
 			int restored_count = 0, skipped_block_count = 0;
 			
