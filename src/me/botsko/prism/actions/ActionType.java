@@ -5,38 +5,38 @@ public enum ActionType {
 	/**
 	 * ACTION TYPES
 	 */
-	BLOCK_BREAK(false, true, true, "broke"),
-	BLOCK_BURN(false, true, true, "burned"),
-	BLOCK_FADE(false, true, true, "faded"),
-	BLOCK_FALL(false, true, true, "fell"),
-	BLOCK_FORM(false, true, true, "formed"),
-	BLOCK_PLACE(true, true, true, "placed"),
-	BLOCK_USE(false, false, false, "used"),
-	CONTAINER_ACCESS(false, false, false, "accessed"), // isBlockAction
-	CREEPER_EXPLODE(false, false, false, "blew up"),
-	ENDERMAN_PICKUP(false, true, true, "picked up"),
-	ENDERMAN_PLACE(true, true, true, "placed"),
-	ENTITY_BREAK(true, true, true, "broke"),
-	ENTITY_EXPLODE(false, true, true, "blew up"),
-	ENTITY_KILL(false, true, true, "killed"),
-	ENTITY_SHEAR(false, false, false, "sheared"),
-	FIREBALL(false, false, false, "ignited"),
-	FLINT_STEEL(false, false, false, "ignited"),
-	ITEM_DROP(false, false, false, "dropped"),
-	ITEM_INSERT(false, false, false, "inserted"),
-	ITEM_PICKUP(false, false, false, "picked up"),
-	ITEM_REMOVE(false, false, false, "removed"),
-	LAVA_BUCKET(false, false, false, "poured"),
-	LAVA_IGNITE(false, false, false, "ignited"),
-	LEAF_DECAY(false, false, false, "decayed"), // isBlockAction
-	LIGHTNING(false, false, false, "ignited"),
-	MUSHROOM_GROW(true, true, true, "grew"),
-	PLAYER_DEATH(false, false, false, "died"),
-	SHEEP_EAT(false, false, false, "ate"), // isEntity
-	SIGN_CHANGE(false, false, false, "wrote"),
-	TNT_EXPLODE(false, true, true, "blew up"),
-	TREE_GROW(false, true, true, "grew"),
-	WATER_BUCKET(false, false, false, "poured");
+	BLOCK_BREAK(false, true, true, "block", "broke"),
+	BLOCK_BURN(false, true, true, "block", "burned"),
+	BLOCK_FADE(false, true, true, "block", "faded"),
+	BLOCK_FALL(false, true, true, "block", "fell"),
+	BLOCK_FORM(false, true, true, "block", "formed"),
+	BLOCK_PLACE(true, true, true, "block", "placed"),
+	BLOCK_USE(false, false, false, "block", "used"),
+	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
+	CREEPER_EXPLODE(false, false, false, "block", "blew up"),
+	ENDERMAN_PICKUP(false, true, true, "block", "picked up"),
+	ENDERMAN_PLACE(true, true, true, "block", "placed"),
+	ENTITY_BREAK(true, true, true, "block", "broke"),
+	ENTITY_EXPLODE(false, true, true, "block", "blew up"),
+	ENTITY_KILL(false, true, true, "entity", "killed"),
+	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
+	FIREBALL(false, false, false, null, "ignited"),
+	FLINT_STEEL(false, false, false, null, "ignited"),
+	ITEM_DROP(false, false, false, "itemstack", "dropped"),
+	ITEM_INSERT(false, false, false, "itemstack", "inserted"),
+	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),
+	ITEM_REMOVE(false, false, false, "itemstack", "removed"),
+	LAVA_BUCKET(false, false, false, null, "poured"),
+	LAVA_IGNITE(false, false, false, null, "ignited"),
+	LEAF_DECAY(false, false, false, "block", "decayed"),
+	LIGHTNING(false, false, false, null, "ignited"),
+	MUSHROOM_GROW(true, true, true, "block", "grew"),
+	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
+	SHEEP_EAT(false, false, false, "entity", "ate"),
+	SIGN_CHANGE(false, false, false, "signchange", "wrote"),
+	TNT_EXPLODE(false, true, true, "block", "blew up"),
+	TREE_GROW(false, true, true, "block", "grew"),
+	WATER_BUCKET(false, false, false, null, "poured");
 	
 
 	
@@ -46,6 +46,7 @@ public enum ActionType {
 	private boolean doesCreateBlock;
 	private boolean canRollback;
 	private boolean canRestore;
+	private String handler;
 	private String niceDescription;
 	
 	
@@ -56,10 +57,11 @@ public enum ActionType {
 	 * @param canRestore
 	 * @param niceDescription
 	 */
-	private ActionType(boolean doesCreateBlock, boolean canRollback, boolean canRestore, String niceDescription){
+	private ActionType(boolean doesCreateBlock, boolean canRollback, boolean canRestore, String handler, String niceDescription){
 		this.doesCreateBlock = doesCreateBlock;
 		this.canRollback = canRollback;
 		this.canRestore = canRestore;
+		this.handler = handler;
 		this.niceDescription = niceDescription;
 	}
 
@@ -83,6 +85,14 @@ public enum ActionType {
 	/**
 	 * @return the niceDescription
 	 */
+	public String getHandler() {
+		return handler;
+	}
+	
+	
+	/**
+	 * @return the niceDescription
+	 */
 	public String getNiceDescription() {
 		return niceDescription;
 	}
@@ -93,7 +103,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isBlockAction(){
-		return (getActionType().contains("block") || getActionType().equals("leaf-decay") || getActionType().contains("container") || getActionType().equals("entity-break") );
+		return (getHandler().equals("block"));
 	}
 	
 	
@@ -102,7 +112,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isEntityAction(){
-		return (getActionType().contains("entity") || getActionType().equals("sheep-eat") );
+		return (getHandler().equals("entity"));
 	}
 	
 	
@@ -111,7 +121,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isItemStackAction(){
-		return getActionType().contains("item");
+		return (getHandler().equals("itemstack"));
 	}
 	
 	
@@ -120,7 +130,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isPlayerDeathAction(){
-		return getActionType().equals("player-death");
+		return (getHandler().equals("playerdeath"));
 	}
 	
 	
@@ -129,7 +139,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isSignAction(){
-		return getActionType().contains("sign");
+		return (getHandler().equals("signchange"));
 	}
 	
 	
