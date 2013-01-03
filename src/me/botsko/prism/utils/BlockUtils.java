@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.util.Vector;
 
 public class BlockUtils {
 	
@@ -59,13 +59,15 @@ public class BlockUtils {
 	 * @param radius The radius around the location you are extinguish
 	 */
 	public static void extinguish(Location loc, int radius){
-		Vector v;
-		for(int x = -radius; x <= radius; x++){
-			for(int y = -radius; y <= radius; y++){
-				for(int z = -radius; y <= radius; y++){
-					v = new Vector(x, y, z);
-					loc.add(v);
-					if(loc.getBlock().getType() == Material.FIRE){
+		int x1 = loc.getBlockX();
+		int y1 = loc.getBlockY();
+		int z1 = loc.getBlockZ();
+		World world = loc.getWorld();
+		for(int x = x1-radius; x <= x1+radius; x++){
+			for(int y = y1-radius; y <= y1+radius; y++){
+				for(int z = z1-radius; z <= z1+radius; z++){
+					loc = new Location(world, x, y, z);
+					if( loc.getBlock().getType() == Material.FIRE ){
 						loc.getBlock().setType(Material.AIR);
 					}
 				}
@@ -79,12 +81,14 @@ public class BlockUtils {
 	 * @param radius The radius around the location you are extinguish
 	 */
 	public static void drain(Location loc, int radius){
-		Vector v;
-		for(int x = -radius; x <= radius; x++){
-			for(int y = -radius; y <= radius; y++){
-				for(int z = -radius; y <= radius; y++){
-					v = new Vector(x, y, z);
-					loc.add(v);
+		int x1 = loc.getBlockX();
+		int y1 = loc.getBlockY();
+		int z1 = loc.getBlockZ();
+		World world = loc.getWorld();
+		for(int x = x1-radius; x <= x1+radius; x++){
+			for(int y = y1-radius; y <= y1+radius; y++){
+				for(int z = z1-radius; z <= z1+radius; z++){
+					loc = new Location(world, x, y, z);
 					if( loc.getBlock().getType() == Material.LAVA || loc.getBlock().getType() == Material.WATER ){
 						loc.getBlock().setType(Material.AIR);
 					}

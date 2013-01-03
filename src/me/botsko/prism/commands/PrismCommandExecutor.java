@@ -272,11 +272,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			 * Extinguish fire
 	    			 */
 	    			if( args[0].equalsIgnoreCase("ex") || args[0].equalsIgnoreCase("extinguish")){
-	    				int radius = 20;
+	    				int radius = 10;
 	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
 	    					radius = Integer.parseInt(args[1]);
 	    				}
 	    				BlockUtils.extinguish(player.getLocation(), radius);
+	    				sender.sendMessage(plugin.playerHeaderMsg("Extinguished nearby fire."));
 	    				return true;
 	    			}
 	    			
@@ -284,11 +285,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			 * Drain water or lava
 	    			 */
 	    			if( args[0].equalsIgnoreCase("dr") || args[0].equalsIgnoreCase("drain")){
-	    				int radius = 20;
+	    				int radius = 10;
 	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
 	    					radius = Integer.parseInt(args[1]);
 	    				}
 	    				BlockUtils.drain(player.getLocation(), radius);
+	    				sender.sendMessage(plugin.playerHeaderMsg("Drained nearby fluids."));
 	    				return true;
 	    			}
 	    		
