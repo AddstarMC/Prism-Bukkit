@@ -46,21 +46,8 @@ public class Executor implements CommandExecutor {
 		
 		// If no subcommand given
 		if (args.length == 0) {
-			plugin.debug("No subcommand found.");
-			if (player == null) {
-				return sendVersion(sender);
-			} else {
-				
-				for (SubCommand sub: availableCommands(sender, player)) {
-//					String usage = "";
-//					if (sub.getUsage() != null) {
-//						usage = ChatColor.LIGHT_PURPLE.toString() + " " + sub.getUsage();
-//					}
-					// ChatColor.GREEN, commandLabel, sub.getName(), usage, ChatColor.BLUE, sub.getDescription()
-					player.sendMessage( plugin.playerHelp(commandLabel, sub.getDescription()));
-				}
-				return false;
-			}
+			sender.sendMessage( plugin.playerError("Missing command. Check /prism ? for help.") );
+			return true;
 		}
 		
 		// Find subcommand
@@ -69,7 +56,8 @@ public class Executor implements CommandExecutor {
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
 			plugin.debug("Subcommand not found: " + subcommandName);
-			return false;
+			sender.sendMessage( plugin.playerError("Invalid subcommand. Check /prism ? for help.") );
+			return true;
 		}
 		// Ensure they have permission
 		else if ( !sender.hasPermission( "prism.*" ) || !sender.hasPermission( sub.getPermNode() ) ) {
@@ -79,24 +67,16 @@ public class Executor implements CommandExecutor {
 		// Ensure min number of arguments
 		else if ((args.length - 1 ) < sub.getMinArgs()) {
 			plugin.debug("Not enough arguments for subcommand: " + subcommandName);
-			// @todo return usage
-			return false;
+			sender.sendMessage( plugin.playerError("Missing arguments. Check /prism ? for help.") );
+			return true;
 		}
+		
+		// Pass along call to handler
 		CallInfo call = new CallInfo(sender, player, args);
-
 		sub.getHandler().handle(call);
 	
 		return true;
-	}
-	
-	/**
-	 * 
-	 * @param sender
-	 * @return
-	 */
-	protected boolean sendVersion(CommandSender sender) {
-//		sender.sendMessage(String.format("%s version %s"));
-		return true;
+		
 	}
 	
 	

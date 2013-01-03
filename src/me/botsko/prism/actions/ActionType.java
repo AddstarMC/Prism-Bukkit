@@ -103,7 +103,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isBlockAction(){
-		return (getHandler().equals("block"));
+		return (getHandler() != null && getHandler().equals("block"));
 	}
 	
 	
@@ -112,7 +112,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isEntityAction(){
-		return (getHandler().equals("entity"));
+		return (getHandler() != null && getHandler().equals("entity"));
 	}
 	
 	
@@ -121,7 +121,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isItemStackAction(){
-		return (getHandler().equals("itemstack"));
+		return (getHandler() != null && getHandler().equals("itemstack"));
 	}
 	
 	
@@ -130,7 +130,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isPlayerDeathAction(){
-		return (getHandler().equals("playerdeath"));
+		return (getHandler() != null && getHandler().equals("playerdeath"));
 	}
 	
 	
@@ -139,7 +139,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isSignAction(){
-		return (getHandler().equals("signchange"));
+		return (getHandler() != null && getHandler().equals("signchange"));
 	}
 	
 	
