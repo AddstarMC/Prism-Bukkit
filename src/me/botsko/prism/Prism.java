@@ -1,6 +1,8 @@
 package me.botsko.prism;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +62,9 @@ public class Prism extends JavaPlugin {
 		// Load configuration, or install if new
 		loadConfig();
 		
+		// Setup databases
+		setupDatabase();
+		
 		// Assign event listeners
 		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
@@ -111,6 +116,36 @@ public class Prism extends JavaPlugin {
 				config.getString("prism.mysql.port")
 		);
 		conn = mysql.getConn();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void setupDatabase(){
+
+		try{
+	        dbc();
+	        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
+	        		"`id` int(11) unsigned NOT NULL auto_increment," +
+	        		"`action_time` datetime NOT NULL," +
+	        		"`action_type` varchar(25) NOT NULL," +
+	        		"`player` varchar(16) NOT NULL," +
+	        		"`world` varchar(255) NOT NULL," +
+	        		"`x` int(11) NOT NULL," +
+	        		"`y` int(11) NOT NULL," +
+	        		"`z` int(11) NOT NULL," +
+	        		"`data` varchar(255) NOT NULL," +
+	        		"PRIMARY KEY  (`id`)" +
+	        		") ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
+	        
+            Statement st = conn.createStatement();
+            st.executeUpdate(query);
+            conn.close();
+	    }
+	    catch (SQLException e){
+	        e.printStackTrace();
+	    }	
 	}
 	
 	
