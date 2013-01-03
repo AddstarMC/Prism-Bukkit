@@ -166,7 +166,7 @@ public class Preview extends Applier {
 			if(!results.getActionResults().isEmpty()){
 				
 				player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
-				Rollback rb = new Rollback( plugin, player, results.getActionResults() );
+				Rollback rb = new Rollback( plugin, player, results.getActionResults(), ps.getArgs() );
 				rb.rollback();
 				
 			} else {

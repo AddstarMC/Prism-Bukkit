@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -54,11 +55,24 @@ public class BlockUtils {
 	
 	
 	/**
-	 * Extinguish all the fire in a radius
-	 * @param loc The location you want to extinguish around
-	 * @param radius The radius around the location you are extinguish
+	 * 
+	 * @param mat
+	 * @param loc
+	 * @param radius
 	 */
-	public static void extinguish(Location loc, int radius){
+	public static void removeMaterialFromRadius(Material mat, Location loc, int radius){
+		Material[] materials = { mat };
+		removeMaterialsFromRadius(materials, loc, radius);
+	}
+	
+	
+	/**
+	 * 
+	 * @param mat
+	 * @param loc
+	 * @param radius
+	 */
+	public static void removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
 		int x1 = loc.getBlockX();
 		int y1 = loc.getBlockY();
 		int z1 = loc.getBlockZ();
@@ -67,7 +81,9 @@ public class BlockUtils {
 			for(int y = y1-radius; y <= y1+radius; y++){
 				for(int z = z1-radius; z <= z1+radius; z++){
 					loc = new Location(world, x, y, z);
-					if( loc.getBlock().getType() == Material.FIRE ){
+					Block b = loc.getBlock();
+					if(b.getType().equals(Material.AIR)) continue;
+					if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
 						loc.getBlock().setType(Material.AIR);
 					}
 				}
@@ -81,20 +97,39 @@ public class BlockUtils {
 	 * @param loc The location you want to extinguish around
 	 * @param radius The radius around the location you are extinguish
 	 */
+	public static void extinguish(Location loc, int radius){
+		removeMaterialFromRadius(Material.FIRE, loc, radius);
+	}
+	
+	
+	/**
+	 * Drains
+	 * @param loc The location you want to extinguish around
+	 * @param radius The radius around the location you are extinguish
+	 */
 	public static void drain(Location loc, int radius){
-		int x1 = loc.getBlockX();
-		int y1 = loc.getBlockY();
-		int z1 = loc.getBlockZ();
-		World world = loc.getWorld();
-		for(int x = x1-radius; x <= x1+radius; x++){
-			for(int y = y1-radius; y <= y1+radius; y++){
-				for(int z = z1-radius; z <= z1+radius; z++){
-					loc = new Location(world, x, y, z);
-					if( loc.getBlock().getType() == Material.LAVA || loc.getBlock().getType() == Material.WATER ){
-						loc.getBlock().setType(Material.AIR);
-					}
-				}
-			}
-		}
+		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA, Material.WATER };
+		removeMaterialsFromRadius(materials, loc, radius);
+	}
+	
+	
+	/**
+	 * Drains lava blocks (radius) around player's loc.
+	 * @param loc
+	 * @param radius
+	 */
+	public static void drainlava(Location loc, int radius){
+		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA };
+		removeMaterialsFromRadius(materials, loc, radius);
+	}
+	
+	
+	/**
+	 * Drains water blocks (radius) around player's loc.
+	 * @param loc
+	 * @param radius
+	 */
+	public static void drainwater(Location loc, int radius){
+		removeMaterialFromRadius(Material.WATER, loc, radius);
 	}
 }

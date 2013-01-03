@@ -45,13 +45,15 @@ public class PrismConfig {
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
-		config.addDefault("prism.default-radius", 20);
+		config.addDefault("prism.default-radius", 10);
 		config.addDefault("prism.max-radius-unless-overridden", 100);
 		
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
 		config.addDefault("prism.clear-records-after", "8w");
+		
+		config.addDefault("prism.appliers.remove-fire-on-rollback", true);
 		
 		config.addDefault("prism.tracking.block-break", false);
 		config.addDefault("prism.tracking.block-burn", true);

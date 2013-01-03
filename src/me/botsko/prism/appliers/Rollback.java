@@ -10,9 +10,11 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.utils.BlockUtils;
 
 public class Rollback extends Applier {
 
@@ -32,16 +34,22 @@ public class Rollback extends Applier {
 	 */
 	private List<Action> results;
 	
+	/**
+	 * 
+	 */
+	private QueryParameters parameters;
+	
 	
 	/**
 	 * 
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, Player player, List<Action> results ) {
+	public Rollback( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
 		this.plugin = plugin;
 		this.player = player;
 		this.results = results;
+		this.parameters = parameters;
 	}
 	
 	
@@ -49,6 +57,12 @@ public class Rollback extends Applier {
 	 * 
 	 */
 	public void rollback(){
+		
+		// Remove any fire at this location
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback")){
+			BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
+		}
+		
 		
 		if(!results.isEmpty()){
 			

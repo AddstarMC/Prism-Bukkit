@@ -269,7 +269,7 @@ public class PrismCommandExecutor implements CommandExecutor {
     			 */
     			if( args[0].equalsIgnoreCase("ex") || args[0].equalsIgnoreCase("extinguish")){
     				int radius = plugin.getConfig().getInt("default-radius");
-    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+    				if(args.length == 2 && TypeUtils.isNumeric(args[1])){
     					radius = Integer.parseInt(args[1]);
     				}
     				BlockUtils.extinguish(player.getLocation(), radius);
@@ -282,8 +282,8 @@ public class PrismCommandExecutor implements CommandExecutor {
     			 * Drain water or lava
     			 */
     			if( args[0].equalsIgnoreCase("dr") || args[0].equalsIgnoreCase("drain")){
-    				int radius = plugin.getConfig().getInt("default-radius");
-    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+    				int radius = plugin.getConfig().getInt("prism.default-radius");
+    				if(args.length == 2 && TypeUtils.isNumeric(args[1])){
     					radius = Integer.parseInt(args[1]);
     				}
     				BlockUtils.drain(player.getLocation(), radius);
@@ -367,7 +367,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    			if(!results.getActionResults().isEmpty()){
 		    				
 		    				player.sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
-		    				Rollback rb = new Rollback( plugin, player, results.getActionResults() );
+		    				Rollback rb = new Rollback( plugin, player, results.getActionResults(), parameters );
 		    				rb.rollback();
 		    				
 		    			} else {
