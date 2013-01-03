@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 
 public class BlockUtils {
 	
@@ -95,5 +96,13 @@ public class BlockUtils {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * If a player is stuck underneath blocks after a rollback, get them out.
+	 * @param p The player
+	 */
+	public static void unSuffocate(Player p){
+		
 	}
 }

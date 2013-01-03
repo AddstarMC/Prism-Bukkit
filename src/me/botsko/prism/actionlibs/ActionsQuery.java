@@ -41,11 +41,26 @@ public class ActionsQuery {
 	}
 	
 	
+	public QueryResult lookup(Player player, QueryParameters parameters){
+		// Cache it if we're doing a lookup. Otherwise we don't
+		// need a cache.
+		
+		QueryResult result = lookup(parameters);
+		
+		if(parameters.getLookup_type().equals("lookup")){
+			if(plugin.cachedQueries.containsKey(player.getName())){
+				plugin.cachedQueries.remove(player.getName());
+			}
+			plugin.cachedQueries.put(player.getName(), result);
+		}
+		return result;
+	}
+	
 	/**
 	 * 
 	 * @return
 	 */
-	public QueryResult lookup( Player player, QueryParameters parameters ){
+	public QueryResult lookup(QueryParameters parameters ){
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
@@ -121,15 +136,6 @@ public class ActionsQuery {
 		
 		// Build result object
 		QueryResult res = new QueryResult( actions, parameters );
-		
-		// Cache it if we're doing a lookup. Otherwise we don't
-		// need a cache.
-		if(parameters.getLookup_type().equals("lookup")){
-			if(plugin.cachedQueries.containsKey(player.getName())){
-				plugin.cachedQueries.remove(player.getName());
-			}
-			plugin.cachedQueries.put(player.getName(), res);
-		}
 		
 		// Return it
 		return res;

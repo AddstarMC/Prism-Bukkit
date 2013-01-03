@@ -469,7 +469,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 				}
 			}
 		}
-		return false;
+		help(sender);
+		return true;
 	}
 	
 	
@@ -477,7 +478,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	 * Display param help
 	 * @param player
 	 */
-	private void helpParams(Player player) {
+	private void helpParams(CommandSender player) {
 		player.sendMessage(plugin.playerHeaderMsg("Prism parameters"));
 		String actions = "";
 		for(ActionType ac : ActionType.values()){
@@ -500,7 +501,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	 * Displays help
 	 * @param player
 	 */
-	protected void help( Player player ){
+	protected void help( CommandSender player ){
 		
 		player.sendMessage( plugin.playerHeaderMsg( "How to use Prism" ) );
 		
