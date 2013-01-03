@@ -46,6 +46,7 @@ public class Executor implements CommandExecutor {
 		
 		// If no subcommand given
 		if (args.length == 0) {
+			plugin.debug("No subcommand found.");
 			if (player == null) {
 				return sendVersion(sender);
 			} else {
@@ -64,9 +65,10 @@ public class Executor implements CommandExecutor {
 		
 		// Find subcommand
 		String subcommandName = args[0].toLowerCase();
+		plugin.debug("Seeking subcommand: " + subcommandName);
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
-			// @todo return usage
+			plugin.debug("Subcommand not found: " + subcommandName);
 			return false;
 		}
 		// Ensure they have permission
@@ -76,6 +78,7 @@ public class Executor implements CommandExecutor {
 		}
 		// Ensure min number of arguments
 		else if ((args.length - 1 ) < sub.getMinArgs()) {
+			plugin.debug("Not enough arguments for subcommand: " + subcommandName);
 			// @todo return usage
 			return false;
 		}
@@ -83,7 +86,7 @@ public class Executor implements CommandExecutor {
 
 		sub.getHandler().handle(call);
 	
-		return false;
+		return true;
 	}
 	
 	/**

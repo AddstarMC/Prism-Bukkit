@@ -38,7 +38,6 @@ public class PrismCommands extends Executor {
 		 * /prism near 
 		 */
 		addSub("near", "prism.lookup")
-		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Search for actions in a small radius around you.")
 		.setHandler(new NearCommand(plugin));
@@ -47,7 +46,7 @@ public class PrismCommands extends Executor {
 		 * /prism page [page] 
 		 */
 		addSub("page", "prism.lookup")
-		.setMinArgs(2)
+		.setMinArgs(1)
 		.setUsage("[page number]")
 		.setDescription("Displays [page] of the most recent search results.")
 		.setHandler(new PageCommand(plugin));
@@ -64,7 +63,7 @@ public class PrismCommands extends Executor {
 		 * /prism teleport [id] 
 		 */
 		addSub("tp", "prism.tp")
-		.setMinArgs(2)
+		.setMinArgs(1)
 		.setUsage("[record id]")
 		.setDescription("Teleport to recordd [id].")
 		.setHandler(new TeleportCommand(plugin));
@@ -73,7 +72,6 @@ public class PrismCommands extends Executor {
 		 * /prism ext
 		 */
 		addSub("ex", "prism.extinguish")
-		.setMinArgs(1)
 		.setUsage("(radius)")
 		.setDescription("Puts out any fire within (radius)")
 		.setHandler(new ExtinguishCommand(plugin));
@@ -82,7 +80,6 @@ public class PrismCommands extends Executor {
 		 * /prism drain
 		 */
 		addSub("drain", "prism.drain")
-		.setMinArgs(1)
 		.setUsage("(radius)")
 		.setDescription("Drains lava and water within (radius)")
 		.setHandler(new ExtinguishCommand(plugin));
@@ -91,7 +88,7 @@ public class PrismCommands extends Executor {
 		 * /prism preview (params)
 		 */
 		addSub("preview", "prism.preview")
-		.setMinArgs(2)
+		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Preview a rollback for (params).")
 		.setHandler(new PreviewCommand(plugin));
@@ -100,7 +97,7 @@ public class PrismCommands extends Executor {
 		 * /prism rollback (params)
 		 */
 		addSub("rollback", "prism.rollback")
-		.setMinArgs(2)
+		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Rollback actions for (params).")
 		.setHandler(new RollbackCommand(plugin));
@@ -109,7 +106,7 @@ public class PrismCommands extends Executor {
 		 * /prism restore (params)
 		 */
 		addSub("restore", "prism.restore")
-		.setMinArgs(2)
+		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Re-applies actions for (params).")
 		.setHandler(new RestoreCommand(plugin));
@@ -117,8 +114,7 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism delete (time)
 		 */
-		addSub("restore", "prism.delete")
-		.setMinArgs(2)
+		addSub("delete", "prism.delete")
 		.setUsage("(timeframe)")
 		.setDescription("Deletes all records from the database before (timeframe)")
 		.setHandler(new RestoreCommand(plugin));

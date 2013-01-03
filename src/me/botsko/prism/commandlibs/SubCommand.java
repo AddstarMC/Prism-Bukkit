@@ -17,6 +17,7 @@ public final class SubCommand {
 	 */
 	public SubCommand(String name, String permission) {
 		this.name = name;
+		this.perm_node = permission;
 	}
 
 	
