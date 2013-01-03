@@ -14,6 +14,7 @@ import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.actiontypes.BlockBreakType;
 import me.botsko.prism.actiontypes.BlockBurnType;
 import me.botsko.prism.actiontypes.BlockFadeType;
+import me.botsko.prism.actiontypes.BlockFallType;
 import me.botsko.prism.actiontypes.BlockFormType;
 import me.botsko.prism.actiontypes.BlockPlaceType;
 import me.botsko.prism.actiontypes.ContainerAccessType;
@@ -160,6 +161,7 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("block-break", new BlockBreakType());
 		actionTypes.put("block-burn", new BlockBurnType());
 		actionTypes.put("block-fade", new BlockFadeType());
+		actionTypes.put("block-fall", new BlockFallType());
 		actionTypes.put("block-form", new BlockFormType());
 		actionTypes.put("block-place", new BlockPlaceType());
 		actionTypes.put("container-access", new ContainerAccessType());
