@@ -75,6 +75,7 @@ public class BlockUtils {
 		}
 	}
 	
+	
 	/**
 	 * Extinguish all the fire in a radius
 	 * @param loc The location you want to extinguish around
