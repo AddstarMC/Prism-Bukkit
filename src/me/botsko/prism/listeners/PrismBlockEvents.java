@@ -41,7 +41,6 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
 		Player player = event.getPlayer();
-		// Pull the proper action type class
 		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-break"), event.getBlock(), player.getName()) );
 	}
 	

@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.BlockAction;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -41,21 +42,47 @@ public class PrismPlayerInteractEvent implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		
 		Player player = event.getPlayer();
-		Block block = null;
+		Block block = event.getClickedBlock();
 		
+		// Are they inspecting?
 		if(plugin.playersWithActiveTools.contains(player.getName())){
 		
 			// Player left click on block, run a history search
 			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-				block = event.getClickedBlock();
+				// Leave as-is
 			}
 			// Player right click on block, get last action
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				block = event.getClickedBlock().getRelative(event.getBlockFace());
+				block = block.getRelative(event.getBlockFace());
 			}
 			if(block != null){
 				showBlockHistory(player, block, block.getLocation());
 				event.setCancelled(true);
+			}
+		} else {
+			
+			// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
+			if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
+
+				switch (block.getType()){
+					case FURNACE:
+					case DISPENSER:
+					case CHEST:
+					case ENDER_CHEST:
+					case ANVIL:
+						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("container-access"), block, player.getName()) );
+						break;
+					case WOODEN_DOOR:
+					case TRAP_DOOR:
+					case FENCE_GATE:
+					case LEVER:
+					case STONE_BUTTON:
+					case WOOD_BUTTON:
+						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("item-use"), block, player.getName()) );
+						break;
+					default:
+						break;
+				}
 			}
 		}
 	}
