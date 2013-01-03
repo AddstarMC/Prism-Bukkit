@@ -14,6 +14,7 @@ public class QueryParameters {
 	protected Vector player_location;
 	
 	protected int radius;
+	protected boolean allow_no_radius = false;
 	protected String player;
 	protected String world;
 	protected String action_type;
@@ -105,6 +106,22 @@ public class QueryParameters {
 	}
 	
 	
+	/**
+	 * @return the allow_no_radius
+	 */
+	public boolean getAllow_no_radius() {
+		return allow_no_radius;
+	}
+
+
+	/**
+	 * @param allow_no_radius the allow_no_radius to set
+	 */
+	public void setAllow_no_radius(boolean allow_no_radius) {
+		this.allow_no_radius = allow_no_radius;
+	}
+
+
 	/**
 	 * @return the player
 	 */

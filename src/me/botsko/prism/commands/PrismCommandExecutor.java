@@ -79,7 +79,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.lookup") ){
 	    				
 	    				// Process and validate all of the arguments
-	    				QueryParameters parameters = preprocessArguments( player, args );
+	    				QueryParameters parameters = preprocessArguments( player, args, "lookup" );
 	    				if(parameters == null){
 	    					return true;
 	    				}
@@ -91,7 +91,9 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 		    				for(Action a : results.getPaginatedActionResults()){
 		    					ActionMessage am = new ActionMessage(a);
-//		    					am.hideId(true); // @todo set this if doing a global search
+		    					if(parameters.getAllow_no_radius()){
+		    						am.hideId(false);
+		    					}
 		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 		    				}
 		    			} else {
@@ -126,7 +128,9 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 		    				for(Action a : results.getPaginatedActionResults()){
 		    					ActionMessage am = new ActionMessage(a);
-//		    					am.hideId(true); // @todo set this if doing a global search
+		    					if(parameters.getAllow_no_radius()){
+		    						am.hideId(false);
+		    					}
 		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 		    				}
 		    			} else {
@@ -169,6 +173,9 @@ public class PrismCommandExecutor implements CommandExecutor {
     							player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
     		    				for(Action a : results.getPaginatedActionResults()){
     		    					ActionMessage am = new ActionMessage(a);
+    		    					if(results.getParameters().getAllow_no_radius()){
+    		    						am.hideId(false);
+    		    					}
     		    					player.sendMessage( plugin.playerMsg( am.getMessage() ) );
     		    				}
     		    			} else {
@@ -238,11 +245,10 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    					return true;
 	    				}
 	    				
-	    				QueryParameters parameters = preprocessArguments( player, args );
+	    				QueryParameters parameters = preprocessArguments( player, args, "rollback" );
 	    				if(parameters == null){
 	    					return true;
 	    				}
-	    				parameters.setLookup_type("rollback");
 	    			
 	    				// Perform preview
 		    			ActionsQuery aq = new ActionsQuery(plugin);
@@ -272,11 +278,10 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		if( args[0].equalsIgnoreCase("rollback") ){
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.rollback") ){
 	    				
-	    				QueryParameters parameters = preprocessArguments( player, args );
+	    				QueryParameters parameters = preprocessArguments( player, args, "rollback" );
 	    				if(parameters == null){
 	    					return true;
 	    				}
-	    				parameters.setLookup_type("rollback");
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			QueryResult results = aq.lookup( player, parameters );
@@ -304,11 +309,10 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		if( args[0].equalsIgnoreCase("restore") ){
 	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.restore") ){
 	    				
-	    				QueryParameters parameters = preprocessArguments( player, args );
+	    				QueryParameters parameters = preprocessArguments( player, args, "rollback" );
 	    				if(parameters == null){
 	    					return true;
 	    				}
-	    				parameters.setLookup_type("rollback");
 	    			
 		    			ActionsQuery aq = new ActionsQuery(plugin);
 		    			QueryResult results = aq.lookup( player, parameters );
@@ -388,10 +392,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 	 * 
 	 * @param args
 	 */
-	protected QueryParameters preprocessArguments( Player player, String[] args ){
+	protected QueryParameters preprocessArguments( Player player, String[] args, String lookup_type ){
 		
 		QueryParameters parameters = new QueryParameters();
 		HashMap<String,String> foundArgs = new HashMap<String,String>();
+		
+		parameters.setLookup_type(lookup_type);
 		
 		if(args != null){
 		
@@ -444,10 +450,20 @@ public class PrismCommandExecutor implements CommandExecutor {
 				// Radius
 				if(arg_type.equals("r")){
 					if(TypeUtils.isNumeric(val)){
-						parameters.setRadius( Integer.parseInt(val) );
+						int radius = Integer.parseInt(val);
+						if(radius > plugin.getConfig().getInt("prism.max-radius-unless-overridden")){
+							radius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
+							player.sendMessage( plugin.playerError("Forcing radius to " + radius + " as allowed by config.") );
+						}
+						parameters.setRadius( radius );
 					} else {
-						player.sendMessage( plugin.playerError("Radius must be a number or 'global'. Use /prism ? for a assitance.") );
-						return null;
+						// User has asked for a global radiu
+						if(val.equals("global") && parameters.getLookup_type().equals("lookup")){
+							parameters.setAllow_no_radius(true);
+						} else {
+							player.sendMessage( plugin.playerError("Radius must be a number or 'global'. Use /prism ? for a assitance.") );
+							return null;
+						}
 					}
 				}
 				
@@ -513,14 +529,12 @@ public class PrismCommandExecutor implements CommandExecutor {
 			 */
 			// Radius default
 			if(!foundArgs.containsKey("r")){
-				plugin.debug("Setting default radius to " + plugin.getConfig().getString("default-radius"));
-				parameters.setRadius( Integer.parseInt( plugin.getConfig().getString("prism.default-radius") ) );
-				
-				// Add the default radius to the foundArgs so even a parameter-less query will
-				// return something.
-				// @todo this should only happen on lookup
-//				foundArgs.put("r", plugin.getConfig().getString("prism.default-radius"));
-				
+				if(parameters.getAllow_no_radius()){
+					// We'll allow no radius.
+				} else {
+					plugin.debug("Setting default radius to " + plugin.getConfig().getInt("default-radius"));
+					parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
+				}
 			}
 			// World default
 			if(!foundArgs.containsKey("w")){

@@ -35,7 +35,8 @@ public class PrismConfig {
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.language", "en-us");
 		
-		config.addDefault("prism.default-radius", "20");
+		config.addDefault("prism.default-radius", 20);
+		config.addDefault("prism.max-radius-unless-overridden", 100);
 		
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");

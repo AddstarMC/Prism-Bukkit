@@ -15,6 +15,11 @@ public class QueryResult {
 	/**
 	 * 
 	 */
+	protected QueryParameters parameters;
+	
+	/**
+	 * 
+	 */
 	protected long queryTime;
 	
 	/**
@@ -42,9 +47,10 @@ public class QueryResult {
 	 * 
 	 * @param actions
 	 */
-	public QueryResult( List<Action> actions ){
+	public QueryResult( List<Action> actions, QueryParameters parameters ){
 		
 		this.actionResults = actions;
+		this.parameters = parameters;
 
 		java.util.Date date = new java.util.Date();
 		this.queryTime = date.getTime();
@@ -79,6 +85,14 @@ public class QueryResult {
 		return actionResults.subList(offset, limit);
 	}
 	
+
+	/**
+	 * @return the parameters
+	 */
+	public QueryParameters getParameters() {
+		return parameters;
+	}
+
 
 	/**
 	 * @return the total_results

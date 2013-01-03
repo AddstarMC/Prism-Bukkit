@@ -114,7 +114,7 @@ public class ActionsQuery {
 		}
 		
 		// Build result object
-		QueryResult res = new QueryResult( actions );
+		QueryResult res = new QueryResult( actions, parameters );
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
