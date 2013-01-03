@@ -16,7 +16,7 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	public Prism plugin;
 	
 	/**
 	 * 

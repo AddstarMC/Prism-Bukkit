@@ -12,7 +12,7 @@ import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.commands.PrismCommandExecutor;
+import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
@@ -73,7 +73,7 @@ public class Prism extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
 		
 		// Add commands
-		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
+		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
 		
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
