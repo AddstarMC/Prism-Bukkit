@@ -52,6 +52,38 @@ public class PrismConfig {
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
 		config.addDefault("prism.clear-records-after", "8w");
+		
+		config.addDefault("prism.tracking.block-break", false);
+		config.addDefault("prism.tracking.block-burn", true);
+		config.addDefault("prism.tracking.block-fade", true);
+		config.addDefault("prism.tracking.block-fall", true);
+		config.addDefault("prism.tracking.block-form", true);
+		config.addDefault("prism.tracking.block-place", true);
+		config.addDefault("prism.tracking.container-access", true);
+		config.addDefault("prism.tracking.creeper-explode", true);
+		config.addDefault("prism.tracking.enderman-pickup", true);
+		config.addDefault("prism.tracking.enderman-place", true);
+		config.addDefault("prism.tracking.entity-break", true);
+		config.addDefault("prism.tracking.entity-explode", true);
+		config.addDefault("prism.tracking.entity-kill", true);
+		config.addDefault("prism.tracking.entity-shear", true);
+		config.addDefault("prism.tracking.fireball", true);
+		config.addDefault("prism.tracking.flint-steel", true);
+		config.addDefault("prism.tracking.item-drop", true);
+		config.addDefault("prism.tracking.item-insert", true);
+		config.addDefault("prism.tracking.item-pickup", true);
+		config.addDefault("prism.tracking.item-remove", true);
+		config.addDefault("prism.tracking.lava-bucket", true);
+		config.addDefault("prism.tracking.lava-ignite", true);
+		config.addDefault("prism.tracking.leaf-decay", true);
+		config.addDefault("prism.tracking.lightning", true);
+		config.addDefault("prism.tracking.mushroom-grow", true);
+		config.addDefault("prism.tracking.player-death", true);
+		config.addDefault("prism.tracking.sheep-eat", true);
+		config.addDefault("prism.tracking.sign-change", true);
+		config.addDefault("prism.tracking.tnt-explode", true);
+		config.addDefault("prism.tracking.tree-grow", true);
+		config.addDefault("prism.tracking.water-bucket", true);
 
 		// Copy defaults
 		config.options().copyDefaults(true);

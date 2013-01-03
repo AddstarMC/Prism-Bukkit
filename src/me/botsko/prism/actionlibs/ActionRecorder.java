@@ -73,6 +73,13 @@ public class ActionRecorder {
 			return false;
 		}
 		
+		
+		// Should we ignore this action type?
+		String action_type = a.getType().getActionType();
+		if(!plugin.getConfig().getBoolean( "prism.tracking." + action_type )){
+			return false;
+		}
+		
 		return true;
 	}
 	
