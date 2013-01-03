@@ -358,7 +358,7 @@ public class ActionsQuery {
 		
 		
 		if(dateFrom != null){
-			where += " AND action_date >= " + dateFrom;
+			where += " AND action_time >= '" + dateFrom + "'";
 		}
 		
 		return where;
