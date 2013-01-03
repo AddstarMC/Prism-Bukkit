@@ -16,7 +16,9 @@ import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -214,6 +216,53 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		
 	    		
 	    		/**
+	    		 * Teleport
+	    		 */
+	    		if( args[0].equalsIgnoreCase("tp") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.tp") ){
+	    				if( args.length == 2 ){
+	    					if(TypeUtils.isNumeric(args[1])){
+	    						
+	    						int record_id = Integer.parseInt(args[1]);
+	    						if(record_id > 0){
+	    							
+	    							// Build params
+	    							QueryParameters params = new QueryParameters();
+	    							params.setWorld( player.getWorld().getName() );
+	    							params.setId(record_id);
+
+	    							// Query
+	    							ActionsQuery aq = new ActionsQuery(plugin);
+	    							QueryResult results = aq.lookup( player, params );
+	    							if(!results.getActionResults().isEmpty()){
+	    								for(me.botsko.prism.actions.Action a : results.getActionResults()){
+	    									
+	    									World world = plugin.getServer().getWorld( a.getWorld_name() );
+	    									if(world != null){
+		    									Location loc = new Location(world,a.getX(),a.getY(),a.getZ());
+//		    									if(Teleport.isSafe(world, loc)){
+		    										player.teleport(loc);
+//		    									} else {
+//		    										player.sendMessage( plugin.playerError( "Doesn't appear to be safe to teleport there." ) );
+//		    									}
+	    									} else {
+	    										player.sendMessage( plugin.playerError( "Action record occurred in world we can't find anymore." ) );
+	    									}
+	    								}
+	    							} else {
+	    								player.sendMessage( plugin.playerError( "No records exists with this ID." ) );
+	    							}
+	    						}
+	    					}
+	    				}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+		    		return true;
+	    		}
+	    		
+	    		
+	    		/**
 	    		 * Preview
 	    		 */
 	    		if( args[0].equalsIgnoreCase("preview") ){
@@ -221,7 +270,7 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    				
 	    				
 	    				// Cancel or Apply
-	    				if( args.length == 2){
+	    				if( args.length == 2 ){
 	    					
 	    					// Apply
 	    					if(args[1].equalsIgnoreCase("apply") ){

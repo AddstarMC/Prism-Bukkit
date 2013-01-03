@@ -165,76 +165,94 @@ public class ActionsQuery {
 //		}
 		
 		// World
-		query += " WHERE world = '"+parameters.getWorld()+"'";
+		query += " WHERE 1=1";
+		
+		/**
+		 * ID
+		 * 
+		 * If we're querying for an ID, none of the other arguments matter.
+		 */
+		int id = parameters.getId();
+		if(id > 0){
+			query += " AND id = " + id;
+		} else {
+			
+			/**
+			 * World
+			 */
+			if(!parameters.getAllow_no_radius()){
+				query += " AND world = '"+parameters.getWorld()+"'";
+			}
 
-		/**
-		 * Actions
-		 */
-		String action_type = parameters.getAction_type();
-		if(action_type != null){
-			query += buildOrQuery("action_type", action_type.split(","));
-		}
-		
-		/**
-		 * Players
-		 */
-		String player = parameters.getPlayer();
-		if(player != null){
-			query += buildOrQuery("player", player.split(","));
-		}
-		
-		/**
-		 * Radius
-		 */
-		int radius = parameters.getRadius();
-		if(radius > 0){
-			query += buildRadiusCondition(radius, parameters.getPlayer_location());
-		}
-		
-		/**
-		 * Block
-		 */
-		String block = parameters.getBlock();
-		if(block != null){
-			query += buildOrQuery("data", block.split(","));
-		}
-		
-		/**
-		 * Entity
-		 */
-		String entity = parameters.getEntity();
-		if(entity != null){
-			query += buildOrQuery("data", entity.split(","));
-		}
-		
-		/**
-		 * Timeframe
-		 */
-		String time = parameters.getTime();
-		if(time != null){
-			query += buildTimeCondition(time);
-		}
-		
-		/**
-		 * Specific coords
-		 */
-		Location loc = parameters.getLoc();
-		if(loc != null){
-			query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
-		}
-		
-		/**
-		 * Order by
-		 */
-		String sort_dir = parameters.getSortDirection();
-		query += " ORDER BY prism_actions.action_time "+sort_dir;
-		
-		/**
-		 * LIMIT
-		 */
-		int limit = parameters.getLimit();
-		if(limit > 0){
-			query += " LIMIT 0,"+limit;
+			/**
+			 * Actions
+			 */
+			String action_type = parameters.getAction_type();
+			if(action_type != null){
+				query += buildOrQuery("action_type", action_type.split(","));
+			}
+			
+			/**
+			 * Players
+			 */
+			String player = parameters.getPlayer();
+			if(player != null){
+				query += buildOrQuery("player", player.split(","));
+			}
+			
+			/**
+			 * Radius
+			 */
+			int radius = parameters.getRadius();
+			if(radius > 0){
+				query += buildRadiusCondition(radius, parameters.getPlayer_location());
+			}
+			
+			/**
+			 * Block
+			 */
+			String block = parameters.getBlock();
+			if(block != null){
+				query += buildOrQuery("data", block.split(","));
+			}
+			
+			/**
+			 * Entity
+			 */
+			String entity = parameters.getEntity();
+			if(entity != null){
+				query += buildOrQuery("data", entity.split(","));
+			}
+			
+			/**
+			 * Timeframe
+			 */
+			String time = parameters.getTime();
+			if(time != null){
+				query += buildTimeCondition(time);
+			}
+			
+			/**
+			 * Specific coords
+			 */
+			Location loc = parameters.getLoc();
+			if(loc != null){
+				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
+			}
+			
+			/**
+			 * Order by
+			 */
+			String sort_dir = parameters.getSortDirection();
+			query += " ORDER BY prism_actions.action_time "+sort_dir;
+			
+			/**
+			 * LIMIT
+			 */
+			int limit = parameters.getLimit();
+			if(limit > 0){
+				query += " LIMIT 0,"+limit;
+			}
 		}
 
 		plugin.debug("Query conditions: " + query);

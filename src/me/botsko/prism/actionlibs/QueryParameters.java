@@ -13,6 +13,7 @@ public class QueryParameters {
 	protected Location loc;
 	protected Vector player_location;
 	
+	protected int id = 0;
 	protected int radius;
 	protected boolean allow_no_radius = false;
 	protected String player;
@@ -24,6 +25,22 @@ public class QueryParameters {
 	
 	protected int limit = 1000000;
 //	protected int offset = 0;
+	
+	
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return id;
+	}
+
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 	
 	/**

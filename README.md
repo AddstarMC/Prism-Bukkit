@@ -57,7 +57,7 @@ Prism was designed for busy servers and is *extremely* fast. The Prism database 
 - - prism.preview - Grants permission to preview and then rollback changes. Recommended for: Staff
 - prism.rollback - Grants permission to rollback changes. Recommended for: Experienced Staff
 - prism.restore - Grants permission to restore (reapply) changes. Recommended for: Experienced Staff       
-          
+- prism.tp - Teleport to a record ID
           
 ## Get Help
 
