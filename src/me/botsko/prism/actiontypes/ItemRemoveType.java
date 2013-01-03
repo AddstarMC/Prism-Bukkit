@@ -62,6 +62,6 @@ public class ItemRemoveType extends GenericActionType {
 	 * @return
 	 */
 	public String getNiceWordOfAction(){
-		return "inserted";
+		return "removed";
 	}
 }
