@@ -18,7 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-public class PrismPlayerInteractEvent implements Listener {
+public class PrismPlayerEvents implements Listener {
 	
 	/**
 	 * 
@@ -30,7 +30,7 @@ public class PrismPlayerInteractEvent implements Listener {
 	 * 
 	 * @param plugin
 	 */
-	public PrismPlayerInteractEvent( Prism plugin ){
+	public PrismPlayerEvents( Prism plugin ){
 		this.plugin = plugin;
 	}
 	
