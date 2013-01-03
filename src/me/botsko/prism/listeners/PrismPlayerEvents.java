@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.ItemStackAction;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,9 +17,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 
-public class PrismPlayerInteractEvent implements Listener {
+public class PrismPlayerEvents implements Listener {
 	
 	/**
 	 * 
@@ -30,8 +33,28 @@ public class PrismPlayerInteractEvent implements Listener {
 	 * 
 	 * @param plugin
 	 */
-	public PrismPlayerInteractEvent( Prism plugin ){
+	public PrismPlayerEvents( Prism plugin ){
 		this.plugin = plugin;
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getPlayer().getLocation(), event.getPlayer()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getPlayer().getLocation(), event.getPlayer()) );
 	}
 	
 	

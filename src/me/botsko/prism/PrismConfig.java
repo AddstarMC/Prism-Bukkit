@@ -51,7 +51,7 @@ public class PrismConfig {
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
-		config.addDefault("prism.clear-records-after", "2m");
+		config.addDefault("prism.clear-records-after", "8w");
 
 		// Copy defaults
 		config.options().copyDefaults(true);

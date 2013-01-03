@@ -21,13 +21,16 @@ public enum ActionType {
 	ENTITY_SHEAR(false, false, false, "sheared"),
 	FIREBALL(false, false, false, "ignited"),
 	FLINT_STEEL(false, false, false, "ignited"),
+	ITEM_DROP(false, false, false, "dropped"),
 	ITEM_INSERT(false, false, false, "inserted"),
+	ITEM_PICKUP(false, false, false, "picked up"),
 	ITEM_REMOVE(false, false, false, "removed"),
 	LAVA_BUCKET(false, false, false, "poured"),
 	LAVA_IGNITE(false, false, false, "ignited"),
 	LEAF_DECAY(false, false, false, "decayed"), // isBlockAction
 	LIGHTNING(false, false, false, "ignited"),
 	MUSHROOM_GROW(true, true, true, "grew"),
+	PLAYER_DEATH(false, false, false, "died"),
 	SHEEP_EAT(false, false, false, "ate"), // isEntity
 	SIGN_CHANGE(false, false, false, "wrote"),
 	TNT_EXPLODE(false, true, true, "blew up"),
@@ -98,7 +101,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isEntityAction(){
-		return (getActionType().contains("entity") || getActionType().contains("eat") );
+		return (getActionType().contains("entity") || getActionType().equals("sheep-eat") );
 	}
 	
 	
@@ -108,6 +111,15 @@ public enum ActionType {
 	 */
 	public boolean isItemStackAction(){
 		return getActionType().contains("item");
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isPlayerDeathAction(){
+		return getActionType().equals("player-death");
 	}
 	
 	
