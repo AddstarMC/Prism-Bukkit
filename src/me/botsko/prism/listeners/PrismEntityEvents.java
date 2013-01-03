@@ -20,6 +20,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class PrismEntityEvents implements Listener {
 
@@ -78,6 +79,16 @@ public class PrismEntityEvents implements Listener {
 //			Player attacker = p.getKiller();
 			
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
+		plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-shear"), event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	

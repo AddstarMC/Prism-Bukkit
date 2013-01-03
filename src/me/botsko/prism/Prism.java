@@ -23,6 +23,7 @@ import me.botsko.prism.actiontypes.EndermanPickupType;
 import me.botsko.prism.actiontypes.EndermanPlaceType;
 import me.botsko.prism.actiontypes.EntityExplodeType;
 import me.botsko.prism.actiontypes.EntityKillType;
+import me.botsko.prism.actiontypes.EntityShearType;
 import me.botsko.prism.actiontypes.FireballType;
 import me.botsko.prism.actiontypes.FlintSteelType;
 import me.botsko.prism.actiontypes.GenericActionType;
@@ -169,6 +170,7 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("enderman-pickup", new EndermanPickupType());
 		actionTypes.put("enderman-place", new EndermanPlaceType());
 		actionTypes.put("entity-explode", new EntityExplodeType());
+		actionTypes.put("entity-shear", new EntityShearType());
 		actionTypes.put("entity-kill", new EntityKillType());
 		actionTypes.put("flint-steel", new FlintSteelType());
 		actionTypes.put("fireball", new FireballType());
