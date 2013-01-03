@@ -16,6 +16,7 @@ public enum ActionType {
 	CREEPER_EXPLODE(false, false, false, "blew up"),
 	ENDERMAN_PICKUP(false, true, true, "picked up"),
 	ENDERMAN_PLACE(true, true, true, "placed"),
+	ENTITY_BREAK(true, true, true, "broke"),
 	ENTITY_EXPLODE(false, true, true, "blew up"),
 	ENTITY_KILL(false, true, true, "killed"),
 	ENTITY_SHEAR(false, false, false, "sheared"),
@@ -92,7 +93,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isBlockAction(){
-		return (getActionType().contains("block") || getActionType().equals("leaf-decay") || getActionType().contains("container") );
+		return (getActionType().contains("block") || getActionType().equals("leaf-decay") || getActionType().contains("container") || getActionType().equals("entity-break") );
 	}
 	
 	
