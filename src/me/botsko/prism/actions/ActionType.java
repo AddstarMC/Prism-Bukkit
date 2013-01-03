@@ -30,6 +30,7 @@ public enum ActionType {
 	LEAF_DECAY(false, false, false, "decayed"), // isBlockAction
 	LIGHTNING(false, false, false, "ignited"),
 	MUSHROOM_GROW(true, true, true, "grew"),
+	PLAYER_DEATH(false, false, false, "died"),
 	SHEEP_EAT(false, false, false, "ate"), // isEntity
 	SIGN_CHANGE(false, false, false, "wrote"),
 	TNT_EXPLODE(false, true, true, "blew up"),
@@ -100,7 +101,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public boolean isEntityAction(){
-		return (getActionType().contains("entity") || getActionType().contains("eat") );
+		return (getActionType().contains("entity") || getActionType().equals("sheep-eat") );
 	}
 	
 	
@@ -110,6 +111,15 @@ public enum ActionType {
 	 */
 	public boolean isItemStackAction(){
 		return getActionType().contains("item");
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isPlayerDeathAction(){
+		return getActionType().equals("player-death");
 	}
 	
 	

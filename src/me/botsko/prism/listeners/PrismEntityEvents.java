@@ -4,6 +4,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.PlayerDeathAction;
+import me.botsko.prism.utils.DeathUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -74,11 +76,15 @@ public class PrismEntityEvents implements Listener {
 			}
 		} else {
 			
-		// Player death
-			
-//			Player p = (Player)event.getEntity();
-//			Player attacker = p.getKiller();
-			
+			// Determine who died and what the exact cause was
+	        Player p = (Player)event.getEntity();
+	        String cause = DeathUtils.getCauseOfDeath( event, p );
+	        String attacker = DeathUtils.getAttacker(event, p);
+	        if(attacker == "pvpwolf"){
+            	String owner = DeathUtils.getTameWolfOwner(event);
+            	attacker = owner+"'s wolf";
+            }
+	        plugin.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
 		}
 	}
 	

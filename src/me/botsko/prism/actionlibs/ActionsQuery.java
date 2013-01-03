@@ -20,6 +20,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -69,6 +70,8 @@ public class ActionsQuery {
 	    			
 	    			// Pull the proper action type class
 	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
+	    			
+	    			plugin.debug("Found matching action type enum: " + actionType.getName());
     				
 	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);
@@ -81,6 +84,10 @@ public class ActionsQuery {
 	    			else if( actionType.isItemStackAction() ){
 	    				ItemStackAction isa = new ItemStackAction(null, null, null, null);
 	    				baseAction = isa;
+	    			}
+	    			else if( actionType.isPlayerDeathAction() ){
+	    				PlayerDeathAction pd = new PlayerDeathAction(null, null, null, null);
+	    				baseAction = pd;
 	    			}
 	    			else if( actionType.isSignAction() ){
 	    				SignAction sa = new SignAction(null, null, null, null);
