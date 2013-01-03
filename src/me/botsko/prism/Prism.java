@@ -36,6 +36,7 @@ import me.botsko.prism.actiontypes.LeafDecayType;
 import me.botsko.prism.actiontypes.LightningType;
 import me.botsko.prism.actiontypes.MushroomGrowType;
 import me.botsko.prism.actiontypes.SheepEatType;
+import me.botsko.prism.actiontypes.SignChangeType;
 import me.botsko.prism.actiontypes.TntExplodeType;
 import me.botsko.prism.actiontypes.TreeGrowType;
 import me.botsko.prism.actiontypes.WaterBucketType;
@@ -183,6 +184,7 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("lightning", new LightningType());
 		actionTypes.put("mushroom-grow", new MushroomGrowType());
 		actionTypes.put("sheep-eat", new SheepEatType());
+		actionTypes.put("sign-change", new SignChangeType());
 		actionTypes.put("tnt-explode", new TntExplodeType());
 		actionTypes.put("tree-grow", new TreeGrowType());
 		actionTypes.put("water-bucket", new WaterBucketType());

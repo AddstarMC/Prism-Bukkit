@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Material;
@@ -22,6 +23,7 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 
 public class PrismBlockEvents implements Listener {
@@ -157,9 +159,20 @@ public class PrismBlockEvents implements Listener {
 //		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-burn"), event.getBlock(), "Environment") );
 	}
 	
-	//onSignChange
-	//onBlockFromTo
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onSignChange(SignChangeEvent event) {
+		plugin.actionsRecorder.addToQueue( new SignAction(plugin.getActionType("sign-change"), event.getBlock(), event.getLines(), event.getPlayer().getName()) );
+	}
 
+
+	/**
+	 * 
+	 * @param event
+	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSetFire(final BlockIgniteEvent event){
 		

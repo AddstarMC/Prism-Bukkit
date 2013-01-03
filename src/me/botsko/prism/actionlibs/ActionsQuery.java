@@ -18,6 +18,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -79,6 +80,10 @@ public class ActionsQuery {
 	    			else if( actionType.isItemStackAction() ){
 	    				ItemStackAction isa = new ItemStackAction(null, null, null, null);
 	    				baseAction = isa;
+	    			}
+	    			else if( actionType.isSignAction() ){
+	    				SignAction sa = new SignAction(null, null, null, null);
+	    				baseAction = sa;
 	    			} else {
 	    				plugin.log("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}

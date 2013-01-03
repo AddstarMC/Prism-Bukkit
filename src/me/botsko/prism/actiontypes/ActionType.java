@@ -30,6 +30,12 @@ public interface ActionType {
 	 */
 	public boolean isItemStackAction();
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSignAction();
+	
 	
 	/**
 	 * 
