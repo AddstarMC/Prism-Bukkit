@@ -13,6 +13,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.appliers.Preview;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.ChatColor;
@@ -261,6 +262,37 @@ public class PrismCommandExecutor implements CommandExecutor {
 		    		return true;
 	    		}
 	    		
+	    		
+	    		/**
+	    		 * Some utility commands for doing stuff
+	    		 */
+	    		{
+	    		
+	    			/**
+	    			 * Extinguish fire
+	    			 */
+	    			if( args[0].equalsIgnoreCase("ex") || args[0].equalsIgnoreCase("extinguish")){
+	    				int radius = 20;
+	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+	    					radius = Integer.parseInt(args[1]);
+	    				}
+	    				BlockUtils.extinguish(player.getLocation(), radius);
+	    				return true;
+	    			}
+	    			
+	    			/**
+	    			 * Drain water or lava
+	    			 */
+	    			if( args[0].equalsIgnoreCase("dr") || args[0].equalsIgnoreCase("drain")){
+	    				int radius = 20;
+	    				if(args.length >= 2 && TypeUtils.isNumeric(args[1])){
+	    					radius = Integer.parseInt(args[1]);
+	    				}
+	    				BlockUtils.drain(player.getLocation(), radius);
+	    				return true;
+	    			}
+	    		
+	    		}
 	    		
 	    		/**
 	    		 * Preview
