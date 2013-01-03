@@ -8,12 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -49,35 +49,55 @@ public class PrismInventoryEvents implements Listener {
 		
 		Inventory inv = event.getInventory();
 		Player player = (Player) event.getWhoClicked();
+	    
 
-		// If this isn't a chest leave
-		// @todo remove this. implement for anvils, dispensers, brewing stands, ender chests
-	    if ( inv.getType() != InventoryType.CHEST ) {
-	    	return;
-	    }
+	    // Ignore player slow types
+		SlotType slotType = event.getSlotType();
+		if ( !slotType.equals(SlotType.CONTAINER) && !slotType.equals(SlotType.FUEL) && !slotType.equals(SlotType.RESULT) ){
+			return;
+		}
+
+		Location containerLoc = null;
+	    InventoryHolder ih = inv.getHolder();
 	    
-	    // If slot isn't a container leave
-	    if ( event.getSlotType() != SlotType.CONTAINER ) {
-	    	return;
-	    }
-	    
-	    Location chestLoc = null;
-	    InventoryHolder ih = event.getInventory().getHolder();
+	    // Chest
 	    if(ih instanceof Chest) {
 		    Chest eventChest = (Chest) ih;
-		    chestLoc = eventChest.getLocation();
+		    containerLoc = eventChest.getLocation();
 	    }
+	    
+	    // Double chest
 	    else if(ih instanceof DoubleChest) {
 	    	DoubleChest eventChest = (DoubleChest) ih;
-	    	chestLoc = eventChest.getLocation();
+	    	containerLoc = eventChest.getLocation();
 	    }
-
-	    // Is item coming or going?
-	    if(event.getSlot() == event.getRawSlot() && !event.getCursor().getType().equals(Material.AIR)){
-	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), chestLoc, player) );
+	    
+	    // Furnace
+	    else if(ih instanceof Furnace) {
+	    	Furnace furnace = (Furnace) ih;
+	    	containerLoc = furnace.getLocation();
 	    }
-	    if(event.getSlot() == event.getRawSlot() && event.getCursor().getType().equals(Material.AIR)){
-	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), chestLoc, player) );
+	    
+//	    // Dispenser
+//	    else if(ih instanceof Dispenser) {
+//	    	Dispenser dispenser = (Dispenser) ih;
+//	    	containerLoc = dispenser.getLocation();
+//		    
+//	    	// still tracks player inv
+//	    	plugin.debug("SLOT: " + event.getSlot());
+//	    	plugin.debug("RAW SLOT: " + event.getRawSlot());
+//		    
+//	    }
+	    
+	    // We don't need to record this since enderchests are for the player only.
+	    
+	    if(containerLoc != null && event.getSlot() == event.getRawSlot()){
+		    if(!event.getCurrentItem().getType().equals(Material.AIR)){
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), containerLoc, player) );
+		    }
+		    if(!event.getCursor().getType().equals(Material.AIR)){
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), containerLoc, player) );
+		    }
 	    }
 	}
 }
