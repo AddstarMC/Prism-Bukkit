@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.api.Api;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
@@ -74,7 +73,6 @@ public class Prism extends JavaPlugin {
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
-		new Api(this);
 		
 		// Init scheduled events
 		endExpiredQueryCaches();
