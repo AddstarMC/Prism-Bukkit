@@ -183,20 +183,16 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-//		String action_type = "";
-//		if(parameters.getAction_type() != null && parameters.getAction_type().contains("block-break")){
-//			action_type = "block-break";
-//		}
-//		if(parameters.getLookup_type().equals("rollback")){
-//			query += " JOIN (" +
-//						"SELECT x, y, z, max(action_time) as action_time" +
-//						" FROM prism_actions" +
-//						" GROUP BY x, y, z) latest" +
-//						" ON prism_actions.action_time = latest.action_time" +
-//						" AND prism_actions.x = latest.x" +
-//						" AND prism_actions.y = latest.y" +
-//						" AND prism_actions.z = latest.z";
-//		}
+		if( parameters.getLookup_type().equals("rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("block-place") ){
+			query += " JOIN (" +
+						"SELECT x, y, z, max(action_time) as action_time" +
+						" FROM prism_actions" +
+						" GROUP BY x, y, z) latest" +
+						" ON prism_actions.action_time = latest.action_time" +
+						" AND prism_actions.x = latest.x" +
+						" AND prism_actions.y = latest.y" +
+						" AND prism_actions.z = latest.z";
+		}
 		
 		// World
 		query += " WHERE 1=1";
