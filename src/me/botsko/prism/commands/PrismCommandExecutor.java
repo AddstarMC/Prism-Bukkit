@@ -412,8 +412,8 @@ public class PrismCommandExecutor implements CommandExecutor {
 				}
 				
 				// Split parameter and values
-				String arg_type = arg.substring(0,1).toLowerCase();
-				String val = arg.substring(2);
+				String arg_type = arg.toLowerCase().substring(0,1);
+				String val = arg.toLowerCase().substring(2);
 				String[] possibleArgs = {"a","r","t","p","w","b","e"};
 				if(Arrays.asList(possibleArgs).contains(arg_type)){
 					if(!val.isEmpty()){
