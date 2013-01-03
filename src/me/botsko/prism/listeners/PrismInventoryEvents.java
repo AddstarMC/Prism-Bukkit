@@ -82,11 +82,8 @@ public class PrismInventoryEvents implements Listener {
 //	    else if(ih instanceof Dispenser) {
 //	    	Dispenser dispenser = (Dispenser) ih;
 //	    	containerLoc = dispenser.getLocation();
-//		    
-//	    	// still tracks player inv
 //	    	plugin.debug("SLOT: " + event.getSlot());
 //	    	plugin.debug("RAW SLOT: " + event.getRawSlot());
-//		    
 //	    }
 	    
 	    // We don't need to record this since enderchests are for the player only.

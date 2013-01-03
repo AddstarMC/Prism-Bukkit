@@ -15,6 +15,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.EntityUtils;
 
 public class Rollback extends Applier {
 
@@ -63,6 +64,14 @@ public class Rollback extends Applier {
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
 				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+			}
+		}
+		
+		// Remove item drops in this radius
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && parameters.getAction_type().contains("explode")){
+			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
+			if(removed > 0){
+				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
