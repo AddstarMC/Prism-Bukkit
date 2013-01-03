@@ -70,9 +70,7 @@ public class ActionsQuery {
 	    			
 	    			// Pull the proper action type class
 	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
-	    			
-	    			plugin.debug("Found matching action type enum: " + actionType.getName());
-    				
+
 	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);
 	    				baseAction = b;

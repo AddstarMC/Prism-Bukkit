@@ -60,9 +60,9 @@ public class BlockUtils {
 	 * @param loc
 	 * @param radius
 	 */
-	public static void removeMaterialFromRadius(Material mat, Location loc, int radius){
+	public static int removeMaterialFromRadius(Material mat, Location loc, int radius){
 		Material[] materials = { mat };
-		removeMaterialsFromRadius(materials, loc, radius);
+		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 	
 	
@@ -72,7 +72,8 @@ public class BlockUtils {
 	 * @param loc
 	 * @param radius
 	 */
-	public static void removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
+	public static int removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
+		int blocks_removed = 0;
 		int x1 = loc.getBlockX();
 		int y1 = loc.getBlockY();
 		int z1 = loc.getBlockZ();
@@ -85,10 +86,12 @@ public class BlockUtils {
 					if(b.getType().equals(Material.AIR)) continue;
 					if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
 						loc.getBlock().setType(Material.AIR);
+						blocks_removed++;
 					}
 				}
 			}
 		}
+		return blocks_removed;
 	}
 	
 	
@@ -97,19 +100,19 @@ public class BlockUtils {
 	 * @param loc The location you want to extinguish around
 	 * @param radius The radius around the location you are extinguish
 	 */
-	public static void extinguish(Location loc, int radius){
-		removeMaterialFromRadius(Material.FIRE, loc, radius);
+	public static int extinguish(Location loc, int radius){
+		return removeMaterialFromRadius(Material.FIRE, loc, radius);
 	}
 	
 	
 	/**
-	 * Drains
-	 * @param loc The location you want to extinguish around
-	 * @param radius The radius around the location you are extinguish
+	 * Drains lava and water within (radius) around (loc).
+	 * @param loc
+	 * @param radius
 	 */
-	public static void drain(Location loc, int radius){
+	public static int drain(Location loc, int radius){
 		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA, Material.WATER };
-		removeMaterialsFromRadius(materials, loc, radius);
+		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 	
 	
@@ -118,9 +121,9 @@ public class BlockUtils {
 	 * @param loc
 	 * @param radius
 	 */
-	public static void drainlava(Location loc, int radius){
+	public static int drainlava(Location loc, int radius){
 		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA };
-		removeMaterialsFromRadius(materials, loc, radius);
+		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 	
 	
@@ -129,7 +132,7 @@ public class BlockUtils {
 	 * @param loc
 	 * @param radius
 	 */
-	public static void drainwater(Location loc, int radius){
-		removeMaterialFromRadius(Material.WATER, loc, radius);
+	public static int drainwater(Location loc, int radius){
+		return removeMaterialFromRadius(Material.WATER, loc, radius);
 	}
 }

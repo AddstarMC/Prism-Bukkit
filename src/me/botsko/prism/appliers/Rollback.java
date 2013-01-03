@@ -59,11 +59,14 @@ public class Rollback extends Applier {
 	public void rollback(){
 		
 		// Remove any fire at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback")){
-			BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getAction_type().contains("block-burn")){
+			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
+			if(fires_ext > 0){
+				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+			}
 		}
 		
-		
+		// Rollback blocks
 		if(!results.isEmpty()){
 			
 			int rolled_back_count = 0, skipped_block_count = 0;
