@@ -2,7 +2,6 @@ package me.botsko.prism;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -10,34 +9,6 @@ import java.util.logging.Logger;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actiontypes.ActionType;
-import me.botsko.prism.actiontypes.BlockBreakType;
-import me.botsko.prism.actiontypes.BlockBurnType;
-import me.botsko.prism.actiontypes.BlockFadeType;
-import me.botsko.prism.actiontypes.BlockFallType;
-import me.botsko.prism.actiontypes.BlockFormType;
-import me.botsko.prism.actiontypes.BlockPlaceType;
-import me.botsko.prism.actiontypes.ContainerAccessType;
-import me.botsko.prism.actiontypes.CreeperExplodeType;
-import me.botsko.prism.actiontypes.EndermanPickupType;
-import me.botsko.prism.actiontypes.EndermanPlaceType;
-import me.botsko.prism.actiontypes.EntityExplodeType;
-import me.botsko.prism.actiontypes.EntityKillType;
-import me.botsko.prism.actiontypes.FireballType;
-import me.botsko.prism.actiontypes.FlintSteelType;
-import me.botsko.prism.actiontypes.GenericActionType;
-import me.botsko.prism.actiontypes.ItemInsertType;
-import me.botsko.prism.actiontypes.ItemRemoveType;
-import me.botsko.prism.actiontypes.ItemUseType;
-import me.botsko.prism.actiontypes.LavaBucketType;
-import me.botsko.prism.actiontypes.LavaIgniteType;
-import me.botsko.prism.actiontypes.LeafDecayType;
-import me.botsko.prism.actiontypes.LightningType;
-import me.botsko.prism.actiontypes.MushroomGrowType;
-import me.botsko.prism.actiontypes.SheepEatType;
-import me.botsko.prism.actiontypes.TntExplodeType;
-import me.botsko.prism.actiontypes.TreeGrowType;
-import me.botsko.prism.actiontypes.WaterBucketType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
@@ -62,7 +33,6 @@ public class Prism extends JavaPlugin {
 	protected Language language;
 	public Connection conn = null;
 	
-	public HashMap<String,ActionType> actionTypes = new HashMap<String,ActionType>();
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
@@ -100,9 +70,6 @@ public class Prism extends JavaPlugin {
 		// Add commands
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
 		
-		// Register all known action types
-		registerActionTypes();
-		
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
@@ -110,6 +77,9 @@ public class Prism extends JavaPlugin {
 		// Init scheduled events
 		endExpiredQueryCaches();
 		endExpiredPreviews();
+		
+		// Delete old data based on config
+		discardExpiredDbRecords();
 		
 	}
 	
@@ -150,58 +120,6 @@ public class Prism extends JavaPlugin {
 	 */
 	public Language getLang(){
 		return this.language;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void registerActionTypes(){
-		
-		actionTypes.put("block-break", new BlockBreakType());
-		actionTypes.put("block-burn", new BlockBurnType());
-		actionTypes.put("block-fade", new BlockFadeType());
-		actionTypes.put("block-fall", new BlockFallType());
-		actionTypes.put("block-form", new BlockFormType());
-		actionTypes.put("block-place", new BlockPlaceType());
-		actionTypes.put("container-access", new ContainerAccessType());
-		actionTypes.put("creeper-explode", new CreeperExplodeType());
-		actionTypes.put("enderman-pickup", new EndermanPickupType());
-		actionTypes.put("enderman-place", new EndermanPlaceType());
-		actionTypes.put("entity-explode", new EntityExplodeType());
-		actionTypes.put("entity-kill", new EntityKillType());
-		actionTypes.put("flint-steel", new FlintSteelType());
-		actionTypes.put("fireball", new FireballType());
-		actionTypes.put("item-insert", new ItemInsertType());
-		actionTypes.put("item-remove", new ItemRemoveType());
-		actionTypes.put("item-use", new ItemUseType());
-		actionTypes.put("lava-bucket", new LavaBucketType());
-		actionTypes.put("lava-ignite", new LavaIgniteType());
-		actionTypes.put("leaf-decay", new LeafDecayType());
-		actionTypes.put("lightning", new LightningType());
-		actionTypes.put("mushroom-grow", new MushroomGrowType());
-		actionTypes.put("sheep-eat", new SheepEatType());
-		actionTypes.put("tnt-explode", new TntExplodeType());
-		actionTypes.put("tree-grow", new TreeGrowType());
-		actionTypes.put("water-bucket", new WaterBucketType());
-		
-	}
-	
-	
-	/**
-	 * Pulls either a generic or a specific action type
-	 * for assignment to a block, entity, etc action.
-	 * 
-	 * @todo Might wanna move this to a registry class
-	 * @param type
-	 * @return
-	 */
-	public ActionType getActionType(String type){
-		ActionType actionType = new GenericActionType();
-		if( actionTypes.containsKey(type) ){
-			actionType = actionTypes.get(type);
-		}
-		return actionType;
 	}
 	
 	
@@ -251,6 +169,16 @@ public class Prism extends JavaPlugin {
 		    	}
 		    }
 		}, 1200L, 1200L);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void discardExpiredDbRecords(){
+		ActionsQuery aq = new ActionsQuery(this);
+		int rows_affected = aq.delete(getConfig().getString("prism.clear-records-after"));
+		log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
 	}
 	
 	

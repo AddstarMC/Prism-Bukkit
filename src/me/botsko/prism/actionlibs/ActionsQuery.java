@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,11 +15,12 @@ import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.ItemStackAction;
-import me.botsko.prism.actiontypes.ActionType;
+import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.TypeUtils;
 
 public class ActionsQuery {
@@ -66,7 +68,7 @@ public class ActionsQuery {
 	    			GenericAction baseAction = null;
 	    			
 	    			// Pull the proper action type class
-	    			ActionType actionType = plugin.getActionType(rs.getString("action_type"));
+	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
     				
 	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);
@@ -79,6 +81,10 @@ public class ActionsQuery {
 	    			else if( actionType.isItemStackAction() ){
 	    				ItemStackAction isa = new ItemStackAction(null, null, null, null);
 	    				baseAction = isa;
+	    			}
+	    			else if( actionType.isSignAction() ){
+	    				SignAction sa = new SignAction(null, null, null, null);
+	    				baseAction = sa;
 	    			} else {
 	    				plugin.log("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}
@@ -130,6 +136,29 @@ public class ActionsQuery {
 		
 	}
 	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int delete( String beforeDateAlias ){
+		int rows_affected = 0;
+		String beforeDate = buildTimeCondition(beforeDateAlias,"<");
+		if(!beforeDate.isEmpty()){
+			try {
+				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
+				plugin.debug("Deleting records prior to " + beforeDate + ": " + query);
+				plugin.dbc();
+				Statement s = plugin.conn.createStatement ();
+				rows_affected = s.executeUpdate (query);
+				s.close();
+				plugin.conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return rows_affected;
+	}
 	
 	
 	/**
@@ -229,7 +258,7 @@ public class ActionsQuery {
 			 */
 			String time = parameters.getTime();
 			if(time != null){
-				query += buildTimeCondition(time);
+				query += buildTimeCondition(time,null);
 			}
 			
 			/**
@@ -321,7 +350,7 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	protected String buildTimeCondition( String arg_value ){
+	protected String buildTimeCondition( String arg_value, String equation ){
 		
 		String where = "";
 
@@ -381,7 +410,11 @@ public class ActionsQuery {
 		
 		
 		if(dateFrom != null){
-			where += " AND action_time >= '" + dateFrom + "'";
+			if(equation == null){
+				where += " AND action_time >= '" + dateFrom + "'";
+			} else {
+				where += " AND action_time "+equation+" '" + dateFrom + "'";
+			}
 		}
 		
 		return where;

@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.ItemStackAction;
 
 import org.bukkit.Location;
@@ -73,10 +74,10 @@ public class PrismInventoryEvents implements Listener {
 
 	    // Is item coming or going?
 	    if(event.getSlot() == event.getRawSlot() && !event.getCursor().getType().equals(Material.AIR)){
-	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(plugin.getActionType("item-insert"), event.getCursor(), chestLoc, player) );
+	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), chestLoc, player) );
 	    }
 	    if(event.getSlot() == event.getRawSlot() && event.getCursor().getType().equals(Material.AIR)){
-	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(plugin.getActionType("item-remove"), event.getCurrentItem(), chestLoc, player) );
+	    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), chestLoc, player) );
 	    }
 	}
 }

@@ -39,7 +39,7 @@ public class ActionMessage {
 		}
 		msg += getPosNegPrefix();
 		msg += highlight + a.getPlayer_name();
-		msg += " " + ChatColor.WHITE + a.getType().getNiceWordOfAction();
+		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		msg += " " + highlight + a.getNiceName();
 		msg += ChatColor.WHITE + " on " + ChatColor.GRAY + a.getDisplay_date();
 		msg += ChatColor.WHITE + " at " + ChatColor.GRAY + a.getDisplay_time();

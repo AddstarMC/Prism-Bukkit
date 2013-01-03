@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.actiontypes.ActionType;
-
 
 public class GenericAction implements Action {
 	

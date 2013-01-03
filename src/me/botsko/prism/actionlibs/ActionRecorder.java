@@ -2,6 +2,7 @@ package me.botsko.prism.actionlibs;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
@@ -35,6 +36,11 @@ public class ActionRecorder {
 	 */
 	public void addToQueue( Action a ){
 		
+		// Verify we're expected to track this action, world, player
+		if(!shouldTrack(a)){
+			return;
+		}
+		
 		queue.add(a);
 		
 		plugin.debug( a.getType().getActionType() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
@@ -43,6 +49,31 @@ public class ActionRecorder {
 		// make this work on a timer, pool, etc
 		save();
 		
+	}
+	
+	
+	/**
+	 * 
+	 * @param a
+	 * @return
+	 */
+	protected boolean shouldTrack( Action a ){
+		
+		// Should we ignore this player?
+		@SuppressWarnings("unchecked")
+		List<String> ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
+		if(ignore_players != null && ignore_players.contains( a.getPlayer_name() )){
+			return false;
+		}
+		
+		// Should we ignore this world?
+		@SuppressWarnings("unchecked")
+		List<String> ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
+		if(ignore_worlds != null && ignore_worlds.contains( a.getWorld_name() )){
+			return false;
+		}
+		
+		return true;
 	}
 	
 	

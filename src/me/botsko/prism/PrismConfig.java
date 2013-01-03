@@ -5,12 +5,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class PrismConfig {
 	
+	/**
+	 * 
+	 */
 	protected Prism plugin;
 	
 	
@@ -35,15 +39,20 @@ public class PrismConfig {
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.language", "en-us");
 		
-		config.addDefault("prism.default-radius", 20);
-		config.addDefault("prism.max-radius-unless-overridden", 100);
-		
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");
 		config.addDefault("prism.mysql.password", "");
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
-			
+		
+		config.addDefault("prism.default-radius", 20);
+		config.addDefault("prism.max-radius-unless-overridden", 100);
+		
+		config.addDefault("prism.ignore.players", new ArrayList<String>());
+		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
+		
+		config.addDefault("prism.clear-records-after", "2m");
+
 		// Copy defaults
 		config.options().copyDefaults(true);
 		

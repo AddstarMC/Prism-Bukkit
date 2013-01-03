@@ -418,6 +418,26 @@ public class PrismCommandExecutor implements CommandExecutor {
 	    		}
 	    		
 	    		
+	    		/**
+	    		 * Delete
+	    		 */
+	    		if( args[0].equalsIgnoreCase("delete") ){
+	    			if( player.hasPermission("prism.*") || player.hasPermission("prism.delete") ){
+	    				// If date provided
+	    				if(args.length == 2){
+			    			ActionsQuery aq = new ActionsQuery(plugin);
+			    			int rows_affected = aq.delete(args[1]);
+			    			player.sendMessage( plugin.playerHeaderMsg( rows_affected + " records have been purged from the database."));
+	    				}
+	    			} else {
+	    				player.sendMessage( plugin.msgNoPermission() );
+	    			}
+	    			
+	    			return true;
+	    			
+	    		}
+	    		
+	    		
 	    		// Help
     			if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("?")){
     				help(player);
