@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -15,6 +16,7 @@ import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -456,7 +458,42 @@ public class PrismCommandExecutor implements CommandExecutor {
 				
 				// Block
 				if(arg_type.equals("b")){
-					parameters.setBlock( val );
+					
+					String[] blocks = val.split(",");
+					
+					if(blocks.length > 0){
+						
+						ArrayList<String> _tmp_vals = new ArrayList<String>();
+						
+						for(String b : blocks){
+					
+							// if user provided id:subid
+							if(b.contains(":") && b.length() >= 3){
+								String _tmp_id = b.substring(0,1);
+								String _tmp_subid = b.substring(2);
+								if(!TypeUtils.isNumeric(_tmp_id) || !TypeUtils.isNumeric(_tmp_subid)){
+									_tmp_vals.add(_tmp_id+":"+_tmp_subid);
+								}
+							} else {
+								
+								// It's id without a subid
+								if(TypeUtils.isNumeric(b)){
+									_tmp_vals.add(b+":0");
+								} else {
+									
+									// Are they using a block name?
+									// @todo we need better names. defaults suck
+									Material m = Material.getMaterial( b.toUpperCase() );
+									if(m != null){
+										_tmp_vals.add(m.getId()+":0");
+									}
+								}
+							}
+						}
+						if(_tmp_vals.size() > 0){
+							parameters.setBlock( TypeUtils.join(_tmp_vals, ",") );
+						}
+					}
 				}
 				
 				// Time

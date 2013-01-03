@@ -187,6 +187,22 @@ public class ActionsQuery {
 		}
 		
 		/**
+		 * Block
+		 */
+		String block = parameters.getBlock();
+		if(block != null){
+			query += buildOrQuery("data", block.split(","));
+		}
+		
+		/**
+		 * Entity
+		 */
+		String entity = parameters.getEntity();
+		if(entity != null){
+			query += buildOrQuery("data", entity.split(","));
+		}
+		
+		/**
 		 * Timeframe
 		 */
 		String time = parameters.getTime();
@@ -230,16 +246,19 @@ public class ActionsQuery {
 	 * @return
 	 */
 	protected String buildOrQuery( String fieldname, String[] arg_values ){
-		String where = " AND (";
-		int c = 1;
-		for(String val : arg_values){
-			if(c > 1 && c <= arg_values.length){
-				where += " OR ";
+		String where = "";
+		if(arg_values.length > 0){
+			where += " AND (";
+			int c = 1;
+			for(String val : arg_values){
+				if(c > 1 && c <= arg_values.length){
+					where += " OR ";
+				}
+				where += fieldname + " = '"+val+"'";
+				c++;
 			}
-			where += fieldname + " = '"+val+"'";
-			c++;
+			where += ")";
 		}
-		where += ")";
 		return where;
 	}
 	
