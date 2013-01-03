@@ -25,6 +25,8 @@ import me.botsko.prism.actiontypes.EntityKillType;
 import me.botsko.prism.actiontypes.FireballType;
 import me.botsko.prism.actiontypes.FlintSteelType;
 import me.botsko.prism.actiontypes.GenericActionType;
+import me.botsko.prism.actiontypes.ItemInsertType;
+import me.botsko.prism.actiontypes.ItemRemoveType;
 import me.botsko.prism.actiontypes.ItemUseType;
 import me.botsko.prism.actiontypes.LavaBucketType;
 import me.botsko.prism.actiontypes.LavaIgniteType;
@@ -40,6 +42,7 @@ import me.botsko.prism.commands.PrismCommandExecutor;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerInteractEvent;
 import me.botsko.prism.listeners.PrismWorldEvents;
 
@@ -91,6 +94,7 @@ public class Prism extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismWorldEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismPlayerInteractEvent( this ), this);
+		getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
 		
 		// Add commands
 		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommandExecutor(this) );
@@ -166,6 +170,8 @@ public class Prism extends JavaPlugin {
 		actionTypes.put("entity-kill", new EntityKillType());
 		actionTypes.put("flint-steel", new FlintSteelType());
 		actionTypes.put("fireball", new FireballType());
+		actionTypes.put("item-insert", new ItemInsertType());
+		actionTypes.put("item-remove", new ItemRemoveType());
 		actionTypes.put("item-use", new ItemUseType());
 		actionTypes.put("lava-bucket", new LavaBucketType());
 		actionTypes.put("lava-ignite", new LavaIgniteType());

@@ -28,6 +28,13 @@ public interface ActionType {
 	 * 
 	 * @return
 	 */
+	public boolean isItemStackAction();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public boolean doesCreateBlock();
 	
 	

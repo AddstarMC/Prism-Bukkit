@@ -56,7 +56,7 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix(){
 		
-		if(a.getType().doesCreateBlock()){
+		if(a.getType().doesCreateBlock() || a.getType().getActionType().equals("item-insert")){
 			return ChatColor.GREEN + "+ " + ChatColor.WHITE;
 		}
 		else {

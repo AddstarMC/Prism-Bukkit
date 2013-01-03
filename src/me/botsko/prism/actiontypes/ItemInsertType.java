@@ -1,6 +1,6 @@
 package me.botsko.prism.actiontypes;
 
-public class GenericActionType implements ActionType {
+public class ItemInsertType extends GenericActionType {
 	
 	
 	/**
@@ -8,7 +8,7 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public String getActionType(){
-		return "generic";
+		return "item-insert";
 	}
 	
 	
@@ -17,15 +17,6 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public boolean isBlockAction(){
-		return true;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isEntityAction(){
 		return false;
 	}
 	
@@ -35,7 +26,7 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public boolean isItemStackAction(){
-		return false;
+		return true;
 	}
 	
 	
@@ -44,7 +35,7 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public boolean doesCreateBlock(){
-		return isBlockAction();
+		return false;
 	}
 	
 	
@@ -53,7 +44,7 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public boolean canRollback(){
-		return true;
+		return false;
 	}
 	
 	
@@ -62,7 +53,7 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public boolean canRestore(){
-		return true;
+		return false;
 	}
 	
 	
@@ -71,6 +62,6 @@ public class GenericActionType implements ActionType {
 	 * @return
 	 */
 	public String getNiceWordOfAction(){
-		return "did something to";
+		return "inserted";
 	}
 }
