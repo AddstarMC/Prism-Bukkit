@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -136,6 +137,29 @@ public class ActionsQuery {
 	}
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public int delete( String beforeDateAlias ){
+		int rows_affected = 0;
+		String beforeDate = buildTimeCondition(beforeDateAlias,"<");
+		if(!beforeDate.isEmpty()){
+			try {
+				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
+				plugin.debug("Deleting records prior to " + beforeDate + ": " + query);
+				plugin.dbc();
+				Statement s = plugin.conn.createStatement ();
+				rows_affected = s.executeUpdate (query);
+				s.close();
+				plugin.conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return rows_affected;
+	}
+	
 	
 	/**
 	 * 
@@ -234,7 +258,7 @@ public class ActionsQuery {
 			 */
 			String time = parameters.getTime();
 			if(time != null){
-				query += buildTimeCondition(time);
+				query += buildTimeCondition(time,null);
 			}
 			
 			/**
@@ -326,7 +350,7 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	protected String buildTimeCondition( String arg_value ){
+	protected String buildTimeCondition( String arg_value, String equation ){
 		
 		String where = "";
 
@@ -386,7 +410,11 @@ public class ActionsQuery {
 		
 		
 		if(dateFrom != null){
-			where += " AND action_time >= '" + dateFrom + "'";
+			if(equation == null){
+				where += " AND action_time >= '" + dateFrom + "'";
+			} else {
+				where += " AND action_time "+equation+" '" + dateFrom + "'";
+			}
 		}
 		
 		return where;

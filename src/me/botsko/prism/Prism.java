@@ -113,6 +113,9 @@ public class Prism extends JavaPlugin {
 		endExpiredQueryCaches();
 		endExpiredPreviews();
 		
+		// Delete old data based on config
+		discardExpiredDbRecords();
+		
 	}
 	
 	
@@ -255,6 +258,16 @@ public class Prism extends JavaPlugin {
 		    	}
 		    }
 		}, 1200L, 1200L);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void discardExpiredDbRecords(){
+		ActionsQuery aq = new ActionsQuery(this);
+		int rows_affected = aq.delete(getConfig().getString("prism.clear-records-after"));
+		log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
 	}
 	
 	
