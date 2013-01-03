@@ -2,8 +2,6 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
-import me.botsko.prism.actiontypes.ActionType;
-
 import org.bukkit.block.Block;
 
 public class SignAction extends GenericAction {

@@ -15,12 +15,12 @@ import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
 public class ActionsQuery {
@@ -68,7 +68,7 @@ public class ActionsQuery {
 	    			GenericAction baseAction = null;
 	    			
 	    			// Pull the proper action type class
-	    			ActionType actionType = plugin.getActionType(rs.getString("action_type"));
+	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
     				
 	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);

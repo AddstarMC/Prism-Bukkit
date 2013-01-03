@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 
 import org.bukkit.Material;
@@ -34,10 +35,10 @@ public class PrismWorldEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onStructureGrow(StructureGrowEvent event) {
 		
-		String type = "tree-grow";
+		ActionType type = ActionType.TREE_GROW;
 		
 		//Sort out structure type
-		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
+		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = ActionType.MUSHROOM_GROW;
 
 		//Loop through blocks
 		for (BlockState block : event.getBlocks()) {
@@ -47,11 +48,11 @@ public class PrismWorldEvents implements Listener {
 	
 			//If a player did it
 			if (event.getPlayer() != null) {
-				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(type), block.getBlock(), event.getPlayer().getName()) );
+				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), event.getPlayer().getName()) );
 			}
 			//If the environment did it
 			else {
-				plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(type), block.getBlock(), "Environment") );
+				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), "Environment") );
 			}
 		}
 	}

@@ -1,8 +1,6 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
-
-import me.botsko.prism.actiontypes.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.block.Block;

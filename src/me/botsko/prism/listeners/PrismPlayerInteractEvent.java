@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 
 import org.bukkit.Location;
@@ -70,7 +71,7 @@ public class PrismPlayerInteractEvent implements Listener {
 					case CHEST:
 					case ENDER_CHEST:
 					case ANVIL:
-						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("container-access"), block, player.getName()) );
+						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
 						break;
 					case WOODEN_DOOR:
 					case TRAP_DOOR:
@@ -78,7 +79,7 @@ public class PrismPlayerInteractEvent implements Listener {
 					case LEVER:
 					case STONE_BUTTON:
 					case WOOD_BUTTON:
-						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("item-use"), block, player.getName()) );
+						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
 						break;
 					default:
 						break;

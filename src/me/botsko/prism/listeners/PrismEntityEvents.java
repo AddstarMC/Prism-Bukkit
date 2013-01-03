@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 
@@ -57,7 +58,7 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-kill"), entity, player.getName()) );
+					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
 		        	
 				}
 				// Mob shot by an arrow
@@ -66,7 +67,7 @@ public class PrismEntityEvents implements Listener {
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-kill"), entity, player.getName()) );
+						plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
 			        	
 					}
 				}
@@ -88,7 +89,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
-		plugin.actionsRecorder.addToQueue( new EntityAction(plugin.getActionType("entity-shear"), event.getEntity(), event.getPlayer().getName()) );
+		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SHEAR, event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -103,17 +104,17 @@ public class PrismEntityEvents implements Listener {
 		// Technically I think that I really should name it "entity-eat" for better consistency and 
 		// in case other mobs ever are made to eat. But that's not as fun
 		if(event.getEntityType().equals(EntityType.SHEEP)){
-			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("sheep-eat"), event.getBlock(), entity) );
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.SHEEP_EAT, event.getBlock(), entity) );
 		} else {
 			
 			if(event.getEntity() instanceof Enderman){
 	
 				if (event.getTo() == Material.AIR){
-					plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PLACE, event.getBlock(), entity) );
 				} else {
 					Enderman enderman = (Enderman) event.getEntity();
 					if (enderman.getCarriedMaterial() != null) {
-						plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("enderman-pickup"), event.getBlock(), entity) );
+						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PICKUP, event.getBlock(), entity) );
 					}
 				}
 			}
@@ -128,19 +129,19 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
 		
-		String action = "entity-explode";
+		ActionType action = ActionType.ENTITY_EXPLODE;
 		String name = event.getEntityType().getName().toLowerCase();
 		if(event.getEntity() instanceof Creeper){
-			action = "creeper-explode";
+			action = ActionType.CREEPER_EXPLODE;
 			name = "creeper";
 		}
 		else if(event.getEntity() instanceof TNTPrimed){
-			action = "tnt-explode";
+			action = ActionType.TNT_EXPLODE;
 			name = "tnt";
 		}
 		
 		for(Block block : event.blockList()){
-			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(action), block, name) );
+			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
 		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
@@ -60,7 +61,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-break"), event.getBlock(), player.getName()) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, event.getBlock(), player.getName()) );
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
@@ -82,7 +83,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-place"), event.getBlock(), player.getName()) );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, event.getBlock(), player.getName()) );
 	}
 	
 	
@@ -92,7 +93,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(BlockFormEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-form"), event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getBlock(), "Environment") );
 	}
 	
 	
@@ -102,7 +103,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-fade"), event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
 	}
 	
 	
@@ -112,7 +113,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onLeavesDecay(LeavesDecayEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("leaf-decay"), event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LEAF_DECAY, event.getBlock(), "Environment") );
 	}
 	
 
@@ -122,7 +123,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-burn"), event.getBlock(), "Environment") );
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, event.getBlock(), "Environment") );
 	}
 	
 	
@@ -141,7 +142,7 @@ public class PrismBlockEvents implements Listener {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				if(preplannedBlockFalls.containsKey(coord_key)){
 					String player = preplannedBlockFalls.get(coord_key);
-					plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-fall"), b, player) );
+					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FALL, b, player) );
 					preplannedBlockFalls.remove(coord_key);
 				}
 			}
@@ -165,7 +166,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(SignChangeEvent event) {
-		plugin.actionsRecorder.addToQueue( new SignAction(plugin.getActionType("sign-change"), event.getBlock(), event.getLines(), event.getPlayer().getName()) );
+		plugin.actionsRecorder.addToQueue( new SignAction(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer().getName()) );
 	}
 
 
@@ -176,19 +177,19 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSetFire(final BlockIgniteEvent event){
 		
-		String cause = null;
+		ActionType cause = null;
 		switch (event.getCause()){
 			case FIREBALL:
-				cause = "fireball";
+				cause = ActionType.FIREBALL;
 				break;
 			case FLINT_AND_STEEL:
-				cause = "flint-steel";
+				cause = ActionType.FLINT_STEEL;
 				break;
 			case LAVA:
-				cause = "lava-ignite";
+				cause = ActionType.LAVA_IGNITE;
 				break;
 			case LIGHTNING:
-				cause = "lightning";
+				cause = ActionType.LIGHTNING;
 				break;
 			case SPREAD:
 //				cause = "fire-spread";
@@ -198,7 +199,7 @@ public class PrismBlockEvents implements Listener {
 		}
 		if(cause != null){
 			Player player = event.getPlayer();
-			plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlock(), (player == null ? "Environment" : player.getName())) );
+			plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
 		}
 	}
 	
@@ -210,7 +211,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
 		Player player = event.getPlayer();
-		String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
-		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType(cause), event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
+		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 	}
 }
