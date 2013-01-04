@@ -26,7 +26,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
-import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
@@ -121,6 +120,8 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
 
+		// bug filed:
+		// https://bukkit.atlassian.net/browse/BUKKIT-3371
 //		EntityType entityType = event.getEntity().getType();
 //		if(entityType.equals(EntityType.ITEM_FRAME)){
 //			
@@ -147,23 +148,17 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onHangingBreakEvent(final HangingBreakEvent event) {
-//		String breaking_name = "";
-//		Entity e = event.getRemover();
-//		if(e instanceof Player){
-//			Player player = (Player)e;
-//			breaking_name = player.getName();
-//		} else {
-//			breaking_name = e.getType().getName();
-//		}
-		plugin.debug("HANGING BREAK EVENT CAUSE: " + event.getCause().name());
-//		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
-	}
+//	/**
+//	 * This is disabled because when a hanging item is broken by a player
+//	 * that shows as HangingBreakByEntityEvent. When detached from
+//	 * another block it's a cause = PHYSICS, which is handled by
+//	 * the block physics events.
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onHangingBreakEvent(final HangingBreakEvent event) {
+////		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+//	}
 	
 	
 	/**
@@ -180,8 +175,7 @@ public class PrismEntityEvents implements Listener {
 		} else {
 			breaking_name = e.getType().getName();
 		}
-		plugin.debug("HANGING BREAK ENTITY: " + breaking_name);
-//		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
 	}
 	
 	

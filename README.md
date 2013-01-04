@@ -62,6 +62,12 @@ Prism was designed for busy servers and is *extremely* fast. The Prism database 
 - prism.reload - Grants config reload permission. Recommended for: OPs
 - prism.delete - Purge records from database via commands. Recommended for: OPs
 - prism.* - Grants all permissions. Recommended for: OPs
+
+## Known Issues
+
+Hanging items can't be rolled back because of a bukkit bug with their facing directions.
+https://bukkit.atlassian.net/browse/BUKKIT-3371
+
           
 ## Get Help
 
