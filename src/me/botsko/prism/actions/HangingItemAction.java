@@ -11,8 +11,6 @@ public class HangingItemAction extends GenericAction {
 	protected Hanging hanging;
 	
 
-	
-	
 	/**
 	 * 
 	 * @param action_type
@@ -89,6 +87,7 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "hangingitem";
+		name = data.toLowerCase();
 //		String[] blockdata = getData().split(":");
 //		if(blockdata.length == 2){
 //			ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));

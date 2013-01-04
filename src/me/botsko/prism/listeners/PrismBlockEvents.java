@@ -1,7 +1,6 @@
 package me.botsko.prism.listeners;
 
 import java.util.ArrayList;
-import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
@@ -12,6 +11,7 @@ import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,16 +34,6 @@ public class PrismBlockEvents implements Listener {
 	 * 
 	 */
 	private Prism plugin;
-	
-	/**
-	 * We store a basic index of block we anticipate will fall, so
-	 * that when they do fall we can attribute them to the player who
-	 * broke the original block.
-	 * 
-	 * Once the block fall is registered, it's removed from here, so
-	 * data should not remain here long.
-	 */
-	private ConcurrentHashMap<String,String> preplannedBlockFalls = new ConcurrentHashMap<String,String>();
 	
 	
 	/**
@@ -71,7 +61,7 @@ public class PrismBlockEvents implements Listener {
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				plugin.debug("Anticipating falling block at " + coord_key + " for " + player.getName());
-				preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.preplannedBlockFalls.put(coord_key, player.getName());
 			}
 		}
 		
@@ -83,7 +73,18 @@ public class PrismBlockEvents implements Listener {
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				plugin.debug("Anticipating block detaching at " + coord_key + " for " + player.getName());
-				preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+			}
+		}
+		
+		
+		// Find a list of all hanging entities on this block
+		ArrayList<Entity> hanging = BlockUtils.findHangingEntities( event.getBlock() );
+		if(hanging.size() > 0){
+			for(Entity e : hanging){
+				String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
+				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + player.getName());
+				plugin.preplannedBlockFalls.put(coord_key, player.getName());
 			}
 		}
 	}
@@ -153,10 +154,10 @@ public class PrismBlockEvents implements Listener {
 			// Only record a block-fall if there's air below.
 			if(b.getRelative(BlockFace.DOWN).getType().equals(Material.AIR)){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				if(preplannedBlockFalls.containsKey(coord_key)){
-					String player = preplannedBlockFalls.get(coord_key);
+				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
+					String player = plugin.preplannedBlockFalls.get(coord_key);
 					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FALL, b, player) );
-					preplannedBlockFalls.remove(coord_key);
+					plugin.preplannedBlockFalls.remove(coord_key);
 				}
 			}
 		}
@@ -168,10 +169,10 @@ public class PrismBlockEvents implements Listener {
 			// If it's lost an attached block
 			if (attachedBlock.getTypeId() == 0) {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				if(preplannedBlockFalls.containsKey(coord_key)){
-					String player = preplannedBlockFalls.get(coord_key);
+				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
+					String player = plugin.preplannedBlockFalls.get(coord_key);
 					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
-					preplannedBlockFalls.remove(coord_key);
+					plugin.preplannedBlockFalls.remove(coord_key);
 				}
 			}
 		}

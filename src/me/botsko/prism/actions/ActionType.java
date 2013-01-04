@@ -34,7 +34,7 @@ public enum ActionType {
 	LIGHTNING(false, false, false, null, "ignited"),
 	MUSHROOM_GROW(true, true, true, "block", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
-	SHEEP_EAT(false, false, false, "entity", "ate"),
+	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, false, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
 	TREE_GROW(false, true, true, "block", "grew"),
@@ -115,6 +115,15 @@ public enum ActionType {
 	 */
 	public boolean isEntityAction(){
 		return (getHandler() != null && getHandler().equals("entity"));
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isHangingItemAction(){
+		return (getHandler() != null && getHandler().equals("hangingitem"));
 	}
 	
 	

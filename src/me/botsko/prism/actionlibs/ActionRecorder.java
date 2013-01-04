@@ -86,7 +86,7 @@ public class ActionRecorder {
 		// @todo maybe we should pass the full player to actions.
 		if( plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" ) ){
 			Player pl = plugin.getServer().getPlayer( a.getPlayer_name() );
-			if(pl.getGameMode().equals(GameMode.CREATIVE)){
+			if(pl != null && pl.getGameMode().equals(GameMode.CREATIVE)){
 				return false;
 			}
 		}

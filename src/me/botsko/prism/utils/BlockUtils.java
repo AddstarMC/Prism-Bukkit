@@ -8,6 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 public class BlockUtils {
 	
@@ -55,8 +57,7 @@ public class BlockUtils {
 	
 	
 	/**
-	 * Recursively grabs a list of all blocks directly above Block
-	 * that are anticipated to fall.
+	 * Searches for detachable blocks on the four acceptable sides of a block.
 	 * 
 	 * @param block
 	 * @return
@@ -97,7 +98,46 @@ public class BlockUtils {
 	 */
 	public static boolean isDetachableBlock( Block block ){
 		Material m = block.getType();
-		if( m.equals(Material.WALL_SIGN) || m.equals(Material.TORCH) || m.equals(Material.ITEM_FRAME) ){
+		if( m.equals(Material.WALL_SIGN) || m.equals(Material.TORCH) ){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Searches for detachable entities in a
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public static ArrayList<Entity> findHangingEntities( Block block ){
+		
+		ArrayList<Entity> entities = new ArrayList<Entity>();
+		
+		Entity[] foundEntities = block.getChunk().getEntities();
+		if(foundEntities.length > 0){
+			for(Entity e : foundEntities){
+				// Let's limit this to only entities within 1 block of the current.
+				if( block.getLocation().distance( e.getLocation() ) < 2 && isHangingEntity(e) ){
+					entities.add(e);
+				}
+			}
+		}
+		
+		return entities;
+		
+	}
+	
+	
+	/**
+	 * Is an entity a hanging type, attachable to a block.
+	 * @param block
+	 * @return
+	 */
+	public static boolean isHangingEntity( Entity entity ){
+		EntityType e = entity.getType();
+		if( e.equals(EntityType.ITEM_FRAME) || e.equals(EntityType.PAINTING) ){
 			return true;
 		}
 		return false;

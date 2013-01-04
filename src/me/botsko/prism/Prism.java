@@ -41,6 +41,16 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	
+	/**
+	 * We store a basic index of blocks we anticipate will fall, so
+	 * that when they do fall we can attribute them to the player who
+	 * broke the original block.
+	 * 
+	 * Once the block fall is registered, it's removed from here, so
+	 * data should not remain here long.
+	 */
+	public ConcurrentHashMap<String,String> preplannedBlockFalls = new ConcurrentHashMap<String,String>();
+	
 	
     /**
      * Enables the plugin and activates our player listeners

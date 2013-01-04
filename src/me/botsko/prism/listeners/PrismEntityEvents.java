@@ -15,6 +15,7 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
@@ -35,7 +38,6 @@ public class PrismEntityEvents implements Listener {
 	 * 
 	 */
 	private Prism plugin;
-	
 	
 	/**
 	 * 
@@ -148,17 +150,32 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * This is disabled because when a hanging item is broken by a player
-//	 * that shows as HangingBreakByEntityEvent. When detached from
-//	 * another block it's a cause = PHYSICS, which is handled by
-//	 * the block physics events.
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onHangingBreakEvent(final HangingBreakEvent event) {
-////		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
-//	}
+	/**
+	 * Hanging items broken by a player fall under the HangingBreakByEntityEvent
+	 * events. This is merely here to capture cause = physics for when they
+	 * detach from a block.
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingBreakEvent(final HangingBreakEvent event) {
+		
+		// Ignore other causes. Entity cause already handled.
+		// @todo should we worry about explosion/obstruction causes?
+		if( !event.getCause().equals(RemoveCause.PHYSICS) ){
+			return;
+		}
+		
+		Hanging e = event.getEntity();
+
+		// Check for planned hanging item breaks
+		String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
+		if(plugin.preplannedBlockFalls.containsKey(coord_key)){
+			String player = plugin.preplannedBlockFalls.get(coord_key);
+			plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, e, player) );
+			plugin.preplannedBlockFalls.remove(coord_key);
+		}
+	}
 	
 	
 	/**
