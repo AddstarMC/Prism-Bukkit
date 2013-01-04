@@ -106,11 +106,12 @@ public class Preview extends Applier {
 					}
 				}
 				
-				PreviewSession ps = new PreviewSession( player, undo, parameters );
-				
-				// Append the preview and blocks temporarily
-				plugin.playerActivePreviews.put(player.getName(), ps);
-				
+				// Only store the preview when we have results to apply
+				if(rolled_back_count > 0){
+					// Append the preview and blocks temporarily
+					PreviewSession ps = new PreviewSession( player, undo, parameters );
+					plugin.playerActivePreviews.put(player.getName(), ps);
+				}
 			}
 			
 			// Build the results message
@@ -122,6 +123,11 @@ public class Preview extends Applier {
 				msg += ChatColor.GRAY + " Use /prism preview apply to confirm this rollback.";
 			}
 			player.sendMessage( plugin.playerHeaderMsg( msg ) );
+			
+			// Let me know there's no need to cancel/apply
+			if(rolled_back_count == 0){
+				player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
+			}
 			
 		} else {
 			player.sendMessage( plugin.playerError( "Nothing found to preview. Try using /prism l (args) first." ) );
