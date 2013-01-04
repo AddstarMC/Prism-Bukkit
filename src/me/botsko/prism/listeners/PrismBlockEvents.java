@@ -26,6 +26,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.material.Attachable;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -70,6 +71,18 @@ public class PrismBlockEvents implements Listener {
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				plugin.debug("Anticipating falling block at " + coord_key + " for " + player.getName());
+				preplannedBlockFalls.put(coord_key, player.getName());
+			}
+		}
+		
+		
+		// Find a list of all blocks above this block that we know
+		// will fall. 
+		ArrayList<Block> detached_blocks = BlockUtils.findAttachedBlocks(event.getBlock());
+		if(detached_blocks.size() > 0){
+			for(Block b : detached_blocks){
+				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
+				plugin.debug("Anticipating block detaching at " + coord_key + " for " + player.getName());
 				preplannedBlockFalls.put(coord_key, player.getName());
 			}
 		}
@@ -147,18 +160,23 @@ public class PrismBlockEvents implements Listener {
 				}
 			}
 		}
-		// Get sign/torch/itemframe that was attached
-//		if (b.getState().getData() instanceof Attachable) {
-//			Attachable a = (Attachable)	b.getState().getData();
-//			Block attachedBlock = b.getRelative(a.getAttachedFace());
-//			if (attachedBlock.getTypeId() == 0) {
-//			// attached to air? looks like the sign (or other attachable) has become detached
-//
-//			}
-//		}
 		
-//		plugin.actionsRecorder.addToQueue( new BlockAction(plugin.getActionType("block-burn"), event.getBlock(), "Environment") );
+		// Log break of any attached items
+		if (b.getState().getData() instanceof Attachable) {
+			Attachable a = (Attachable)	b.getState().getData();
+			Block attachedBlock = b.getRelative(a.getAttachedFace());
+			// If it's lost an attached block
+			if (attachedBlock.getTypeId() == 0) {
+				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
+				if(preplannedBlockFalls.containsKey(coord_key)){
+					String player = preplannedBlockFalls.get(coord_key);
+					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
+					preplannedBlockFalls.remove(coord_key);
+				}
+			}
+		}
 	}
+	
 	
 	/**
 	 * 

@@ -55,6 +55,56 @@ public class BlockUtils {
 	
 	
 	/**
+	 * Recursively grabs a list of all blocks directly above Block
+	 * that are anticipated to fall.
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public static ArrayList<Block> findAttachedBlocks( Block block ){
+		
+		ArrayList<Block> falling_blocks = new ArrayList<Block>();
+		
+		// Check each of the four sides
+		Block blockToCheck = block.getRelative(BlockFace.EAST);
+		if(BlockUtils.isDetachableBlock(blockToCheck)){
+			falling_blocks.add(blockToCheck);
+		}
+		blockToCheck = block.getRelative(BlockFace.WEST);
+		if(BlockUtils.isDetachableBlock(blockToCheck)){
+			falling_blocks.add(blockToCheck);
+		}
+		blockToCheck = block.getRelative(BlockFace.NORTH);
+		if(BlockUtils.isDetachableBlock(blockToCheck)){
+			falling_blocks.add(blockToCheck);
+		}
+		blockToCheck = block.getRelative(BlockFace.SOUTH);
+		if(BlockUtils.isDetachableBlock(blockToCheck)){
+			falling_blocks.add(blockToCheck);
+		}
+		
+		return falling_blocks;
+		
+	}
+	
+	
+	/**
+	 * Determine whether or not a block is capable of falling.
+	 * 
+	 * Seems like there's got to be another way to do this...
+	 * @param block
+	 * @return
+	 */
+	public static boolean isDetachableBlock( Block block ){
+		Material m = block.getType();
+		if( m.equals(Material.WALL_SIGN) || m.equals(Material.TORCH) || m.equals(Material.ITEM_FRAME) ){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * 
 	 * @param mat
 	 * @param loc
