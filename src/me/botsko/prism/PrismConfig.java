@@ -74,6 +74,8 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.fireball", true);
 		config.addDefault("prism.tracking.flint-steel", true);
+		config.addDefault("prism.tracking.hangingitem-break", true);
+		config.addDefault("prism.tracking.hangingitem-place", true);
 		config.addDefault("prism.tracking.item-drop", true);
 		config.addDefault("prism.tracking.item-insert", true);
 		config.addDefault("prism.tracking.item-pickup", true);

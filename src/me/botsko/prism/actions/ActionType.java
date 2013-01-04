@@ -22,6 +22,8 @@ public enum ActionType {
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
 	FIREBALL(false, false, false, null, "ignited"),
 	FLINT_STEEL(false, false, false, null, "ignited"),
+	HANGINGITEM_BREAK(false, true, true, "hangingitem", "broke"),
+	HANGINGITEM_PLACE(true, true, true, "hangingitem", "hung"),
 	ITEM_DROP(false, false, false, "itemstack", "dropped"),
 	ITEM_INSERT(false, false, false, "itemstack", "inserted"),
 	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),

@@ -24,7 +24,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class PrismEntityEvents implements Listener {
@@ -111,23 +110,35 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-
-		EntityType entityType = event.getEntity().getType();
-		if(entityType.equals(EntityType.ITEM_FRAME)){
-			plugin.debug("Placed item frame");
-		}
-		else if(entityType.equals(EntityType.PAINTING)){
-			plugin.debug("Placed a painting");
-		}
-		
-//		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
-	}
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
+//
+//		EntityType entityType = event.getEntity().getType();
+//		if(entityType.equals(EntityType.ITEM_FRAME)){
+//			
+//			// item inside
+////			ItemFrame i = ((ItemFrame)e);
+////          i.getItem();
+//			
+//			// Experimenting with spawning the itemframes so I know what to record.
+//			World currentWorld = event.getBlock().getWorld();
+//			Location loc = new Location(currentWorld, -131, 65, 180);
+////			Hanging h = currentWorld.spawn(loc, ItemFrame.class);
+//			Hanging h = currentWorld.spawn(loc, Painting.class);
+//			
+//			// This never works.
+//			h.setFacingDirection(BlockFace.NORTH);
+//			
+////			plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
+//		}
+//		else if(entityType.equals(EntityType.PAINTING)){
+//			
+//		}
+//	}
 	
 	
 	/**
