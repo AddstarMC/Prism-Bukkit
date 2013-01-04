@@ -7,12 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.SignAction;
 
 public class Restore extends Applier {
 
@@ -65,6 +67,12 @@ public class Restore extends Applier {
 			
 			for(Action a : results){
 				
+				// No sense in trying to restore
+				// when the type doesn't support it.
+				if(!a.getType().isCanRestore()){
+					continue;
+				}
+				
 				World world = plugin.getServer().getWorld(a.getWorld_name());
 				
 				//Get some data from the entry
@@ -78,11 +86,9 @@ public class Restore extends Applier {
 					BlockAction b = (BlockAction) a;
 					
 					Block block = world.getBlockAt(loc);
-//					BlockState state = block.getState();
 					
 					// If the block was placed, we must replace it
 					if(a.getType().doesCreateBlock()){
-						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(block.getType().equals(Material.AIR)){
 							
 							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
@@ -103,6 +109,37 @@ public class Restore extends Applier {
 							block.setType( Material.AIR);
 							restored_count++;
 						}
+					}
+				}
+				
+				
+				/**
+				 * Rollback sign actions
+				 */
+				if( a instanceof SignAction ){
+					
+					SignAction b = (SignAction) a;
+					Block block = world.getBlockAt(loc);
+					
+					// Ensure a sign exists there (and no other block)
+					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+						
+						if( block.getType().equals(Material.AIR) ){
+							block.setType(Material.WALL_SIGN);
+						}
+						
+						// Set the contents
+						Sign s = (Sign)block.getState();
+						String[] lines = b.getLines();
+						int i = 0;
+						if(lines.length > 0){
+							for(String line : lines){
+								s.setLine(i, line);
+								i++;
+							}
+						}
+						s.update();
+						restored_count++;
 					}
 				}
 			}

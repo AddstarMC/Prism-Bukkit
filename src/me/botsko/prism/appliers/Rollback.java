@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -20,7 +19,6 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
-import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -92,6 +90,12 @@ public class Rollback extends Applier {
 			
 			for(Action a : results){
 				
+				// No sense in trying to rollback
+				// when the type doesn't support it.
+				if(!a.getType().isCanRollback()){
+					continue;
+				}
+				
 				World world = plugin.getServer().getWorld(a.getWorld_name());
 				
 				//Get some data from the entry
@@ -105,13 +109,7 @@ public class Rollback extends Applier {
 					BlockAction b = (BlockAction) a;
 					
 					Block block = world.getBlockAt(loc);
-					
-					// No sense in trying to rollback
-					// when the type doesn't support it.
-					if(!a.getType().isCanRollback()){
-						continue;
-					}
-					
+
 					// If the block was placed, we need to remove it
 					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
@@ -155,36 +153,6 @@ public class Rollback extends Applier {
 					
 					rolled_back_count++;
 					
-				}
-				
-				
-				/**
-				 * Rollback sign actions
-				 */
-				if( a instanceof SignAction ){
-					
-					SignAction b = (SignAction) a;
-					Block block = world.getBlockAt(loc);
-					
-					// Ensure a sign exists there (and no other block)
-					if(block.getType().equals(Material.AIR)){
-						if( !block.getType().equals(Material.SIGN) && !block.getType().equals(Material.WALL_SIGN) ){
-							block.setType(Material.WALL_SIGN);
-						}
-						
-						// Set the contents
-						Sign s = (Sign)block.getState();
-						String[] lines = b.getLines();
-						int i = 0;
-						if(lines.length > 0){
-							for(String line : lines){
-								s.setLine(i, line);
-								i++;
-							}
-						}
-						s.update();
-						rolled_back_count++;
-					}
 				}
 				
 				
