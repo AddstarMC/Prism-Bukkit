@@ -24,6 +24,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class PrismEntityEvents implements Listener {
@@ -107,6 +108,25 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
+
+		EntityType entityType = event.getEntity().getType();
+		if(entityType.equals(EntityType.ITEM_FRAME)){
+			plugin.debug("Placed item frame");
+		}
+		else if(entityType.equals(EntityType.PAINTING)){
+			plugin.debug("Placed a painting");
+		}
+		
+//		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
 	}
 	
 	

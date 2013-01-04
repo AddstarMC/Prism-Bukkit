@@ -60,7 +60,7 @@ public class Rollback extends Applier {
 	public void rollback(){
 		
 		// Remove any fire at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getAction_type().contains("block-burn")){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("block-burn")){
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
 				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
@@ -68,7 +68,7 @@ public class Rollback extends Applier {
 		}
 		
 		// Remove item drops in this radius
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && parameters.getAction_type().contains("explode")){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("explode")){
 			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 			if(removed > 0){
 				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
