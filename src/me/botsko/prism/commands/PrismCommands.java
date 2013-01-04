@@ -55,7 +55,6 @@ public class PrismCommands extends Executor {
 		 * /prism i
 		 */
 		addSub("i", "prism.lookup")
-		.setMinArgs(1)
 		.setDescription("Toggles the block inspection tool to your hand.")
 		.setHandler(new InspectCommand(plugin));
 		
