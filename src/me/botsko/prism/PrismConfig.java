@@ -54,6 +54,7 @@ public class PrismConfig {
 		
 		config.addDefault("prism.clear-records-after", "8w");
 		
+		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-rollback", true);

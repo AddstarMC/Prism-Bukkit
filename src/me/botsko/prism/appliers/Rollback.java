@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -7,14 +8,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
@@ -101,6 +106,12 @@ public class Rollback extends Applier {
 					
 					Block block = world.getBlockAt(loc);
 					
+					// No sense in trying to rollback
+					// when the type doesn't support it.
+					if(!a.getType().isCanRollback()){
+						continue;
+					}
+					
 					// If the block was placed, we need to remove it
 					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
@@ -173,6 +184,29 @@ public class Rollback extends Applier {
 						}
 						s.update();
 						rolled_back_count++;
+					}
+				}
+				
+				
+				/**
+				 * Rollback itemstack actions
+				 */
+				if( a instanceof ItemStackAction ){
+					
+					ItemStackAction b = (ItemStackAction) a;
+					
+					Block block = world.getBlockAt(loc);
+					if(block.getType().equals(Material.CHEST)){
+						Chest chest = (Chest) block.getState();
+						
+						// If item was removed, put it back.
+						if(a.getType().equals(ActionType.ITEM_REMOVE) && plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
+							HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
+							rolled_back_count++;
+							if(leftovers.size() > 0){
+								plugin.debug("Couldn't rollback items to container, it's full.");
+							}
+						}
 					}
 				}
 			}

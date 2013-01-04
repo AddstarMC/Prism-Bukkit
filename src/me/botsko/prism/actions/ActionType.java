@@ -27,7 +27,7 @@ public enum ActionType {
 	ITEM_DROP(false, false, false, "itemstack", "dropped"),
 	ITEM_INSERT(false, false, false, "itemstack", "inserted"),
 	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),
-	ITEM_REMOVE(false, false, false, "itemstack", "removed"),
+	ITEM_REMOVE(false, true, true, "itemstack", "removed"),
 	LAVA_BUCKET(false, false, false, null, "poured"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, false, false, "block", "decayed"),

@@ -40,6 +40,8 @@ Prism was designed for busy servers and is *extremely* fast. The Prism database 
 
 #### Rollbacks
 
+@todo make warning about items from containers (prism.appliers.allow_rollback_items_removed_from_container)
+
 #### Restore
 
 

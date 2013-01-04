@@ -93,6 +93,15 @@ public class ItemStackAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public ItemStack getItem(){
+		return item;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNiceName(){
 		String name = "";
 		if(item != null){
