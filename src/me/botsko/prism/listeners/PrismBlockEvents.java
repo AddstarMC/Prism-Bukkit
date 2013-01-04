@@ -54,13 +54,7 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
-		// If the block being broke is a sign, we need to record a different event
-		// so we can handle the sign text properly
-		if( block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
-			
-		} else {
-			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
-		}
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 

@@ -126,6 +126,7 @@ public class Rollback extends Applier {
 							block.setTypeId( b.getBlock_id() );
 							block.setData( b.getBlock_subid() );
 							rolled_back_count++;
+							
 						}
 					}
 				}
@@ -154,37 +155,24 @@ public class Rollback extends Applier {
 					SignAction b = (SignAction) a;
 					Block block = world.getBlockAt(loc);
 					
-					// If the block was placed, we need to remove it
-					if(a.getType().doesCreateBlock()){
-						if(!block.getType().equals(Material.AIR)){
-							block.setType(Material.AIR);
-							rolled_back_count++;
-						}
-					} else {
-						
-						/**
-						 * Restore the block that was removed, unless something
-						 * other than air occupies the spot.
-						 */
-						if(block.getType().equals(Material.AIR)){
-							
-							// @todo we need to know if it's a wall sign or normal sign
+					// Ensure a sign exists there (and no other block)
+					if(block.getType().equals(Material.AIR)){
+						if( !block.getType().equals(Material.SIGN) && !block.getType().equals(Material.WALL_SIGN) ){
 							block.setType(Material.WALL_SIGN);
-							
-							// Restore text
-							Sign s = (Sign) block;
-							String[] lines = b.getLines();
-							int i = 0;
-							if(lines.length > 0){
-								for(String line : lines){
-									s.setLine(i, line);
-									i++;
-								}
-							}
-							
-							rolled_back_count++;
-							
 						}
+						
+						// Set the contents
+						Sign s = (Sign)block.getState();
+						String[] lines = b.getLines();
+						int i = 0;
+						if(lines.length > 0){
+							for(String line : lines){
+								s.setLine(i, line);
+								i++;
+							}
+						}
+						s.update();
+						rolled_back_count++;
 					}
 				}
 			}
