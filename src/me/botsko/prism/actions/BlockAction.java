@@ -106,11 +106,8 @@ public class BlockAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "block";
-		String[] blockdata = getData().split(":");
-		if(blockdata.length == 2){
-			ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));
-			name = i.getType().name().toLowerCase().replace("_", " ");
-		}
+		ItemStack i = new ItemStack( getBlock_id(),getBlock_subid());
+		name = i.getType().name().toLowerCase().replace("_", " ");
 		return name;
 	}
 }
