@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.utils.DeathUtils;
 
@@ -24,6 +25,9 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingBreakEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
 public class PrismEntityEvents implements Listener {
@@ -110,13 +114,13 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-//
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
+
 //		EntityType entityType = event.getEntity().getType();
 //		if(entityType.equals(EntityType.ITEM_FRAME)){
 //			
@@ -124,21 +128,61 @@ public class PrismEntityEvents implements Listener {
 ////			ItemFrame i = ((ItemFrame)e);
 ////          i.getItem();
 //			
-//			// Experimenting with spawning the itemframes so I know what to record.
-//			World currentWorld = event.getBlock().getWorld();
-//			Location loc = new Location(currentWorld, -131, 65, 180);
-////			Hanging h = currentWorld.spawn(loc, ItemFrame.class);
-//			Hanging h = currentWorld.spawn(loc, Painting.class);
+////			// Experimenting with spawning the itemframes so I know what to record.
+////			World currentWorld = event.getBlock().getWorld();
+////			Location loc = new Location(currentWorld, -131, 65, 180);
+//////			Hanging h = currentWorld.spawn(loc, ItemFrame.class);
+////			Hanging h = currentWorld.spawn(loc, Painting.class);
+////			
+////			// This never works.
+////			h.setFacingDirection(BlockFace.NORTH);
 //			
-//			// This never works.
-//			h.setFacingDirection(BlockFace.NORTH);
-//			
-////			plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
 //		}
 //		else if(entityType.equals(EntityType.PAINTING)){
 //			
 //		}
-//	}
+		
+		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingBreakEvent(final HangingBreakEvent event) {
+//		String breaking_name = "";
+//		Entity e = event.getRemover();
+//		if(e instanceof Player){
+//			Player player = (Player)e;
+//			breaking_name = player.getName();
+//		} else {
+//			breaking_name = e.getType().getName();
+//		}
+		plugin.debug("HANGING BREAK EVENT CAUSE: " + event.getCause().name());
+//		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingBreakEvent(final HangingBreakByEntityEvent event) {
+		String breaking_name = "";
+		Entity e = event.getRemover();
+		if(e instanceof Player){
+			Player player = (Player)e;
+			breaking_name = player.getName();
+		} else {
+			breaking_name = e.getType().getName();
+		}
+		plugin.debug("HANGING BREAK ENTITY: " + breaking_name);
+//		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+	}
 	
 	
 	/**

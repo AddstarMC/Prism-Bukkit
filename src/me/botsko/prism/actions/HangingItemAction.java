@@ -24,7 +24,7 @@ public class HangingItemAction extends GenericAction {
 			this.type = action_type;
 		}
 		if(hanging != null){
-			
+			// @todo We'll need to store the hanging direction/face so we can properly restore.
 			this.hanging = hanging;
 			this.world_name = hanging.getWorld().getName();
 			this.x = hanging.getLocation().getX();
@@ -68,6 +68,10 @@ public class HangingItemAction extends GenericAction {
 	 */
 	protected void setHangingFromData(){
 		if(hanging == null && data != null){
+//			EntityType e = EntityType.valueOf(data);
+//			if(e != null){
+//				hanging = e;
+//			}
 //			String[] blockArr = data.split(":");
 //			if (!TypeUtils.isNumeric(blockArr[0])) return;
 //			

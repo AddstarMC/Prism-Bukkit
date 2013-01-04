@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 
@@ -73,11 +76,19 @@ public class ActionRecorder {
 			return false;
 		}
 		
-		
 		// Should we ignore this action type?
 		String action_type = a.getType().getActionType();
 		if(!plugin.getConfig().getBoolean( "prism.tracking." + action_type )){
 			return false;
+		}
+		
+		// Should we ignore this player for being in creative?
+		// @todo maybe we should pass the full player to actions.
+		if( plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" ) ){
+			Player pl = plugin.getServer().getPlayer( a.getPlayer_name() );
+			if(pl.getGameMode().equals(GameMode.CREATIVE)){
+				return false;
+			}
 		}
 		
 		return true;
