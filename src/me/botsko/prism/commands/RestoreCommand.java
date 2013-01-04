@@ -42,9 +42,16 @@ public class RestoreCommand implements SubHandler {
 		if(!results.getActionResults().isEmpty()){
 			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restoring changes...") );
+
+			// Inform nearby players
+			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
 			
-			Restore rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
-			rs.restore();
+			// Perform restore
+			Restore rs = new Restore( plugin, results.getActionResults() );
+			String response = rs.restore();
+			if(response != null){
+				call.getPlayer().sendMessage(response);
+			}
 			
 		} else {
 			// @todo no results

@@ -8,10 +8,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.SignAction;
@@ -27,17 +25,7 @@ public class Restore extends Applier {
 	/**
 	 * 
 	 */
-	private Player player;
-	
-	/**
-	 * 
-	 */
 	private List<Action> results;
-
-	/**
-	 * 
-	 */
-	private QueryParameters parameters;
 	
 	
 	/**
@@ -45,24 +33,21 @@ public class Restore extends Applier {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
+	public Restore( Prism plugin, List<Action> results ) {
 		this.plugin = plugin;
-		this.player = player;
 		this.results = results;
-		this.parameters = parameters;
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public void restore(){
+	public String restore(){
+		
+		String response;
 		
 		if(!results.isEmpty()){
-			
-			// Inform nearby players
-			plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
-			
+
 			int restored_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){
@@ -152,10 +137,11 @@ public class Restore extends Applier {
 			if(restored_count > 0){
 				msg += ChatColor.GRAY + " It's like it was always there.";
 			}
-			player.sendMessage( plugin.playerHeaderMsg( msg ) );
+			response = plugin.playerHeaderMsg( msg );
 			
 		} else {
-			player.sendMessage( plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
+			response = plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." );
 		}
+		return response;
 	}
 }

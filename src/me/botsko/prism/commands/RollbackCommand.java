@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -41,10 +43,17 @@ public class RollbackCommand implements SubHandler {
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
 		if(!results.getActionResults().isEmpty()){
 			
+			// Inform nearby players
+			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is performing a rollback nearby. Just so you know.");
+			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 			Rollback rb = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters );
-			rb.rollback();
-			
+			ArrayList<String> responses = rb.rollback();
+			if(!responses.isEmpty()){
+				for(String resp : responses){
+					call.getPlayer().sendMessage(resp);
+				}
+			}
 		} else {
 			// @todo no results
 		}

@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,13 +65,15 @@ public class Rollback extends Applier {
 	/**
 	 * 
 	 */
-	public void rollback(){
+	public ArrayList<String> rollback(){
+		
+		ArrayList<String> responses = new ArrayList<String>();
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
-				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+				responses.add( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
@@ -78,15 +81,12 @@ public class Rollback extends Applier {
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
 			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 			if(removed > 0){
-				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+				responses.add( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
 		// Rollback blocks
 		if(!results.isEmpty()){
-			
-			// Inform nearby players
-			plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a rollback nearby. Just so you know.");
 			
 			int rolled_back_count = 0, skipped_block_count = 0;
 			
@@ -199,7 +199,7 @@ public class Rollback extends Applier {
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( player, parameters );
 				if(!results.getActionResults().isEmpty()){
-					Restore rs = new Restore( plugin, player, results.getActionResults(), parameters );
+					Restore rs = new Restore( plugin, results.getActionResults() );
 					rs.restore();
 				}
 			}
@@ -213,10 +213,11 @@ public class Rollback extends Applier {
 			if(rolled_back_count > 0){
 				msg += ChatColor.GRAY + " It's like it never happened.";
 			}
-			player.sendMessage( plugin.playerHeaderMsg( msg ) );
+			responses.add( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
-			player.sendMessage( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
+			responses.add( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
+		return responses;
 	}
 }
