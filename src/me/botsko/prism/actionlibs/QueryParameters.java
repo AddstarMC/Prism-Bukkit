@@ -275,4 +275,24 @@ public class QueryParameters {
 		}
 		return "ASC";
 	}
+	
+	
+	/**
+	 * This just provides easy access to whether or not any action
+	 * type we're searching for should also trigger a restore
+	 * of any events afterwards.
+	 * 
+	 * @param at
+	 * @return
+	 */
+	public boolean shouldTriggerRestoreFor( ActionType at ){
+		if(!getActionTypes().isEmpty()){
+			for(ActionType requestedType : getActionTypes()){
+				if(requestedType.shouldTriggerRestoreFor( at )){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

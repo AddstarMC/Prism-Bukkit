@@ -184,6 +184,36 @@ public enum ActionType {
 	
 	
 	/**
+	 * Returns whether or not an action type should also
+	 * trigger a restore action after an applier.
+	 * 
+	 * This is a pretty inefficient way to define the 
+	 * relationships but it's really the only way I 
+	 * can think of atm.
+	 * 
+	 * @param at
+	 * @return
+	 */
+	public boolean shouldTriggerRestoreFor(ActionType at){
+		
+		// Actions that should trigger sign changes
+		if(at.equals(ActionType.SIGN_CHANGE)){
+			switch(this){
+				case BLOCK_BREAK:
+				case BLOCK_BURN:
+				case CREEPER_EXPLODE:
+				case ENDERMAN_PICKUP:
+				case TNT_EXPLODE:
+					return true;
+				default:
+					return false;
+			}
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * 
 	 * @return
 	 */

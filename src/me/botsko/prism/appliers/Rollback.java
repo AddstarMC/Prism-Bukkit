@@ -186,7 +186,7 @@ public class Rollback extends Applier {
 			 * If we've done block-break rollback we also need to re-apply
 			 * any sign-change events at this location.
 			 */
-			if( parameters.getActionTypes().contains(ActionType.BLOCK_BREAK) ){
+			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
 				
 				// We're going to modify the action type of the query params
 				// and pass it along to a restore.
