@@ -52,11 +52,19 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
 		Player player = event.getPlayer();
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, event.getBlock(), player.getName()) );
+		Block block = event.getBlock();
+		
+		// If the block being broke is a sign, we need to record a different event
+		// so we can handle the sign text properly
+		if( block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+			
+		} else {
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
+		}
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
-		ArrayList<Block> falling_blocks = BlockUtils.findFallingBlocksAboveBlock(event.getBlock());
+		ArrayList<Block> falling_blocks = BlockUtils.findFallingBlocksAboveBlock(block);
 		if(falling_blocks.size() > 0){
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
@@ -65,10 +73,14 @@ public class PrismBlockEvents implements Listener {
 			}
 		}
 		
+//		// We can't have attachments on attachments so we'll end here.
+//		if(BlockUtils.isDetachableBlock(block)){
+//			return;
+//		}
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
-		ArrayList<Block> detached_blocks = BlockUtils.findAttachedBlocks(event.getBlock());
+		ArrayList<Block> detached_blocks = BlockUtils.findAttachedBlocks(block);
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
@@ -79,7 +91,7 @@ public class PrismBlockEvents implements Listener {
 		
 		
 		// Find a list of all hanging entities on this block
-		ArrayList<Entity> hanging = BlockUtils.findHangingEntities( event.getBlock() );
+		ArrayList<Entity> hanging = BlockUtils.findHangingEntities(block);
 		if(hanging.size() > 0){
 			for(Entity e : hanging){
 				String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();

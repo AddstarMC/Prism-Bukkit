@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
@@ -14,6 +15,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -98,7 +100,6 @@ public class Rollback extends Applier {
 					BlockAction b = (BlockAction) a;
 					
 					Block block = world.getBlockAt(loc);
-//					BlockState state = block.getState();
 					
 					// If the block was placed, we need to remove it
 					if(a.getType().doesCreateBlock()){
@@ -115,7 +116,9 @@ public class Rollback extends Applier {
 						 */
 						if(block.getType().equals(Material.AIR)){
 							
-							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+							Material m = Material.getMaterial(b.getBlock_id());
+							
+							if(!mayEverPlace(m)){
 								skipped_block_count++;
 								continue;
 							}
@@ -140,6 +143,49 @@ public class Rollback extends Applier {
 					
 					rolled_back_count++;
 					
+				}
+				
+				
+				/**
+				 * Rollback sign actions
+				 */
+				if( a instanceof SignAction ){
+					
+					SignAction b = (SignAction) a;
+					Block block = world.getBlockAt(loc);
+					
+					// If the block was placed, we need to remove it
+					if(a.getType().doesCreateBlock()){
+						if(!block.getType().equals(Material.AIR)){
+							block.setType(Material.AIR);
+							rolled_back_count++;
+						}
+					} else {
+						
+						/**
+						 * Restore the block that was removed, unless something
+						 * other than air occupies the spot.
+						 */
+						if(block.getType().equals(Material.AIR)){
+							
+							// @todo we need to know if it's a wall sign or normal sign
+							block.setType(Material.WALL_SIGN);
+							
+							// Restore text
+							Sign s = (Sign) block;
+							String[] lines = b.getLines();
+							int i = 0;
+							if(lines.length > 0){
+								for(String line : lines){
+									s.setLine(i, line);
+									i++;
+								}
+							}
+							
+							rolled_back_count++;
+							
+						}
+					}
 				}
 			}
 			

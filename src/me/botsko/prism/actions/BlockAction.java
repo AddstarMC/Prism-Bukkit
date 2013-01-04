@@ -1,7 +1,6 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
-import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
@@ -16,12 +15,7 @@ public class BlockAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected int block_id;
-	
-	/**
-	 * 
-	 */
-	protected byte block_subid;
+	protected BlockActionData actionData;
 	
 	
 	/**
@@ -31,11 +25,18 @@ public class BlockAction extends GenericAction {
 	 * @param player
 	 */
 	public BlockAction( ActionType action_type, Block block, String player ){
+		
+		// Build an object for the specific details of this action
+		actionData = new BlockActionData();
+		
+		// Store information for the action
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(block != null){
 			this.block = block;
+			actionData.block_id = block.getTypeId();
+			actionData.block_subid = block.getData();
 			this.world_name = block.getWorld().getName();
 			this.x = block.getLocation().getX();
 			this.y = block.getLocation().getY();
@@ -48,9 +49,11 @@ public class BlockAction extends GenericAction {
 			java.util.Date date= new java.util.Date();
 			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
+		
 		// Set data from current block
-		setDataFromBlock();
-		setBlockIdsFromData();
+		setDataFromObject();
+		setObjectFromData();
+		
 	}
 	
 	
@@ -59,32 +62,24 @@ public class BlockAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setBlockIdsFromData();
+		setObjectFromData();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setDataFromBlock(){
-		if(data == null && block != null){
-			data = block.getTypeId() + ":" + block.getData();
-		}
+	protected void setDataFromObject(){
+		data = gson.toJson(actionData);
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setBlockIdsFromData(){
-		if(block == null && data != null){
-			String[] blockArr = data.split(":");
-			if (!TypeUtils.isNumeric(blockArr[0])) return;
-			
-			block_id = Integer.parseInt(blockArr[0]);
-			if (blockArr.length > 1){
-				block_subid = (byte) Integer.parseInt(blockArr[1]);
-			}
+	protected void setObjectFromData(){
+		if(data != null){
+			actionData = gson.fromJson(data, BlockActionData.class);
 		}
 	}
 	
@@ -93,7 +88,7 @@ public class BlockAction extends GenericAction {
 	 * 
 	 */
 	public int getBlock_id(){
-		return block_id;
+		return actionData.block_id;
 	}
 	
 	
@@ -101,7 +96,7 @@ public class BlockAction extends GenericAction {
 	 * 
 	 */
 	public byte getBlock_subid(){
-		return block_subid;
+		return actionData.block_subid;
 	}
 	
 	

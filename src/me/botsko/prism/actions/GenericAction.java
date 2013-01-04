@@ -1,7 +1,14 @@
 package me.botsko.prism.actions;
 
+import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
+
 
 public class GenericAction implements Action {
+	
+	/**
+	 * 
+	 */
+	protected Gson gson = new Gson();
 	
 	/**
 	 * 
@@ -12,7 +19,6 @@ public class GenericAction implements Action {
 	 * 
 	 */
 	protected int id;
-
 
 	/**
 	 * 

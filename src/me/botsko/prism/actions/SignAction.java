@@ -10,11 +10,11 @@ public class SignAction extends GenericAction {
 	 * 
 	 */
 	protected Block block;
-
+	
 	/**
 	 * 
 	 */
-	protected String[] lines;
+	protected SignActionData actionData;
 	
 	
 	/**
@@ -24,16 +24,22 @@ public class SignAction extends GenericAction {
 	 * @param player
 	 */
 	public SignAction( ActionType action_type, Block block, String[] lines, String player ){
+		
+		// Build an object for the specific details of this action
+		actionData = new SignActionData();
+				
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(block != null){
 			this.block = block;
-			this.lines = lines;
 			this.world_name = block.getWorld().getName();
 			this.x = block.getX();
 			this.y = block.getY();
 			this.z = block.getZ();
+		}
+		if(lines != null){
+			actionData.lines = lines;
 		}
 		if(player != null){
 			this.player_name = player;
@@ -42,9 +48,11 @@ public class SignAction extends GenericAction {
 			java.util.Date date= new java.util.Date();
 			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
+		
 		// Set data from current block
-		setDataFromSignContent();
-		setSignContentFromData();
+		setDataFromObject();
+		setObjectFromData();
+		
 	}
 	
 	
@@ -53,32 +61,34 @@ public class SignAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setSignContentFromData();
-	}
-	
-	
-	/**
-	 * There's likely a better way but I'm tired. The only
-	 * safe separator character is 17 characters, 1 too many
-	 * for any single line.
-	 */
-	protected void setDataFromSignContent(){
-		if(data == null && lines != null){
-			data = "";
-			for(String line : lines){
-				data += line+"-----------------";
-			}
-		}
+		setObjectFromData();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setSignContentFromData(){
-		if(lines == null && data != null){
-			lines = data.split("-----------------");
+	protected void setDataFromObject(){
+		data = gson.toJson(actionData);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void setObjectFromData(){
+		if(data != null){
+			actionData = gson.fromJson(data, SignActionData.class);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getLines(){
+		return actionData.lines;
 	}
 	
 	
@@ -88,10 +98,12 @@ public class SignAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "sign (";
-		if(lines.length > 0){
+		if(actionData.lines != null && actionData.lines.length > 0){
 			int c = 1;
-			for(String line : lines){
-				name += line + (c < lines.length ? ", " : "");
+			for(String line : actionData.lines){
+				if(!line.isEmpty()){
+					name += line + (c < actionData.lines.length ? ", " : "");
+				}
 				c++;
 			}
 		} else {

@@ -1,6 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 
@@ -56,7 +57,7 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix(){
 		
-		if(a.getType().doesCreateBlock() || a.getType().getActionType().equals("item-insert")){
+		if( a.getType().doesCreateBlock() || a.getType().equals(ActionType.ITEM_INSERT) || a.getType().equals(ActionType.SIGN_CHANGE) ){
 			return ChatColor.GREEN + "+ " + ChatColor.WHITE;
 		}
 		else {
