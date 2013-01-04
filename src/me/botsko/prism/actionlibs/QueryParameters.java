@@ -1,6 +1,9 @@
 package me.botsko.prism.actionlibs;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -18,7 +21,7 @@ public class QueryParameters {
 	protected boolean allow_no_radius = false;
 	protected String player;
 	protected String world;
-	protected String action_type;
+	protected ArrayList<ActionType> action_types = new ArrayList<ActionType>();
 	protected String time;
 	protected String entity;
 	protected String block;
@@ -174,16 +177,24 @@ public class QueryParameters {
 	/**
 	 * @return the action_type
 	 */
-	public String getAction_type() {
-		return action_type;
+	public ArrayList<ActionType> getActionTypes() {
+		return action_types;
 	}
 	
 	
 	/**
 	 * @param action_type the action_type to set
 	 */
-	public void setAction_type(String action_type) {
-		this.action_type = action_type;
+	public void addActionType(ActionType action_type) {
+		this.action_types.add(action_type);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void resetActionTypes() {
+		action_types.clear();
 	}
 	
 	

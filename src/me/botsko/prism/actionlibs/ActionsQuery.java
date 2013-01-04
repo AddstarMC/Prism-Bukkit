@@ -188,7 +188,7 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-		if( parameters.getLookup_type().equals("rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("block-place") ){
+		if( parameters.getLookup_type().equals("rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ){
 			query += " JOIN (" +
 						"SELECT x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions" +
@@ -222,9 +222,15 @@ public class ActionsQuery {
 			/**
 			 * Actions
 			 */
-			String action_type = parameters.getAction_type();
-			if(action_type != null){
-				query += buildOrQuery("action_type", action_type.split(","));
+			ArrayList<ActionType> action_types = parameters.getActionTypes();
+			if(!action_types.isEmpty()){
+				String[] actions = new String[action_types.size()];
+				int i = 0; // @todo Might be a better way to do this.
+				for(ActionType type : action_types){
+					actions[i] = type.getActionType();
+					i++;
+				}
+				query += buildOrQuery("action_type", actions);
 			}
 			
 			/**

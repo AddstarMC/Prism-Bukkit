@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
@@ -60,7 +61,15 @@ public class PreprocessArgs {
 				
 				// Action
 				if(arg_type.equals("a")){
-					parameters.setAction_type( val );
+					String[] actions = val.split(",");
+					if(actions.length > 0){
+						for(String action : actions){
+							ActionType actionType = ActionType.getByActionType( action );
+							if(actionType != null){
+								parameters.addActionType( actionType );
+							}
+						}
+					}
 				}
 				
 				// Player

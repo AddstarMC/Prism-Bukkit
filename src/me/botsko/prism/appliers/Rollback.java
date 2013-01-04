@@ -13,7 +13,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
@@ -65,7 +67,7 @@ public class Rollback extends Applier {
 	public void rollback(){
 		
 		// Remove any fire at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("block-burn")){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
 				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
@@ -73,7 +75,7 @@ public class Rollback extends Applier {
 		}
 		
 		// Remove item drops in this radius
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && parameters.getAction_type() != null && parameters.getAction_type().contains("explode")){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
 			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 			if(removed > 0){
 				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
@@ -178,6 +180,30 @@ public class Rollback extends Applier {
 					}
 				}
 			}
+			
+			
+			/**
+			 * If we've done block-break rollback we also need to re-apply
+			 * any sign-change events at this location.
+			 */
+			if( parameters.getActionTypes().contains(ActionType.BLOCK_BREAK) ){
+				
+				// We're going to modify the action type of the query params
+				// and pass it along to a restore.
+				// NOTE: These params have been modified from original, so
+				// do NOT use the object for original params.
+				
+				parameters.resetActionTypes();
+				parameters.addActionType(ActionType.SIGN_CHANGE);
+				
+				ActionsQuery aq = new ActionsQuery(plugin);
+				QueryResult results = aq.lookup( player, parameters );
+				if(!results.getActionResults().isEmpty()){
+					Restore rs = new Restore( plugin, player, results.getActionResults(), parameters );
+					rs.restore();
+				}
+			}
+			
 			
 			// Build the results message
 			String msg = rolled_back_count + " reversals.";
