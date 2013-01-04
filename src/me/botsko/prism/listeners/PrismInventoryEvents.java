@@ -7,6 +7,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
@@ -59,36 +60,51 @@ public class PrismInventoryEvents implements Listener {
 
 		Location containerLoc = null;
 	    InventoryHolder ih = inv.getHolder();
+	    boolean should_catch = false;
 	    
 	    // Chest
 	    if(ih instanceof Chest) {
-		    Chest eventChest = (Chest) ih;
-		    containerLoc = eventChest.getLocation();
+	    	if(event.getSlot() == event.getRawSlot()){
+			    Chest eventChest = (Chest) ih;
+			    containerLoc = eventChest.getLocation();
+			    should_catch = true;
+	    	}
 	    }
 	    
 	    // Double chest
 	    else if(ih instanceof DoubleChest) {
-	    	DoubleChest eventChest = (DoubleChest) ih;
-	    	containerLoc = eventChest.getLocation();
+	    	if(event.getSlot() == event.getRawSlot()){
+		    	DoubleChest eventChest = (DoubleChest) ih;
+		    	containerLoc = eventChest.getLocation();
+		    	should_catch = true;
+	    	}
 	    }
 	    
 	    // Furnace
 	    else if(ih instanceof Furnace) {
-	    	Furnace furnace = (Furnace) ih;
-	    	containerLoc = furnace.getLocation();
+	    	if(event.getSlot() == event.getRawSlot()){
+		    	Furnace furnace = (Furnace) ih;
+		    	containerLoc = furnace.getLocation();
+		    	should_catch = true;
+	    	}
 	    }
 	    
-//	    // Dispenser
-//	    else if(ih instanceof Dispenser) {
-//	    	Dispenser dispenser = (Dispenser) ih;
-//	    	containerLoc = dispenser.getLocation();
-//	    	plugin.debug("SLOT: " + event.getSlot());
-//	    	plugin.debug("RAW SLOT: " + event.getRawSlot());
-//	    }
+		// Dispenser
+	    // Took a bit of effort to figure.
+	    // http://forums.bukkit.org/threads/excluding-player-inventory-clicks-when-using-dispenser.120495/
+		else if(ih instanceof Dispenser) {
+			Dispenser dispenser = (Dispenser) ih;
+			containerLoc = dispenser.getLocation();
+			
+			// Only a click in the dispenser can trigger a slot < 9
+			if(event.getRawSlot() <= 8){
+				should_catch = true;
+			}
+		}
 	    
 	    // We don't need to record this since enderchests are for the player only.
 	    
-	    if(containerLoc != null && event.getSlot() == event.getRawSlot()){
+	    if(should_catch && containerLoc != null){
 		    if(!event.getCurrentItem().getType().equals(Material.AIR)){
 		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), containerLoc, player) );
 		    }
