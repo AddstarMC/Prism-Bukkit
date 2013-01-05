@@ -1,5 +1,7 @@
 #Prism
 
+*An incredible plugin for rollbacks, restores, and more. *
+
 Prism is a new generation of grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's designed to be extremely fast and incredibly powerful - designed by a group with a lot of experience in both programming and owning/managing a very popular/high-traffic server.
 
 ## Features
@@ -205,7 +207,7 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 
 IRC: irc.esper.net #dhmc_us
 
-Wiki: http://dhmc.us/wiki/view/prism/          
+Wiki: http://dhmc.us/wiki/view/prism/         
            
 ## Credits
 

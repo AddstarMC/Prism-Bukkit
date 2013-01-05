@@ -210,21 +210,26 @@ public class Rollback extends Preview {
 			// NOTE: These params have been modified from original, so
 			// do NOT use the object for original params.
 			
-			
 			/**
 			 * If we've done breaking-blocks rollback we also need to re-apply
 			 * any sign-change events at this location.
 			 */
 			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
 				
-				parameters.resetActionTypes();
-				parameters.addActionType(ActionType.SIGN_CHANGE);
-				
-				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( player, parameters );
-				if(!results.getActionResults().isEmpty()){
-					Restore rs = new Restore( plugin, player, results.getActionResults(), parameters );
-					rs.apply();
+				QueryParameters triggerParameters;
+				try {
+					triggerParameters = parameters.clone();
+					triggerParameters.resetActionTypes();
+					triggerParameters.addActionType(ActionType.SIGN_CHANGE);
+					
+					ActionsQuery aq = new ActionsQuery(plugin);
+					QueryResult results = aq.lookup( player, triggerParameters );
+					if(!results.getActionResults().isEmpty()){
+						Restore rs = new Restore( plugin, player, results.getActionResults(), triggerParameters );
+						rs.apply();
+					}
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
 				}
 			}
 			
@@ -236,14 +241,20 @@ public class Rollback extends Preview {
 				
 				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
 				
-				parameters.resetActionTypes();
-				parameters.addActionType(ActionType.ITEM_REMOVE);
-				
-				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( player, parameters );
-				if(!results.getActionResults().isEmpty()){
-					Rollback rb = new Rollback( plugin, player, results.getActionResults(), parameters );
-					rb.apply();
+				QueryParameters triggerParameters;
+				try {
+					triggerParameters = parameters.clone();
+					triggerParameters.resetActionTypes();
+					triggerParameters.addActionType(ActionType.ITEM_REMOVE);
+					
+					ActionsQuery aq = new ActionsQuery(plugin);
+					QueryResult results = aq.lookup( player, triggerParameters );
+					if(!results.getActionResults().isEmpty()){
+						Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
+						rb.apply();
+					}
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
 				}
 			}
 			

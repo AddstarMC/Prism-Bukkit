@@ -8,7 +8,7 @@ import me.botsko.prism.actions.ActionType;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class QueryParameters {
+public class QueryParameters implements Cloneable {
 	
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
 	protected String lookup_type = "lookup";
@@ -314,5 +314,16 @@ public class QueryParameters {
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public QueryParameters clone() throws CloneNotSupportedException {
+		QueryParameters cloned = (QueryParameters) super.clone();
+		cloned.action_types = new ArrayList<ActionType>(action_types);
+		return cloned;
 	}
 }
