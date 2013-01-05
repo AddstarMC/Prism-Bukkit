@@ -34,7 +34,6 @@ public class InspectorWand implements Wand {
 	 */
 	@Override
 	public void playerLeftClick(Player player, Block block) {
-		plugin.debug("WAND LEFT CLICK");
 		if(block != null){
 			showBlockHistory(player, block, block.getLocation());
 		}
