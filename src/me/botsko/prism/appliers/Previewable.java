@@ -2,6 +2,13 @@ package me.botsko.prism.appliers;
 
 public interface Previewable {
 	
+	
+	/**
+	 * 
+	 */
+	public void setIsPreview(boolean is_preview);
+	
+	
 	/**
 	 * 
 	 * @return

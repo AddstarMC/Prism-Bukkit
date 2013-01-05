@@ -39,6 +39,7 @@ public class PreviewCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		if( call.getArgs().length >= 2 ){
 			
+			
 			/**
 			 * Apply previous preview changes
 			 */
@@ -75,7 +76,7 @@ public class PreviewCommand implements SubHandler {
 			 */
 			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") ){
 				
-				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback" );
+				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 2 );
 				if(parameters == null){
 					return;
 				}

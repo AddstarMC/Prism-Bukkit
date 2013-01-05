@@ -33,7 +33,7 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback" );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 1 );
 		if(parameters == null){
 			return;
 		}

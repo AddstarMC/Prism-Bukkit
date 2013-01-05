@@ -19,7 +19,7 @@ public class PreprocessArgs {
 	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, Player player, String[] args, String lookup_type ){
+	public static QueryParameters process( Prism plugin, Player player, String[] args, String lookup_type, int starting ){
 		
 		QueryParameters parameters = new QueryParameters();
 		HashMap<String,String> foundArgs = new HashMap<String,String>();
@@ -29,7 +29,7 @@ public class PreprocessArgs {
 		if(args != null){
 		
 			// Iterate over arguments
-			for (int i = 1; i < args.length; i++) {
+			for (int i = starting; i < args.length; i++) {
 				
 				String arg = args[i];
 				if (arg.isEmpty()) continue;

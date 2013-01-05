@@ -39,6 +39,15 @@ public class Preview implements Previewable {
 	
 	/**
 	 * 
+	 * @param is_preview
+	 */
+	public void setIsPreview(boolean is_preview){
+		this.is_preview = is_preview;
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public void cancel_preview(){
 		if(plugin.playerActivePreviews.containsKey(player.getName())){
@@ -68,7 +77,8 @@ public class Preview implements Previewable {
 			// Get preview session
 			PreviewSession ps = plugin.playerActivePreviews.get(player.getName());
 			
-//			player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
+			player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
+			ps.getPreviewer().setIsPreview(false);
 			ps.getPreviewer().apply();
 			
 			plugin.playerActivePreviews.remove( player.getName() );
