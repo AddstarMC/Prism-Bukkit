@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.TypeUtils;
 
 public class NearCommand implements SubHandler {
 	
@@ -37,7 +38,13 @@ public class NearCommand implements SubHandler {
 		parameters.setWorld( call.getPlayer().getWorld().getName() );
 		parameters.setPlayer_location(call.getPlayer().getLocation().toVector());
 		
-		parameters.setRadius(5); // @todo config this
+		// allow a custom near radius
+		int radius = plugin.getConfig().getInt("prism.near.default-radius");
+		if(call.getArgs().length > 0 && TypeUtils.isNumeric(call.getArg(1))){
+			radius = Integer.parseInt( call.getArg(1) );
+		}
+		
+		parameters.setRadius(radius);
 		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
@@ -52,7 +59,7 @@ public class NearCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
 			}
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find any nearby changes." ) );
+			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find any changes within "+radius+" blocks of you." ) );
 		}
 	}
 }

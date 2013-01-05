@@ -118,7 +118,11 @@ public class PreviewCommand implements SubHandler {
 				} else {
 					call.getPlayer().sendMessage( plugin.playerError("Nothing found to preview.") );
 				}
+				return;
 			}
+			
+			call.getPlayer().sendMessage( plugin.playerError("Invalid command. Check /prism ? for help.") );
+			
 		}
 	}
 }

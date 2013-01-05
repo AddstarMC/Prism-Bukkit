@@ -48,6 +48,8 @@ public class PrismConfig {
 		config.addDefault("prism.default-radius", 10);
 		config.addDefault("prism.max-radius-unless-overridden", 100);
 		
+		config.addDefault("prism.near.default-radius", 5);
+		
 		config.addDefault("prism.ignore.players-in-creative", true);
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
