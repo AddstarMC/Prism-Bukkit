@@ -190,7 +190,7 @@ public class PrismEntityEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onHangingBreakEvent(final HangingBreakByEntityEvent event) {
+	public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
 		String breaking_name = "";
 		Entity e = event.getRemover();
 		if(e instanceof Player){
@@ -250,7 +250,10 @@ public class PrismEntityEvents implements Listener {
 			name = "tnt";
 		}
 		
+		// Also log item-removes from chests that are blown up
+		PrismBlockEvents be = new PrismBlockEvents(plugin);		
 		for(Block block : event.blockList()){
+			be.logItemRemoveFromDestroyedContainer(name, block);
 			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
 		}
 	}

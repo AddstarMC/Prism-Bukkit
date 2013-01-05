@@ -51,15 +51,10 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
-	 * @param event
+	 * @param player
+	 * @param block
 	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onBlockBreak(final BlockBreakEvent event){
-		Player player = event.getPlayer();
-		Block block = event.getBlock();
-		
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
-		
+	public void logItemRemoveFromDestroyedContainer( String player_name, Block block ){
 		// If this is a container we need to trigger item removal for everything in it.
 		// It's important we record this *after* the block break so the log shows what
 		// really happened.
@@ -67,7 +62,7 @@ public class PrismBlockEvents implements Listener {
 			Chest container = (Chest) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player_name) );
 				}
 			}
 		}
@@ -76,7 +71,7 @@ public class PrismBlockEvents implements Listener {
 //			Furnace container = (Furnace) block.getState();
 //			for( ItemStack i : container.getInventory().getContents()){
 //				if(i != null){
-//					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+//					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player_name) );
 //				}
 //			}
 //		}
@@ -84,11 +79,19 @@ public class PrismBlockEvents implements Listener {
 			Dispenser container = (Dispenser) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player_name) );
 				}
 			}
 		}
-		
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param block
+	 */
+	protected void logBlockRelationshipsForBlock( Player player, Block block ){
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
@@ -127,6 +130,26 @@ public class PrismBlockEvents implements Listener {
 				plugin.preplannedBlockFalls.put(coord_key, player.getName());
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent event){
+		Player player = event.getPlayer();
+		Block block = event.getBlock();
+		
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
+		
+		// log items removed from chest
+		logItemRemoveFromDestroyedContainer( player.getName(), block );
+	
+		// check for block relationships
+		logBlockRelationshipsForBlock( player, block );
+		
 	}
 	
 	
@@ -177,7 +200,12 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(BlockBurnEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, event.getBlock(), "Environment") );
+		Block block = event.getBlock();
+		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
+		
+//		// check for block relationships
+//		logBlockRelationshipsForBlock( player, block );
+				
 	}
 	
 	

@@ -106,10 +106,10 @@ public class PrismInventoryEvents implements Listener {
 	    
 	    if(should_catch && containerLoc != null){
 		    if(!event.getCurrentItem().getType().equals(Material.AIR)){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), containerLoc, player) );
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), containerLoc, player.getName()) );
 		    }
 		    if(!event.getCursor().getType().equals(Material.AIR)){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), containerLoc, player) );
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), containerLoc, player.getName()) );
 		    }
 	    }
 	}

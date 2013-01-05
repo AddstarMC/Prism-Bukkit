@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemStackAction extends GenericAction {
@@ -26,20 +25,20 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, Location loc, Player player ){
+	public ItemStackAction( ActionType action_type, ItemStack item, Location loc, String player_name ){
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(item != null){
 			this.item = item;
 			this.quantity = item.getAmount();
-			this.world_name = player.getWorld().getName();
+			this.world_name = loc.getWorld().getName();
 			this.x = loc.getX();
 			this.y = loc.getY();
 			this.z = loc.getZ();
 		}
-		if(player != null){
-			this.player_name = player.getName();
+		if(player_name != null){
+			this.player_name = player_name;
 		}
 		if(action_time == null){
 			java.util.Date date= new java.util.Date();
