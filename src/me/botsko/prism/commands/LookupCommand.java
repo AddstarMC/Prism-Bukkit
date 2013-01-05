@@ -35,6 +35,8 @@ public class LookupCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
+		plugin.debug("Lookup called.");
+		
 		// Process and validate all of the arguments
 		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "lookup", 1 );
 		if(parameters == null){

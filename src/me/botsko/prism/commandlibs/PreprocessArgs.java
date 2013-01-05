@@ -34,29 +34,38 @@ public class PreprocessArgs {
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
 				
+				// Verify we have an arg we can match
+				String[] possibleArgs = {"a","r","t","p","w","b","e"};
+				plugin.debug("Validating arg: " + arg.substring(0,1));
+				if(!Arrays.asList(possibleArgs).contains(arg.substring(0,1))){
+					player.sendMessage( plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
+					return null;
+				}
+				
 				// Verify they're formatting like a:[val]
 				if(!arg.contains(":")){
-					player.sendMessage( plugin.playerError("Parameter format error for '"+arg+"'. Use /prism ? for a assitance.") );
+					player.sendMessage( plugin.playerError("Missing parameter value for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				if (!arg.substring(1,2).equals(":")) {
-					player.sendMessage( plugin.playerError("Misplaced ':' (colon) error for '"+arg+"'. Use /prism ? for a assitance.") );
+					player.sendMessage( plugin.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
 				// Split parameter and values
 				String arg_type = arg.toLowerCase().substring(0,1);
 				String val = arg.toLowerCase().substring(2);
-				String[] possibleArgs = {"a","r","t","p","w","b","e"};
+				
+				if(val.isEmpty()){
+					player.sendMessage( plugin.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
+					return null;
+				}
+				
+				// Officially certify we found a valid argument and value!
 				if(Arrays.asList(possibleArgs).contains(arg_type)){
-					if(!val.isEmpty()){
-						plugin.debug("Found arg type " + arg_type + " with value: " + val);
-						foundArgs.put(arg_type, val);
-						parameters.setFoundArgs(foundArgs);
-					} else {
-						player.sendMessage( plugin.playerError("You must supply at least one parameter value. Use /prism ? for a assitance.") );
-						return null;
-					}
+					plugin.debug("Found arg type " + arg_type + " with value: " + val);
+					foundArgs.put(arg_type, val);
+					parameters.setFoundArgs(foundArgs);
 				}
 				
 				// Action
@@ -68,7 +77,13 @@ public class PreprocessArgs {
 							if(actionType != null){
 								parameters.addActionType( actionType );
 							} else {
-								player.sendMessage( plugin.playerError("Ignoring action type '"+action+"' because it's unrecognized.") );
+								if(foundArgs.size() == 1){
+									// can't error here because we haven't counted
+//									player.sendMessage( plugin.playerError("Action type '"+action+"' is unrecognized. Nothing else to search with.") );
+//									return null;
+								} else {
+									player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized.") );
+								}
 							}
 						}
 					}

@@ -30,14 +30,20 @@ public class DrainCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		int radius = plugin.getConfig().getInt("default-radius");
-		if(call.getArgs().length == 2 && TypeUtils.isNumeric(call.getArg(1))){
-			radius = Integer.parseInt(call.getArg(1));
+		if(call.getArgs().length == 2){
+			if(TypeUtils.isNumeric(call.getArg(1))){
+				radius = Integer.parseInt(call.getArg(1));
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
+				return;
+			}
 		}
+		
 		int changed = BlockUtils.drain(call.getPlayer().getLocation(), radius);
 		if(changed > 0){
-			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained nearby fluids.."));
+			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained nearby liquids."));
 		} else {
-			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Nothing found to drain with that radius."));
+			call.getPlayer().sendMessage(plugin.playerError("Nothing found to drain with that radius."));
 		}
 	}
 }

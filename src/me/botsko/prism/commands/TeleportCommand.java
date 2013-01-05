@@ -34,38 +34,45 @@ public class TeleportCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if(TypeUtils.isNumeric(call.getArg(1))){
+		if(!TypeUtils.isNumeric(call.getArg(1))){
+			call.getPlayer().sendMessage( plugin.playerError( "You must provide a numeric record ID to teleport to." ) );
+			return;
+		}
 			
-			int record_id = Integer.parseInt(call.getArg(1));
-			if(record_id > 0){
-				
-				// Build params
-				QueryParameters params = new QueryParameters();
-				params.setWorld( call.getPlayer().getWorld().getName() );
-				params.setId(record_id);
+		int record_id = Integer.parseInt(call.getArg(1));
+		if(record_id <= 0){
+			call.getPlayer().sendMessage( plugin.playerError( "Record id must be greater than zero." ) );
+			return;
+		}
+			
+		// Build params
+		QueryParameters params = new QueryParameters();
+		params.setWorld( call.getPlayer().getWorld().getName() );
+		params.setId(record_id);
 
-				// Query
-				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( call.getPlayer(), params );
-				if(!results.getActionResults().isEmpty()){
-					for(me.botsko.prism.actions.Action a : results.getActionResults()){
-						
-						World world = plugin.getServer().getWorld( a.getWorld_name() );
-						if(world != null){
-							Location loc = new Location(world,a.getX(),a.getY(),a.getZ());
-//							if(Teleport.isSafe(world, loc)){
-							call.getPlayer().teleport(loc);
-//							} else {
-//								player.sendMessage( plugin.playerError( "Doesn't appear to be safe to teleport there." ) );
-//							}
-						} else {
-							call.getPlayer().sendMessage( plugin.playerError( "Action record occurred in world we can't find anymore." ) );
-						}
-					}
-				} else {
-					call.getPlayer().sendMessage( plugin.playerError( "No records exists with this ID." ) );
-				}
+		// Query
+		ActionsQuery aq = new ActionsQuery(plugin);
+		QueryResult results = aq.lookup( call.getPlayer(), params );
+		if(results.getActionResults().isEmpty()){
+			call.getPlayer().sendMessage( plugin.playerError( "No records exists with this ID." ) );
+			return;
+		}
+		
+		
+		for(me.botsko.prism.actions.Action a : results.getActionResults()){
+			
+			World world = plugin.getServer().getWorld( a.getWorld_name() );
+			if(world == null){
+				call.getPlayer().sendMessage( plugin.playerError( "Action record occurred in world we can't find anymore." ) );
+				return;
 			}
+			
+			Location loc = new Location(world,a.getX(),a.getY(),a.getZ());
+//			if(Teleport.isSafe(world, loc)){
+			call.getPlayer().teleport(loc);
+//			} else {
+//				call.getPlayer().sendMessage( plugin.playerError( "Doesn't appear to be safe to teleport there." ) );
+//			}
 		}
 	}
 }

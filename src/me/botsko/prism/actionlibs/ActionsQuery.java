@@ -154,7 +154,7 @@ public class ActionsQuery {
 	public int delete( String beforeDateAlias ){
 		int rows_affected = 0;
 		String beforeDate = buildTimeCondition(beforeDateAlias,"<");
-		if(!beforeDate.isEmpty()){
+		if(beforeDate != null && !beforeDate.isEmpty()){
 			try {
 				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
 				plugin.debug("Deleting records prior to " + beforeDate + ": " + query);

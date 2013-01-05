@@ -46,7 +46,7 @@ public class Executor implements CommandExecutor {
 		
 		// If no subcommand given
 		if (args.length == 0) {
-			sender.sendMessage( plugin.playerError("Missing command. Check /prism ? for help.") );
+			sender.sendMessage( plugin.msgInvalidSubcommand() );
 			return true;
 		}
 		
@@ -55,8 +55,7 @@ public class Executor implements CommandExecutor {
 		plugin.debug("Seeking subcommand: " + subcommandName);
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
-			plugin.debug("Subcommand not found: " + subcommandName);
-			sender.sendMessage( plugin.playerError("Invalid subcommand. Check /prism ? for help.") );
+			sender.sendMessage( plugin.msgInvalidSubcommand() );
 			return true;
 		}
 		// Ensure they have permission
@@ -66,8 +65,7 @@ public class Executor implements CommandExecutor {
 		}
 		// Ensure min number of arguments
 		else if ((args.length - 1 ) < sub.getMinArgs()) {
-			plugin.debug("Not enough arguments for subcommand: " + subcommandName);
-			sender.sendMessage( plugin.playerError("Missing arguments. Check /prism ? for help.") );
+			sender.sendMessage( plugin.msgMissingArguments() );
 			return true;
 		}
 		

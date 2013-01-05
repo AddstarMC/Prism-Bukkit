@@ -40,8 +40,13 @@ public class NearCommand implements SubHandler {
 		
 		// allow a custom near radius
 		int radius = plugin.getConfig().getInt("prism.near.default-radius");
-		if(call.getArgs().length == 2 && TypeUtils.isNumeric(call.getArg(1))){
-			radius = Integer.parseInt(call.getArg(1));
+		if(call.getArgs().length == 2){
+			if(TypeUtils.isNumeric(call.getArg(1))){
+				radius = Integer.parseInt(call.getArg(1));
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
+				return;
+			}
 		}
 		
 		parameters.setRadius(radius);

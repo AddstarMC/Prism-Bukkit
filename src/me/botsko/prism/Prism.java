@@ -273,7 +273,7 @@ public class Prism extends JavaPlugin {
 	 * @param help
 	 */
 	public String playerHelp( String cmd, String help ){
-		return ChatColor.LIGHT_PURPLE + "/" + cmd + ": " + ChatColor.WHITE + help;
+		return ChatColor.GRAY + "/prism " + ChatColor.LIGHT_PURPLE + cmd + ChatColor.WHITE + " - " + help;
 	}
 	
 	
@@ -287,6 +287,36 @@ public class Prism extends JavaPlugin {
 			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.RED + msg;
 		}
 		return "";
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String msgMissingArguments(){
+		return playerError("Missing arguments. Check /prism ? for help.");
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String msgInvalidArguments(){
+		return playerError("Invalid arguments. Check /prism ? for help.");
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String msgInvalidSubcommand(){
+		return playerError("Prism doesn't have that command. Check /prism ? for help.");
 	}
 	
 	
