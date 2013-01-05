@@ -77,13 +77,11 @@ public class ItemStackAction extends GenericAction {
 		if(item == null && data != null){
 			String[] blockArr = data.split(":");
 			if (!TypeUtils.isNumeric(blockArr[0])) return;
-			
 			int block_id = Integer.parseInt(blockArr[0]);
 			if (blockArr.length == 3){
 				int block_subid = (byte) Integer.parseInt(blockArr[1]);
 				quantity = Integer.parseInt(blockArr[2]);
-				item = new ItemStack(block_id,block_subid);
-				item.setAmount(quantity);
+				item = new ItemStack(block_id,quantity,(short)block_subid);
 			}
 		}
 	}
