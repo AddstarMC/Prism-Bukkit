@@ -6,5 +6,10 @@ public class SignActionData {
 	 * 
 	 */
 	public String[] lines;
+	
+	/**
+	 * 
+	 */
+	public String sign_type;
 
 }

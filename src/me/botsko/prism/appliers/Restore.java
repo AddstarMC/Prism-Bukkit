@@ -130,7 +130,7 @@ public class Restore extends Preview {
 					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
 						
 						if( block.getType().equals(Material.AIR) ){
-							block.setType(Material.WALL_SIGN);
+							block.setType(b.getSignType());
 						}
 						
 						// Set the contents

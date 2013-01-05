@@ -2,6 +2,7 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 public class SignAction extends GenericAction {
@@ -32,6 +33,7 @@ public class SignAction extends GenericAction {
 			this.type = action_type;
 		}
 		if(block != null){
+			actionData.sign_type = block.getType().name();
 			this.block = block;
 			this.world_name = block.getWorld().getName();
 			this.x = block.getX();
@@ -89,6 +91,15 @@ public class SignAction extends GenericAction {
 	 */
 	public String[] getLines(){
 		return actionData.lines;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Material getSignType(){
+		return  Material.valueOf(actionData.sign_type);
 	}
 	
 	
