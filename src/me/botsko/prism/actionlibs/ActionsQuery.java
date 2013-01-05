@@ -177,7 +177,7 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT prism_actions.id, prism_actions.action_time, action_type, player, world, prism_actions.x, prism_actions.y, prism_actions.z, data, DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, DATE_FORMAT(prism_actions.action_time, '%l:%i:%s %p') display_time FROM prism_actions";
+		String query = "SELECT prism_actions.id, prism_actions.action_time, prism_actions.action_type, player, world, prism_actions.x, prism_actions.y, prism_actions.z, data, DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, DATE_FORMAT(prism_actions.action_time, '%l:%i:%s %p') display_time FROM prism_actions";
 		
 		// If we're rolling back, we need to exclude records
 		// at exact coords that have new entries there. So if
@@ -190,13 +190,14 @@ public class ActionsQuery {
 		// they won't restore when a new block is present.
 		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) || parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) ){
 			query += " JOIN (" +
-						"SELECT x, y, z, max(action_time) as action_time" +
-						" FROM prism_actions" +
-						" GROUP BY x, y, z) latest" +
+						"SELECT action_type, x, y, z, max(action_time) as action_time" +
+						" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
+						" GROUP BY action_type, x, y, z) latest" +
 						" ON prism_actions.action_time = latest.action_time" +
 						" AND prism_actions.x = latest.x" +
 						" AND prism_actions.y = latest.y" +
-						" AND prism_actions.z = latest.z";
+						" AND prism_actions.z = latest.z" +
+						" AND prism_actions.action_type = latest.action_type";
 		}
 		
 		// World
@@ -230,7 +231,7 @@ public class ActionsQuery {
 					actions[i] = type.getActionType();
 					i++;
 				}
-				query += buildOrQuery("action_type", actions);
+				query += buildOrQuery("prism_actions.action_type", actions);
 			}
 			
 			/**
