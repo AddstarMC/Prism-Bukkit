@@ -36,15 +36,16 @@ public class ActionMessage {
 		
 		String msg = "";
 		if(!hide_id){
-			msg += ChatColor.GRAY + "" + a.getId() + " ";
+			msg += ChatColor.GRAY + "[" + a.getId() + "] ";
 		}
+		
+		msg += ChatColor.GRAY + a.getDisplay_date();
+		msg += " " + ChatColor.GRAY + a.getDisplay_time().toLowerCase();
 		msg += getPosNegPrefix();
 		msg += highlight + a.getPlayer_name();
 		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
-		msg += " " + ChatColor.GRAY + "(" + a.getType().getActionType() + ")";
 		msg += " " + highlight + a.getNiceName();
-		msg += ChatColor.WHITE + " on " + ChatColor.GRAY + a.getDisplay_date();
-		msg += ChatColor.WHITE + " at " + ChatColor.GRAY + a.getDisplay_time();
+		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionType() + ")";
 		
 		return msg;
 		
@@ -59,10 +60,10 @@ public class ActionMessage {
 	protected String getPosNegPrefix(){
 		
 		if( a.getType().doesCreateBlock() || a.getType().equals(ActionType.ITEM_INSERT) || a.getType().equals(ActionType.SIGN_CHANGE) ){
-			return ChatColor.GREEN + "+ " + ChatColor.WHITE;
+			return ChatColor.GREEN + " + " + ChatColor.WHITE;
 		}
 		else {
-			return ChatColor.RED + "- " + ChatColor.WHITE;
+			return ChatColor.RED + " - " + ChatColor.WHITE;
 		}
 	}
 

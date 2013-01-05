@@ -81,7 +81,7 @@ public class PrismCommands extends Executor {
 		addSub("drain", "prism.drain")
 		.setUsage("(radius)")
 		.setDescription("Drains lava and water within (radius)")
-		.setHandler(new ExtinguishCommand(plugin));
+		.setHandler(new DrainCommand(plugin));
 		
 		/**
 		 * /prism preview (params)
@@ -124,6 +124,13 @@ public class PrismCommands extends Executor {
 		addSub("?", "prism.help")
 		.setDescription("This. Helpception!")
 		.setHandler(new HelpCommand(plugin));
+		
+		/**
+		 * /prism ?
+		 */
+		addSub("params", "prism.help")
+		.setDescription("Parameter help.")
+		.setHandler(new ParamsCommand(plugin));
 		
 		/**
 		 * /prism reload

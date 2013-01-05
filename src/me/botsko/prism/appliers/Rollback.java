@@ -76,6 +76,12 @@ public class Rollback extends Preview {
 			}
 		}
 		
+		// can't really work here. doesn't return a proper result, etc
+//		// Remove any lava blocks when doing a lava bucket rollback
+//		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET)){
+//			BlockUtils.drainlava(parameters.getLoc(), parameters.getRadius());
+//		}
+		
 		// Rollback blocks
 		if(!results.isEmpty()){
 
@@ -129,7 +135,7 @@ public class Rollback extends Preview {
 						 * However, it also means that a rollback *could* interfere with a player-placed
 						 * block.
 						 */
-						if( block.getType().equals(Material.AIR) || BlockUtils.isFallingBlock(block) ){
+						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
 							Material m = Material.getMaterial(b.getBlock_id());
 							

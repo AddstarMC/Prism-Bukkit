@@ -67,7 +67,7 @@ public class HelpCommand implements SubHandler {
 		player.sendMessage( plugin.playerHelp("i", "Toggles the inspector onto your hand."));
 		player.sendMessage( plugin.playerHelp("l (params)", "Search the database"));
 		player.sendMessage( plugin.playerHelp("near", "Find all changes nearby."));
-//		player.sendMessage( plugin.playerHelp("params", "Lists parameter help."));
+		player.sendMessage( plugin.playerHelp("params", "Lists parameter help."));
 		player.sendMessage( plugin.playerHelp("preview rollback (params)", "Preview a rollback."));
 		player.sendMessage( plugin.playerHelp("preview restore (params)", "Preview a restoration."));
 		player.sendMessage( plugin.playerHelp("preview apply", "Applies the last preview."));

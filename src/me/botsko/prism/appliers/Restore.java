@@ -85,7 +85,7 @@ public class Restore extends Preview {
 					
 					// If the block was placed, we must replace it
 					if(a.getType().doesCreateBlock()){
-						if(block.getType().equals(Material.AIR)){
+						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
 							if(!BlockUtils.mayEverPlace(Material.getMaterial(b.getBlock_id()))){
 								skipped_block_count++;

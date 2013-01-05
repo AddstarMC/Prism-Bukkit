@@ -177,7 +177,20 @@ public class ActionsQuery {
 	 */
 	public String getArgumentConditions( QueryParameters parameters ){
 		
-		String query = "SELECT prism_actions.id, prism_actions.action_time, prism_actions.action_type, player, world, prism_actions.x, prism_actions.y, prism_actions.z, data, DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, DATE_FORMAT(prism_actions.action_time, '%l:%i:%s %p') display_time FROM prism_actions";
+		// Build select
+		String query = "SELECT " +
+				"prism_actions.id, " +
+				"prism_actions.action_time, " +
+				"prism_actions.action_type, " +
+				"player, " +
+				"world, " +
+				"prism_actions.x, " +
+				"prism_actions.y, " +
+				"prism_actions.z, " +
+				"data, " +
+				"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, " +
+				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time " +
+				"FROM prism_actions";
 		
 		// If we're rolling back, we need to exclude records
 		// at exact coords that have new entries there. So if

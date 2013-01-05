@@ -31,6 +31,27 @@ public class BlockUtils {
 	
 	
 	/**
+	 * Returns whether or not the plugin may place a material,
+	 * so that we can avoid including dangerous items with an
+	 * applier.
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public static boolean isAcceptableForBlockPlace( Block block ){
+		if( block.getType().equals(Material.AIR) 
+				|| BlockUtils.isFallingBlock(block)
+				|| block.getType().equals(Material.WATER)
+				|| block.getType().equals(Material.STATIONARY_WATER)
+				|| block.getType().equals(Material.LAVA)
+				|| block.getType().equals(Material.STATIONARY_LAVA)){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * Recursively grabs a list of all blocks directly above Block
 	 * that are anticipated to fall.
 	 * 
@@ -114,7 +135,13 @@ public class BlockUtils {
 	 */
 	public static boolean isDetachableBlock( Block block ){
 		Material m = block.getType();
-		if( m.equals(Material.WALL_SIGN) || m.equals(Material.TORCH) ){
+		if( m.equals(Material.WALL_SIGN) 
+				|| m.equals(Material.TORCH) 
+				|| m.equals(Material.LEVER) 
+				|| m.equals(Material.WOOD_BUTTON) 
+				|| m.equals(Material.STONE_BUTTON) 
+				|| m.equals(Material.LADDER)
+				|| m.equals(Material.VINE)){
 			return true;
 		}
 		return false;
@@ -217,7 +244,7 @@ public class BlockUtils {
 	 * @param radius
 	 */
 	public static int drain(Location loc, int radius){
-		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA, Material.WATER };
+		Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA, Material.WATER, Material.STATIONARY_WATER };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 	
@@ -239,6 +266,7 @@ public class BlockUtils {
 	 * @param radius
 	 */
 	public static int drainwater(Location loc, int radius){
-		return removeMaterialFromRadius(Material.WATER, loc, radius);
+		Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
+		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 }

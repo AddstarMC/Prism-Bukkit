@@ -79,6 +79,8 @@ public class PrismEntityEvents implements Listener {
 			        	
 					}
 				}
+				// Mob died by mob
+				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, entityDamageByEntityEvent.getDamager().getType().getName()) );
 			}
 		} else {
 			
