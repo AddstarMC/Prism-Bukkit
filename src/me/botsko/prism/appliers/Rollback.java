@@ -25,28 +25,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
-public class Rollback extends Applier {
-
-	
-	/**
-	 * 
-	 */
-	private Prism plugin;
-	
-	/**
-	 * 
-	 */
-	private Player player;
-	
-	/**
-	 * 
-	 */
-	private List<Action> results;
-	
-	/**
-	 * 
-	 */
-	private QueryParameters parameters;
+public class Rollback extends Preview {
 	
 	
 	/**
@@ -63,11 +42,23 @@ public class Rollback extends Applier {
 	
 	
 	/**
+	 * Set preview move and then do a rollback
+	 * @return
+	 */
+	public ApplierResult preview(){
+		is_preview = true;
+		return apply();
+	}
+	
+	
+	/**
 	 * 
 	 */
-	public ArrayList<String> rollback(){
+	public ApplierResult apply(){
 		
 		ArrayList<String> responses = new ArrayList<String>();
+		int rolled_back_count = 0, skipped_block_count = 0;
+		ArrayList<Undo> undo = new ArrayList<Undo>();
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
@@ -87,9 +78,7 @@ public class Rollback extends Applier {
 		
 		// Rollback blocks
 		if(!results.isEmpty()){
-			
-			int rolled_back_count = 0, skipped_block_count = 0;
-			
+
 			for(Action a : results){
 				
 				// No sense in trying to rollback
@@ -109,14 +98,24 @@ public class Rollback extends Applier {
 				if( a instanceof BlockAction ){
 					
 					BlockAction b = (BlockAction) a;
-					
 					Block block = world.getBlockAt(loc);
+					
+					if(!is_preview){
+						// Record the change temporarily so we can cancel
+						// and update the client
+						Undo u = new Undo( block );
+						undo.add(u);
+					}
 
 					// If the block was placed, we need to remove it
 					if(a.getType().doesCreateBlock()){
 						// @todo ensure we're not removing a new block that's been placed by someone else
 						if(!block.getType().equals(Material.AIR)){
-							block.setType(Material.AIR);
+							if(!is_preview){
+								block.setType(Material.AIR);
+							} else {
+								player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+							}
 							rolled_back_count++;
 						}
 					} else {
@@ -134,13 +133,18 @@ public class Rollback extends Applier {
 							
 							Material m = Material.getMaterial(b.getBlock_id());
 							
-							if(!mayEverPlace(m)){
+							if(!BlockUtils.mayEverPlace(m)){
 								skipped_block_count++;
 								continue;
 							}
 							
-							block.setTypeId( b.getBlock_id() );
-							block.setData( b.getBlock_subid() );
+							if(!is_preview){
+								block.setTypeId( b.getBlock_id() );
+								block.setData( b.getBlock_subid() );
+							} else {
+								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+							}
+							
 							rolled_back_count++;
 							
 						}
@@ -195,22 +199,22 @@ public class Rollback extends Applier {
 			// do NOT use the object for original params.
 			
 			
-//			/**
-//			 * If we've done breaking-blocks rollback we also need to re-apply
-//			 * any sign-change events at this location.
-//			 */
-//			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
-//				
-//				parameters.resetActionTypes();
-//				parameters.addActionType(ActionType.SIGN_CHANGE);
-//				
-//				ActionsQuery aq = new ActionsQuery(plugin);
-//				QueryResult results = aq.lookup( player, parameters );
-//				if(!results.getActionResults().isEmpty()){
-//					Restore rs = new Restore( plugin, results.getActionResults() );
-//					rs.restore();
-//				}
-//			}
+			/**
+			 * If we've done breaking-blocks rollback we also need to re-apply
+			 * any sign-change events at this location.
+			 */
+			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
+				
+				parameters.resetActionTypes();
+				parameters.addActionType(ActionType.SIGN_CHANGE);
+				
+				ActionsQuery aq = new ActionsQuery(plugin);
+				QueryResult results = aq.lookup( player, parameters );
+				if(!results.getActionResults().isEmpty()){
+					Restore rs = new Restore( plugin, player, results.getActionResults(), parameters );
+					rs.apply();
+				}
+			}
 			
 			
 			/**
@@ -227,24 +231,43 @@ public class Rollback extends Applier {
 				QueryResult results = aq.lookup( player, parameters );
 				if(!results.getActionResults().isEmpty()){
 					Rollback rb = new Rollback( plugin, player, results.getActionResults(), parameters );
-					rb.rollback();
+					rb.apply();
 				}
 			}
 			
 			
 			// Build the results message
-			String msg = rolled_back_count + " reversals.";
-			if(skipped_block_count > 0){
-				msg += " " + skipped_block_count + " skipped.";
-			}
-			if(rolled_back_count > 0){
-				msg += ChatColor.GRAY + " It's like it never happened.";
-			}
-			responses.add( plugin.playerHeaderMsg( msg ) );
+			if(!is_preview){
+				
+				String msg = rolled_back_count + " reversals.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(rolled_back_count > 0){
+					msg += ChatColor.GRAY + " It's like it never happened.";
+				}
+				responses.add( plugin.playerHeaderMsg( msg ) );
+				
+			} else {
 			
+				// Build the results message
+				String msg = rolled_back_count + " planned reversals.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(rolled_back_count > 0){
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this rollback.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+				// Let me know there's no need to cancel/apply
+				if(rolled_back_count == 0){
+					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
+				}
+			}
 		} else {
 			responses.add( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
-		return responses;
+		return new ApplierResult( is_preview, rolled_back_count, skipped_block_count, undo, responses );
 	}
 }

@@ -1,18 +1,10 @@
 package me.botsko.prism.appliers;
 
-import java.util.ArrayList;
-
-import me.botsko.prism.actionlibs.QueryParameters;
 
 import org.bukkit.entity.Player;
 
 public class PreviewSession {
-	
-	/**
-	 * 
-	 */
-	protected ArrayList<Undo> undo_queue = new ArrayList<Undo>();
-	
+
 	/**
 	 * 
 	 */
@@ -21,7 +13,12 @@ public class PreviewSession {
 	/**
 	 * 
 	 */
-	protected QueryParameters parameters;
+	protected Previewable previewer;
+	
+	/**
+	 * 
+	 */
+	protected ApplierResult results;
 	
 	/**
 	 * 
@@ -35,20 +32,12 @@ public class PreviewSession {
 	 * @param undo
 	 * @param args
 	 */
-	public PreviewSession( Player player, ArrayList<Undo> undo, QueryParameters parameters ){
-		this.undo_queue = undo;
+	public PreviewSession( Player player, Previewable previewer, ApplierResult results ){
 		this.player = player;
-		this.parameters = parameters;
+		this.previewer = previewer;
+		this.results = results;
 		java.util.Date date = new java.util.Date();
 		this.queryTime = date.getTime();
-	}
-
-
-	/**
-	 * @return the undo_queue
-	 */
-	public ArrayList<Undo> getUndo_queue() {
-		return undo_queue;
 	}
 
 
@@ -61,17 +50,25 @@ public class PreviewSession {
 
 
 	/**
-	 * @return the queryTime
+	 * @return the previewer
 	 */
-	public long getQueryTime() {
-		return queryTime;
+	public Previewable getPreviewer() {
+		return previewer;
 	}
 
 
 	/**
-	 * @return the args
+	 * @return the results
 	 */
-	public QueryParameters getArgs() {
-		return parameters;
+	public ApplierResult getResults() {
+		return results;
+	}
+
+
+	/**
+	 * @return the queryTime
+	 */
+	public long getQueryTime() {
+		return queryTime;
 	}
 }

@@ -15,6 +15,22 @@ public class BlockUtils {
 	
 	
 	/**
+	 * Returns whether or not the plugin may place a material,
+	 * so that we can avoid including dangerous items with an
+	 * applier.
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public static boolean mayEverPlace( Material m ){
+		if( m.equals(Material.TNT) || m.equals(Material.FIRE) || m.equals(Material.LAVA) ){
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
 	 * Recursively grabs a list of all blocks directly above Block
 	 * that are anticipated to fall.
 	 * 

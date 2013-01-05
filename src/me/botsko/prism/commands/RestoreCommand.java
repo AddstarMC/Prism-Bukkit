@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.appliers.ApplierResult;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
@@ -47,10 +48,12 @@ public class RestoreCommand implements SubHandler {
 			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, results.getActionResults() );
-			String response = rs.restore();
-			if(response != null){
-				call.getPlayer().sendMessage(response);
+			Restore rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
+			ApplierResult result = rs.apply();
+			if(!result.getMessages().isEmpty()){
+				for(String resp : result.getMessages()){
+					call.getPlayer().sendMessage(resp);
+				}
 			}
 			
 		} else {

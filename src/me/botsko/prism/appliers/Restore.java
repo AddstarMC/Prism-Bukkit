@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -8,13 +9,16 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.utils.BlockUtils;
 
-public class Restore extends Applier {
+public class Restore extends Preview {
 
 	
 	/**
@@ -33,22 +37,34 @@ public class Restore extends Applier {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, List<Action> results ) {
+	public Restore( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
 		this.plugin = plugin;
+		this.player = player;
 		this.results = results;
+		this.parameters = parameters;
+	}
+	
+	
+	/**
+	 * Set preview move and then do a rollback
+	 * @return
+	 */
+	public ApplierResult preview(){
+		is_preview = true;
+		return apply();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public String restore(){
+	public ApplierResult apply(){
 		
-		String response;
+		ArrayList<String> responses = new ArrayList<String>();
+		int restored_count = 0, skipped_block_count = 0;
+		ArrayList<Undo> undo = new ArrayList<Undo>();
 		
 		if(!results.isEmpty()){
-
-			int restored_count = 0, skipped_block_count = 0;
 			
 			for(Action a : results){
 				
@@ -76,7 +92,7 @@ public class Restore extends Applier {
 					if(a.getType().doesCreateBlock()){
 						if(block.getType().equals(Material.AIR)){
 							
-							if(!mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+							if(!BlockUtils.mayEverPlace(Material.getMaterial(b.getBlock_id()))){
 								skipped_block_count++;
 								continue;
 							}
@@ -137,11 +153,11 @@ public class Restore extends Applier {
 			if(restored_count > 0){
 				msg += ChatColor.GRAY + " It's like it was always there.";
 			}
-			response = plugin.playerHeaderMsg( msg );
+			responses.add( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
-			response = plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." );
+			responses.add(plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ));
 		}
-		return response;
+		return new ApplierResult( is_preview, restored_count, skipped_block_count, undo, responses );
 	}
 }
