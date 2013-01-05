@@ -80,7 +80,12 @@ public class PrismEntityEvents implements Listener {
 					}
 				}
 				// Mob died by mob
-				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, entityDamageByEntityEvent.getDamager().getType().getName()) );
+				Entity damager = entityDamageByEntityEvent.getDamager();
+				String name = "unknown";
+				if(damager != null){
+					name = damager.getType().getName();
+				}
+				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
 			}
 		} else {
 			

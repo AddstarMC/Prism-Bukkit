@@ -164,6 +164,12 @@ public class Rollback extends Preview {
 				if( a instanceof EntityAction ){
 					
 					EntityAction b = (EntityAction) a;
+					
+					if(!EntityUtils.mayEverSpawn(b.getEntityTypeFromData())){
+						skipped_block_count++;
+						continue;
+					}
+					
 					world.spawnEntity(loc, b.getEntityTypeFromData());
 					
 					plugin.debug("Rolling back entity " + b.getEntityTypeFromData().getName());
