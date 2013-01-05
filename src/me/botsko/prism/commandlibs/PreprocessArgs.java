@@ -67,6 +67,8 @@ public class PreprocessArgs {
 							ActionType actionType = ActionType.getByActionType( action );
 							if(actionType != null){
 								parameters.addActionType( actionType );
+							} else {
+								player.sendMessage( plugin.playerError("Ignoring action type '"+action+"' because it's unrecognized.") );
 							}
 						}
 					}
