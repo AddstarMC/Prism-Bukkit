@@ -124,8 +124,13 @@ public class Rollback extends Applier {
 						/**
 						 * Restore the block that was removed, unless something
 						 * other than air occupies the spot.
+						 * 
+						 * Restore the block if we detect a falling block now sits there. This resolves
+						 * the issue of falling blocks taking up the space, preventing this rollback.
+						 * However, it also means that a rollback *could* interfere with a player-placed
+						 * block.
 						 */
-						if(block.getType().equals(Material.AIR)){
+						if( block.getType().equals(Material.AIR) || BlockUtils.isFallingBlock(block) ){
 							
 							Material m = Material.getMaterial(b.getBlock_id());
 							
