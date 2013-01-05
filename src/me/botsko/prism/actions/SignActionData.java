@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import org.bukkit.block.BlockFace;
+
 public class SignActionData {
 	
 	/**
@@ -11,5 +13,10 @@ public class SignActionData {
 	 * 
 	 */
 	public String sign_type;
+	
+	/**
+	 * 
+	 */
+	public BlockFace facing;
 
 }

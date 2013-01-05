@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 	
@@ -34,6 +36,8 @@ public class SignAction extends GenericAction {
 		}
 		if(block != null){
 			actionData.sign_type = block.getType().name();
+			Sign sign = (Sign) block.getState().getData();
+			actionData.facing = sign.getFacing();
 			this.block = block;
 			this.world_name = block.getWorld().getName();
 			this.x = block.getX();
@@ -99,7 +103,16 @@ public class SignAction extends GenericAction {
 	 * @return
 	 */
 	public Material getSignType(){
-		return  Material.valueOf(actionData.sign_type);
+		return Material.valueOf(actionData.sign_type);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BlockFace getFacing(){
+		return actionData.facing;
 	}
 	
 	

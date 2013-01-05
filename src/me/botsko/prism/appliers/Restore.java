@@ -133,8 +133,14 @@ public class Restore extends Preview {
 							block.setType(b.getSignType());
 						}
 						
-						// Set the contents
+						// Set the facing direction
 						Sign s = (Sign)block.getState();
+						
+						if(block.getType().equals(Material.SIGN)){
+							((org.bukkit.material.Sign)s.getData()).setFacingDirection(b.getFacing());
+						}
+						
+						// Set content
 						String[] lines = b.getLines();
 						int i = 0;
 						if(lines.length > 0){
