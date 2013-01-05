@@ -188,7 +188,7 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-		if( parameters.getLookup_type().equals("rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ){
+		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) || parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) ){
 			query += " JOIN (" +
 						"SELECT x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions" +

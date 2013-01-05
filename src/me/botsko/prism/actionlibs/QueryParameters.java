@@ -295,4 +295,24 @@ public class QueryParameters {
 		}
 		return false;
 	}
+	
+	
+	/**
+	 * This just provides easy access to whether or not any action
+	 * type we're searching for should also trigger a rollback
+	 * of any events afterwards.
+	 * 
+	 * @param at
+	 * @return
+	 */
+	public boolean shouldTriggerRollbackFor( ActionType at ){
+		if(!getActionTypes().isEmpty()){
+			for(ActionType requestedType : getActionTypes()){
+				if(requestedType.shouldTriggerRollbackFor( at )){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

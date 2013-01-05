@@ -182,25 +182,47 @@ public class Rollback extends Applier {
 			}
 			
 			
+			// POST ROLLBACK TRIGGERS
+			
+			// We're going to modify the action type of the query params
+			// and pass it along to a restore.
+			// NOTE: These params have been modified from original, so
+			// do NOT use the object for original params.
+			
+			
+//			/**
+//			 * If we've done breaking-blocks rollback we also need to re-apply
+//			 * any sign-change events at this location.
+//			 */
+//			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
+//				
+//				parameters.resetActionTypes();
+//				parameters.addActionType(ActionType.SIGN_CHANGE);
+//				
+//				ActionsQuery aq = new ActionsQuery(plugin);
+//				QueryResult results = aq.lookup( player, parameters );
+//				if(!results.getActionResults().isEmpty()){
+//					Restore rs = new Restore( plugin, results.getActionResults() );
+//					rs.restore();
+//				}
+//			}
+			
+			
 			/**
-			 * If we've done block-break rollback we also need to re-apply
-			 * any sign-change events at this location.
+			 * If we've rolled back any containers we need to restore item-removes.
 			 */
-			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
+			if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
 				
-				// We're going to modify the action type of the query params
-				// and pass it along to a restore.
-				// NOTE: These params have been modified from original, so
-				// do NOT use the object for original params.
+				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
 				
 				parameters.resetActionTypes();
-				parameters.addActionType(ActionType.SIGN_CHANGE);
+				parameters.addActionType(ActionType.ITEM_REMOVE);
 				
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( player, parameters );
 				if(!results.getActionResults().isEmpty()){
-					Restore rs = new Restore( plugin, results.getActionResults() );
-					rs.restore();
+					Rollback rb = new Rollback( plugin, player, results.getActionResults(), parameters );
+					rb.rollback();
 				}
 			}
 			
