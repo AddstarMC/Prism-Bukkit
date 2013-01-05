@@ -3,7 +3,6 @@ package me.botsko.prism;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
@@ -19,6 +18,7 @@ import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +37,7 @@ public class Prism extends JavaPlugin {
 	
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
-	public ArrayList<String> playersWithActiveTools = new ArrayList<String>();
+	public ConcurrentHashMap<String,Wand> playersWithActiveTools = new ConcurrentHashMap<String,Wand>();
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	

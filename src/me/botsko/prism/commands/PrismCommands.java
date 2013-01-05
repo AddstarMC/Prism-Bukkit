@@ -59,6 +59,13 @@ public class PrismCommands extends Executor {
 		.setHandler(new InspectCommand(plugin));
 		
 		/**
+		 * /prism wand
+		 */
+		addSub("wand", "prism.rollback")
+		.setDescription("Toggles the wand.")
+		.setHandler(new WandCommand(plugin));
+		
+		/**
 		 * /prism teleport [id] 
 		 */
 		addSub("tp", "prism.tp")

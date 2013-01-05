@@ -1,16 +1,11 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionMessage;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.wands.Wand;
 
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -67,22 +62,28 @@ public class PrismPlayerEvents implements Listener {
 		
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
-		
-		// Are they inspecting?
-		if(plugin.playersWithActiveTools.contains(player.getName())){
-		
-			// Player left click on block, run a history search
-			if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-				// Leave as-is
+
+		// Are they using a wand?
+		if(plugin.playersWithActiveTools.containsKey(player.getName())){
+
+			// Pull the wand in use
+			Wand wand = plugin.playersWithActiveTools.get(player.getName());
+			if(wand != null){
+
+				// Left click is for current block
+				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+					wand.playerLeftClick( player, block );
+				}
+				// Right click is for relative block on blockface
+				if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+					block = block.getRelative(event.getBlockFace());
+					wand.playerRightClick( player, block );
+				}
 			}
-			// Player right click on block, get last action
-			if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-				block = block.getRelative(event.getBlockFace());
-			}
-			if(block != null){
-				showBlockHistory(player, block, block.getLocation());
-				event.setCancelled(true);
-			}
+			
+			// Always cancel
+			event.setCancelled(true);
+			
 		} else {
 			
 			// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
@@ -108,36 +109,6 @@ public class PrismPlayerEvents implements Listener {
 						break;
 				}
 			}
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param player
-	 * @param block
-	 * @param loc
-	 */
-	protected void showBlockHistory( Player player, Block block, Location loc ){
-		
-		plugin.debug("Running history search for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
-
-		// Build params
-		QueryParameters params = new QueryParameters();
-		params.setWorld( player.getWorld().getName() );
-		params.setLoc(loc);
-		
-		// Query
-		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( player, params );
-		if(!results.getActionResults().isEmpty()){
-			for(me.botsko.prism.actions.Action a : results.getActionResults()){
-				ActionMessage am = new ActionMessage(a);
-				player.sendMessage( plugin.playerHeaderMsg( am.getMessage() ) );
-			}
-		} else {
-			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
-			player.sendMessage( plugin.playerError( "No history for this " + space_name + " found." ) );
 		}
 	}
 }
