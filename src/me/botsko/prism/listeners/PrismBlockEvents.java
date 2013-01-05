@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +29,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 
 public class PrismBlockEvents implements Listener {
@@ -55,6 +59,36 @@ public class PrismBlockEvents implements Listener {
 		Block block = event.getBlock();
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
+		
+		// If this is a container we need to trigger item removal for everything in it.
+		// It's important we record this *after* the block break so the log shows what
+		// really happened.
+		if( block.getType().equals(Material.CHEST) ){
+			Chest container = (Chest) block.getState();
+			for( ItemStack i : container.getInventory().getContents()){
+				if(i != null){
+					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+				}
+			}
+		}
+		// @todo not working. might need to record items from each slot
+//		if( block.getType().equals(Material.FURNACE) ){
+//			Furnace container = (Furnace) block.getState();
+//			for( ItemStack i : container.getInventory().getContents()){
+//				if(i != null){
+//					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+//				}
+//			}
+//		}
+		if( block.getType().equals(Material.DISPENSER) ){
+			Dispenser container = (Dispenser) block.getState();
+			for( ItemStack i : container.getInventory().getContents()){
+				if(i != null){
+					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player) );
+				}
+			}
+		}
+		
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
