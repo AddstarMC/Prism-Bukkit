@@ -103,11 +103,16 @@ public class PreprocessArgs {
 				if(arg_type.equals("r")){
 					if(TypeUtils.isNumeric(val)){
 						int radius = Integer.parseInt(val);
+						if(radius <= 0){
+							player.sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+						}
 						if(radius > plugin.getConfig().getInt("prism.max-radius-unless-overridden")){
 							radius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
 							player.sendMessage( plugin.playerError("Forcing radius to " + radius + " as allowed by config.") );
 						}
-						parameters.setRadius( radius );
+						if(radius > 0){
+							parameters.setRadius( radius );
+						}
 					} else {
 						// User has asked for a global radiu
 						if(val.equals("global") && parameters.getLookup_type().equals("lookup")){

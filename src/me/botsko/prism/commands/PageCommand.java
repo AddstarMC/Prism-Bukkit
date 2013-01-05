@@ -44,6 +44,11 @@ public class PageCommand implements SubHandler {
 		}
 		
 		int page = Integer.parseInt(call.getArg(1));
+
+		if(page <= 0){
+			call.getPlayer().sendMessage( plugin.playerError("Page must be greater than zero.") );
+			return;
+		}
 		
 		// Is anything even cached?
 		if(plugin.cachedQueries.containsKey(call.getPlayer().getName())){
