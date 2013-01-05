@@ -19,17 +19,6 @@ import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 
 public class Restore extends Preview {
-
-	
-	/**
-	 * 
-	 */
-	private Prism plugin;
-	
-	/**
-	 * 
-	 */
-	private List<Action> results;
 	
 	
 	/**
@@ -85,8 +74,14 @@ public class Restore extends Preview {
 				if( a instanceof BlockAction ){
 					
 					BlockAction b = (BlockAction) a;
-					
 					Block block = world.getBlockAt(loc);
+					
+					if(is_preview){
+						// Record the change temporarily so we can cancel
+						// and update the client
+						Undo u = new Undo( block );
+						undo.add(u);
+					}
 					
 					// If the block was placed, we must replace it
 					if(a.getType().doesCreateBlock()){
@@ -97,8 +92,13 @@ public class Restore extends Preview {
 								continue;
 							}
 							
-							block.setTypeId( b.getBlock_id() );
-							block.setData( b.getBlock_subid() );
+							if(!is_preview){
+								block.setTypeId( b.getBlock_id() );
+								block.setData( b.getBlock_subid() );
+							} else {
+								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+							}
+							
 							restored_count++;
 						}
 					} else {
@@ -107,7 +107,11 @@ public class Restore extends Preview {
 						 * Again remove the block that was removed
 						 */
 						if(!block.getType().equals(Material.AIR)){
-							block.setType( Material.AIR);
+							if(!is_preview){
+								block.setType(Material.AIR);
+							} else {
+								player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+							}
 							restored_count++;
 						}
 					}
@@ -146,15 +150,35 @@ public class Restore extends Preview {
 			}
 			
 			// Build the results message
-			String msg = restored_count + " events restored.";
-			if(skipped_block_count > 0){
-				msg += " " + skipped_block_count + " skipped.";
-			}
-			if(restored_count > 0){
-				msg += ChatColor.GRAY + " It's like it was always there.";
-			}
-			responses.add( plugin.playerHeaderMsg( msg ) );
+			if(!is_preview){
+				
+				// Build the results message
+				String msg = restored_count + " events restored.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(restored_count > 0){
+					msg += ChatColor.GRAY + " It's like it was always there.";
+				}
+				responses.add( plugin.playerHeaderMsg( msg ) );
+				
+			} else {
 			
+				// Build the results message
+				String msg = restored_count + " planned restorations.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(restored_count > 0){
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this restore.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+				// Let me know there's no need to cancel/apply
+				if(restored_count == 0){
+					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
+				}
+			}
 		} else {
 			responses.add(plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ));
 		}

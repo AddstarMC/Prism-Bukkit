@@ -86,7 +86,7 @@ public class PreviewCommand implements SubHandler {
 				QueryResult results = aq.lookup( call.getPlayer(), parameters );
 				if(!results.getActionResults().isEmpty()){
 					
-					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback preview...") );
+					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning preview...") );
 					
 					ApplierResult result = null;
 					Previewable rs = null;
@@ -116,7 +116,7 @@ public class PreviewCommand implements SubHandler {
 						}
 					}
 				} else {
-					// @todo no results
+					call.getPlayer().sendMessage( plugin.playerError("Nothing found to preview.") );
 				}
 			}
 		}

@@ -53,9 +53,11 @@ public class Preview implements Previewable {
 		if(plugin.playerActivePreviews.containsKey(player.getName())){
 			
 			PreviewSession previewSession = plugin.playerActivePreviews.get( player.getName() );
-			
+			plugin.debug("Undo queue empty: " + previewSession.getResults().getUndoQueue().isEmpty());
 			if(!previewSession.getResults().getUndoQueue().isEmpty()){
+				
 				for(Undo u : previewSession.getResults().getUndoQueue()){
+					plugin.debug("Preview block sent to player: " + u.getOriginalBlock().getType().name());
 					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getData());
 				}
 			}
@@ -79,7 +81,12 @@ public class Preview implements Previewable {
 			
 			player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
 			ps.getPreviewer().setIsPreview(false);
-			ps.getPreviewer().apply();
+			ApplierResult result = ps.getPreviewer().apply();
+			if(!result.getMessages().isEmpty()){
+				for(String resp : result.getMessages()){
+					player.getPlayer().sendMessage(resp);
+				}
+			}
 			
 			plugin.playerActivePreviews.remove( player.getName() );
 			

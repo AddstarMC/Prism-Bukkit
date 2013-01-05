@@ -100,7 +100,7 @@ public class Rollback extends Preview {
 					BlockAction b = (BlockAction) a;
 					Block block = world.getBlockAt(loc);
 					
-					if(!is_preview){
+					if(is_preview){
 						// Record the change temporarily so we can cancel
 						// and update the client
 						Undo u = new Undo( block );
