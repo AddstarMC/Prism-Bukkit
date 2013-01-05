@@ -245,6 +245,19 @@ public class Prism extends JavaPlugin {
 	 * @param msg
 	 * @return
 	 */
+	public String playerSubduedHeaderMsg(String msg){
+		if(msg != null){
+			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.GRAY + msg;
+		}
+		return "";
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
 	public String playerMsg(String msg){
 		if(msg != null){
 			return ChatColor.WHITE + msg;

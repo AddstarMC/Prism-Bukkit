@@ -40,8 +40,8 @@ public class NearCommand implements SubHandler {
 		
 		// allow a custom near radius
 		int radius = plugin.getConfig().getInt("prism.near.default-radius");
-		if(call.getArgs().length > 0 && TypeUtils.isNumeric(call.getArg(1))){
-			radius = Integer.parseInt( call.getArg(1) );
+		if(call.getArgs().length == 2 && TypeUtils.isNumeric(call.getArg(1))){
+			radius = Integer.parseInt(call.getArg(1));
 		}
 		
 		parameters.setRadius(radius);
@@ -50,6 +50,7 @@ public class NearCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
 		if(!results.getActionResults().isEmpty()){
+			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg( "All changes within " + radius + " blocks of you..." ) );
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			for(Action a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
@@ -59,7 +60,7 @@ public class NearCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
 			}
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find any changes within "+radius+" blocks of you." ) );
+			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find anything." ) );
 		}
 	}
 }
