@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.wands.Wand;
 
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -31,6 +33,17 @@ public class PrismPlayerEvents implements Listener {
 	public PrismPlayerEvents( Prism plugin ){
 		this.plugin = plugin;
 	}
+	
+	
+	 /**
+     * Log command use
+     * @param event
+     */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+		Player player = event.getPlayer();
+        plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+    }
 	
 	
 	/**

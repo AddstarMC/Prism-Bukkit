@@ -90,6 +90,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.lightning", true);
 		config.addDefault("prism.tracking.mushroom-grow", true);
 		config.addDefault("prism.tracking.player-death", true);
+		config.addDefault("prism.tracking.player-command", true);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
 		config.addDefault("prism.tracking.tnt-explode", true);

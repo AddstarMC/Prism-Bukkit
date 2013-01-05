@@ -34,6 +34,7 @@ public enum ActionType {
 	LIGHTNING(false, false, false, null, "ignited"),
 	MUSHROOM_GROW(true, true, true, "block", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
+	PLAYER_COMMAND(false, false, false, "command", "ran command"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
@@ -106,6 +107,15 @@ public enum ActionType {
 	 */
 	public boolean isBlockAction(){
 		return (getHandler() != null && getHandler().equals("block"));
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isCommandAction(){
+		return (getHandler() != null && getHandler().equals("command"));
 	}
 	
 	

@@ -17,6 +17,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.HangingItemAction;
@@ -74,6 +75,10 @@ public class ActionsQuery {
 
 	    			if(actionType.isBlockAction()){
 	    				BlockAction b = new BlockAction(null, null, null);
+	    				baseAction = b;
+	    			}
+	    			else if(actionType.isCommandAction()){
+	    				CommandAction b = new CommandAction(null, null, null, null);
 	    				baseAction = b;
 	    			}
 	    			else if( actionType.isEntityAction() ){
