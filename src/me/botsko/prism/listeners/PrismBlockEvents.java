@@ -233,6 +233,7 @@ public class PrismBlockEvents implements Listener {
 		// Log break of any attached items
 		if (b.getState().getData() instanceof Attachable) {
 			Attachable a = (Attachable)	b.getState().getData();
+			if(a == null) return;
 			Block attachedBlock = b.getRelative(a.getAttachedFace());
 			// If it's lost an attached block
 			if (attachedBlock.getTypeId() == 0) {
