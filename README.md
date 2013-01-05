@@ -45,24 +45,123 @@ At the very least, you must set the MySQL connection information for your databa
 
 ## How to Use
 
+By default, Prism will begin tracking all sorts of events that happen in your worlds. Players making block changes, killing entities, transfers of items, and much more. 
+
+Some of this data is purely informational, so you can find out who did something, and some of it is useful for rollbacks and restores.
+
 
 #### Searching (Lookup, Inspector, Near)
 
+The first use is to be able to find the information you need. Prism comes with three tools to find the data from in-game, each with a different focus.
+
+##### Inspector
+
+Use `/prism i` to toggle your hand/tool into inspection mode. Left-click a block to see that exact block's history. Right-click on any side of the block to see the history for the space adjacent.
+
+Excellent for finding information about a single block, like a chest or ore finds.
+
+##### Near
+
+Use `/prism near` to do a quick query for all actions within a five block radius (configurable). It shows you all actions so you can quickly get a picture of what's happened.
+
+Excellent for an area with no specific/visible issues. For example you can't tell what was griefed or you need to see if anyone was here recently.
+
+##### Lookup
+
+When the inspector and near commands aren't enough you have the power to query essentially any results from the database.
+
+Use `/prism l (params)` to do a search of information. **See below for understanding parameters.** By using any arrangement of the parameters you can easily filter through records and find out exactly what you need.
+
+Lookup queries can be local to you, or even global if you so desire. Need to see only all item-pickup actions by player nasonfish within ten blocks? Or how about where player YeaItsMe last placed a chest in the entire server.
+
+It's almost limitless.
+
+##### Pagination
+
+Most times, a lookup or near query returns a lot of information. We break this into pages for easier navigating. 
+
+After *any* lookup or near query, use `/prism page [page #]` to skip to different pages of results. It simply uses the data from your last search and will expire after five minutes.
+
+
+##### Teleporting
+
+When you perform a lookup with `r:global`, the results will include ID numbers with every action. Since you're viewing records that aren't nearby you can teleport to them.
+
+Use `/prism tp [id]` to teleport to a record's location. 
+
+*Note: We're working on a smarter teleport system that will accurately judge the safety of the area, and attempt a nearby spot. This is in development.*
+
+
 #### Understanding Parameters
+
+"Parameters" is the name we use for *arguments* given to commands like lookup, preview, rollback, and restore. They allow you to define exactly which data Prism should be working with.
+
+You may define any, all, or none (safe defaults assumed if none given). You may use them in any order.
+
+You can even define multiple arguments for most by separating them with a comma. Like `a:block-break,block-place`
+
+**List of parameters:**
+
+- `a:[action]` - Like "block-break" (See below for full list). No default.
+- `r:[radius]` - How many blocks near you the action happened, i.e. `r:20`. Default radius set in config. Can't exceed the max defined in config. Use r:global to force an all-world search, *for lookups only*.
+- `b:[blockname/id]` - Like `b:grass` or `b:2` or `b:2:0`. No default.
+- `e:[entity]` - Like `e:pig`. No default.
+- `t:[timesince]` - Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). No default. Use time arguments together if you wish, like `1h20m`.
+- `p:[player]` - Like `p:viveleroi`. No default.
+- `w:[world]` - Like `w:worldname`. Defaults to your current world.
+
+
+**List of actions:**
+
+
+
 
 
 #### Preview
 
+*Previewing* a rollback or restore is **the safest way**. When you preview a rollback/restore, Prism queries the database with your given parameters, and shows those blocks changes/restorations to you only - it does not apply the rollback/restore to the world. Players around you won't see the preview, only you will.
+
+This allows you to see whether or not your rollback/restore will do what you intended - because if not you can cancel it without any impact on the real map.
+
+Use `/prism preview rollback (params)` (or restore). If the results look good and you wish to apply them to the map, use `/prism preview apply`.
+
+If not, use `/prism preview cancel`. You may only have one preview pending at a time, and they will expire after a minute. If you forget about them or logout, they will self-cancel.
+
+Applying a preview doesn't require the (params) again because Prism remembers what you had queried. When you apply a preview, it's done exactly the same way but as a real rollback/restore.
+
+***The Prism team recommends you make a habit of always using preview.***
+
+*Note: Only block changes are supported in preview mode. Item/entity/etc rollbacks won't show in a preview, but will still be rolled back correctly when the preview is applied.*
+
 #### Rollback
 
-@todo make warning about items from containers (prism.appliers.allow_rollback_items_removed_from_container)
+Some expert users may be comfortable enough to rollback without a preview. Use `/prism rollback (params)`. Your changes will be applied immediately.
+
+*Note: The Prism team reminds you that if you allow rollbacks, especially of items removed from chests or entity kills, be aware that staff with access to do so have the capability to do so repeatedly. There's no absolute way to ensure an item or entity hasn't already been rolled back but you shouldn't have a problem because only staff can perform rollbacks and staff are by definition trusted. However, you can disable item removal rollbacks in the config.*
+
 
 #### Restore
 
+Restoring is a way to re-apply changes that usually have been rolled back already. Essentially a method to reverse a rollback.
+
+Use `/prism restore (params)`. 
+
+*Note: Both rollbacks and restores of block-place actions will try their best to avoid re-apply block changes to an area with newer activity. For example if you re-apply a block-place I did, but Natman93 has already put a new block there, Prism will skip it.*
 
 
+#### Ex, Drain
 
-## Commands
+Use `/prism ex [radius]` to extinguish all fires in the radius, or `/prism drain [radius]` to remove all liquid (water and lava) in the radius.
+
+When performing a rollback of block-burn actions, Prism will automatically extinguish the fires as well. 
+
+
+#### Delete
+
+Server operators can use `/prism delete [timeframe]` to manually purge records from the database. This isn't usually necessary, as Prism will automatically clear records that have expired (per config) on startup.
+
+
+## Full Commands List
 
 - `prism i`
 - `prism l (params)`
@@ -78,28 +177,10 @@ At the very least, you must set the MySQL connection information for your databa
 - `prism drain [radius]`
 - `prism tp [id]]`
 - `prism delete`
-- `prism credits`
-
-#### Parameters:
-
-Parameters are to be used for any command that supports (params). You may define any, all, or none. They
-help you find, rollback, or restore essentially any piece of information you need. Some use defaults and
-some don't.
-
-You can even define multiple arguments for most by separating them with a comma. Like "a:block-break,block-place"
-
-- `a:[action]` - Like "block-break" (See below for full list). No default.
-- `r:[radius]` - i.e. 20, or 100. Defaults to default-radius defined in config. Use r:global to force an all-world search, for lookups only.
-- `b:[blockname/id]` - Like "grass" or "2" or "2:0". No default.
-- `e:[entity]` - Like "pig". No default.
-- `t:[timesince]` - Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). No default.
-- `p:[player]` - Like "viveleroi". No default.
-- `w:[world]` - Defaults to your current world.
+- `prism ?` - Help.
+- `prism params` - List parameters in-game.
 
 
-#### Actions
-
-(todo)
 
 ## Permissions
 
@@ -134,4 +215,6 @@ This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
 ## Authors
 
 - viveleroi (Creator, Lead Developer)
-- jasonbbb711 (Contributor)
+- nasonfish (Contributor)
+- nasonfish, Natman93, YeaItsMe (Dev Testers)
+- @todo (Live Testers)
