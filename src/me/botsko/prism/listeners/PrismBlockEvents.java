@@ -142,6 +142,15 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+			// If you've broken the top half of a door, we need to record the action for the bottom.
+			// This is because a top half break doesn't record the orientation of the door while the bottom does,
+			// and we have code in the rollback/restore to add the top half back in.
+			if(block.getData() == 8){
+				block = block.getRelative(BlockFace.DOWN);
+			}
+		}
+		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		
 		// log items removed from chest

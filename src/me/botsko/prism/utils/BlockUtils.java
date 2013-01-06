@@ -272,17 +272,29 @@ public class BlockUtils {
 	
 	
 	/**
+	 * Lower door halves get byte values based on which direction the front
+	 * of the door is facing.
+	 * 
+	 * 0 = West
+	 * 1 = North
+	 * 2 = East
+	 * 3 = South
+	 * 
+	 * The upper halves of both door types always have a value of 8.
 	 * 
 	 * @param originalBlock
 	 * @param typeid
 	 * @param subid
 	 */
 	public static void properlySetDoor( Block originalBlock, int typeid, byte subid ){
-		if(subid == 8){
+		// Wood door upper or iron door upper
+		if( subid == 8 ){
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
 			aboveOrBelow.setTypeId( typeid );
-			aboveOrBelow.setData( (byte)2 );
-		} else {
+			aboveOrBelow.setData( (byte)0 ); // we have no way to know which direction the lower half was facing
+		}
+		// Wood door lower or iron door lower
+		else {
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
 			aboveOrBelow.setTypeId( typeid );
 			aboveOrBelow.setData( (byte)8 );
