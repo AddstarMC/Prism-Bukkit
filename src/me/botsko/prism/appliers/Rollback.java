@@ -77,10 +77,10 @@ public class Rollback extends Preview {
 		}
 		
 		// can't really work here. doesn't return a proper result, etc
-//		// Remove any lava blocks when doing a lava bucket rollback
-//		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET)){
-//			BlockUtils.drainlava(parameters.getLoc(), parameters.getRadius());
-//		}
+		// Remove any lava blocks when doing a lava bucket rollback
+		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET)){
+			BlockUtils.drainlava(parameters.getPlayer_location(), parameters.getRadius());
+		}
 		
 		// Rollback blocks
 		if(!results.isEmpty()){

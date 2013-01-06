@@ -270,7 +270,7 @@ public class ActionsQuery {
 			 */
 			int radius = parameters.getRadius();
 			if(radius > 0){
-				query += buildRadiusCondition(radius, parameters.getPlayer_location());
+				query += buildRadiusCondition(radius, parameters.getPlayer_location().toVector());
 			}
 			
 			/**

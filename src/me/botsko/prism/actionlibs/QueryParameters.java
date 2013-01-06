@@ -6,7 +6,6 @@ import java.util.HashMap;
 import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 public class QueryParameters implements Cloneable {
 	
@@ -14,7 +13,7 @@ public class QueryParameters implements Cloneable {
 	protected String lookup_type = "lookup";
 	
 	protected Location loc;
-	protected Vector player_location;
+	protected Location player_location;
 	
 	protected int id = 0;
 	protected int radius;
@@ -27,7 +26,6 @@ public class QueryParameters implements Cloneable {
 	protected String block;
 	
 	protected int limit = 1000000;
-//	protected int offset = 0;
 	
 	
 	/**
@@ -97,7 +95,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the player_location
 	 */
-	public Vector getPlayer_location() {
+	public Location getPlayer_location() {
 		return player_location;
 	}
 
@@ -105,7 +103,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param player_location the player_location to set
 	 */
-	public void setPlayer_location(Vector player_location) {
+	public void setPlayer_location(Location player_location) {
 		this.player_location = player_location;
 	}
 

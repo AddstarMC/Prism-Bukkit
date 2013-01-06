@@ -207,19 +207,21 @@ public class BlockUtils {
 	 */
 	public static int removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
 		int blocks_removed = 0;
-		int x1 = loc.getBlockX();
-		int y1 = loc.getBlockY();
-		int z1 = loc.getBlockZ();
-		World world = loc.getWorld();
-		for(int x = x1-radius; x <= x1+radius; x++){
-			for(int y = y1-radius; y <= y1+radius; y++){
-				for(int z = z1-radius; z <= z1+radius; z++){
-					loc = new Location(world, x, y, z);
-					Block b = loc.getBlock();
-					if(b.getType().equals(Material.AIR)) continue;
-					if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
-						loc.getBlock().setType(Material.AIR);
-						blocks_removed++;
+		if(loc != null && radius > 0 && materials != null && materials.length > 0){
+			int x1 = loc.getBlockX();
+			int y1 = loc.getBlockY();
+			int z1 = loc.getBlockZ();
+			World world = loc.getWorld();
+			for(int x = x1-radius; x <= x1+radius; x++){
+				for(int y = y1-radius; y <= y1+radius; y++){
+					for(int z = z1-radius; z <= z1+radius; z++){
+						loc = new Location(world, x, y, z);
+						Block b = loc.getBlock();
+						if(b.getType().equals(Material.AIR)) continue;
+						if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
+							loc.getBlock().setType(Material.AIR);
+							blocks_removed++;
+						}
 					}
 				}
 			}
