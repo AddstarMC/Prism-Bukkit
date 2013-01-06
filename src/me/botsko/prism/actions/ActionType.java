@@ -187,7 +187,7 @@ public enum ActionType {
 		if(_tmp.length == 2){
 			return _tmp[1];
 		}
-		return this.name();
+		return this.name().toLowerCase();
 	}
 	
 	

@@ -45,7 +45,7 @@ public class ActionMessage {
 		msg += highlight + a.getPlayer_name();
 		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		msg += " " + highlight + a.getNiceName();
-		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionType() + ")";
+		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
 		
 		return msg;
 		

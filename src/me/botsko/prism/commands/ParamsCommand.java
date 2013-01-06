@@ -53,11 +53,19 @@ public class ParamsCommand implements SubHandler {
 		String actions = "";
 		int i = 1;
 		for(ActionType ac : ActionType.values()){
+			actions += ac.getActionShortType() + (i < ActionType.values().length ? ", " : "");
+			i++;
+		}
+		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actions) );
+		
+		
+		actions = "";
+		i = 1;
+		for(ActionType ac : ActionType.values()){
 			actions += ac.getActionType() + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
-		
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Actions:" + ChatColor.WHITE + " " + actions) );
+		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actions) );
 		
 	}
 }
