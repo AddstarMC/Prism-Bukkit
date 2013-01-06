@@ -52,7 +52,7 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param player_name
 	 * @param block
 	 */
 	public void logItemRemoveFromDestroyedContainer( String player_name, Block block ){

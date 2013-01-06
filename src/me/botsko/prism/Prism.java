@@ -268,7 +268,7 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param player_name
 	 * @param cmd
 	 * @param help
 	 */

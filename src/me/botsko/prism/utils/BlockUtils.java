@@ -19,7 +19,7 @@ public class BlockUtils {
 	 * so that we can avoid including dangerous items with an
 	 * applier.
 	 * 
-	 * @param block
+	 * @param block_filters
 	 * @return
 	 */
 	public static boolean mayEverPlace( Material m ){
@@ -175,7 +175,7 @@ public class BlockUtils {
 	
 	/**
 	 * Is an entity a hanging type, attachable to a block.
-	 * @param block
+	 * @param block_filters
 	 * @return
 	 */
 	public static boolean isHangingEntity( Entity entity ){

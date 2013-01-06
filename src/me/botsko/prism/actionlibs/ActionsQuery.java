@@ -270,7 +270,7 @@ public class ActionsQuery {
 			 */
 			int radius = parameters.getRadius();
 			if(radius > 0){
-				query += buildRadiusCondition(radius, parameters.getPlayer_location().toVector());
+				query += buildRadiusCondition(radius, parameters.getPlayerLocation().toVector());
 			}
 			
 			/**
@@ -300,7 +300,7 @@ public class ActionsQuery {
 			/**
 			 * Specific coords
 			 */
-			Location loc = parameters.getLoc();
+			Location loc = parameters.getSpecificBlockLocation();
 			if(loc != null){
 				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
 			}
@@ -354,7 +354,7 @@ public class ActionsQuery {
 	/**
 	 * 
 	 * @param arg_values
-	 * @param player
+	 * @param player_name
 	 * @return
 	 */
 	protected String buildRadiusCondition( int radius, Vector loc ){

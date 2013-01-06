@@ -205,7 +205,7 @@ public class PreprocessArgs {
 				parameters.setWorld( player.getWorld().getName() );
 			}
 			// Player location
-			parameters.setPlayer_location( player.getLocation() );
+			parameters.setPlayerLocation( player.getLocation() );
 		}
 		return parameters;
 	}
