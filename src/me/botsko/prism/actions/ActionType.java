@@ -105,73 +105,11 @@ public enum ActionType {
 	
 	/**
 	 * 
+	 * @param handler
 	 * @return
 	 */
-	public boolean isBlockAction(){
-		return (getHandler() != null && getHandler().equals("block"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isCommandAction(){
-		return (getHandler() != null && getHandler().equals("command"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isEntityAction(){
-		return (getHandler() != null && getHandler().equals("entity"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isGrowAction(){
-		return (getHandler() != null && getHandler().equals("grow"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isHangingItemAction(){
-		return (getHandler() != null && getHandler().equals("hangingitem"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isItemStackAction(){
-		return (getHandler() != null && getHandler().equals("itemstack"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isPlayerDeathAction(){
-		return (getHandler() != null && getHandler().equals("playerdeath"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isSignAction(){
-		return (getHandler() != null && getHandler().equals("signchange"));
+	public boolean requiresHandler( String handler ){
+		return (getHandler() != null && getHandler().equals(handler));
 	}
 	
 	
