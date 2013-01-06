@@ -20,6 +20,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
+import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
@@ -84,6 +85,10 @@ public class ActionsQuery {
 	    			else if( actionType.isEntityAction() ){
 	    				EntityAction eka = new EntityAction(null, null, null);
 	    				baseAction = eka;
+	    			}
+	    			else if( actionType.isGrowAction() ){
+	    				GrowAction ga = new GrowAction(null, null, null);
+	    				baseAction = ga;
 	    			}
 	    			else if( actionType.isHangingItemAction() ){
 	    				HangingItemAction ha = new HangingItemAction(null, null, null);

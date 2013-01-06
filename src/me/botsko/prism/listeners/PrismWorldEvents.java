@@ -2,7 +2,7 @@ package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
-import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.GrowAction;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -36,23 +36,21 @@ public class PrismWorldEvents implements Listener {
 	public void onStructureGrow(StructureGrowEvent event) {
 		
 		ActionType type = ActionType.TREE_GROW;
-		
-		//Sort out structure type
 		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = ActionType.MUSHROOM_GROW;
 
 		//Loop through blocks
 		for (BlockState block : event.getBlocks()) {
-
+			
 			//Don't log the bottom block
-			if (block.getType() == Material.MYCEL || block.getType() == Material.DIRT || block.getType() == Material.GRASS) continue;
+			if (block.getType() == Material.MYCEL || block.getType() == Material.DIRT || block.getType() == Material.GRASS ) continue;
 	
 			//If a player did it
 			if (event.getPlayer() != null) {
-				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), event.getPlayer().getName()) );
+				plugin.actionsRecorder.addToQueue( new GrowAction(type, block, event.getPlayer().getName()) );
 			}
 			//If the environment did it
 			else {
-				plugin.actionsRecorder.addToQueue( new BlockAction(type, block.getBlock(), "Environment") );
+				plugin.actionsRecorder.addToQueue( new GrowAction(type, block, "Environment") );
 			}
 		}
 	}

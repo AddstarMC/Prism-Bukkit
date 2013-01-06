@@ -34,13 +34,13 @@ public enum ActionType {
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, false, false, "block", "decayed"),
 	LIGHTNING(false, false, false, null, "ignited"),
-	MUSHROOM_GROW(true, true, true, "block", "grew"),
+	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
 	PLAYER_COMMAND(false, false, false, "command", "ran command"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
-	TREE_GROW(true, true, true, "block", "grew"),
+	TREE_GROW(true, true, true, "grow", "grew"),
 	WATER_BUCKET(false, false, false, null, "poured");
 	
 
@@ -127,6 +127,15 @@ public enum ActionType {
 	 */
 	public boolean isEntityAction(){
 		return (getHandler() != null && getHandler().equals("entity"));
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isGrowAction(){
+		return (getHandler() != null && getHandler().equals("grow"));
 	}
 	
 	
