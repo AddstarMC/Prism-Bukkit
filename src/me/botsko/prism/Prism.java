@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -18,9 +19,11 @@ import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -29,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Prism extends JavaPlugin {
 
 	protected String msg_name = "Prism";
+	protected final String log_prefix = "[!]: ";
 	public Prism prism;
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
@@ -37,9 +41,11 @@ public class Prism extends JavaPlugin {
 	
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
+	public OreMonitor oreMonitor;
 	public ConcurrentHashMap<String,Wand> playersWithActiveTools = new ConcurrentHashMap<String,Wand>();
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
+	public ConcurrentHashMap<Location,Long> alertedBlocks = new ConcurrentHashMap<Location,Long>();
 	
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so
@@ -88,10 +94,12 @@ public class Prism extends JavaPlugin {
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
+		oreMonitor = new OreMonitor(this);
 		
 		// Init scheduled events
 		endExpiredQueryCaches();
 		endExpiredPreviews();
+		removeExpiredLocations();
 		
 		// Delete old data based on config
 		discardExpiredDbRecords();
@@ -220,6 +228,27 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
+	public void removeExpiredLocations(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+		    	java.util.Date date = new java.util.Date();
+		    	// Remove locations logged over five minute ago.
+		    	for (Entry<Location, Long> entry : alertedBlocks.entrySet()){
+		    		long diff = (date.getTime() - entry.getValue()) / 1000;
+		    		if(diff >= 300){
+		    			alertedBlocks.remove(entry.getKey());
+		    		}
+		    	}
+		    	debug("AlertedBlock Size: " + alertedBlocks.size() );
+		    }
+		}, 1200L, 1200L);
+	}
+	
+	
+	/**
+	 * 
+	 */
 	public void discardExpiredDbRecords(){
 		ActionsQuery aq = new ActionsQuery(this);
 		int rows_affected = aq.delete(getConfig().getString("prism.clear-records-after"));
@@ -287,6 +316,19 @@ public class Prism extends JavaPlugin {
 			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.RED + msg;
 		}
 		return "";
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 */
+	public void alertPlayers( String msg ){
+		for (Player p : getServer().getOnlinePlayers()) {
+			if (p.hasPermission("prism.alerts")){
+				p.sendMessage( playerMsg( msg ) );
+			}
+		}
 	}
 	
 	

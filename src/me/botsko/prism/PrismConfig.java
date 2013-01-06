@@ -96,6 +96,14 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
+		
+		config.addDefault("prism.alerts.ores.coal", false);
+		config.addDefault("prism.alerts.ores.redstone", false);
+		config.addDefault("prism.alerts.ores.lapis", true);
+		config.addDefault("prism.alerts.ores.iron", true);
+		config.addDefault("prism.alerts.ores.gold", true);
+		config.addDefault("prism.alerts.ores.diamond", true);
+		config.addDefault("prism.alerts.ores.emerald", true);
 
 		// Copy defaults
 		config.options().copyDefaults(true);

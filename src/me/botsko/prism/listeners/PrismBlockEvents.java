@@ -151,6 +151,8 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		// Run ore find alerts
+		plugin.oreMonitor.processAlertsFromBlock(player, block);
 		
 		/**
 		 * Handle special double-length blocks
