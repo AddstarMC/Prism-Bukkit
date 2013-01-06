@@ -30,6 +30,8 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -328,6 +330,33 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPistonExtend(final BlockPistonExtendEvent event){
+//		if(event.getLength() > 0){
+//			List<Block> blocks = event.getBlocks();
+//			for( Block block : blocks){
+//				// @todo record block move events
+//			}
+//		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPistonRetract(final BlockPistonRetractEvent event){
+//		Block block = event.getBlock();
+//		BlockFace face = event.getDirection();
+//		event.getRetractLocation()
 	}
 	
 	
