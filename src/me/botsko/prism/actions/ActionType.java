@@ -183,7 +183,7 @@ public enum ActionType {
 	public static ActionType getByActionType(String action){
 		String _seek_type = action.toUpperCase().replace("-", "_");
 		for (ActionType me : ActionType.values()) {
-	        if (me.name().equalsIgnoreCase(_seek_type))
+	        if (me.name().equalsIgnoreCase(_seek_type) || me.getActionShortType().equals(action))
 	            return me;
 	    }
 	    return null;
@@ -212,6 +212,16 @@ public enum ActionType {
 	 */
 	public String getActionType(){
 		return this.name().toLowerCase().replace("_", "-");
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getActionShortType(){
+		String[] _tmp = this.name().toLowerCase().split("_");
+		return _tmp[1];
 	}
 	
 	
