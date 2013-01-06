@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Prism extends JavaPlugin {
 
 	protected String msg_name = "Prism";
-	protected final String log_prefix = "[!]: ";
+	protected final String log_prefix = "[!]";
 	public Prism prism;
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
@@ -326,7 +326,7 @@ public class Prism extends JavaPlugin {
 	public void alertPlayers( String msg ){
 		for (Player p : getServer().getOnlinePlayers()) {
 			if (p.hasPermission("prism.alerts")){
-				p.sendMessage( playerMsg( msg ) );
+				p.sendMessage( playerMsg( ChatColor.RED + log_prefix + " " + msg ) );
 			}
 		}
 	}
