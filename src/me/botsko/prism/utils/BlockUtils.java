@@ -269,4 +269,23 @@ public class BlockUtils {
 		Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
+	
+	
+	/**
+	 * 
+	 * @param originalBlock
+	 * @param typeid
+	 * @param subid
+	 */
+	public static void properlySetDoor( Block originalBlock, int typeid, byte subid ){
+		if(subid == 8){
+			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
+			aboveOrBelow.setTypeId( typeid );
+			aboveOrBelow.setData( (byte)2 );
+		} else {
+			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
+			aboveOrBelow.setTypeId( typeid );
+			aboveOrBelow.setData( (byte)8 );
+		}
+	}
 }

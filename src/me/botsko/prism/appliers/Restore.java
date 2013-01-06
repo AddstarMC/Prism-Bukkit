@@ -87,14 +87,23 @@ public class Restore extends Preview {
 					if(a.getType().doesCreateBlock()){
 						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
-							if(!BlockUtils.mayEverPlace(Material.getMaterial(b.getBlock_id()))){
+							Material m = Material.getMaterial(b.getBlock_id());
+							
+							if(!BlockUtils.mayEverPlace(m)){
 								skipped_block_count++;
 								continue;
 							}
 							
 							if(!is_preview){
+								
 								block.setTypeId( b.getBlock_id() );
 								block.setData( b.getBlock_subid() );
+								
+								// If we're rolling back a door, we need to set it properly
+								if(m.equals(Material.WOODEN_DOOR)){
+									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
+								}
+								
 							} else {
 								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
 							}

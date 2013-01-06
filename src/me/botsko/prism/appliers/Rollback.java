@@ -147,6 +147,12 @@ public class Rollback extends Preview {
 							if(!is_preview){
 								block.setTypeId( b.getBlock_id() );
 								block.setData( b.getBlock_subid() );
+
+								// If we're rolling back a door, we need to set it properly
+								if(m.equals(Material.WOODEN_DOOR)){
+									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
+								}
+								
 							} else {
 								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
 							}
