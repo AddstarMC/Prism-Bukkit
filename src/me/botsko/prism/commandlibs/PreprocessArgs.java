@@ -3,6 +3,7 @@ package me.botsko.prism.commandlibs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -81,13 +82,15 @@ public class PreprocessArgs {
 									parameters.addActionType( actionType );
 								}
 							} else {
-								if(foundArgs.size() == 1){
-									// can't error here because we haven't counted
-//									player.sendMessage( plugin.playerError("Action type '"+action+"' is unrecognized. Nothing else to search with.") );
-//									return null;
-								} else {
-									player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized.") );
+								
+								// Remove the arg. If only one action provided, this will essentially
+								// ensure a validation error prevents a query.
+								for (Entry<String, String> entry : foundArgs.entrySet()){
+								    if( entry.getKey().equals(arg_type) && entry.getValue().equals( val ) ){
+								    	foundArgs.remove(entry.getKey());
+								    }
 								}
+								player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized.") );
 							}
 						}
 					}
