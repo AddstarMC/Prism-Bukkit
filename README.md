@@ -8,6 +8,7 @@ Prism is a new generation of grief management (rollbacks, restores, etc) plugin 
 
 - **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
 - **Several easy, yet powerful lookup/inspector commands.**
+- **Inspector and rollback wand features.**
 - **Rollback, restoration commands like you know and love.**
 - **Preview mode shows rollback AND restore actions to you only - then you can apply/cancel before actually changing the world.**
 - **Tracks essentially everything you need to know. (Configurable, see below)**
@@ -56,9 +57,9 @@ Some of this data is purely informational, so you can find out who did something
 
 The first use is to be able to find the information you need. Prism comes with three tools to find the data from in-game, each with a different focus.
 
-##### Inspector
+##### Inspector (Wand)
 
-Use `/prism i` to toggle your hand/tool into inspection mode. Left-click a block to see that exact block's history. Right-click on any side of the block to see the history for the space adjacent.
+Use `/prism i` to toggle what we call the "inspection" wand. Wands bind certain actions to your hand/tools. The inspection wand can be toggled with just `/prism i` or `/prism wand i`. Left-click a block to see that exact block's history. Right-click on any side of the block to see the history for the space adjacent.
 
 Excellent for finding information about a single block, like a chest or ore finds.
 
@@ -115,9 +116,7 @@ You can even define multiple arguments for most by separating them with a comma.
 
 **List of actions:**
 
-
-
-
+@todo
 
 #### Preview
 
@@ -138,6 +137,14 @@ Applying a preview doesn't require the (params) again because Prism remembers wh
 #### Rollback
 
 Some expert users may be comfortable enough to rollback without a preview. Use `/prism rollback (params)`. Your changes will be applied immediately.
+
+##### Rollback Wand
+
+Another wand type is a rollback wand. Like the inspector it's for use on a single block or empty space. Use `/prism wand rollback` and the wand will bind to your hand/tools.
+
+Left-click a block to roll back it's last action, or right-click a block face to rollback the block from that spot. Repeat the command to disable the wand.
+
+Useful for fixing minor griefs when you'd rather not worry about commands.
 
 *Note: The Prism team reminds you that if you allow rollbacks, especially of items removed from chests or entity kills, be aware that staff with access to do so have the capability to do so repeatedly. There's no absolute way to ensure an item or entity hasn't already been rolled back but you shouldn't have a problem because only staff can perform rollbacks and staff are by definition trusted. However, you can disable item removal rollbacks in the config.*
 
