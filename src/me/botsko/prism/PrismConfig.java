@@ -127,6 +127,16 @@ public class PrismConfig {
 	
 	
 	/**
+	 * Loads item database
+	 * @return
+	 */
+	public FileConfiguration getItems(){
+		FileConfiguration config = loadConfig( "", "items" );
+		return config;
+	}
+	
+	
+	/**
 	 * Returns base directory for config
 	 * @return
 	 */
