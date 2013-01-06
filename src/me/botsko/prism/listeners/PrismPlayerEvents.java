@@ -7,7 +7,9 @@ import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.wands.Wand;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -120,6 +122,10 @@ public class PrismPlayerEvents implements Listener {
 						break;
 					default:
 						break;
+				}
+			} else if (block != null && event.getAction() == Action.PHYSICAL){
+				if(block.getType() == Material.SOIL){ // They are stepping on soil
+					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 				}
 			}
 		}
