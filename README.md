@@ -203,6 +203,7 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism.tp` - Teleport to a record ID
 - `prism.reload` - Grants config reload permission. Recommended for: OPs
 - `prism.delete` - Purge records from database via commands. Recommended for: OPs
+- `prims.alerts` - Alerts for ore finds, dangerous block placements.
 - `prism.*` - Grants all permissions. Recommended for: OPs
 
 ## Known Issues
