@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import java.util.ArrayList;
+
 public enum ActionType {
 	
 	/**
@@ -185,6 +187,22 @@ public enum ActionType {
 	            return me;
 	    }
 	    return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @param action
+	 * @return
+	 */
+	public static ArrayList<ActionType> getCanRollbackActionTypes(){
+		ArrayList<ActionType> canRollback = new ArrayList<ActionType>();
+		for (ActionType me : ActionType.values()) {
+	        if(me.isCanRestore()){
+	        	canRollback.add(me);
+	        }
+	    }
+	    return canRollback;
 	}
 	
 	

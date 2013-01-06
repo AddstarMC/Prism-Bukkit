@@ -218,5 +218,5 @@ This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
 
 - viveleroi (Creator, Lead Developer)
 - nasonfish (Contributor)
-- nasonfish, Natman93, YeaItsMe (Dev Testers)
+- nasonfish, Natman93, YeaItsMe, mafoan (Dev Testers)
 - @todo (Live Testers)

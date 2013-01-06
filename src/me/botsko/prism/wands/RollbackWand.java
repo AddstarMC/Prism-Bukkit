@@ -1,5 +1,7 @@
 package me.botsko.prism.wands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -8,6 +10,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.Rollback;
 
 public class RollbackWand implements Wand {
@@ -63,6 +66,13 @@ public class RollbackWand implements Wand {
 		QueryParameters params = new QueryParameters();
 		params.setWorld( player.getWorld().getName() );
 		params.setLoc( block.getLocation());
+		params.setLimit(1);
+		
+		// Append actions that can be rolled back
+		ArrayList<ActionType> types = ActionType.getCanRollbackActionTypes();
+		for(ActionType type : types){
+			params.addActionType(type);
+		}
 		
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( player, params );
