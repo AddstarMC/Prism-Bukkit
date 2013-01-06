@@ -237,7 +237,10 @@ public enum ActionType {
 	 */
 	public String getActionShortType(){
 		String[] _tmp = this.name().toLowerCase().split("_");
-		return _tmp[1];
+		if(_tmp.length == 2){
+			return _tmp[1];
+		}
+		return this.name();
 	}
 	
 	
