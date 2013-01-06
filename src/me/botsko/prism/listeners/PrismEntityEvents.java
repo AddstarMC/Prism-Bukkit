@@ -21,11 +21,13 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
@@ -99,6 +101,17 @@ public class PrismEntityEvents implements Listener {
             }
 	        plugin.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onCreatureSpawn(final CreatureSpawnEvent event){
+//		event.getEntityType();
+//		event.getSpawnReason();
 	}
 	
 	
@@ -256,5 +269,16 @@ public class PrismEntityEvents implements Listener {
 			be.logItemRemoveFromDestroyedContainer(name, block);
 			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPotionSplash(final PotionSplashEvent event){
+//		event.getEntity()
+//		event.getAffectedEntities()
 	}
 }
