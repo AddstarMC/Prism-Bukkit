@@ -152,6 +152,10 @@ public class Rollback extends Preview {
 								if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
 									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
 								}
+								// Or a bed
+								if( m.equals(Material.BED_BLOCK) ){
+									BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
+								}
 								
 							} else {
 								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());

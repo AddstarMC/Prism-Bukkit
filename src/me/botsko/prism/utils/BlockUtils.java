@@ -300,4 +300,38 @@ public class BlockUtils {
 			aboveOrBelow.setData( (byte)8 );
 		}
 	}
+	
+	
+	/**
+	 * Given the lower block of a bed, we translate that to the top
+	 * half, figuring out which direction and data value it gets.
+	 * 
+	 * @param originalBlock
+	 * @param typeid
+	 * @param subid
+	 */
+	public static void properlySetBed( Block originalBlock, int typeid, byte subid ){
+		Block top = null;
+		int new_subid = 0;
+		switch(subid){
+			case 3:
+				top = originalBlock.getRelative(BlockFace.EAST);
+				new_subid = 11;
+				break;
+			case 2:
+				top = originalBlock.getRelative(BlockFace.NORTH);
+				new_subid = 10;
+				break;
+			case 1:
+				top = originalBlock.getRelative(BlockFace.WEST);
+				new_subid = 9;
+				break;
+			case 0:
+				top = originalBlock.getRelative(BlockFace.SOUTH);
+				new_subid = 8;
+				break;
+		}
+		top.setTypeId(typeid);
+		top.setData((byte)new_subid);
+	}
 }

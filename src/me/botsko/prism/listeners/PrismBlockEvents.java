@@ -31,6 +31,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
+import org.bukkit.material.Bed;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -142,6 +143,10 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		
+		/**
+		 * Handle special double-length blocks
+		 */
 		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
 			// If you've broken the top half of a door, we need to record the action for the bottom.
 			// This is because a top half break doesn't record the orientation of the door while the bottom does,
@@ -149,6 +154,13 @@ public class PrismBlockEvents implements Listener {
 			if(block.getData() == 8){
 				block = block.getRelative(BlockFace.DOWN);
 			}
+		}
+		// If it's a bed, we always record the lower half and rely on appliers
+		if( block.getType().equals(Material.BED_BLOCK) ){
+			Bed b = (Bed)block.getState().getData();
+			if(b.isHeadOfBed()){
+	            block = block.getRelative(b.getFacing().getOppositeFace());
+	        }
 		}
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
