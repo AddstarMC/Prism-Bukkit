@@ -3,6 +3,10 @@ package me.botsko.prism.monitors;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -51,9 +55,18 @@ public class OreMonitor {
 			
 				// check if block placed
 				boolean wasplaced = false;
-//				if(la != null && worlds != null){
-//					wasplaced = la.wasBlockPlaced( worlds.get( block.getWorld().getName() ), block.getLocation().getX(),block.getLocation().getY(),block.getLocation().getZ() );
-//				}
+				
+				// Build params
+				QueryParameters params = new QueryParameters();
+				params.setWorld( player.getWorld().getName() );
+				params.setLoc(block.getLocation());
+				params.addActionType(ActionType.BLOCK_PLACE);
+				
+				ActionsQuery aq = new ActionsQuery(plugin);
+				QueryResult results = aq.lookup( player, params );
+				if(!results.getActionResults().isEmpty()){
+					wasplaced = true;
+				}
 				
 				if(!wasplaced){
 					// identify all ore blocks on same Y axis in x/z direction
