@@ -35,13 +35,13 @@ public enum ActionType {
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, false, false, "block", "decayed"),
 	LIGHTNING(false, false, false, null, "ignited"),
-	MUSHROOM_GROW(true, true, true, "block", "grew"),
+	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
 	PLAYER_COMMAND(false, false, false, "command", "ran command"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
-	TREE_GROW(true, true, true, "block", "grew"),
+	TREE_GROW(true, true, true, "grow", "grew"),
 	WATER_BUCKET(false, false, false, null, "poured");
 	
 
@@ -106,64 +106,11 @@ public enum ActionType {
 	
 	/**
 	 * 
+	 * @param handler
 	 * @return
 	 */
-	public boolean isBlockAction(){
-		return (getHandler() != null && getHandler().equals("block"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isCommandAction(){
-		return (getHandler() != null && getHandler().equals("command"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isEntityAction(){
-		return (getHandler() != null && getHandler().equals("entity"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isHangingItemAction(){
-		return (getHandler() != null && getHandler().equals("hangingitem"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isItemStackAction(){
-		return (getHandler() != null && getHandler().equals("itemstack"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isPlayerDeathAction(){
-		return (getHandler() != null && getHandler().equals("playerdeath"));
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public boolean isSignAction(){
-		return (getHandler() != null && getHandler().equals("signchange"));
+	public boolean requiresHandler( String handler ){
+		return (getHandler() != null && getHandler().equals(handler));
 	}
 	
 	
@@ -196,6 +143,22 @@ public enum ActionType {
 	 * @param action
 	 * @return
 	 */
+	public static ArrayList<ActionType> getByActionsType(String action){
+		ArrayList<ActionType> actions = new ArrayList<ActionType>();
+		String _seek_type = action.toUpperCase().replace("-", "_");
+		for (ActionType me : ActionType.values()) {
+	        if (me.name().equalsIgnoreCase(_seek_type) || me.getActionShortType().equals(action))
+	        	actions.add(me);
+	    }
+	    return actions;
+	}
+	
+	
+	/**
+	 * 
+	 * @param action
+	 * @return
+	 */
 	public static ArrayList<ActionType> getCanRollbackActionTypes(){
 		ArrayList<ActionType> canRollback = new ArrayList<ActionType>();
 		for (ActionType me : ActionType.values()) {
@@ -213,6 +176,19 @@ public enum ActionType {
 	 */
 	public String getActionType(){
 		return this.name().toLowerCase().replace("_", "-");
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getActionShortType(){
+		String[] _tmp = this.name().toLowerCase().split("_");
+		if(_tmp.length == 2){
+			return _tmp[1];
+		}
+		return this.name();
 	}
 	
 	

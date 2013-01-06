@@ -20,6 +20,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
+import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
@@ -73,31 +74,35 @@ public class ActionsQuery {
 	    			// Pull the proper action type class
 	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
 
-	    			if(actionType.isBlockAction()){
+	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
 	    				baseAction = b;
 	    			}
-	    			else if(actionType.isCommandAction()){
+	    			else if(actionType.requiresHandler("command")){
 	    				CommandAction b = new CommandAction(null, null, null, null);
 	    				baseAction = b;
 	    			}
-	    			else if( actionType.isEntityAction() ){
+	    			else if( actionType.requiresHandler("entity") ){
 	    				EntityAction eka = new EntityAction(null, null, null);
 	    				baseAction = eka;
 	    			}
-	    			else if( actionType.isHangingItemAction() ){
+	    			else if( actionType.requiresHandler("grow") ){
+	    				GrowAction ga = new GrowAction(null, null, null);
+	    				baseAction = ga;
+	    			}
+	    			else if( actionType.requiresHandler("hangingitem") ){
 	    				HangingItemAction ha = new HangingItemAction(null, null, null);
 	    				baseAction = ha;
 	    			}
-	    			else if( actionType.isItemStackAction() ){
+	    			else if( actionType.requiresHandler("itemstack") ){
 	    				ItemStackAction isa = new ItemStackAction(null, null, null, null);
 	    				baseAction = isa;
 	    			}
-	    			else if( actionType.isPlayerDeathAction() ){
+	    			else if( actionType.requiresHandler("playerdeath") ){
 	    				PlayerDeathAction pd = new PlayerDeathAction(null, null, null, null);
 	    				baseAction = pd;
 	    			}
-	    			else if( actionType.isSignAction() ){
+	    			else if( actionType.requiresHandler("signchange") ){
 	    				SignAction sa = new SignAction(null, null, null, null);
 	    				baseAction = sa;
 	    			} else {
