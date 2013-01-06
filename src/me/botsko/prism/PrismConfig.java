@@ -97,6 +97,9 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		
+		
+		config.addDefault("prism.alerts.ores.enabled", true);
+		config.addDefault("prism.alerts.ores.log-to-console", true);
 		config.addDefault("prism.alerts.ores.coal", false);
 		config.addDefault("prism.alerts.ores.redstone", false);
 		config.addDefault("prism.alerts.ores.lapis", true);

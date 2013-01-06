@@ -1,8 +1,6 @@
 package me.botsko.prism.listeners;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
@@ -11,7 +9,6 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -39,7 +36,6 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Bed;
-import org.bukkit.material.MaterialData;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -368,48 +364,25 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFromTo(BlockFromToEvent event) {
-		List<Integer> fluidBlocks = Arrays.asList(0, 27, 28, 31, 32, 37, 38, 39, 40, 50, 51, 55, 59, 66, 69, 70, 75, 76, 78, 93, 94);
 
 		// Ignore blocks that aren't liquid. @todo what else triggers this?
 		if (!event.getBlock().isLiquid()) return;
-
-		Location loc = event.getToBlock().getLocation();
+		
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
-		MaterialData data = from.getData();
 
 		// Lava
-		if(from.getTypeId() == 10 || from.getTypeId() == 11){
-			// Flowing into a normal block
-			if(fluidBlocks.contains(to.getTypeId())){
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-			}
-			// Flowing into water
-			else if (to.getTypeId() == 8 || to.getTypeId() == 9) {
-				from.setTypeId(event.getFace() == BlockFace.DOWN?10:4);
-				data.setData((byte)0);
-				from.setData(data);
-			}
-			// @todo set lava flow
+		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
+			Block newTo = event.getToBlock();
+			newTo.setType(Material.STONE);
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
 		}
 
-		// Water
-		else if (from.getTypeId() == 8 || from.getTypeId() == 9) {
-
-			//Normal block
-			if (fluidBlocks.contains(to.getTypeId())) {
-				data.setData((byte)(from.getRawData() + 1));
-				from.setData(data);
-				// @todo set flow to from
-			}
-	
-			// Flowing over lava, obsidian, cobble, or stone will form
+		// Water flowing into lava forms obsidian or cobble
+		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
 			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-			if (lower.getTypeId() == 10 || lower.getTypeId() == 11) {
-				from.setTypeId(lower.getData().getData() == 0?49:4);
-				loc.setY(loc.getY() - 1);
-				// @todo set flow lower from
+			if( lower.getType().equals(Material.COBBLESTONE) || lower.getType().equals(Material.OBSIDIAN) ){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
 			}
 		}
 	}
