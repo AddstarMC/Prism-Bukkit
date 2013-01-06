@@ -183,10 +183,26 @@ public enum ActionType {
 	public static ActionType getByActionType(String action){
 		String _seek_type = action.toUpperCase().replace("-", "_");
 		for (ActionType me : ActionType.values()) {
-	        if (me.name().equalsIgnoreCase(_seek_type) || me.getActionShortType().equals(action))
+	        if (me.name().equalsIgnoreCase(_seek_type))
 	            return me;
 	    }
 	    return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @param action
+	 * @return
+	 */
+	public static ArrayList<ActionType> getByActionsType(String action){
+		ArrayList<ActionType> actions = new ArrayList<ActionType>();
+		String _seek_type = action.toUpperCase().replace("-", "_");
+		for (ActionType me : ActionType.values()) {
+	        if (me.name().equalsIgnoreCase(_seek_type) || me.getActionShortType().equals(action))
+	        	actions.add(me);
+	    }
+	    return actions;
 	}
 	
 	

@@ -73,9 +73,13 @@ public class PreprocessArgs {
 					String[] actions = val.split(",");
 					if(actions.length > 0){
 						for(String action : actions){
-							ActionType actionType = ActionType.getByActionType( action );
-							if(actionType != null){
-								parameters.addActionType( actionType );
+							// Find all actions that match the action provided - whether the full name or
+							// short name.
+							ArrayList<ActionType> actionTypes = ActionType.getByActionsType( action );
+							if(!actionTypes.isEmpty()){
+								for(ActionType actionType : actionTypes){
+									parameters.addActionType( actionType );
+								}
 							} else {
 								if(foundArgs.size() == 1){
 									// can't error here because we haven't counted
