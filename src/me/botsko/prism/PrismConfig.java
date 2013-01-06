@@ -70,6 +70,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.block-place", true);
 		config.addDefault("prism.tracking.container-access", true);
 		config.addDefault("prism.tracking.creeper-explode", true);
+		config.addDefault("prism.tracking.crop-trample", true);
 		config.addDefault("prism.tracking.enderman-pickup", true);
 		config.addDefault("prism.tracking.enderman-place", true);
 		config.addDefault("prism.tracking.entity-break", true);

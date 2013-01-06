@@ -7,6 +7,7 @@ import java.util.HashMap;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.utils.LevenshteinDistance;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
@@ -82,7 +83,8 @@ public class PreprocessArgs {
 //									player.sendMessage( plugin.playerError("Action type '"+action+"' is unrecognized. Nothing else to search with.") );
 //									return null;
 								} else {
-									player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized.") );
+									player.sendMessage( plugin.playerError("Unrecognized action '"+action+"'. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+									return null;
 								}
 							}
 						}
@@ -114,9 +116,14 @@ public class PreprocessArgs {
 							parameters.setRadius( radius );
 						}
 					} else {
-						// User has asked for a global radiu
-						if(val.equals("global") && parameters.getLookup_type().equals("lookup")){
-							parameters.setAllow_no_radius(true);
+						// User has asked for a global radius
+						if(val.equals("global")){
+							if( parameters.getLookup_type().equals("lookup")){
+								parameters.setAllow_no_radius(true);
+							} else {
+								player.sendMessage( plugin.playerError("A global radius may only be used on lookup.") );
+								return null;
+							}
 						} else {
 							player.sendMessage( plugin.playerError("Radius must be a number or 'global'. Use /prism ? for a assitance.") );
 							return null;
