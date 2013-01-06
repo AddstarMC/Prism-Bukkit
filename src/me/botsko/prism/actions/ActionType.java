@@ -40,7 +40,7 @@ public enum ActionType {
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
-	TREE_GROW(false, true, true, "block", "grew"),
+	TREE_GROW(true, true, true, "block", "grew"),
 	WATER_BUCKET(false, false, false, null, "poured");
 	
 
