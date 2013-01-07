@@ -102,7 +102,7 @@ public class ItemStackAction extends GenericAction {
 	public String getNiceName(){
 		String name = "";
 		if(item != null){
-			name = quantity + " " + this.materialAliases.getItemAlias(item);
+			name = quantity + " " + this.materialAliases.getItemStackAliasByItemStack(item);
 		}
 		return name;
 	}

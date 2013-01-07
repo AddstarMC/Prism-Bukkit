@@ -104,6 +104,6 @@ public class BlockAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
-		return this.materialAliases.getItemAlias(actionData.block_id, actionData.block_subid);
+		return this.materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
 	}
 }

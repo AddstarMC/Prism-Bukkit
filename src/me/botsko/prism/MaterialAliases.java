@@ -1,16 +1,19 @@
 package me.botsko.prism;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 public class MaterialAliases {
-
+	
 	/**
 	 * 
 	 */
-	protected FileConfiguration items;
+	protected HashMap<String,String> itemAliases = new HashMap<String,String>();
 	
 	
 	/**
@@ -18,7 +21,22 @@ public class MaterialAliases {
 	 * @param plugin
 	 */
 	public MaterialAliases( FileConfiguration items ) {
-		this.items = items;
+
+		// Load all item ids/aliases
+		Map<String, Object> itemaliases = items.getConfigurationSection("items").getValues(false);
+		
+		// Cache the values for easier lookup
+		if(itemaliases != null){
+			for (String key : itemaliases.keySet()) {
+				@SuppressWarnings("unchecked")
+				ArrayList<String> aliases = (ArrayList<String>)itemaliases.get(key);
+				if(aliases.size() > 0){
+					for(String alias : aliases){
+						itemAliases.put(key, alias);
+					}
+				}
+			}
+		}
 	}
 	
 	
@@ -28,14 +46,11 @@ public class MaterialAliases {
 	 * @param subid
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public String getItemAlias( int typeid, byte subid ){
+	public String getItemStackAliasById( int typeid, byte subid ){
 		String item_name = null;
-		ArrayList<String> aliases = (ArrayList<String>) items.getList("items."+typeid+";"+subid);
-		if(aliases != null && aliases.size() > 0){
-			for(String s : aliases){
-				return s;
-			}
+		if(!itemAliases.isEmpty()){
+			String key = typeid+";"+subid;
+			item_name = itemAliases.get(key);
 		}
 		if(item_name == null){
 			ItemStack i = new ItemStack( typeid,subid);
@@ -50,7 +65,27 @@ public class MaterialAliases {
 	 * @param i
 	 * @return
 	 */
-	public String getItemAlias( ItemStack i ){
-		return getItemAlias( i.getTypeId(), (byte) i.getDurability() );
+	public String getItemStackAliasByItemStack( ItemStack i ){
+		return getItemStackAliasById( i.getTypeId(), (byte) i.getDurability() );
+	}
+	
+	
+	/**
+	 * 
+	 * @param alias
+	 * @return
+	 */
+	public int[] getItemIdsByAlias( String alias ){
+		int[] ids = new int[2];
+		if(!itemAliases.isEmpty()){
+			for (Entry<String, String> entry : itemAliases.entrySet()){
+			    if(entry.getValue().equals( alias )){
+			    	String[] _tmp = entry.getKey().split(";");
+			    	ids[0] = Integer.parseInt(_tmp[0]);
+			    	ids[1] = Integer.parseInt(_tmp[1]);
+			    }
+			}
+		}
+		return ids;
 	}
 }
