@@ -350,6 +350,26 @@ public class Prism extends JavaPlugin {
         }
     }
 	
+	/**
+	 * For some of our conversion tools, we cannot get the world name
+	 * because it is stored as an int in the other database.
+	 * This will run a check to see if any of the worlds are IDs
+	 * and if so, make it a world.
+	 */
+	public void checkForWorldIds(){
+		dbc();
+		String query = "UPDATE world FROM prism_actions WHERE ISNUMERIC(world) AND world NOT LIKE '%.%' AND str NOT LIKE '%e%' AND str NOT LIKE '%-%' SET world=" + "";
+		
+		Statement st;
+		try {
+			st = conn.createStatement();
+			st.executeUpdate(query);
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	/**
 	 * 
