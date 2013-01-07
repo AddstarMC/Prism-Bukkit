@@ -152,7 +152,7 @@ public class Rollback extends Preview {
 						 */
 						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
-							if(BlockUtils.isDetachableMaterial(Material.getMaterial(b.getBlock_id()))){
+							if(BlockUtils.isSideFaceDetachableMaterial(Material.getMaterial(b.getBlock_id()))){
 								reattach.add(b);
 								continue;
 							}

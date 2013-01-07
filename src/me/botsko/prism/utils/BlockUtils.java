@@ -99,41 +99,42 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Block> findAttachedBlocks( Block block ){
+	public static ArrayList<Block> findSideFaceAttachedBlocks( Block block ){
 		
-		ArrayList<Block> falling_blocks = new ArrayList<Block>();
+		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
 		
 		// Check each of the four sides
 		Block blockToCheck = block.getRelative(BlockFace.EAST);
-		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
-			falling_blocks.add(blockToCheck);
+		if(BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())){
+			detaching_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.WEST);
-		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
-			falling_blocks.add(blockToCheck);
+		if(BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())){
+			detaching_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.NORTH);
-		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
-			falling_blocks.add(blockToCheck);
+		if(BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())){
+			detaching_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.SOUTH);
-		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
-			falling_blocks.add(blockToCheck);
+		if(BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())){
+			detaching_blocks.add(blockToCheck);
 		}
 		
-		return falling_blocks;
+		return detaching_blocks;
 		
 	}
 	
 	
 	/**
-	 * Determine whether or not a block is capable of falling.
+	 * Determine whether or not a block is going to detach
+	 * from the side of a block.
 	 * 
 	 * Seems like there's got to be another way to do this...
 	 * @param m
 	 * @return
 	 */
-	public static boolean isDetachableMaterial( Material m ){
+	public static boolean isSideFaceDetachableMaterial( Material m ){
 		if( m.equals(Material.WALL_SIGN) 
 				|| m.equals(Material.TORCH) 
 				|| m.equals(Material.LEVER) 
@@ -142,6 +143,80 @@ public class BlockUtils {
 				|| m.equals(Material.LADDER)
 				|| m.equals(Material.VINE)
 				|| m.equals(Material.COCOA)){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * Searches for detachable blocks on the four acceptable sides of a block.
+	 * 
+	 * @param block
+	 * @return
+	 */
+	public static ArrayList<Block> findTopFaceAttachedBlocks( Block block ){
+		
+		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
+		
+		// Find any block on top of this that will detach
+		Block blockToCheck = block.getRelative(BlockFace.UP);
+		if(BlockUtils.isTopFaceDetachableMaterial(blockToCheck.getType())){
+			detaching_blocks.add(blockToCheck);
+		}
+		
+		return detaching_blocks;
+		
+	}
+	
+	
+	/**
+	 * Determine whether or not a block is going to detach
+	 * from the side of a block.
+	 * 
+	 * Seems like there's got to be another way to do this...
+	 * @param m
+	 * @return
+	 */
+	public static boolean isTopFaceDetachableMaterial( Material m ){
+		if( m.equals(Material.BROWN_MUSHROOM)
+			|| m.equals(Material.CACTUS) 
+			|| m.equals(Material.CARROT)
+			|| m.equals(Material.DETECTOR_RAIL)
+			|| m.equals(Material.POTATO)
+			|| m.equals(Material.CROPS)
+			|| m.equals(Material.DIODE)
+			|| m.equals(Material.DIODE_BLOCK_OFF)
+			|| m.equals(Material.DIODE_BLOCK_ON)
+			|| m.equals(Material.FLOWER_POT)
+			|| m.equals(Material.IRON_DOOR)
+			|| m.equals(Material.IRON_DOOR_BLOCK)
+			|| m.equals(Material.LEVER) 
+			|| m.equals(Material.LONG_GRASS)
+			|| m.equals(Material.MELON_STEM)
+			|| m.equals(Material.NETHER_WARTS)
+			|| m.equals(Material.POWERED_RAIL)
+			|| m.equals(Material.PUMPKIN_STEM)
+			|| m.equals(Material.RAILS)
+			|| m.equals(Material.RED_MUSHROOM)
+			|| m.equals(Material.REDSTONE)
+			|| m.equals(Material.REDSTONE_TORCH_OFF)
+			|| m.equals(Material.REDSTONE_TORCH_ON)
+			|| m.equals(Material.REDSTONE_WIRE)
+			|| m.equals(Material.SAPLING)
+			|| m.equals(Material.SIGN) 
+			|| m.equals(Material.SIGN_POST) 
+			|| m.equals(Material.SNOW)
+			|| m.equals(Material.SUGAR_CANE_BLOCK)
+			|| m.equals(Material.STONE_PLATE)
+			|| m.equals(Material.TORCH)
+			|| m.equals(Material.TRIPWIRE)
+			|| m.equals(Material.WATER_LILY)
+			|| m.equals(Material.WHEAT)
+			|| m.equals(Material.WOOD_DOOR)
+			|| m.equals(Material.WOOD_PLATE)
+			|| m.equals(Material.WOODEN_DOOR)
+				){
 			return true;
 		}
 		return false;

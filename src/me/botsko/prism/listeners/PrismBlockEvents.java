@@ -147,16 +147,25 @@ public class PrismBlockEvents implements Listener {
 //		}
 		
 		
-		// Find a list of attached blocks that we expect will detach
-		ArrayList<Block> detached_blocks = BlockUtils.findAttachedBlocks(block);
+		// Find a list of side-face attached blocks that we expect will detach
+		ArrayList<Block> detached_blocks = BlockUtils.findSideFaceAttachedBlocks(block);
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating block detaching at " + coord_key + " for " + playername);
+				plugin.debug("Anticipating block detaching (side) at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 		
+		// Find a list of top-side attached blocks that we expect will detach
+		detached_blocks = BlockUtils.findTopFaceAttachedBlocks(block);
+		if(detached_blocks.size() > 0){
+			for(Block b : detached_blocks){
+				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
+				plugin.debug("Anticipating block popping off (above) at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
+			}
+		}
 		
 		// Find a list of all hanging entities on this block
 		ArrayList<Entity> hanging = BlockUtils.findHangingEntities(block);
