@@ -320,8 +320,33 @@ public class BlockUtils {
 		else {
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
 			aboveOrBelow.setTypeId( typeid );
-			// @todo if there's a door on left, use 9
-			aboveOrBelow.setData( (byte)8 );
+			// Determine the directing the bottom half is facing, then check
+			// it's left side for an existing door, because the subid changes
+			// if we're on the right.
+			Block left = null;
+			switch(subid){
+				case 0:
+					// Back faces east
+					left = originalBlock.getRelative(BlockFace.NORTH);
+					break;
+				case 1:
+					// Back faces south
+					left = originalBlock.getRelative(BlockFace.EAST);
+					break;
+				case 2:
+					// Back faces west
+					left = originalBlock.getRelative(BlockFace.SOUTH);
+					break;
+				case 3:
+					// Back faces north
+					left = originalBlock.getRelative(BlockFace.WEST);
+					break;
+			}
+			if( left != null && left.getType().equals(Material.WOODEN_DOOR) || left.getType().equals(Material.IRON_DOOR_BLOCK) ){
+				aboveOrBelow.setData( (byte)9 );
+			} else {
+				aboveOrBelow.setData( (byte)8 );
+			}
 		}
 	}
 	

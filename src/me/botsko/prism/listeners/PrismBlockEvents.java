@@ -101,7 +101,6 @@ public class PrismBlockEvents implements Listener {
 			// If you've broken the top half of a door, we need to record the action for the bottom.
 			// This is because a top half break doesn't record the orientation of the door while the bottom does,
 			// and we have code in the rollback/restore to add the top half back in.
-			plugin.debug("DOOR DATA: " + block.getData());
 			if(block.getData() == 8 || block.getData() == 9){
 				block = block.getRelative(BlockFace.DOWN);
 			}
