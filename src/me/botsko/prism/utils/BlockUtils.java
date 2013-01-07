@@ -361,6 +361,7 @@ public class BlockUtils {
 			case NETHER_STALK:
 			case RAILS:
 			case RED_ROSE:
+			case RED_MUSHROOM:
 			case REDSTONE_WIRE:
 			case SAPLING:
 			case SKULL:
