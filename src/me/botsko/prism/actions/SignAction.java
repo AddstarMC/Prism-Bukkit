@@ -104,7 +104,10 @@ public class SignAction extends GenericAction {
 	 */
 	public Material getSignType(){
 		if(actionData.sign_type != null){
-			return Material.valueOf(actionData.sign_type);
+			Material m = Material.valueOf(actionData.sign_type);
+			if(m != null){
+				return m;
+			}
 		}
 		return Material.SIGN;
 	}
