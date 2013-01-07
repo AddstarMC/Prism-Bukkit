@@ -86,6 +86,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.item-pickup", true);
 		config.addDefault("prism.tracking.item-remove", true);
 		config.addDefault("prism.tracking.lava-bucket", true);
+		config.addDefault("prism.tracking.lava-flow", true);
 		config.addDefault("prism.tracking.lava-ignite", true);
 		config.addDefault("prism.tracking.leaf-decay", true);
 		config.addDefault("prism.tracking.lightning", true);
@@ -97,6 +98,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
+		config.addDefault("prism.tracking.water-flow", true);
 
 		// Copy defaults
 		config.options().copyDefaults(true);
