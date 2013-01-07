@@ -311,7 +311,7 @@ public class BlockUtils {
 	 */
 	public static void properlySetDoor( Block originalBlock, int typeid, byte subid ){
 		// Wood door upper or iron door upper
-		if( subid == 8 ){
+		if( subid == 8 || subid == 9 ){ // 8 for single doors or left side of double, 9 for right side of double
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
 			aboveOrBelow.setTypeId( typeid );
 			aboveOrBelow.setData( (byte)0 ); // we have no way to know which direction the lower half was facing
@@ -320,6 +320,7 @@ public class BlockUtils {
 		else {
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
 			aboveOrBelow.setTypeId( typeid );
+			// @todo if there's a door on left, use 9
 			aboveOrBelow.setData( (byte)8 );
 		}
 	}
