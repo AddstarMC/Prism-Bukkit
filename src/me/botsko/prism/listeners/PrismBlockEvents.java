@@ -42,6 +42,13 @@ public class PrismBlockEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+//	/**
+//	 * We have to track the coords a blockfromto event triggers
+//	 * a block form for, because it likes to fire several times
+//	 * for the same block. It's a pretty silly thing.
+//	 */
+//	protected ArrayList<String> coordsUsed = new ArrayList<String>();
+	
 	
 	/**
 	 * 
@@ -402,6 +409,11 @@ public class PrismBlockEvents implements Listener {
 				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getToBlock(), "Lava"));
 			}
 		}
+		
+		/**
+		 * Predict the forming of Stone, Obsidian, Cobblestone because of lava/water flowing
+		 * into each other. Boy, I wish bukkit used block_form for this.
+		 */
 
 		// Lava
 		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
@@ -409,20 +421,33 @@ public class PrismBlockEvents implements Listener {
 			newTo.setType(Material.STONE);
 			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
 		}
+		
+		// This doesn't work well.
+		// - Water over cobble/obsidian that was there still triggers.
+		// - Water over lava still forms cobble not under to the side somehow. We don't seem to catch it all.
 
-		// Water flowing into lava forms obsidian or cobble
-		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
-			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-			
-			// @todo fires multiple times per loc?
-			if( lower.getType().equals(Material.OBSIDIAN) ){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
-			}
-			
-			BlockState side = event.getToBlock().getRelative(event.getFace()).getState();
-			if( side.getType().equals(Material.COBBLESTONE) ){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, side.getBlock(), "Environment") );
-			}
-		}
+//		// Water flowing into lava forms obsidian or cobble
+//		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
+//			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
+//			
+//			// Obsidian or cobble can form below 
+//			if( lower.getType().equals(Material.OBSIDIAN) || lower.getType().equals(Material.COBBLESTONE) ){
+//				String coordsKey = lower.getX()+":"+lower.getY()+":"+lower.getZ();
+//				if(coordsUsed.contains(coordsKey)) return;
+//				// Add coords to list the event has already fired for
+//				coordsUsed.add(coordsKey);
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
+//			}
+//			
+//			// Cobble can also form to the side
+//			BlockState side = event.getToBlock().getRelative(event.getFace()).getState();
+//			if( side.getType().equals(Material.COBBLESTONE) ){
+//				String coordsKey = side.getX()+":"+side.getY()+":"+side.getZ();
+//				if(coordsUsed.contains(coordsKey)) return;
+//				// Add coords to list the event has already fired for
+//				coordsUsed.add(coordsKey);
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, side.getBlock(), "Environment") );
+//			}
+//		}
 	}
 }
