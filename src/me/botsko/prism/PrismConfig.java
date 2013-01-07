@@ -79,7 +79,6 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.fireball", true);
-		config.addDefault("prism.tracking.flint-steel", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);
 		config.addDefault("prism.tracking.item-drop", true);
@@ -89,6 +88,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.lava-bucket", true);
 		config.addDefault("prism.tracking.lava-ignite", true);
 		config.addDefault("prism.tracking.leaf-decay", true);
+		config.addDefault("prism.tracking.lighter", true);
 		config.addDefault("prism.tracking.lightning", true);
 		config.addDefault("prism.tracking.mushroom-grow", true);
 		config.addDefault("prism.tracking.player-death", true);

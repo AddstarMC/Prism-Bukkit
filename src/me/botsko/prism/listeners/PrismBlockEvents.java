@@ -296,7 +296,7 @@ public class PrismBlockEvents implements Listener {
 				cause = ActionType.FIREBALL;
 				break;
 			case FLINT_AND_STEEL:
-				cause = ActionType.FLINT_STEEL;
+				cause = ActionType.LIGHTER;
 				break;
 			case LAVA:
 				cause = ActionType.LAVA_IGNITE;
