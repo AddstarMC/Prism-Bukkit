@@ -275,8 +275,9 @@ public class PrismBlockEvents implements Listener {
 			if(a == null) return;
 			Block attachedBlock = b.getRelative(a.getAttachedFace());
 			// If it's lost an attached block
-			if (attachedBlock.getTypeId() == 0) {
+			if (BlockUtils.materialMeansBlockDetachment(attachedBlock.getType())) {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
+				plugin.debug("Seeking block detachment at: " + coord_key);
 				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 					String player = plugin.preplannedBlockFalls.get(coord_key);
 					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );

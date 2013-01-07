@@ -149,6 +149,27 @@ public class BlockUtils {
 	
 	
 	/**
+	 * Determine whether or not a block location is filled
+	 * by a material that means an attachable material
+	 * is now detached.
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public static boolean materialMeansBlockDetachment(Material m){
+		if( m.equals(Material.AIR) 
+				|| m.equals(Material.FIRE) 
+				|| m.equals(Material.WATER) 
+				|| m.equals(Material.STATIONARY_WATER) 
+				|| m.equals(Material.LAVA) 
+				|| m.equals(Material.STATIONARY_LAVA)){
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
 	 * Searches for detachable entities in a
 	 * 
 	 * @param block
