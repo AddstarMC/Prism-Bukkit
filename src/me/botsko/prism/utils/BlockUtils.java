@@ -342,10 +342,12 @@ public class BlockUtils {
 					left = originalBlock.getRelative(BlockFace.WEST);
 					break;
 			}
-			if( left != null && left.getType().equals(Material.WOODEN_DOOR) || left.getType().equals(Material.IRON_DOOR_BLOCK) ){
-				aboveOrBelow.setData( (byte)9 );
-			} else {
-				aboveOrBelow.setData( (byte)8 );
+			if(aboveOrBelow != null){
+				if( left != null && left.getType().equals(Material.WOODEN_DOOR) || left.getType().equals(Material.IRON_DOOR_BLOCK) ){
+					aboveOrBelow.setData( (byte)9 );
+				} else {
+					aboveOrBelow.setData( (byte)8 );
+				}
 			}
 		}
 	}

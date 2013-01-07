@@ -72,7 +72,7 @@ public class WandCommand implements SubHandler {
 			/**
 			 * Profile wand
 			 */
-			if(type.equalsIgnoreCase("p")){
+			else if(type.equalsIgnoreCase("p")){
 				ProfileWand wand = new ProfileWand( plugin );
 				plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );

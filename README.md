@@ -215,7 +215,7 @@ There are so many actions recorded and parameters available to find/restore them
 
 A griefer has broken blocks and set fire to a house. If we don't know who started the fire we can find the person who lit it with:
 
-`/prism l a:flint-steel`
+`/prism l a:lighter`
 
 Or, find who broke the blocks with `/prism near` or the inspector wand, `/prism i`.
 
@@ -249,20 +249,24 @@ Rollback a creeper's art:
 
 - Hanging items can't be rolled back because of a bukkit bug with their facing directions. https://bukkit.atlassian.net/browse/BUKKIT-3371
 - Free-standing signs may rollback facing an exact direction when it was placed with an orientation between two directions.
+- Blocks that form from lava/water mixing are extremely difficult to track properly because bukkit has no proper events for them. We've begun work a custom tracking system but it's difficult work.
 
           
 ## Get Help
 
 IRC: irc.esper.net #dhmc_us
 
-Wiki: http://dhmc.us/wiki/view/prism/         
+Wiki: http://dhmc.us/wiki/view/prism/    
+
+## Donate
+
+The entire team has put in a LOT of work developing and testing Prism and will continue to do so. Donate to these folks today:
+
+viveleroi - (PayPal; botsko@gmail.com) 
            
 ## Credits
 
 This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
-
-
-## Authors
 
 - viveleroi (Creator, Lead Developer)
 - nasonfish (Contributor)
