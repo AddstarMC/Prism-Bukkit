@@ -152,7 +152,7 @@ public class Rollback extends Preview {
 						 */
 						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
-							if(BlockUtils.isDetachableBlock(Material.getMaterial(b.getBlock_id()))){
+							if(BlockUtils.isDetachableMaterial(Material.getMaterial(b.getBlock_id()))){
 								reattach.add(b);
 								continue;
 							}
@@ -231,6 +231,7 @@ public class Rollback extends Preview {
 					}
 				}
 			}
+			
 			
 			/**
 			 * Lets loop through the block actions with detachable blocks

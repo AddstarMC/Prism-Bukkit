@@ -105,19 +105,19 @@ public class BlockUtils {
 		
 		// Check each of the four sides
 		Block blockToCheck = block.getRelative(BlockFace.EAST);
-		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
+		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.WEST);
-		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
+		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.NORTH);
-		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
+		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.SOUTH);
-		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
+		if(BlockUtils.isDetachableMaterial(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		
@@ -133,7 +133,7 @@ public class BlockUtils {
 	 * @param m
 	 * @return
 	 */
-	public static boolean isDetachableBlock( Material m ){
+	public static boolean isDetachableMaterial( Material m ){
 		if( m.equals(Material.WALL_SIGN) 
 				|| m.equals(Material.TORCH) 
 				|| m.equals(Material.LEVER) 
