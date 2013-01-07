@@ -140,7 +140,7 @@ public class Restore extends Preview {
 					Block block = world.getBlockAt(loc);
 					
 					// Ensure a sign exists there (and no other block)
-					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
 						
 						if( block.getType().equals(Material.AIR) ){
 							block.setType(b.getSignType());
