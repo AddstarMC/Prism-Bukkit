@@ -42,12 +42,12 @@ public class PrismBlockEvents implements Listener {
 	 */
 	private Prism plugin;
 	
-//	/**
-//	 * We have to track the coords a blockfromto event triggers
-//	 * a block form for, because it likes to fire several times
-//	 * for the same block. It's a pretty silly thing.
-//	 */
-//	protected ArrayList<String> coordsUsed = new ArrayList<String>();
+	/**
+	 * We have to track the coords a blockfromto event triggers
+	 * a block form for, because it likes to fire several times
+	 * for the same block. It's a pretty silly thing.
+	 */
+	protected ArrayList<String> coordsUsed = new ArrayList<String>();
 	
 	
 	/**
@@ -415,39 +415,58 @@ public class PrismBlockEvents implements Listener {
 		 * into each other. Boy, I wish bukkit used block_form for this.
 		 */
 
-		// Lava
+		// Lava flows to water. STONE forms
 		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
 			Block newTo = event.getToBlock();
 			newTo.setType(Material.STONE);
 			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
 		}
 		
-		// This doesn't work well.
-		// - Water over cobble/obsidian that was there still triggers.
-		// - Water over lava still forms cobble not under to the side somehow. We don't seem to catch it all.
-
+	
+////		int id = event.getBlock().getTypeId();
+//		
+//		 // If moving to air
+//		Block b = event.getToBlock();
+//		if(b.getType().equals(Material.AIR)){
+//
+//		 	// formed sat/lava = cobble
+//		 	// formed stationary_water = stone
+//		 
+//			 // Are we moving from a water block
+//			Material fromM = event.getBlock().getType();
+//			if(fromM.equals(Material.WATER) || fromM.equals(Material.STATIONARY_WATER)){
+//				// Check all sides
+//				for(BlockFace face : BlockFace.values()){
+//					Block r = b.getRelative(face, 1);
+//					// If the side is lava, cobble shall form.
+//					// Note: if stationary_lava, stone will form. Seems to always be captured above.
+//					if(r.getType().equals(Material.LAVA) || r.getType().equals(Material.STATIONARY_LAVA)){
+//						String coordsKey = r.getX()+":"+r.getY()+":"+r.getZ();
+//						 if(coordsUsed.contains(coordsKey)) continue;
+//						 coordsUsed.add(coordsKey);
+//						 plugin.debug("COBBLE FORMED " + r.getType().name());
+////						 r.setType(Material.COBBLESTONE);
+//						 plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, r, "Environment") );
+//					}
+//				}
+//			}
+//		}
+//		
+//
 //		// Water flowing into lava forms obsidian or cobble
-//		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
+//		if ( from.getType().equals(Material.STATIONARY_WATER) && to.getType().equals(Material.STATIONARY_LAVA) ) {
+//			plugin.debug("FROM WATER to " + to.getType().name());
 //			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-//			
-//			// Obsidian or cobble can form below 
-//			if( lower.getType().equals(Material.OBSIDIAN) || lower.getType().equals(Material.COBBLESTONE) ){
+//			// Obsidian can form below 
+//			if( lower.getType().equals(Material.OBSIDIAN) ){
 //				String coordsKey = lower.getX()+":"+lower.getY()+":"+lower.getZ();
 //				if(coordsUsed.contains(coordsKey)) return;
 //				// Add coords to list the event has already fired for
 //				coordsUsed.add(coordsKey);
+//				plugin.debug("COBBLE/OBY FORMED BELOW " + coordsKey);
 //				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
 //			}
-//			
-//			// Cobble can also form to the side
-//			BlockState side = event.getToBlock().getRelative(event.getFace()).getState();
-//			if( side.getType().equals(Material.COBBLESTONE) ){
-//				String coordsKey = side.getX()+":"+side.getY()+":"+side.getZ();
-//				if(coordsUsed.contains(coordsKey)) return;
-//				// Add coords to list the event has already fired for
-//				coordsUsed.add(coordsKey);
-//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, side.getBlock(), "Environment") );
-//			}
+//
 //		}
 	}
 }
