@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.wands.InspectorWand;
+import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 
@@ -48,7 +49,11 @@ public class WandCommand implements SubHandler {
 				else if( type.equalsIgnoreCase("i") && wand instanceof InspectorWand ){
 					plugin.playersWithActiveTools.remove(call.getPlayer().getName());
 					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Inspector wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
-				} 
+				}
+				else if( type.equalsIgnoreCase("p") && wand instanceof ProfileWand ){
+					plugin.playersWithActiveTools.remove(call.getPlayer().getName());
+					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				}
 				else {
 					call.getPlayer().sendMessage( plugin.playerError("You have another wand active, please disable it first.") );
 				}
@@ -62,6 +67,15 @@ public class WandCommand implements SubHandler {
 				InspectorWand wand = new InspectorWand( plugin );
 				plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
+			}
+			
+			/**
+			 * Profile wand
+			 */
+			if(type.equalsIgnoreCase("p")){
+				ProfileWand wand = new ProfileWand( plugin );
+				plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
+				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 			}
 			
 			/**

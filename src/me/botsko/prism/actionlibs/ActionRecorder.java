@@ -46,7 +46,7 @@ public class ActionRecorder {
 		
 		queue.add(a);
 		
-		plugin.debug( a.getType().getActionType() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
+		plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
 		
 		// @todo for now, we're just calling save immediately. but we could
 		// make this work on a timer, pool, etc
