@@ -91,6 +91,33 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
+	 * @param block
+	 */
+	public Block properlyLogDoubleLengthBlocks( Block block ){
+		/**
+		 * Handle special double-length blocks
+		 */
+		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+			// If you've broken the top half of a door, we need to record the action for the bottom.
+			// This is because a top half break doesn't record the orientation of the door while the bottom does,
+			// and we have code in the rollback/restore to add the top half back in.
+			if(block.getData() == 8){
+				block = block.getRelative(BlockFace.DOWN);
+			}
+		}
+		// If it's a bed, we always record the lower half and rely on appliers
+		if( block.getType().equals(Material.BED_BLOCK) ){
+			Bed b = (Bed)block.getState().getData();
+			if(b.isHeadOfBed()){
+	            block = block.getRelative(b.getFacing().getOppositeFace());
+	        }
+		}
+		return block;
+	}
+	
+	
+	/**
+	 * 
 	 * @param player
 	 * @param block
 	 */
@@ -148,24 +175,8 @@ public class PrismBlockEvents implements Listener {
 		// Run ore find alerts
 		plugin.oreMonitor.processAlertsFromBlock(player, block);
 		
-		/**
-		 * Handle special double-length blocks
-		 */
-		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
-			// If you've broken the top half of a door, we need to record the action for the bottom.
-			// This is because a top half break doesn't record the orientation of the door while the bottom does,
-			// and we have code in the rollback/restore to add the top half back in.
-			if(block.getData() == 8){
-				block = block.getRelative(BlockFace.DOWN);
-			}
-		}
-		// If it's a bed, we always record the lower half and rely on appliers
-		if( block.getType().equals(Material.BED_BLOCK) ){
-			Bed b = (Bed)block.getState().getData();
-			if(b.isHeadOfBed()){
-	            block = block.getRelative(b.getFacing().getOppositeFace());
-	        }
-		}
+		// Change handling a bit if it's a long block
+		block = properlyLogDoubleLengthBlocks(block);
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		

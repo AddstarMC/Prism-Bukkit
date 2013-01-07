@@ -273,7 +273,11 @@ public class PrismEntityEvents implements Listener {
 		// Also log item-removes from chests that are blown up
 		PrismBlockEvents be = new PrismBlockEvents(plugin);		
 		for(Block block : event.blockList()){
+			// Change handling a bit if it's a long block
+			block = be.properlyLogDoubleLengthBlocks(block);
+			// Log items from chests
 			be.logItemRemoveFromDestroyedContainer(name, block);
+			// Record blocks explode
 			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
 		}
 	}
