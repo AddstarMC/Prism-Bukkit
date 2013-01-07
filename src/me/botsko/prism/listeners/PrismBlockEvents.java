@@ -42,6 +42,11 @@ public class PrismBlockEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+	/**
+	 * Materials that break when water flows onto them
+	 */
+	private ArrayList<Material> flowBreakMaterials = new ArrayList<Material>();
+	
 	
 	/**
 	 * 
@@ -329,6 +334,58 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	
+	/**
+	 * When a fluid flows
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onBlockFromToEvent(final BlockFromToEvent event){
+		Block from = event.getBlock();
+		Block to = event.getToBlock();
+		
+		if(canFlowBreak(to)){
+			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getToBlock(), "Water"));
+			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getToBlock(), "Lava"));
+			}
+		}
+	}
+	
+	private boolean canFlowBreak(Block to){
+		if(this.flowBreakMaterials.isEmpty()){
+			flowBreakMaterials.add(Material.BROWN_MUSHROOM);
+			flowBreakMaterials.add(Material.COCOA);
+			flowBreakMaterials.add(Material.CROPS);
+			flowBreakMaterials.add(Material.DEAD_BUSH);
+			flowBreakMaterials.add(Material.DETECTOR_RAIL);
+			flowBreakMaterials.add(Material.DIODE_BLOCK_OFF);
+			flowBreakMaterials.add(Material.DIODE_BLOCK_ON);
+			flowBreakMaterials.add(Material.FIRE);
+			flowBreakMaterials.add(Material.FLOWER_POT);
+			flowBreakMaterials.add(Material.LADDER);
+			flowBreakMaterials.add(Material.LEVER);
+			flowBreakMaterials.add(Material.LONG_GRASS);
+			flowBreakMaterials.add(Material.MELON_STEM);
+			flowBreakMaterials.add(Material.NETHER_STALK);
+			flowBreakMaterials.add(Material.RAILS);
+			flowBreakMaterials.add(Material.RED_ROSE);
+			flowBreakMaterials.add(Material.REDSTONE_WIRE);
+			flowBreakMaterials.add(Material.SAPLING);
+			flowBreakMaterials.add(Material.SKULL);
+			flowBreakMaterials.add(Material.SUGAR_CANE_BLOCK);
+			flowBreakMaterials.add(Material.TORCH);
+			flowBreakMaterials.add(Material.TRIPWIRE);
+			flowBreakMaterials.add(Material.TRIPWIRE_HOOK);
+			flowBreakMaterials.add(Material.VINE);
+			flowBreakMaterials.add(Material.WATER_LILY);
+			flowBreakMaterials.add(Material.YELLOW_FLOWER);
+		}
+		
+		return flowBreakMaterials.contains(to.getType());
+		
+	}
+	
 //	/**
 //	 * 
 //	 * @param event
@@ -393,5 +450,6 @@ public class PrismBlockEvents implements Listener {
 				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
 			}
 		}
+
 	}
 }
