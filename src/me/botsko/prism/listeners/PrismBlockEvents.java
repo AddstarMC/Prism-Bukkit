@@ -413,8 +413,15 @@ public class PrismBlockEvents implements Listener {
 		// Water flowing into lava forms obsidian or cobble
 		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
 			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
-			if( lower.getType().equals(Material.COBBLESTONE) || lower.getType().equals(Material.OBSIDIAN) ){
+			
+			// @todo fires multiple times per loc?
+			if( lower.getType().equals(Material.OBSIDIAN) ){
 				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
+			}
+			
+			BlockState side = event.getToBlock().getRelative(event.getFace()).getState();
+			if( side.getType().equals(Material.COBBLESTONE) ){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, side.getBlock(), "Environment") );
 			}
 		}
 	}
