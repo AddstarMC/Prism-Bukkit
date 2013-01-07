@@ -74,7 +74,7 @@ public class PreviewCommand implements SubHandler {
 			/**
 			 * Begin a rollback or restore preview
 			 */
-			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") ){
+			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs") ){
 				
 				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 2 );
 				if(parameters == null){
@@ -90,11 +90,11 @@ public class PreviewCommand implements SubHandler {
 					
 					ApplierResult result = null;
 					Previewable rs = null;
-					if(call.getArg(1).equalsIgnoreCase("rollback")){
+					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
 						rs = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters );
 						result = rs.preview();
 					}
-					if(call.getArg(1).equalsIgnoreCase("restore")){
+					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
 						rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
 						result = rs.preview();
 					}

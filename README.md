@@ -124,7 +124,7 @@ You can even define multiple arguments for most by separating them with a comma.
 
 This allows you to see whether or not your rollback/restore will do what you intended - because if not you can cancel it without any impact on the real map.
 
-Use `/prism preview rollback (params)` (or restore). If the results look good and you wish to apply them to the map, use `/prism preview apply`.
+Use `/prism preview (rollback/rb or restore/rs) (params)`. If the results look good and you wish to apply them to the map, use `/prism preview apply`.
 
 If not, use `/prism preview cancel`. You may only have one preview pending at a time, and they will expire after a minute. If you forget about them or logout, they will self-cancel.
 
@@ -176,8 +176,8 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism l (params)`
 - `prism near`
 - `prism page [#]`
-- `prism preview rollback (params)`
-- `prism preview restore (params)`
+- `prism preview (rollback|rb) (params)`
+- `prism preview (restore|rs) (params)`
 - `prism preview apply`
 - `prism preview cancel`
 - `prism rollback (params)`
@@ -185,6 +185,7 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism ex [radius]`
 - `prism drain [radius]`
 - `prism tp [id]]`
+- `prism wand (rollback|i|p)`
 - `prism delete`
 - `prism ?` - Help.
 - `prism params` - List parameters in-game.
