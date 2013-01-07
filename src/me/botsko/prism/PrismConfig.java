@@ -59,8 +59,9 @@ public class PrismConfig {
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
-		config.addDefault("prism.appliers.remove-fire-on-rollback", true);
-		config.addDefault("prism.appliers.remove-drops-on-rollback", true);
+		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
+		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
+		config.addDefault("prism.appliers.remove-liquid-on-flow-rollback", true);
 		
 		config.addDefault("prism.tracking.block-break", false);
 		config.addDefault("prism.tracking.block-burn", true);

@@ -61,7 +61,7 @@ public class Rollback extends Preview {
 		ArrayList<Undo> undo = new ArrayList<Undo>();
 		
 		// Remove any fire at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
 				responses.add( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
@@ -69,10 +69,18 @@ public class Rollback extends Preview {
 		}
 		
 		// Remove item drops in this radius
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
 			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 			if(removed > 0){
 				responses.add( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+			}
+		}
+		
+		// Remove any liquid at this location
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-liquid-on-flow-rollback") && ( parameters.getActionTypes().contains(ActionType.WATER_FLOW) || parameters.getActionTypes().contains(ActionType.LAVA_FLOW)) ){
+			int fires_ext = BlockUtils.drain(player.getLocation(),parameters.getRadius());
+			if(fires_ext > 0){
+				responses.add( plugin.playerHeaderMsg("Draining liquid first!" + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
