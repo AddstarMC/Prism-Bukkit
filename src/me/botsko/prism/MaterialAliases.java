@@ -3,8 +3,9 @@ package me.botsko.prism;
 import java.util.ArrayList;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
 
-public class Items {
+public class MaterialAliases {
 
 	/**
 	 * 
@@ -16,7 +17,7 @@ public class Items {
 	 * 
 	 * @param plugin
 	 */
-	public Items( FileConfiguration items ) {
+	public MaterialAliases( FileConfiguration items ) {
 		this.items = items;
 	}
 	
@@ -36,6 +37,20 @@ public class Items {
 				return s;
 			}
 		}
+		if(item_name == null){
+			ItemStack i = new ItemStack( typeid,subid);
+			item_name = i.getType().name().toLowerCase().replace("_", " ");
+		}
 		return item_name;
+	}
+	
+	
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
+	public String getItemAlias( ItemStack i ){
+		return getItemAlias( i.getTypeId(), (byte) i.getDurability() );
 	}
 }

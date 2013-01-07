@@ -36,7 +36,7 @@ public class Prism extends JavaPlugin {
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
 	protected Language language;
-	protected Items items;
+	protected MaterialAliases items;
 	public Connection conn = null;
 	
 	public ActionRecorder actionsRecorder;
@@ -116,7 +116,7 @@ public class Prism extends JavaPlugin {
 		// Load language files
 		language = new Language( this, mc.getLang() );
 		// Load items db
-		items = new Items( mc.getItems() );
+		items = new MaterialAliases( mc.getItems() );
 	}
 	
 	
@@ -182,7 +182,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public Items getItems(){
+	public MaterialAliases getItems(){
 		return this.items;
 	}
 	

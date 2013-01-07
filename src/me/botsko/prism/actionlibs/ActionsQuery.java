@@ -125,6 +125,7 @@ public class ActionsQuery {
     				baseAction.setY( rs.getInt("y") );
     				baseAction.setZ( rs.getInt("z") );
     				baseAction.setData( rs.getString("data") );
+    				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				actions.add(baseAction);
 	    			

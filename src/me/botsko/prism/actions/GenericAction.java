@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.MaterialAliases;
+
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 
 
@@ -14,6 +16,11 @@ public class GenericAction implements Action {
 	 * 
 	 */
 	protected ActionType type;
+	
+	/**
+	 * 
+	 */
+	protected MaterialAliases materialAliases;
 	
 	/**
 	 * 
@@ -240,6 +247,15 @@ public class GenericAction implements Action {
 	 */
 	public void setData(String data) {
 		this.data = data;
+	}
+	
+	
+	/**
+	 * 
+	 * @param m
+	 */
+	public void setMaterialAliases( MaterialAliases m ){
+		this.materialAliases = m;
 	}
 	
 	
