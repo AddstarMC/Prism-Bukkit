@@ -152,17 +152,20 @@ public class Rollback extends Preview {
 						 */
 						if( BlockUtils.isAcceptableForBlockPlace(block) ){
 							
-							if(BlockUtils.isSideFaceDetachableMaterial(Material.getMaterial(b.getBlock_id()))){
-								reattach.add(b);
-								continue;
-							}
-							
 							Material m = Material.getMaterial(b.getBlock_id());
 							
+							// Ignore any blocks we should never place
 							if(!BlockUtils.mayEverPlace(m)){
 								skipped_block_count++;
 								continue;
 							}
+							
+							// If it's attachable to the sides or top, we need to delay
+							if( BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m) ){
+								reattach.add(b);
+								continue;
+							}
+
 							
 							if(!is_preview){
 								block.setTypeId( b.getBlock_id() );
