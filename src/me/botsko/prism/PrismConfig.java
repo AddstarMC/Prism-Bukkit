@@ -68,6 +68,8 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.block-fall", true);
 		config.addDefault("prism.tracking.block-form", true);
 		config.addDefault("prism.tracking.block-place", true);
+//		config.addDefault("prism.tracking.block-shift", true);
+		config.addDefault("prism.tracking.block-use", true);
 		config.addDefault("prism.tracking.container-access", true);
 		config.addDefault("prism.tracking.creeper-explode", true);
 		config.addDefault("prism.tracking.enderman-pickup", true);
@@ -96,6 +98,17 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
+		
+		
+		config.addDefault("prism.alerts.ores.enabled", true);
+		config.addDefault("prism.alerts.ores.log-to-console", true);
+		config.addDefault("prism.alerts.ores.coal", false);
+		config.addDefault("prism.alerts.ores.redstone", false);
+		config.addDefault("prism.alerts.ores.lapis", true);
+		config.addDefault("prism.alerts.ores.iron", true);
+		config.addDefault("prism.alerts.ores.gold", true);
+		config.addDefault("prism.alerts.ores.diamond", true);
+		config.addDefault("prism.alerts.ores.emerald", true);
 
 		// Copy defaults
 		config.options().copyDefaults(true);

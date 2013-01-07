@@ -12,6 +12,7 @@ import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
@@ -23,6 +24,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -143,6 +145,8 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		// Run ore find alerts
+		plugin.oreMonitor.processAlertsFromBlock(player, block);
 		
 		/**
 		 * Handle special double-length blocks
@@ -322,5 +326,72 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+	}
+	
+	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonExtend(final BlockPistonExtendEvent event){
+//
+//		List<Block> blocks = event.getBlocks();
+//		
+//		plugin.debug("DIRECTION: " + event.getDirection().name());
+//		
+//		if(!blocks.isEmpty()){
+//			for( Block block : blocks){
+//				
+//				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
+//				// We should record the from coords, to coords, and block replaced, as well as the block moved.
+//				plugin.debug("MOVING FROM: " + block.getX() + " " + block.getY() + " " + block.getZ() + " to " + block.getRelative(event.getDirection()).getType().name() );
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, block, "Environment") );
+//			}
+//		}
+//	}
+//	
+//	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonRetract(final BlockPistonRetractEvent event){
+//		plugin.debug("PISTON retracted");
+////		Block block = event.getBlock();
+////		BlockFace face = event.getDirection();
+////		event.getRetractLocation()
+////		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, event.getBlock(), "Environment") );
+//	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onBlockFromTo(BlockFromToEvent event) {
+
+		// Ignore blocks that aren't liquid. @todo what else triggers this?
+		if (!event.getBlock().isLiquid()) return;
+		
+		BlockState from = event.getBlock().getState();
+		BlockState to = event.getToBlock().getState();
+
+		// Lava
+		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
+			Block newTo = event.getToBlock();
+			newTo.setType(Material.STONE);
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
+		}
+
+		// Water flowing into lava forms obsidian or cobble
+		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
+			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
+			if( lower.getType().equals(Material.COBBLESTONE) || lower.getType().equals(Material.OBSIDIAN) ){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
+			}
+		}
 	}
 }
