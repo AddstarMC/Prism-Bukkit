@@ -17,6 +17,7 @@ public enum ActionType {
 	BLOCK_USE(false, false, false, "block", "used"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
 	CREEPER_EXPLODE(false, true, true, "block", "blew up"),
+	CROP_TRAMPLE(false, true, true, "block", "trampled"),
 	ENDERMAN_PICKUP(false, true, true, "block", "picked up"),
 	ENDERMAN_PLACE(true, true, true, "block", "placed"),
 	ENTITY_BREAK(true, true, true, "block", "broke"),
