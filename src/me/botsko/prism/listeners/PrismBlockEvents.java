@@ -239,6 +239,9 @@ public class PrismBlockEvents implements Listener {
 		Block block = event.getBlock();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
+		// Change handling a bit if it's a long block
+		block = properlyLogDoubleLengthBlocks(block);
+		
 		// check for block relationships
 		logBlockRelationshipsForBlock( "Environment", block );
 				
