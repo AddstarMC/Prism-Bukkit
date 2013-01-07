@@ -102,7 +102,6 @@ public class PrismEntityEvents implements Listener {
 	        plugin.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
 	        
 	        // Log item drops
-	        plugin.debug("DROPS: " + event.getDrops().size());
 	        if( !event.getDrops().isEmpty() ){
 	        	for(ItemStack i : event.getDrops()){
 	        		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, p.getLocation(), p.getName()) );
