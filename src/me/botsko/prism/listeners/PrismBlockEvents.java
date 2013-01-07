@@ -139,8 +139,8 @@ public class PrismBlockEvents implements Listener {
 //			return;
 //		}
 		
-		// Find a list of all blocks above this block that we know
-		// will fall. 
+		
+		// Find a list of attached blocks that we expect will detach
 		ArrayList<Block> detached_blocks = BlockUtils.findAttachedBlocks(block);
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
