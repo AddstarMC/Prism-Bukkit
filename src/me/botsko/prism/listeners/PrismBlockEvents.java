@@ -94,7 +94,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param player
 	 * @param block
 	 */
-	protected void logBlockRelationshipsForBlock( Player player, Block block ){
+	protected void logBlockRelationshipsForBlock( String playername, Block block ){
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
@@ -102,8 +102,8 @@ public class PrismBlockEvents implements Listener {
 		if(falling_blocks.size() > 0){
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating falling block at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating falling block at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 		
@@ -118,8 +118,8 @@ public class PrismBlockEvents implements Listener {
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating block detaching at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating block detaching at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 		
@@ -129,8 +129,8 @@ public class PrismBlockEvents implements Listener {
 		if(hanging.size() > 0){
 			for(Entity e : hanging){
 				String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
-				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 	}
@@ -173,7 +173,7 @@ public class PrismBlockEvents implements Listener {
 		logItemRemoveFromDestroyedContainer( player.getName(), block );
 	
 		// check for block relationships
-		logBlockRelationshipsForBlock( player, block );
+		logBlockRelationshipsForBlock( player.getName(), block );
 		
 	}
 	
@@ -228,8 +228,8 @@ public class PrismBlockEvents implements Listener {
 		Block block = event.getBlock();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
-//		// check for block relationships
-//		logBlockRelationshipsForBlock( player, block );
+		// check for block relationships
+		logBlockRelationshipsForBlock( "Environment", block );
 				
 	}
 	
