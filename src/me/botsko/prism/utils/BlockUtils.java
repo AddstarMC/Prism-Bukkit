@@ -336,4 +336,44 @@ public class BlockUtils {
 		top.setTypeId(typeid);
 		top.setData((byte)new_subid);
 	}
+	
+	
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public static boolean canFlowBreakMaterial(Material m){
+		switch(m){
+			case BROWN_MUSHROOM:
+			case COCOA:
+			case CROPS:
+			case DEAD_BUSH:
+			case DETECTOR_RAIL:
+			case DIODE_BLOCK_OFF:
+			case DIODE_BLOCK_ON:
+			case FIRE:
+			case FLOWER_POT:
+			case LADDER:
+			case LEVER:
+			case LONG_GRASS:
+			case MELON_STEM:
+			case NETHER_STALK:
+			case RAILS:
+			case RED_ROSE:
+			case REDSTONE_WIRE:
+			case SAPLING:
+			case SKULL:
+			case SUGAR_CANE_BLOCK:
+			case TORCH:
+			case TRIPWIRE:
+			case TRIPWIRE_HOOK:
+			case VINE:
+			case WATER_LILY:
+			case YELLOW_FLOWER:
+				return true;
+			default:
+				return false;
+		}
+	}
 }

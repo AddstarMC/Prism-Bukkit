@@ -42,11 +42,6 @@ public class PrismBlockEvents implements Listener {
 	 */
 	private Prism plugin;
 	
-	/**
-	 * Materials that break when water flows onto them
-	 */
-	private ArrayList<Material> flowBreakMaterials = new ArrayList<Material>();
-	
 	
 	/**
 	 * 
@@ -91,6 +86,33 @@ public class PrismBlockEvents implements Listener {
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 */
+	public Block properlyLogDoubleLengthBlocks( Block block ){
+		/**
+		 * Handle special double-length blocks
+		 */
+		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+			// If you've broken the top half of a door, we need to record the action for the bottom.
+			// This is because a top half break doesn't record the orientation of the door while the bottom does,
+			// and we have code in the rollback/restore to add the top half back in.
+			if(block.getData() == 8){
+				block = block.getRelative(BlockFace.DOWN);
+			}
+		}
+		// If it's a bed, we always record the lower half and rely on appliers
+		if( block.getType().equals(Material.BED_BLOCK) ){
+			Bed b = (Bed)block.getState().getData();
+			if(b.isHeadOfBed()){
+	            block = block.getRelative(b.getFacing().getOppositeFace());
+	        }
+		}
+		return block;
 	}
 	
 	
@@ -153,24 +175,8 @@ public class PrismBlockEvents implements Listener {
 		// Run ore find alerts
 		plugin.oreMonitor.processAlertsFromBlock(player, block);
 		
-		/**
-		 * Handle special double-length blocks
-		 */
-		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
-			// If you've broken the top half of a door, we need to record the action for the bottom.
-			// This is because a top half break doesn't record the orientation of the door while the bottom does,
-			// and we have code in the rollback/restore to add the top half back in.
-			if(block.getData() == 8){
-				block = block.getRelative(BlockFace.DOWN);
-			}
-		}
-		// If it's a bed, we always record the lower half and rely on appliers
-		if( block.getType().equals(Material.BED_BLOCK) ){
-			Bed b = (Bed)block.getState().getData();
-			if(b.isHeadOfBed()){
-	            block = block.getRelative(b.getFacing().getOppositeFace());
-	        }
-		}
+		// Change handling a bit if it's a long block
+		block = properlyLogDoubleLengthBlocks(block);
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		
@@ -334,58 +340,6 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	
-	/**
-	 * When a fluid flows
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockFromToEvent(final BlockFromToEvent event){
-		Block from = event.getBlock();
-		Block to = event.getToBlock();
-		
-		if(canFlowBreak(to)){
-			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getToBlock(), "Water"));
-			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getToBlock(), "Lava"));
-			}
-		}
-	}
-	
-	private boolean canFlowBreak(Block to){
-		if(this.flowBreakMaterials.isEmpty()){
-			flowBreakMaterials.add(Material.BROWN_MUSHROOM);
-			flowBreakMaterials.add(Material.COCOA);
-			flowBreakMaterials.add(Material.CROPS);
-			flowBreakMaterials.add(Material.DEAD_BUSH);
-			flowBreakMaterials.add(Material.DETECTOR_RAIL);
-			flowBreakMaterials.add(Material.DIODE_BLOCK_OFF);
-			flowBreakMaterials.add(Material.DIODE_BLOCK_ON);
-			flowBreakMaterials.add(Material.FIRE);
-			flowBreakMaterials.add(Material.FLOWER_POT);
-			flowBreakMaterials.add(Material.LADDER);
-			flowBreakMaterials.add(Material.LEVER);
-			flowBreakMaterials.add(Material.LONG_GRASS);
-			flowBreakMaterials.add(Material.MELON_STEM);
-			flowBreakMaterials.add(Material.NETHER_STALK);
-			flowBreakMaterials.add(Material.RAILS);
-			flowBreakMaterials.add(Material.RED_ROSE);
-			flowBreakMaterials.add(Material.REDSTONE_WIRE);
-			flowBreakMaterials.add(Material.SAPLING);
-			flowBreakMaterials.add(Material.SKULL);
-			flowBreakMaterials.add(Material.SUGAR_CANE_BLOCK);
-			flowBreakMaterials.add(Material.TORCH);
-			flowBreakMaterials.add(Material.TRIPWIRE);
-			flowBreakMaterials.add(Material.TRIPWIRE_HOOK);
-			flowBreakMaterials.add(Material.VINE);
-			flowBreakMaterials.add(Material.WATER_LILY);
-			flowBreakMaterials.add(Material.YELLOW_FLOWER);
-		}
-		
-		return flowBreakMaterials.contains(to.getType());
-		
-	}
-	
 //	/**
 //	 * 
 //	 * @param event
@@ -435,6 +389,15 @@ public class PrismBlockEvents implements Listener {
 		
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
+		
+		// Watch for blocks that the liquid can break
+		if(BlockUtils.canFlowBreakMaterial(to.getType())){
+			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getToBlock(), "Water"));
+			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getToBlock(), "Lava"));
+			}
+		}
 
 		// Lava
 		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
@@ -450,6 +413,5 @@ public class PrismBlockEvents implements Listener {
 				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
 			}
 		}
-
 	}
 }
