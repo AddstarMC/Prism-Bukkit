@@ -164,6 +164,7 @@ public class PrismBlockEvents implements Listener {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				plugin.debug("Anticipating block popping off (above) at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, playername) );
 			}
 		}
 		
@@ -285,7 +286,9 @@ public class PrismBlockEvents implements Listener {
 			}
 		}
 		
-		// Log break of any attached items
+		// If it's an attachable item, we need to look for detachment
+		// at the sides.
+		// http://jd.bukkit.org/doxygen/d1/d0b/interfaceorg_1_1bukkit_1_1material_1_1Attachable.html#details
 		if (b.getState().getData() instanceof Attachable) {
 			Attachable a = (Attachable)	b.getState().getData();
 			if(a == null) return;
@@ -293,7 +296,22 @@ public class PrismBlockEvents implements Listener {
 			// If it's lost an attached block
 			if (BlockUtils.materialMeansBlockDetachment(attachedBlock.getType())) {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Seeking block detachment at: " + coord_key);
+				plugin.debug("Seeking block (side) detachment at: " + coord_key);
+				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
+					String player = plugin.preplannedBlockFalls.get(coord_key);
+					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
+					plugin.preplannedBlockFalls.remove(coord_key);
+				}
+			}
+		} 
+		// Otherwise we need to look for detachment at the bottom.
+		else {
+			
+			Block attachedBlock = b.getRelative(BlockFace.DOWN);
+			// If it's lost a supporting block
+			if (BlockUtils.materialMeansBlockDetachment(attachedBlock.getType())) {
+				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
+				plugin.debug("Seeking block (below) detachment at: " + coord_key);
 				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 					String player = plugin.preplannedBlockFalls.get(coord_key);
 					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );

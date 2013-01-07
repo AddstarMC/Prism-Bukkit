@@ -163,6 +163,15 @@ public class BlockUtils {
 		Block blockToCheck = block.getRelative(BlockFace.UP);
 		if(BlockUtils.isTopFaceDetachableMaterial(blockToCheck.getType())){
 			detaching_blocks.add(blockToCheck);
+			if( blockToCheck.getType().equals(Material.CACTUS) || blockToCheck.getType().equals(Material.SUGAR_CANE_BLOCK) ){
+				// For cactus and sugar cane, we can even have blocks above
+				ArrayList<Block> additionalBlocks = findTopFaceAttachedBlocks(blockToCheck);
+				if(!additionalBlocks.isEmpty()){
+					for(Block _temp : additionalBlocks){
+						detaching_blocks.add(_temp);
+					}
+				}
+			}
 		}
 		
 		return detaching_blocks;
@@ -179,6 +188,7 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean isTopFaceDetachableMaterial( Material m ){
+		System.out.print("TOP: " + m.name());
 		if( m.equals(Material.BROWN_MUSHROOM)
 			|| m.equals(Material.CACTUS) 
 			|| m.equals(Material.CARROT)
