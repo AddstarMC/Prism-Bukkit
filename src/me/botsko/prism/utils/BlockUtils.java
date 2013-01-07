@@ -188,48 +188,51 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean isTopFaceDetachableMaterial( Material m ){
-		System.out.print("TOP: " + m.name());
-		if( m.equals(Material.BROWN_MUSHROOM)
-			|| m.equals(Material.CACTUS) 
-			|| m.equals(Material.CARROT)
-			|| m.equals(Material.DETECTOR_RAIL)
-			|| m.equals(Material.POTATO)
-			|| m.equals(Material.CROPS)
-			|| m.equals(Material.DIODE)
-			|| m.equals(Material.DIODE_BLOCK_OFF)
-			|| m.equals(Material.DIODE_BLOCK_ON)
-			|| m.equals(Material.FLOWER_POT)
-			|| m.equals(Material.IRON_DOOR)
-			|| m.equals(Material.IRON_DOOR_BLOCK)
-			|| m.equals(Material.LEVER) 
-			|| m.equals(Material.LONG_GRASS)
-			|| m.equals(Material.MELON_STEM)
-			|| m.equals(Material.NETHER_WARTS)
-			|| m.equals(Material.POWERED_RAIL)
-			|| m.equals(Material.PUMPKIN_STEM)
-			|| m.equals(Material.RAILS)
-			|| m.equals(Material.RED_MUSHROOM)
-			|| m.equals(Material.REDSTONE)
-			|| m.equals(Material.REDSTONE_TORCH_OFF)
-			|| m.equals(Material.REDSTONE_TORCH_ON)
-			|| m.equals(Material.REDSTONE_WIRE)
-			|| m.equals(Material.SAPLING)
-			|| m.equals(Material.SIGN) 
-			|| m.equals(Material.SIGN_POST) 
-			|| m.equals(Material.SNOW)
-			|| m.equals(Material.SUGAR_CANE_BLOCK)
-			|| m.equals(Material.STONE_PLATE)
-			|| m.equals(Material.TORCH)
-			|| m.equals(Material.TRIPWIRE)
-			|| m.equals(Material.WATER_LILY)
-			|| m.equals(Material.WHEAT)
-			|| m.equals(Material.WOOD_DOOR)
-			|| m.equals(Material.WOOD_PLATE)
-			|| m.equals(Material.WOODEN_DOOR)
-				){
-			return true;
+		switch(m){
+			case BROWN_MUSHROOM:
+			case CACTUS:
+			case CARROT:
+			case DEAD_BUSH:
+			case DETECTOR_RAIL:
+			case POTATO:
+			case CROPS:
+			case DIODE:
+			case DIODE_BLOCK_OFF:
+			case DIODE_BLOCK_ON:
+			case FLOWER_POT:
+			case IRON_DOOR:
+			case IRON_DOOR_BLOCK:
+			case LEVER:
+			case LONG_GRASS:
+			case MELON_STEM:
+			case NETHER_WARTS:
+			case POWERED_RAIL:
+			case PUMPKIN_STEM:
+			case RAILS:
+			case RED_MUSHROOM:
+			case RED_ROSE:
+			case REDSTONE:
+			case REDSTONE_TORCH_OFF:
+			case REDSTONE_TORCH_ON:
+			case REDSTONE_WIRE:
+			case SAPLING:
+			case SIGN:
+			case SIGN_POST:
+			case SKULL:
+			case SUGAR_CANE_BLOCK:
+			case STONE_PLATE:
+			case TORCH:
+			case TRIPWIRE:
+			case WATER_LILY:
+			case WHEAT:
+			case WOOD_DOOR:
+			case WOOD_PLATE:
+			case WOODEN_DOOR:
+			case YELLOW_FLOWER:
+				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 	
 	
@@ -480,31 +483,48 @@ public class BlockUtils {
 	public static boolean canFlowBreakMaterial(Material m){
 		switch(m){
 			case BROWN_MUSHROOM:
-			case COCOA:
-			case CROPS:
+			case CACTUS:
+			case CARROT:
+			case COCOA: // different from pop off list
 			case DEAD_BUSH:
 			case DETECTOR_RAIL:
+			case POTATO:
+			case CROPS:
+			case DIODE:
 			case DIODE_BLOCK_OFF:
 			case DIODE_BLOCK_ON:
-			case FIRE:
 			case FLOWER_POT:
-			case LADDER:
+			case IRON_DOOR:
+			case IRON_DOOR_BLOCK:
+			case LADDER: // different from pop off list
 			case LEVER:
 			case LONG_GRASS:
 			case MELON_STEM:
-			case NETHER_STALK:
+			case NETHER_WARTS:
+			case POWERED_RAIL:
+			case PUMPKIN_STEM:
 			case RAILS:
-			case RED_ROSE:
 			case RED_MUSHROOM:
+			case RED_ROSE:
+			case REDSTONE:
+			case REDSTONE_TORCH_OFF:
+			case REDSTONE_TORCH_ON:
 			case REDSTONE_WIRE:
 			case SAPLING:
+			case SIGN:
+			case SIGN_POST:
 			case SKULL:
 			case SUGAR_CANE_BLOCK:
+			case STONE_PLATE:
 			case TORCH:
 			case TRIPWIRE:
-			case TRIPWIRE_HOOK:
-			case VINE:
+			case TRIPWIRE_HOOK: // different from pop off list
+			case VINE: // different from pop off list
 			case WATER_LILY:
+			case WHEAT:
+			case WOOD_DOOR:
+			case WOOD_PLATE:
+			case WOODEN_DOOR:
 			case YELLOW_FLOWER:
 				return true;
 			default:
