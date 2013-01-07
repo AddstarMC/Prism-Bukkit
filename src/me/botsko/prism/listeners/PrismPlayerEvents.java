@@ -45,7 +45,9 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-        plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		if(!event.isCancelled()){
+			plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		}
     }
 	
 	
