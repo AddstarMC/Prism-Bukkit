@@ -145,10 +145,10 @@ public class PrismPlayerEvents implements Listener {
 					default:
 						break;
 				}
-			} else if (block != null && event.getAction() == Action.PHYSICAL){
-				if(block.getType() == Material.SOIL){ // They are stepping on soil
-					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
-				}
+			} 
+		} if (block != null && event.getAction() == Action.PHYSICAL){
+			if(block.getType() == Material.SOIL){ // They are stepping on soil
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 			}
 		}
 	}
