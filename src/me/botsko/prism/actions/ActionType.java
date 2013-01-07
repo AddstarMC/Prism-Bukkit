@@ -235,18 +235,18 @@ public enum ActionType {
 	 */
 	public boolean shouldTriggerRollbackFor(ActionType at){
 		
-		// Actions that should trigger item removal rollback
-		if(at.equals(ActionType.ITEM_REMOVE)){
-			switch(this){
-				case BLOCK_BREAK:
-				case BLOCK_BURN:
-				case CREEPER_EXPLODE:
-				case TNT_EXPLODE:
-					return true;
-				default:
-					return false;
-			}
-		}
+//		// Actions that should trigger item removal rollback
+//		if(at.equals(ActionType.ITEM_REMOVE)){
+//			switch(this){
+//				case BLOCK_BREAK:
+//				case BLOCK_BURN:
+//				case CREEPER_EXPLODE:
+//				case TNT_EXPLODE:
+//					return true;
+//				default:
+//					return false;
+//			}
+//		}
 		return false;
 	}
 	
