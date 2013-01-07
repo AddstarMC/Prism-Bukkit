@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PrismPlayerEvents implements Listener {
 	
@@ -46,6 +47,25 @@ public class PrismPlayerEvents implements Listener {
 		Player player = event.getPlayer();
         plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
     }
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerQuit(final PlayerQuitEvent event){
+
+		// Remove any active wands for this player
+		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){
+			plugin.playersWithActiveTools.remove(event.getPlayer().getName());
+		}
+		// Remove any active previews for this player, even though they would expire
+		// naturally.
+		if(plugin.playerActivePreviews.containsKey(event.getPlayer().getName())){
+			plugin.playerActivePreviews.remove(event.getPlayer().getName());
+		}
+	}
 	
 	
 	/**
