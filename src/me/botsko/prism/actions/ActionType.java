@@ -31,7 +31,8 @@ public enum ActionType {
 	ITEM_INSERT(false, false, false, "itemstack", "inserted"),
 	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),
 	ITEM_REMOVE(false, true, true, "itemstack", "removed"),
-	LAVA_BUCKET(false, true, false, null, "poured lava"),
+	LAVA_BUCKET(false, true, false, null, "poured"),
+	LAVA_FLOW(false, true, true, "block", "broke"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, false, false, "block", "decayed"),
 	LIGHTER(false, false, false, null, "set a fire"),
@@ -43,8 +44,8 @@ public enum ActionType {
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
 	TREE_GROW(true, true, true, "grow", "grew"),
-	WATER_BUCKET(false, false, false, null, "poured water");
-	
+	WATER_BUCKET(false, false, false, null, "poured"),
+	WATER_FLOW(false, true, true, "block", "broke");
 
 	
 	/**
