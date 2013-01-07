@@ -105,19 +105,19 @@ public class BlockUtils {
 		
 		// Check each of the four sides
 		Block blockToCheck = block.getRelative(BlockFace.EAST);
-		if(BlockUtils.isDetachableBlock(blockToCheck)){
+		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.WEST);
-		if(BlockUtils.isDetachableBlock(blockToCheck)){
+		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.NORTH);
-		if(BlockUtils.isDetachableBlock(blockToCheck)){
+		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		blockToCheck = block.getRelative(BlockFace.SOUTH);
-		if(BlockUtils.isDetachableBlock(blockToCheck)){
+		if(BlockUtils.isDetachableBlock(blockToCheck.getType())){
 			falling_blocks.add(blockToCheck);
 		}
 		
@@ -130,18 +130,18 @@ public class BlockUtils {
 	 * Determine whether or not a block is capable of falling.
 	 * 
 	 * Seems like there's got to be another way to do this...
-	 * @param block
+	 * @param m
 	 * @return
 	 */
-	public static boolean isDetachableBlock( Block block ){
-		Material m = block.getType();
+	public static boolean isDetachableBlock( Material m ){
 		if( m.equals(Material.WALL_SIGN) 
 				|| m.equals(Material.TORCH) 
 				|| m.equals(Material.LEVER) 
 				|| m.equals(Material.WOOD_BUTTON) 
 				|| m.equals(Material.STONE_BUTTON) 
 				|| m.equals(Material.LADDER)
-				|| m.equals(Material.VINE)){
+				|| m.equals(Material.VINE)
+				|| m.equals(Material.COCOA)){
 			return true;
 		}
 		return false;
