@@ -77,10 +77,10 @@ public class Rollback extends Preview {
 		}
 		
 		// can't really work here. doesn't return a proper result, etc
-//		// Remove any lava blocks when doing a lava bucket rollback
-//		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET)){
-//			BlockUtils.drainlava(parameters.getLoc(), parameters.getRadius());
-//		}
+		// Remove any lava blocks when doing a lava bucket rollback
+		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET)){
+			BlockUtils.drainlava(parameters.getPlayerLocation(), parameters.getRadius());
+		}
 		
 		// Rollback blocks
 		if(!results.isEmpty()){
@@ -151,6 +151,10 @@ public class Rollback extends Preview {
 								// If we're rolling back a door, we need to set it properly
 								if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
 									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
+								}
+								// Or a bed
+								if( m.equals(Material.BED_BLOCK) ){
+									BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
 								}
 								
 							} else {

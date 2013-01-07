@@ -64,7 +64,7 @@ public class InspectorWand implements Wand {
 		// Build params
 		QueryParameters params = new QueryParameters();
 		params.setWorld( player.getWorld().getName() );
-		params.setLoc(loc);
+		params.setSpecificBlockLocation(loc);
 		
 		// Query
 		ActionsQuery aq = new ActionsQuery(plugin);

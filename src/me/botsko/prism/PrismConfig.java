@@ -68,6 +68,8 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.block-fall", true);
 		config.addDefault("prism.tracking.block-form", true);
 		config.addDefault("prism.tracking.block-place", true);
+//		config.addDefault("prism.tracking.block-shift", true);
+		config.addDefault("prism.tracking.block-use", true);
 		config.addDefault("prism.tracking.container-access", true);
 		config.addDefault("prism.tracking.creeper-explode", true);
 		config.addDefault("prism.tracking.crop-trample", true);
@@ -78,7 +80,6 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.fireball", true);
-		config.addDefault("prism.tracking.flint-steel", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);
 		config.addDefault("prism.tracking.item-drop", true);
@@ -89,16 +90,28 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.lava-flow", true);
 		config.addDefault("prism.tracking.lava-ignite", true);
 		config.addDefault("prism.tracking.leaf-decay", true);
+		config.addDefault("prism.tracking.lighter", true);
 		config.addDefault("prism.tracking.lightning", true);
 		config.addDefault("prism.tracking.mushroom-grow", true);
 		config.addDefault("prism.tracking.player-death", true);
-		config.addDefault("prism.tracking.player-command", true);
+		config.addDefault("prism.tracking.player-command", false);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", true);
+		
+		
+		config.addDefault("prism.alerts.ores.enabled", true);
+		config.addDefault("prism.alerts.ores.log-to-console", true);
+		config.addDefault("prism.alerts.ores.coal", false);
+		config.addDefault("prism.alerts.ores.redstone", false);
+		config.addDefault("prism.alerts.ores.lapis", true);
+		config.addDefault("prism.alerts.ores.iron", true);
+		config.addDefault("prism.alerts.ores.gold", true);
+		config.addDefault("prism.alerts.ores.diamond", true);
+		config.addDefault("prism.alerts.ores.emerald", true);
 
 		// Copy defaults
 		config.options().copyDefaults(true);
@@ -126,6 +139,16 @@ public class PrismConfig {
 		FileConfiguration config = loadConfig( "languages/", lang_file );
 		return config;
 		
+	}
+	
+	
+	/**
+	 * Loads item database
+	 * @return
+	 */
+	public FileConfiguration getItems(){
+		FileConfiguration config = loadConfig( "", "items" );
+		return config;
 	}
 	
 	

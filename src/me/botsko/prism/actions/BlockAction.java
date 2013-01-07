@@ -3,7 +3,6 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
 
 public class BlockAction extends GenericAction {
 	
@@ -105,9 +104,6 @@ public class BlockAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
-		String name = "block";
-		ItemStack i = new ItemStack( getBlock_id(),getBlock_subid());
-		name = i.getType().name().toLowerCase().replace("_", " ");
-		return name;
+		return this.materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
 	}
 }

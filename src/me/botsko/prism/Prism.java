@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -18,9 +19,11 @@ import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -33,13 +36,16 @@ public class Prism extends JavaPlugin {
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
 	protected Language language;
+	protected MaterialAliases items;
 	public Connection conn = null;
 	
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
+	public OreMonitor oreMonitor;
 	public ConcurrentHashMap<String,Wand> playersWithActiveTools = new ConcurrentHashMap<String,Wand>();
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
+	public ConcurrentHashMap<Location,Long> alertedBlocks = new ConcurrentHashMap<Location,Long>();
 	
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so
@@ -88,10 +94,12 @@ public class Prism extends JavaPlugin {
 		// Init re-used classes
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
+		oreMonitor = new OreMonitor(this);
 		
 		// Init scheduled events
 		endExpiredQueryCaches();
 		endExpiredPreviews();
+		removeExpiredLocations();
 		
 		// Delete old data based on config
 		discardExpiredDbRecords();
@@ -107,6 +115,8 @@ public class Prism extends JavaPlugin {
 		config = mc.getConfig();
 		// Load language files
 		language = new Language( this, mc.getLang() );
+		// Load items db
+		items = new MaterialAliases( mc.getItems() );
 	}
 	
 	
@@ -170,13 +180,21 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public MaterialAliases getItems(){
+		return this.items;
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public void endExpiredQueryCaches(){
 		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 
 		    public void run() {
 		    	java.util.Date date = new java.util.Date();
-		    	prism.debug("Removing expired lookup queries from cache");
 		    	for (Map.Entry<String, QueryResult> query : cachedQueries.entrySet()){
 		    		QueryResult result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
@@ -198,7 +216,6 @@ public class Prism extends JavaPlugin {
 
 		    public void run() {
 		    	java.util.Date date = new java.util.Date();
-		    	prism.debug("Removing expired previews from cache");
 		    	for (Map.Entry<String, PreviewSession> query : playerActivePreviews.entrySet()){
 		    		PreviewSession result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
@@ -210,6 +227,26 @@ public class Prism extends JavaPlugin {
 		    			}
 		    			prism.debug("Removing cached preview from "+result.getQueryTime()+" by " + result.getPlayer().getName() + ".");
 		    			playerActivePreviews.remove(query.getKey());
+		    		}
+		    	}
+		    }
+		}, 1200L, 1200L);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void removeExpiredLocations(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+
+		    public void run() {
+		    	java.util.Date date = new java.util.Date();
+		    	// Remove locations logged over five minute ago.
+		    	for (Entry<Location, Long> entry : alertedBlocks.entrySet()){
+		    		long diff = (date.getTime() - entry.getValue()) / 1000;
+		    		if(diff >= 300){
+		    			alertedBlocks.remove(entry.getKey());
 		    		}
 		    	}
 		    }
@@ -268,7 +305,7 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param player_name
 	 * @param cmd
 	 * @param help
 	 */
@@ -287,6 +324,19 @@ public class Prism extends JavaPlugin {
 			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.RED + msg;
 		}
 		return "";
+	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 */
+	public void alertPlayers( String msg ){
+		for (Player p : getServer().getOnlinePlayers()) {
+			if (p.hasPermission("prism.alerts")){
+				p.sendMessage( playerMsg( msg ) );
+			}
+		}
 	}
 	
 	

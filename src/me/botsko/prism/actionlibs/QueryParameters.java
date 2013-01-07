@@ -6,28 +6,28 @@ import java.util.HashMap;
 import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.Location;
-import org.bukkit.util.Vector;
 
 public class QueryParameters implements Cloneable {
 	
+	// Internal use
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
 	protected String lookup_type = "lookup";
 	
-	protected Location loc;
-	protected Vector player_location;
-	
-	protected int id = 0;
+	// Typically required
 	protected int radius;
-	protected boolean allow_no_radius = false;
-	protected String player;
 	protected String world;
-	protected ArrayList<ActionType> action_types = new ArrayList<ActionType>();
-	protected String time;
-	protected String entity;
-	protected String block;
 	
+	// Optional
+	protected ArrayList<ActionType> action_types = new ArrayList<ActionType>();
+	protected Location specific_block_loc;
+	protected Location player_location;
+	protected int id = 0;
+	protected String player_name;
+	protected String time_since;
+	protected String entity_filters;
+	protected ArrayList<String> block_filters = new ArrayList<String>();
+	protected boolean allow_no_radius = false;
 	protected int limit = 1000000;
-//	protected int offset = 0;
 	
 	
 	/**
@@ -50,7 +50,7 @@ public class QueryParameters implements Cloneable {
 	 * @return the entity
 	 */
 	public String getEntity() {
-		return entity;
+		return entity_filters;
 	}
 
 
@@ -58,46 +58,54 @@ public class QueryParameters implements Cloneable {
 	 * @param entity the entity to set
 	 */
 	public void setEntity(String entity) {
-		this.entity = entity;
+		this.entity_filters = entity;
 	}
 
 
 	/**
 	 * @return the block
 	 */
-	public String getBlock() {
-		return block;
+	public ArrayList<String> getBlockFilters() {
+		return block_filters;
 	}
 
 
 	/**
 	 * @param block the block to set
 	 */
-	public void setBlock(String block) {
-		this.block = block;
+	public void setBlockFilters(ArrayList<String> blocks) {
+		this.block_filters = blocks;
+	}
+	
+	
+	/**
+	 * @param block the block to set
+	 */
+	public void addBlockFilter(String block) {
+		this.block_filters.add(block);
 	}
 	
 	
 	/**
 	 * @return the loc
 	 */
-	public Location getLoc() {
-		return loc;
+	public Location getSpecificBlockLocation() {
+		return specific_block_loc;
 	}
 	
 	
 	/**
 	 * @param loc the loc to set
 	 */
-	public void setLoc(Location loc) {
-		this.loc = loc;
+	public void setSpecificBlockLocation(Location loc) {
+		this.specific_block_loc = loc;
 	}
 	
 	
 	/**
 	 * @return the player_location
 	 */
-	public Vector getPlayer_location() {
+	public Location getPlayerLocation() {
 		return player_location;
 	}
 
@@ -105,7 +113,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param player_location the player_location to set
 	 */
-	public void setPlayer_location(Vector player_location) {
+	public void setPlayerLocation(Location player_location) {
 		this.player_location = player_location;
 	}
 
@@ -146,7 +154,7 @@ public class QueryParameters implements Cloneable {
 	 * @return the player
 	 */
 	public String getPlayer() {
-		return player;
+		return player_name;
 	}
 	
 	
@@ -154,7 +162,7 @@ public class QueryParameters implements Cloneable {
 	 * @param player the player to set
 	 */
 	public void setPlayer(String player) {
-		this.player = player;
+		this.player_name = player;
 	}
 	
 	
@@ -202,7 +210,7 @@ public class QueryParameters implements Cloneable {
 	 * @return the time
 	 */
 	public String getTime() {
-		return time;
+		return time_since;
 	}
 	
 	
@@ -210,7 +218,7 @@ public class QueryParameters implements Cloneable {
 	 * @param time the time to set
 	 */
 	public void setTime(String time) {
-		this.time = time;
+		this.time_since = time;
 	}
 
 

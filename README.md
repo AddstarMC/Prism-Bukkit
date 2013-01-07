@@ -190,7 +190,6 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism params` - List parameters in-game.
 
 
-
 ## Permissions
 
 - `prism.help`
@@ -203,11 +202,52 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism.tp` - Teleport to a record ID
 - `prism.reload` - Grants config reload permission. Recommended for: OPs
 - `prism.delete` - Purge records from database via commands. Recommended for: OPs
+- `prims.alerts` - Alerts for ore finds, dangerous block placements.
 - `prism.*` - Grants all permissions. Recommended for: OPs
+
+
+## Real-World Examples
+
+There are so many actions recorded and parameters available to find/restore them we can't possibly give examples of them all, but here are some examples of common needs to get you started.
+
+##### Broken blocks, house on fire
+
+A griefer has broken blocks and set fire to a house. If we don't know who started the fire we can find the person who lit it with:
+
+`/prism l a:flint-steel`
+
+Or, find who broke the blocks with `/prism near` or the inspector wand, `/prism i`.
+
+A default radius is always used so it's only nearby activity. Once you see who set the fire or broke the blocks, you can use the username(s) to rollback the changes.
+
+`/prism rollback a:break,burn p:nasonfish`
+
+##### Killed Farm Animals
+
+Some one has killed the entire cow farm for your player. Who? If `/prism near` returns too much info then just run a lookup:
+
+`/prism l a:kill`
+
+The "kill" action will show any entities that have been killed nearby and who did it.
+
+Need to roll them back?
+
+`/prism rollback a:kill p:VortexBuilder3`
+
+
+##### Creepers
+
+Rollback a creeper's art:
+
+`/prism rollback a:explode`
+
+"Explode" is a short hand action that also includes tnt. To only rollback a creeper hole, use `a:creeper-explode`.
+
 
 ## Known Issues
 
 - Hanging items can't be rolled back because of a bukkit bug with their facing directions. https://bukkit.atlassian.net/browse/BUKKIT-3371
+- Free-standing signs may rollback facing an exact direction when it was placed with an orientation between two directions.
 
           
 ## Get Help

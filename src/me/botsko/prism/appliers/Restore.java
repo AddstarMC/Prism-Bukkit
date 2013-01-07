@@ -103,6 +103,10 @@ public class Restore extends Preview {
 								if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
 									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
 								}
+								// Or a bed
+								if( m.equals(Material.BED_BLOCK) ){
+									BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
+								}
 								
 							} else {
 								player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
@@ -136,7 +140,7 @@ public class Restore extends Preview {
 					Block block = world.getBlockAt(loc);
 					
 					// Ensure a sign exists there (and no other block)
-					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
 						
 						if( block.getType().equals(Material.AIR) ){
 							block.setType(b.getSignType());

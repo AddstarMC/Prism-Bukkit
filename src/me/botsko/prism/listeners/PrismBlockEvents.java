@@ -12,6 +12,7 @@ import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.entity.Entity;
@@ -32,6 +33,7 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
+import org.bukkit.material.Bed;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -57,7 +59,7 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param player_name
 	 * @param block
 	 */
 	public void logItemRemoveFromDestroyedContainer( String player_name, Block block ){
@@ -97,7 +99,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param player
 	 * @param block
 	 */
-	protected void logBlockRelationshipsForBlock( Player player, Block block ){
+	protected void logBlockRelationshipsForBlock( String playername, Block block ){
 		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
@@ -105,8 +107,8 @@ public class PrismBlockEvents implements Listener {
 		if(falling_blocks.size() > 0){
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating falling block at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating falling block at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 		
@@ -121,8 +123,8 @@ public class PrismBlockEvents implements Listener {
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating block detaching at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating block detaching at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 		
@@ -132,8 +134,8 @@ public class PrismBlockEvents implements Listener {
 		if(hanging.size() > 0){
 			for(Entity e : hanging){
 				String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
-				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + player.getName());
-				plugin.preplannedBlockFalls.put(coord_key, player.getName());
+				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + playername);
+				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
 	}
@@ -148,6 +150,12 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		// Run ore find alerts
+		plugin.oreMonitor.processAlertsFromBlock(player, block);
+		
+		/**
+		 * Handle special double-length blocks
+		 */
 		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
 			// If you've broken the top half of a door, we need to record the action for the bottom.
 			// This is because a top half break doesn't record the orientation of the door while the bottom does,
@@ -156,6 +164,13 @@ public class PrismBlockEvents implements Listener {
 				block = block.getRelative(BlockFace.DOWN);
 			}
 		}
+		// If it's a bed, we always record the lower half and rely on appliers
+		if( block.getType().equals(Material.BED_BLOCK) ){
+			Bed b = (Bed)block.getState().getData();
+			if(b.isHeadOfBed()){
+	            block = block.getRelative(b.getFacing().getOppositeFace());
+	        }
+		}
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		
@@ -163,7 +178,7 @@ public class PrismBlockEvents implements Listener {
 		logItemRemoveFromDestroyedContainer( player.getName(), block );
 	
 		// check for block relationships
-		logBlockRelationshipsForBlock( player, block );
+		logBlockRelationshipsForBlock( player.getName(), block );
 		
 	}
 	
@@ -218,8 +233,8 @@ public class PrismBlockEvents implements Listener {
 		Block block = event.getBlock();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
-//		// check for block relationships
-//		logBlockRelationshipsForBlock( player, block );
+		// check for block relationships
+		logBlockRelationshipsForBlock( "Environment", block );
 				
 	}
 	
@@ -286,7 +301,7 @@ public class PrismBlockEvents implements Listener {
 				cause = ActionType.FIREBALL;
 				break;
 			case FLINT_AND_STEEL:
-				cause = ActionType.FLINT_STEEL;
+				cause = ActionType.LIGHTER;
 				break;
 			case LAVA:
 				cause = ActionType.LAVA_IGNITE;
@@ -317,6 +332,7 @@ public class PrismBlockEvents implements Listener {
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 	}
+	
 	
 	/**
 	 * When a fluid flows
@@ -367,5 +383,73 @@ public class PrismBlockEvents implements Listener {
 		}
 		
 		return flowBreakMaterials.contains(to.getType());
+		
+	}
+	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonExtend(final BlockPistonExtendEvent event){
+//
+//		List<Block> blocks = event.getBlocks();
+//		
+//		plugin.debug("DIRECTION: " + event.getDirection().name());
+//		
+//		if(!blocks.isEmpty()){
+//			for( Block block : blocks){
+//				
+//				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
+//				// We should record the from coords, to coords, and block replaced, as well as the block moved.
+//				plugin.debug("MOVING FROM: " + block.getX() + " " + block.getY() + " " + block.getZ() + " to " + block.getRelative(event.getDirection()).getType().name() );
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, block, "Environment") );
+//			}
+//		}
+//	}
+//	
+//	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonRetract(final BlockPistonRetractEvent event){
+//		plugin.debug("PISTON retracted");
+////		Block block = event.getBlock();
+////		BlockFace face = event.getDirection();
+////		event.getRetractLocation()
+////		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, event.getBlock(), "Environment") );
+//	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onBlockFromTo(BlockFromToEvent event) {
+
+		// Ignore blocks that aren't liquid. @todo what else triggers this?
+		if (!event.getBlock().isLiquid()) return;
+		
+		BlockState from = event.getBlock().getState();
+		BlockState to = event.getToBlock().getState();
+
+		// Lava
+		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
+			Block newTo = event.getToBlock();
+			newTo.setType(Material.STONE);
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
+		}
+
+		// Water flowing into lava forms obsidian or cobble
+		else if ( from.getType().equals(Material.WATER) || from.getType().equals(Material.STATIONARY_WATER) ) {
+			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
+			if( lower.getType().equals(Material.COBBLESTONE) || lower.getType().equals(Material.OBSIDIAN) ){
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
+			}
+		}
+
 	}
 }

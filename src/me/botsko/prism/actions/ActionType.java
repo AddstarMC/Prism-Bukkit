@@ -13,6 +13,7 @@ public enum ActionType {
 	BLOCK_FALL(false, true, true, "block", "fell"),
 	BLOCK_FORM(false, true, true, "block", "formed"),
 	BLOCK_PLACE(true, true, true, "block", "placed"),
+//	BLOCK_SHIFT(true, false, false, "block", "moved"),
 	BLOCK_USE(false, false, false, "block", "used"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
 	CREEPER_EXPLODE(false, true, true, "block", "blew up"),
@@ -24,7 +25,6 @@ public enum ActionType {
 	ENTITY_KILL(false, true, true, "entity", "killed"),
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
 	FIREBALL(false, false, false, null, "ignited"),
-	FLINT_STEEL(false, false, false, null, "ignited"),
 	HANGINGITEM_BREAK(false, true, true, "hangingitem", "broke"),
 	HANGINGITEM_PLACE(true, true, true, "hangingitem", "hung"),
 	ITEM_DROP(false, false, false, "itemstack", "dropped"),
@@ -35,6 +35,7 @@ public enum ActionType {
 	LAVA_FLOW(false, true, true, "block", "broke"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, false, false, "block", "decayed"),
+	LIGHTER(false, false, false, null, "set a fire"),
 	LIGHTNING(false, false, false, null, "ignited"),
 	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
@@ -189,7 +190,7 @@ public enum ActionType {
 		if(_tmp.length == 2){
 			return _tmp[1];
 		}
-		return this.name();
+		return this.name().toLowerCase();
 	}
 	
 	
@@ -236,18 +237,18 @@ public enum ActionType {
 	 */
 	public boolean shouldTriggerRollbackFor(ActionType at){
 		
-		// Actions that should trigger item removal rollback
-		if(at.equals(ActionType.ITEM_REMOVE)){
-			switch(this){
-				case BLOCK_BREAK:
-				case BLOCK_BURN:
-				case CREEPER_EXPLODE:
-				case TNT_EXPLODE:
-					return true;
-				default:
-					return false;
-			}
-		}
+//		// Actions that should trigger item removal rollback
+//		if(at.equals(ActionType.ITEM_REMOVE)){
+//			switch(this){
+//				case BLOCK_BREAK:
+//				case BLOCK_BURN:
+//				case CREEPER_EXPLODE:
+//				case TNT_EXPLODE:
+//					return true;
+//				default:
+//					return false;
+//			}
+//		}
 		return false;
 	}
 	

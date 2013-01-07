@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PrismPlayerEvents implements Listener {
 	
@@ -44,8 +45,29 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-        plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		if(!event.isCancelled()){
+			plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		}
     }
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerQuit(final PlayerQuitEvent event){
+
+		// Remove any active wands for this player
+		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){
+			plugin.playersWithActiveTools.remove(event.getPlayer().getName());
+		}
+		// Remove any active previews for this player, even though they would expire
+		// naturally.
+		if(plugin.playerActivePreviews.containsKey(event.getPlayer().getName())){
+			plugin.playerActivePreviews.remove(event.getPlayer().getName());
+		}
+	}
 	
 	
 	/**
@@ -123,10 +145,10 @@ public class PrismPlayerEvents implements Listener {
 					default:
 						break;
 				}
-			} else if (block != null && event.getAction() == Action.PHYSICAL){
-				if(block.getType() == Material.SOIL){ // They are stepping on soil
-					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
-				}
+			} 
+		} if (block != null && event.getAction() == Action.PHYSICAL){
+			if(block.getType() == Material.SOIL){ // They are stepping on soil
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 			}
 		}
 	}

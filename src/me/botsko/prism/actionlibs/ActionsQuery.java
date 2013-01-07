@@ -125,6 +125,7 @@ public class ActionsQuery {
     				baseAction.setY( rs.getInt("y") );
     				baseAction.setZ( rs.getInt("z") );
     				baseAction.setData( rs.getString("data") );
+    				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				actions.add(baseAction);
 	    			
@@ -211,7 +212,7 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) || parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) ){
+		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
 			query += " JOIN (" +
 						"SELECT action_type, x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
@@ -270,15 +271,17 @@ public class ActionsQuery {
 			 */
 			int radius = parameters.getRadius();
 			if(radius > 0){
-				query += buildRadiusCondition(radius, parameters.getPlayer_location());
+				query += buildRadiusCondition(radius, parameters.getPlayerLocation().toVector());
 			}
 			
 			/**
 			 * Block
 			 */
-			String block = parameters.getBlock();
-			if(block != null){
-				query += buildOrQuery("data", block.split(","));
+			ArrayList<String> blockfilters = parameters.getBlockFilters();
+			if(!blockfilters.isEmpty()){
+				String[] blockArr = new String[blockfilters.size()];
+				blockArr = blockfilters.toArray(blockArr);
+				query += buildOrQuery("data", blockArr);
 			}
 			
 			/**
@@ -300,7 +303,7 @@ public class ActionsQuery {
 			/**
 			 * Specific coords
 			 */
-			Location loc = parameters.getLoc();
+			Location loc = parameters.getSpecificBlockLocation();
 			if(loc != null){
 				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
 			}
@@ -354,7 +357,7 @@ public class ActionsQuery {
 	/**
 	 * 
 	 * @param arg_values
-	 * @param player
+	 * @param player_name
 	 * @return
 	 */
 	protected String buildRadiusCondition( int radius, Vector loc ){

@@ -65,7 +65,7 @@ public class RollbackWand implements Wand {
 		// Build params
 		QueryParameters params = new QueryParameters();
 		params.setWorld( player.getWorld().getName() );
-		params.setLoc( block.getLocation());
+		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
 		
 		// Append actions that can be rolled back

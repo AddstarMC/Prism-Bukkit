@@ -21,7 +21,7 @@ public class GrowAction extends GenericAction {
 	/**
 	 * 
 	 * @param action_type
-	 * @param block
+	 * @param block_filters
 	 * @param player
 	 */
 	public GrowAction( ActionType action_type, BlockState blockstate, String player ){

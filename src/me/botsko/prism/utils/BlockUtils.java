@@ -19,7 +19,7 @@ public class BlockUtils {
 	 * so that we can avoid including dangerous items with an
 	 * applier.
 	 * 
-	 * @param block
+	 * @param block_filters
 	 * @return
 	 */
 	public static boolean mayEverPlace( Material m ){
@@ -175,7 +175,7 @@ public class BlockUtils {
 	
 	/**
 	 * Is an entity a hanging type, attachable to a block.
-	 * @param block
+	 * @param block_filters
 	 * @return
 	 */
 	public static boolean isHangingEntity( Entity entity ){
@@ -207,19 +207,21 @@ public class BlockUtils {
 	 */
 	public static int removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
 		int blocks_removed = 0;
-		int x1 = loc.getBlockX();
-		int y1 = loc.getBlockY();
-		int z1 = loc.getBlockZ();
-		World world = loc.getWorld();
-		for(int x = x1-radius; x <= x1+radius; x++){
-			for(int y = y1-radius; y <= y1+radius; y++){
-				for(int z = z1-radius; z <= z1+radius; z++){
-					loc = new Location(world, x, y, z);
-					Block b = loc.getBlock();
-					if(b.getType().equals(Material.AIR)) continue;
-					if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
-						loc.getBlock().setType(Material.AIR);
-						blocks_removed++;
+		if(loc != null && radius > 0 && materials != null && materials.length > 0){
+			int x1 = loc.getBlockX();
+			int y1 = loc.getBlockY();
+			int z1 = loc.getBlockZ();
+			World world = loc.getWorld();
+			for(int x = x1-radius; x <= x1+radius; x++){
+				for(int y = y1-radius; y <= y1+radius; y++){
+					for(int z = z1-radius; z <= z1+radius; z++){
+						loc = new Location(world, x, y, z);
+						Block b = loc.getBlock();
+						if(b.getType().equals(Material.AIR)) continue;
+						if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
+							loc.getBlock().setType(Material.AIR);
+							blocks_removed++;
+						}
 					}
 				}
 			}
@@ -299,5 +301,39 @@ public class BlockUtils {
 			aboveOrBelow.setTypeId( typeid );
 			aboveOrBelow.setData( (byte)8 );
 		}
+	}
+	
+	
+	/**
+	 * Given the lower block of a bed, we translate that to the top
+	 * half, figuring out which direction and data value it gets.
+	 * 
+	 * @param originalBlock
+	 * @param typeid
+	 * @param subid
+	 */
+	public static void properlySetBed( Block originalBlock, int typeid, byte subid ){
+		Block top = null;
+		int new_subid = 0;
+		switch(subid){
+			case 3:
+				top = originalBlock.getRelative(BlockFace.EAST);
+				new_subid = 11;
+				break;
+			case 2:
+				top = originalBlock.getRelative(BlockFace.NORTH);
+				new_subid = 10;
+				break;
+			case 1:
+				top = originalBlock.getRelative(BlockFace.WEST);
+				new_subid = 9;
+				break;
+			case 0:
+				top = originalBlock.getRelative(BlockFace.SOUTH);
+				new_subid = 8;
+				break;
+		}
+		top.setTypeId(typeid);
+		top.setData((byte)new_subid);
 	}
 }

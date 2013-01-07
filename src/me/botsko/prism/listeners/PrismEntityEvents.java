@@ -5,6 +5,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
+import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.utils.DeathUtils;
 
@@ -31,6 +32,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PrismEntityEvents implements Listener {
 
@@ -98,8 +100,26 @@ public class PrismEntityEvents implements Listener {
             	attacker = owner+"'s wolf";
             }
 	        plugin.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
+	        
+	        // Log item drops
+	        if( !event.getDrops().isEmpty() ){
+	        	for(ItemStack i : event.getDrops()){
+	        		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, p.getLocation(), p.getName()) );
+	        	}
+	        }
 		}
 	}
+	
+	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onCreatureSpawn(final CreatureSpawnEvent event){
+////		event.getEntityType();
+////		event.getSpawnReason();
+//	}
 	
 	
 	/**
