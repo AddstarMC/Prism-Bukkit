@@ -27,8 +27,6 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -331,31 +329,41 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPistonExtend(final BlockPistonExtendEvent event){
-//		if(event.getLength() > 0){
-//			List<Block> blocks = event.getBlocks();
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonExtend(final BlockPistonExtendEvent event){
+//
+//		List<Block> blocks = event.getBlocks();
+//		
+//		plugin.debug("DIRECTION: " + event.getDirection().name());
+//		
+//		if(!blocks.isEmpty()){
 //			for( Block block : blocks){
-//				// @todo record block move events
+//				
+//				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
+//				// We should record the from coords, to coords, and block replaced, as well as the block moved.
+//				plugin.debug("MOVING FROM: " + block.getX() + " " + block.getY() + " " + block.getZ() + " to " + block.getRelative(event.getDirection()).getType().name() );
+//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, block, "Environment") );
 //			}
 //		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPistonRetract(final BlockPistonRetractEvent event){
-//		Block block = event.getBlock();
-//		BlockFace face = event.getDirection();
-//		event.getRetractLocation()
-	}
+//	}
+//	
+//	
+//	/**
+//	 * 
+//	 * @param event
+//	 */
+//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//	public void onPistonRetract(final BlockPistonRetractEvent event){
+//		plugin.debug("PISTON retracted");
+////		Block block = event.getBlock();
+////		BlockFace face = event.getDirection();
+////		event.getRetractLocation()
+////		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, event.getBlock(), "Environment") );
+//	}
 	
 	
 	/**

@@ -183,7 +183,6 @@ public class Prism extends JavaPlugin {
 
 		    public void run() {
 		    	java.util.Date date = new java.util.Date();
-		    	prism.debug("Removing expired lookup queries from cache");
 		    	for (Map.Entry<String, QueryResult> query : cachedQueries.entrySet()){
 		    		QueryResult result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
@@ -205,7 +204,6 @@ public class Prism extends JavaPlugin {
 
 		    public void run() {
 		    	java.util.Date date = new java.util.Date();
-		    	prism.debug("Removing expired previews from cache");
 		    	for (Map.Entry<String, PreviewSession> query : playerActivePreviews.entrySet()){
 		    		PreviewSession result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
@@ -239,7 +237,6 @@ public class Prism extends JavaPlugin {
 		    			alertedBlocks.remove(entry.getKey());
 		    		}
 		    	}
-		    	debug("AlertedBlock Size: " + alertedBlocks.size() );
 		    }
 		}, 1200L, 1200L);
 	}
