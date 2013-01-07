@@ -96,7 +96,9 @@ public class Rollback extends Preview {
 		
 		// Rollback blocks
 		if(!results.isEmpty()){
-
+			
+			ArrayList<BlockAction> reattach = new ArrayList<BlockAction>();
+			
 			for(Action a : results){
 				
 				// No sense in trying to rollback
@@ -104,6 +106,7 @@ public class Rollback extends Preview {
 				if(!a.getType().isCanRollback()){
 					continue;
 				}
+					
 				
 				World world = plugin.getServer().getWorld(a.getWorld_name());
 				
@@ -148,6 +151,11 @@ public class Rollback extends Preview {
 						 * block.
 						 */
 						if( BlockUtils.isAcceptableForBlockPlace(block) ){
+							
+							if(BlockUtils.isDetachableBlock(Material.getMaterial(b.getBlock_id()))){
+								reattach.add(b);
+								continue;
+							}
 							
 							Material m = Material.getMaterial(b.getBlock_id());
 							
@@ -222,6 +230,26 @@ public class Rollback extends Preview {
 						}
 					}
 				}
+			}
+			
+			/**
+			 * Lets loop through the block actions with detachable blocks
+			 * after we have put back other blocks so they can reattach.
+			 */
+			for(BlockAction b : reattach){
+				
+				World world = plugin.getServer().getWorld(b.getWorld_name());
+				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
+				Block block = world.getBlockAt(loc);
+				
+				if(!is_preview){
+					block.setTypeId( b.getBlock_id() );
+					block.setData( b.getBlock_subid() );
+				} else {
+					player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+				}
+				
+				rolled_back_count++;
 			}
 			
 			
