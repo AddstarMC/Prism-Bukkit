@@ -25,7 +25,7 @@ public class QueryParameters implements Cloneable {
 	protected String player_name;
 	protected String time_since;
 	protected String entity_filters;
-	protected String block_filters;
+	protected ArrayList<String> block_filters = new ArrayList<String>();
 	protected boolean allow_no_radius = false;
 	protected int limit = 1000000;
 	
@@ -65,7 +65,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the block
 	 */
-	public String getBlock() {
+	public ArrayList<String> getBlockFilters() {
 		return block_filters;
 	}
 
@@ -73,8 +73,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param block the block to set
 	 */
-	public void setBlock(String block) {
-		this.block_filters = block;
+	public void setBlockFilters(ArrayList<String> blocks) {
+		this.block_filters = blocks;
+	}
+	
+	
+	/**
+	 * @param block the block to set
+	 */
+	public void addBlockFilter(String block) {
+		this.block_filters.add(block);
 	}
 	
 	

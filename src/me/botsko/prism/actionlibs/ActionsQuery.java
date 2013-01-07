@@ -277,9 +277,11 @@ public class ActionsQuery {
 			/**
 			 * Block
 			 */
-			String block = parameters.getBlock();
-			if(block != null){
-				query += buildOrQuery("data", block.split(","));
+			ArrayList<String> blockfilters = parameters.getBlockFilters();
+			if(!blockfilters.isEmpty()){
+				String[] blockArr = new String[blockfilters.size()];
+				blockArr = blockfilters.toArray(blockArr);
+				query += buildOrQuery("data", blockArr);
 			}
 			
 			/**

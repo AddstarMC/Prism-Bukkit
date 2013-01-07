@@ -143,7 +143,6 @@ public class PreprocessArgs {
 					
 					if(blocks.length > 0){
 						
-						ArrayList<String> _tmp_vals = new ArrayList<String>();
 						String block_match = "{\"block_id\":%d,\"block_subid\":%d}";
 						
 						for(String b : blocks){
@@ -153,26 +152,23 @@ public class PreprocessArgs {
 								String _tmp_id = b.substring(0,1);
 								String _tmp_subid = b.substring(2);
 								if(!TypeUtils.isNumeric(_tmp_id) || !TypeUtils.isNumeric(_tmp_subid)){
-									_tmp_vals.add( String.format(block_match, _tmp_id, _tmp_subid) );
+									parameters.addBlockFilter( String.format(block_match, _tmp_id, _tmp_subid) );
 								}
 							} else {
 								
 								// It's id without a subid
 								if(TypeUtils.isNumeric(b)){
-									_tmp_vals.add( String.format(block_match, b, 0) );
+									parameters.addBlockFilter( String.format(block_match, b, 0) );
 								} else {
 									
 									// Lookup the item name, get the ids
 									MaterialAliases items = plugin.getItems();
 									int[] ids = items.getItemIdsByAlias( b );
 									if(ids.length == 2){
-										_tmp_vals.add( String.format(block_match, ids[0], ids[1]) );
+										parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
 									}
 								}
 							}
-						}
-						if(_tmp_vals.size() > 0){
-							parameters.setBlock( TypeUtils.join(_tmp_vals, ",") );
 						}
 					}
 				}
