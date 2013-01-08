@@ -8,6 +8,8 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 Introduction and basic walkthrough of features: http://www.youtube.com/watch?v=3b6DQQvBp30
 
+Bug reports, feature requests: https://snowy-evening.com/botsko/prism/ 
+
 ## Features
 
 - **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
