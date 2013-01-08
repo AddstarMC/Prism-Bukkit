@@ -128,7 +128,21 @@ public class PrismInventoryEvents implements Listener {
 			
 			// Only a click in the dispenser can trigger a slot < 9
 			if(event.getRawSlot() <= 8){
-				actionType = ActionType.ITEM_REMOVE;
+				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	item = currentitem;
+			    	actionType = ActionType.ITEM_REMOVE;
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	item = cursoritem;
+			    	actionType = ActionType.ITEM_INSERT;
+			    }
+			} else {
+				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+				if( event.isShiftClick() ){
+					actionType = ActionType.ITEM_INSERT;
+		    		item = currentitem;
+				}
 			}
 		}
 	    
