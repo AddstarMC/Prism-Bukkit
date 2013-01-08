@@ -317,7 +317,11 @@ public class ActionsQuery {
 			 */
 			String time = parameters.getTime();
 			if(time != null){
-				query += buildTimeCondition(time,null);
+				try {
+					query += buildTimeCondition(time,null);
+				} catch(IllegalArgumentException e){
+					// @todo we need to refactor this so we can display an error
+				}
 			}
 			
 			/**
