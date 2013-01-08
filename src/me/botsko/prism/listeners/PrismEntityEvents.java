@@ -106,7 +106,7 @@ public class PrismEntityEvents implements Listener {
 	        // Log item drops
 	        if( !event.getDrops().isEmpty() ){
 	        	for(ItemStack i : event.getDrops()){
-	        		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, p.getLocation(), p.getName()) );
+	        		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, i.getAmount(), p.getLocation(), p.getName()) );
 	        	}
 	        }
 		}

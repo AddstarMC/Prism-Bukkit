@@ -147,8 +147,27 @@ public class PrismInventoryEvents implements Listener {
 		}
 	    
 
+	    // Determine correct quantity. Right-click events change the item
+	    // quantity but don't seem to update the cursor/current items.
+	    int officialQuantity = 0;
+	    if(item != null){
+		    officialQuantity = item.getAmount();
+		    // If the player right-clicked we need to assume the amount
+		    if( event.isRightClick() ){
+		    	// If you're right-clicking to remove an item, it divides by two
+		    	if( actionType.equals(ActionType.ITEM_REMOVE) ){
+		    		officialQuantity = (officialQuantity - (int)Math.floor( (item.getAmount() / 2) ));
+		    	}
+		    	// If you're right-clicking to insert, it's only one
+		    	else if( actionType.equals(ActionType.ITEM_INSERT) ){
+		    		officialQuantity = 1;
+		    	}
+		    }
+	    }
+	    
+	    // Record it!
 	    if(actionType != null && containerLoc != null && item != null){
-		    plugin.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, containerLoc, player.getName()) );
+		    plugin.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, containerLoc, player.getName()) );
 	    }
 	}
 }

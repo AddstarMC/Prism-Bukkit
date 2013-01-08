@@ -25,13 +25,13 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, Location loc, String player_name ){
+	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, Location loc, String player_name ){
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(item != null){
 			this.item = item;
-			this.quantity = item.getAmount();
+			this.quantity = quantity;
 			this.world_name = loc.getWorld().getName();
 			this.x = loc.getX();
 			this.y = loc.getY();
