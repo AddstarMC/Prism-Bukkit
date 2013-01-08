@@ -72,6 +72,7 @@ public class EntityUtils {
 	 */
 	public static boolean playerMayPassThrough( Material m ){
 		switch(m){
+			case AIR:
 			case CARROT:
 			case DEAD_BUSH:
 			case DETECTOR_RAIL:
