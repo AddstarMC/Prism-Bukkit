@@ -15,7 +15,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -53,31 +52,54 @@ public class PrismInventoryEvents implements Listener {
 		Player player = (Player) event.getWhoClicked();
 	    
 
-	    // Ignore player slow types
-		SlotType slotType = event.getSlotType();
-		if ( !slotType.equals(SlotType.CONTAINER) && !slotType.equals(SlotType.FUEL) && !slotType.equals(SlotType.RESULT) ){
-			return;
-		}
-
 		Location containerLoc = null;
 	    InventoryHolder ih = inv.getHolder();
-	    boolean should_catch = false;
+	    ItemStack currentitem = event.getCurrentItem();
+	    ItemStack cursoritem = event.getCursor();
+	    ActionType actionType = null;
+	    ItemStack item = null;
 	    
+
 	    // Chest
+	    // If the slot type is <= 35 and rawslot >= 36, it means we're shift+clicking an item into
+	    // the chest.
 	    if(ih instanceof Chest) {
-	    	if(event.getSlot() == event.getRawSlot()){
-			    Chest eventChest = (Chest) ih;
-			    containerLoc = eventChest.getLocation();
-			    should_catch = true;
+	    	Chest eventChest = (Chest) ih;
+		    containerLoc = eventChest.getLocation();
+	    	if( event.getSlot() == event.getRawSlot() ){
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	item = currentitem;
+			    	actionType = ActionType.ITEM_REMOVE;
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	item = cursoritem;
+			    	actionType = ActionType.ITEM_INSERT;
+			    }
+	    	}
+	    	// this triggers whether it's a shift click or not
+	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
+	    		actionType = ActionType.ITEM_INSERT;
+	    		item = currentitem;
 	    	}
 	    }
 	    
 	    // Double chest
 	    else if(ih instanceof DoubleChest) {
-	    	if(event.getSlot() == event.getRawSlot()){
-		    	DoubleChest eventChest = (DoubleChest) ih;
-		    	containerLoc = eventChest.getLocation();
-		    	should_catch = true;
+	    	DoubleChest eventChest = (DoubleChest) ih;
+	    	containerLoc = eventChest.getLocation();
+	    	if( event.getSlot() == event.getRawSlot() ){
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	item = currentitem;
+			    	actionType = ActionType.ITEM_REMOVE;
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	item = cursoritem;
+			    	actionType = ActionType.ITEM_INSERT;
+			    }
+	    	}
+	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
+	    		actionType = ActionType.ITEM_INSERT;
+	    		item = currentitem;
 	    	}
 	    }
 	    
@@ -86,7 +108,14 @@ public class PrismInventoryEvents implements Listener {
 	    	if(event.getSlot() == event.getRawSlot()){
 		    	Furnace furnace = (Furnace) ih;
 		    	containerLoc = furnace.getLocation();
-		    	should_catch = true;
+		    	if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	item = currentitem;
+			    	actionType = ActionType.ITEM_REMOVE;
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	item = cursoritem;
+			    	actionType = ActionType.ITEM_INSERT;
+			    }
 	    	}
 	    }
 	    
@@ -99,21 +128,13 @@ public class PrismInventoryEvents implements Listener {
 			
 			// Only a click in the dispenser can trigger a slot < 9
 			if(event.getRawSlot() <= 8){
-				should_catch = true;
+				actionType = ActionType.ITEM_REMOVE;
 			}
 		}
 	    
-	    // We don't need to record this since enderchests are for the player only.
-	    
-	    if(should_catch && containerLoc != null){
-	    	ItemStack currentitem = event.getCurrentItem();
-		    if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, currentitem, containerLoc, player.getName()) );
-		    }
-		    ItemStack cursoritem = event.getCursor();
-		    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, cursoritem, containerLoc, player.getName()) );
-		    }
+
+	    if(actionType != null && containerLoc != null && item != null){
+		    plugin.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, containerLoc, player.getName()) );
 	    }
 	}
 }
