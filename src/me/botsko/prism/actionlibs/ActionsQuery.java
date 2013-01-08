@@ -193,12 +193,12 @@ public class ActionsQuery {
 				"prism_actions.id, " +
 				"prism_actions.action_time, " +
 				"prism_actions.action_type, " +
-				"player, " +
-				"world, " +
+				"prism_actions.player, " +
+				"prism_actions.world, " +
 				"prism_actions.x, " +
 				"prism_actions.y, " +
 				"prism_actions.z, " +
-				"data, " +
+				"prism_actions.data, " +
 				"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, " +
 				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time " +
 				"FROM prism_actions";
@@ -283,7 +283,7 @@ public class ActionsQuery {
 			 */
 			String player = parameters.getPlayer();
 			if(player != null){
-				query += buildOrQuery("player", player.split(","));
+				query += buildOrQuery("prism_actions.player", player.split(","));
 			}
 			
 			/**
@@ -301,7 +301,7 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildOrQuery("data", blockArr);
+				query += buildOrQuery("prism_actions.data", blockArr);
 			}
 			
 			/**
@@ -309,7 +309,7 @@ public class ActionsQuery {
 			 */
 			String entity = parameters.getEntity();
 			if(entity != null){
-				query += buildOrQuery("data", entity.split(","));
+				query += buildOrQuery("prism_actions.data", entity.split(","));
 			}
 			
 			/**
@@ -470,9 +470,9 @@ public class ActionsQuery {
 		
 		if(dateFrom != null){
 			if(equation == null){
-				where += " AND action_time >= '" + dateFrom + "'";
+				where += " AND prism_actions.action_time >= '" + dateFrom + "'";
 			} else {
-				where += " AND action_time "+equation+" '" + dateFrom + "'";
+				where += " AND prism_actions.action_time "+equation+" '" + dateFrom + "'";
 			}
 		}
 		
