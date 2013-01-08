@@ -35,7 +35,7 @@ public enum ActionType {
 	LAVA_BUCKET(false, true, false, null, "poured"),
 	LAVA_FLOW(false, true, true, "block", "broke"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
-	LEAF_DECAY(false, false, false, "block", "decayed"),
+	LEAF_DECAY(false, true, true, "block", "decayed"),
 	LIGHTER(false, false, false, null, "set a fire"),
 	LIGHTNING(false, false, false, null, "ignited"),
 	MUSHROOM_GROW(true, true, true, "grow", "grew"),
