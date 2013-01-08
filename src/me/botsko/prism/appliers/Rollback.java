@@ -324,22 +324,22 @@ public class Rollback extends Preview {
 				}
 				responses.add( plugin.playerHeaderMsg( msg ) );
 				
-				for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
-					int add = 0;
-					if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
-						Location l = player.getLocation();
-						plugin.debug("block coords: " + l.getBlockX() + " " +  l.getBlockY() + " " +  l.getBlockZ());
-						plugin.debug("block type: " + l.getBlock().getType().name());
-						while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
-							add++;
-							l.setY(l.getY() + 1);
-						}
-						if(add > 0){
-							player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
-							player.teleport(l);
-						}
-					}
-				}
+//				for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
+//					int add = 0;
+//					if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
+//						Location l = player.getLocation();
+//						plugin.debug("block coords: " + l.getBlockX() + " " +  l.getBlockY() + " " +  l.getBlockZ());
+//						plugin.debug("block type: " + l.getBlock().getType().name());
+//						while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
+//							add++;
+//							l.setY(l.getY() + 1);
+//						}
+//						if(add > 0){
+//							player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
+//							player.teleport(l);
+//						}
+//					}
+//				}
 				
 			} else {
 			
