@@ -174,6 +174,8 @@ Use `/prism restore (params)`.
 
 Use `/prism ex [radius]` to extinguish all fires in the radius, or `/prism drain [radius]` to remove all liquid (water and lava) in the radius.
 
+You may also drain specific subtypes of liquid, so `/prism drain water` or `lava`, and if providing a radius, `/prism drain lava 10`.
+
 When performing a rollback of block-burn actions, Prism will automatically extinguish the fires as well. 
 
 

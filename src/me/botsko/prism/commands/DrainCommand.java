@@ -29,27 +29,70 @@ public class DrainCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
+		String drain_type = "";
 		int radius = plugin.getConfig().getInt("default-radius");
-		if(call.getArgs().length == 2){
+		if(call.getArgs().length == 3){
+			if( call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava") ){
+				drain_type = call.getArg(1);
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError("Invalid drain type. Must be lava, water, or left out.") );
+				return;
+			}
+			// Validate radius
+			radius = validateRadius( call, call.getArg(2) );
+		}
+		else if(call.getArgs().length == 2){
 			if(TypeUtils.isNumeric(call.getArg(1))){
-				int _tmp_radius = Integer.parseInt(call.getArg(1));
-				if(_tmp_radius > 0){
-					radius = _tmp_radius;
+				radius = validateRadius( call, call.getArg(1) );
+			} else {
+				if( call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava") ){
+					drain_type = call.getArg(1);
 				} else {
-					call.getPlayer().sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+					call.getPlayer().sendMessage( plugin.playerError("Invalid drain type. Must be lava, water, or left out.") );
 					return;
 				}
-			} else {
-				call.getPlayer().sendMessage( plugin.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
-				return;
 			}
 		}
 		
-		int changed = BlockUtils.drain(call.getPlayer().getLocation(), radius);
+		int changed = 0;
+		if(drain_type.isEmpty()){
+			changed = BlockUtils.drain(call.getPlayer().getLocation(), radius);
+		}
+		else if(drain_type.equals("water")){
+			changed = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
+		}
+		else if(drain_type.equals("lava")){
+			changed = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
+		}
+		
 		if(changed > 0){
-			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained nearby liquids."));
+			// @todo remove the extra space in msg
+			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained nearby "+drain_type+" liquids."));
 		} else {
 			call.getPlayer().sendMessage(plugin.playerError("Nothing found to drain with that radius."));
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param call
+	 * @return
+	 */
+	protected int validateRadius( CallInfo call, String radius_arg ){
+		int radius = plugin.getConfig().getInt("default-radius");
+		if(TypeUtils.isNumeric(radius_arg)){
+			int _tmp_radius = Integer.parseInt(radius_arg);
+			if(_tmp_radius > 0){
+				radius = _tmp_radius;
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+				return 0;
+			}
+		} else {
+			call.getPlayer().sendMessage( plugin.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
+			return 0;
+		}
+		return radius;
 	}
 }
