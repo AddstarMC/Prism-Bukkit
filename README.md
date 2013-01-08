@@ -6,6 +6,8 @@ Prism is a new generation of grief management (rollbacks, restores, etc) plugin 
 
 Prism not only offers the standard features you expect, but a **lot** more.
 
+Introduction and basic walkthrough of features: http://www.youtube.com/watch?v=3b6DQQvBp30
+
 ## Features
 
 - **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
