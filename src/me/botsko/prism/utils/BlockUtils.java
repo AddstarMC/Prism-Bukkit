@@ -219,6 +219,7 @@ public class BlockUtils {
 			case SIGN:
 			case SIGN_POST:
 			case SKULL:
+			case SNOW:
 			case SUGAR_CANE_BLOCK:
 			case STONE_PLATE:
 			case TORCH:
