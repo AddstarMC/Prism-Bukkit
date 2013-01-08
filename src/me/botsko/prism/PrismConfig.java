@@ -63,7 +63,7 @@ public class PrismConfig {
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
 //		config.addDefault("prism.appliers.remove-liquid-on-flow-rollback", true);
 		
-		config.addDefault("prism.tracking.block-break", false);
+		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
 		config.addDefault("prism.tracking.block-fade", true);
 		config.addDefault("prism.tracking.block-fall", true);
