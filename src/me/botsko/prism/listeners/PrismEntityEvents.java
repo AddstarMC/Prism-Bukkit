@@ -25,6 +25,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
@@ -93,8 +95,17 @@ public class PrismEntityEvents implements Listener {
 				}
 			} else {
 				
+				String killer = "unknown";
+				EntityDamageEvent damage = entity.getLastDamageCause();
+				if(damage != null){
+					DamageCause cause = damage.getCause();
+					if(cause != null){
+						killer = cause.name().toLowerCase();
+					}
+				}
+				
 				// Record the death as natural
-				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, entity.getLastDamageCause().getCause().name().toLowerCase()) );
+				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, killer) );
 				
 			}
 		} else {
