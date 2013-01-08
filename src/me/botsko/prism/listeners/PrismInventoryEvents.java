@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 public class PrismInventoryEvents implements Listener {
 
@@ -105,11 +106,13 @@ public class PrismInventoryEvents implements Listener {
 	    // We don't need to record this since enderchests are for the player only.
 	    
 	    if(should_catch && containerLoc != null){
-		    if(!event.getCurrentItem().getType().equals(Material.AIR)){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, event.getCurrentItem(), containerLoc, player.getName()) );
+	    	ItemStack currentitem = event.getCurrentItem();
+		    if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, currentitem, containerLoc, player.getName()) );
 		    }
-		    if(!event.getCursor().getType().equals(Material.AIR)){
-		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, event.getCursor(), containerLoc, player.getName()) );
+		    ItemStack cursoritem = event.getCursor();
+		    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+		    	plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_INSERT, cursoritem, containerLoc, player.getName()) );
 		    }
 	    }
 	}
