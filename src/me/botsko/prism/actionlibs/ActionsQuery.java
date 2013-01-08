@@ -314,7 +314,16 @@ public class ActionsQuery {
 			 */
 			String entity = parameters.getEntity();
 			if(entity != null){
-				query += buildOrQuery("prism_actions.data", entity.split(","));
+				String[] entities = entity.split(",");
+				if(entities.length > 0){
+					String[] entity_matches = new String[entities.length];
+					int c = 0;
+					for(String e : entities){
+						entity_matches[c] = "entity_name\":\""+e;
+						c++;
+					}
+					query += buildOrLikeQuery("prism_actions.data", entity_matches);
+				}
 			}
 			
 			/**
@@ -375,6 +384,30 @@ public class ActionsQuery {
 					where += " OR ";
 				}
 				where += fieldname + " = '"+val+"'";
+				c++;
+			}
+			where += ")";
+		}
+		return where;
+	}
+	
+	
+	/**
+	 * 
+	 * @param fieldname
+	 * @param arg_values
+	 * @return
+	 */
+	protected String buildOrLikeQuery( String fieldname, String[] arg_values ){
+		String where = "";
+		if(arg_values.length > 0){
+			where += " AND (";
+			int c = 1;
+			for(String val : arg_values){
+				if(c > 1 && c <= arg_values.length){
+					where += " OR ";
+				}
+				where += fieldname + " LIKE '%"+val+"%'";
 				c++;
 			}
 			where += ")";
