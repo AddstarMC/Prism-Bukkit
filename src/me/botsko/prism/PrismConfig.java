@@ -37,7 +37,7 @@ public class PrismConfig {
 		
 		// set defaults
 		config.addDefault("prism.debug", false);
-		config.addDefault("prism.language", "en-us");
+//		config.addDefault("prism.language", "en-us");
 		
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");
@@ -61,7 +61,7 @@ public class PrismConfig {
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
-		config.addDefault("prism.appliers.remove-liquid-on-flow-rollback", true);
+//		config.addDefault("prism.appliers.remove-liquid-on-flow-rollback", true);
 		
 		config.addDefault("prism.tracking.block-break", false);
 		config.addDefault("prism.tracking.block-burn", true);
@@ -102,7 +102,6 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", true);
-		
 		
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);

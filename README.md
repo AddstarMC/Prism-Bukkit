@@ -4,6 +4,8 @@
 
 Prism is a new generation of grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's designed to be extremely fast and incredibly powerful - designed by a group with a lot of experience in both programming and owning/managing a very popular/high-traffic server.
 
+Prism not only offers the standard features you expect, but a **lot** more.
+
 ## Features
 
 - **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
@@ -15,6 +17,7 @@ Prism is a new generation of grief management (rollbacks, restores, etc) plugin 
 - **Amazingly easy-to-use commands**
 - **Safe defaults so you don't accidentally roll back too much with a typo**
 - **Extremely clean, personal, and beautiful chat messages, that NEVER spam you.**
+- **Additional features like staff alerts for players finding ores!**
 - **Configurable for your needs. Change the defaults, ignore players/worlds, ignore creative, disable tracking events you don't care about!**
 - Tracks essentially ALL block changes.
 - Includes related changes like blocks falling, signs/torches popping off
@@ -44,6 +47,11 @@ Prism is a new generation of grief management (rollbacks, restores, etc) plugin 
 Place the Prism.jar file in your bukkit `/plugins` directory. Start your server and an initial configuration file will be created.
 
 At the very least, you must set the MySQL connection information for your database before using Prism.
+
+
+## Configuration
+
+(todo)
 	
 
 ## How to Use
@@ -185,7 +193,7 @@ Server operators can use `/prism delete [timeframe]` to manually purge records f
 - `prism ex [radius]`
 - `prism drain [radius]`
 - `prism tp [id]]`
-- `prism wand (rollback|i|p)`
+- `prism wand (rollback|i|p|off)`
 - `prism delete`
 - `prism ?` - Help.
 - `prism params` - List parameters in-game.
