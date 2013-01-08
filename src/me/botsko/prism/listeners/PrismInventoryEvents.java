@@ -6,6 +6,7 @@ import me.botsko.prism.actions.ItemStackAction;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
@@ -171,7 +172,24 @@ public class PrismInventoryEvents implements Listener {
 		    		recordInvAction( currentitem, ActionType.ITEM_INSERT);
 				}
 			}
-		} 
+		}
+	    
+	    // Brewing stand
+		else if(ih instanceof BrewingStand) {
+			BrewingStand brewer = (BrewingStand) ih;
+			containerLoc = brewer.getLocation();
+			if( event.getSlot() == event.getRawSlot() ){
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
+	    		}
+	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	recordInvAction( cursoritem, ActionType.ITEM_INSERT);
+			    }
+	    	}
+		}
 	}
 	
 	
