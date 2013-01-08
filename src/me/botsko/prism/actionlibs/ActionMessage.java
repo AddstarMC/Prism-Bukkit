@@ -46,6 +46,15 @@ public class ActionMessage {
 		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		if(a.getType().getHandler() != null){
 			msg += " " + highlight + a.getNiceName();
+		} else {
+			// We should really improve this, but this saves me from having to make
+			// a custom handler.
+			if(a.getType().equals(ActionType.LAVA_BUCKET)){
+				msg += " " + highlight + "lava";
+			} 
+			else if (a.getType().equals(ActionType.WATER_BUCKET)){
+				msg += " " + highlight + "water";
+			}
 		}
 		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
 		
