@@ -2,6 +2,8 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
+import me.botsko.prism.utils.TypeUtils;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -129,13 +131,7 @@ public class SignAction extends GenericAction {
 	public String getNiceName(){
 		String name = "sign (";
 		if(actionData.lines != null && actionData.lines.length > 0){
-			int c = 1;
-			for(String line : actionData.lines){
-				if(!line.isEmpty()){
-					name += line + (c < actionData.lines.length ? ", " : "");
-				}
-				c++;
-			}
+			name += TypeUtils.implode(actionData.lines, ", ");
 		} else {
 			name += "no text";
 		}
