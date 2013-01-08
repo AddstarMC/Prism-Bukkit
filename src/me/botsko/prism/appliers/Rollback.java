@@ -76,13 +76,13 @@ public class Rollback extends Preview {
 			}
 		}
 		
-		// Remove any liquid at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-liquid-on-flow-rollback") && ( parameters.getActionTypes().contains(ActionType.WATER_FLOW) || parameters.getActionTypes().contains(ActionType.LAVA_FLOW)) ){
-			int fires_ext = BlockUtils.drain(player.getLocation(),parameters.getRadius());
-			if(fires_ext > 0){
-				responses.add( plugin.playerHeaderMsg("Draining liquid first!" + ChatColor.GRAY + " Like a boss.") );
-			}
-		}
+//		// Remove any liquid at this location
+//		if(plugin.getConfig().getBoolean("prism.appliers.remove-liquid-on-flow-rollback") && ( parameters.getActionTypes().contains(ActionType.WATER_FLOW) || parameters.getActionTypes().contains(ActionType.LAVA_FLOW)) ){
+//			int fires_ext = BlockUtils.drain(player.getLocation(),parameters.getRadius());
+//			if(fires_ext > 0){
+//				responses.add( plugin.playerHeaderMsg("Draining liquid first!" + ChatColor.GRAY + " Like a boss.") );
+//			}
+//		}
 		
 		// can't really work here. doesn't return a proper result, etc
 		// Remove any lava blocks when doing a lava bucket rollback
