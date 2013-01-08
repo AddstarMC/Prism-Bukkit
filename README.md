@@ -260,6 +260,7 @@ Rollback a creeper's art:
 ## Known Issues
 
 - Hanging items can't be rolled back because of a bukkit bug with their facing directions. https://bukkit.atlassian.net/browse/BUKKIT-3371
+- Item frame rotation can't be properly tracked because Bukkit doesn't fire any interact events for them. https://bukkit.atlassian.net/browse/BUKKIT-3402
 - Free-standing signs may rollback facing an exact direction when it was placed with an orientation between two directions.
 - Blocks that form from lava/water mixing are extremely difficult to track properly because bukkit has no proper events for them. We've begun work a custom tracking system but it's difficult work.
 
