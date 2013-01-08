@@ -281,6 +281,8 @@ public class PrismEntityEvents implements Listener {
 			be.logItemRemoveFromDestroyedContainer(name, block);
 			// Record blocks explode
 			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
+			// look for relationships
+			be.logBlockRelationshipsForBlock( name, block );
 		}
 	}
 }
