@@ -5,6 +5,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.Location;
@@ -147,6 +148,12 @@ public class PrismPlayerEvents implements Listener {
 						break;
 					case LOG:
 						recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+					case CROPS:
+					case GRASS:
+					case MELON_STEM:
+					case PUMPKIN_STEM:
+					case SAPLING:
+						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 					default:
 						break;
 				}
@@ -166,7 +173,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordCocoaPlantEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
-		if(block.getType().equals(Material.LOG) && inhand.getTypeId() == 351 && inhand.getDurability() >= 3 && inhand.getDurability() == 3){
+		if(block.getType().equals(Material.LOG) && block.getData() >= 3 && inhand.getTypeId() == 351 && inhand.getDurability() == 3){
 			Location newLoc = block.getRelative(clickedFace).getLocation();
 			Block actualBlock = block.getWorld().getBlockAt(newLoc);
 			// This is a lame way to do this
@@ -178,6 +185,20 @@ public class PrismPlayerEvents implements Listener {
 			action.setBlockId( 127 );
 			action.setBlockSubId( (byte)1 );
 			plugin.actionsRecorder.addToQueue( action );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param inhand
+	 * @param clickedFace
+	 * @param player
+	 */
+	protected void recordBonemealEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		if( inhand.getTypeId() == 351 && inhand.getDurability() == 15){
+			plugin.actionsRecorder.addToQueue( new UseAction(ActionType.BONEMEAL_USE, "bonemeal", block, player) );
 		}
 	}
 }

@@ -25,6 +25,7 @@ import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.utils.TypeUtils;
 
 public class ActionsQuery {
@@ -105,6 +106,10 @@ public class ActionsQuery {
 	    			else if( actionType.requiresHandler("signchange") ){
 	    				SignAction sa = new SignAction(null, null, null, null);
 	    				baseAction = sa;
+	    			}
+	    			else if( actionType.requiresHandler("use") ){
+	    				UseAction use = new UseAction(null, null, null, null);
+	    				baseAction = use;
 	    			} else {
 	    				plugin.log("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}
