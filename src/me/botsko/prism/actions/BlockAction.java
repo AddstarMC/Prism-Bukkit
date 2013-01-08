@@ -93,9 +93,29 @@ public class BlockAction extends GenericAction {
 	
 	/**
 	 * 
+	 * @param id
+	 */
+	public void setBlockId( int id ){
+		actionData.block_id = id;
+		setDataFromObject();
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public byte getBlock_subid(){
 		return actionData.block_subid;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setBlockSubId( byte id ){
+		actionData.block_subid = id;
+		setDataFromObject();
 	}
 	
 	

@@ -7,6 +7,7 @@ import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.wands.Wand;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,6 +21,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class PrismPlayerEvents implements Listener {
 	
@@ -143,6 +145,8 @@ public class PrismPlayerEvents implements Listener {
 					case WOOD_BUTTON:
 						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
 						break;
+					case LOG:
+						recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 					default:
 						break;
 				}
@@ -151,6 +155,29 @@ public class PrismPlayerEvents implements Listener {
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
 				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param inhand
+	 * @param player
+	 */
+	protected void recordCocoaPlantEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		if(block.getType().equals(Material.LOG) && inhand.getTypeId() == 351 && inhand.getDurability() >= 3 && inhand.getDurability() == 3){
+			Location newLoc = block.getRelative(clickedFace).getLocation();
+			Block actualBlock = block.getWorld().getBlockAt(newLoc);
+			// This is a lame way to do this
+			BlockAction action = new BlockAction(ActionType.BLOCK_PLACE, null, player);
+			action.setX( actualBlock.getX() );
+			action.setY( actualBlock.getY() );
+			action.setZ( actualBlock.getZ() );
+			action.setWorld_name(newLoc.getWorld().getName());
+			action.setBlockId( 127 );
+			action.setBlockSubId( (byte)1 );
+			plugin.actionsRecorder.addToQueue( action );
 		}
 	}
 }
