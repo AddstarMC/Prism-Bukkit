@@ -26,6 +26,36 @@ public class PrismInventoryEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+	/**
+	 * 
+	 */
+	private InventoryClickEvent event;
+	
+	/**
+	 * 
+	 */
+	private Player player;
+	
+	/**
+	 * 
+	 */
+	private Location containerLoc;
+	
+	/**
+	 * 
+	 */
+	private InventoryHolder ih;
+	
+	/**
+	 * 
+	 */
+	private ItemStack currentitem;
+	
+	/**
+	 * 
+	 */
+	private ItemStack cursoritem;
+	
 	
 	/**
 	 * 
@@ -48,16 +78,13 @@ public class PrismInventoryEvents implements Listener {
 			return;
 		}
 		
+		// Store some info
 		Inventory inv = event.getInventory();
-		Player player = (Player) event.getWhoClicked();
-	    
-
-		Location containerLoc = null;
-	    InventoryHolder ih = inv.getHolder();
-	    ItemStack currentitem = event.getCurrentItem();
-	    ItemStack cursoritem = event.getCursor();
-	    ActionType actionType = null;
-	    ItemStack item = null;
+		player = (Player) event.getWhoClicked();
+		this.event = event;
+	    ih = inv.getHolder();
+	    currentitem = event.getCurrentItem();
+	    cursoritem = event.getCursor();
 	    
 
 	    // Chest
@@ -67,19 +94,23 @@ public class PrismInventoryEvents implements Listener {
 	    	Chest eventChest = (Chest) ih;
 		    containerLoc = eventChest.getLocation();
 	    	if( event.getSlot() == event.getRawSlot() ){
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	item = currentitem;
-			    	actionType = ActionType.ITEM_REMOVE;
+	    		
+	    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
+	    		// and remove for the current.
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
+	    			recordInvAction( cursoritem, ActionType.ITEM_INSERT);
+	    		}
+	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	recordInvAction( currentitem, ActionType.ITEM_REMOVE);
 			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	item = cursoritem;
-			    	actionType = ActionType.ITEM_INSERT;
+	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	recordInvAction( cursoritem, ActionType.ITEM_INSERT);
 			    }
 	    	}
 	    	// this triggers whether it's a shift click or not
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		actionType = ActionType.ITEM_INSERT;
-	    		item = currentitem;
+	    		recordInvAction( currentitem, ActionType.ITEM_INSERT);
 	    	}
 	    }
 	    
@@ -88,18 +119,19 @@ public class PrismInventoryEvents implements Listener {
 	    	DoubleChest eventChest = (DoubleChest) ih;
 	    	containerLoc = eventChest.getLocation();
 	    	if( event.getSlot() == event.getRawSlot() ){
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	item = currentitem;
-			    	actionType = ActionType.ITEM_REMOVE;
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
+	    			recordInvAction( cursoritem, ActionType.ITEM_INSERT);
+	    		}
+	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
 			    }
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	item = cursoritem;
-			    	actionType = ActionType.ITEM_INSERT;
+			    	recordInvAction( cursoritem, ActionType.ITEM_INSERT);
 			    }
 	    	}
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		actionType = ActionType.ITEM_INSERT;
-	    		item = currentitem;
+	    		recordInvAction( currentitem, ActionType.ITEM_INSERT);
 	    	}
 	    }
 	    
@@ -109,12 +141,10 @@ public class PrismInventoryEvents implements Listener {
 		    	Furnace furnace = (Furnace) ih;
 		    	containerLoc = furnace.getLocation();
 		    	if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	item = currentitem;
-			    	actionType = ActionType.ITEM_REMOVE;
+		    		recordInvAction( currentitem, ActionType.ITEM_REMOVE);
 			    }
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	item = cursoritem;
-			    	actionType = ActionType.ITEM_INSERT;
+			    	recordInvAction( cursoritem, ActionType.ITEM_INSERT);
 			    }
 	    	}
 	    }
@@ -129,25 +159,32 @@ public class PrismInventoryEvents implements Listener {
 			// Only a click in the dispenser can trigger a slot < 9
 			if(event.getRawSlot() <= 8){
 				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	item = currentitem;
-			    	actionType = ActionType.ITEM_REMOVE;
+					recordInvAction( currentitem, ActionType.ITEM_REMOVE);
 			    }
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	item = cursoritem;
-			    	actionType = ActionType.ITEM_INSERT;
+			    	recordInvAction( cursoritem, ActionType.ITEM_INSERT);
 			    }
 			} else {
 				// Otherwise the player has to be clicking in their inventory. We'd record the insert
 				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
 				if( event.isShiftClick() ){
-					actionType = ActionType.ITEM_INSERT;
-		    		item = currentitem;
+		    		recordInvAction( currentitem, ActionType.ITEM_INSERT);
 				}
 			}
-		}
-	    
-
-	    // Determine correct quantity. Right-click events change the item
+		} 
+	}
+	
+	
+	/**
+	 * 
+	 * @param item
+	 * @param actionType
+	 * @param containerLoc
+	 * @param event
+	 */
+	protected void recordInvAction( ItemStack item, ActionType actionType ){
+		
+		// Determine correct quantity. Right-click events change the item
 	    // quantity but don't seem to update the cursor/current items.
 	    int officialQuantity = 0;
 	    if(item != null){
