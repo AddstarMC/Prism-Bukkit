@@ -3,6 +3,7 @@ package me.botsko.prism.utils;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.ExperienceOrb;
@@ -46,7 +47,9 @@ public class EntityUtils {
 		return removed;
 	}
 
-
+	/**
+	 *
+	 */
 	public static boolean inCube(Location loc1, int radius, Location loc2) {
 		return (
 				loc1.getBlockX() + radius > loc2.getBlockX()
@@ -56,5 +59,58 @@ public class EntityUtils {
 				&& loc1.getBlockZ() + radius > loc2.getBlockZ()
 				&& loc1.getBlockZ() - radius < loc2.getBlockZ()
 				);
+	}
+	
+	
+	/**
+	 * Determine whether or not a block is going to detach
+	 * from the side of a block.
+	 * 
+	 * Seems like there's got to be another way to do this...
+	 * @param m
+	 * @return
+	 */
+	public static boolean playerMayPassThrough( Material m ){
+		switch(m){
+			case CARROT:
+			case DEAD_BUSH:
+			case DETECTOR_RAIL:
+			case POTATO:
+			case CROPS:
+			case DIODE:
+			case DIODE_BLOCK_OFF:
+			case DIODE_BLOCK_ON:
+			case FLOWER_POT:
+			case LEVER:
+			case LONG_GRASS:
+			case MELON_STEM:
+			case NETHER_WARTS:
+			case POWERED_RAIL:
+			case PUMPKIN_STEM:
+			case RAILS:
+			case RED_MUSHROOM:
+			case RED_ROSE:
+			case REDSTONE:
+			case REDSTONE_TORCH_OFF:
+			case REDSTONE_TORCH_ON:
+			case REDSTONE_WIRE:
+			case SAPLING:
+			case SIGN:
+			case SIGN_POST:
+			case SKULL:
+			case SNOW:
+			case SUGAR_CANE_BLOCK:
+			case STONE_PLATE:
+			case TORCH:
+			case TRIPWIRE:
+			case WATER_LILY:
+			case WHEAT:
+			case WOOD_PLATE:
+			case WOODEN_DOOR:
+			case YELLOW_FLOWER:
+				return true;
+			default:
+				return false;
+		}
 	}
 }
