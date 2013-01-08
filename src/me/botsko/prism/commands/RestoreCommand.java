@@ -57,7 +57,7 @@ public class RestoreCommand implements SubHandler {
 			}
 			
 		} else {
-			// @todo no results
+			call.getPlayer().sendMessage( plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
 		}
 	}
 }

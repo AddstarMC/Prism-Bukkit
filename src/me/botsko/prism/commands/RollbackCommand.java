@@ -54,7 +54,7 @@ public class RollbackCommand implements SubHandler {
 				}
 			}
 		} else {
-			// @todo no results
+			call.getPlayer().sendMessage( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
 	}
 }
