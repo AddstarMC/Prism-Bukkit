@@ -2,8 +2,10 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 
+import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Sheep;
 
 public class EntityAction extends GenericAction {
 
@@ -11,7 +13,7 @@ public class EntityAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected Entity entity;
+	protected EntityActionData actionData;
 
 
 	/**
@@ -21,15 +23,25 @@ public class EntityAction extends GenericAction {
 	 * @param player
 	 */
 	public EntityAction( ActionType action_type, Entity entity, String player ){
+		
+		// Build an object for the specific details of this action
+		actionData = new EntityActionData();
+				
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(entity != null){
-			this.entity = entity;
+			this.actionData.entity_name = entity.getType().getName().toLowerCase();
 			this.world_name = entity.getWorld().getName();
 			this.x = entity.getLocation().getX();
 			this.y = entity.getLocation().getY();
 			this.z = entity.getLocation().getZ();
+			
+			// Get sheep color
+			if( entity.getType().equals(EntityType.SHEEP)){
+				Sheep sheep = ((Sheep) entity);
+				this.actionData.color = sheep.getColor().name().toLowerCase();
+			}
 		}
 		if(player != null){
 			this.player_name = player;
@@ -38,9 +50,10 @@ public class EntityAction extends GenericAction {
 			java.util.Date date= new java.util.Date();
 			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
+		
 		// Save entity data from current entity
-		setDataFromEntity();
-		getEntityTypeFromData();
+		setDataFromObject();
+		setObjectFromData();
 	}
 	
 	
@@ -49,31 +62,43 @@ public class EntityAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		getEntityTypeFromData();
+		setObjectFromData();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setDataFromEntity(){
-		if(data == null && entity != null){
-			data = entity.getType().getName();
-		}
+	protected void setDataFromObject(){
+		data = gson.toJson(actionData);
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public EntityType getEntityTypeFromData(){
-		if(entity == null && data != null){
-			EntityType mob = EntityType.fromName(data);
-			if(mob != null){
-				return mob;
-			}
+	protected void setObjectFromData(){
+		if(data != null){
+			actionData = gson.fromJson(data, EntityActionData.class);
 		}
-		return null;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public EntityType getEntityType(){
+		return EntityType.valueOf(actionData.entity_name.toUpperCase());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public DyeColor getColor(){
+		return DyeColor.valueOf(actionData.color.toUpperCase());
 	}
 	
 	
@@ -82,7 +107,11 @@ public class EntityAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
-		String name = getData().toLowerCase();
+		String name = "";
+		if(!actionData.color.isEmpty()){
+			name += actionData.color + " ";
+		}
+		name += actionData.entity_name;
 		return name;
 	}
 }

@@ -10,7 +10,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
@@ -197,14 +200,20 @@ public class Rollback extends Preview {
 					
 					EntityAction b = (EntityAction) a;
 					
-					if(!EntityUtils.mayEverSpawn(b.getEntityTypeFromData())){
+					if(!EntityUtils.mayEverSpawn(b.getEntityType())){
 						skipped_block_count++;
 						continue;
 					}
 					
-					world.spawnEntity(loc, b.getEntityTypeFromData());
+					Entity entity = world.spawnEntity(loc, b.getEntityType());
 					
-					plugin.debug("Rolling back entity " + b.getEntityTypeFromData().getName());
+					// Set sheep color
+					if( entity.getType().equals(EntityType.SHEEP)){
+						Sheep sheep = ((Sheep) entity);
+						sheep.setColor( b.getColor() );
+					}
+					
+					plugin.debug("Rolling back entity " + b.getEntityType().getName());
 					
 					rolled_back_count++;
 					
