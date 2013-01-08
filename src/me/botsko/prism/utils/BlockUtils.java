@@ -431,12 +431,30 @@ public class BlockUtils {
 					break;
 			}
 			if(aboveOrBelow != null){
-				if( left != null && left.getType().equals(Material.WOODEN_DOOR) || left.getType().equals(Material.IRON_DOOR_BLOCK) ){
+				if( left != null && isDoor(left.getType()) ){
 					aboveOrBelow.setData( (byte)9 );
 				} else {
 					aboveOrBelow.setData( (byte)8 );
 				}
 			}
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public static boolean isDoor(Material m){
+		switch(m){
+			case WOOD_DOOR:
+			case WOODEN_DOOR:
+			case IRON_DOOR:
+			case IRON_DOOR_BLOCK:
+				return true;
+			default:
+				return false;
 		}
 	}
 	

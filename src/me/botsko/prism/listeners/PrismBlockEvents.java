@@ -130,6 +130,10 @@ public class PrismBlockEvents implements Listener {
 	 */
 	protected void logBlockRelationshipsForBlock( String playername, Block block ){
 		
+		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+			return;
+		}
+		
 		// Find a list of all blocks above this block that we know
 		// will fall. 
 		ArrayList<Block> falling_blocks = BlockUtils.findFallingBlocksAboveBlock(block);
@@ -311,7 +315,7 @@ public class PrismBlockEvents implements Listener {
 			// If it's lost a supporting block
 			if (BlockUtils.materialMeansBlockDetachment(attachedBlock.getType())) {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Seeking block (below) detachment at: " + coord_key);
+//				plugin.debug("Seeking block (below) detachment at: " + coord_key);
 				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 					String player = plugin.preplannedBlockFalls.get(coord_key);
 					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
