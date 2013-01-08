@@ -132,6 +132,7 @@ public class PrismPlayerEvents implements Listener {
 					case CHEST:
 					case ENDER_CHEST:
 					case ANVIL:
+					case BREWING_STAND:
 						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
 						break;
 					case WOODEN_DOOR:
