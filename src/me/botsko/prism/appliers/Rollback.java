@@ -338,8 +338,6 @@ public class Rollback extends Preview {
 					if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
 						Location l = player.getLocation();
 						while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
-							plugin.debug("block coords: " + l.getBlockX() + " " +  l.getBlockY() + " " +  l.getBlockZ());
-							plugin.debug("block type: " + l.getBlock().getType().name());
 							add++;
 							if(l.getY() >= 256) break;
 							l.setY(l.getY() + 1);
