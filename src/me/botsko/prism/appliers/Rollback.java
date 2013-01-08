@@ -324,6 +324,21 @@ public class Rollback extends Preview {
 				}
 				responses.add( plugin.playerHeaderMsg( msg ) );
 				
+				for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
+					int add = 0;
+					if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
+						Location l = player.getLocation();
+						while(l.getBlock().getType() != Material.AIR){
+							add++;
+							l.setY(l.getY() + 1);
+						}
+						if(add > 0){
+							player.sendMessage(plugin.playerHeaderMsg("A rollback was performed near you, so to prevent suffocation, you have been moved upward " + add + " blocks."));
+							player.teleport(l);
+						}
+					}
+				}
+				
 			} else {
 			
 				// Build the results message
