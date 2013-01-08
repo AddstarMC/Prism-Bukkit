@@ -87,8 +87,9 @@ public class PrismEntityEvents implements Listener {
 				if(damager != null){
 					name = damager.getType().getName();
 				}
-				name = (name.isEmpty() ? "unknown" : name);
-				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
+				if(name != null){
+					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
+				}
 			}
 		} else {
 			
