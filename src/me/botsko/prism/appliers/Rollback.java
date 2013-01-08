@@ -333,7 +333,7 @@ public class Rollback extends Preview {
 							l.setY(l.getY() + 1);
 						}
 						if(add > 0){
-							player.sendMessage(plugin.playerHeaderMsg("A rollback was performed near you, so to prevent suffocation, you have been moved upward " + add + " blocks."));
+							player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
 							player.teleport(l);
 						}
 					}
