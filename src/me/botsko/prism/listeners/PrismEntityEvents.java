@@ -69,6 +69,7 @@ public class PrismEntityEvents implements Listener {
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
 					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+					return;
 		        	
 				}
 				// Mob shot by an arrow
@@ -78,18 +79,23 @@ public class PrismEntityEvents implements Listener {
 						
 						Player player = (Player) arrow.getShooter();
 						plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+						return;
 			        	
 					}
-				}
-				// Mob died by mob
-				Entity damager = entityDamageByEntityEvent.getDamager();
-				String name = "unknown";
-				if(damager != null){
-					name = damager.getType().getName();
-				}
-				if(name != null){
+				} else {
+					// Mob died by another mob
+					Entity damager = entityDamageByEntityEvent.getDamager();
+					String name = "unknown";
+					if(damager != null){
+						name = damager.getType().getName();
+					}
 					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
 				}
+			} else {
+				
+				// Record the death as natural
+				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, entity.getLastDamageCause().getCause().name().toLowerCase()) );
+				
 			}
 		} else {
 			
