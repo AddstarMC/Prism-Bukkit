@@ -4,9 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -26,7 +24,6 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
-import me.botsko.prism.utils.TypeUtils;
 
 public class ActionsQuery {
 	
@@ -331,11 +328,7 @@ public class ActionsQuery {
 			 */
 			String time = parameters.getTime();
 			if(time != null){
-				try {
-					query += buildTimeCondition(time,null);
-				} catch(IllegalArgumentException e){
-					// @todo we need to refactor this so we can display an error
-				}
+				query += buildTimeCondition(time,null);
 			}
 			
 			/**
@@ -451,65 +444,8 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	protected String buildTimeCondition( String arg_value, String equation ){
-		
+	protected String buildTimeCondition( String dateFrom, String equation ){
 		String where = "";
-
-		int type = 2;
-		for (int j = 0; j < arg_value.length(); j++) {
-			String c = arg_value.substring(j, j+1);
-			if (!TypeUtils.isNumeric(c)) {
-				if (c.equals("m") || c .equals("s") || c.equals("h") || c.equals("d") || c.equals("w"))
-					type = 0;
-				if (c.equals("-") || c.equals(":"))
-					type = 1;
-			}
-		}
-		
-		String dateFrom = null;
-
-		//If the time is in the format '0w0d0h0m0s'
-		if (type == 0) {
-
-			int weeks = 0;
-			int days = 0;
-			int hours = 0;
-			int mins = 0;
-			int secs = 0;
-
-			String nums = "";
-			for (int j = 0; j < arg_value.length(); j++) {
-				String c = arg_value.substring(j, j+1);
-				if (TypeUtils.isNumeric(c)){
-					nums += c;
-					continue;
-				}
-				int num = Integer.parseInt(nums);
-				if (c.equals("w")) weeks = num;
-				else if (c.equals("d")) days = num;
-				else if (c.equals("h")) hours = num;
-				else if (c.equals("m")) mins = num;
-				else if (c.equals("s")) secs = num;
-				else throw new IllegalArgumentException("Invalid time measurement: " + c);
-				nums = "";
-			}
-
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.WEEK_OF_YEAR, -1 * weeks);
-			cal.add(Calendar.DAY_OF_MONTH, -1 * days);
-			cal.add(Calendar.HOUR, -1 * hours);
-			cal.add(Calendar.MINUTE, -1 * mins);
-			cal.add(Calendar.SECOND, -1 * secs);
-			
-			SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			dateFrom = form.format(cal.getTime());
-
-		}
-		//Invalid time format
-		else if (type == 2)
-			throw new IllegalArgumentException("Invalid time format!");
-		
-		
 		if(dateFrom != null){
 			if(equation == null){
 				where += " AND prism_actions.action_time >= '" + dateFrom + "'";
@@ -517,8 +453,6 @@ public class ActionsQuery {
 				where += " AND prism_actions.action_time "+equation+" '" + dateFrom + "'";
 			}
 		}
-		
 		return where;
-		
 	}
 }
