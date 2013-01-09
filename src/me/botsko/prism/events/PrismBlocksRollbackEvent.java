@@ -1,10 +1,14 @@
 package me.botsko.prism.events;
 
-import org.bukkit.block.BlockState;
+
+import java.util.ArrayList;
+
+import me.botsko.prism.events.containers.BlockStateChange;
+
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
  
-public class PrismBlockReplaceEvent extends Event {
+public class PrismBlocksRollbackEvent extends Event {
 	
 	/**
 	 * Required by bukkit for proper event handling.
@@ -14,12 +18,7 @@ public class PrismBlockReplaceEvent extends Event {
     /**
      * 
      */
-    private BlockState originalBlock;
-    
-    /**
-     * 
-     */
-    private BlockState newBlock;
+    private ArrayList<BlockStateChange> blockStateChanges;
     
     /**
      * 
@@ -31,9 +30,8 @@ public class PrismBlockReplaceEvent extends Event {
      * 
      * @param example
      */
-    public PrismBlockReplaceEvent( BlockState originalBlock, BlockState newBlock, String onBehalfOf ) {
-        this.originalBlock = originalBlock;
-        this.newBlock = newBlock;
+    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, String onBehalfOf ) {
+        this.blockStateChanges = blockStateChanges;
         this.onBehalfOf = onBehalfOf;
     }
  
@@ -41,16 +39,8 @@ public class PrismBlockReplaceEvent extends Event {
     /**
 	 * @return the originalBlock
 	 */
-	public BlockState getOriginalBlock() {
-		return originalBlock;
-	}
-
-
-	/**
-	 * @return the newBlock
-	 */
-	public BlockState getNewBlock() {
-		return newBlock;
+	public ArrayList<BlockStateChange> getBlockStateChanges() {
+		return blockStateChanges;
 	}
 
 

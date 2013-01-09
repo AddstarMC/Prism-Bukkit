@@ -26,7 +26,8 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
-import me.botsko.prism.events.PrismBlockReplaceEvent;
+import me.botsko.prism.events.PrismBlocksRollbackEvent;
+import me.botsko.prism.events.containers.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -64,6 +65,7 @@ public class Rollback extends Preview {
 		ArrayList<String> responses = new ArrayList<String>();
 		int rolled_back_count = 0, skipped_block_count = 0;
 		ArrayList<Undo> undo = new ArrayList<Undo>();
+	    ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
@@ -184,9 +186,8 @@ public class Rollback extends Preview {
 								// Capture the new state
 								BlockState newBlock = block.getState();
 								
-								// Trigger the replacement event
-								PrismBlockReplaceEvent event = new PrismBlockReplaceEvent(originalBlock, newBlock, player.getName());
-								plugin.getServer().getPluginManager().callEvent(event);
+								// Store the state change
+								blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
 								
 								// If we're rolling back a door, we need to set it properly
 								if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
@@ -334,6 +335,11 @@ public class Rollback extends Preview {
 					e.printStackTrace();
 				}
 			}
+			
+			
+			// Trigger the rollback event
+			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player.getName());
+			plugin.getServer().getPluginManager().callEvent(event);
 			
 			
 			// Build the results message

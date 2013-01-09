@@ -1,7 +1,10 @@
 package me.botsko.prism.listeners.self;
 
+import java.util.ArrayList;
+
 import me.botsko.prism.Prism;
-import me.botsko.prism.events.PrismBlockReplaceEvent;
+import me.botsko.prism.events.PrismBlocksRollbackEvent;
+import me.botsko.prism.events.containers.BlockStateChange;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,12 +31,13 @@ public class PrismBlockEventListener implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onPrismBlockReplaceEvent(PrismBlockReplaceEvent event){
+	public void onPrismBlockReplaceEvent(PrismBlocksRollbackEvent event){
 		plugin.debug("---- PrismBlockReplaceEvent: " + event.getOnBehalfOf());
-		plugin.debug("Replaced block due to rollback/restore. Changed " + event.getOriginalBlock().getTypeId() + " to " + event.getNewBlock().getTypeId());
+		ArrayList<BlockStateChange> blockStateChanges = event.getBlockStateChanges();
+		if(!blockStateChanges.isEmpty()){
+			for(BlockStateChange stateChange : blockStateChanges){
+				plugin.debug("Replaced block due to rollback/restore. Changed " + stateChange.getOriginalBlock().getTypeId() + " to " + stateChange.getNewBlock().getTypeId());
+			}
+		}
 	}
-	
-	// PrismBlockReplaceEvent - When a replace a block in the world
-	// PrismBlockRemoveEvent - When we remove a block from the world
-	
 }
