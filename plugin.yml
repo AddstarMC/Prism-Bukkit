@@ -1,6 +1,6 @@
 name: Prism
 main: me.botsko.prism.Prism
-version: 1.0.0-Alpha2
+version: 1.0.0-dev
 commands:
    prism:
       description: Base command for everything Prism
