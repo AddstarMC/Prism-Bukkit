@@ -62,6 +62,12 @@ public class ActionRecorder {
 	 */
 	protected boolean shouldTrack( Action a ){
 		
+		// Always track Prism actions - it's mainly internal
+		// use anyway.
+		if(a.getType().getActionType().contains("prism")){
+			return true;
+		}
+		
 		// Should we ignore this player?
 		@SuppressWarnings("unchecked")
 		List<String> ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
