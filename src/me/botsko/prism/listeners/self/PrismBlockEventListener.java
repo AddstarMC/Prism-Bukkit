@@ -35,7 +35,8 @@ public class PrismBlockEventListener implements Listener {
 	 */
 	@EventHandler
 	public void onPrismBlocksRollbackEvent(PrismBlocksRollbackEvent event){
-		plugin.debug("---- PrismBlocksRollbackEvent: " + event.getOnBehalfOf());
+
+		// Get all block changes for this event
 		ArrayList<BlockStateChange> blockStateChanges = event.getBlockStateChanges();
 		if(!blockStateChanges.isEmpty()){
 			for(BlockStateChange stateChange : blockStateChanges){
@@ -43,16 +44,14 @@ public class PrismBlockEventListener implements Listener {
 				BlockState orig = stateChange.getOriginalBlock();
 				BlockState newBlock = stateChange.getNewBlock();
 				
+				// Build the action
 				PrismRollbackAction action = new PrismRollbackAction(ActionType.PRISM_ROLLBACK, orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.getOnBehalfOf());
-				
 				action.setWorld_name(orig.getWorld().getName());
 				action.setX(orig.getX());
 				action.setY(orig.getY());
 				action.setZ(orig.getZ());
-				
-				
+
 				plugin.actionsRecorder.addToQueue( action );
-				plugin.debug("Replaced block due to rollback/restore. Changed " + stateChange.getOriginalBlock().getTypeId() + " to " + stateChange.getNewBlock().getTypeId());
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 package me.botsko.prism.events;
 
-public enum PrismEventType {
+public enum PrismProcessType {
 	ROLLBACK, RESTORE
 }

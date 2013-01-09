@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -105,14 +103,6 @@ public class PreviewCommand implements SubHandler {
 							// Append the preview and blocks temporarily
 							PreviewSession ps = new PreviewSession( call.getPlayer(), rs, result );
 							plugin.playerActivePreviews.put(call.getPlayer().getName(), ps);
-						}
-						
-						// Send any messages to user
-						ArrayList<String> responses = result.getMessages();
-						if(!responses.isEmpty()){
-							for(String resp : responses){
-								call.getPlayer().sendMessage(resp);
-							}
 						}
 					}
 				} else {

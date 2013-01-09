@@ -5,6 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.events.containers.BlockStateChange;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -53,12 +54,12 @@ public class Preview implements Previewable {
 		if(plugin.playerActivePreviews.containsKey(player.getName())){
 			
 			PreviewSession previewSession = plugin.playerActivePreviews.get( player.getName() );
-			plugin.debug("Undo queue empty: " + previewSession.getResults().getUndoQueue().isEmpty());
-			if(!previewSession.getResults().getUndoQueue().isEmpty()){
+			plugin.debug("Undo queue empty: " + previewSession.getResults().getBlockStateChanges().isEmpty());
+			if(!previewSession.getResults().getBlockStateChanges().isEmpty()){
 				
-				for(Undo u : previewSession.getResults().getUndoQueue()){
+				for(BlockStateChange u : previewSession.getResults().getBlockStateChanges()){
 					plugin.debug("Preview block sent to player: " + u.getOriginalBlock().getType().name());
-					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getData());
+					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 				}
 			}
 			
@@ -81,12 +82,7 @@ public class Preview implements Previewable {
 			
 			player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
 			ps.getPreviewer().setIsPreview(false);
-			ApplierResult result = ps.getPreviewer().apply();
-			if(!result.getMessages().isEmpty()){
-				for(String resp : result.getMessages()){
-					player.getPlayer().sendMessage(resp);
-				}
-			}
+			ps.getPreviewer().apply();
 			
 			plugin.playerActivePreviews.remove( player.getName() );
 			
