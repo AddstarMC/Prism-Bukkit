@@ -252,6 +252,14 @@ Need to roll them back?
 
 ##### Creepers
 
+Sometimes players will attempt to bypass the server admins and lead a creeper to a house, let it explode, and thereby get away with the grief. Not with Prism.
+
+When an entity begins to follow a player, we record the event as an entity-follow. It only fires when the entity begins to follow a player so it may have been some distance from the explosion location. However, it's not an issue.
+
+`/prism l a:follow e:creeper r:50`
+
+This will show all players that lured a creeper within 50 blocks. Check the timestamp of the explosion and if it's within a few minutes of the follow, they're very likely connected.
+
 Rollback a creeper's art:
 
 `/prism rollback a:explode`
