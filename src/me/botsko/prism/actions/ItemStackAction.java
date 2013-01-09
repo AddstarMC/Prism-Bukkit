@@ -1,9 +1,12 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
+import java.util.Map.Entry;
+
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Location;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
 public class ItemStackAction extends GenericAction {
@@ -65,6 +68,11 @@ public class ItemStackAction extends GenericAction {
 	protected void setDataFromItem(){
 		if(data == null && item != null){
 			data = item.getTypeId() + ":" + item.getDurability() + ":" + quantity;
+			if(!item.getEnchantments().isEmpty()){
+				for(Entry<Enchantment, Integer> ench : item.getEnchantments().entrySet()){
+					data += ":" + ench.getKey().getId() + "," + ench.getValue();
+				}
+			}
 		}
 	}
 	
@@ -77,10 +85,15 @@ public class ItemStackAction extends GenericAction {
 			String[] blockArr = data.split(":");
 			if (!TypeUtils.isNumeric(blockArr[0])) return;
 			int block_id = Integer.parseInt(blockArr[0]);
-			if (blockArr.length == 3){
+			if (blockArr.length >= 3){
 				int block_subid = (byte) Integer.parseInt(blockArr[1]);
 				quantity = Integer.parseInt(blockArr[2]);
 				item = new ItemStack(block_id,quantity,(short)block_subid);
+				if(blockArr.length > 3){
+					for(int i = 3; i < blockArr.length; i++){
+						item.addEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
+					}
+				}
 			}
 		}
 	}
