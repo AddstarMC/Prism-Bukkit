@@ -149,8 +149,10 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityTargetEvent(EntityTargetEvent event) {
         if (event.getTarget() instanceof Player) {
-            Player player = (Player) event.getTarget();
-            plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );  
+        	if(event.getEntity().getType().equals(EntityType.CREEPER)){
+	            Player player = (Player) event.getTarget();
+	            plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );
+        	}
         }
     }
 
