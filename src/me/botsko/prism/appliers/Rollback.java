@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +26,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.events.PrismBlockReplaceEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -171,8 +173,21 @@ public class Rollback extends Preview {
 
 							
 							if(!is_preview){
+								
+								// Capture the block before we change it
+								BlockState originalBlock = block.getState();
+								
+								// Set the material
 								block.setTypeId( b.getBlock_id() );
 								block.setData( b.getBlock_subid() );
+								
+								// Capture the new state
+								BlockState newBlock = block.getState();
+								
+								// Trigger the replacement event
+								PrismBlockReplaceEvent event = new PrismBlockReplaceEvent(originalBlock, newBlock, player.getName());
+								plugin.getServer().getPluginManager().callEvent(event);
+								
 								// If we're rolling back a door, we need to set it properly
 								if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
 									BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
