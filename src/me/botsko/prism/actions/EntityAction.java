@@ -108,7 +108,7 @@ public class EntityAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "";
-		if(!actionData.color.isEmpty()){
+		if(actionData.color != null && !actionData.color.isEmpty()){
 			name += actionData.color + " ";
 		}
 		name += actionData.entity_name;
