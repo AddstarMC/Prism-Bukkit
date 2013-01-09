@@ -79,6 +79,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.enderman-place", true);
 		config.addDefault("prism.tracking.entity-break", true);
 		config.addDefault("prism.tracking.entity-explode", true);
+		config.addDefault("prism.tracking.entity-follow", true);
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.fireball", true);

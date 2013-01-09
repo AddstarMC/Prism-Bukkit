@@ -29,6 +29,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
@@ -139,6 +140,20 @@ public class PrismEntityEvents implements Listener {
 ////		event.getEntityType();
 ////		event.getSpawnReason();
 //	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityTargetEvent(EntityTargetEvent event) {
+        if (event.getTarget() instanceof Player) {
+            Player player = (Player) event.getTarget();
+            plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );  
+        }
+    }
+
 	
 	
 	/**

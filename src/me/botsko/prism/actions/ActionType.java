@@ -23,6 +23,7 @@ public enum ActionType {
 	ENDERMAN_PLACE(true, true, true, "block", "placed"),
 	ENTITY_BREAK(true, true, true, "block", "broke"),
 	ENTITY_EXPLODE(false, true, true, "block", "blew up"),
+	ENTITY_FOLLOW(false, false, false, "entity", "lured"),
 	ENTITY_KILL(false, true, true, "entity", "killed"),
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
 	FIREBALL(false, false, false, null, "ignited"),
