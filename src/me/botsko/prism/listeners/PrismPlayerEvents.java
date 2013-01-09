@@ -153,6 +153,8 @@ public class PrismPlayerEvents implements Listener {
 					case MELON_STEM:
 					case PUMPKIN_STEM:
 					case SAPLING:
+					case CARROT:
+					case POTATO:
 						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 					default:
 						break;
