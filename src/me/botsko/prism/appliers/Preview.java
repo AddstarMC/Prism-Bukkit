@@ -5,7 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.events.containers.BlockStateChange;
+import me.botsko.prism.events.BlockStateChange;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

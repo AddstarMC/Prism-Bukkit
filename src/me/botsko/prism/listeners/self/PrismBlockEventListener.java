@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.PrismRollbackAction;
+import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
-import me.botsko.prism.events.containers.BlockStateChange;
 
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;

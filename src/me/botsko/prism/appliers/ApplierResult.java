@@ -2,7 +2,7 @@ package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
 
-import me.botsko.prism.events.containers.BlockStateChange;
+import me.botsko.prism.events.BlockStateChange;
 
 public class ApplierResult {
 	

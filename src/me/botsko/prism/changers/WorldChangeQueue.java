@@ -1,4 +1,4 @@
-package me.botsko.prism.appliers;
+package me.botsko.prism.changers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +14,12 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.appliers.ApplierResult;
+import me.botsko.prism.appliers.Restore;
+import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.events.PrismProcessType;
-import me.botsko.prism.events.containers.BlockStateChange;
 import me.botsko.prism.utils.EntityUtils;
 
 import org.bukkit.Location;
@@ -85,7 +88,6 @@ public class WorldChangeQueue {
 		this.player = player;
 		this.is_preview = is_preview;
 		this.parameters = parameters;
-		plugin.debug("RESULTS " + incomingResults.size());
 	}
 	
 	
@@ -135,6 +137,7 @@ public class WorldChangeQueue {
 						skipped_block_count++;
 						continue;
 					} else {
+						blockStateChanges.add(result.getBlockStateChange());
 						changes_applied_count++;
 					}
 				}

@@ -1,6 +1,6 @@
-package me.botsko.prism.appliers;
+package me.botsko.prism.changers;
 
-import me.botsko.prism.events.containers.BlockStateChange;
+import me.botsko.prism.events.BlockStateChange;
 
 public class BlockChangeResult {
 	

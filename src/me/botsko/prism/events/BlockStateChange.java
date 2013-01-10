@@ -1,4 +1,4 @@
-package me.botsko.prism.events.containers;
+package me.botsko.prism.events;
 
 import org.bukkit.block.BlockState;
 

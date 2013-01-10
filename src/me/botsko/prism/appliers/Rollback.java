@@ -9,6 +9,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.changers.WorldChangeQueue;
 import me.botsko.prism.events.PrismProcessType;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
@@ -79,7 +80,6 @@ public class Rollback extends Preview {
 	
 			
 		// Give the results to the changequeue
-		plugin.debug("RESULTS " + results.size());
 		WorldChangeQueue changeQueue = new WorldChangeQueue( plugin, PrismProcessType.ROLLBACK, results, player, is_preview, parameters );
 		ApplierResult changesApplied = changeQueue.apply();
 		

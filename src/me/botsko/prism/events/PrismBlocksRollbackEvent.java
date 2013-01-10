@@ -3,7 +3,6 @@ package me.botsko.prism.events;
 
 import java.util.ArrayList;
 
-import me.botsko.prism.events.containers.BlockStateChange;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

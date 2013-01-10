@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.changers.WorldChangeQueue;
 import me.botsko.prism.events.PrismProcessType;
 
 public class Restore extends Preview {

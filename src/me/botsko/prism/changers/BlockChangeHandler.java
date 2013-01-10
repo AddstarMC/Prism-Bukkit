@@ -1,8 +1,8 @@
-package me.botsko.prism.appliers;
+package me.botsko.prism.changers;
 
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismProcessType;
-import me.botsko.prism.events.containers.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Location;
