@@ -11,6 +11,7 @@ import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -23,12 +24,12 @@ public class PreprocessArgs {
 	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, Player player, String[] args, String lookup_type, int starting ){
+	public static QueryParameters process( Prism plugin, Player player, String[] args, PrismProcessType processType, int starting ){
 		
 		QueryParameters parameters = new QueryParameters();
 		HashMap<String,String> foundArgs = new HashMap<String,String>();
 		
-		parameters.setLookup_type(lookup_type);
+		parameters.setLookup_type(processType);
 		
 		if(args != null){
 		

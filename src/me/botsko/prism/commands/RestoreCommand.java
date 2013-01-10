@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
@@ -32,7 +33,7 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 1 );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.RESTORE, 1 );
 		if(parameters == null){
 			return;
 		}

@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -36,7 +37,7 @@ public class LookupCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		// Process and validate all of the arguments
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "lookup", 1 );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
 		if(parameters == null){
 			return;
 		}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Location;
 
@@ -11,7 +12,7 @@ public class QueryParameters implements Cloneable {
 	
 	// Internal use
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
-	protected String lookup_type = "lookup";
+	protected PrismProcessType lookup_type = PrismProcessType.LOOKUP;
 	
 	// Typically required
 	protected int radius;
@@ -244,7 +245,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the lookup_type
 	 */
-	public String getLookup_type() {
+	public PrismProcessType getLookup_type() {
 		return lookup_type;
 	}
 
@@ -268,7 +269,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param lookup_type the lookup_type to set
 	 */
-	public void setLookup_type(String lookup_type) {
+	public void setLookup_type(PrismProcessType lookup_type) {
 		this.lookup_type = lookup_type;
 	}
 	

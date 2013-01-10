@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.ApplierResult;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -74,7 +75,7 @@ public class PreviewCommand implements SubHandler {
 			 */
 			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs") ){
 				
-				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 2 );
+				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 2 );
 				if(parameters == null){
 					return;
 				}

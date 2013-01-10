@@ -1,5 +1,5 @@
 package me.botsko.prism.appliers;
 
 public enum PrismProcessType {
-	ROLLBACK, RESTORE
+	LOOKUP, ROLLBACK, RESTORE
 }
