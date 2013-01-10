@@ -76,11 +76,11 @@ public class Rollback extends Preview {
 		if(parameters.getActionTypes().contains(ActionType.WATER_BUCKET) || parameters.getActionTypes().contains(ActionType.WATER_FLOW)){
 			BlockUtils.drainwater(parameters.getPlayerLocation(), parameters.getRadius());
 		}
-		
 	
 			
 		// Give the results to the changequeue
-		WorldChangeQueue changeQueue = new WorldChangeQueue( PrismProcessType.ROLLBACK, results );
+		plugin.debug("RESULTS " + results.size());
+		WorldChangeQueue changeQueue = new WorldChangeQueue( plugin, PrismProcessType.ROLLBACK, results, player, is_preview, parameters );
 		ApplierResult changesApplied = changeQueue.apply();
 		
 		if(changesApplied == null){

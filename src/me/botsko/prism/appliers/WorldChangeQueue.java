@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -30,12 +31,37 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.ItemStack;
 
-public class WorldChangeQueue extends Preview {
+public class WorldChangeQueue {
+	
+	/**
+	 * 
+	 */
+	protected Prism plugin;
 	
 	/**
 	 * 
 	 */
 	PrismProcessType processType;
+	
+	/**
+	 * 
+	 */
+	protected List<Action> results;
+	
+	/**
+	 * 
+	 */
+	protected Player player;
+	
+	/**
+	 * 
+	 */
+	protected boolean is_preview = false;
+	
+	/**
+	 * 
+	 */
+	protected QueryParameters parameters;
 	
 	/**
 	 * 
@@ -52,9 +78,14 @@ public class WorldChangeQueue extends Preview {
 	 * 
 	 * @param processType
 	 */
-	public WorldChangeQueue( PrismProcessType processType, List<Action> results ){
+	public WorldChangeQueue( Prism plugin, PrismProcessType processType, List<Action> incomingResults, Player player, boolean is_preview, QueryParameters parameters ){
+		this.plugin = plugin;
 		this.processType = processType;
-		this.results = results;
+		this.results = incomingResults;
+		this.player = player;
+		this.is_preview = is_preview;
+		this.parameters = parameters;
+		plugin.debug("RESULTS " + incomingResults.size());
 	}
 	
 	
@@ -67,8 +98,9 @@ public class WorldChangeQueue extends Preview {
 		ArrayList<Action> deferredChanges = new ArrayList<Action>();
 		ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 		
-		if(!results.isEmpty()){
-			for(Action a : results){
+		if(results != null && !results.isEmpty()){
+			
+			for(Action a : results){;
 				
 				// No sense in trying to rollback
 				// when the type doesn't support it.

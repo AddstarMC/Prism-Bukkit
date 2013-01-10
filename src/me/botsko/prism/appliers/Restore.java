@@ -42,7 +42,7 @@ public class Restore extends Preview {
 	public ApplierResult apply(){
 		
 		// Give the results to the changequeue
-		WorldChangeQueue changeQueue = new WorldChangeQueue( PrismProcessType.RESTORE, results );
+		WorldChangeQueue changeQueue = new WorldChangeQueue( plugin, PrismProcessType.RESTORE, results, player, is_preview, parameters );
 		ApplierResult changesApplied = changeQueue.apply();
 		
 		if(changesApplied == null){

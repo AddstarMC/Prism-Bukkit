@@ -46,6 +46,7 @@ public class BlockChangeHandler {
 	public BlockChangeHandler( PrismProcessType processType, Location loc, BlockAction b, Player player, boolean is_preview ){
 		
 		// Store the block change information
+		this.processType = processType;
 		this.b = b;
 		this.player = player;
 		this.is_preview = is_preview;
