@@ -149,7 +149,17 @@ public class Preview implements Previewable {
 		
 		if(results != null && !results.isEmpty()){
 			
-			for(Action a : results){;
+			if(!is_preview){
+				// Inform nearby players
+				plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a " + processType.name().toLowerCase() + " near you.");
+				// Inform staff
+				if(plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")){
+					plugin.alertPlayers( ChatColor.WHITE + processType.name().toLowerCase() + " by " + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand() );
+				}
+			}
+			
+			
+			for(Action a : results){
 				
 				// No sense in trying to rollback
 				// when the type doesn't support it.

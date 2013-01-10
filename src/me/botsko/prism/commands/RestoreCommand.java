@@ -36,6 +36,7 @@ public class RestoreCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
+		parameters.setStringFromRawArgs( call.getArgs() );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );

@@ -89,10 +89,10 @@ public class OreMonitor {
 						// Restore the block
 						block.setType( state.getType() );
 						
-						String msg = "[!] " + getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
+						String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
 						
 						// Alert staff
-						plugin.alertPlayers(ChatColor.RED+ "[!] "+msg);
+						plugin.alertPlayers(msg);
 						
 						// Log to console
 						if(plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")){

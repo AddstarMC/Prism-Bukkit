@@ -78,6 +78,7 @@ public class PreviewCommand implements SubHandler {
 				if(parameters == null){
 					return;
 				}
+				parameters.setStringFromRawArgs( call.getArgs() );
 			
 				// Perform preview
 				ActionsQuery aq = new ActionsQuery(plugin);

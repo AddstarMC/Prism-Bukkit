@@ -42,9 +42,6 @@ public class RollbackCommand implements SubHandler {
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
 		if(!results.getActionResults().isEmpty()){
 			
-			// Inform nearby players
-			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is performing a rollback nearby. Just so you know.");
-			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 			Rollback rb = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters );
 			rb.apply();
