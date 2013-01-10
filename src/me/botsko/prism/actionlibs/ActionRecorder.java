@@ -183,8 +183,6 @@ public class ActionRecorder {
 	    PreparedStatement s = null;
 	    try {
 	    	
-	    	plugin.debug("EMPTYING QUEUE");
-	    	
 	        plugin.dbc();
 	        plugin.conn.setAutoCommit(false);
 	        s =  plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");

@@ -12,7 +12,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class PrismBlockEventListener implements Listener {
+public class PrismRollbackEvents implements Listener {
 	
 	/**
 	 * 
@@ -24,7 +24,7 @@ public class PrismBlockEventListener implements Listener {
 	 * 
 	 * @param plugin
 	 */
-	public PrismBlockEventListener( Prism plugin ){
+	public PrismRollbackEvents( Prism plugin ){
 		this.plugin = plugin;
 	}
 	
