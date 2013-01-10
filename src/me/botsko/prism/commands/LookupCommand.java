@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.List;
+
 import org.bukkit.ChatColor;
 
 import me.botsko.prism.Prism;
@@ -47,12 +49,17 @@ public class LookupCommand implements SubHandler {
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
 		if(!results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
-			for(Action a : results.getPaginatedActionResults()){
-				ActionMessage am = new ActionMessage(a);
-				if(parameters.getAllow_no_radius()){
-					am.hideId(false);
+			List<Action> paginated = results.getPaginatedActionResults();
+			if(paginated != null){
+				for(Action a : paginated){
+					ActionMessage am = new ActionMessage(a);
+					if(parameters.getAllow_no_radius()){
+						am.hideId(false);
+					}
+					call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
 				}
-				call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
 			call.getPlayer().sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );

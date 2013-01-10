@@ -78,11 +78,13 @@ public class QueryResult {
 		int limit = (page * per_page);
 		int offset = (limit - per_page);
 		
-		if(limit > total_results){
-			limit = total_results;
+		if(offset <= total_results){
+			if(limit > total_results){
+				limit = total_results;
+			}
+			return actionResults.subList(offset, limit);
 		}
-		
-		return actionResults.subList(offset, limit);
+		return null;
 	}
 	
 
