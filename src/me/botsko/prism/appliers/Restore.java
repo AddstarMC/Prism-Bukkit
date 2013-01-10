@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -48,12 +49,17 @@ public class Restore extends Preview {
 		if(changesApplied == null){
 			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "No actions found that match the criteria." ) );
 		}
+		
+		// Calc the final time
+		Calendar lCDateTime = Calendar.getInstance();
+		long processEndTime = lCDateTime.getTimeInMillis();
+		long timeDiff = processEndTime - processStartTime;
 			
 		// Build the results message
 		if(!is_preview){
 			
 			// Build the results message
-			String msg = changesApplied.getChanges_applied() + " events restored.";
+			String msg = changesApplied.getChanges_applied() + " events restored ("+timeDiff+"ms).";
 			if(changesApplied.getChanges_skipped() > 0){
 				msg += " " + changesApplied.getChanges_skipped() + " skipped.";
 			}

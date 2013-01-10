@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.Calendar;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -75,6 +77,9 @@ public class PreviewCommand implements SubHandler {
 			 */
 			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs") ){
 				
+				Calendar lCDateTime = Calendar.getInstance();
+				long processStartTime = lCDateTime.getTimeInMillis();
+				
 				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 2 );
 				if(parameters == null){
 					return;
@@ -91,7 +96,7 @@ public class PreviewCommand implements SubHandler {
 					ApplierResult result = null;
 					Previewable rs = null;
 					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
-						rs = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters );
+						rs = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters, processStartTime );
 						result = rs.preview();
 					}
 					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){

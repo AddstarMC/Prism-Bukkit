@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -20,12 +21,13 @@ public class Rollback extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
+	public Rollback( Prism plugin, Player player, List<Action> results, QueryParameters parameters, long processStartTime ) {
 		this.processType = PrismProcessType.ROLLBACK;
 		this.plugin = plugin;
 		this.player = player;
 		this.results = results;
 		this.parameters = parameters;
+		this.processStartTime = processStartTime;
 	}
 	
 	
@@ -86,10 +88,15 @@ public class Rollback extends Preview {
 			return null;
 		}
 		
+		// Calc the final time
+		Calendar lCDateTime = Calendar.getInstance();
+		long processEndTime = lCDateTime.getTimeInMillis();
+		long timeDiff = processEndTime - processStartTime;
+		
 		// Build the results message
 		if(!is_preview){
 			
-			String msg = changesApplied.getChanges_applied() + " reversals.";
+			String msg = changesApplied.getChanges_applied() + " reversals ("+timeDiff+"ms).";
 			if(changesApplied.getChanges_skipped() > 0){
 				msg += " " + changesApplied.getChanges_skipped() + " skipped.";
 			}

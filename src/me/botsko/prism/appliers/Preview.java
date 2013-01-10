@@ -14,7 +14,6 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.changers.BlockChangeResult;
 import me.botsko.prism.changers.ChangeResultType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
@@ -68,6 +67,21 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected boolean is_preview = false;
+	
+	/**
+	 * 
+	 */
+	protected long processStartTime;
+	
+	/**
+	 * 
+	 */
+	ArrayList<Action> deferredChanges = new ArrayList<Action>();
+	
+	/**
+	 * 
+	 */
+	ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 	
 	/**
 	 * 
@@ -146,9 +160,6 @@ public class Preview implements Previewable {
 	 */
 	public ApplierResult apply(){
 		
-		ArrayList<Action> deferredChanges = new ArrayList<Action>();
-		ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
-		
 		if(results != null && !results.isEmpty()){
 			
 			if(!is_preview){
@@ -202,16 +213,15 @@ public class Preview implements Previewable {
 				if( a instanceof BlockAction ){
 					
 					// Pass along to the change handler
-					BlockChangeResult result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
+					ChangeResultType result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
 					
-					if(result.getChangeResultType().equals(ChangeResultType.DEFERRED)){
+					if(result.equals(ChangeResultType.DEFERRED)){
 						deferredChanges.add( a );
 					}
-					else if(result.getChangeResultType().equals(ChangeResultType.SKIPPED)){
+					else if(result.equals(ChangeResultType.SKIPPED)){
 						skipped_block_count++;
 						continue;
 					} else {
-						blockStateChanges.add(result.getBlockStateChange());
 						changes_applied_count++;
 					}
 				}
@@ -356,29 +366,29 @@ public class Preview implements Previewable {
 				}
 				
 				
-				/**
-				 * If we've rolled back any containers we need to restore item-removes.
-				 */
-				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
-					
-					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
-					
-					QueryParameters triggerParameters;
-					try {
-						triggerParameters = parameters.clone();
-						triggerParameters.resetActionTypes();
-						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
-						
-						ActionsQuery aq = new ActionsQuery(plugin);
-						QueryResult results = aq.lookup( player, triggerParameters );
-						if(!results.getActionResults().isEmpty()){
-							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
-							rb.apply();
-						}
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
-				}
+//				/**
+//				 * If we've rolled back any containers we need to restore item-removes.
+//				 */
+//				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
+//					
+//					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+//					
+//					QueryParameters triggerParameters;
+//					try {
+//						triggerParameters = parameters.clone();
+//						triggerParameters.resetActionTypes();
+//						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
+//						
+//						ActionsQuery aq = new ActionsQuery(plugin);
+//						QueryResult results = aq.lookup( player, triggerParameters );
+//						if(!results.getActionResults().isEmpty()){
+//							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
+//							rb.apply();
+//						}
+//					} catch (CloneNotSupportedException e) {
+//						e.printStackTrace();
+//					}
+//				}
 			}
 			
 			
@@ -414,7 +424,7 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected BlockChangeResult applyBlockChange(BlockAction b, Block block){
+	protected ChangeResultType applyBlockChange(BlockAction b, Block block){
 		
 		// Rollbacks remove blocks players created, and restore blocks player's removed
 		if(processType.equals(PrismProcessType.ROLLBACK)){
@@ -444,25 +454,24 @@ public class Preview implements Previewable {
 	 * However, it also means that a rollback *could* interfere with a player-placed
 	 * block.
 	 */
-	protected BlockChangeResult placeBlock( BlockAction b, Block block ){
+	protected ChangeResultType placeBlock( BlockAction b, Block block ){
 		
 		Material m = Material.getMaterial(b.getBlock_id());
-		BlockStateChange blockStateChanges = null;
 		
 		// We're doing a rollback, we need to ensure the location we're replacing doesn't
 		// have a new block already.
 		if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
-			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+			return ChangeResultType.SKIPPED;
 		}
 		
 		// On the blacklist?
 		if( !BlockUtils.mayEverPlace(m) ){
-			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+			return ChangeResultType.SKIPPED;
 		}
 			
 		// If it's attachable to the sides or top, we need to delay
 		if( (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m)) && !BlockUtils.isDoor(m)){
-			return new BlockChangeResult( ChangeResultType.DEFERRED, null );
+			return ChangeResultType.DEFERRED;
 		}
 
 		// If we're not in a preview, actually apply this block
@@ -479,7 +488,7 @@ public class Preview implements Previewable {
 			BlockState newBlock = block.getState();
 			
 			// Store the state change
-			blockStateChanges = new BlockStateChange(originalBlock,newBlock);
+			blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
 			
 			// If we're rolling back a door, we need to set it properly
 			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
@@ -495,7 +504,7 @@ public class Preview implements Previewable {
 			player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
 		}
 		
-		return new BlockChangeResult( ChangeResultType.APPLIED, blockStateChanges );
+		return ChangeResultType.APPLIED;
 
 	}
 
@@ -503,9 +512,7 @@ public class Preview implements Previewable {
 	/***
 	 * 
 	 */
-	protected BlockChangeResult removeBlock( Block block ){
-		
-		BlockStateChange blockStateChanges = null;
+	protected ChangeResultType removeBlock( Block block ){
 		
 		// @todo ensure we're not removing a new block that's been placed by someone else
 		if(!block.getType().equals(Material.AIR)){
@@ -521,13 +528,13 @@ public class Preview implements Previewable {
 				BlockState newBlock = block.getState();
 				
 				// Store the state change
-				blockStateChanges = new BlockStateChange(originalBlock,newBlock);
+				blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
 				
 			} else {
 				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
 			}
-			return new BlockChangeResult( ChangeResultType.APPLIED, blockStateChanges );
+			return ChangeResultType.APPLIED;
 		}
-		return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+		return ChangeResultType.SKIPPED;
 	}
 }
