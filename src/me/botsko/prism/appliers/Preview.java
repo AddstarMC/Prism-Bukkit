@@ -20,6 +20,8 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.wands.RollbackWand;
+import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -150,11 +152,27 @@ public class Preview implements Previewable {
 		if(results != null && !results.isEmpty()){
 			
 			if(!is_preview){
-				// Inform nearby players
-				plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a " + processType.name().toLowerCase() + " near you.");
-				// Inform staff
-				if(plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")){
-					plugin.alertPlayers( ChatColor.WHITE + processType.name().toLowerCase() + " by " + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand() );
+				
+				Wand oldwand = null;
+				if(plugin.playersWithActiveTools.containsKey(player.getName())){
+					// Pull the wand in use
+					oldwand = plugin.playersWithActiveTools.get(player.getName());
+				}
+				
+				boolean show_nearby = true;
+				if(oldwand != null && oldwand instanceof RollbackWand){
+					show_nearby = false;
+				}
+				if(show_nearby){
+					// Inform nearby players
+					plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a " + processType.name().toLowerCase() + " near you.");
+					// Inform staff
+					if(plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")){
+						String cmd = parameters.getOriginalCommand();
+						if(cmd != null){
+							plugin.alertPlayers( ChatColor.WHITE + processType.name().toLowerCase() + " by " + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand() );
+						}
+					}
 				}
 			}
 			

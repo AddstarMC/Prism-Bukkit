@@ -51,6 +51,7 @@ public class EntityUtils {
 	 *
 	 */
 	public static boolean inCube(Location loc1, int radius, Location loc2) {
+		if(loc1 == null || loc2 == null) return false;
 		return (
 				loc1.getBlockX() + radius > loc2.getBlockX()
 				&& loc1.getBlockX() - radius < loc2.getBlockX()
