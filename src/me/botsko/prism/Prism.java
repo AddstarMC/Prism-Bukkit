@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Action;
 import me.botsko.prism.appliers.PreviewSession;
+import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.db.Mysql;
@@ -50,7 +50,7 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	public ConcurrentHashMap<Location,Long> alertedBlocks = new ConcurrentHashMap<Location,Long>();
-	public final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
+	public final LinkedBlockingQueue<Previewable> prismProcessQueue = new LinkedBlockingQueue<Previewable>();
 	
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so
@@ -263,11 +263,28 @@ public class Prism extends JavaPlugin {
 	}
 	
 	
+//	/**
+//	 * We check every 
+//	 */
+//	public void prismProcessQueueTask(){
+//		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+//			
+//		    public void run() {
+//		    	
+//		    	while(!prism.prismProcessQueue.isEmpty()){
+//		    		Previewable process = prism.prismProcessQueue.poll();
+//		    		process.apply();
+//		    	}
+//		    }
+//		}, 2L, 2L);
+//	}
+	
+	
 	/**
 	 * 
 	 */
 	public void actionRecorderTask(){
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ActionRecorder(prism), 2L, 2L);
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ActionRecorder(prism), 3L, 3L);
 	}
 	
 	

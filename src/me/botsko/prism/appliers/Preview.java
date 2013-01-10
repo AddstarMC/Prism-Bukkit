@@ -3,6 +3,7 @@ package me.botsko.prism.appliers;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -87,6 +88,11 @@ public class Preview implements Previewable {
 	 */
 	protected int changes_applied_count;
 	
+	/**
+	 * 
+	 */
+	public final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
+	
 	
 	/**
 	 * 
@@ -97,15 +103,15 @@ public class Preview implements Previewable {
 		this.processType = processType;
 		this.plugin = plugin;
 		this.player = player;
-//		this.results = results;
 		this.parameters = parameters;
 		this.processStartTime = processStartTime;
 		
 		// @todo if not preview
 		// Append all actions to the queue. @todo we should do this somewhere else
 		for(Action a : results){
-			plugin.worldChangeQueue.add(a);
+			worldChangeQueue.add(a);
 		}
+		plugin.debug("QUEUE SIZE ON INIT: " + worldChangeQueue.size() );
 	}
 	
 	
@@ -162,8 +168,7 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	public ApplierResult preview() {
-		return null;
+	public void preview() {
 	}
 
 
@@ -171,9 +176,9 @@ public class Preview implements Previewable {
 	 * 
 	 * @return
 	 */
-	public ApplierResult apply(){
+	public void apply(){
 		
-		if(!plugin.worldChangeQueue.isEmpty()){
+		if(!worldChangeQueue.isEmpty()){
 			
 			if(!is_preview){
 				
@@ -200,237 +205,11 @@ public class Preview implements Previewable {
 				}
 			}
 			
-			
-			while(!plugin.worldChangeQueue.isEmpty()){
-				Action a = plugin.worldChangeQueue.poll();
-				
-				// No sense in trying to rollback
-				// when the type doesn't support it.
-				if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
-					continue;
-				}
-				
-				// No sense in trying to restore
-				// when the type doesn't support it.
-				if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
-					continue;
-				}
-					
-				// Determine the location
-				World world = plugin.getServer().getWorld(a.getWorld_name());
-				Location loc = new Location(world, a.getX(), a.getY(), a.getZ());
-	
-				
-				/**
-				 * Reverse or restore block changes
-				 */
-				if( a instanceof BlockAction ){
-					
-					// Pass along to the change handler
-					ChangeResultType result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
-					
-					if(result.equals(ChangeResultType.DEFERRED)){
-						deferredChanges.add( a );
-					}
-					else if(result.equals(ChangeResultType.SKIPPED)){
-						skipped_block_count++;
-						continue;
-					} else {
-						changes_applied_count++;
-					}
-				}
-				
-				
-				/**
-				 * Rollback entity kills
-				 */
-				if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof EntityAction ){
-					
-					EntityAction b = (EntityAction) a;
-					
-					if(!EntityUtils.mayEverSpawn(b.getEntityType())){
-						skipped_block_count++;
-						continue;
-					}
-					
-					Entity entity = world.spawnEntity(loc, b.getEntityType());
-					
-					// Set sheep color
-					if( entity.getType().equals(EntityType.SHEEP)){
-						Sheep sheep = ((Sheep) entity);
-						sheep.setColor( b.getColor() );
-					}
-					
-					changes_applied_count++;
-					
-				}
-				
-				
-				/**
-				 * Rollback itemstack actions
-				 */
-				if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
-					
-					ItemStackAction b = (ItemStackAction) a;
-					
-					Block block = world.getBlockAt(loc);
-					if(block.getType().equals(Material.CHEST)){
-						Chest chest = (Chest) block.getState();
-						
-						// If item was removed, put it back.
-						if(a.getType().equals(ActionType.ITEM_REMOVE) && plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
-							HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
-							changes_applied_count++;
-							if(leftovers.size() > 0){
-								// @todo
-							}
-						}
-					}
-				}
-				
-
-				/**
-				 * Restore sign actions
-				 */
-				if( processType.equals(PrismProcessType.RESTORE) && a instanceof SignAction ){
-					
-					SignAction b = (SignAction) a;
-					Block block = world.getBlockAt(loc);
-					
-					// Ensure a sign exists there (and no other block)
-					if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
-						
-						if( block.getType().equals(Material.AIR) ){
-							block.setType(b.getSignType());
-						}
-						
-						// Set the facing direction
-						Sign s = (Sign)block.getState();
-						
-						if(block.getType().equals(Material.SIGN)){
-							((org.bukkit.material.Sign)s.getData()).setFacingDirection(b.getFacing());
-						}
-						
-						// Set content
-						String[] lines = b.getLines();
-						int i = 0;
-						if(lines.length > 0){
-							for(String line : lines){
-								s.setLine(i, line);
-								i++;
-							}
-						}
-						s.update();
-						changes_applied_count++;
-					}
-				}
-				plugin.worldChangeQueue.remove(a); // @todo needed?
-			}
-			
-			// Apply deferred block changes
-			for(Action a : deferredChanges){
-				
-				BlockAction b = (BlockAction) a;
-				
-				World world = plugin.getServer().getWorld(b.getWorld_name());
-				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
-				Block block = world.getBlockAt(loc);
-				
-				if(!is_preview){
-					block.setTypeId( b.getBlock_id() );
-					block.setData( b.getBlock_subid() );
-				} else {
-					player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
-				}
-				
-				changes_applied_count++;
-			}
-			
-			
-			// POST ROLLBACK TRIGGERS
-			if(processType.equals(PrismProcessType.ROLLBACK)){
-			
-				// We're going to modify the action type of the query params
-				// and pass it along to a restore.
-				// NOTE: These params have been modified from original, so
-				// do NOT use the object for original params.
-				
-				/**
-				 * If we've done breaking-blocks rollback we also need to re-apply
-				 * any sign-change events at this location.
-				 */
-				if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
-					
-					QueryParameters triggerParameters;
-					try {
-						triggerParameters = parameters.clone();
-						triggerParameters.resetActionTypes();
-						triggerParameters.addActionType(ActionType.SIGN_CHANGE);
-						
-						ActionsQuery aq = new ActionsQuery(plugin);
-						QueryResult results = aq.lookup( player, triggerParameters );
-						if(!results.getActionResults().isEmpty()){
-							Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters, processStartTime );
-							rs.apply();
-						}
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				
-//				/**
-//				 * If we've rolled back any containers we need to restore item-removes.
-//				 */
-//				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
-//					
-//					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
-//					
-//					QueryParameters triggerParameters;
-//					try {
-//						triggerParameters = parameters.clone();
-//						triggerParameters.resetActionTypes();
-//						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
-//						
-//						ActionsQuery aq = new ActionsQuery(plugin);
-//						QueryResult results = aq.lookup( player, triggerParameters );
-//						if(!results.getActionResults().isEmpty()){
-//							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
-//							rb.apply();
-//						}
-//					} catch (CloneNotSupportedException e) {
-//						e.printStackTrace();
-//					}
-//				}
-			}
-			
-			
-			// Make sure we move the player out of the way
-			for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
-				int add = 0;
-				if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
-					Location l = player.getLocation();
-					while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
-						add++;
-						if(l.getY() >= 256) break;
-						l.setY(l.getY() + 1);
-					}
-					if(add > 0){
-						player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
-						player.teleport(l);
-					}
-				}
-			}
-			
-			
-			// Trigger the rollback event
-			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
-			plugin.getServer().getPluginManager().callEvent(event);
-			
-			return new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges );
-			
+			// Offload the work of world changes
+			// to a scheduled sync task
+			plugin.debug("OFFLOADING CHANGES");
+			processWorldChanges();
 		}
-		return null;
 	}
 	
 	
@@ -549,5 +328,273 @@ public class Preview implements Previewable {
 			return ChangeResultType.APPLIED;
 		}
 		return ChangeResultType.SKIPPED;
+	}
+	
+	
+	
+	/**
+	 * 
+	 */
+	public void processWorldChanges(){
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			
+		    public void run() {
+		    	
+		    	plugin.debug("BEGINNING SYNC TASK: " + worldChangeQueue.size() );
+		    	
+		    	int iterationCount = 0;
+		    	while(!worldChangeQueue.isEmpty()){
+		    		
+		    		// We only want to process a set number of block changes per 
+		    		// schedule. Breaking here will leave the rest in the queue.
+		    		iterationCount++;
+		    		if(iterationCount >= 500){
+		    			break;
+		    		}
+		    		
+					Action a = worldChangeQueue.poll();
+					
+					// No sense in trying to rollback
+					// when the type doesn't support it.
+					if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
+						continue;
+					}
+					
+					// No sense in trying to restore
+					// when the type doesn't support it.
+					if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
+						continue;
+					}
+						
+					// Determine the location
+					World world = plugin.getServer().getWorld(a.getWorld_name());
+					Location loc = new Location(world, a.getX(), a.getY(), a.getZ());
+		
+					
+					/**
+					 * Reverse or restore block changes
+					 */
+					if( a instanceof BlockAction ){
+						
+						// Pass along to the change handler
+						ChangeResultType result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
+						
+						if(result.equals(ChangeResultType.DEFERRED)){
+							deferredChanges.add( a );
+						}
+						else if(result.equals(ChangeResultType.SKIPPED)){
+							skipped_block_count++;
+							continue;
+						} else {
+							changes_applied_count++;
+						}
+					}
+					
+					
+					/**
+					 * Rollback entity kills
+					 */
+					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof EntityAction ){
+						
+						EntityAction b = (EntityAction) a;
+						
+						if(!EntityUtils.mayEverSpawn(b.getEntityType())){
+							skipped_block_count++;
+							continue;
+						}
+						
+						Entity entity = world.spawnEntity(loc, b.getEntityType());
+						
+						// Set sheep color
+						if( entity.getType().equals(EntityType.SHEEP)){
+							Sheep sheep = ((Sheep) entity);
+							sheep.setColor( b.getColor() );
+						}
+						
+						changes_applied_count++;
+						
+					}
+					
+					
+					/**
+					 * Rollback itemstack actions
+					 */
+					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
+						
+						ItemStackAction b = (ItemStackAction) a;
+						
+						Block block = world.getBlockAt(loc);
+						if(block.getType().equals(Material.CHEST)){
+							Chest chest = (Chest) block.getState();
+							
+							// If item was removed, put it back.
+							if(a.getType().equals(ActionType.ITEM_REMOVE) && plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
+								HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
+								changes_applied_count++;
+								if(leftovers.size() > 0){
+									// @todo
+								}
+							}
+						}
+					}
+					
+
+					/**
+					 * Restore sign actions
+					 */
+					if( processType.equals(PrismProcessType.RESTORE) && a instanceof SignAction ){
+						
+						SignAction b = (SignAction) a;
+						Block block = world.getBlockAt(loc);
+						
+						// Ensure a sign exists there (and no other block)
+						if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+							
+							if( block.getType().equals(Material.AIR) ){
+								block.setType(b.getSignType());
+							}
+							
+							// Set the facing direction
+							Sign s = (Sign)block.getState();
+							
+							if(block.getType().equals(Material.SIGN)){
+								((org.bukkit.material.Sign)s.getData()).setFacingDirection(b.getFacing());
+							}
+							
+							// Set content
+							String[] lines = b.getLines();
+							int i = 0;
+							if(lines.length > 0){
+								for(String line : lines){
+									s.setLine(i, line);
+									i++;
+								}
+							}
+							s.update();
+							changes_applied_count++;
+						}
+					}
+					worldChangeQueue.remove(a); // @todo needed?
+				}
+		    	
+		    	// If the queue is empty, we're done
+		    	if(worldChangeQueue.isEmpty()){
+		    		postProcess();
+		    	}
+		    	
+		    }
+		}, 2L, 2L);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ApplierResult postProcess(){
+		
+			
+		// Apply deferred block changes
+		for(Action a : deferredChanges){
+			
+			BlockAction b = (BlockAction) a;
+			
+			World world = plugin.getServer().getWorld(b.getWorld_name());
+			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
+			Block block = world.getBlockAt(loc);
+			
+			if(!is_preview){
+				block.setTypeId( b.getBlock_id() );
+				block.setData( b.getBlock_subid() );
+			} else {
+				player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+			}
+			
+			changes_applied_count++;
+		}
+		
+		
+		// POST ROLLBACK TRIGGERS
+		if(processType.equals(PrismProcessType.ROLLBACK)){
+		
+			// We're going to modify the action type of the query params
+			// and pass it along to a restore.
+			// NOTE: These params have been modified from original, so
+			// do NOT use the object for original params.
+			
+			/**
+			 * If we've done breaking-blocks rollback we also need to re-apply
+			 * any sign-change events at this location.
+			 */
+			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
+				
+				QueryParameters triggerParameters;
+				try {
+					triggerParameters = parameters.clone();
+					triggerParameters.resetActionTypes();
+					triggerParameters.addActionType(ActionType.SIGN_CHANGE);
+					
+					ActionsQuery aq = new ActionsQuery(plugin);
+					QueryResult results = aq.lookup( player, triggerParameters );
+					if(!results.getActionResults().isEmpty()){
+						Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters, processStartTime );
+						rs.apply();
+					}
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			
+//				/**
+//				 * If we've rolled back any containers we need to restore item-removes.
+//				 */
+//				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
+//					
+//					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+//					
+//					QueryParameters triggerParameters;
+//					try {
+//						triggerParameters = parameters.clone();
+//						triggerParameters.resetActionTypes();
+//						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
+//						
+//						ActionsQuery aq = new ActionsQuery(plugin);
+//						QueryResult results = aq.lookup( player, triggerParameters );
+//						if(!results.getActionResults().isEmpty()){
+//							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
+//							rb.apply();
+//						}
+//					} catch (CloneNotSupportedException e) {
+//						e.printStackTrace();
+//					}
+//				}
+		}
+		
+		
+		// Make sure we move the player out of the way
+		for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
+			int add = 0;
+			if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
+				Location l = player.getLocation();
+				while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
+					add++;
+					if(l.getY() >= 256) break;
+					l.setY(l.getY() + 1);
+				}
+				if(add > 0){
+					player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
+					player.teleport(l);
+				}
+			}
+		}
+		
+		
+		// Trigger the rollback event
+		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
+		plugin.getServer().getPluginManager().callEvent(event);
+		
+		return new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges );
+	
 	}
 }

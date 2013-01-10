@@ -27,16 +27,16 @@ public class Restore extends Preview {
 	 * Set preview move and then do a rollback
 	 * @return
 	 */
-	public ApplierResult preview(){
+	public void preview(){
 		is_preview = true;
-		return apply();
+		apply();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public ApplierResult apply(){
+	public void apply(){
 		
 		// Give the results to the changequeue
 		ApplierResult changesApplied = super.apply();

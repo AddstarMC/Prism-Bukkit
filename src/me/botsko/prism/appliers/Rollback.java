@@ -30,16 +30,16 @@ public class Rollback extends Preview {
 	 * Set preview move and then do a rollback
 	 * @return
 	 */
-	public ApplierResult preview(){
+	public void preview(){
 		is_preview = true;
-		return apply();
+		apply();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public ApplierResult apply(){
+	public void apply(){
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){

@@ -13,7 +13,7 @@ public interface Previewable {
 	 * 
 	 * @return
 	 */
-	public ApplierResult preview();
+	public void preview();
 	
 	
 	/**
@@ -32,5 +32,5 @@ public interface Previewable {
 	 * 
 	 * @return
 	 */
-	public ApplierResult apply();
+	public void apply();
 }
