@@ -12,6 +12,7 @@ import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
+import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
@@ -262,9 +263,13 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void discardExpiredDbRecords(){
-		ActionsQuery aq = new ActionsQuery(this);
-		int rows_affected = aq.delete(getConfig().getString("prism.clear-records-after"));
-		log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
+		
+		String dateBefore = PreprocessArgs.translateTimeStringToDate( this, null, getConfig().getString("prism.clear-records-after") );
+		if(dateBefore != null && !dateBefore.isEmpty()){
+			ActionsQuery aq = new ActionsQuery(this);
+			int rows_affected = aq.delete(dateBefore);
+			log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
+		}
 	}
 	
 	

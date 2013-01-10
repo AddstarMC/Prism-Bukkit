@@ -263,7 +263,9 @@ public class PreprocessArgs {
 				else if (c.equals("m")) mins = num;
 				else if (c.equals("s")) secs = num;
 				else {
-					player.sendMessage( plugin.playerError("Invalid time value '"+c+"'. Use /prism ? for a help.") );
+					if(player != null){
+						player.sendMessage( plugin.playerError("Invalid time value '"+c+"'. Use /prism ? for a help.") );
+					}
 					return null;
 				}
 				nums = "";
@@ -282,7 +284,9 @@ public class PreprocessArgs {
 		}
 		//Invalid time format
 		else if (type == 2){
-			player.sendMessage( plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			if(player != null){
+				player.sendMessage( plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			}
 			return null;
 		}
 		
