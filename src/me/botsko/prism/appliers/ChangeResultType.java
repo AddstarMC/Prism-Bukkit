@@ -1,4 +1,4 @@
-package me.botsko.prism.changers;
+package me.botsko.prism.appliers;
 
 public enum ChangeResultType {
 	APPLIED, SKIPPED, DEFERRED

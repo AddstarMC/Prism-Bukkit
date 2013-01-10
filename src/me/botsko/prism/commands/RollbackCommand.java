@@ -49,7 +49,7 @@ public class RollbackCommand implements SubHandler {
 		if(!results.getActionResults().isEmpty()){
 			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
-			Rollback rb = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters, processStartTime );
+			Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
 			rb.apply();
 			
 		} else {

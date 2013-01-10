@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.Calendar;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -33,6 +35,9 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
+		Calendar lCDateTime = Calendar.getInstance();
+		long processStartTime = lCDateTime.getTimeInMillis();
+		
 		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.RESTORE, 1 );
 		if(parameters == null){
 			return;
@@ -49,7 +54,7 @@ public class RestoreCommand implements SubHandler {
 			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
+			Restore rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, processStartTime );
 			rs.apply();
 			
 		} else {

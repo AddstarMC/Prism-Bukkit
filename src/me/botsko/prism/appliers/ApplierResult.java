@@ -9,22 +9,22 @@ public class ApplierResult {
 	/**
 	 * 
 	 */
-	protected int changes_applied = 0;
+	protected final int changes_applied;
 	
 	/**
 	 * 
 	 */
-	protected int changes_skipped = 0;
+	protected final int changes_skipped;
 	
 	/**
 	 * 
 	 */
-	protected boolean is_preview;
+	protected final boolean is_preview;
 	
 	/**
 	 * 
 	 */
-	protected ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+	protected final ArrayList<BlockStateChange> blockStateChanges;
 	
 	
 	/**

@@ -18,17 +18,17 @@ public class PrismBlocksRollbackEvent extends Event {
     /**
      * 
      */
-    private ArrayList<BlockStateChange> blockStateChanges;
+    private final ArrayList<BlockStateChange> blockStateChanges;
     
     /**
      * 
      */
-    private Player onBehalfOf;
+    private final Player onBehalfOf;
     
     /**
      * 
      */
-    private String commandParameters;
+    private final String commandParameters;
  
     
     /**

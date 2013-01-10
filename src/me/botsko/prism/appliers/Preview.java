@@ -14,7 +14,6 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.changers.ChangeResultType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
@@ -46,22 +45,22 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	PrismProcessType processType;
+	protected final PrismProcessType processType;
 	
 	/**
 	 * 
 	 */
-	protected Player player;
+	protected final Player player;
 	
 	/**
 	 * 
 	 */
-	protected List<Action> results;
+	protected final List<Action> results;
 	
 	/**
 	 * 
 	 */
-	protected QueryParameters parameters;
+	protected final QueryParameters parameters;
 	
 	/**
 	 * 
@@ -71,27 +70,42 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected long processStartTime;
+	protected final long processStartTime;
 	
 	/**
 	 * 
 	 */
-	ArrayList<Action> deferredChanges = new ArrayList<Action>();
+	protected ArrayList<Action> deferredChanges = new ArrayList<Action>();
 	
 	/**
 	 * 
 	 */
-	ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+	protected ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 	
 	/**
 	 * 
 	 */
-	int skipped_block_count;
+	protected int skipped_block_count;
 	
 	/**
 	 * 
 	 */
-	int changes_applied_count;
+	protected int changes_applied_count;
+	
+	
+	/**
+	 * 
+	 * @param plugin
+	 * @return 
+	 */
+	public Preview( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, long processStartTime ){
+		this.processType = processType;
+		this.plugin = plugin;
+		this.player = player;
+		this.results = results;
+		this.parameters = parameters;
+		this.processStartTime = processStartTime;
+	}
 	
 	
 	/**
@@ -357,7 +371,7 @@ public class Preview implements Previewable {
 						ActionsQuery aq = new ActionsQuery(plugin);
 						QueryResult results = aq.lookup( player, triggerParameters );
 						if(!results.getActionResults().isEmpty()){
-							Restore rs = new Restore( plugin, player, results.getActionResults(), triggerParameters );
+							Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters, processStartTime );
 							rs.apply();
 						}
 					} catch (CloneNotSupportedException e) {
@@ -454,7 +468,7 @@ public class Preview implements Previewable {
 	 * However, it also means that a rollback *could* interfere with a player-placed
 	 * block.
 	 */
-	protected ChangeResultType placeBlock( BlockAction b, Block block ){
+	protected ChangeResultType placeBlock( final BlockAction b, Block block ){
 		
 		Material m = Material.getMaterial(b.getBlock_id());
 		

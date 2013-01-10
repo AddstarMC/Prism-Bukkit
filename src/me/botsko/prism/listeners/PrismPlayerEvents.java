@@ -78,7 +78,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
+	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -88,7 +88,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
 		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -98,7 +98,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();

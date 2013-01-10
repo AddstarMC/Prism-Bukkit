@@ -18,12 +18,8 @@ public class Restore extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
-		this.processType = PrismProcessType.RESTORE;
-		this.plugin = plugin;
-		this.player = player;
-		this.results = results;
-		this.parameters = parameters;
+	public Restore( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, long processStartTime ){
+		super(plugin, player, processType, results, parameters, processStartTime);
 	}
 	
 	

@@ -21,13 +21,8 @@ public class Rollback extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, Player player, List<Action> results, QueryParameters parameters, long processStartTime ) {
-		this.processType = PrismProcessType.ROLLBACK;
-		this.plugin = plugin;
-		this.player = player;
-		this.results = results;
-		this.parameters = parameters;
-		this.processStartTime = processStartTime;
+	public Rollback( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, long processStartTime ){
+		super(plugin, player, processType, results, parameters, processStartTime);
 	}
 	
 	

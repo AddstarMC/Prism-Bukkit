@@ -226,7 +226,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockForm(BlockFormEvent event) {
+	public void onBlockForm(final BlockFormEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getBlock(), "Environment") );
 	}
 	
@@ -236,7 +236,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockFade(BlockFadeEvent event) {
+	public void onBlockFade(final BlockFadeEvent event) {
 		if(event.getBlock().getType().equals(Material.FIRE)) return;
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
 	}
@@ -247,7 +247,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onLeavesDecay(LeavesDecayEvent event) {
+	public void onLeavesDecay(final LeavesDecayEvent event) {
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LEAF_DECAY, event.getBlock(), "Environment") );
 	}
 	
@@ -257,7 +257,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockBurn(BlockBurnEvent event) {
+	public void onBlockBurn(final BlockBurnEvent event) {
 		Block block = event.getBlock();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
@@ -275,7 +275,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockPhysics(BlockPhysicsEvent event) {
+	public void onBlockPhysics(final BlockPhysicsEvent event) {
 		
 		// Record that a block fell, associated with the player who broke the base block.
 		Block b = event.getBlock();
@@ -334,7 +334,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onSignChange(SignChangeEvent event) {
+	public void onSignChange(final SignChangeEvent event) {
 		plugin.actionsRecorder.addToQueue( new SignAction(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer().getName()) );
 	}
 
@@ -427,7 +427,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onBlockFromTo(BlockFromToEvent event) {
+	public void onBlockFromTo(final BlockFromToEvent event) {
 
 		// Ignore blocks that aren't liquid. @todo what else triggers this?
 		if (!event.getBlock().isLiquid()) return;

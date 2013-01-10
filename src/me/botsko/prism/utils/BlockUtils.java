@@ -58,7 +58,7 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Block> findFallingBlocksAboveBlock( Block block ){
+	public static ArrayList<Block> findFallingBlocksAboveBlock( final Block block ){
 		
 		ArrayList<Block> falling_blocks = new ArrayList<Block>();
 		
@@ -99,7 +99,7 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Block> findSideFaceAttachedBlocks( Block block ){
+	public static ArrayList<Block> findSideFaceAttachedBlocks( final Block block ){
 		
 		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
 		
@@ -155,7 +155,7 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Block> findTopFaceAttachedBlocks( Block block ){
+	public static ArrayList<Block> findTopFaceAttachedBlocks( final Block block ){
 		
 		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
 		
@@ -264,7 +264,7 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Entity> findHangingEntities( Block block ){
+	public static ArrayList<Entity> findHangingEntities( final Block block ){
 		
 		ArrayList<Entity> entities = new ArrayList<Entity>();
 		

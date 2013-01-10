@@ -12,6 +12,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 
 public class RollbackWand implements Wand {
@@ -81,7 +82,7 @@ public class RollbackWand implements Wand {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( player, params );
 		if(!results.getActionResults().isEmpty()){
-			Rollback rb = new Rollback( plugin, player, results.getActionResults(), params, processStartTime );
+			Rollback rb = new Rollback( plugin, player, PrismProcessType.ROLLBACK, results.getActionResults(), params, processStartTime );
 			rb.apply();
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");

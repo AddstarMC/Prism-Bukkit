@@ -147,7 +147,7 @@ public class PrismEntityEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityTargetEvent(EntityTargetEvent event) {
+    public void onEntityTargetEvent(final EntityTargetEvent event) {
         if (event.getTarget() instanceof Player) {
         	if(event.getEntity().getType().equals(EntityType.CREEPER)){
 	            Player player = (Player) event.getTarget();

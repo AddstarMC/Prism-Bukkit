@@ -96,11 +96,11 @@ public class PreviewCommand implements SubHandler {
 					ApplierResult result = null;
 					Previewable rs = null;
 					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
-						rs = new Rollback( plugin, call.getPlayer(), results.getActionResults(), parameters, processStartTime );
+						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
 						result = rs.preview();
 					}
 					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
-						rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
+						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, processStartTime );
 						result = rs.preview();
 					}
 					if(result != null){

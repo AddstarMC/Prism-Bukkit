@@ -36,7 +36,7 @@ public class PrismRollbackEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler
-	public void onPrismBlocksRollbackEvent(PrismBlocksRollbackEvent event){
+	public void onPrismBlocksRollbackEvent(final PrismBlocksRollbackEvent event){
 
 		// Get all block changes for this event
 		ArrayList<BlockStateChange> blockStateChanges = event.getBlockStateChanges();

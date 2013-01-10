@@ -8,22 +8,22 @@ public class PreviewSession {
 	/**
 	 * 
 	 */
-	protected Player player;
+	protected final Player player;
 	
 	/**
 	 * 
 	 */
-	protected Previewable previewer;
+	protected final Previewable previewer;
 	
 	/**
 	 * 
 	 */
-	protected ApplierResult results;
+	protected final ApplierResult results;
 	
 	/**
 	 * 
 	 */
-	protected long queryTime;
+	protected final long queryTime;
 	
 	
 	/**
