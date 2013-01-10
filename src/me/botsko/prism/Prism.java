@@ -6,11 +6,13 @@ import java.sql.Statement;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.Action;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
@@ -48,6 +50,7 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	public ConcurrentHashMap<Location,Long> alertedBlocks = new ConcurrentHashMap<Location,Long>();
+	public final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
 	
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so

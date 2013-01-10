@@ -55,11 +55,6 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected final List<Action> results;
-	
-	/**
-	 * 
-	 */
 	protected final QueryParameters parameters;
 	
 	/**
@@ -102,9 +97,15 @@ public class Preview implements Previewable {
 		this.processType = processType;
 		this.plugin = plugin;
 		this.player = player;
-		this.results = results;
+//		this.results = results;
 		this.parameters = parameters;
 		this.processStartTime = processStartTime;
+		
+		// @todo if not preview
+		// Append all actions to the queue. @todo we should do this somewhere else
+		for(Action a : results){
+			plugin.worldChangeQueue.add(a);
+		}
 	}
 	
 	
@@ -172,7 +173,7 @@ public class Preview implements Previewable {
 	 */
 	public ApplierResult apply(){
 		
-		if(results != null && !results.isEmpty()){
+		if(!plugin.worldChangeQueue.isEmpty()){
 			
 			if(!is_preview){
 				
@@ -200,7 +201,8 @@ public class Preview implements Previewable {
 			}
 			
 			
-			for(Action a : results){
+			while(!plugin.worldChangeQueue.isEmpty()){
+				Action a = plugin.worldChangeQueue.poll();
 				
 				// No sense in trying to rollback
 				// when the type doesn't support it.
@@ -322,6 +324,7 @@ public class Preview implements Previewable {
 						changes_applied_count++;
 					}
 				}
+				plugin.worldChangeQueue.remove(a); // @todo needed?
 			}
 			
 			// Apply deferred block changes
