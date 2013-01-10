@@ -42,6 +42,7 @@ public enum ActionType {
 	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
 	PLAYER_COMMAND(false, false, false, "command", "ran command"),
+	PRISM_PROCESS(true, false, false, "prismprocess", "ran process"),
 	PRISM_ROLLBACK(true, false, false, "prismrollback", "rolled back"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),

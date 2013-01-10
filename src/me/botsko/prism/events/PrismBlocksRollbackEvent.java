@@ -4,6 +4,7 @@ package me.botsko.prism.events;
 import java.util.ArrayList;
 
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
  
@@ -22,14 +23,14 @@ public class PrismBlocksRollbackEvent extends Event {
     /**
      * 
      */
-    private String onBehalfOf;
+    private Player onBehalfOf;
  
     
     /**
      * 
      * @param example
      */
-    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, String onBehalfOf ) {
+    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf ) {
         this.blockStateChanges = blockStateChanges;
         this.onBehalfOf = onBehalfOf;
     }
@@ -46,7 +47,7 @@ public class PrismBlocksRollbackEvent extends Event {
 	/**
 	 * @return the onBehalfOf
 	 */
-	public String getOnBehalfOf() {
+	public Player onBehalfOf() {
 		return onBehalfOf;
 	}
 

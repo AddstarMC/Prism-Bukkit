@@ -1,4 +1,4 @@
-package me.botsko.prism.events;
+package me.botsko.prism.appliers;
 
 public enum PrismProcessType {
 	ROLLBACK, RESTORE

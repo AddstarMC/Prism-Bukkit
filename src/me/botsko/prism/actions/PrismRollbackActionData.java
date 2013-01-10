@@ -26,5 +26,10 @@ public class PrismRollbackActionData {
 	 * 
 	 */
 	public int newBlock_subid;
+	
+	/**
+	 * 
+	 */
+	public int parent_id;
 
 }

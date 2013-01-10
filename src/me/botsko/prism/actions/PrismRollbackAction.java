@@ -17,7 +17,7 @@ public class PrismRollbackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PrismRollbackAction( ActionType action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername ){
+	public PrismRollbackAction( ActionType action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername, int parent_id ){
 		
 		actionData = new PrismRollbackActionData();
 		
@@ -30,6 +30,7 @@ public class PrismRollbackAction extends GenericAction {
 			actionData.originalBlock_subid = originalBlock_subid;
 			actionData.newBlock_id = newBlock_id;
 			actionData.newBlock_subid = newBlock_subid;
+			actionData.parent_id = parent_id;
 			this.player_name = playername;
 		}
 		if(action_time == null){

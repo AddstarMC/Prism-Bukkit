@@ -18,7 +18,6 @@ import me.botsko.prism.changers.BlockChangeResult;
 import me.botsko.prism.changers.ChangeResultType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
-import me.botsko.prism.events.PrismProcessType;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -374,7 +373,7 @@ public class Preview implements Previewable {
 			
 			
 			// Trigger the rollback event
-			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player.getName());
+			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player);
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			return new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges );

@@ -1,7 +1,9 @@
 package me.botsko.prism.actionlibs;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -153,10 +155,11 @@ public class ActionRecorder {
 	 * 
 	 * @param a
 	 */
-	protected void insertActionIntoDatabase( Action a){
+	public int insertActionIntoDatabase( Action a){
+		int id = 0;
 		try {
 			plugin.dbc();
-	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getAction_time());
 	        s.setString(2,a.getType().getActionType());
 	        s.setString(3,a.getPlayer_name());
@@ -166,11 +169,18 @@ public class ActionRecorder {
 	        s.setInt(7,(int)a.getZ());
 	        s.setString(8,a.getData());
 	        s.executeUpdate();
+	        
+	        ResultSet generatedKeys = s.getGeneratedKeys();
+	        if(generatedKeys.next()){
+	        	id = generatedKeys.getInt(1);
+	        }
+	        
     		s.close();
             plugin.conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+		return id;
 	}
 	
 	
