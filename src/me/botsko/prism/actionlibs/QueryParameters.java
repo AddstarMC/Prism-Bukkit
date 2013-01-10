@@ -29,6 +29,9 @@ public class QueryParameters implements Cloneable {
 	protected boolean allow_no_radius = false;
 	protected int limit = 1000000;
 	
+	// Informational
+	protected String original_command;
+	
 	
 	/**
 	 * @return the id
@@ -322,6 +325,30 @@ public class QueryParameters implements Cloneable {
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param args
+	 */
+	public void setStringFromRawArgs( String[] args ){
+		String params = "";
+		if(args.length > 0){
+			for(int i = 1; i < args.length; i++){
+				params += " "+args[i];
+			}
+		}
+		original_command = params;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getOriginalCommand(){
+		return original_command;
 	}
 	
 	

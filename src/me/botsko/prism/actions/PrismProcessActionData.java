@@ -5,7 +5,7 @@ public class PrismProcessActionData {
 	/**
 	 * 
 	 */
-	public String params;
+	public String params = "";
 	
 	/**
 	 * 

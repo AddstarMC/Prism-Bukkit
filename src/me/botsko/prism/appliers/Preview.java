@@ -373,7 +373,7 @@ public class Preview implements Previewable {
 			
 			
 			// Trigger the rollback event
-			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player);
+			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 			return new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges );

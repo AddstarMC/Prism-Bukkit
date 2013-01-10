@@ -43,7 +43,7 @@ public class PrismRollbackEvents implements Listener {
 		if(!blockStateChanges.isEmpty()){
 			
 			// Create an entry for the rollback as a whole
-			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, PrismProcessType.ROLLBACK, event.onBehalfOf(), "params" );
+			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
 			int id = plugin.actionsRecorder.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;

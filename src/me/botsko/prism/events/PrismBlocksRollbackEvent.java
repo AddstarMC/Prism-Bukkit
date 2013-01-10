@@ -24,15 +24,21 @@ public class PrismBlocksRollbackEvent extends Event {
      * 
      */
     private Player onBehalfOf;
+    
+    /**
+     * 
+     */
+    private String commandParameters;
  
     
     /**
      * 
      * @param example
      */
-    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf ) {
+    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, String commandParameters ) {
         this.blockStateChanges = blockStateChanges;
         this.onBehalfOf = onBehalfOf;
+        this.commandParameters = commandParameters;
     }
  
     
@@ -49,6 +55,15 @@ public class PrismBlocksRollbackEvent extends Event {
 	 */
 	public Player onBehalfOf() {
 		return onBehalfOf;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getCommandParams(){
+		return commandParameters;
 	}
 
 
