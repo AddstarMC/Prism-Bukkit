@@ -23,6 +23,11 @@ public class ActionRecorder {
 	 */
 	private static final LinkedBlockingQueue<Action> queue = new LinkedBlockingQueue<Action>();
 	
+	/**
+	 * 
+	 */
+	private boolean immediatelyProcessQueue = true;
+	
 	
 	/**
 	 * 
@@ -30,6 +35,15 @@ public class ActionRecorder {
 	 */
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
+	}
+	
+	
+	/**
+	 * 
+	 * @param immediatelyProcessQueue
+	 */
+	public void shouldImmediatelyProcessQueue(boolean immediatelyProcessQueue){
+		this.immediatelyProcessQueue = immediatelyProcessQueue;
 	}
 	
 	
@@ -50,8 +64,20 @@ public class ActionRecorder {
 		
 		// @todo for now, we're just calling save immediately. but we could
 		// make this work on a timer, pool, etc
+		if( immediatelyProcessQueue ){
+			save();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void saveQueue(){
 		save();
-		
+		// Reset the queue empty flag since it was just
+		// emptied but whatever turned it off.
+		immediatelyProcessQueue = true;
 	}
 	
 	
@@ -108,10 +134,14 @@ public class ActionRecorder {
 	 */
 	public void save(){
 		if(!queue.isEmpty()){
-			while (!queue.isEmpty()) {
-				Action a = queue.poll();
-				insertActionIntoDatabase( a );
-				queue.remove(a); //@todo unecessary?
+			if(immediatelyProcessQueue){
+				while (!queue.isEmpty()) {
+					Action a = queue.poll();
+					insertActionIntoDatabase( a );
+					queue.remove(a); //@todo unecessary?
+				}
+			} else {
+				insertActionsIntoDatabase();
 			}
 		} else {
 			plugin.debug("Action queue empty when save() called.");
@@ -139,6 +169,47 @@ public class ActionRecorder {
     		s.close();
             plugin.conn.close();
         } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param entities
+	 * @throws SQLException
+	 */
+	public void insertActionsIntoDatabase() {
+	    PreparedStatement s = null;
+	    try {
+	    	
+	    	plugin.debug("EMPTYING QUEUE");
+	    	
+	        plugin.dbc();
+	        plugin.conn.setAutoCommit(false);
+	        s =  plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+	        int i = 0;
+	        while (!queue.isEmpty()) {
+	        	Action a = queue.poll();
+	        	s.setString(1,a.getAction_time());
+		        s.setString(2,a.getType().getActionType());
+		        s.setString(3,a.getPlayer_name());
+		        s.setString(4,a.getWorld_name());
+		        s.setInt(5,(int)a.getX());
+		        s.setInt(6,(int)a.getY());
+		        s.setInt(7,(int)a.getZ());
+		        s.setString(8,a.getData());
+	            s.addBatch();
+	            if ((i + 1) % 1000 == 0) {
+	                s.executeBatch(); // Execute every 1000 items.
+	            }
+	            i++;
+	        }
+	        s.executeBatch();
+	        plugin.conn.commit();
+	        s.close();
+            plugin.conn.close();
+	    } catch (SQLException e) {
             e.printStackTrace();
         }
 	}
