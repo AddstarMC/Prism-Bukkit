@@ -124,11 +124,9 @@ public class Preview implements Previewable {
 		if(plugin.playerActivePreviews.containsKey(player.getName())){
 			
 			PreviewSession previewSession = plugin.playerActivePreviews.get( player.getName() );
-			plugin.debug("Undo queue empty: " + previewSession.getResults().getBlockStateChanges().isEmpty());
 			if(!previewSession.getResults().getBlockStateChanges().isEmpty()){
 				
 				for(BlockStateChange u : previewSession.getResults().getBlockStateChanges()){
-					plugin.debug("Preview block sent to player: " + u.getOriginalBlock().getType().name());
 					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 				}
 			}
@@ -261,8 +259,6 @@ public class Preview implements Previewable {
 						sheep.setColor( b.getColor() );
 					}
 					
-					plugin.debug("Rolling back entity " + b.getEntityType().getName());
-					
 					changes_applied_count++;
 					
 				}
@@ -284,7 +280,7 @@ public class Preview implements Previewable {
 							HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
 							changes_applied_count++;
 							if(leftovers.size() > 0){
-								plugin.debug("Couldn't rollback items to container, it's full.");
+								// @todo
 							}
 						}
 					}

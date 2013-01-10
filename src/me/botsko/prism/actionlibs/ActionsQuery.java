@@ -175,7 +175,7 @@ public class ActionsQuery {
 		if(beforeDate != null && !beforeDate.isEmpty()){
 			try {
 				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
-				plugin.debug("Deleting records prior to " + beforeDate + ": " + query);
+				plugin.log("Deleting records prior to " + beforeDate + ": " + query);
 				plugin.dbc();
 				Statement s = plugin.conn.createStatement ();
 				rows_affected = s.executeUpdate (query);
@@ -359,7 +359,9 @@ public class ActionsQuery {
 			}
 		}
 
-		plugin.debug("Query conditions: " + query);
+		if(plugin.getConfig().getBoolean("prism.debug")){
+			plugin.debug("Query conditions: " + query);
+		}
 		
 		return query;
 		

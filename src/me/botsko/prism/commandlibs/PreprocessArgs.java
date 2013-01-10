@@ -41,7 +41,6 @@ public class PreprocessArgs {
 				
 				// Verify we have an arg we can match
 				String[] possibleArgs = {"a","r","t","p","w","b","e"};
-				plugin.debug("Validating arg: " + arg.substring(0,1));
 				if(!Arrays.asList(possibleArgs).contains(arg.substring(0,1))){
 					player.sendMessage( plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
@@ -68,7 +67,6 @@ public class PreprocessArgs {
 				
 				// Officially certify we found a valid argument and value!
 				if(Arrays.asList(possibleArgs).contains(arg_type)){
-					plugin.debug("Found arg type " + arg_type + " with value: " + val);
 					foundArgs.put(arg_type, val);
 					parameters.setFoundArgs(foundArgs);
 				}
@@ -207,7 +205,6 @@ public class PreprocessArgs {
 				if(parameters.getAllow_no_radius()){
 					// We'll allow no radius.
 				} else {
-					plugin.debug("Setting default radius to " + plugin.getConfig().getInt("default-radius"));
 					parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
 				}
 			}

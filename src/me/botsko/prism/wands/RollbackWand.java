@@ -62,8 +62,6 @@ public class RollbackWand implements Wand {
 	 */
 	protected void rollback( Player player, Block block ){
 		
-		plugin.debug("Running rollback wand query for " + block.getX() + " " + block.getY() + " " + block.getZ());
-		
 		Calendar lCDateTime = Calendar.getInstance();
 		long processStartTime = lCDateTime.getTimeInMillis();
 

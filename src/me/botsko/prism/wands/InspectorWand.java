@@ -58,8 +58,6 @@ public class InspectorWand implements Wand {
 	 * @param loc
 	 */
 	protected void showBlockHistory( Player player, Block block, Location loc ){
-		
-		plugin.debug("Running inspector wand for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 
 		// Build params
 		QueryParameters params = new QueryParameters();

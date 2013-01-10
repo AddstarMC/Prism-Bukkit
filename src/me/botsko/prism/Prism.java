@@ -207,7 +207,6 @@ public class Prism extends JavaPlugin {
 		    		QueryResult result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
 		    		if(diff >= 300){
-		    			prism.debug("Removing cached query from "+result.getQueryTime()+" with " + result.getTotal_results() + " results.");
 		    			cachedQueries.remove(query.getKey());
 		    		}
 		    	}
@@ -233,7 +232,6 @@ public class Prism extends JavaPlugin {
 		    			if(player != null){
 		    				player.sendMessage( prism.playerHeaderMsg("Canceling forgotten preview.") );
 		    			}
-		    			prism.debug("Removing cached preview from "+result.getQueryTime()+" by " + result.getPlayer().getName() + ".");
 		    			playerActivePreviews.remove(query.getKey());
 		    		}
 		    	}

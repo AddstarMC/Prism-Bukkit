@@ -52,7 +52,6 @@ public class Executor implements CommandExecutor {
 		
 		// Find subcommand
 		String subcommandName = args[0].toLowerCase();
-		plugin.debug("Seeking subcommand: " + subcommandName);
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
 			sender.sendMessage( plugin.msgInvalidSubcommand() );

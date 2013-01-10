@@ -140,7 +140,7 @@ public class PrismBlockEvents implements Listener {
 		if(falling_blocks.size() > 0){
 			for(Block b : falling_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating falling block at " + coord_key + " for " + playername);
+//				plugin.debug("Anticipating falling block at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
@@ -156,7 +156,7 @@ public class PrismBlockEvents implements Listener {
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating block detaching (side) at " + coord_key + " for " + playername);
+//				plugin.debug("Anticipating block detaching (side) at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
@@ -166,7 +166,7 @@ public class PrismBlockEvents implements Listener {
 		if(detached_blocks.size() > 0){
 			for(Block b : detached_blocks){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-				plugin.debug("Anticipating block popping off (above) at " + coord_key + " for " + playername);
+//				plugin.debug("Anticipating block popping off (above) at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
 //				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, playername) );
 			}
@@ -177,7 +177,7 @@ public class PrismBlockEvents implements Listener {
 		if(hanging.size() > 0){
 			for(Entity e : hanging){
 				String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
-				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + playername);
+//				plugin.debug("Anticipating hanging item detaching at " + coord_key + " for " + playername);
 				plugin.preplannedBlockFalls.put(coord_key, playername);
 			}
 		}
@@ -302,7 +302,7 @@ public class PrismBlockEvents implements Listener {
 				// If it's lost an attached block
 				if (BlockUtils.materialMeansBlockDetachment(attachedBlock.getType())) {
 					String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-					plugin.debug("Seeking block (side) detachment at: " + coord_key);
+//					plugin.debug("Seeking block (side) detachment at: " + coord_key);
 					if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 						String player = plugin.preplannedBlockFalls.get(coord_key);
 						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
