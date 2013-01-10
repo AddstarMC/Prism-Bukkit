@@ -126,6 +126,13 @@ public class PrismCommands extends Executor {
 		.setHandler(new DeleteCommand(plugin));
 		
 		/**
+		 * /prism undo
+		 */
+		addSub("undo", "prism.rollback")
+		.setDescription("Revert a previous process.")
+		.setHandler(new UndoCommand(plugin));
+		
+		/**
 		 * /prism ?
 		 */
 		addSub("?", "prism.help")
@@ -133,7 +140,7 @@ public class PrismCommands extends Executor {
 		.setHandler(new HelpCommand(plugin));
 		
 		/**
-		 * /prism ?
+		 * /prism params
 		 */
 		addSub("params", "prism.help")
 		.setDescription("Parameter help.")

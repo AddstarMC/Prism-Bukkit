@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.PrismRollbackAction;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 
@@ -42,7 +43,7 @@ public class PrismRollbackEvents implements Listener {
 		if(!blockStateChanges.isEmpty()){
 			
 			// Create an entry for the rollback as a whole
-			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, event.onBehalfOf(), "params" );
+			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, PrismProcessType.ROLLBACK, event.onBehalfOf(), "params" );
 			int id = plugin.actionsRecorder.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;
