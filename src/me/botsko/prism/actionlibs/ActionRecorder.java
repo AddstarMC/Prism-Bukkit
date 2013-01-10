@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 
-public class ActionRecorder {
+public class ActionRecorder implements Runnable {
 	
 	/**
 	 * 
@@ -28,7 +28,7 @@ public class ActionRecorder {
 	/**
 	 * 
 	 */
-	private boolean immediatelyProcessQueue = true;
+	private boolean immediatelyProcessQueue = false;
 	
 	
 	/**
@@ -64,8 +64,7 @@ public class ActionRecorder {
 		
 		plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
 		
-		// @todo for now, we're just calling save immediately. but we could
-		// make this work on a timer, pool, etc
+		// Only execute current batch if asked
 		if( immediatelyProcessQueue ){
 			save();
 		}
@@ -145,8 +144,6 @@ public class ActionRecorder {
 			} else {
 				insertActionsIntoDatabase();
 			}
-		} else {
-			plugin.debug("Action queue empty when save() called.");
 		}
 	}
 	
@@ -220,5 +217,11 @@ public class ActionRecorder {
 	    } catch (SQLException e) {
             e.printStackTrace();
         }
+	}
+
+
+	@Override
+	public void run() {
+		save();
 	}
 }

@@ -101,6 +101,9 @@ public class Prism extends JavaPlugin {
 		actionsQuery = new ActionsQuery(this);
 		oreMonitor = new OreMonitor(this);
 		
+		// Init async tasks
+		actionRecorderTask();
+		
 		// Init scheduled events
 		endExpiredQueryCaches();
 		endExpiredPreviews();
@@ -256,6 +259,14 @@ public class Prism extends JavaPlugin {
 		    	}
 		    }
 		}, 1200L, 1200L);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void actionRecorderTask(){
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ActionRecorder(prism), 2L, 2L);
 	}
 	
 	
