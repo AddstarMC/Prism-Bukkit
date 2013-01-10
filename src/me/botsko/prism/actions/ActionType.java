@@ -80,7 +80,7 @@ public enum ActionType {
 	/**
 	 * @return the canRollback
 	 */
-	public boolean isCanRollback() {
+	public boolean canRollback() {
 		return canRollback;
 	}
 
@@ -88,7 +88,7 @@ public enum ActionType {
 	/**
 	 * @return the canRestore
 	 */
-	public boolean isCanRestore() {
+	public boolean canRestore() {
 		return canRestore;
 	}
 
@@ -167,7 +167,7 @@ public enum ActionType {
 	public static ArrayList<ActionType> getCanRollbackActionTypes(){
 		ArrayList<ActionType> canRollback = new ArrayList<ActionType>();
 		for (ActionType me : ActionType.values()) {
-	        if(me.isCanRestore()){
+	        if(me.canRestore()){
 	        	canRollback.add(me);
 	        }
 	    }

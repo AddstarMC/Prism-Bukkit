@@ -37,7 +37,14 @@ public class WorldChangeQueue extends Preview {
 	 */
 	PrismProcessType processType;
 	
+	/**
+	 * 
+	 */
 	int skipped_block_count;
+	
+	/**
+	 * 
+	 */
 	int changes_applied_count;
 	
 	
@@ -55,7 +62,7 @@ public class WorldChangeQueue extends Preview {
 	 * 
 	 * @return
 	 */
-	public ApplierResult applyChanges(){
+	public ApplierResult apply(){
 		
 		ArrayList<Action> deferredChanges = new ArrayList<Action>();
 		ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
@@ -65,13 +72,13 @@ public class WorldChangeQueue extends Preview {
 				
 				// No sense in trying to rollback
 				// when the type doesn't support it.
-				if(!a.getType().isCanRollback()){
+				if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
 					continue;
 				}
 				
 				// No sense in trying to restore
 				// when the type doesn't support it.
-				if(!a.getType().isCanRestore()){
+				if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
 					continue;
 				}
 					
@@ -81,7 +88,7 @@ public class WorldChangeQueue extends Preview {
 	
 				
 				/**
-				 * Rollback block changes
+				 * Reverse or restore block changes
 				 */
 				if( a instanceof BlockAction ){
 					
@@ -104,7 +111,7 @@ public class WorldChangeQueue extends Preview {
 				/**
 				 * Rollback entity kills
 				 */
-				if( a instanceof EntityAction ){
+				if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof EntityAction ){
 					
 					EntityAction b = (EntityAction) a;
 					
@@ -131,7 +138,7 @@ public class WorldChangeQueue extends Preview {
 				/**
 				 * Rollback itemstack actions
 				 */
-				if( a instanceof ItemStackAction ){
+				if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
 					
 					ItemStackAction b = (ItemStackAction) a;
 					
@@ -150,11 +157,11 @@ public class WorldChangeQueue extends Preview {
 					}
 				}
 				
-				
-				/**  @todo WAS IN RESTORE ONLY
+
+				/**
 				 * Restore sign actions
 				 */
-				if( a instanceof SignAction ){
+				if( processType.equals(PrismProcessType.RESTORE) && a instanceof SignAction ){
 					
 					SignAction b = (SignAction) a;
 					Block block = world.getBlockAt(loc);
@@ -209,57 +216,59 @@ public class WorldChangeQueue extends Preview {
 			
 			
 			// POST ROLLBACK TRIGGERS
+			if(processType.equals(PrismProcessType.ROLLBACK)){
 			
-			// We're going to modify the action type of the query params
-			// and pass it along to a restore.
-			// NOTE: These params have been modified from original, so
-			// do NOT use the object for original params.
-			
-			/**
-			 * If we've done breaking-blocks rollback we also need to re-apply
-			 * any sign-change events at this location.
-			 */
-			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
+				// We're going to modify the action type of the query params
+				// and pass it along to a restore.
+				// NOTE: These params have been modified from original, so
+				// do NOT use the object for original params.
 				
-				QueryParameters triggerParameters;
-				try {
-					triggerParameters = parameters.clone();
-					triggerParameters.resetActionTypes();
-					triggerParameters.addActionType(ActionType.SIGN_CHANGE);
+				/**
+				 * If we've done breaking-blocks rollback we also need to re-apply
+				 * any sign-change events at this location.
+				 */
+				if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
 					
-					ActionsQuery aq = new ActionsQuery(plugin);
-					QueryResult results = aq.lookup( player, triggerParameters );
-					if(!results.getActionResults().isEmpty()){
-						Restore rs = new Restore( plugin, player, results.getActionResults(), triggerParameters );
-						rs.apply();
+					QueryParameters triggerParameters;
+					try {
+						triggerParameters = parameters.clone();
+						triggerParameters.resetActionTypes();
+						triggerParameters.addActionType(ActionType.SIGN_CHANGE);
+						
+						ActionsQuery aq = new ActionsQuery(plugin);
+						QueryResult results = aq.lookup( player, triggerParameters );
+						if(!results.getActionResults().isEmpty()){
+							Restore rs = new Restore( plugin, player, results.getActionResults(), triggerParameters );
+							rs.apply();
+						}
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
 					}
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
 				}
-			}
-			
-			
-			/**
-			 * If we've rolled back any containers we need to restore item-removes.
-			 */
-			if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
 				
-				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
 				
-				QueryParameters triggerParameters;
-				try {
-					triggerParameters = parameters.clone();
-					triggerParameters.resetActionTypes();
-					triggerParameters.addActionType(ActionType.ITEM_REMOVE);
+				/**
+				 * If we've rolled back any containers we need to restore item-removes.
+				 */
+				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
 					
-					ActionsQuery aq = new ActionsQuery(plugin);
-					QueryResult results = aq.lookup( player, triggerParameters );
-					if(!results.getActionResults().isEmpty()){
-						Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
-						rb.apply();
+					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+					
+					QueryParameters triggerParameters;
+					try {
+						triggerParameters = parameters.clone();
+						triggerParameters.resetActionTypes();
+						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
+						
+						ActionsQuery aq = new ActionsQuery(plugin);
+						QueryResult results = aq.lookup( player, triggerParameters );
+						if(!results.getActionResults().isEmpty()){
+							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
+							rb.apply();
+						}
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
 					}
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
 				}
 			}
 			

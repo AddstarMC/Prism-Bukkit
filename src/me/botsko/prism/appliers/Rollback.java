@@ -1,6 +1,5 @@
 package me.botsko.prism.appliers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -45,13 +44,11 @@ public class Rollback extends Preview {
 	 */
 	public ApplierResult apply(){
 		
-		ArrayList<String> responses = new ArrayList<String>();
-		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
 			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 			if(fires_ext > 0){
-				responses.add( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
@@ -59,7 +56,7 @@ public class Rollback extends Preview {
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
 			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 			if(removed > 0){
-				responses.add( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
 			}
 		}
 		
@@ -87,7 +84,8 @@ public class Rollback extends Preview {
 		ApplierResult changesApplied = changeQueue.apply();
 		
 		if(changesApplied == null){
-			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "No actions found that match the criteria." ) );
+			player.sendMessage( plugin.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
+			return null;
 		}
 		
 		// Build the results message
@@ -100,7 +98,7 @@ public class Rollback extends Preview {
 			if(changesApplied.getChanges_applied() > 0){
 				msg += ChatColor.GRAY + " It's like it never happened.";
 			}
-			responses.add( plugin.playerHeaderMsg( msg ) );
+			player.sendMessage( plugin.playerHeaderMsg( msg ) );
 			
 		} else {
 		
