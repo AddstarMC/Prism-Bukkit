@@ -93,9 +93,14 @@ public class BlockChangeHandler {
 		Material m = Material.getMaterial(b.getBlock_id());
 		BlockStateChange blockStateChanges = null;
 		
-		// If the spot we're going to affect is free for a block placement,
-		// Or if this is a block that we never want to place.
-		if( !BlockUtils.isAcceptableForBlockPlace(block) || !BlockUtils.mayEverPlace(m) ){
+		// We're doing a rollback, we need to ensure the location we're replacing doesn't
+		// have a new block already.
+		if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
+			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+		}
+		
+		// On the blacklist?
+		if( !BlockUtils.mayEverPlace(m) ){
 			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
 		}
 			

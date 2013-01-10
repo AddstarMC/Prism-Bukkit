@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.changers.WorldChangeQueue;
 import me.botsko.prism.events.PrismProcessType;
 
 public class Restore extends Preview {
@@ -20,6 +19,7 @@ public class Restore extends Preview {
 	 * @return 
 	 */
 	public Restore( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
+		this.processType = PrismProcessType.RESTORE;
 		this.plugin = plugin;
 		this.player = player;
 		this.results = results;
@@ -43,9 +43,9 @@ public class Restore extends Preview {
 	public ApplierResult apply(){
 		
 		// Give the results to the changequeue
-		WorldChangeQueue changeQueue = new WorldChangeQueue( plugin, PrismProcessType.RESTORE, results, player, is_preview, parameters );
-		ApplierResult changesApplied = changeQueue.apply();
+		ApplierResult changesApplied = super.apply();
 		
+		// No changes!
 		if(changesApplied == null){
 			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "No actions found that match the criteria." ) );
 		}

@@ -9,7 +9,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
-import me.botsko.prism.changers.WorldChangeQueue;
 import me.botsko.prism.events.PrismProcessType;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
@@ -23,6 +22,7 @@ public class Rollback extends Preview {
 	 * @return 
 	 */
 	public Rollback( Prism plugin, Player player, List<Action> results, QueryParameters parameters ) {
+		this.processType = PrismProcessType.ROLLBACK;
 		this.plugin = plugin;
 		this.player = player;
 		this.results = results;
@@ -80,8 +80,7 @@ public class Rollback extends Preview {
 	
 			
 		// Give the results to the changequeue
-		WorldChangeQueue changeQueue = new WorldChangeQueue( plugin, PrismProcessType.ROLLBACK, results, player, is_preview, parameters );
-		ApplierResult changesApplied = changeQueue.apply();
+		ApplierResult changesApplied = super.apply();
 		
 		if(changesApplied == null){
 			player.sendMessage( plugin.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );

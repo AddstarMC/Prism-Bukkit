@@ -3,8 +3,6 @@ package me.botsko.prism.listeners.self;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
-import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 
@@ -44,14 +42,16 @@ public class PrismBlockEventListener implements Listener {
 				BlockState orig = stateChange.getOriginalBlock();
 				BlockState newBlock = stateChange.getNewBlock();
 				
-				// Build the action
-				PrismRollbackAction action = new PrismRollbackAction(ActionType.PRISM_ROLLBACK, orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.getOnBehalfOf());
-				action.setWorld_name(orig.getWorld().getName());
-				action.setX(orig.getX());
-				action.setY(orig.getY());
-				action.setZ(orig.getZ());
-
-				plugin.actionsRecorder.addToQueue( action );
+				plugin.debug("PrismBlocksRollbackEvent changed " + orig.getType().name() + " to " + newBlock.getType().name() );
+				
+//				// Build the action
+//				PrismRollbackAction action = new PrismRollbackAction(ActionType.PRISM_ROLLBACK, orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.getOnBehalfOf());
+//				action.setWorld_name(orig.getWorld().getName());
+//				action.setX(orig.getX());
+//				action.setY(orig.getY());
+//				action.setZ(orig.getZ());
+//
+//				plugin.actionsRecorder.addToQueue( action );
 			}
 		}
 	}
