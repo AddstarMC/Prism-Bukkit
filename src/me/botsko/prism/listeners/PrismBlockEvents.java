@@ -237,6 +237,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(BlockFadeEvent event) {
+		if(event.getBlock().getType().equals(Material.FIRE)) return;
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
 	}
 	

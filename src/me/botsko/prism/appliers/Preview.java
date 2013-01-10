@@ -14,12 +14,12 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.changers.BlockChangeHandler;
 import me.botsko.prism.changers.BlockChangeResult;
 import me.botsko.prism.changers.ChangeResultType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.events.PrismProcessType;
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
 import org.bukkit.ChatColor;
@@ -27,6 +27,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Entity;
@@ -174,8 +175,7 @@ public class Preview implements Previewable {
 				if( a instanceof BlockAction ){
 					
 					// Pass along to the change handler
-					BlockChangeHandler blockChangeHandler = new BlockChangeHandler( PrismProcessType.ROLLBACK, loc, (BlockAction) a, player, is_preview );
-					BlockChangeResult result = blockChangeHandler.applyChange();
+					BlockChangeResult result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
 					
 					if(result.getChangeResultType().equals(ChangeResultType.DEFERRED)){
 						deferredChanges.add( a );
@@ -381,5 +381,126 @@ public class Preview implements Previewable {
 			
 		}
 		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected BlockChangeResult applyBlockChange(BlockAction b, Block block){
+		
+		// Rollbacks remove blocks players created, and restore blocks player's removed
+		if(processType.equals(PrismProcessType.ROLLBACK)){
+			if(b.getType().doesCreateBlock()){
+				return removeBlock(block);
+			} else {
+				return placeBlock(b,block);
+			}
+		}
+		
+		// Restores break blocks players placed again, and re-place blocks player's have placed before
+		if(processType.equals(PrismProcessType.RESTORE)){
+			if(b.getType().doesCreateBlock()){
+				return placeBlock(b,block);
+			} else {
+				return removeBlock(block);
+			}
+		}
+		return null;
+	}
+	
+	
+	/**
+	 * Place a block unless something other than air occupies the spot, or if we detect 
+	 * a falling block now sits there. This resolves
+	 * the issue of falling blocks taking up the space, preventing this rollback.
+	 * However, it also means that a rollback *could* interfere with a player-placed
+	 * block.
+	 */
+	protected BlockChangeResult placeBlock( BlockAction b, Block block ){
+		
+		Material m = Material.getMaterial(b.getBlock_id());
+		BlockStateChange blockStateChanges = null;
+		
+		// We're doing a rollback, we need to ensure the location we're replacing doesn't
+		// have a new block already.
+		if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
+			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+		}
+		
+		// On the blacklist?
+		if( !BlockUtils.mayEverPlace(m) ){
+			return new BlockChangeResult( ChangeResultType.SKIPPED, null );
+		}
+			
+		// If it's attachable to the sides or top, we need to delay
+		if( (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m)) && !BlockUtils.isDoor(m)){
+			return new BlockChangeResult( ChangeResultType.DEFERRED, null );
+		}
+
+		// If we're not in a preview, actually apply this block
+		if(!is_preview){
+			
+			// Capture the block before we change it
+			BlockState originalBlock = block.getState();
+			
+			// Set the material
+			block.setTypeId( b.getBlock_id() );
+			block.setData( b.getBlock_subid() );
+			
+			// Capture the new state
+			BlockState newBlock = block.getState();
+			
+			// Store the state change
+			blockStateChanges = new BlockStateChange(originalBlock,newBlock);
+			
+			// If we're rolling back a door, we need to set it properly
+			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
+				BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
+			}
+			// Or a bed
+			if( m.equals(Material.BED_BLOCK) ){
+				BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
+			}
+		} else {
+			
+			// Otherwise, preview it.
+			player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+		}
+		
+		return new BlockChangeResult( ChangeResultType.APPLIED, blockStateChanges );
+
+	}
+
+
+	/***
+	 * 
+	 */
+	protected BlockChangeResult removeBlock( Block block ){
+		
+		BlockStateChange blockStateChanges = null;
+		
+		// @todo ensure we're not removing a new block that's been placed by someone else
+		if(!block.getType().equals(Material.AIR)){
+			if(!is_preview){
+				
+				// Capture the block before we change it
+				BlockState originalBlock = block.getState();
+				
+				// Set
+				block.setType(Material.AIR);
+				
+				// Capture the new state
+				BlockState newBlock = block.getState();
+				
+				// Store the state change
+				blockStateChanges = new BlockStateChange(originalBlock,newBlock);
+				
+			} else {
+				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+			}
+			return new BlockChangeResult( ChangeResultType.APPLIED, blockStateChanges );
+		}
+		return new BlockChangeResult( ChangeResultType.SKIPPED, null );
 	}
 }
