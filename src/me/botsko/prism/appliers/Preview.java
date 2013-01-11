@@ -342,7 +342,7 @@ public class Preview implements Previewable {
 		    public void run() {
 		    	
 		    	if(plugin.getConfig().getBoolean("prism.debug")){
-		    		plugin.debug("World Change Queue Processing. Queue size: " + worldChangeQueue.size() );
+		    		plugin.debug("World change queue size: " + worldChangeQueue.size() );
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
@@ -364,12 +364,14 @@ public class Preview implements Previewable {
 					// No sense in trying to rollback
 					// when the type doesn't support it.
 					if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
+						worldChangeQueue.remove(a);
 						continue;
 					}
 					
 					// No sense in trying to restore
 					// when the type doesn't support it.
 					if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
+						worldChangeQueue.remove(a);
 						continue;
 					}
 						
@@ -391,6 +393,7 @@ public class Preview implements Previewable {
 						}
 						else if(result.equals(ChangeResultType.SKIPPED)){
 							skipped_block_count++;
+							worldChangeQueue.remove(a);
 							continue;
 						} else {
 							changes_applied_count++;
@@ -407,6 +410,7 @@ public class Preview implements Previewable {
 						
 						if(!EntityUtils.mayEverSpawn(b.getEntityType())){
 							skipped_block_count++;
+							worldChangeQueue.remove(a);
 							continue;
 						}
 						
@@ -488,8 +492,10 @@ public class Preview implements Previewable {
 				}
 	    		
 	    		// The task for this action is done being used
-	    		plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
-		    	
+	    		if(worldChangeQueue.isEmpty() || is_preview){
+	    			plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
+	    		}
+	    		
 		    	// If the queue is empty, we're done
 		    	if(worldChangeQueue.isEmpty()){
 		    		postProcess();
@@ -511,7 +517,6 @@ public class Preview implements Previewable {
 	 */
 	public void postProcessPreview(){
 		if(is_preview && changes_applied_count > 0){
-			plugin.log("SAVING PREVIEW");
 			// Append the preview and blocks temporarily
 			PreviewSession ps = new PreviewSession( player, this );
 			plugin.playerActivePreviews.put(player.getName(), ps);
