@@ -66,12 +66,12 @@ public class Rollback extends Preview {
 		
 		// @todo can't really work here. doesn't return a proper result, etc
 		// Remove any lava blocks when doing a lava bucket rollback
-		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET) || parameters.getActionTypes().contains(ActionType.LAVA_FLOW)){
-			BlockUtils.drainlava(parameters.getPlayerLocation(), parameters.getRadius());
-		}
-		if(parameters.getActionTypes().contains(ActionType.WATER_BUCKET) || parameters.getActionTypes().contains(ActionType.WATER_FLOW)){
-			BlockUtils.drainwater(parameters.getPlayerLocation(), parameters.getRadius());
-		}
+//		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET) || parameters.getActionTypes().contains(ActionType.LAVA_BREAK)){
+//			BlockUtils.drainlava(parameters.getPlayerLocation(), parameters.getRadius());
+//		}
+//		if(parameters.getActionTypes().contains(ActionType.WATER_BUCKET) || parameters.getActionTypes().contains(ActionType.WATER_BREAK)){
+//			BlockUtils.drainwater(parameters.getPlayerLocation(), parameters.getRadius());
+//		}
 	
 			
 		// Give the results to the changequeue

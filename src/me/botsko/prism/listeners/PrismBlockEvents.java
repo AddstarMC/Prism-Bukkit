@@ -435,12 +435,29 @@ public class PrismBlockEvents implements Listener {
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
 		
+		// This event fires multiples per coordinate. We can reduce the load
+		// by only storing one.
+		String coordsKey = from.getX()+":"+from.getY()+":"+from.getZ();
+		if(coordsUsed.contains(coordsKey)) return;
+		// Add coords to list the event has already fired for
+		coordsUsed.add(coordsKey);
+		
+		// Record water flow
+		if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getBlock(), "Water"));
+		}
+		
+		// Record lava flow
+		if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
+			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getBlock(), "Lava"));
+		}
+		
 		// Watch for blocks that the liquid can break
 		if(BlockUtils.canFlowBreakMaterial(to.getType())){
 			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getToBlock(), "Water"));
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_BREAK, event.getToBlock(), "Water"));
 			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getToBlock(), "Lava"));
+				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_BREAK, event.getToBlock(), "Lava"));
 			}
 		}
 		
