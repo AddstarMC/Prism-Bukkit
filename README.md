@@ -12,9 +12,9 @@ Bug reports, feature requests: https://snowy-evening.com/botsko/prism/
 
 ## Features
 
-- **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
+- **Extremely fast. Multi-threaded and queued handling of thousands of event recordings or block changes during rollbacks/restores. **
 - **Several easy, yet powerful lookup/inspector commands.**
-- **Inspector and rollback wand features.**
+- **Inspector, rollback, and profile wand features.**
 - **Rollback, restoration commands like you know and love.**
 - **Preview mode shows rollback AND restore actions to you only - then you can apply/cancel before actually changing the world.**
 - **Tracks essentially everything you need to know. (Configurable, see below)**
@@ -118,12 +118,20 @@ You can even define multiple arguments for most by separating them with a comma.
 **List of parameters:**
 
 - `a:[action]` - Like "block-break" (See below for full list). No default.
-- `r:[radius]` - How many blocks near you the action happened, i.e. `r:20`. Default radius set in config. Can't exceed the max defined in config. Use r:global to force an all-world search, *for lookups only*.
+- `r:[radius]` - How many blocks near you the action happened, i.e. `r:20`. Default radius set in config. Can't exceed the max defined in config. (See below for additional radius options).
 - `b:[blockname/id]` - Like `b:grass` or `b:2` or `b:2:0`. No default.
 - `e:[entity]` - Like `e:pig`. No default.
 - `t:[timesince]` - Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). No default. Use time arguments together if you wish, like `1h20m`.
 - `p:[player]` - Like `p:viveleroi`. No default.
 - `w:[world]` - Like `w:worldname`. Defaults to your current world.
+
+**Alternative Radius Options**
+
+The radius `r` parameter also supports the following options:
+
+- `r:global` - Instructs Prism to not limit results to a location. Currently works for *lookup* actions only.
+- `r:we` - Uses a WorldEdit selection to limit all results - lookups/restores/rollbacks. Works for anything that supports the `r` parameter.
+
 
 
 **List of actions:**
