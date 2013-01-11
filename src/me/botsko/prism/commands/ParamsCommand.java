@@ -53,6 +53,7 @@ public class ParamsCommand implements SubHandler {
 		String actions = "";
 		int i = 1;
 		for(ActionType ac : ActionType.values()){
+			if(ac.name().contains("PRISM")) continue;
 			actions += ac.getActionShortType() + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
@@ -62,6 +63,7 @@ public class ParamsCommand implements SubHandler {
 		actions = "";
 		i = 1;
 		for(ActionType ac : ActionType.values()){
+			if(ac.name().contains("PRISM")) continue;
 			actions += ac.getActionType() + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
