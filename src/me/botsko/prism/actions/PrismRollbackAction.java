@@ -70,13 +70,52 @@ public class PrismRollbackAction extends GenericAction {
 			actionData = gson.fromJson(data, PrismRollbackActionData.class);
 		}
 	}
-//	
-//
-//	/**
-//	 * 
-//	 * @return
-//	 */
-//	public String getNiceName(){
-//		return this.materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
-//	}
+
+	
+	/**
+	 * @return the onBehalfOf
+	 */
+	public String getOnBehalfOf() {
+		return actionData.onBehalfOf;
+	}
+
+	
+	/**
+	 * @return the originalBlock_id
+	 */
+	public int getOriginalBlockId() {
+		return actionData.originalBlock_id;
+	}
+
+	
+	/**
+	 * @return the originalBlock_subid
+	 */
+	public int getOriginalBlockSubId() {
+		return actionData.originalBlock_subid;
+	}
+
+	
+	/**
+	 * @return the newBlock_id
+	 */
+	public int getNewBlockId() {
+		return actionData.newBlock_id;
+	}
+
+	
+	/**
+	 * @return the newBlock_subid
+	 */
+	public int getNewBlockSubId() {
+		return actionData.newBlock_subid;
+	}
+
+	
+	/**
+	 * @return the parent_id
+	 */
+	public int getParentId() {
+		return actionData.parent_id;
+	}
 }

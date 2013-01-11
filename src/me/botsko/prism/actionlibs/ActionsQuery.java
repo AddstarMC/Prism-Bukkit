@@ -23,6 +23,7 @@ import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -70,6 +71,7 @@ public class ActionsQuery {
 	    		while(rs.next()){
 	    			
 	    			GenericAction baseAction = null;
+	    			boolean override_data = false;
 	    			
 	    			// Pull the proper action type class
 	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
@@ -106,6 +108,21 @@ public class ActionsQuery {
 	    				PrismProcessAction ps = new PrismProcessAction(null, null, null, null);
 	    				baseAction = ps;
 	    			}
+	    			else if( actionType.requiresHandler("prismrollback") ){
+	    				
+	    				override_data = true;
+	    				
+	    				// Get the actual process action
+	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
+	    				pr.setData( rs.getString("data") );
+	    				
+	    				// All we really want is a block action to feed to the world change system
+	    				BlockAction b = new BlockAction(null, null, null);
+	    				b.setBlockId(pr.getOriginalBlockId());
+	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
+	    				baseAction = b;
+	    				
+	    			}
 	    			else if( actionType.requiresHandler("signchange") ){
 	    				SignAction sa = new SignAction(null, null, null, null);
 	    				baseAction = sa;
@@ -132,7 +149,9 @@ public class ActionsQuery {
     				baseAction.setX( rs.getInt("x") );
     				baseAction.setY( rs.getInt("y") );
     				baseAction.setZ( rs.getInt("z") );
-    				baseAction.setData( rs.getString("data") );
+    				if(!override_data){
+    					baseAction.setData( rs.getString("data") );
+    				}
     				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				actions.add(baseAction);
@@ -347,6 +366,13 @@ public class ActionsQuery {
 			Location loc = parameters.getSpecificBlockLocation();
 			if(loc != null){
 				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
+			}
+			
+			/**
+			 * Parent process id
+			 */
+			if(parameters.getParentId() > 0){
+				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"%'";
 			}
 			
 			/**

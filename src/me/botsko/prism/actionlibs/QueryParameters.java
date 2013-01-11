@@ -28,7 +28,9 @@ public class QueryParameters implements Cloneable {
 	protected String entity_filters;
 	protected ArrayList<String> block_filters = new ArrayList<String>();
 	protected boolean allow_no_radius = false;
+	protected int parent_id = 0;
 	protected int limit = 1000000;
+
 	
 	// Informational
 	protected String original_command;
@@ -271,6 +273,24 @@ public class QueryParameters implements Cloneable {
 	 */
 	public void setLookup_type(PrismProcessType lookup_type) {
 		this.lookup_type = lookup_type;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setParentId(int id){
+		this.parent_id = id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public int getParentId(){
+		return parent_id;
 	}
 	
 	
