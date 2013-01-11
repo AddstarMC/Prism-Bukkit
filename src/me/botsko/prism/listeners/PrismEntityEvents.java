@@ -309,6 +309,14 @@ public class PrismEntityEvents implements Listener {
 		// Also log item-removes from chests that are blown up
 		PrismBlockEvents be = new PrismBlockEvents(plugin);		
 		for(Block block : event.blockList()){
+			
+			// don't bother record upper doors.
+			if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+				if(block.getData() >= 4){
+					continue;
+				}
+			}
+			
 			// Change handling a bit if it's a long block
 			block = be.properlyLogDoubleLengthBlocks(block);
 			// Log items from chests
