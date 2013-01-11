@@ -109,6 +109,15 @@ public class PrismCommands extends Executor {
 		.setHandler(new RollbackCommand(plugin));
 		
 		/**
+		 * /prism we (params)
+		 */
+		addSub("we", "prism.rollback")
+		.setMinArgs(1)
+		.setUsage("(params)")
+		.setDescription("Rollback actions for (params).")
+		.setHandler(new WorldEditCommand(plugin));
+		
+		/**
 		 * /prism restore (params)
 		 */
 		addSub("restore", "prism.restore")

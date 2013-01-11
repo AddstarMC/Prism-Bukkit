@@ -69,6 +69,7 @@ public class WorldEditCommand implements SubHandler {
 		double lRadius = Math.ceil(sel.getLength() / 2);
 		double wRadius = Math.ceil(sel.getWidth() / 2);
 		double hRadius = Math.ceil(sel.getHeight() / 2);
+		
 		int maxRadius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
 		if (maxRadius != 0 && (lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius)){
 			call.getPlayer().sendMessage( plugin.playerError("Selection exceeds that maximum radius allowed.") );
