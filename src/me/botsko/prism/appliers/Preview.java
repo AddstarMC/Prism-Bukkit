@@ -1,7 +1,9 @@
 package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -91,7 +93,13 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	public final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
+	protected final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
+	
+	/**
+	 * 
+	 */
+	protected int worldChangeQueueTaskId;
+	
 	
 	
 	/**
@@ -106,12 +114,11 @@ public class Preview implements Previewable {
 		this.parameters = parameters;
 		this.processStartTime = processStartTime;
 		
-		// @todo if not preview
-		// Append all actions to the queue. @todo we should do this somewhere else
+		// Append all actions to the queue.
+		// @todo Is there a better way to append these to the queue?
 		for(Action a : results){
 			worldChangeQueue.add(a);
 		}
-		plugin.debug("QUEUE SIZE ON INIT: " + worldChangeQueue.size() );
 	}
 	
 	
@@ -128,21 +135,12 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void cancel_preview(){
-		if(plugin.playerActivePreviews.containsKey(player.getName())){
-			
-			PreviewSession previewSession = plugin.playerActivePreviews.get( player.getName() );
-			if(!previewSession.getResults().getBlockStateChanges().isEmpty()){
-				
-				for(BlockStateChange u : previewSession.getResults().getBlockStateChanges()){
-					player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
-				}
+		if(!blockStateChanges.isEmpty()){
+			for(BlockStateChange u : blockStateChanges){
+				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 			}
-			
-			player.sendMessage( plugin.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
-			
-			plugin.playerActivePreviews.remove( player.getName() );
-			
 		}
+		player.sendMessage( plugin.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
 	}
 	
 	
@@ -150,26 +148,16 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void apply_preview(){
-		if(plugin.playerActivePreviews.containsKey(player.getName())){
-			
-			// Get preview session
-			PreviewSession ps = plugin.playerActivePreviews.get(player.getName());
-			
-			player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
-			ps.getPreviewer().setIsPreview(false);
-			ps.getPreviewer().apply();
-			
-			plugin.playerActivePreviews.remove( player.getName() );
-			
-		}
+		player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
+		setIsPreview(false);
+		apply();
 	}
 	
 
 	/**
 	 * 
 	 */
-	public void preview() {
-	}
+	public void preview() {}
 
 
 	/**
@@ -207,7 +195,6 @@ public class Preview implements Previewable {
 			
 			// Offload the work of world changes
 			// to a scheduled sync task
-			plugin.debug("OFFLOADING CHANGES");
 			processWorldChanges();
 		}
 	}
@@ -292,8 +279,14 @@ public class Preview implements Previewable {
 			}
 		} else {
 			
-			// Otherwise, preview it.
+			// Otherwise, save the state so we can cancel if needed
+			BlockState originalBlock = block.getState();
+			// Note: we save the original state as both old/new so we can re-use blockStateChanges
+			blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
+			
+			// Preview it
 			player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+			
 		}
 		
 		return ChangeResultType.APPLIED;
@@ -323,7 +316,15 @@ public class Preview implements Previewable {
 				blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
 				
 			} else {
+				
+				// Otherwise, save the state so we can cancel if needed
+				BlockState originalBlock = block.getState();
+				// Note: we save the original state as both old/new so we can re-use blockStateChanges
+				blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
+				
+				// Preview it
 				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
+				
 			}
 			return ChangeResultType.APPLIED;
 		}
@@ -336,23 +337,29 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void processWorldChanges(){
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			
 		    public void run() {
 		    	
-		    	plugin.debug("BEGINNING SYNC TASK: " + worldChangeQueue.size() );
+		    	if(plugin.getConfig().getBoolean("prism.debug")){
+		    		plugin.debug("World Change Queue Processing. Queue size: " + worldChangeQueue.size() );
+		    	}
+		    	
+				if(worldChangeQueue.isEmpty()){
+					player.sendMessage( plugin.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
+					return;
+				}
 		    	
 		    	int iterationCount = 0;
-		    	while(!worldChangeQueue.isEmpty()){
+	    		for (Iterator<Action> iterator = worldChangeQueue.iterator(); iterator.hasNext(); ) {
+	    			Action a = iterator.next(); 
 		    		
 		    		// We only want to process a set number of block changes per 
 		    		// schedule. Breaking here will leave the rest in the queue.
 		    		iterationCount++;
-		    		if(iterationCount >= 500){
+		    		if(iterationCount >= 1000){
 		    			break;
 		    		}
-		    		
-					Action a = worldChangeQueue.poll();
 					
 					// No sense in trying to rollback
 					// when the type doesn't support it.
@@ -474,16 +481,42 @@ public class Preview implements Previewable {
 							changes_applied_count++;
 						}
 					}
-					worldChangeQueue.remove(a); // @todo needed?
+					
+					if(!is_preview){
+						worldChangeQueue.remove(a);
+					}
 				}
+	    		
+	    		// The task for this action is done being used
+	    		plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
 		    	
 		    	// If the queue is empty, we're done
 		    	if(worldChangeQueue.isEmpty()){
 		    		postProcess();
+		    	} else {
+		    		
+		    		// otherwise we're previewing and need
+		    		// info about the planned rollback
+		    		if(is_preview){
+		    			postProcessPreview();
+		    		}
 		    	}
-		    	
 		    }
 		}, 2L, 2L);
+	}
+	
+	
+	/**
+	 * Store the preview session for later use
+	 */
+	public void postProcessPreview(){
+		if(is_preview && changes_applied_count > 0){
+			plugin.log("SAVING PREVIEW");
+			// Append the preview and blocks temporarily
+			PreviewSession ps = new PreviewSession( player, this );
+			plugin.playerActivePreviews.put(player.getName(), ps);
+		}
+		sendResultMessages();
 	}
 	
 	
@@ -491,9 +524,8 @@ public class Preview implements Previewable {
 	 * 
 	 * @return
 	 */
-	public ApplierResult postProcess(){
+	public void postProcess(){
 		
-			
 		// Apply deferred block changes
 		for(Action a : deferredChanges){
 			
@@ -545,30 +577,30 @@ public class Preview implements Previewable {
 				}
 			}
 			
-			
-//				/**
-//				 * If we've rolled back any containers we need to restore item-removes.
-//				 */
-//				if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
+		
+//			/**
+//			 * If we've rolled back any containers we need to restore item-removes.
+//			 */
+//			if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
+//				
+//				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+//				
+//				QueryParameters triggerParameters;
+//				try {
+//					triggerParameters = parameters.clone();
+//					triggerParameters.resetActionTypes();
+//					triggerParameters.addActionType(ActionType.ITEM_REMOVE);
 //					
-//					plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
-//					
-//					QueryParameters triggerParameters;
-//					try {
-//						triggerParameters = parameters.clone();
-//						triggerParameters.resetActionTypes();
-//						triggerParameters.addActionType(ActionType.ITEM_REMOVE);
-//						
-//						ActionsQuery aq = new ActionsQuery(plugin);
-//						QueryResult results = aq.lookup( player, triggerParameters );
-//						if(!results.getActionResults().isEmpty()){
-//							Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
-//							rb.apply();
-//						}
-//					} catch (CloneNotSupportedException e) {
-//						e.printStackTrace();
+//					ActionsQuery aq = new ActionsQuery(plugin);
+//					QueryResult results = aq.lookup( player, triggerParameters );
+//					if(!results.getActionResults().isEmpty()){
+//						Rollback rb = new Rollback( plugin, player, results.getActionResults(), triggerParameters );
+//						rb.apply();
 //					}
+//				} catch (CloneNotSupportedException e) {
+//					e.printStackTrace();
 //				}
+//			}
 		}
 		
 		
@@ -594,7 +626,87 @@ public class Preview implements Previewable {
 		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		return new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges );
+		sendResultMessages();
+		
+	}
 	
+	
+	/**
+	 * 
+	 */
+	public void sendResultMessages(){
+		
+		// Calc the final time
+		Calendar lCDateTime = Calendar.getInstance();
+		long processEndTime = lCDateTime.getTimeInMillis();
+		long timeDiff = processEndTime - processStartTime;
+		
+		// Send player success messages
+		if(processType.equals(PrismProcessType.ROLLBACK)){
+		
+			// Build the results message
+			if(!is_preview){
+				
+				String msg = changes_applied_count + " reversals ("+timeDiff+"ms).";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(changes_applied_count > 0){
+					msg += ChatColor.GRAY + " It's like it never happened.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+			} else {
+			
+				// Build the results message
+				String msg = changes_applied_count + " planned reversals.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(changes_applied_count > 0){
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this rollback.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+				// Let me know there's no need to cancel/apply
+				if(changes_applied_count == 0){
+					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
+				}
+			}
+		}
+		
+		
+		// Build the results message
+		if(processType.equals(PrismProcessType.RESTORE)){
+			if(!is_preview){
+				
+				// Build the results message
+				String msg = changes_applied_count + " events restored ("+timeDiff+"ms).";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(changes_applied_count > 0){
+					msg += ChatColor.GRAY + " It's like it was always there.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+			} else {
+			
+				// Build the results message
+				String msg = changes_applied_count + " planned restorations.";
+				if(skipped_block_count > 0){
+					msg += " " + skipped_block_count + " skipped.";
+				}
+				if(changes_applied_count > 0){
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this restore.";
+				}
+				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				
+				// Let me know there's no need to cancel/apply
+				if(changes_applied_count == 0){
+					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
+				}
+			}
+		}
 	}
 }

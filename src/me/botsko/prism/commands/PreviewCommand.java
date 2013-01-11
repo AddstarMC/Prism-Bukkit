@@ -6,7 +6,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.appliers.ApplierResult;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -48,6 +47,9 @@ public class PreviewCommand implements SubHandler {
 				if(plugin.playerActivePreviews.containsKey(call.getPlayer().getName())){
 					PreviewSession previewSession = plugin.playerActivePreviews.get( call.getPlayer().getName() );
 					previewSession.getPreviewer().apply_preview();
+					plugin.playerActivePreviews.remove( call.getPlayer().getName() );
+				} else {
+					call.getPlayer().sendMessage( plugin.playerError("You have no preview pending.") );
 				}
 				return;
 			}
@@ -60,6 +62,9 @@ public class PreviewCommand implements SubHandler {
 				if(plugin.playerActivePreviews.containsKey(call.getPlayer().getName())){
 					PreviewSession previewSession = plugin.playerActivePreviews.get( call.getPlayer().getName() );
 					previewSession.getPreviewer().cancel_preview();
+					plugin.playerActivePreviews.remove( call.getPlayer().getName() );
+				} else {
+					call.getPlayer().sendMessage( plugin.playerError("You have no preview pending.") );
 				}
 				return;
 			}
@@ -93,25 +98,16 @@ public class PreviewCommand implements SubHandler {
 					
 					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning preview...") );
 					
-					ApplierResult result = null;
 					Previewable rs = null;
 					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
 						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
-						result = rs.preview();
+						rs.preview();
 					}
 					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
 						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, processStartTime );
-						result = rs.preview();
+						rs.preview();
 					}
-					if(result != null){
-					
-						// If we're in a preview and changes would be applied...
-						if(result.isPreview() && result.getChanges_applied() > 0){
-							// Append the preview and blocks temporarily
-							PreviewSession ps = new PreviewSession( call.getPlayer(), rs, result );
-							plugin.playerActivePreviews.put(call.getPlayer().getName(), ps);
-						}
-					}
+					// Adding preview to player preview queue handled by postProcess
 				} else {
 					call.getPlayer().sendMessage( plugin.playerError("Nothing found to preview.") );
 				}

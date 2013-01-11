@@ -18,11 +18,6 @@ public class PreviewSession {
 	/**
 	 * 
 	 */
-	protected final ApplierResult results;
-	
-	/**
-	 * 
-	 */
 	protected final long queryTime;
 	
 	
@@ -32,10 +27,9 @@ public class PreviewSession {
 	 * @param undo
 	 * @param args
 	 */
-	public PreviewSession( Player player, Previewable previewer, ApplierResult results ){
+	public PreviewSession( Player player, Previewable previewer ){
 		this.player = player;
 		this.previewer = previewer;
-		this.results = results;
 		java.util.Date date = new java.util.Date();
 		this.queryTime = date.getTime();
 	}
@@ -54,14 +48,6 @@ public class PreviewSession {
 	 */
 	public Previewable getPreviewer() {
 		return previewer;
-	}
-
-
-	/**
-	 * @return the results
-	 */
-	public ApplierResult getResults() {
-		return results;
 	}
 
 
