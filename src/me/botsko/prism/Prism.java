@@ -349,10 +349,12 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @param msg
 	 */
-	public void alertPlayers( String msg ){
+	public void alertPlayers( Player player, String msg ){
 		for (Player p : getServer().getOnlinePlayers()) {
-			if (p.hasPermission("prism.alerts")){
-				p.sendMessage( playerMsg( ChatColor.RED+ "[!] "+msg ) );
+			if( !p.equals( player ) ){
+				if (p.hasPermission("prism.alerts")){
+					p.sendMessage( playerMsg( ChatColor.RED+ "[!] "+msg ) );
+				}
 			}
 		}
 	}

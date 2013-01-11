@@ -187,7 +187,7 @@ public class Preview implements Previewable {
 					if(plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")){
 						String cmd = parameters.getOriginalCommand();
 						if(cmd != null){
-							plugin.alertPlayers( ChatColor.WHITE + processType.name().toLowerCase() + " by " + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand() );
+							plugin.alertPlayers( player, ChatColor.WHITE + processType.name().toLowerCase() + " by " + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand() );
 						}
 					}
 				}
@@ -645,6 +645,10 @@ public class Preview implements Previewable {
 		Calendar lCDateTime = Calendar.getInstance();
 		long processEndTime = lCDateTime.getTimeInMillis();
 		long timeDiff = processEndTime - processStartTime;
+		String timeTaken = "";
+		if(plugin.getConfig().getBoolean("prism.debug")){
+			timeTaken = is_preview ? "" : " ("+timeDiff+"ms)";
+		}
 		
 		// Send player success messages
 		if(processType.equals(PrismProcessType.ROLLBACK)){
@@ -652,7 +656,7 @@ public class Preview implements Previewable {
 			// Build the results message
 			if(!is_preview){
 				
-				String msg = changes_applied_count + " reversals ("+timeDiff+"ms).";
+				String msg = changes_applied_count + " reversals"+timeTaken+".";
 				if(skipped_block_count > 0){
 					msg += " " + skipped_block_count + " skipped.";
 				}
@@ -686,7 +690,7 @@ public class Preview implements Previewable {
 			if(!is_preview){
 				
 				// Build the results message
-				String msg = changes_applied_count + " events restored ("+timeDiff+"ms).";
+				String msg = changes_applied_count + " events restored"+timeTaken+".";
 				if(skipped_block_count > 0){
 					msg += " " + skipped_block_count + " skipped.";
 				}

@@ -92,7 +92,7 @@ public class OreMonitor {
 						String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
 						
 						// Alert staff
-						plugin.alertPlayers(msg);
+						plugin.alertPlayers( null, msg );
 						
 						// Log to console
 						if(plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")){
