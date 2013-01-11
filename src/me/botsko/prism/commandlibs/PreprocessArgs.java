@@ -213,7 +213,7 @@ public class PreprocessArgs {
 				parameters.setWorld( player.getWorld().getName() );
 			}
 			// Player location
-			parameters.setPlayerLocation( player.getLocation() );
+			parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 		}
 		return parameters;
 	}
