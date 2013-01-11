@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -9,6 +10,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
@@ -42,8 +44,8 @@ public class Rollback extends Preview {
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
-			int fires_ext = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
-			if(fires_ext > 0){
+			ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
+			if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
 				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
 			}
 		}

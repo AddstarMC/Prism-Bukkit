@@ -1,10 +1,14 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -67,20 +71,26 @@ public class DrainCommand implements SubHandler {
 		call.getPlayer().sendMessage(plugin.playerHeaderMsg(msg));
 		
 		
-		int changed = 0;
+		ArrayList<BlockStateChange> blockStateChanges = null;
 		if(drain_type.isEmpty()){
-			changed = BlockUtils.drain(call.getPlayer().getLocation(), radius);
+			blockStateChanges = BlockUtils.drain(call.getPlayer().getLocation(), radius);
 		}
 		else if(drain_type.equals("water")){
-			changed = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
+			blockStateChanges = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
 		}
 		else if(drain_type.equals("lava")){
-			changed = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
+			blockStateChanges = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
 		}
 		
-		if(changed > 0){
+		if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
+			
 			// @todo remove the extra space in msg
-			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained "+changed+" "+drain_type+" blocks."));
+			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained "+blockStateChanges.size()+" "+drain_type+" blocks."));
+			
+			// Trigger the event
+			PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
 		} else {
 			call.getPlayer().sendMessage(plugin.playerError("Nothing found to drain with that radius."));
 		}
