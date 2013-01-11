@@ -210,14 +210,14 @@ public class Preview implements Previewable {
 			if(b.getType().doesCreateBlock()){
 				return removeBlock(block);
 			} else {
-				return placeBlock(b,block);
+				return placeBlock(b,block,false);
 			}
 		}
 		
 		// Restores break blocks players placed again, and re-place blocks player's have placed before
 		if(processType.equals(PrismProcessType.RESTORE)){
 			if(b.getType().doesCreateBlock()){
-				return placeBlock(b,block);
+				return placeBlock(b,block,false);
 			} else {
 				return removeBlock(block);
 			}
@@ -233,7 +233,7 @@ public class Preview implements Previewable {
 	 * However, it also means that a rollback *could* interfere with a player-placed
 	 * block.
 	 */
-	protected ChangeResultType placeBlock( final BlockAction b, Block block ){
+	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
 		
 		Material m = Material.getMaterial(b.getBlock_id());
 		
@@ -248,8 +248,8 @@ public class Preview implements Previewable {
 			return ChangeResultType.SKIPPED;
 		}
 			
-		// If it's attachable to the sides or top, we need to delay
-		if( (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m)) && !BlockUtils.isDoor(m)){
+		// If it's attachable to the sides or top, we need to delay unless we're handling those now
+		if( !is_deferred && (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m))){
 			return ChangeResultType.DEFERRED;
 		}
 
@@ -533,23 +533,12 @@ public class Preview implements Previewable {
 		
 		// Apply deferred block changes
 		for(Action a : deferredChanges){
-			
 			BlockAction b = (BlockAction) a;
-			
 			World world = plugin.getServer().getWorld(b.getWorld_name());
 			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 			Block block = world.getBlockAt(loc);
-			
-			if(!is_preview){
-				block.setTypeId( b.getBlock_id() );
-				block.setData( b.getBlock_subid() );
-			} else {
-				player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
-			}
-			
-			changes_applied_count++;
+			placeBlock( b, block, true );
 		}
-		
 		
 		// POST ROLLBACK TRIGGERS
 		if(processType.equals(PrismProcessType.ROLLBACK)){
