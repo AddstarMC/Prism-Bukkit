@@ -125,7 +125,7 @@ public class PreprocessArgs {
 					} else {
 						// User has asked for a global radius
 						if(val.equals("global")){
-							if( parameters.getLookup_type().equals("lookup")){
+							if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
 								parameters.setAllow_no_radius(true);
 							} else {
 								player.sendMessage( plugin.playerError("A global radius may only be used on lookup.") );

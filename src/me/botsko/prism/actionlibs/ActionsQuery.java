@@ -25,6 +25,7 @@ import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.appliers.PrismProcessType;
 
 public class ActionsQuery {
 	
@@ -152,7 +153,7 @@ public class ActionsQuery {
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
-		if(parameters.getLookup_type().equals("lookup")){
+		if(parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
 			if(plugin.cachedQueries.containsKey(player.getName())){
 				plugin.cachedQueries.remove(player.getName());
 			}
@@ -219,7 +220,7 @@ public class ActionsQuery {
 		//
 		// By default block-break rollbacks don't need this because
 		// they won't restore when a new block is present.
-		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
+		if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
 			query += " JOIN (" +
 						"SELECT action_type, x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
@@ -237,17 +238,21 @@ public class ActionsQuery {
 		// This excludes the older records when a newer one, of the same action type, exists for that location
 		//
 		// We ignore item removes because you often want to rollback multiple per coord
-		else if( parameters.getLookup_type().equals("rollback") && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
+		else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
 			
 			query += " RIGHT JOIN (" +
-					"SELECT action_type, x, y, z, max(action_time) as action_time" +
+					"SELECT"+(parameters.getPlayer() != null ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
 					" FROM prism_actions" +
-					" GROUP BY action_type, x, y, z) latest" +
+					" GROUP BY action_type, x, y, z"+(parameters.getPlayer() != null ? ", player" : "")+") latest" +
 					" ON prism_actions.action_time = latest.action_time" +
 					" AND prism_actions.x = latest.x" +
 					" AND prism_actions.y = latest.y" +
 					" AND prism_actions.z = latest.z" +
 					" AND prism_actions.action_type = latest.action_type";
+			
+					if(parameters.getPlayer() != null){
+						query += " AND prism_actions.player = latest.player";
+					}
 
 		}
 		
