@@ -1,5 +1,6 @@
 package me.botsko.prism;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,6 +22,7 @@ import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismRollbackEvents;
+import me.botsko.prism.metrics.Metrics;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.wands.Wand;
 
@@ -70,12 +72,12 @@ public class Prism extends JavaPlugin {
 		
 		this.log("Initializing plugin. By Viveleroi (and team), Darkhelmet Minecraft: s.dhmc.us");
 		
-//		try {
-//		    Metrics metrics = new Metrics(this);
-//		    metrics.start();
-//		} catch (IOException e) {
-//		    log("MCStats submission failed.");
-//		}
+		try {
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
+		} catch (IOException e) {
+		    log("MCStats submission failed.");
+		}
 		
 		// Load configuration, or install if new
 		loadConfig();
