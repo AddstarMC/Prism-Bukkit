@@ -146,6 +146,7 @@ public class BlockUtils {
 				|| m.equals(Material.LADDER)
 				|| m.equals(Material.VINE)
 				|| m.equals(Material.COCOA)
+				|| m.equals(Material.PORTAL)
 				|| m.equals(Material.PISTON_EXTENSION)
 				|| m.equals(Material.PISTON_MOVING_PIECE)){
 			return true;
@@ -211,6 +212,7 @@ public class BlockUtils {
 			case LONG_GRASS:
 			case MELON_STEM:
 			case NETHER_WARTS:
+			case PORTAL:
 			case POWERED_RAIL:
 			case PUMPKIN_STEM:
 			case RAILS:
