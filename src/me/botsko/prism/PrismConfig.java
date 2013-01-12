@@ -69,7 +69,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.block-fall", true);
 		config.addDefault("prism.tracking.block-form", true);
 		config.addDefault("prism.tracking.block-place", true);
-//		config.addDefault("prism.tracking.block-shift", true);
+		config.addDefault("prism.tracking.block-shift", true);
 		config.addDefault("prism.tracking.block-use", true);
 		config.addDefault("prism.tracking.bonemeal-use", true);
 		config.addDefault("prism.tracking.container-access", true);

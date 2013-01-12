@@ -15,6 +15,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
@@ -78,6 +79,10 @@ public class ActionsQuery {
 
 	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
+	    				baseAction = b;
+	    			}
+	    			else if(actionType.requiresHandler("blockshift")){
+	    				BlockShiftAction b = new BlockShiftAction(null, null, null, null);
 	    				baseAction = b;
 	    			}
 	    			else if(actionType.requiresHandler("command")){
@@ -352,6 +357,10 @@ public class ActionsQuery {
 				query += buildOrQuery("prism_actions.action_type", actions);
 			}
 			
+			if( !action_types.contains(ActionType.PRISM_PROCESS) ){
+				query += " AND LEFT(prism_actions.action_type,5) != 'prism'";
+			}
+			
 			/**
 			 * Players
 			 */
@@ -419,7 +428,7 @@ public class ActionsQuery {
 			 * Order by
 			 */
 			String sort_dir = parameters.getSortDirection();
-			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", id "+sort_dir;
+			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", x ASC, z ASC, y ASC, id "+sort_dir;
 			
 			/**
 			 * LIMIT

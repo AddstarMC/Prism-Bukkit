@@ -32,10 +32,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
 public class Preview implements Previewable {
@@ -416,10 +418,24 @@ public class Preview implements Previewable {
 						
 						Entity entity = world.spawnEntity(loc, b.getEntityType());
 						
+						// Get animal age
+						if(entity instanceof Ageable){
+							Ageable age = (Ageable)entity;
+							if(!b.isAdult()){
+								age.setBaby();
+							}
+						}
+						
 						// Set sheep color
 						if( entity.getType().equals(EntityType.SHEEP)){
 							Sheep sheep = ((Sheep) entity);
 							sheep.setColor( b.getColor() );
+						}
+						
+						// Set villager profession
+						if( entity instanceof Villager ){
+							Villager v = (Villager)entity;
+							v.setProfession( b.getProfession() );
 						}
 						
 						changes_applied_count++;

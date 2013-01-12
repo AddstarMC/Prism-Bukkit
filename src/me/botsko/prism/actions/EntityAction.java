@@ -3,9 +3,12 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 
 public class EntityAction extends GenericAction {
 
@@ -37,10 +40,22 @@ public class EntityAction extends GenericAction {
 			this.y = entity.getLocation().getY();
 			this.z = entity.getLocation().getZ();
 			
+			// Get animal age
+			if(entity instanceof Ageable){
+				Ageable a = (Ageable)entity;
+				this.actionData.isAdult = a.isAdult();
+			}
+			
 			// Get sheep color
 			if( entity.getType().equals(EntityType.SHEEP)){
 				Sheep sheep = ((Sheep) entity);
 				this.actionData.color = sheep.getColor().name().toLowerCase();
+			}
+			
+			// Get villager type
+			if( entity instanceof Villager ){
+				Villager v = (Villager)entity;
+				this.actionData.profession = v.getProfession().toString().toLowerCase();
 			}
 		}
 		if(player != null){
@@ -97,8 +112,26 @@ public class EntityAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public boolean isAdult(){
+		return this.actionData.isAdult;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public DyeColor getColor(){
 		return DyeColor.valueOf(actionData.color.toUpperCase());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Profession getProfession(){
+		return Profession.valueOf(actionData.profession.toUpperCase());
 	}
 	
 	
@@ -110,6 +143,12 @@ public class EntityAction extends GenericAction {
 		String name = "";
 		if(actionData.color != null && !actionData.color.isEmpty()){
 			name += actionData.color + " ";
+		}
+		if(!actionData.isAdult){
+			name += "baby ";
+		}
+		if(this.actionData.profession != null){
+			name += this.actionData.profession + " ";
 		}
 		name += actionData.entity_name;
 		return name;
