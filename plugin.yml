@@ -1,6 +1,6 @@
 name: Prism
 main: me.botsko.prism.Prism
-version: 1.0.0-dev
+version: 1.0.0-Alpha3
 softdepend: [WorldEdit]
 commands:
    prism:
