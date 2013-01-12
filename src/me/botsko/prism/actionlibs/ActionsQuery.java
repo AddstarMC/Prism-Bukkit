@@ -348,7 +348,16 @@ public class ActionsQuery {
 				query += buildOrQuery("prism_actions.action_type", actions);
 			}
 			
-			if( !action_types.contains(ActionType.PRISM_PROCESS) ){
+			// Make sure none of the prism process types are requested
+			boolean containtsPrismProcessType = false;
+			for(ActionType aType : action_types){
+				if(aType.getActionType().contains("prism")){
+					containtsPrismProcessType = true;
+					break;
+				}
+			}
+			
+			if( !containtsPrismProcessType ){
 				query += " AND LEFT(prism_actions.action_type,5) != 'prism'";
 			}
 			
