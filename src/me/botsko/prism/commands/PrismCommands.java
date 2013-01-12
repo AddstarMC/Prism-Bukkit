@@ -125,12 +125,12 @@ public class PrismCommands extends Executor {
 		.setDescription("Deletes all records from the database before (timeframe)")
 		.setHandler(new DeleteCommand(plugin));
 		
-		/**
-		 * /prism undo
-		 */
-		addSub("undo", "prism.rollback")
-		.setDescription("Revert a previous process.")
-		.setHandler(new UndoCommand(plugin));
+//		/**
+//		 * /prism undo
+//		 */
+//		addSub("undo", "prism.rollback")
+//		.setDescription("Revert a previous process.")
+//		.setHandler(new UndoCommand(plugin));
 		
 		/**
 		 * /prism ?
