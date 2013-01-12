@@ -10,6 +10,11 @@ public class EntityActionData {
 	/**
 	 * 
 	 */
+	public boolean isAdult;
+	
+	/**
+	 * 
+	 */
 	public String color;
 
 }

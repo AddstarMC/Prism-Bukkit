@@ -3,6 +3,7 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 
 import org.bukkit.DyeColor;
+import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
@@ -36,6 +37,12 @@ public class EntityAction extends GenericAction {
 			this.x = entity.getLocation().getX();
 			this.y = entity.getLocation().getY();
 			this.z = entity.getLocation().getZ();
+			
+			// Get animal age
+			if(entity instanceof Ageable){
+				Ageable a = (Ageable)entity;
+				this.actionData.isAdult = a.isAdult();
+			}
 			
 			// Get sheep color
 			if( entity.getType().equals(EntityType.SHEEP)){
@@ -97,6 +104,15 @@ public class EntityAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public boolean isAdult(){
+		return this.actionData.isAdult;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public DyeColor getColor(){
 		return DyeColor.valueOf(actionData.color.toUpperCase());
 	}
@@ -110,6 +126,9 @@ public class EntityAction extends GenericAction {
 		String name = "";
 		if(actionData.color != null && !actionData.color.isEmpty()){
 			name += actionData.color + " ";
+		}
+		if(!actionData.isAdult){
+			name += "baby ";
 		}
 		name += actionData.entity_name;
 		return name;
