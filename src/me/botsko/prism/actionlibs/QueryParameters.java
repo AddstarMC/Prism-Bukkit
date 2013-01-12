@@ -326,7 +326,7 @@ public class QueryParameters implements Cloneable {
 	 * @return
 	 */
 	public String getSortDirection(){
-		if(this.lookup_type.equals("lookup")){
+		if(this.lookup_type.equals(PrismProcessType.LOOKUP)){
 			return "DESC";
 		}
 		return "ASC";
