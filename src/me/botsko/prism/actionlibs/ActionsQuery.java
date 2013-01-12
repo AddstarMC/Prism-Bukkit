@@ -295,6 +295,10 @@ public class ActionsQuery {
 				query += buildOrQuery("prism_actions.action_type", actions);
 			}
 			
+			if( !action_types.contains(ActionType.PRISM_PROCESS) ){
+				query += " AND LEFT(prism_actions.action_type,5) != 'prism'";
+			}
+			
 			/**
 			 * Players
 			 */
