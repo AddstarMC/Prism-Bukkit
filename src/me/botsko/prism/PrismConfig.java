@@ -123,12 +123,14 @@ public class PrismConfig {
 		config.addDefault("prism.alerts.uses.enabled", true);
 		config.addDefault("prism.alerts.uses.ignore-staff", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
-//		config.addDefault("prism.alerts.uses.lava", true);
+		config.addDefault("prism.alerts.uses.lava", true);
 		
 		List<String> monitorItems = new ArrayList<String>();
 		monitorItems.add("7");
 		monitorItems.add("29");
 		monitorItems.add("46");
+		monitorItems.add("10");
+		monitorItems.add("11");
 		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
 
 		// Copy defaults

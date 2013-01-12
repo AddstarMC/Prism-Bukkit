@@ -41,6 +41,30 @@ public class UseMonitor {
 	
 	/**
 	 * 
+	 * @param playername
+	 * @return
+	 */
+	protected void incrementCount(String playername, String msg){
+		
+		int count = 0;
+		if(countedEvents.containsKey(playername)){
+			count = countedEvents.get(playername);
+		}
+		count++;
+		countedEvents.put(playername, count );
+		
+		if(count == 5){
+			plugin.alertPlayers(null, playername + " continues to monitored activities - pausing warnings.");
+		} else {
+			if(count < 5){
+				plugin.alertPlayers(null, ChatColor.GRAY + playername + " " + msg);
+			}
+		}
+	}
+	
+	
+	/**
+	 * 
 	 * @param player
 	 * @param block
 	 */
@@ -66,29 +90,20 @@ public class UseMonitor {
 		
 		// Ensure we're tracking this block
 		if(blocksToAlert.contains( blockType )){
-			
-			// Existing count
-			int count = 0;
-			if(countedEvents.containsKey(playername)){
-				count = countedEvents.get(playername);
-			}
-			count++;
-			countedEvents.put(playername, count );
-			
-			plugin.debug("COUNT: " + count);
-			
 			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
-			
-			if(count == 5){
-				String msg = playername + " continues to monitored activities - pausing warnings.";
-				plugin.alertPlayers(null, msg);
-			} else {
-				if(count < 5){
-					String msg = ChatColor.GRAY + playername + " placed "+alias;
-					plugin.alertPlayers(null, msg);
-				}
-			}
+			incrementCount(playername, "placed "+alias);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param use_msg
+	 */
+	public void alertOnItemUse( Player player, String use_msg ){
+		String playername = player.getName();
+		incrementCount(playername,use_msg);
 	}
 	
 	
