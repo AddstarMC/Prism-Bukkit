@@ -556,6 +556,7 @@ public class Preview implements Previewable {
 			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 			Block block = world.getBlockAt(loc);
 			placeBlock( b, block, true );
+			changes_applied_count++;
 		}
 		
 		// POST ROLLBACK TRIGGERS
