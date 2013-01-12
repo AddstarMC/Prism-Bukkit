@@ -14,7 +14,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
@@ -74,7 +74,7 @@ public class UndoCommand implements SubHandler {
 				
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning to undo..." + ChatColor.GRAY + " Abandon ship!") );
 				
-				Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
+				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters, processStartTime );
 				rb.apply();
 				
 			} else {
