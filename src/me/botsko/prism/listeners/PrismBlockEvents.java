@@ -1,10 +1,12 @@
 package me.botsko.prism.listeners;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
@@ -27,6 +29,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -385,29 +388,28 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onPistonExtend(final BlockPistonExtendEvent event){
-//
-//		List<Block> blocks = event.getBlocks();
-//		
-//		plugin.debug("DIRECTION: " + event.getDirection().name());
-//		
-//		if(!blocks.isEmpty()){
-//			for( Block block : blocks){
-//				
-//				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
-//				// We should record the from coords, to coords, and block replaced, as well as the block moved.
-//				plugin.debug("MOVING FROM: " + block.getX() + " " + block.getY() + " " + block.getZ() + " to " + block.getRelative(event.getDirection()).getType().name() );
-//				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, block, "Environment") );
-//			}
-//		}
-//	}
-//	
-//	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPistonExtend(final BlockPistonExtendEvent event){
+
+		List<Block> blocks = event.getBlocks();
+		if(!blocks.isEmpty()){
+			for( Block block : blocks){
+				
+				if(block.getType().equals(Material.AIR)) continue;
+
+				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
+				// We should record the from coords, to coords, and block replaced, as well as the block moved.
+				plugin.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, block, block.getRelative(event.getDirection()).getLocation(), "Piston") );
+				
+			}
+		}
+	}
+	
+	
 //	/**
 //	 * 
 //	 * @param event

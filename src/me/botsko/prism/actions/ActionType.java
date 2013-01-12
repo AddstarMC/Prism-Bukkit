@@ -13,7 +13,7 @@ public enum ActionType {
 	BLOCK_FALL(false, true, true, "block", "fell"),
 	BLOCK_FORM(false, true, true, "block", "formed"),
 	BLOCK_PLACE(true, true, true, "block", "placed"),
-//	BLOCK_SHIFT(true, false, false, "block", "moved"),
+	BLOCK_SHIFT(true, false, false, "blockshift", "moved"),
 	BLOCK_USE(false, false, false, "block", "used"),
 	BONEMEAL_USE(false, false, false, "use", "used"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),

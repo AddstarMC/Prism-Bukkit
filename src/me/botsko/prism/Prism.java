@@ -71,7 +71,7 @@ public class Prism extends JavaPlugin {
      */
 	@Override
 	public void onEnable(){
-		
+
 		prism = this;
 		
 		this.log("Initializing plugin. By Viveleroi (and team), Darkhelmet Minecraft: s.dhmc.us");
