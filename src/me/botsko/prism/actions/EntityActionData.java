@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+
 public class EntityActionData {
 	
 	/**
@@ -16,5 +17,11 @@ public class EntityActionData {
 	 * 
 	 */
 	public String color;
+	
+	
+	/**
+	 * 
+	 */
+	public String profession;
 
 }

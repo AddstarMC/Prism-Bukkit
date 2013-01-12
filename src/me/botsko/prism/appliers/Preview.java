@@ -37,6 +37,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Villager;
 import org.bukkit.inventory.ItemStack;
 
 public class Preview implements Previewable {
@@ -429,6 +430,12 @@ public class Preview implements Previewable {
 						if( entity.getType().equals(EntityType.SHEEP)){
 							Sheep sheep = ((Sheep) entity);
 							sheep.setColor( b.getColor() );
+						}
+						
+						// Set villager profession
+						if( entity instanceof Villager ){
+							Villager v = (Villager)entity;
+							v.setProfession( b.getProfession() );
 						}
 						
 						changes_applied_count++;

@@ -7,6 +7,8 @@ import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Villager;
+import org.bukkit.entity.Villager.Profession;
 
 public class EntityAction extends GenericAction {
 
@@ -48,6 +50,12 @@ public class EntityAction extends GenericAction {
 			if( entity.getType().equals(EntityType.SHEEP)){
 				Sheep sheep = ((Sheep) entity);
 				this.actionData.color = sheep.getColor().name().toLowerCase();
+			}
+			
+			// Get villager type
+			if( entity instanceof Villager ){
+				Villager v = (Villager)entity;
+				this.actionData.profession = v.getProfession().toString().toLowerCase();
 			}
 		}
 		if(player != null){
@@ -122,6 +130,15 @@ public class EntityAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public Profession getProfession(){
+		return Profession.valueOf(actionData.profession.toUpperCase());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNiceName(){
 		String name = "";
 		if(actionData.color != null && !actionData.color.isEmpty()){
@@ -129,6 +146,9 @@ public class EntityAction extends GenericAction {
 		}
 		if(!actionData.isAdult){
 			name += "baby ";
+		}
+		if(this.actionData.profession != null){
+			name += this.actionData.profession + " ";
 		}
 		name += actionData.entity_name;
 		return name;
