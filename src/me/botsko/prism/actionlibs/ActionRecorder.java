@@ -62,9 +62,9 @@ public class ActionRecorder implements Runnable {
 		
 		queue.add(a);
 		
-		if(plugin.getConfig().getBoolean("prism.debug")){
-			plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
-		}
+//		if( plugin.getConfig().getBoolean("prism.debug") ){
+//			plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
+//		}
 		
 		// Only execute current batch if asked
 		if( immediatelyProcessQueue ){

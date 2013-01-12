@@ -22,6 +22,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -132,15 +133,16 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onCreatureSpawn(final CreatureSpawnEvent event){
-////		event.getEntityType();
-////		event.getSpawnReason();
-//	}
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onCreatureSpawn(final CreatureSpawnEvent event){
+		String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
+		if(reason.equals("natural")) return;
+		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
+	}
 	
 	
 	/**
@@ -156,7 +158,6 @@ public class PrismEntityEvents implements Listener {
         	}
         }
     }
-
 	
 	
 	/**

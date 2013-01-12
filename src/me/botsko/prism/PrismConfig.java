@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -82,6 +83,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.entity-follow", true);
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
+		config.addDefault("prism.tracking.entity-spawn", true);
 		config.addDefault("prism.tracking.fireball", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);
@@ -117,6 +119,20 @@ public class PrismConfig {
 		config.addDefault("prism.alerts.ores.gold", true);
 		config.addDefault("prism.alerts.ores.diamond", true);
 		config.addDefault("prism.alerts.ores.emerald", true);
+		
+		// Enable monitoring of item use/placement
+		config.addDefault("prism.alerts.uses.enabled", true);
+		config.addDefault("prism.alerts.uses.ignore-staff", true);
+		config.addDefault("prism.alerts.uses.lighter", true);
+		config.addDefault("prism.alerts.uses.lava", true);
+		
+		List<String> monitorItems = new ArrayList<String>();
+		monitorItems.add("7");
+		monitorItems.add("29");
+		monitorItems.add("46");
+		monitorItems.add("10");
+		monitorItems.add("11");
+		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
 
 		// Copy defaults
 		config.options().copyDefaults(true);

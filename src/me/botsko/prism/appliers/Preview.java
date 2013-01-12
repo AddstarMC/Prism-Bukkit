@@ -239,10 +239,12 @@ public class Preview implements Previewable {
 		
 		Material m = Material.getMaterial(b.getBlock_id());
 		
-		// We're doing a rollback, we need to ensure the location we're replacing doesn't
-		// have a new block already.
-		if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
-			return ChangeResultType.SKIPPED;
+		if( !parameters.allowBlockOverride() ){
+			// We're doing a rollback, we need to ensure the location we're replacing doesn't
+			// have a new block already.
+			if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
+				return ChangeResultType.SKIPPED;
+			}
 		}
 		
 		// On the blacklist?
@@ -554,6 +556,7 @@ public class Preview implements Previewable {
 			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 			Block block = world.getBlockAt(loc);
 			placeBlock( b, block, true );
+			changes_applied_count++;
 		}
 		
 		// POST ROLLBACK TRIGGERS

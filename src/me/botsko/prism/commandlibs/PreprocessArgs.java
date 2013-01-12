@@ -41,25 +41,25 @@ public class PreprocessArgs {
 				if (arg.isEmpty()) continue;
 				
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e"};
+				String[] possibleArgs = {"a","r","t","p","w","b","e","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg.substring(0,1))){
 					player.sendMessage( plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
-				// Verify they're formatting like a:[val]
-				if(!arg.contains(":")){
-					player.sendMessage( plugin.playerError("Missing parameter value for '"+arg+"'. Use /prism ? for help.") );
+				// Verify they're formatting like a:[val] or like -arg
+				if(!(arg.contains(":") || arg.contains("-"))){
+					player.sendMessage( plugin.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
-				if (!arg.substring(1,2).equals(":")) {
+				if (!(arg.substring(1,2).equals(":") || arg.substring(0,1).equals("-"))){
 					player.sendMessage( plugin.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
 				// Split parameter and values
 				String arg_type = arg.toLowerCase().substring(0,1);
-				String val = arg.toLowerCase().substring(2);
+				String val = arg.substring(1,2).equals(":") ? arg.toLowerCase().substring(2) : arg.toLowerCase().substring(1);
 				
 				if(val.isEmpty()){
 					player.sendMessage( plugin.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
@@ -94,6 +94,9 @@ public class PreprocessArgs {
 								    }
 								}
 								player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+								if(actions.length == 1){
+									return null;
+								}
 							}
 						}
 					}
@@ -203,6 +206,14 @@ public class PreprocessArgs {
 						parameters.setTime( date );
 					} else {
 						return null;
+					}
+				}
+				
+				// Special Flags
+				if(arg_type.equals("-")){
+					
+					if(val.equals("no-overwrite")){
+						parameters.setAllowBlockOverride(false);
 					}
 				}
 			}

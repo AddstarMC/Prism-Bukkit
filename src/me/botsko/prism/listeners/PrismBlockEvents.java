@@ -220,8 +220,13 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
+		
 		Player player = event.getPlayer();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, event.getBlock(), player.getName()) );
+	
+		// Pass to the placement alerter
+		plugin.useMonitor.alertOnBlockPlacement(player, event.getBlock());
+		
 	}
 	
 	
@@ -371,8 +376,15 @@ public class PrismBlockEvents implements Listener {
 //				cause = "block-ignite";
 		}
 		if(cause != null){
+			
 			Player player = event.getPlayer();
+			
+			if( cause.equals(ActionType.LIGHTER) && plugin.getConfig().getBoolean("prism.alerts.uses.lighter") ){
+				plugin.useMonitor.alertOnItemUse(player,"used a lighter");
+			}
+			
 			plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
+			
 		}
 	}
 	
@@ -383,9 +395,14 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
+		
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+		
+		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava")){
+			plugin.useMonitor.alertOnItemUse(player,"poured lava");
+		}
 	}
 	
 	

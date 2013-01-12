@@ -58,7 +58,7 @@ public class Executor implements CommandExecutor {
 			return true;
 		}
 		// Ensure they have permission
-		else if ( !(player.hasPermission( "prism.*" ) || player.hasPermission( sub.getPermNode() )) ) {
+		else if ( player != null && !(player.hasPermission( "prism.*" ) || player.hasPermission( sub.getPermNode() )) ) {
 			sender.sendMessage( plugin.msgNoPermission() );
 			return true;
 		}
