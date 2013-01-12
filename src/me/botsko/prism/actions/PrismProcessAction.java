@@ -81,6 +81,15 @@ public class PrismProcessAction extends GenericAction {
 	
 	/**
 	 * 
+	 * @return
+	 */
+	public ActionType getProcessChildActionType(){
+		return ActionType.getByActionType( "prism-"+actionData.processType );
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public String getNiceName(){
 		return actionData.processType + " ("+actionData.params+")";

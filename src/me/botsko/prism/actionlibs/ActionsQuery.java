@@ -187,6 +187,49 @@ public class ActionsQuery {
 	
 	/**
 	 * 
+	 * @param person
+	 * @param account_name
+	 */
+	public PrismProcessAction getPrismProcessRecord( int id ){
+		PrismProcessAction process = null;
+		try {
+            
+			plugin.dbc();
+            PreparedStatement s;
+    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
+    		s.setInt(1, id);
+    		s.executeQuery();
+    		ResultSet rs = s.getResultSet();
+
+    		if(rs.first()){
+    			process = new PrismProcessAction(null, null, null, null);
+    			// Set all shared values
+    			process.setId( rs.getInt("id") );
+    			process.setType( ActionType.getByActionType( rs.getString("action_type") ) );
+    			process.setAction_time( rs.getString("action_time") );
+//    			process.setDisplay_date( rs.getString("display_date") );
+//    			process.setDisplay_time( rs.getString("display_time") );
+    			process.setWorld_name( rs.getString("world") );
+    			process.setPlayer_name( rs.getString("player") );
+    			process.setX( rs.getInt("x") );
+    			process.setY( rs.getInt("y") );
+    			process.setZ( rs.getInt("z") );
+    			process.setData( rs.getString("data") );
+			}
+    		
+    		rs.close();
+    		s.close();
+            plugin.conn.close();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return process;
+	}
+	
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public int delete( String beforeDateAlias ){
@@ -369,7 +412,7 @@ public class ActionsQuery {
 			 * Parent process id
 			 */
 			if(parameters.getParentId() > 0){
-				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"%'";
+				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"}%'";
 			}
 			
 			/**

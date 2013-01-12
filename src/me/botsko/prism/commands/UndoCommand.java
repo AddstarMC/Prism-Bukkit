@@ -12,6 +12,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -48,20 +49,26 @@ public class UndoCommand implements SubHandler {
 				return;
 			}
 			
-			// @todo we need to query the parent object first,
-			// then determine which sub action type we need
+			ActionsQuery aq = new ActionsQuery(plugin);
+			
+			PrismProcessAction process = aq.getPrismProcessRecord( record_id );
+			
+			if(process == null){
+				call.getPlayer().sendMessage( plugin.playerError( "A process does not exists with that value." ) );
+				return;
+			}
 			
 			Calendar lCDateTime = Calendar.getInstance();
 			long processStartTime = lCDateTime.getTimeInMillis();
 			
+			
 			// Pull the actual block change data for this undo event
 			QueryParameters parameters = new QueryParameters();
 			parameters.setWorld(call.getPlayer().getWorld().getName());
-			parameters.addActionType(ActionType.PRISM_DRAIN);
+			parameters.addActionType(process.getProcessChildActionType());
 			parameters.setPlayer( call.getPlayer().getName() );
 			parameters.setParentId(record_id);
 			
-			ActionsQuery aq = new ActionsQuery(plugin);
 			QueryResult results = aq.lookup( call.getPlayer(), parameters );
 			if(!results.getActionResults().isEmpty()){
 				
