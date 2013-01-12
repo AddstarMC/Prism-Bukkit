@@ -54,7 +54,7 @@ public class UseMonitor {
 		countedEvents.put(playername, count );
 		
 		if(count == 5){
-			plugin.alertPlayers(null, playername + " continues to monitored activities - pausing warnings.");
+			plugin.alertPlayers(null, playername + " continues - pausing warnings.");
 		} else {
 			if(count < 5){
 				plugin.alertPlayers(null, ChatColor.GRAY + playername + " " + msg);
@@ -66,22 +66,36 @@ public class UseMonitor {
 	/**
 	 * 
 	 * @param player
+	 * @return
+	 */
+	protected boolean checkFeatureShouldProceed( Player player ){
+		// Ensure enabled
+		if(!plugin.getConfig().getBoolean("prism.alerts.uses.enabled")){
+			return false;
+		}
+		
+		// Ignore players who would see the alerts
+		if ( plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts") ){
+			return false;
+		}
+		
+		// Ignore certain ranks
+		if( player.hasPermission("prism.bypass-use-alerts")){
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
 	 * @param block
 	 */
 	public void alertOnBlockPlacement( Player player, Block block ){
 		
 		// Ensure enabled
-		if(!plugin.getConfig().getBoolean("prism.alerts.uses.enabled")){
-			return;
-		}
-		
-		// Ignore players who would see the alerts
-		if ( plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts") ){
-			return;
-		}
-		
-		// Ignore certain ranks
-		if( player.hasPermission("prism.bypass-use-alerts")){
+		if( !checkFeatureShouldProceed( player ) ){
 			return;
 		}
 		
@@ -102,8 +116,15 @@ public class UseMonitor {
 	 * @param use_msg
 	 */
 	public void alertOnItemUse( Player player, String use_msg ){
+		
+		// Ensure enabled
+		if( !checkFeatureShouldProceed( player ) ){
+			return;
+		}
+		
 		String playername = player.getName();
 		incrementCount(playername,use_msg);
+		
 	}
 	
 	
