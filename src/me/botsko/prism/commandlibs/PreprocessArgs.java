@@ -94,6 +94,9 @@ public class PreprocessArgs {
 								    }
 								}
 								player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+								if(actions.length == 1){
+									return null;
+								}
 							}
 						}
 					}
