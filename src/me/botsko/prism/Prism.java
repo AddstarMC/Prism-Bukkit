@@ -38,7 +38,8 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
 
-	protected String msg_name = "Prism";
+	protected final String plugin_name = this.getDescription().getName();
+	protected final String plugin_version = this.getDescription().getName();
 	public Prism prism;
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
@@ -74,7 +75,7 @@ public class Prism extends JavaPlugin {
 
 		prism = this;
 		
-		this.log("Initializing plugin. By Viveleroi (and team), Darkhelmet Minecraft: s.dhmc.us");
+		this.log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 		
 		try {
 		    Metrics metrics = new Metrics(this);
@@ -313,7 +314,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerHeaderMsg(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.WHITE + msg;
+			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.WHITE + msg;
 		}
 		return "";
 	}
@@ -326,7 +327,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerSubduedHeaderMsg(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.GRAY + msg;
+			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.GRAY + msg;
 		}
 		return "";
 	}
@@ -363,7 +364,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public String playerError(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + msg_name+" // " + ChatColor.RED + msg;
+			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.RED + msg;
 		}
 		return "";
 	}
@@ -451,7 +452,7 @@ public class Prism extends JavaPlugin {
 	 * @param message
 	 */
 	public void log(String message){
-		log.info("["+msg_name+"]: " + message);
+		log.info("["+plugin_name+"]: " + message);
 	}
 	
 	
@@ -461,7 +462,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public void debug(String message){
 		if(this.config.getBoolean("prism.debug")){
-			log.info("["+msg_name+"]: " + message);
+			log.info("["+plugin_name+"]: " + message);
 		}
 	}
 	
