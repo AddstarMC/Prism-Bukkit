@@ -83,6 +83,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.entity-follow", true);
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
+		config.addDefault("prism.tracking.entity-spawn", true);
 		config.addDefault("prism.tracking.fireball", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);

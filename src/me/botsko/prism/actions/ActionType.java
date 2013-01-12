@@ -26,6 +26,7 @@ public enum ActionType {
 	ENTITY_FOLLOW(false, false, false, "entity", "lured"),
 	ENTITY_KILL(false, true, true, "entity", "killed"),
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
+	ENTITY_SPAWN(false, false, false, "entity", "spawned"),
 	FIREBALL(false, false, false, null, "ignited"),
 	HANGINGITEM_BREAK(false, true, true, "hangingitem", "broke"),
 	HANGINGITEM_PLACE(true, true, true, "hangingitem", "hung"),
