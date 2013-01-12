@@ -355,7 +355,7 @@ public class ActionsQuery {
 			 * Order by
 			 */
 			String sort_dir = parameters.getSortDirection();
-			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", id "+sort_dir;
+			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", x ASC, z ASC, y ASC, id "+sort_dir;
 			
 			/**
 			 * LIMIT
