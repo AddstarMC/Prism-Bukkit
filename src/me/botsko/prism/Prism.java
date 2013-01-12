@@ -32,7 +32,10 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
 
@@ -43,6 +46,7 @@ public class Prism extends JavaPlugin {
 	protected Language language;
 	protected MaterialAliases items;
 	public Connection conn = null;
+	public WorldEditPlugin plugin_worldEdit = null;
 	
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
@@ -85,6 +89,9 @@ public class Prism extends JavaPlugin {
 		
 		// Setup databases
 		setupDatabase();
+		
+		// Plugins we use
+		checkPluginDependancies();
 		
 		// Assign event listeners
 		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
@@ -187,6 +194,21 @@ public class Prism extends JavaPlugin {
 	 */
 	public Language getLang(){
 		return this.language;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void checkPluginDependancies(){
+		Plugin we = getServer().getPluginManager().getPlugin("WorldEdit");
+		if (we != null) {
+			plugin_worldEdit = (WorldEditPlugin)we;
+			log("WorldEdit found. Associated features enabled.");
+		}
+		else {
+			log("WorldEdit not found. Certain optional features of Prism disabled.");
+		}
 	}
 	
 	

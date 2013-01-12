@@ -318,13 +318,10 @@ public class ActionsQuery {
 			}
 			
 			/**
-			 * Radius
+			 * Radius or Selection
 			 */
-			int radius = parameters.getRadius();
-			if(radius > 0){
-				query += buildRadiusCondition(radius, parameters.getPlayerLocation().toVector());
-			}
-			
+			query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
+
 			/**
 			 * Block
 			 */
@@ -453,27 +450,13 @@ public class ActionsQuery {
 	 * @param player_name
 	 * @return
 	 */
-	protected String buildRadiusCondition( int radius, Vector loc ){
+	protected String buildRadiusCondition( Vector minLoc, Vector maxLoc ){
 		String where = "";
-//		if(arg_values[0].equalsIgnoreCase("world")){
-//			// @todo force bypassing max radius
-//		} else {
-
-			// @todo allow for worldedit selections
-
-			//If the radius is set we need to format the min and max locations
-			if (radius > 0) {
-
-				//Check if location and world are supplied
-				Vector minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
-				Vector maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
-				
-				where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
-				where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
-				where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
-
-			}
-//		}
+		if(minLoc != null && maxLoc != null ){
+			where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
+			where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
+			where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
+		}
 		return where;
 	}
 	

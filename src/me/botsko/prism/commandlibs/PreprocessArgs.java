@@ -12,6 +12,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.LevenshteinDistance;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -114,6 +115,7 @@ public class PreprocessArgs {
 						int radius = Integer.parseInt(val);
 						if(radius <= 0){
 							player.sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+							return null;
 						}
 						if(radius > plugin.getConfig().getInt("prism.max-radius-unless-overridden")){
 							radius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
@@ -123,8 +125,22 @@ public class PreprocessArgs {
 							parameters.setRadius( radius );
 						}
 					} else {
+						
+						// User wants an area inside of a worldedit selection
+						if(val.equals("we")){
+							
+							if (plugin.plugin_worldEdit == null) {
+								player.sendMessage( plugin.playerError("This feature is disabled because Prism couldn't find WorldEdit.") );
+								return null;
+							} else {
+							
+								// Load a selection from world edit as our area.
+								parameters = WorldEditBridge.getSelectedArea(plugin, player, parameters);
+							}
+						}
+						
 						// User has asked for a global radius
-						if(val.equals("global")){
+						else if(val.equals("global")){
 							if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
 								parameters.setAllow_no_radius(true);
 							} else {
@@ -213,7 +229,7 @@ public class PreprocessArgs {
 				parameters.setWorld( player.getWorld().getName() );
 			}
 			// Player location
-			parameters.setPlayerLocation( player.getLocation() );
+			parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 		}
 		return parameters;
 	}

@@ -38,7 +38,7 @@ public class NearCommand implements SubHandler {
 		// Build params
 		QueryParameters parameters = new QueryParameters();
 		parameters.setWorld( call.getPlayer().getWorld().getName() );
-		parameters.setPlayerLocation(call.getPlayer().getLocation());
+		parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
 		
 		// allow a custom near radius
 		int radius = plugin.getConfig().getInt("prism.near.default-radius");

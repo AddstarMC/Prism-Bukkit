@@ -7,6 +7,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 public class QueryParameters implements Cloneable {
 	
@@ -29,6 +30,9 @@ public class QueryParameters implements Cloneable {
 	protected ArrayList<String> block_filters = new ArrayList<String>();
 	protected boolean allow_no_radius = false;
 	protected int parent_id = 0;
+	protected Vector minLoc;
+	protected Vector maxLoc;
+
 	protected int limit = 1000000;
 
 	
@@ -115,12 +119,53 @@ public class QueryParameters implements Cloneable {
 		return player_location;
 	}
 
-
+	
 	/**
-	 * @param player_location the player_location to set
+	 * 
+	 * @param loc
 	 */
-	public void setPlayerLocation(Location player_location) {
-		this.player_location = player_location;
+	public void setMinMaxVectorsFromPlayerLocation(Location loc){
+		this.player_location = loc;
+		if(radius > 0){
+			minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
+			maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector getMinLocation(){
+		return minLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMinLocation(Vector minLoc){
+		this.minLoc = minLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector getMaxLocation(){
+		return maxLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMaxLocation(Vector maxLoc){
+		this.maxLoc = maxLoc;
 	}
 
 
