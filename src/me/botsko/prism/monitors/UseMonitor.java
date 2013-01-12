@@ -1,0 +1,107 @@
+package me.botsko.prism.monitors;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+
+import me.botsko.prism.Prism;
+
+public class UseMonitor {
+	
+	/**
+	 * 
+	 */
+	private Prism plugin;
+	
+	/**
+	 * 
+	 */
+	protected final ArrayList<String> blocksToAlert;
+	
+	/**
+	 * 
+	 */
+	private ConcurrentHashMap<String,Integer> countedEvents = new ConcurrentHashMap<String,Integer>();
+	
+	
+	/**
+	 * 
+	 * @param plugin
+	 */
+	@SuppressWarnings("unchecked")
+	public UseMonitor( Prism plugin ){
+		this.plugin = plugin;
+		blocksToAlert = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-placement");
+		resetEventsQueue();
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param block
+	 */
+	public void alertOnBlockPlacement( Player player, Block block ){
+		
+		// Ensure enabled
+		if(!plugin.getConfig().getBoolean("prism.alerts.uses.enabled")){
+			return;
+		}
+		
+		// Ignore players who would see the alerts
+		if ( plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts") ){
+			return;
+		}
+		
+		// Ignore certain ranks
+		if( player.hasPermission("prism.bypass-use-alerts")){
+			return;
+		}
+		
+		String playername = player.getName();
+		String blockType = ""+block.getTypeId();
+		
+		// Ensure we're tracking this block
+		if(blocksToAlert.contains( blockType )){
+			
+			// Existing count
+			int count = 0;
+			if(countedEvents.containsKey(playername)){
+				count = countedEvents.get(playername);
+			}
+			count++;
+			countedEvents.put(playername, count );
+			
+			plugin.debug("COUNT: " + count);
+			
+			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
+			
+			if(count == 5){
+				String msg = playername + " continues to monitored activities - pausing warnings.";
+				plugin.alertPlayers(null, msg);
+			} else {
+				if(count < 5){
+					String msg = ChatColor.GRAY + playername + " placed "+alias;
+					plugin.alertPlayers(null, msg);
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Reset the queue every now and then
+	 * Technically this can reset someone's counts too early but
+	 * that just means staff will see extra warnings.
+	 */
+	public void resetEventsQueue(){
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		    public void run() {
+		    	countedEvents = new ConcurrentHashMap<String,Integer>();
+		    }
+		}, 7000L, 7000L);
+	}
+}

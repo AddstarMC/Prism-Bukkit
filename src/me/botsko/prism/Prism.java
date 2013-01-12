@@ -24,6 +24,7 @@ import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismRollbackEvents;
 import me.botsko.prism.metrics.Metrics;
 import me.botsko.prism.monitors.OreMonitor;
+import me.botsko.prism.monitors.UseMonitor;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
@@ -38,8 +39,8 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
 
-	protected final String plugin_name = this.getDescription().getName();
-	protected final String plugin_version = this.getDescription().getName();
+	protected String plugin_name;
+	protected String plugin_version;
 	public Prism prism;
 	protected Logger log = Logger.getLogger("Minecraft");
 	public FileConfiguration config;
@@ -51,6 +52,7 @@ public class Prism extends JavaPlugin {
 	public ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
+	public UseMonitor useMonitor;
 	public ConcurrentHashMap<String,Wand> playersWithActiveTools = new ConcurrentHashMap<String,Wand>();
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
@@ -72,6 +74,9 @@ public class Prism extends JavaPlugin {
      */
 	@Override
 	public void onEnable(){
+		
+		plugin_name = this.getDescription().getName();
+		plugin_version = this.getDescription().getName();
 
 		prism = this;
 		
@@ -110,6 +115,7 @@ public class Prism extends JavaPlugin {
 		actionsRecorder = new ActionRecorder(this);
 		actionsQuery = new ActionsQuery(this);
 		oreMonitor = new OreMonitor(this);
+		useMonitor = new UseMonitor(this);
 		
 		// Init async tasks
 		actionRecorderTask();

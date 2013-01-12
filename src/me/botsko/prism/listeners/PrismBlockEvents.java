@@ -220,8 +220,13 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
+		
 		Player player = event.getPlayer();
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, event.getBlock(), player.getName()) );
+	
+		// Pass to the placement alerter
+		plugin.useMonitor.alertOnBlockPlacement(player, event.getBlock());
+		
 	}
 	
 	
