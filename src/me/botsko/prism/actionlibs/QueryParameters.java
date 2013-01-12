@@ -33,6 +33,9 @@ public class QueryParameters implements Cloneable {
 	protected Vector maxLoc;
 	protected int limit = 1000000;
 	
+	// Directional
+	protected boolean allow_block_overwrite = true;
+	
 	// Informational
 	protected String original_command;
 	
@@ -330,6 +333,25 @@ public class QueryParameters implements Cloneable {
 			return "DESC";
 		}
 		return "ASC";
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setAllowBlockOverride( boolean allow_block_overwrite ){
+		this.allow_block_overwrite = allow_block_overwrite;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean allowBlockOverride(){
+		return allow_block_overwrite;
 	}
 	
 	

@@ -239,11 +239,13 @@ public class Preview implements Previewable {
 		
 		Material m = Material.getMaterial(b.getBlock_id());
 		
-//		// We're doing a rollback, we need to ensure the location we're replacing doesn't
-//		// have a new block already.
-//		if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
-//			return ChangeResultType.SKIPPED;
-//		}
+		if( !parameters.allowBlockOverride() ){
+			// We're doing a rollback, we need to ensure the location we're replacing doesn't
+			// have a new block already.
+			if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
+				return ChangeResultType.SKIPPED;
+			}
+		}
 		
 		// On the blacklist?
 		if( !BlockUtils.mayEverPlace(m) ){

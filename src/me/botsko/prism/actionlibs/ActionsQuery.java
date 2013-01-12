@@ -216,51 +216,41 @@ public class ActionsQuery {
 				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time " +
 				"FROM prism_actions";
 		
-//		// If we're rolling back, we need to only return entries that are the latest
-//		// event at specific coords.
-//		// So if player A placed a block, then removes it, and player
-//		// B places a block at the same place, a rollback of
-//		// all player A's block-places won't damage what
-//		// player B added
-//		// http://stackoverflow.com/questions/14114432/exclude-mysql-table-records-that-have-matching-newer-records
-//		//
-//		// By default block-break rollbacks don't need this because
-//		// they won't restore when a new block is present.
-//		if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
-//			query += " JOIN (" +
-//						"SELECT action_type, x, y, z, max(action_time) as action_time" +
-//						" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
-//						" GROUP BY action_type, x, y, z) latest" +
-//						" ON prism_actions.action_time = latest.action_time" +
-//						" AND prism_actions.x = latest.x" +
-//						" AND prism_actions.y = latest.y" +
-//						" AND prism_actions.z = latest.z" +
-//						" AND prism_actions.action_type = latest.action_type";
-//		}
-		// Append a right join to exclude actions of the same type that have newer entries at the exact same
-		// coords. For example, if you break a block (#1), place a new block and break it (#2), and then
-		// run a rollback of breaks, the breaks are ordered by time (earliest first) which means the rollback
-		// will restore the #1 block first, and skip the second because a block now exists in that spot.
-		// This excludes the older records when a newer one, of the same action type, exists for that location
-		//
-		// We ignore item removes because you often want to rollback multiple per coord
-//		else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
-//			
-//			query += " JOIN (" +
-//					"SELECT"+(parameters.getPlayer() != null ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
-//					" FROM prism_actions" +
-//					" GROUP BY action_type, x, y, z"+(parameters.getPlayer() != null ? ", player" : "")+") latest" +
-//					" ON prism_actions.action_time = latest.action_time" +
-//					" AND prism_actions.x = latest.x" +
-//					" AND prism_actions.y = latest.y" +
-//					" AND prism_actions.z = latest.z" +
-//					" AND prism_actions.action_type = latest.action_type";
-//			
-//					if(parameters.getPlayer() != null){
-//						query += " AND prism_actions.player = latest.player";
-//					}
-//
-//		}
+		// If the user has elected to enforce block override prevention,
+		// we'll run join conditions to exclude older records for a specific
+		// coordinate so that we don't end up rolling back the first block break
+		// at a location when there's a newer one, because no overwrite means
+		// any after that first will be skipped.
+		if( !parameters.allowBlockOverride() ){
+			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
+				query += " JOIN (" +
+							"SELECT action_type, x, y, z, max(action_time) as action_time" +
+							" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
+							" GROUP BY action_type, x, y, z) latest" +
+							" ON prism_actions.action_time = latest.action_time" +
+							" AND prism_actions.x = latest.x" +
+							" AND prism_actions.y = latest.y" +
+							" AND prism_actions.z = latest.z" +
+							" AND prism_actions.action_type = latest.action_type";
+			}
+			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
+				
+				query += " JOIN (" +
+						"SELECT"+(parameters.getPlayer() != null ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
+						" FROM prism_actions" +
+						" GROUP BY action_type, x, y, z"+(parameters.getPlayer() != null ? ", player" : "")+") latest" +
+						" ON prism_actions.action_time = latest.action_time" +
+						" AND prism_actions.x = latest.x" +
+						" AND prism_actions.y = latest.y" +
+						" AND prism_actions.z = latest.z" +
+						" AND prism_actions.action_type = latest.action_type";
+				
+						if(parameters.getPlayer() != null){
+							query += " AND prism_actions.player = latest.player";
+						}
+	
+			}
+		}
 		
 		// World
 		query += " WHERE 1=1";
