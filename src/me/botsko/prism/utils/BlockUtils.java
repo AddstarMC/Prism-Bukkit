@@ -145,7 +145,9 @@ public class BlockUtils {
 				|| m.equals(Material.STONE_BUTTON) 
 				|| m.equals(Material.LADDER)
 				|| m.equals(Material.VINE)
-				|| m.equals(Material.COCOA)){
+				|| m.equals(Material.COCOA)
+				|| m.equals(Material.PISTON_EXTENSION)
+				|| m.equals(Material.PISTON_MOVING_PIECE)){
 			return true;
 		}
 		return false;
