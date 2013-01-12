@@ -30,6 +30,7 @@ import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
@@ -410,18 +411,17 @@ public class PrismBlockEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onPistonRetract(final BlockPistonRetractEvent event){
-//		plugin.debug("PISTON retracted");
-////		Block block = event.getBlock();
-////		BlockFace face = event.getDirection();
-////		event.getRetractLocation()
-////		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_SHIFT, event.getBlock(), "Environment") );
-//	}
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPistonRetract(final BlockPistonRetractEvent event){
+		if(!event.isSticky()) return;
+		Block block = event.getBlock();
+		if(block.getType().equals(Material.AIR)) return;
+		plugin.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, event.getRetractLocation().getBlock(), block.getRelative(event.getDirection()).getLocation(), "Piston") );
+	}
 	
 	
 	/**
