@@ -140,6 +140,7 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCreatureSpawn(final CreatureSpawnEvent event){
 		String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
+		if(reason.equals("natural")) return;
 		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
 	}
 	
