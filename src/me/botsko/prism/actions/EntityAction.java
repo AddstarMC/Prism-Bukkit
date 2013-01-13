@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
@@ -44,9 +45,11 @@ public class EntityAction extends GenericAction {
 			this.z = entity.getLocation().getZ();
 			
 			// Get animal age
-			if(entity instanceof Ageable){
+			if(entity instanceof Ageable && !(entity instanceof Monster) ){
 				Ageable a = (Ageable)entity;
 				this.actionData.isAdult = a.isAdult();
+			} else {
+				this.actionData.isAdult = true;
 			}
 			
 			// Get sheep color
@@ -170,7 +173,7 @@ public class EntityAction extends GenericAction {
 		if(actionData.color != null && !actionData.color.isEmpty()){
 			name += actionData.color + " ";
 		}
-		if(!actionData.isAdult){
+		if(actionData.isAdult && !actionData.isAdult){
 			name += "baby ";
 		}
 		if(this.actionData.profession != null){
