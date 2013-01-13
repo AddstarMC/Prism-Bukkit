@@ -156,6 +156,10 @@ public class PrismPlayerEvents implements Listener {
 					case CARROT:
 					case POTATO:
 						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+					case TNT:
+						if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
+							plugin.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
+						}
 					default:
 						break;
 				}

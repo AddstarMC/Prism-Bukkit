@@ -53,6 +53,7 @@ public enum ActionType {
 	SKULL_PLACE(true, true, true, "skull", "placed"),
 	SPAWNEGG_USE(false, false, true, "use", "used"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
+	TNT_PRIME(false, false, false, "use", "primed"),
 	TREE_GROW(true, true, true, "grow", "grew"),
 	WATER_BREAK(false, true, true, "block", "broke"),
 	WATER_BUCKET(false, false, false, null, "poured"),

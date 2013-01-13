@@ -108,6 +108,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.skull-place", true);
 		config.addDefault("prism.tracking.spawnegg-use", true);
 		config.addDefault("prism.tracking.tnt-explode", true);
+		config.addDefault("prism.tracking.tnt-prime", true);
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-break", true);
 		config.addDefault("prism.tracking.water-bucket", true);
