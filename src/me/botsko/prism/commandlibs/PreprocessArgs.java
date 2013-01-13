@@ -215,12 +215,14 @@ public class PreprocessArgs {
 				
 				// Special Flags
 				if(arg_type.equals("-")){
-					Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
-					if(flag == null){
+					try {
+						Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
+						if(!(parameters.hasFlag(flag))){
+							parameters.addFlag(flag);
+						}
+					} catch(IllegalArgumentException ex){
 						player.sendMessage( plugin.playerError("Unrecognized flag '"+val+"'. Use /prism ? [command] for help.") );
-					}
-					if(!(parameters.hasFlag(flag))){
-						parameters.addFlag(flag);
+						return null;
 					}
 				}
 			}
@@ -248,7 +250,7 @@ public class PreprocessArgs {
 			}
 			// Time default
 			if(!foundArgs.containsKey("t")){
-				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.time-since"));
+				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.default-time-since"));
 				if(date != null){
 					plugin.log("Error - date range configuration for prism.time-since is not valid");
 					date = translateTimeStringToDate(plugin,player,"3d");
