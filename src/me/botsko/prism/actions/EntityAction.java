@@ -3,11 +3,14 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 
 import org.bukkit.DyeColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Villager.Profession;
 
 public class EntityAction extends GenericAction {
@@ -57,6 +60,19 @@ public class EntityAction extends GenericAction {
 				Villager v = (Villager)entity;
 				this.actionData.profession = v.getProfession().toString().toLowerCase();
 			}
+			
+			// Taming owner
+			if (entity instanceof Wolf){
+	            Wolf wolf = (Wolf)entity;
+	            if(wolf.isTamed()){
+	                if(wolf.getOwner() instanceof Player){
+	                	this.actionData.taming_owner = ((Player)wolf.getOwner()).getName();
+	                }
+	                if(wolf.getOwner() instanceof OfflinePlayer){
+	                	this.actionData.taming_owner = ((OfflinePlayer)wolf.getOwner()).getName();
+	                }
+	            }
+	    	}
 		}
 		if(player != null){
 			this.player_name = player;
@@ -69,6 +85,7 @@ public class EntityAction extends GenericAction {
 		// Save entity data from current entity
 		setDataFromObject();
 		setObjectFromData();
+		
 	}
 	
 	
@@ -139,6 +156,15 @@ public class EntityAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public String getTamingOwner(){
+		return this.actionData.taming_owner;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNiceName(){
 		String name = "";
 		if(actionData.color != null && !actionData.color.isEmpty()){
@@ -149,6 +175,9 @@ public class EntityAction extends GenericAction {
 		}
 		if(this.actionData.profession != null){
 			name += this.actionData.profession + " ";
+		}
+		if(actionData.taming_owner != null){
+			name += actionData.taming_owner+"'s ";
 		}
 		name += actionData.entity_name;
 		return name;

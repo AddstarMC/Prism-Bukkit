@@ -18,10 +18,14 @@ public class EntityActionData {
 	 */
 	public String color;
 	
-	
 	/**
 	 * 
 	 */
 	public String profession;
+	
+	/**
+	 * 
+	 */
+	public String taming_owner;
 
 }

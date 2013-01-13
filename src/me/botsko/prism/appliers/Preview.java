@@ -28,6 +28,7 @@ import me.botsko.prism.wands.Wand;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -41,6 +42,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.ItemStack;
 
 public class Preview implements Previewable {
@@ -466,6 +468,19 @@ public class Preview implements Previewable {
 							Villager v = (Villager)entity;
 							v.setProfession( b.getProfession() );
 						}
+						
+						// Set taming owner
+						if (entity instanceof Wolf){
+				            Wolf wolf = (Wolf)entity;
+				            Player owner = plugin.getServer().getPlayer( b.getTamingOwner() );
+				            if(owner == null){
+					            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(b.getTamingOwner());
+					            if(offlinePlayer.hasPlayedBefore()){
+					            	owner = (Player)offlinePlayer;
+					            }
+				            }
+				            if(owner != null) wolf.setOwner(owner);
+				    	}
 						
 						changes_applied_count++;
 						
