@@ -26,6 +26,7 @@ import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.actions.SkullAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.appliers.PrismProcessType;
 
@@ -130,6 +131,10 @@ public class ActionsQuery {
 	    			}
 	    			else if( actionType.requiresHandler("signchange") ){
 	    				SignAction sa = new SignAction(null, null, null, null);
+	    				baseAction = sa;
+	    			}
+	    			else if( actionType.requiresHandler("skull") ){
+	    				SkullAction sa = new SkullAction(null, null, null);
 	    				baseAction = sa;
 	    			}
 	    			else if( actionType.requiresHandler("use") ){

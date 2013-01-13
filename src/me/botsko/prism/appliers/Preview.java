@@ -17,6 +17,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.actions.SkullAction;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
@@ -33,6 +34,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -527,6 +529,29 @@ public class Preview implements Previewable {
 							s.update();
 							changes_applied_count++;
 						}
+					}
+					
+					
+					/**
+					 * Skulls
+					 */
+					if( a instanceof SkullAction ){
+						
+						SkullAction s = (SkullAction) a;
+						Block block = world.getBlockAt(loc);
+						
+						// Set the material
+						block.setTypeId( s.getBlock_id() );
+						block.setData( s.getBlock_subid() );
+						
+						// Set skull data
+						Skull skull = (Skull) block.getState();
+						skull.setRotation( s.getRotation() );
+						skull.setSkullType( s.getSkullType() );
+						skull.update();
+						
+						changes_applied_count++;
+						
 					}
 					
 					if(!is_preview){

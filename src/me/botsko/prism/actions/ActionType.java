@@ -49,6 +49,8 @@ public enum ActionType {
 	PRISM_ROLLBACK(true, false, false, "prismrollback", "rolled back"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
+	SKULL_BREAK(false, true, true, "skull", "broke"),
+	SKULL_PLACE(true, true, true, "skull", "placed"),
 	SPAWNEGG_USE(false, false, true, "use", "used"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
 	TREE_GROW(true, true, true, "grow", "grew"),
