@@ -201,6 +201,37 @@ public class ActionsQuery {
 	 * @param person
 	 * @param account_name
 	 */
+	public int getUsersLastPrismProcessId( String playername ){
+		int id = 0;
+		try {
+            
+			plugin.dbc();
+            PreparedStatement s;
+    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
+    		s.setString(1, playername);
+    		s.executeQuery();
+    		ResultSet rs = s.getResultSet();
+
+    		if(rs.first()){
+    			id = rs.getInt("id");
+			}
+    		
+    		rs.close();
+    		s.close();
+            plugin.conn.close();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param person
+	 * @param account_name
+	 */
 	public PrismProcessAction getPrismProcessRecord( int id ){
 		PrismProcessAction process = null;
 		try {

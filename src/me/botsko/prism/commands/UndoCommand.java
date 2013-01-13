@@ -42,24 +42,38 @@ public class UndoCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if( call.getArgs().length > 1 && TypeUtils.isNumeric(call.getArg(1))){
-			int record_id = Integer.parseInt(call.getArg(1));
-			if(record_id <= 0){
-				call.getPlayer().sendMessage( plugin.playerError( "Record id must be greater than zero." ) );
-				return;
-			}
+		if( call.getArgs().length > 1){
 			
 			ActionsQuery aq = new ActionsQuery(plugin);
 			
-			PrismProcessAction process = aq.getPrismProcessRecord( record_id );
+			int record_id = 0;
+			if(TypeUtils.isNumeric(call.getArg(1))){
+				record_id = Integer.parseInt(call.getArg(1));
+				if(record_id <= 0){
+					call.getPlayer().sendMessage( plugin.playerError( "Record id must be greater than zero." ) );
+					return;
+				}
+			} else {
+				if(call.getArg(1).equals("last")){
+					record_id = aq.getUsersLastPrismProcessId( call.getPlayer().getName() );
+				}
+			}
 			
+			// Invalid id
+			if(record_id == 0){
+				call.getPlayer().sendMessage( plugin.playerError( "Either you have no last process or an invalid id." ) );
+				return;
+			}
+			
+			
+			PrismProcessAction process = aq.getPrismProcessRecord( record_id );
 			if(process == null){
 				call.getPlayer().sendMessage( plugin.playerError( "A process does not exists with that value." ) );
 				return;
 			}
-			
+
 			// We only support this for drains
-			if(!process.getProcessChildActionType().equals(PrismProcessType.DRAIN)){
+			if(!process.getProcessChildActionType().equals(ActionType.PRISM_DRAIN)){
 				call.getPlayer().sendMessage( plugin.playerError( "You can't currently undo anything other than a drain process." ) );
 				return;
 			}
