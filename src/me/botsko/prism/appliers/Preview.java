@@ -39,6 +39,7 @@ import org.bukkit.block.Skull;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
@@ -689,20 +690,26 @@ public class Preview implements Previewable {
 		}
 		
 		
-		// Make sure we move the player out of the way
+		// Move any players or living entities out of the way
 		if( parameters.getWorld() != null ){
-			for(Player player : plugin.getServer().getWorld(parameters.getWorld()).getPlayers()){
-				int add = 0;
-				if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), player.getLocation())){
-					Location l = player.getLocation();
-					while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
-						add++;
-						if(l.getY() >= 256) break;
-						l.setY(l.getY() + 1);
-					}
-					if(add > 0){
-						player.sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
-						player.teleport(l);
+			List<Entity> entities = player.getNearbyEntities(parameters.getRadius(), parameters.getRadius(), parameters.getRadius());
+			entities.add((Entity)player);
+			for(Entity entity : entities){
+				if(entity instanceof LivingEntity){
+					int add = 0;
+					if(EntityUtils.inCube(parameters.getPlayerLocation(), parameters.getRadius(), entity.getLocation())){
+						Location l = entity.getLocation();
+						while( !EntityUtils.playerMayPassThrough(l.getBlock().getType()) ){
+							add++;
+							if(l.getY() >= 256) break;
+							l.setY(l.getY() + 1);
+						}
+						if(add > 0){
+							if(entity instanceof Player){
+								((Player)entity).sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
+							}
+							entity.teleport(l);
+						}
 					}
 				}
 			}
