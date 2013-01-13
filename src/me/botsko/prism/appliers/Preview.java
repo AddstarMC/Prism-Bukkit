@@ -29,6 +29,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Sign;
@@ -262,6 +263,18 @@ public class Preview implements Previewable {
 			
 			// Capture the block before we change it
 			BlockState originalBlock = block.getState();
+
+			// If lilypad, check that block below is water. Be sure
+			// it's set to stationary water so the lilypad will sit
+			if( b.getBlock_id() == 111 ){
+				
+				Block below = block.getRelative(BlockFace.DOWN);
+				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
+					below.setType(Material.STATIONARY_WATER);
+				} else {
+					return ChangeResultType.SKIPPED;
+				}
+			}
 			
 			// Set the material
 			block.setTypeId( b.getBlock_id() );
@@ -278,7 +291,7 @@ public class Preview implements Previewable {
 				BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
 			}
 			// Or a bed
-			if( m.equals(Material.BED_BLOCK) ){
+			else if( m.equals(Material.BED_BLOCK) ){
 				BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
 			}
 		} else {
