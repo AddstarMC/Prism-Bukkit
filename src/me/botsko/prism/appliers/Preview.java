@@ -568,8 +568,15 @@ public class Preview implements Previewable {
 			World world = plugin.getServer().getWorld(b.getWorld_name());
 			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 			Block block = world.getBlockAt(loc);
-			placeBlock( b, block, true );
-			changes_applied_count++;
+			ChangeResultType res = placeBlock( b, block, true );
+			if(res.equals(ChangeResultType.APPLIED)){
+				changes_applied_count++;
+			}
+			else if(res.equals(ChangeResultType.SKIPPED)){
+				skipped_block_count++;
+			} else {
+				plugin.log("Error: Deferred block placement encountered an additional deferral for block "+block.getTypeId()+":"+block.getData()+". Report to Prism developers.");
+			}
 		}
 		
 		// POST ROLLBACK TRIGGERS
