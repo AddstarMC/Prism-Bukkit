@@ -280,6 +280,18 @@ public class Preview implements Previewable {
 			block.setTypeId( b.getBlock_id() );
 			block.setData( b.getBlock_subid() );
 			
+			// If the material is a crop that needs soil, we must restore the soil
+			// This may need to go before setting the block, but I prefer the BlockUtil
+			// logic to use materials.
+			if( BlockUtils.materialRequiresSoil(block.getType()) ){
+				Block below = block.getRelative(BlockFace.DOWN);
+				if( below.getType().equals(Material.DIRT) || below.getType().equals(Material.AIR) || below.getType().equals(Material.GRASS) ){
+					below.setType(Material.SOIL);
+				} else {
+					return ChangeResultType.SKIPPED;
+				}
+			}
+			
 			// Capture the new state
 			BlockState newBlock = block.getState();
 			

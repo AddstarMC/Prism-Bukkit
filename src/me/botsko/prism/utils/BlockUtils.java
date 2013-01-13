@@ -559,4 +559,24 @@ public class BlockUtils {
 				return false;
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @param m
+	 * @return
+	 */
+	public static boolean materialRequiresSoil(Material m){
+		switch(m){
+			case CROPS:
+			case WHEAT:
+			case POTATO:
+			case CARROT:
+			case MELON_STEM:
+			case PUMPKIN_STEM:
+				return true;
+			default:
+				return false;
+		}
+	}
 }
