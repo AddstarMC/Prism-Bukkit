@@ -22,7 +22,6 @@ import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
-import me.botsko.prism.listeners.self.PrismRollbackEvents;
 import me.botsko.prism.metrics.Metrics;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
@@ -107,7 +106,7 @@ public class Prism extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
 		
 		// Assign listeners to our own events
-		getServer().getPluginManager().registerEvents(new PrismRollbackEvents( this ), this);
+//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents( this ), this);
 		getServer().getPluginManager().registerEvents(new PrismMiscEvents( this ), this);
 		
 		// Add commands
