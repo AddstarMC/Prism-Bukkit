@@ -117,6 +117,7 @@ public class UndoCommand implements SubHandler {
 			QueryResult results = aq.lookup( call.getPlayer(), parameters );
 			if(!results.getActionResults().isEmpty()){
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process") );
 				List<Action> paginated = results.getPaginatedActionResults();
 				if(paginated != null){
 					for(Action a : paginated){

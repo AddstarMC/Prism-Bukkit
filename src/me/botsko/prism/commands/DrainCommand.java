@@ -86,6 +86,7 @@ public class DrainCommand implements SubHandler {
 			
 			// @todo remove the extra space in msg
 			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained "+blockStateChanges.size()+" "+drain_type+" blocks."));
+			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Use /prism undo last if needed.") );
 			
 			// Trigger the event
 			PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
