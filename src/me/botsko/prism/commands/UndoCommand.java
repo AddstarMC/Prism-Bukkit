@@ -58,9 +58,14 @@ public class UndoCommand implements SubHandler {
 				return;
 			}
 			
+			// We only support this for drains
+			if(!process.getProcessChildActionType().equals(PrismProcessType.DRAIN)){
+				call.getPlayer().sendMessage( plugin.playerError( "You can't currently undo anything other than a drain process." ) );
+				return;
+			}
+			
 			Calendar lCDateTime = Calendar.getInstance();
 			long processStartTime = lCDateTime.getTimeInMillis();
-			
 			
 			// Pull the actual block change data for this undo event
 			QueryParameters parameters = new QueryParameters();
@@ -69,10 +74,12 @@ public class UndoCommand implements SubHandler {
 			parameters.setPlayer( call.getPlayer().getName() );
 			parameters.setParentId(record_id);
 			
+			// make sure the distance isn't too far away
+			
 			QueryResult results = aq.lookup( call.getPlayer(), parameters );
 			if(!results.getActionResults().isEmpty()){
 				
-				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning to undo..." + ChatColor.GRAY + " Abandon ship!") );
+				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
 				
 				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters, processStartTime );
 				rb.apply();

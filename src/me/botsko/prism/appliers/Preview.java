@@ -231,6 +231,14 @@ public class Preview implements Previewable {
 				return removeBlock(block);
 			}
 		}
+		
+		// Undo a drain/ext event (which always remove blocks)
+		// @todo if we ever track rollback/restore for undo, we'll
+		// need logic to do the opposite
+		if(processType.equals(PrismProcessType.UNDO)){
+			return placeBlock(b,block,false);
+		}
+		
 		return null;
 	}
 	
@@ -254,8 +262,8 @@ public class Preview implements Previewable {
 			}
 		}
 		
-		// On the blacklist?
-		if( !BlockUtils.mayEverPlace(m) ){
+		// On the blacklist (except an undo)
+		if( !BlockUtils.mayEverPlace(m) && !processType.equals(PrismProcessType.UNDO) ){
 			return ChangeResultType.SKIPPED;
 		}
 			
@@ -806,6 +814,22 @@ public class Preview implements Previewable {
 					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
 				}
 			}
+		}
+		
+		
+		// Build the results message
+		if(processType.equals(PrismProcessType.UNDO)){
+				
+			// Build the results message
+			String msg = changes_applied_count + " things neverminded"+timeTaken+".";
+			if(skipped_block_count > 0){
+				msg += " " + skipped_block_count + " skipped.";
+			}
+			if(changes_applied_count > 0){
+				msg += ChatColor.GRAY + " If anyone asks, you never did that.";
+			}
+			player.sendMessage( plugin.playerHeaderMsg( msg ) );
+			
 		}
 	}
 }
