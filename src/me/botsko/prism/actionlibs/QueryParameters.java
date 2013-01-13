@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
@@ -37,7 +38,7 @@ public class QueryParameters implements Cloneable {
 
 	
 	// Directional
-	protected boolean allow_block_overwrite = true;
+	protected ArrayList<Flag> flags = new ArrayList<Flag>();
 	
 	// Informational
 	protected String original_command;
@@ -362,17 +363,19 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @return
 	 */
-	public void setAllowBlockOverride( boolean allow_block_overwrite ){
-		this.allow_block_overwrite = allow_block_overwrite;
+	public void addFlag( Flag flag ){
+		if(hasFlag(flag)) return;
+		this.flags.add(flag);
 	}
 	
 	
 	/**
 	 * 
+	 * @param flag
 	 * @return
 	 */
-	public boolean allowBlockOverride(){
-		return allow_block_overwrite;
+	public boolean hasFlag( Flag flag ){
+		return flags.contains(flag);
 	}
 	
 	

@@ -215,9 +215,12 @@ public class PreprocessArgs {
 				
 				// Special Flags
 				if(arg_type.equals("-")){
-					
-					if(val.equals("no-overwrite")){
-						parameters.setAllowBlockOverride(false);
+					Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
+					if(flag == null){
+						player.sendMessage( plugin.playerError("Unrecognized flag '"+val+"'. Use /prism ? [command] for help.") );
+					}
+					if(!(parameters.hasFlag(flag))){
+						parameters.addFlag(flag);
 					}
 				}
 			}

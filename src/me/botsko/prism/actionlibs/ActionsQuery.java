@@ -29,6 +29,7 @@ import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 public class ActionsQuery {
 	
@@ -288,7 +289,7 @@ public class ActionsQuery {
 		// coordinate so that we don't end up rolling back the first block break
 		// at a location when there's a newer one, because no overwrite means
 		// any after that first will be skipped.
-		if( !parameters.allowBlockOverride() ){
+		if( !parameters.hasFlag(Flag.NO_OVERWRITE) ){
 			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
 				query += " JOIN (" +
 							"SELECT action_type, x, y, z, max(action_time) as action_time" +

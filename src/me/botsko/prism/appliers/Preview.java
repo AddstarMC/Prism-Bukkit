@@ -18,6 +18,7 @@ import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
+import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
@@ -245,7 +246,7 @@ public class Preview implements Previewable {
 		
 		Material m = Material.getMaterial(b.getBlock_id());
 		
-		if( !parameters.allowBlockOverride() ){
+		if( !parameters.hasFlag(Flag.NO_OVERWRITE) ){
 			// We're doing a rollback, we need to ensure the location we're replacing doesn't
 			// have a new block already.
 			if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){

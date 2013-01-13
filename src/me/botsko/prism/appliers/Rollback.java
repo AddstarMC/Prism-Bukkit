@@ -10,6 +10,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
@@ -44,37 +45,38 @@ public class Rollback extends Preview {
 		
 		// Remove any fire at this location
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().contains(ActionType.BLOCK_BURN)){
-			ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
-			if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
-				player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+			if( !parameters.hasFlag(Flag.NO_EXT) ){
+				ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
+				if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
+					player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+				}
 			}
 		}
 		
 		// Remove item drops in this radius
 		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback") && (parameters.getActionTypes().contains(ActionType.TNT_EXPLODE) || parameters.getActionTypes().contains(ActionType.CREEPER_EXPLODE)) ){
-			int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
-			if(removed > 0){
-				player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+			if( !parameters.hasFlag(Flag.NO_ITEMCLEAR) ){
+				int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
+				if(removed > 0){
+					player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+				}
 			}
 		}
 		
-//		// Remove any liquid at this location
-//		if(plugin.getConfig().getBoolean("prism.appliers.remove-liquid-on-flow-rollback") && ( parameters.getActionTypes().contains(ActionType.WATER_FLOW) || parameters.getActionTypes().contains(ActionType.LAVA_FLOW)) ){
-//			int fires_ext = BlockUtils.drain(player.getLocation(),parameters.getRadius());
-//			if(fires_ext > 0){
-//				responses.add( plugin.playerHeaderMsg("Draining liquid first!" + ChatColor.GRAY + " Like a boss.") );
-//			}
-//		}
-		
-		// @todo can't really work here. doesn't return a proper result, etc
-		// Remove any lava blocks when doing a lava bucket rollback
-//		if(parameters.getActionTypes().contains(ActionType.LAVA_BUCKET) || parameters.getActionTypes().contains(ActionType.LAVA_BREAK)){
-//			BlockUtils.drainlava(parameters.getPlayerLocation(), parameters.getRadius());
-//		}
-//		if(parameters.getActionTypes().contains(ActionType.WATER_BUCKET) || parameters.getActionTypes().contains(ActionType.WATER_BREAK)){
-//			BlockUtils.drainwater(parameters.getPlayerLocation(), parameters.getRadius());
-//		}
-	
+		// Remove any liquid at this location
+		ArrayList<BlockStateChange> drained = null;
+		if( parameters.hasFlag(Flag.DRAIN) ){
+			drained = BlockUtils.drain(player.getLocation(),parameters.getRadius());
+		}
+		if( parameters.hasFlag(Flag.DRAIN_LAVA) ){
+			drained = BlockUtils.drainlava(player.getLocation(),parameters.getRadius());
+		}
+		if( parameters.hasFlag(Flag.DRAIN_WATER) ){
+			drained = BlockUtils.drainwater(player.getLocation(),parameters.getRadius());
+		}
+		if(drained != null && drained.size() > 0){
+			player.sendMessage( plugin.playerHeaderMsg("Draining liquid!" + ChatColor.GRAY + " Like a boss.") );
+		}
 			
 		// Give the results to the changequeue
 		super.apply();
