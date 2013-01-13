@@ -189,9 +189,13 @@ public class PreprocessArgs {
 									
 									// Lookup the item name, get the ids
 									MaterialAliases items = plugin.getItems();
-									int[] ids = items.getItemIdsByAlias( b );
-									if(ids.length == 2){
-										parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
+									ArrayList<int[]> itemIds = items.getItemIdsByAlias( b );
+									if(itemIds.size() > 0){
+										for(int[] ids : itemIds){
+											if(ids.length == 2){
+												parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
+											}
+										}
 									}
 								}
 							}
