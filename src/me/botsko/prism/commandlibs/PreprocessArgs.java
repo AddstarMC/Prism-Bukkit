@@ -243,6 +243,16 @@ public class PreprocessArgs {
 			if(!foundArgs.containsKey("w")){
 				parameters.setWorld( player.getWorld().getName() );
 			}
+			// Time default
+			if(!foundArgs.containsKey("t")){
+				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.time-since"));
+				if(date != null){
+					plugin.log("Error - date range configuration for prism.time-since is not valid");
+					date = translateTimeStringToDate(plugin,player,"3d");
+				}
+				parameters.setTime(date);
+			}
+			
 			// Player location
 			parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 		}

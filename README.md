@@ -19,7 +19,7 @@ https://github.com/botskonet/Prism-Extras/wiki
 
 ## Selection of Features
 
-- **Extremely fast. Multi-threaded and queued handling of thousands of event recordings or block changes during rollbacks/restores. **
+- **Extremely fast. Multi-threaded and queued handling of thousands of event recordings or block changes during rollbacks/restores.**
 - **Several easy, yet powerful lookup/inspector commands.**
 - **Inspector, rollback, and profile wand features.**
 - **Rollback, restoration commands like you know and love.**
