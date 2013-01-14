@@ -19,7 +19,7 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 [Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
 
-Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki:
+Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki.
 
 [Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
 
@@ -39,7 +39,7 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 
 ### Events and Lookup
 
-- Tracks 43+ player, entity, and world events.
+- Tracks 46+ player, entity, and world events.
 - Includes block changes, container access, item inserts/remove/pickups/drops, entity deaths, shearing, and a LOT more.
 - Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
 - Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
@@ -94,7 +94,7 @@ Coming soon.
 - Multi-threaded queue system for tracking events, combined with a batch recording system makes event recording happen quickly and without impacting your server.
 - Block r/r/p are also run on separate threads and queued for large changes to reduce chances of impacting the main thread.
 - Only one database table with extremely straight-forward design, as well as field types that are smart for the data we store. Records 1 million records with an average of 100MB of space consumption. A server with 200+ players per day can expect about ~2GB of data per month, depending on actions tracked and activity.
-- A dev server with 512M RAM, 2.7Ghz dual core processor, 9,446 blocks from a tnt explosion restored in 3.4 seconds - 3413 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 300ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
+- A dev server with 512M RAM, 2.7Ghz dual core processor, 6,886 blocks from a tnt explosion restored in 2.2 seconds - 2210 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 200ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
 
 
        
