@@ -75,17 +75,19 @@ public class MaterialAliases {
 	 * @param alias
 	 * @return
 	 */
-	public int[] getItemIdsByAlias( String alias ){
-		int[] ids = new int[2];
+	public ArrayList<int[]> getItemIdsByAlias( String alias ){
+		ArrayList<int[]> itemIds = new ArrayList<int[]>();
 		if(!itemAliases.isEmpty()){
 			for (Entry<String, String> entry : itemAliases.entrySet()){
+				int[] ids = new int[2];
 			    if(entry.getValue().equals( alias )){
 			    	String[] _tmp = entry.getKey().split(";");
 			    	ids[0] = Integer.parseInt(_tmp[0]);
 			    	ids[1] = Integer.parseInt(_tmp[1]);
+			    	itemIds.add(ids);
 			    }
 			}
 		}
-		return ids;
+		return itemIds;
 	}
 }

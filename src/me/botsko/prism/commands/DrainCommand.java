@@ -1,8 +1,14 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
+import org.bukkit.ChatColor;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -30,7 +36,7 @@ public class DrainCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		String drain_type = "";
-		int radius = plugin.getConfig().getInt("default-radius");
+		int radius = plugin.getConfig().getInt("prism.default-radius");
 		if(call.getArgs().length == 3){
 			if( call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava") ){
 				drain_type = call.getArg(1);
@@ -54,20 +60,38 @@ public class DrainCommand implements SubHandler {
 			}
 		}
 		
-		int changed = 0;
-		if(drain_type.isEmpty()){
-			changed = BlockUtils.drain(call.getPlayer().getLocation(), radius);
-		}
-		else if(drain_type.equals("water")){
-			changed = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
+		// Build seeking message
+		String msg = "Seeking "+drain_type+" within "+radius+" blocks.";
+		if(drain_type.equals("water")){
+			msg += ChatColor.GRAY + " It's just too wet.";
 		}
 		else if(drain_type.equals("lava")){
-			changed = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
+			msg += ChatColor.GRAY + " It's getting hot in here.";
+		}
+		call.getPlayer().sendMessage(plugin.playerHeaderMsg(msg));
+		
+		
+		ArrayList<BlockStateChange> blockStateChanges = null;
+		if(drain_type.isEmpty()){
+			blockStateChanges = BlockUtils.drain(call.getPlayer().getLocation(), radius);
+		}
+		else if(drain_type.equals("water")){
+			blockStateChanges = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
+		}
+		else if(drain_type.equals("lava")){
+			blockStateChanges = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
 		}
 		
-		if(changed > 0){
+		if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
+			
 			// @todo remove the extra space in msg
-			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained nearby "+drain_type+" liquids."));
+			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Drained "+blockStateChanges.size()+" "+drain_type+" blocks."));
+			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Use /prism undo last if needed.") );
+			
+			// Trigger the event
+			PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
 		} else {
 			call.getPlayer().sendMessage(plugin.playerError("Nothing found to drain with that radius."));
 		}
@@ -80,7 +104,7 @@ public class DrainCommand implements SubHandler {
 	 * @return
 	 */
 	protected int validateRadius( CallInfo call, String radius_arg ){
-		int radius = plugin.getConfig().getInt("default-radius");
+		int radius = plugin.getConfig().getInt("prism.default-radius");
 		if(TypeUtils.isNumeric(radius_arg)){
 			int _tmp_radius = Integer.parseInt(radius_arg);
 			if(_tmp_radius > 0){

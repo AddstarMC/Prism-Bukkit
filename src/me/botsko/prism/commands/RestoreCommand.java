@@ -1,10 +1,12 @@
 package me.botsko.prism.commands;
 
+import java.util.Calendar;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.appliers.ApplierResult;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
@@ -33,10 +35,14 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), "rollback", 1 );
+		Calendar lCDateTime = Calendar.getInstance();
+		long processStartTime = lCDateTime.getTimeInMillis();
+		
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.RESTORE, 1 );
 		if(parameters == null){
 			return;
 		}
+		parameters.setStringFromRawArgs( call.getArgs() );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
@@ -48,13 +54,8 @@ public class RestoreCommand implements SubHandler {
 			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, call.getPlayer(), results.getActionResults(), parameters );
-			ApplierResult result = rs.apply();
-			if(!result.getMessages().isEmpty()){
-				for(String resp : result.getMessages()){
-					call.getPlayer().sendMessage(resp);
-				}
-			}
+			Restore rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, processStartTime );
+			rs.apply();
 			
 		} else {
 			call.getPlayer().sendMessage( plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );

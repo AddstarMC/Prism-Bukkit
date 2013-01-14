@@ -1,6 +1,8 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
+
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Hanging;
 
 public class HangingItemAction extends GenericAction {
@@ -8,7 +10,7 @@ public class HangingItemAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected Hanging hanging;
+	protected HangingItemActionData actionData;
 	
 
 	/**
@@ -18,16 +20,19 @@ public class HangingItemAction extends GenericAction {
 	 * @param player
 	 */
 	public HangingItemAction( ActionType action_type, Hanging hanging, String player ){
+		
+		actionData = new HangingItemActionData();
+		
 		if(action_type != null){
 			this.type = action_type;
 		}
 		if(hanging != null){
-			// @todo We'll need to store the hanging direction/face so we can properly restore.
-			this.hanging = hanging;
+			this.actionData.type = hanging.getType().name().toLowerCase();
+			this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
 			this.world_name = hanging.getWorld().getName();
-			this.x = hanging.getLocation().getX();
-			this.y = hanging.getLocation().getY();
-			this.z = hanging.getLocation().getZ();
+			this.x = hanging.getLocation().getBlockX();
+			this.y = hanging.getLocation().getBlockY();
+			this.z = hanging.getLocation().getBlockZ();
 		}
 		if(player != null){
 			this.player_name = player;
@@ -37,8 +42,8 @@ public class HangingItemAction extends GenericAction {
 			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		// Set data from current block
-		setDataFromHanging();
-		setHangingFromData();
+		setDataFromObject();
+		setObjectFromData();
 	}
 	
 	
@@ -47,37 +52,45 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setDataFromHanging();
+		setObjectFromData();
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setDataFromHanging(){
-		if(data == null && hanging != null){
-			data = hanging.getType().getName();
-		}
+	protected void setDataFromObject(){
+		data = gson.toJson(actionData);
 	}
 	
 	
 	/**
 	 * 
 	 */
-	protected void setHangingFromData(){
-		if(hanging == null && data != null){
-//			EntityType e = EntityType.valueOf(data);
-//			if(e != null){
-//				hanging = e;
-//			}
-//			String[] blockArr = data.split(":");
-//			if (!TypeUtils.isNumeric(blockArr[0])) return;
-//			
-//			block_id = Integer.parseInt(blockArr[0]);
-//			if (blockArr.length > 1){
-//				block_subid = (byte) Integer.parseInt(blockArr[1]);
-//			}
+	protected void setObjectFromData(){
+		if(data != null){
+			actionData = gson.fromJson(data, HangingItemActionData.class);
 		}
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getHangingType(){
+		return this.actionData.type;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public BlockFace getDirection(){
+		if(actionData.direction != null){
+			return BlockFace.valueOf(actionData.direction.toUpperCase());
+		}
+		return null;
 	}
 	
 	
@@ -88,11 +101,9 @@ public class HangingItemAction extends GenericAction {
 	public String getNiceName(){
 		String name = "hangingitem";
 		name = data.toLowerCase();
-//		String[] blockdata = getData().split(":");
-//		if(blockdata.length == 2){
-//			ItemStack i = new ItemStack(Integer.parseInt(blockdata[0]),(byte)Integer.parseInt(blockdata[1]));
-//			name = i.getType().name().toLowerCase().replace("_", " ");
-//		}
+		if(this.actionData.type != null){
+			name = this.actionData.type;
+		}
 		return name;
 	}
 }

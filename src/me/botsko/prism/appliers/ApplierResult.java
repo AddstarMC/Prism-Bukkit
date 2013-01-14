@@ -2,32 +2,29 @@ package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
 
+import me.botsko.prism.events.BlockStateChange;
+
 public class ApplierResult {
 	
 	/**
 	 * 
 	 */
-	protected int changes_applied = 0;
+	protected final int changes_applied;
 	
 	/**
 	 * 
 	 */
-	protected int changes_skipped = 0;
+	protected final int changes_skipped;
 	
 	/**
 	 * 
 	 */
-	protected ArrayList<String> messages = new ArrayList<String>();
+	protected final boolean is_preview;
 	
 	/**
 	 * 
 	 */
-	protected boolean is_preview;
-	
-	/**
-	 * 
-	 */
-	protected ArrayList<Undo> undo = new ArrayList<Undo>();
+	protected final ArrayList<BlockStateChange> blockStateChanges;
 	
 	
 	/**
@@ -36,12 +33,11 @@ public class ApplierResult {
 	 * @param changes_skipped
 	 * @param messages
 	 */
-	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, ArrayList<Undo> undo, ArrayList<String> messages ){
+	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, ArrayList<BlockStateChange> blockStateChanges ){
 		this.changes_applied = changes_applied;
 		this.changes_skipped = changes_skipped;
-		this.messages = messages;
 		this.is_preview = is_preview;
-		this.undo = undo;
+		this.blockStateChanges = blockStateChanges;
 	}
 
 
@@ -62,14 +58,6 @@ public class ApplierResult {
 
 
 	/**
-	 * @return the messages
-	 */
-	public ArrayList<String> getMessages() {
-		return messages;
-	}
-
-
-	/**
 	 * @return the is_preview
 	 */
 	public boolean isPreview() {
@@ -80,7 +68,7 @@ public class ApplierResult {
 	/**
 	 * @return the undo
 	 */
-	public ArrayList<Undo> getUndoQueue(){
-		return undo;
+	public ArrayList<BlockStateChange> getBlockStateChanges(){
+		return blockStateChanges;
 	}
 }

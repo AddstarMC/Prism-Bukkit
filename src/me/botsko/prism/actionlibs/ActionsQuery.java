@@ -15,6 +15,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.GenericAction;
@@ -22,8 +23,13 @@ import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerDeathAction;
+import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.actions.SkullAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 public class ActionsQuery {
 	
@@ -68,12 +74,17 @@ public class ActionsQuery {
 	    		while(rs.next()){
 	    			
 	    			GenericAction baseAction = null;
+	    			boolean override_data = false;
 	    			
 	    			// Pull the proper action type class
 	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
 
 	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
+	    				baseAction = b;
+	    			}
+	    			else if(actionType.requiresHandler("blockshift")){
+	    				BlockShiftAction b = new BlockShiftAction(null, null, null, null);
 	    				baseAction = b;
 	    			}
 	    			else if(actionType.requiresHandler("command")){
@@ -100,8 +111,31 @@ public class ActionsQuery {
 	    				PlayerDeathAction pd = new PlayerDeathAction(null, null, null, null);
 	    				baseAction = pd;
 	    			}
+	    			else if( actionType.requiresHandler("prismprocess") ){
+	    				PrismProcessAction ps = new PrismProcessAction(null, null, null, null);
+	    				baseAction = ps;
+	    			}
+	    			else if( actionType.requiresHandler("prismrollback") ){
+	    				
+	    				override_data = true;
+	    				
+	    				// Get the actual process action
+	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
+	    				pr.setData( rs.getString("data") );
+	    				
+	    				// All we really want is a block action to feed to the world change system
+	    				BlockAction b = new BlockAction(null, null, null);
+	    				b.setBlockId(pr.getOriginalBlockId());
+	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
+	    				baseAction = b;
+	    				
+	    			}
 	    			else if( actionType.requiresHandler("signchange") ){
 	    				SignAction sa = new SignAction(null, null, null, null);
+	    				baseAction = sa;
+	    			}
+	    			else if( actionType.requiresHandler("skull") ){
+	    				SkullAction sa = new SkullAction(null, null, null);
 	    				baseAction = sa;
 	    			}
 	    			else if( actionType.requiresHandler("use") ){
@@ -126,7 +160,9 @@ public class ActionsQuery {
     				baseAction.setX( rs.getInt("x") );
     				baseAction.setY( rs.getInt("y") );
     				baseAction.setZ( rs.getInt("z") );
-    				baseAction.setData( rs.getString("data") );
+    				if(!override_data){
+    					baseAction.setData( rs.getString("data") );
+    				}
     				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				actions.add(baseAction);
@@ -147,7 +183,7 @@ public class ActionsQuery {
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
-		if(parameters.getLookup_type().equals("lookup")){
+		if(parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
 			if(plugin.cachedQueries.containsKey(player.getName())){
 				plugin.cachedQueries.remove(player.getName());
 			}
@@ -162,6 +198,80 @@ public class ActionsQuery {
 	
 	/**
 	 * 
+	 * @param person
+	 * @param account_name
+	 */
+	public int getUsersLastPrismProcessId( String playername ){
+		int id = 0;
+		try {
+            
+			plugin.dbc();
+            PreparedStatement s;
+    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
+    		s.setString(1, playername);
+    		s.executeQuery();
+    		ResultSet rs = s.getResultSet();
+
+    		if(rs.first()){
+    			id = rs.getInt("id");
+			}
+    		
+    		rs.close();
+    		s.close();
+            plugin.conn.close();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param person
+	 * @param account_name
+	 */
+	public PrismProcessAction getPrismProcessRecord( int id ){
+		PrismProcessAction process = null;
+		try {
+            
+			plugin.dbc();
+            PreparedStatement s;
+    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
+    		s.setInt(1, id);
+    		s.executeQuery();
+    		ResultSet rs = s.getResultSet();
+
+    		if(rs.first()){
+    			process = new PrismProcessAction(null, null, null, null);
+    			// Set all shared values
+    			process.setId( rs.getInt("id") );
+    			process.setType( ActionType.getByActionType( rs.getString("action_type") ) );
+    			process.setAction_time( rs.getString("action_time") );
+//    			process.setDisplay_date( rs.getString("display_date") );
+//    			process.setDisplay_time( rs.getString("display_time") );
+    			process.setWorld_name( rs.getString("world") );
+    			process.setPlayer_name( rs.getString("player") );
+    			process.setX( rs.getInt("x") );
+    			process.setY( rs.getInt("y") );
+    			process.setZ( rs.getInt("z") );
+    			process.setData( rs.getString("data") );
+			}
+    		
+    		rs.close();
+    		s.close();
+            plugin.conn.close();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+		return process;
+	}
+	
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public int delete( String beforeDateAlias ){
@@ -170,7 +280,7 @@ public class ActionsQuery {
 		if(beforeDate != null && !beforeDate.isEmpty()){
 			try {
 				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
-				plugin.debug("Deleting records prior to " + beforeDate + ": " + query);
+				plugin.log("Deleting records prior to " + beforeDate + ": " + query);
 				plugin.dbc();
 				Statement s = plugin.conn.createStatement ();
 				rows_affected = s.executeUpdate (query);
@@ -205,45 +315,40 @@ public class ActionsQuery {
 				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time " +
 				"FROM prism_actions";
 		
-		// If we're rolling back, we need to exclude records
-		// at exact coords that have new entries there. So if
-		// player A placed a block, then removes it, and player
-		// B places a block at the same place, a rollback of
-		// all player A's block-places won't damage what
-		// player B added
-		//
-		// By default block-break rollbacks don't need this because
-		// they won't restore when a new block is present.
-		if( parameters.getLookup_type().equals("rollback") && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
-			query += " JOIN (" +
-						"SELECT action_type, x, y, z, max(action_time) as action_time" +
-						" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
-						" GROUP BY action_type, x, y, z) latest" +
+		// If the user has elected to enforce block override prevention,
+		// we'll run join conditions to exclude older records for a specific
+		// coordinate so that we don't end up rolling back the first block break
+		// at a location when there's a newer one, because no overwrite means
+		// any after that first will be skipped.
+		if( parameters.hasFlag(Flag.NO_OVERWRITE) ){
+			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
+				query += " JOIN (" +
+							"SELECT action_type, x, y, z, max(action_time) as action_time" +
+							" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
+							" GROUP BY action_type, x, y, z) latest" +
+							" ON prism_actions.action_time = latest.action_time" +
+							" AND prism_actions.x = latest.x" +
+							" AND prism_actions.y = latest.y" +
+							" AND prism_actions.z = latest.z" +
+							" AND prism_actions.action_type = latest.action_type";
+			}
+			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
+				
+				query += " JOIN (" +
+						"SELECT"+(parameters.getPlayer() != null ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
+						" FROM prism_actions" +
+						" GROUP BY action_type, x, y, z"+(parameters.getPlayer() != null ? ", player" : "")+") latest" +
 						" ON prism_actions.action_time = latest.action_time" +
 						" AND prism_actions.x = latest.x" +
 						" AND prism_actions.y = latest.y" +
 						" AND prism_actions.z = latest.z" +
 						" AND prism_actions.action_type = latest.action_type";
-		}
-		// Append a right join to exclude actions of the same type that have newer entries at the exact same
-		// coords. For example, if you break a block (#1), place a new block and break it (#2), and then
-		// run a rollback of breaks, the breaks are ordered by time (earliest first) which means the rollback
-		// will restore the #1 block first, and skip the second because a block now exists in that spot.
-		// This excludes the older records when a newer one, of the same action type, exists for that location
-		//
-		// We ignore item removes because you often want to rollback multiple per coord
-		else if( parameters.getLookup_type().equals("rollback") && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
-			
-			query += " RIGHT JOIN (" +
-					"SELECT action_type, x, y, z, max(action_time) as action_time" +
-					" FROM prism_actions" +
-					" GROUP BY action_type, x, y, z) latest" +
-					" ON prism_actions.action_time = latest.action_time" +
-					" AND prism_actions.x = latest.x" +
-					" AND prism_actions.y = latest.y" +
-					" AND prism_actions.z = latest.z" +
-					" AND prism_actions.action_type = latest.action_type";
-
+				
+						if(parameters.getPlayer() != null){
+							query += " AND prism_actions.player = latest.player";
+						}
+	
+			}
 		}
 		
 		// World
@@ -280,6 +385,19 @@ public class ActionsQuery {
 				query += buildOrQuery("prism_actions.action_type", actions);
 			}
 			
+			// Make sure none of the prism process types are requested
+			boolean containtsPrismProcessType = false;
+			for(ActionType aType : action_types){
+				if(aType.getActionType().contains("prism")){
+					containtsPrismProcessType = true;
+					break;
+				}
+			}
+			
+			if( !containtsPrismProcessType ){
+				query += " AND prism_actions.action_type NOT LIKE '%prism%'";
+			}
+			
 			/**
 			 * Players
 			 */
@@ -289,13 +407,10 @@ public class ActionsQuery {
 			}
 			
 			/**
-			 * Radius
+			 * Radius or Selection
 			 */
-			int radius = parameters.getRadius();
-			if(radius > 0){
-				query += buildRadiusCondition(radius, parameters.getPlayerLocation().toVector());
-			}
-			
+			query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
+
 			/**
 			 * Block
 			 */
@@ -340,10 +455,17 @@ public class ActionsQuery {
 			}
 			
 			/**
+			 * Parent process id
+			 */
+			if(parameters.getParentId() > 0){
+				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"}%'";
+			}
+			
+			/**
 			 * Order by
 			 */
 			String sort_dir = parameters.getSortDirection();
-			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", id "+sort_dir;
+			query += " ORDER BY prism_actions.action_time "+sort_dir+ ", x ASC, z ASC, y ASC, id "+sort_dir;
 			
 			/**
 			 * LIMIT
@@ -354,7 +476,9 @@ public class ActionsQuery {
 			}
 		}
 
-		plugin.debug("Query conditions: " + query);
+		if(plugin.getConfig().getBoolean("prism.debug")){
+			plugin.debug("Query conditions: " + query);
+		}
 		
 		return query;
 		
@@ -415,27 +539,13 @@ public class ActionsQuery {
 	 * @param player_name
 	 * @return
 	 */
-	protected String buildRadiusCondition( int radius, Vector loc ){
+	protected String buildRadiusCondition( Vector minLoc, Vector maxLoc ){
 		String where = "";
-//		if(arg_values[0].equalsIgnoreCase("world")){
-//			// @todo force bypassing max radius
-//		} else {
-
-			// @todo allow for worldedit selections
-
-			//If the radius is set we need to format the min and max locations
-			if (radius > 0) {
-
-				//Check if location and world are supplied
-				Vector minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
-				Vector maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
-				
-				where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
-				where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
-				where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
-
-			}
-//		}
+		if(minLoc != null && maxLoc != null ){
+			where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
+			where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
+			where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
+		}
 		return where;
 	}
 	

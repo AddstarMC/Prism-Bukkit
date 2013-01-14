@@ -11,6 +11,8 @@ import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.LevenshteinDistance;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -23,12 +25,12 @@ public class PreprocessArgs {
 	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, Player player, String[] args, String lookup_type, int starting ){
+	public static QueryParameters process( Prism plugin, Player player, String[] args, PrismProcessType processType, int starting ){
 		
 		QueryParameters parameters = new QueryParameters();
 		HashMap<String,String> foundArgs = new HashMap<String,String>();
 		
-		parameters.setLookup_type(lookup_type);
+		parameters.setLookup_type(processType);
 		
 		if(args != null){
 		
@@ -39,26 +41,25 @@ public class PreprocessArgs {
 				if (arg.isEmpty()) continue;
 				
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e"};
-				plugin.debug("Validating arg: " + arg.substring(0,1));
+				String[] possibleArgs = {"a","r","t","p","w","b","e","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg.substring(0,1))){
 					player.sendMessage( plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
-				// Verify they're formatting like a:[val]
-				if(!arg.contains(":")){
-					player.sendMessage( plugin.playerError("Missing parameter value for '"+arg+"'. Use /prism ? for help.") );
+				// Verify they're formatting like a:[val] or like -arg
+				if(!(arg.contains(":") || arg.contains("-"))){
+					player.sendMessage( plugin.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
-				if (!arg.substring(1,2).equals(":")) {
+				if (!(arg.substring(1,2).equals(":") || arg.substring(0,1).equals("-"))){
 					player.sendMessage( plugin.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
 				// Split parameter and values
 				String arg_type = arg.toLowerCase().substring(0,1);
-				String val = arg.toLowerCase().substring(2);
+				String val = arg.substring(1,2).equals(":") ? arg.toLowerCase().substring(2) : arg.toLowerCase().substring(1);
 				
 				if(val.isEmpty()){
 					player.sendMessage( plugin.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
@@ -67,7 +68,6 @@ public class PreprocessArgs {
 				
 				// Officially certify we found a valid argument and value!
 				if(Arrays.asList(possibleArgs).contains(arg_type)){
-					plugin.debug("Found arg type " + arg_type + " with value: " + val);
 					foundArgs.put(arg_type, val);
 					parameters.setFoundArgs(foundArgs);
 				}
@@ -94,6 +94,9 @@ public class PreprocessArgs {
 								    }
 								}
 								player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+								if(actions.length == 1){
+									return null;
+								}
 							}
 						}
 					}
@@ -115,6 +118,7 @@ public class PreprocessArgs {
 						int radius = Integer.parseInt(val);
 						if(radius <= 0){
 							player.sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+							return null;
 						}
 						if(radius > plugin.getConfig().getInt("prism.max-radius-unless-overridden")){
 							radius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
@@ -124,9 +128,23 @@ public class PreprocessArgs {
 							parameters.setRadius( radius );
 						}
 					} else {
+						
+						// User wants an area inside of a worldedit selection
+						if(val.equals("we")){
+							
+							if (plugin.plugin_worldEdit == null) {
+								player.sendMessage( plugin.playerError("This feature is disabled because Prism couldn't find WorldEdit.") );
+								return null;
+							} else {
+							
+								// Load a selection from world edit as our area.
+								parameters = WorldEditBridge.getSelectedArea(plugin, player, parameters);
+							}
+						}
+						
 						// User has asked for a global radius
-						if(val.equals("global")){
-							if( parameters.getLookup_type().equals("lookup")){
+						else if(val.equals("global")){
+							if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
 								parameters.setAllow_no_radius(true);
 							} else {
 								player.sendMessage( plugin.playerError("A global radius may only be used on lookup.") );
@@ -171,9 +189,13 @@ public class PreprocessArgs {
 									
 									// Lookup the item name, get the ids
 									MaterialAliases items = plugin.getItems();
-									int[] ids = items.getItemIdsByAlias( b );
-									if(ids.length == 2){
-										parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
+									ArrayList<int[]> itemIds = items.getItemIdsByAlias( b );
+									if(itemIds.size() > 0){
+										for(int[] ids : itemIds){
+											if(ids.length == 2){
+												parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
+											}
+										}
 									}
 								}
 							}
@@ -187,6 +209,19 @@ public class PreprocessArgs {
 					if(date != null){
 						parameters.setTime( date );
 					} else {
+						return null;
+					}
+				}
+				
+				// Special Flags
+				if(arg_type.equals("-")){
+					try {
+						Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
+						if(!(parameters.hasFlag(flag))){
+							parameters.addFlag(flag);
+						}
+					} catch(IllegalArgumentException ex){
+						player.sendMessage( plugin.playerError("Unrecognized flag '"+val+"'. Use /prism ? [command] for help.") );
 						return null;
 					}
 				}
@@ -206,7 +241,6 @@ public class PreprocessArgs {
 				if(parameters.getAllow_no_radius()){
 					// We'll allow no radius.
 				} else {
-					plugin.debug("Setting default radius to " + plugin.getConfig().getInt("default-radius"));
 					parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
 				}
 			}
@@ -214,8 +248,18 @@ public class PreprocessArgs {
 			if(!foundArgs.containsKey("w")){
 				parameters.setWorld( player.getWorld().getName() );
 			}
+			// Time default
+			if(!foundArgs.containsKey("t")){
+				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.default-time-since"));
+				if(date != null){
+					plugin.log("Error - date range configuration for prism.time-since is not valid");
+					date = translateTimeStringToDate(plugin,player,"3d");
+				}
+				parameters.setTime(date);
+			}
+			
 			// Player location
-			parameters.setPlayerLocation( player.getLocation() );
+			parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 		}
 		return parameters;
 	}
@@ -263,7 +307,9 @@ public class PreprocessArgs {
 				else if (c.equals("m")) mins = num;
 				else if (c.equals("s")) secs = num;
 				else {
-					player.sendMessage( plugin.playerError("Invalid time value '"+c+"'. Use /prism ? for a help.") );
+					if(player != null){
+						player.sendMessage( plugin.playerError("Invalid time value '"+c+"'. Use /prism ? for a help.") );
+					}
 					return null;
 				}
 				nums = "";
@@ -282,7 +328,9 @@ public class PreprocessArgs {
 		}
 		//Invalid time format
 		else if (type == 2){
-			player.sendMessage( plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			if(player != null){
+				player.sendMessage( plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			}
 			return null;
 		}
 		

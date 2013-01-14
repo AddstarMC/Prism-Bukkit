@@ -33,7 +33,7 @@ public class PrismWorldEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onStructureGrow(StructureGrowEvent event) {
+	public void onStructureGrow(final StructureGrowEvent event) {
 		
 		ActionType type = ActionType.TREE_GROW;
 		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = ActionType.MUSHROOM_GROW;

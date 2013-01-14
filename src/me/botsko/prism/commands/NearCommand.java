@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.List;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -36,7 +38,6 @@ public class NearCommand implements SubHandler {
 		// Build params
 		QueryParameters parameters = new QueryParameters();
 		parameters.setWorld( call.getPlayer().getWorld().getName() );
-		parameters.setPlayerLocation(call.getPlayer().getLocation());
 		
 		// allow a custom near radius
 		int radius = plugin.getConfig().getInt("prism.near.default-radius");
@@ -56,6 +57,7 @@ public class NearCommand implements SubHandler {
 		}
 		
 		parameters.setRadius(radius);
+		parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
 		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
@@ -63,12 +65,17 @@ public class NearCommand implements SubHandler {
 		if(!results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg( "All changes within " + radius + " blocks of you..." ) );
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
-			for(Action a : results.getPaginatedActionResults()){
-				ActionMessage am = new ActionMessage(a);
-				if(parameters.getAllow_no_radius()){
-					am.hideId(false);
+			List<Action> paginated = results.getPaginatedActionResults();
+			if(paginated != null){
+				for(Action a : paginated){
+					ActionMessage am = new ActionMessage(a);
+					if(parameters.getAllow_no_radius()){
+						am.hideId(false);
+					}
+					call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
 				}
-				call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
 			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find anything." ) );

@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -46,6 +47,7 @@ public class PrismConfig {
 		config.addDefault("prism.mysql.port", "3306");
 		
 		config.addDefault("prism.default-radius", 10);
+		config.addDefault("prism.default-time-since", "3d");
 		config.addDefault("prism.max-radius-unless-overridden", 100);
 		
 		config.addDefault("prism.near.default-radius", 5);
@@ -69,7 +71,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.block-fall", true);
 		config.addDefault("prism.tracking.block-form", true);
 		config.addDefault("prism.tracking.block-place", true);
-//		config.addDefault("prism.tracking.block-shift", true);
+		config.addDefault("prism.tracking.block-shift", true);
 		config.addDefault("prism.tracking.block-use", true);
 		config.addDefault("prism.tracking.bonemeal-use", true);
 		config.addDefault("prism.tracking.container-access", true);
@@ -79,8 +81,10 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.enderman-place", true);
 		config.addDefault("prism.tracking.entity-break", true);
 		config.addDefault("prism.tracking.entity-explode", true);
+		config.addDefault("prism.tracking.entity-follow", true);
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
+		config.addDefault("prism.tracking.entity-spawn", true);
 		config.addDefault("prism.tracking.fireball", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);
@@ -88,6 +92,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.item-insert", true);
 		config.addDefault("prism.tracking.item-pickup", true);
 		config.addDefault("prism.tracking.item-remove", true);
+		config.addDefault("prism.tracking.lava-break", true);
 		config.addDefault("prism.tracking.lava-bucket", true);
 		config.addDefault("prism.tracking.lava-flow", true);
 		config.addDefault("prism.tracking.lava-ignite", true);
@@ -99,11 +104,17 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.player-command", false);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
+		config.addDefault("prism.tracking.skull-break", true);
+		config.addDefault("prism.tracking.skull-place", true);
+		config.addDefault("prism.tracking.spawnegg-use", true);
 		config.addDefault("prism.tracking.tnt-explode", true);
+		config.addDefault("prism.tracking.tnt-prime", true);
 		config.addDefault("prism.tracking.tree-grow", true);
+		config.addDefault("prism.tracking.water-break", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", true);
 		
+		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		config.addDefault("prism.alerts.ores.coal", false);
@@ -113,6 +124,20 @@ public class PrismConfig {
 		config.addDefault("prism.alerts.ores.gold", true);
 		config.addDefault("prism.alerts.ores.diamond", true);
 		config.addDefault("prism.alerts.ores.emerald", true);
+		
+		// Enable monitoring of item use/placement
+		config.addDefault("prism.alerts.uses.enabled", true);
+		config.addDefault("prism.alerts.uses.ignore-staff", true);
+		config.addDefault("prism.alerts.uses.lighter", true);
+		config.addDefault("prism.alerts.uses.lava", true);
+		
+		List<String> monitorItems = new ArrayList<String>();
+		monitorItems.add("7");
+		monitorItems.add("29");
+		monitorItems.add("46");
+		monitorItems.add("10");
+		monitorItems.add("11");
+		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
 
 		// Copy defaults
 		config.options().copyDefaults(true);

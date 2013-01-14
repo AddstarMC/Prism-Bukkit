@@ -122,7 +122,6 @@ public class PrismInventoryEvents implements Listener {
 	    	if( event.getSlot() == event.getRawSlot() ){
 	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);
-	    			recordInvAction( cursoritem, ActionType.ITEM_INSERT);
 	    		}
 	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
 	    			recordInvAction( currentitem, ActionType.ITEM_REMOVE);

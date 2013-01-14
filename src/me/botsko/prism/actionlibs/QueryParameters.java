@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 import org.bukkit.Location;
+import org.bukkit.util.Vector;
 
 public class QueryParameters implements Cloneable {
 	
 	// Internal use
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
-	protected String lookup_type = "lookup";
+	protected PrismProcessType lookup_type = PrismProcessType.LOOKUP;
 	
 	// Typically required
 	protected int radius;
@@ -27,7 +30,18 @@ public class QueryParameters implements Cloneable {
 	protected String entity_filters;
 	protected ArrayList<String> block_filters = new ArrayList<String>();
 	protected boolean allow_no_radius = false;
+	protected int parent_id = 0;
+	protected Vector minLoc;
+	protected Vector maxLoc;
+
 	protected int limit = 1000000;
+
+	
+	// Directional
+	protected ArrayList<Flag> flags = new ArrayList<Flag>();
+	
+	// Informational
+	protected String original_command;
 	
 	
 	/**
@@ -109,12 +123,53 @@ public class QueryParameters implements Cloneable {
 		return player_location;
 	}
 
-
+	
 	/**
-	 * @param player_location the player_location to set
+	 * 
+	 * @param loc
 	 */
-	public void setPlayerLocation(Location player_location) {
-		this.player_location = player_location;
+	public void setMinMaxVectorsFromPlayerLocation(Location loc){
+		this.player_location = loc;
+		if(radius > 0){
+			minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
+			maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector getMinLocation(){
+		return minLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMinLocation(Vector minLoc){
+		this.minLoc = minLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Vector getMaxLocation(){
+		return maxLoc;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void setMaxLocation(Vector maxLoc){
+		this.maxLoc = maxLoc;
 	}
 
 
@@ -241,7 +296,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the lookup_type
 	 */
-	public String getLookup_type() {
+	public PrismProcessType getLookup_type() {
 		return lookup_type;
 	}
 
@@ -265,8 +320,26 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param lookup_type the lookup_type to set
 	 */
-	public void setLookup_type(String lookup_type) {
+	public void setLookup_type(PrismProcessType lookup_type) {
 		this.lookup_type = lookup_type;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setParentId(int id){
+		this.parent_id = id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public int getParentId(){
+		return parent_id;
 	}
 	
 	
@@ -278,10 +351,31 @@ public class QueryParameters implements Cloneable {
 	 * @return
 	 */
 	public String getSortDirection(){
-		if(this.lookup_type.equals("lookup")){
+		if(this.lookup_type.equals(PrismProcessType.LOOKUP)){
 			return "DESC";
 		}
 		return "ASC";
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void addFlag( Flag flag ){
+		if(hasFlag(flag)) return;
+		this.flags.add(flag);
+	}
+	
+	
+	/**
+	 * 
+	 * @param flag
+	 * @return
+	 */
+	public boolean hasFlag( Flag flag ){
+		return flags.contains(flag);
 	}
 	
 	
@@ -322,6 +416,30 @@ public class QueryParameters implements Cloneable {
 			}
 		}
 		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param args
+	 */
+	public void setStringFromRawArgs( String[] args ){
+		String params = "";
+		if(args.length > 0){
+			for(int i = 1; i < args.length; i++){
+				params += " "+args[i];
+			}
+		}
+		original_command = params;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getOriginalCommand(){
+		return original_command;
 	}
 	
 	

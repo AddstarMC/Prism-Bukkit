@@ -22,6 +22,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -29,6 +30,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
@@ -91,6 +93,7 @@ public class PrismEntityEvents implements Listener {
 					if(damager != null){
 						name = damager.getType().getName();
 					}
+					if(name == null) name = "unknown";
 					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
 				}
 			} else {
@@ -130,15 +133,31 @@ public class PrismEntityEvents implements Listener {
 	}
 	
 	
-//	/**
-//	 * 
-//	 * @param event
-//	 */
-//	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-//	public void onCreatureSpawn(final CreatureSpawnEvent event){
-////		event.getEntityType();
-////		event.getSpawnReason();
-//	}
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onCreatureSpawn(final CreatureSpawnEvent event){
+		String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
+		if(reason.equals("natural")) return;
+		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEntityTargetEvent(final EntityTargetEvent event) {
+        if (event.getTarget() instanceof Player) {
+        	if(event.getEntity().getType().equals(EntityType.CREEPER)){
+	            Player player = (Player) event.getTarget();
+	            plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );
+        	}
+        }
+    }
 	
 	
 	/**
@@ -167,32 +186,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-
-		// bug filed:
-		// https://bukkit.atlassian.net/browse/BUKKIT-3371
-//		EntityType entityType = event.getEntity().getType();
-//		if(entityType.equals(EntityType.ITEM_FRAME)){
-//			
-//			// item inside
-////			ItemFrame i = ((ItemFrame)e);
-////          i.getItem();
-//			
-////			// Experimenting with spawning the itemframes so I know what to record.
-////			World currentWorld = event.getBlock().getWorld();
-////			Location loc = new Location(currentWorld, -131, 65, 180);
-//////			Hanging h = currentWorld.spawn(loc, ItemFrame.class);
-////			Hanging h = currentWorld.spawn(loc, Painting.class);
-////			
-////			// This never works.
-////			h.setFacingDirection(BlockFace.NORTH);
-//			
-//		}
-//		else if(entityType.equals(EntityType.PAINTING)){
-//			
-//		}
-		
 		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
-		
 	}
 	
 	
@@ -292,6 +286,14 @@ public class PrismEntityEvents implements Listener {
 		// Also log item-removes from chests that are blown up
 		PrismBlockEvents be = new PrismBlockEvents(plugin);		
 		for(Block block : event.blockList()){
+			
+			// don't bother record upper doors.
+			if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+				if(block.getData() >= 4){
+					continue;
+				}
+			}
+			
 			// Change handling a bit if it's a long block
 			block = be.properlyLogDoubleLengthBlocks(block);
 			// Log items from chests

@@ -6,6 +6,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,8 +59,6 @@ public class InspectorWand implements Wand {
 	 * @param loc
 	 */
 	protected void showBlockHistory( Player player, Block block, Location loc ){
-		
-		plugin.debug("Running inspector wand for " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 
 		// Build params
 		QueryParameters params = new QueryParameters();
@@ -70,9 +69,14 @@ public class InspectorWand implements Wand {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( player, params );
 		if(!results.getActionResults().isEmpty()){
-			for(me.botsko.prism.actions.Action a : results.getActionResults()){
+			String blockname = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
+			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );
+			if(results.getActionResults().size() > 5){
+				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			}
+			for(me.botsko.prism.actions.Action a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
-				player.sendMessage( plugin.playerHeaderMsg( am.getMessage() ) );
+				player.sendMessage( plugin.playerMsg( am.getMessage() ) );
 			}
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");

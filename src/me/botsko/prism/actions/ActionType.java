@@ -13,7 +13,7 @@ public enum ActionType {
 	BLOCK_FALL(false, true, true, "block", "fell"),
 	BLOCK_FORM(false, true, true, "block", "formed"),
 	BLOCK_PLACE(true, true, true, "block", "placed"),
-//	BLOCK_SHIFT(true, false, false, "block", "moved"),
+	BLOCK_SHIFT(true, false, false, "blockshift", "moved"),
 	BLOCK_USE(false, false, false, "block", "used"),
 	BONEMEAL_USE(false, false, false, "use", "used"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
@@ -23,8 +23,10 @@ public enum ActionType {
 	ENDERMAN_PLACE(true, true, true, "block", "placed"),
 	ENTITY_BREAK(true, true, true, "block", "broke"),
 	ENTITY_EXPLODE(false, true, true, "block", "blew up"),
+	ENTITY_FOLLOW(false, false, false, "entity", "lured"),
 	ENTITY_KILL(false, true, true, "entity", "killed"),
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
+	ENTITY_SPAWN(false, false, false, "entity", "spawned"),
 	FIREBALL(false, false, false, null, "ignited"),
 	HANGINGITEM_BREAK(false, true, true, "hangingitem", "broke"),
 	HANGINGITEM_PLACE(true, true, true, "hangingitem", "hung"),
@@ -32,8 +34,9 @@ public enum ActionType {
 	ITEM_INSERT(false, false, false, "itemstack", "inserted"),
 	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),
 	ITEM_REMOVE(false, true, true, "itemstack", "removed"),
+	LAVA_BREAK(false, true, true, "block", "broke"),
 	LAVA_BUCKET(false, true, false, null, "poured"),
-	LAVA_FLOW(false, true, true, "block", "broke"),
+	LAVA_FLOW(true, true, true, "block", "flowed into"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, true, true, "block", "decayed"),
 	LIGHTER(false, false, false, null, "set a fire"),
@@ -41,12 +44,20 @@ public enum ActionType {
 	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
 	PLAYER_COMMAND(false, false, false, "command", "ran command"),
+	PRISM_DRAIN(false, true, true, "prismrollback", "drained"),
+	PRISM_PROCESS(false, false, false, "prismprocess", "ran process"),
+	PRISM_ROLLBACK(true, false, false, "prismrollback", "rolled back"),
 	SHEEP_EAT(false, false, false, "block", "ate"),
 	SIGN_CHANGE(false, false, true, "signchange", "wrote"),
+	SKULL_BREAK(false, true, true, "skull", "broke"),
+	SKULL_PLACE(true, true, true, "skull", "placed"),
+	SPAWNEGG_USE(false, false, true, "use", "used"),
 	TNT_EXPLODE(false, true, true, "block", "blew up"),
+	TNT_PRIME(false, false, false, "use", "primed"),
 	TREE_GROW(true, true, true, "grow", "grew"),
+	WATER_BREAK(false, true, true, "block", "broke"),
 	WATER_BUCKET(false, false, false, null, "poured"),
-	WATER_FLOW(false, true, true, "block", "broke");
+	WATER_FLOW(true, true, true, "block", "flowed into");
 
 	
 	/**
@@ -78,7 +89,7 @@ public enum ActionType {
 	/**
 	 * @return the canRollback
 	 */
-	public boolean isCanRollback() {
+	public boolean canRollback() {
 		return canRollback;
 	}
 
@@ -86,7 +97,7 @@ public enum ActionType {
 	/**
 	 * @return the canRestore
 	 */
-	public boolean isCanRestore() {
+	public boolean canRestore() {
 		return canRestore;
 	}
 
@@ -165,7 +176,7 @@ public enum ActionType {
 	public static ArrayList<ActionType> getCanRollbackActionTypes(){
 		ArrayList<ActionType> canRollback = new ArrayList<ActionType>();
 		for (ActionType me : ActionType.values()) {
-	        if(me.isCanRestore()){
+	        if(me.canRestore()){
 	        	canRollback.add(me);
 	        }
 	    }

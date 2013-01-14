@@ -78,7 +78,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
+	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -88,7 +88,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
 		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -98,7 +98,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
@@ -153,10 +153,23 @@ public class PrismPlayerEvents implements Listener {
 					case MELON_STEM:
 					case PUMPKIN_STEM:
 					case SAPLING:
+					case CARROT:
+					case POTATO:
 						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+					case TNT:
+						if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
+							plugin.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
+						}
 					default:
 						break;
 				}
+				
+				
+				// if they're holding a spawner egg
+				if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
+					recordMonsterEggUse( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+				}
+				
 			} 
 		} if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
@@ -200,5 +213,17 @@ public class PrismPlayerEvents implements Listener {
 		if( inhand.getTypeId() == 351 && inhand.getDurability() == 15){
 			plugin.actionsRecorder.addToQueue( new UseAction(ActionType.BONEMEAL_USE, "bonemeal", block, player) );
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param inhand
+	 * @param clickedFace
+	 * @param player
+	 */
+	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		plugin.actionsRecorder.addToQueue( new UseAction(ActionType.SPAWNEGG_USE, "monster egg", block, player) );
 	}
 }

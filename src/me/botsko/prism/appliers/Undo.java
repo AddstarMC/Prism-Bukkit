@@ -1,29 +1,32 @@
 package me.botsko.prism.appliers;
 
-import org.bukkit.block.Block;
+import java.util.List;
 
-public class Undo {
+import org.bukkit.entity.Player;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actions.Action;
+
+public class Undo extends Preview {
+	
 	
 	/**
 	 * 
+	 * @param plugin
+	 * @return 
 	 */
-	private Block block;
-	
-	
-	/**
-	 * 
-	 * @param block
-	 */
-	public Undo( Block block ){
-		this.block = block;
+	public Undo( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, long processStartTime ){
+		super(plugin, player, processType, results, parameters, processStartTime);
 	}
 	
 	
 	/**
-	 * 
+	 * Set preview move and then do a rollback
 	 * @return
 	 */
-	public Block getOriginalBlock(){
-		return block;
+	public void preview(){
+		player.sendMessage( plugin.playerError("You can't preview an undo.") );
+		return;
 	}
 }

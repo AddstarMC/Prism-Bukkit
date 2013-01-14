@@ -47,7 +47,7 @@ public class OreMonitor {
 	 * @param player
 	 * @param block
 	 */
-	public void processAlertsFromBlock( Player player, Block block ){
+	public void processAlertsFromBlock( final Player player, final Block block ){
 		
 		if(!plugin.getConfig().getBoolean("prism.alerts.ores.enabled")){
 			return;
@@ -89,10 +89,10 @@ public class OreMonitor {
 						// Restore the block
 						block.setType( state.getType() );
 						
-						String msg = "[!] " + getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
+						String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
 						
 						// Alert staff
-						plugin.alertPlayers(ChatColor.RED+ "[!] "+msg);
+						plugin.alertPlayers( null, msg );
 						
 						// Log to console
 						if(plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")){

@@ -1,7 +1,9 @@
 package me.botsko.prism.actionlibs;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -11,7 +13,7 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 
-public class ActionRecorder {
+public class ActionRecorder implements Runnable {
 	
 	/**
 	 * 
@@ -23,6 +25,11 @@ public class ActionRecorder {
 	 */
 	private static final LinkedBlockingQueue<Action> queue = new LinkedBlockingQueue<Action>();
 	
+	/**
+	 * 
+	 */
+	private boolean immediatelyProcessQueue = false;
+	
 	
 	/**
 	 * 
@@ -30,6 +37,15 @@ public class ActionRecorder {
 	 */
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
+	}
+	
+	
+	/**
+	 * 
+	 * @param immediatelyProcessQueue
+	 */
+	public void shouldImmediatelyProcessQueue(boolean immediatelyProcessQueue){
+		this.immediatelyProcessQueue = immediatelyProcessQueue;
 	}
 	
 	
@@ -46,12 +62,25 @@ public class ActionRecorder {
 		
 		queue.add(a);
 		
-		plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
+//		if( plugin.getConfig().getBoolean("prism.debug") ){
+//			plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
+//		}
 		
-		// @todo for now, we're just calling save immediately. but we could
-		// make this work on a timer, pool, etc
+		// Only execute current batch if asked
+		if( immediatelyProcessQueue ){
+			save();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void saveQueue(){
 		save();
-		
+		// Reset the queue empty flag since it was just
+		// emptied but whatever turned it off.
+		immediatelyProcessQueue = true;
 	}
 	
 	
@@ -61,6 +90,12 @@ public class ActionRecorder {
 	 * @return
 	 */
 	protected boolean shouldTrack( Action a ){
+		
+		// Always track Prism actions - it's mainly internal
+		// use anyway.
+		if(a.getType().getActionType().contains("prism")){
+			return true;
+		}
 		
 		// Should we ignore this player?
 		@SuppressWarnings("unchecked")
@@ -102,13 +137,15 @@ public class ActionRecorder {
 	 */
 	public void save(){
 		if(!queue.isEmpty()){
-			while (!queue.isEmpty()) {
-				Action a = queue.poll();
-				insertActionIntoDatabase( a );
-				queue.remove(a); //@todo unecessary?
+			if(immediatelyProcessQueue){
+				while (!queue.isEmpty()) {
+					Action a = queue.poll();
+					insertActionIntoDatabase( a );
+					queue.remove(a); //@todo unecessary?
+				}
+			} else {
+				insertActionsIntoDatabase();
 			}
-		} else {
-			plugin.debug("Action queue empty when save() called.");
 		}
 	}
 	
@@ -117,10 +154,15 @@ public class ActionRecorder {
 	 * 
 	 * @param a
 	 */
-	protected void insertActionIntoDatabase( Action a){
+	public int insertActionIntoDatabase( Action a){
+		int id = 0;
 		try {
 			plugin.dbc();
-	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+			if(plugin.conn == null){
+				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
+				return 0;
+			}
+	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getAction_time());
 	        s.setString(2,a.getType().getActionType());
 	        s.setString(3,a.getPlayer_name());
@@ -130,10 +172,66 @@ public class ActionRecorder {
 	        s.setInt(7,(int)a.getZ());
 	        s.setString(8,a.getData());
 	        s.executeUpdate();
+	        
+	        ResultSet generatedKeys = s.getGeneratedKeys();
+	        if(generatedKeys.next()){
+	        	id = generatedKeys.getInt(1);
+	        }
+	        
     		s.close();
             plugin.conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+		return id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param entities
+	 * @throws SQLException
+	 */
+	public void insertActionsIntoDatabase() {
+	    PreparedStatement s = null;
+	    try {
+	    	
+	        plugin.dbc();
+	        if(plugin.conn == null){
+				plugin.log("Prism database error. Connection should be there but it's not. These actions weren't logged.");
+				return;
+			}
+	        plugin.conn.setAutoCommit(false);
+	        s =  plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+	        int i = 0;
+	        while (!queue.isEmpty()) {
+	        	Action a = queue.poll();
+	        	s.setString(1,a.getAction_time());
+		        s.setString(2,a.getType().getActionType());
+		        s.setString(3,a.getPlayer_name());
+		        s.setString(4,a.getWorld_name());
+		        s.setInt(5,(int)a.getX());
+		        s.setInt(6,(int)a.getY());
+		        s.setInt(7,(int)a.getZ());
+		        s.setString(8,a.getData());
+	            s.addBatch();
+	            if ((i + 1) % 1000 == 0) {
+	                s.executeBatch(); // Execute every 1000 items.
+	            }
+	            i++;
+	        }
+	        s.executeBatch();
+	        plugin.conn.commit();
+	        s.close();
+            plugin.conn.close();
+	    } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+
+
+	@Override
+	public void run() {
+		save();
 	}
 }

@@ -1,8 +1,12 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.events.PrismBlocksExtinguishEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -45,9 +49,15 @@ public class ExtinguishCommand implements SubHandler {
 			}
 		}
 		
-		int changed = BlockUtils.extinguish(call.getPlayer().getLocation(), radius);
-		if(changed > 0){
+		ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(call.getPlayer().getLocation(), radius);
+		if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
+			
 			call.getPlayer().sendMessage(plugin.playerHeaderMsg("Extinguished nearby fire! Cool!"));
+			
+			// Trigger the event
+			PrismBlocksExtinguishEvent event = new PrismBlocksExtinguishEvent(blockStateChanges, call.getPlayer(), radius);
+			plugin.getServer().getPluginManager().callEvent(event);
+			
 		} else {
 			call.getPlayer().sendMessage(plugin.playerError("No fired found within that radius to extinguish."));
 		}

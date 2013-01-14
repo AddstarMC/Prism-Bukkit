@@ -1,281 +1,110 @@
 #Prism
 
-*An incredible plugin for rollbacks, restores, and more. *
+**Stable Public Beta coming soon!**
 
-Prism is a new generation of grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's designed to be extremely fast and incredibly powerful - designed by a group with a lot of experience in both programming and owning/managing a very popular/high-traffic server.
+*An incredible plugin for rollbacks, restores, and more.*
+
+Prism is the ultimate grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's extremely fast, versatile, and incredibly powerful. It's smart rollback engine and a wide range of features put Prism in a class all it's own.
 
 Prism not only offers the standard features you expect, but a **lot** more.
 
-Introduction and basic walkthrough of features: http://www.youtube.com/watch?v=3b6DQQvBp30
+![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
+*
 
-Bug reports, feature requests: https://snowy-evening.com/botsko/prism/ 
+## Official Documentation
 
-## Features
+**Everything you need to know.**
 
-- **Extremely fast. Rolls back thousands of broken blocks within milliseconds. No lag.**
-- **Several easy, yet powerful lookup/inspector commands.**
-- **Inspector and rollback wand features.**
-- **Rollback, restoration commands like you know and love.**
-- **Preview mode shows rollback AND restore actions to you only - then you can apply/cancel before actually changing the world.**
-- **Tracks essentially everything you need to know. (Configurable, see below)**
-- **Amazingly easy-to-use commands**
-- **Safe defaults so you don't accidentally roll back too much with a typo**
-- **Extremely clean, personal, and beautiful chat messages, that NEVER spam you.**
-- **Additional features like staff alerts for players finding ores!**
-- **Configurable for your needs. Change the defaults, ignore players/worlds, ignore creative, disable tracking events you don't care about!**
-- Tracks essentially ALL block changes.
-- Includes related changes like blocks falling, signs/torches popping off
-- Tracks sign text and even restores it upon rollbacks.
-- Associates those related activities to the original block breaking player.
-- Mushrooms and tree growth is associated with the planting player.
-- Rolling back fire damage also puts out any remaining fires. (Configurable)
-- Or just use the extinguish command.
-- Rolling back tnt/creeper explosions also removes the laggy item drops within the radius. (Configurable)
-- Drain water/lava with the drain command.
-- Track and rollback animal/mob kills. Someone killed your cows? No problem.*
-- Track shearing of sheep.
-- Track mobs changing blocks like enderman, sheep eating, etc.
-- Tracks chest/furnace/dispenser/etc access. 
-- Watches for someone placing/taking items from the containers.
-- You can even rollback items stolen from the container.*
-- Records player deaths and what the cause was, who the attacker was.
-- Records items player dropped, and items they pickup. Know who stole your death spot loot!
-- Find the right info with paginated near/lookup commands.
-- Get specific with a block history inspector bound to your hand.
-- Database is designed specifically for the data we store. No disk space bloating (not going to point fingers...)
+[Quick Demonstration Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
 
+[Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
 
+Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki:
 
-## How to Install
-	
-Place the Prism.jar file in your bukkit `/plugins` directory. Start your server and an initial configuration file will be created.
+[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
 
-At the very least, you must set the MySQL connection information for your database before using Prism.
 
+## Features Overview
 
-## Configuration
+- Prism tracks 46 (and growing) different player, entity, and world events.
+- Multiple tools and commands let you see exactly what happened.
+- Rollback or restore events directly, or with a safer preview mode first.
+- Safe command defaults, very clean and fun to use chat messages.
+- Smarter rollbacks/restores, and a dozen extra features.
+- Extremely fast. Takes a pounding. 
+- Extremely configurable.
+- Dozens of extra features you don't get from other plugins.
 
-(todo)
-	
+## Features Detail
 
-## How to Use
+### Events and Lookup
 
-By default, Prism will begin tracking all sorts of events that happen in your worlds. Players making block changes, killing entities, transfers of items, and much more. 
+- Tracks 43+ player, entity, and world events.
+- Includes block changes, container access, item inserts/remove/pickups/drops, entity deaths, shearing, and a LOT more.
+- Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
+- Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
+- Tracks liquid flow and items that break because of it
+- Fine-tuned config allows you to control tracking of every single one.
+- Inspector wand allows you to find history for single blocks/spaces.
+- Near command finds recent events around you.
+- Lookup command is extremely powerful with our versatile parameters.
+- Action names also have short-names for easier typing and can combine related actions.
+- The radius command also accepts a world edit selection - for any /r/r/p/lookup actions.
+- Very clean chat messages and paginated results to ease your burden.
 
-Some of this data is purely informational, so you can find out who did something, and some of it is useful for rollbacks and restores.
+### Rollbacks, Restore, Preview (R/R/P)
 
+- Rollback and restore commands you know and love.
+- Rollback or restore directly, or preview changes for _both_ modes first.
+- Apply/cancel previews, or let them auto-cancel after a minute.
+- Extremely safe default parameters make it harder for you to make mistakes, but can be overridden in-game when you absolutely need them.
+- You can even rollback killed entities, items taken from containers, and more.
+- Sign rollbacks will restore their text (provided we tracked what was written)
+- Rollbacks of burn events also extinguish fires.
+- Rollbacks of tnt/creeper explosion events also remove the laggy item drops.
+- We're CONSTANTLY testing to ensure that rollbacks are smart - problem items like doors, beds, cactus, sugar cane, and more are always restored properly! No half-doors!
+- Rollbacks/restores can be alerted to nearby players, and to staff members (staff see actual rollback params).
+- Rollback systems moves any players in the way to a safe position on rollback
+- Advanced, optional flags give you ultimate control over the rollback/restore action at command-time.
 
-#### Searching (Lookup, Inspector, Near)
 
-The first use is to be able to find the information you need. Prism comes with three tools to find the data from in-game, each with a different focus.
+### Web Search Interface
 
-##### Inspector (Wand)
+Coming soon.
 
-Use `/prism i` to toggle what we call the "inspection" wand. Wands bind certain actions to your hand/tools. The inspection wand can be toggled with just `/prism i` or `/prism wand i`. Left-click a block to see that exact block's history. Right-click on any side of the block to see the history for the space adjacent.
+![Prism](http://dhmc.us.s3.amazonaws.com/prism-web.jpg)
 
-Excellent for finding information about a single block, like a chest or ore finds.
 
-##### Near
+### Extra Features
 
-Use `/prism near` to do a quick query for all actions within a five block radius (configurable). It shows you all actions so you can quickly get a picture of what's happened.
+- Alerts for staff when players find natural ores (configurable).
+- Alerts for staff when players use flint and steel, place lava, or place any item listed in the config (like tnt).
+- Put out fires with the extinguish command
+- Drain all liquids or just water/lava
+- Profile wand shows you data about a block.
 
-Excellent for an area with no specific/visible issues. For example you can't tell what was griefed or you need to see if anyone was here recently.
+### Misc
 
-##### Lookup
+- Consistently designed chat messages are easy to read, and never spam you.
+- All commands are consistent and designed knowing a human will be using them.
+- Config allows you to ignore creative mode, or a list of players, worlds, etc.
 
-When the inspector and near commands aren't enough you have the power to query essentially any results from the database.
+### Technical
 
-Use `/prism l (params)` to do a search of information. **See below for understanding parameters.** By using any arrangement of the parameters you can easily filter through records and find out exactly what you need.
+- Multi-threaded queue system for tracking events, combined with a batch recording system makes event recording happen quickly and without impacting your server.
+- Block r/r/p are also run on separate threads and queued for large changes to reduce chances of impacting the main thread.
+- Only one database table with extremely straight-forward design, as well as field types that are smart for the data we store. Records 1 million records with an average of 100MB of space consumption. A server with 200+ players per day can expect about ~2GB of data per month, depending on actions tracked and activity.
+- A dev server with 512M RAM, 2.7Ghz dual core processor, 9,446 blocks from a tnt explosion restored in 3.4 seconds - 3413 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 300ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
 
-Lookup queries can be local to you, or even global if you so desire. Need to see only all item-pickup actions by player nasonfish within ten blocks? Or how about where player YeaItsMe last placed a chest in the entire server.
 
-It's almost limitless.
-
-##### Pagination
-
-Most times, a lookup or near query returns a lot of information. We break this into pages for easier navigating. 
-
-After *any* lookup or near query, use `/prism page [page #]` to skip to different pages of results. It simply uses the data from your last search and will expire after five minutes.
-
-
-##### Teleporting
-
-When you perform a lookup with `r:global`, the results will include ID numbers with every action. Since you're viewing records that aren't nearby you can teleport to them.
-
-Use `/prism tp [id]` to teleport to a record's location. 
-
-*Note: We're working on a smarter teleport system that will accurately judge the safety of the area, and attempt a nearby spot. This is in development.*
-
-
-#### Understanding Parameters
-
-"Parameters" is the name we use for *arguments* given to commands like lookup, preview, rollback, and restore. They allow you to define exactly which data Prism should be working with.
-
-You may define any, all, or none (safe defaults assumed if none given). You may use them in any order.
-
-You can even define multiple arguments for most by separating them with a comma. Like `a:block-break,block-place`
-
-**List of parameters:**
-
-- `a:[action]` - Like "block-break" (See below for full list). No default.
-- `r:[radius]` - How many blocks near you the action happened, i.e. `r:20`. Default radius set in config. Can't exceed the max defined in config. Use r:global to force an all-world search, *for lookups only*.
-- `b:[blockname/id]` - Like `b:grass` or `b:2` or `b:2:0`. No default.
-- `e:[entity]` - Like `e:pig`. No default.
-- `t:[timesince]` - Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). No default. Use time arguments together if you wish, like `1h20m`.
-- `p:[player]` - Like `p:viveleroi`. No default.
-- `w:[world]` - Like `w:worldname`. Defaults to your current world.
-
-
-**List of actions:**
-
-@todo
-
-#### Preview
-
-*Previewing* a rollback or restore is **the safest way**. When you preview a rollback/restore, Prism queries the database with your given parameters, and shows those blocks changes/restorations to you only - it does not apply the rollback/restore to the world. Players around you won't see the preview, only you will.
-
-This allows you to see whether or not your rollback/restore will do what you intended - because if not you can cancel it without any impact on the real map.
-
-Use `/prism preview (rollback/rb or restore/rs) (params)`. If the results look good and you wish to apply them to the map, use `/prism preview apply`.
-
-If not, use `/prism preview cancel`. You may only have one preview pending at a time, and they will expire after a minute. If you forget about them or logout, they will self-cancel.
-
-Applying a preview doesn't require the (params) again because Prism remembers what you had queried. When you apply a preview, it's done exactly the same way but as a real rollback/restore.
-
-***The Prism team recommends you make a habit of always using preview.***
-
-*Note: Only block changes are supported in preview mode. Item/entity/etc rollbacks won't show in a preview, but will still be rolled back correctly when the preview is applied.*
-
-#### Rollback
-
-Some expert users may be comfortable enough to rollback without a preview. Use `/prism rollback (params)`. Your changes will be applied immediately.
-
-##### Rollback Wand
-
-Another wand type is a rollback wand. Like the inspector it's for use on a single block or empty space. Use `/prism wand rollback` and the wand will bind to your hand/tools.
-
-Left-click a block to roll back it's last action, or right-click a block face to rollback the block from that spot. Repeat the command to disable the wand.
-
-Useful for fixing minor griefs when you'd rather not worry about commands.
-
-*Note: The Prism team reminds you that if you allow rollbacks, especially of items removed from chests or entity kills, be aware that staff with access to do so have the capability to do so repeatedly. There's no absolute way to ensure an item or entity hasn't already been rolled back but you shouldn't have a problem because only staff can perform rollbacks and staff are by definition trusted. However, you can disable item removal rollbacks in the config.*
-
-
-#### Restore
-
-Restoring is a way to re-apply changes that usually have been rolled back already. Essentially a method to reverse a rollback.
-
-Use `/prism restore (params)`. 
-
-*Note: Both rollbacks and restores of block-place actions will try their best to avoid re-apply block changes to an area with newer activity. For example if you re-apply a block-place I did, but Natman93 has already put a new block there, Prism will skip it.*
-
-
-#### Ex, Drain
-
-Use `/prism ex [radius]` to extinguish all fires in the radius, or `/prism drain [radius]` to remove all liquid (water and lava) in the radius.
-
-You may also drain specific subtypes of liquid, so `/prism drain water` or `lava`, and if providing a radius, `/prism drain lava 10`.
-
-When performing a rollback of block-burn actions, Prism will automatically extinguish the fires as well. 
-
-
-#### Delete
-
-Server operators can use `/prism delete [timeframe]` to manually purge records from the database. This isn't usually necessary, as Prism will automatically clear records that have expired (per config) on startup.
-
-
-## Full Commands List
-
-- `prism i`
-- `prism l (params)`
-- `prism near`
-- `prism page [#]`
-- `prism preview (rollback|rb) (params)`
-- `prism preview (restore|rs) (params)`
-- `prism preview apply`
-- `prism preview cancel`
-- `prism rollback (params)`
-- `prism restore (params)`
-- `prism ex [radius]`
-- `prism drain [radius]`
-- `prism tp [id]]`
-- `prism wand (rollback|i|p|off)`
-- `prism delete`
-- `prism ?` - Help.
-- `prism params` - List parameters in-game.
-
-
-## Permissions
-
-- `prism.help`
-- `prism.lookup` - Grants config lookup, inspector, near permission. Recommended for: Staff
-- `prism.extinguish` - For removed fires in a radius.
-- `prism.drain` - Removing water/lava in a radius.
-- `prism.preview` - Grants permission to preview and then rollback/restore changes. Recommended for: Staff
-- `prism.rollback` - Grants permission to rollback changes. Recommended for: Experienced Staff
-- `prism.restore` - Grants permission to restore (reapply) changes. Recommended for: Experienced Staff       
-- `prism.tp` - Teleport to a record ID
-- `prism.reload` - Grants config reload permission. Recommended for: OPs
-- `prism.delete` - Purge records from database via commands. Recommended for: OPs
-- `prism.alerts` - Alerts for ore finds, dangerous block placements.
-- `prism.*` - Grants all permissions. Recommended for: OPs
-
-
-## Real-World Examples
-
-There are so many actions recorded and parameters available to find/restore them we can't possibly give examples of them all, but here are some examples of common needs to get you started.
-
-##### Broken blocks, house on fire
-
-A griefer has broken blocks and set fire to a house. If we don't know who started the fire we can find the person who lit it with:
-
-`/prism l a:lighter`
-
-Or, find who broke the blocks with `/prism near` or the inspector wand, `/prism i`.
-
-A default radius is always used so it's only nearby activity. Once you see who set the fire or broke the blocks, you can use the username(s) to rollback the changes.
-
-`/prism rollback a:break,burn p:nasonfish`
-
-##### Killed Farm Animals
-
-Some one has killed the entire cow farm for your player. Who? If `/prism near` returns too much info then just run a lookup:
-
-`/prism l a:kill`
-
-The "kill" action will show any entities that have been killed nearby and who did it.
-
-Need to roll them back?
-
-`/prism rollback a:kill p:VortexBuilder3`
-
-
-##### Creepers
-
-Rollback a creeper's art:
-
-`/prism rollback a:explode`
-
-"Explode" is a short hand action that also includes tnt. To only rollback a creeper hole, use `a:creeper-explode`.
-
-
-## Known Issues
-
-- Hanging items can't be rolled back because of a bukkit bug with their facing directions. https://bukkit.atlassian.net/browse/BUKKIT-3371
-- Item frame rotation can't be properly tracked because Bukkit doesn't fire any interact events for them. https://bukkit.atlassian.net/browse/BUKKIT-3402
-- Free-standing signs may rollback facing an exact direction when it was placed with an orientation between two directions.
-- Blocks that form from lava/water mixing are extremely difficult to track properly because bukkit has no proper events for them. We've begun work a custom tracking system but it's difficult work.
-
-          
+       
 ## Get Help
 
-IRC: irc.esper.net #dhmc_us
-
-Wiki: http://dhmc.us/wiki/view/prism/    
+IRC: irc.esper.net #dhmc_us   
 
 ## Donate
 
-The entire team has put in a LOT of work developing and testing Prism and will continue to do so. Donate to these folks today:
+The entire team has and will put in a LOT of work developing and testing Prism and will continue to do so. Donate to these folks today:
 
 viveleroi - (PayPal; botsko@gmail.com) 
            
@@ -283,7 +112,9 @@ viveleroi - (PayPal; botsko@gmail.com)
 
 This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
 
-- viveleroi (Creator, Lead Developer)
-- nasonfish (Contributor)
-- nasonfish, Natman93, YeaItsMe, mafoan (Dev Testers)
-- @todo (Live Testers)
+- viveleroi (*Creator, Lead Dev*)
+- nasonfish (*Contributor*)
+- nasonfish, Natman93, YeaItsMe, mafoan (*Alpha Testers*)
+- mafoan, randox24, tacovan, nehocbelac, Shampoo123, cxmmy14, Palczynski, drac17, ollie2000, PGKxNIGHTMARE, allies333, DocVanNostrand, drfizzman123, 00benallen, rachaelriott, PheonixTamer, YeaItsMe, Natman93, Brazter, sydney2005, rsleight, napalm1, Teh_Fishman, and more (*Live Testers on DHMC*)
+
+* Artwork by [LegendarySoldier](http://legendary-soldier.deviantart.com/ )
