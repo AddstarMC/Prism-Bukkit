@@ -1,57 +1,101 @@
 #Prism
 
-*An incredible plugin for rollbacks, restores, and more. *
+**Stable Public Beta coming soon!**
 
-Prism is a new generation of grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's designed to be extremely fast and incredibly powerful - smarter rollbacks combined with tons of features that put Prism in a class of it's own.
+*An incredible plugin for rollbacks, restores, and more.*
+
+Prism is the ultimate grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's extremely fast, versatile, and incredibly powerful. It's smart rollback engine and a wide range of features put Prism in a class all it's own.
 
 Prism not only offers the standard features you expect, but a **lot** more.
 
-[Quick Demonstration Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
-
-[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
+![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
+*
 
 ## Official Documentation
 
+**Everything you need to know.**
+
+[Quick Demonstration Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
+
+[Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
+
 Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki:
 
-https://github.com/botskonet/Prism-Extras/wiki
+[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
 
 
-## Selection of Features
+## Features Overview
 
-- **Extremely fast. Multi-threaded and queued handling of thousands of event recordings or block changes during rollbacks/restores.**
-- **Several easy, yet powerful lookup/inspector commands.**
-- **Inspector, rollback, and profile wand features.**
-- **Rollback, restoration commands like you know and love.**
-- **Preview mode shows rollback AND restore actions to you only - then you can apply/cancel before actually changing the world.**
-- **Tracks essentially everything you need to know. (Configurable, see below)**
-- **Amazingly easy-to-use commands**
-- **Safe defaults so you don't accidentally roll back too much with a typo**
-- **Extremely clean, personal, and beautiful chat messages, that NEVER spam you.**
-- **Additional features like staff alerts for players finding ores!**
-- **Configurable for your needs. Change the defaults, ignore players/worlds, ignore creative, disable tracking events you don't care about!**
-- Tracks essentially ALL block changes.
-- Includes related changes like blocks falling, signs/torches popping off
-- Tracks sign text and even restores it upon rollbacks.
-- Associates those related activities to the original block breaking player.
-- Mushrooms and tree growth is associated with the planting player.
-- Rolling back fire damage also puts out any remaining fires. (Configurable)
-- Or just use the extinguish command.
-- Rolling back tnt/creeper explosions also removes the laggy item drops within the radius. (Configurable)
-- Drain water/lava with the drain command.
-- Track and rollback animal/mob kills. Someone killed your cows? No problem.*
-- Track shearing of sheep.
-- Track mobs changing blocks like enderman, sheep eating, etc.
-- Tracks chest/furnace/dispenser/etc access. 
-- Watches for someone placing/taking items from the containers.
-- You can even rollback items stolen from the container.*
-- Records player deaths and what the cause was, who the attacker was.
-- Records items player dropped, and items they pickup. Know who stole your death spot loot!
-- Find the right info with paginated near/lookup commands.
-- Get specific with a block history inspector bound to your hand.
-- Database is designed specifically for the data we store. No disk space bloating (not going to point fingers...)
+- Prism tracks 46 (and growing) different player, entity, and world events.
+- Multiple tools and commands let you see exactly what happened.
+- Rollback or restore events directly, or with a safer preview mode first.
+- Safe command defaults, very clean and fun to use chat messages.
+- Smarter rollbacks/restores, and a dozen extra features.
+- Extremely fast. Takes a pounding. 
+- Extremely configurable.
+- Dozens of extra features you don't get from other plugins.
 
-	
+## Features Detail
+
+### Events and Lookup
+
+- Tracks 43+ player, entity, and world events.
+- Includes block changes, container access, item inserts/remove/pickups/drops, entity deaths, shearing, and a LOT more.
+- Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
+- Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
+- Tracks liquid flow and items that break because of it
+- Fine-tuned config allows you to control tracking of every single one.
+- Inspector wand allows you to find history for single blocks/spaces.
+- Near command finds recent events around you.
+- Lookup command is extremely powerful with our versatile parameters.
+- Action names also have short-names for easier typing and can combine related actions.
+- The radius command also accepts a world edit selection - for any /r/r/p/lookup actions.
+- Very clean chat messages and paginated results to ease your burden.
+
+### Rollbacks, Restore, Preview (R/R/P)
+
+- Rollback and restore commands you know and love.
+- Rollback or restore directly, or preview changes for _both_ modes first.
+- Apply/cancel previews, or let them auto-cancel after a minute.
+- Extremely safe default parameters make it harder for you to make mistakes, but can be overridden in-game when you absolutely need them.
+- You can even rollback killed entities, items taken from containers, and more.
+- Sign rollbacks will restore their text (provided we tracked what was written)
+- Rollbacks of burn events also extinguish fires.
+- Rollbacks of tnt/creeper explosion events also remove the laggy item drops.
+- We're CONSTANTLY testing to ensure that rollbacks are smart - problem items like doors, beds, cactus, sugar cane, and more are always restored properly! No half-doors!
+- Rollbacks/restores can be alerted to nearby players, and to staff members (staff see actual rollback params).
+- Rollback systems moves any players in the way to a safe position on rollback
+- Advanced, optional flags give you ultimate control over the rollback/restore action at command-time.
+
+
+### Web Search Interface
+
+Coming soon.
+
+![Prism](http://dhmc.us.s3.amazonaws.com/prism-web.jpg)
+
+
+### Extra Features
+
+- Alerts for staff when players find natural ores (configurable).
+- Alerts for staff when players use flint and steel, place lava, or place any item listed in the config (like tnt).
+- Put out fires with the extinguish command
+- Drain all liquids or just water/lava
+- Profile wand shows you data about a block.
+
+### Misc
+
+- Consistently designed chat messages are easy to read, and never spam you.
+- All commands are consistent and designed knowing a human will be using them.
+- Config allows you to ignore creative mode, or a list of players, worlds, etc.
+
+### Technical
+
+- Multi-threaded queue system for tracking events, combined with a batch recording system makes event recording happen quickly and without impacting your server.
+- Block r/r/p are also run on separate threads and queued for large changes to reduce chances of impacting the main thread.
+- Only one database table with extremely straight-forward design, as well as field types that are smart for the data we store. Records 1 million records with an average of 100MB of space consumption. A server with 200+ players per day can expect about ~2GB of data per month, depending on actions tracked and activity.
+- A dev server with 512M RAM, 2.7Ghz dual core processor, 9,446 blocks from a tnt explosion restored in 3.4 seconds - 3413 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 300ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
+
 
        
 ## Get Help
@@ -68,7 +112,9 @@ viveleroi - (PayPal; botsko@gmail.com)
 
 This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
 
-- viveleroi (Creator, Lead Developer)
-- nasonfish (Contributor)
-- nasonfish, Natman93, YeaItsMe, mafoan (Dev Testers)
-- @todo (Live Testers)
+- viveleroi (*Creator, Lead Dev*)
+- nasonfish (*Contributor*)
+- nasonfish, Natman93, YeaItsMe, mafoan (*Alpha Testers*)
+- mafoan, randox24, tacovan, nehocbelac, Shampoo123, cxmmy14, Palczynski, drac17, ollie2000, PGKxNIGHTMARE, allies333, DocVanNostrand, drfizzman123, 00benallen, rachaelriott, PheonixTamer, YeaItsMe, Natman93, Brazter, sydney2005, rsleight, napalm1, Teh_Fishman, and more (*Live Testers on DHMC*)
+
+* Artwork by [LegendarySoldier](http://legendary-soldier.deviantart.com/ )
