@@ -625,6 +625,7 @@ public class Preview implements Previewable {
 			// Append the preview and blocks temporarily
 			PreviewSession ps = new PreviewSession( player, this );
 			plugin.playerActivePreviews.put(player.getName(), ps);
+			moveEntitiesToSafety();
 		}
 		sendResultMessages();
 	}
@@ -735,8 +736,21 @@ public class Preview implements Previewable {
 //			}
 		}
 		
+		moveEntitiesToSafety();
 		
-		// Move any players or living entities out of the way
+		// Trigger the rollback event
+		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
+		plugin.getServer().getPluginManager().callEvent(event);
+		
+		sendResultMessages();
+		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void moveEntitiesToSafety(){
 		if( parameters.getWorld() != null ){
 			List<Entity> entities = player.getNearbyEntities(parameters.getRadius(), parameters.getRadius(), parameters.getRadius());
 			entities.add((Entity)player);
@@ -760,14 +774,6 @@ public class Preview implements Previewable {
 				}
 			}
 		}
-		
-		
-		// Trigger the rollback event
-		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
-		plugin.getServer().getPluginManager().callEvent(event);
-		
-		sendResultMessages();
-		
 	}
 	
 	
