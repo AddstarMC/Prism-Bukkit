@@ -181,7 +181,7 @@ public class Prism extends JavaPlugin {
 	        		"`y` int(11) NOT NULL," +
 	        		"`z` int(11) NOT NULL," +
 	        		"`data` varchar(255) NOT NULL," +
-	        		"PRIMARY KEY  (`id`)" +
+	        		"PRIMARY KEY  (`id`), " +
 	        		"KEY `x` (`x`)" +
 	        		") ENGINE=MyISAM;";
 	        
