@@ -186,32 +186,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-
-		// bug filed:
-		// https://bukkit.atlassian.net/browse/BUKKIT-3371
-//		EntityType entityType = event.getEntity().getType();
-//		if(entityType.equals(EntityType.ITEM_FRAME)){
-//			
-//			// item inside
-////			ItemFrame i = ((ItemFrame)e);
-////          i.getItem();
-//			
-////			// Experimenting with spawning the itemframes so I know what to record.
-////			World currentWorld = event.getBlock().getWorld();
-////			Location loc = new Location(currentWorld, -131, 65, 180);
-//////			Hanging h = currentWorld.spawn(loc, ItemFrame.class);
-////			Hanging h = currentWorld.spawn(loc, Painting.class);
-////			
-////			// This never works.
-////			h.setFacingDirection(BlockFace.NORTH);
-//			
-//		}
-//		else if(entityType.equals(EntityType.PAINTING)){
-//			
-//		}
-		
 		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
-		
 	}
 	
 	

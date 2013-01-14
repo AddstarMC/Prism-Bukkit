@@ -15,6 +15,7 @@ import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
@@ -40,7 +41,10 @@ import org.bukkit.block.Skull;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
@@ -498,6 +502,14 @@ public class Preview implements Previewable {
 					
 					
 					/**
+					 * Hanging items
+					 */
+					if( a instanceof HangingItemAction){
+						deferredChanges.add( a );
+					}
+					
+					
+					/**
 					 * Rollback itemstack actions
 					 */
 					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
@@ -626,18 +638,43 @@ public class Preview implements Previewable {
 		
 		// Apply deferred block changes
 		for(Action a : deferredChanges){
-			BlockAction b = (BlockAction) a;
-			World world = plugin.getServer().getWorld(b.getWorld_name());
-			Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
-			Block block = world.getBlockAt(loc);
-			ChangeResultType res = placeBlock( b, block, true );
-			if(res.equals(ChangeResultType.APPLIED)){
-				changes_applied_count++;
-			}
-			else if(res.equals(ChangeResultType.SKIPPED)){
-				skipped_block_count++;
+			
+			if( a instanceof HangingItemAction){
+				
+				HangingItemAction h = (HangingItemAction)a;
+				
+				BlockFace attachedFace = h.getDirection().getOppositeFace();
+				World world = plugin.getServer().getWorld(h.getWorld_name());
+				Location loc = new Location(world, h.getX(), h.getY(), h.getZ()).getBlock().getRelative(h.getDirection()).getLocation();
+				
+				// bug filed:
+				// https://bukkit.atlassian.net/browse/BUKKIT-3371
+				if( h.getHangingType().equals("item_frame") ){
+					Hanging hangingItem = world.spawn(loc, ItemFrame.class);
+					hangingItem.setFacingDirection( attachedFace, true );
+					changes_applied_count++;
+				}
+				else if( h.getHangingType().equals("painting") ){
+					Hanging hangingItem = world.spawn(loc, Painting.class);
+					hangingItem.setFacingDirection( h.getDirection(), true );
+					changes_applied_count++;
+				}
 			} else {
-				plugin.log("Error: Deferred block placement encountered an additional deferral for block "+block.getTypeId()+":"+block.getData()+". Report to Prism developers.");
+			
+			
+				BlockAction b = (BlockAction) a;
+				World world = plugin.getServer().getWorld(b.getWorld_name());
+				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
+				Block block = world.getBlockAt(loc);
+				ChangeResultType res = placeBlock( b, block, true );
+				if(res.equals(ChangeResultType.APPLIED)){
+					changes_applied_count++;
+				}
+				else if(res.equals(ChangeResultType.SKIPPED)){
+					skipped_block_count++;
+				} else {
+					plugin.log("Error: Deferred block placement encountered an additional deferral for block "+block.getTypeId()+":"+block.getData()+". Report to Prism developers.");
+				}
 			}
 		}
 		
