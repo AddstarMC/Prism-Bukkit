@@ -182,7 +182,8 @@ public class Prism extends JavaPlugin {
 	        		"`z` int(11) NOT NULL," +
 	        		"`data` varchar(255) NOT NULL," +
 	        		"PRIMARY KEY  (`id`)" +
-	        		") ENGINE=MyISAM  DEFAULT CHARSET=latin1;";
+	        		"KEY `x` (`x`)" +
+	        		") ENGINE=MyISAM;";
 	        
             Statement st = conn.createStatement();
             st.executeUpdate(query);
