@@ -27,6 +27,7 @@ import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
+import me.botsko.prism.actions.SpawnerAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
@@ -136,6 +137,10 @@ public class ActionsQuery {
 	    			}
 	    			else if( actionType.requiresHandler("skull") ){
 	    				SkullAction sa = new SkullAction(null, null, null);
+	    				baseAction = sa;
+	    			}
+	    			else if( actionType.requiresHandler("spawner") ){
+	    				SpawnerAction sa = new SpawnerAction(null, null, null);
 	    				baseAction = sa;
 	    			}
 	    			else if( actionType.requiresHandler("use") ){

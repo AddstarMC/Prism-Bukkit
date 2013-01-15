@@ -19,6 +19,7 @@ import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
+import me.botsko.prism.actions.SpawnerAction;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
@@ -36,6 +37,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Ageable;
@@ -586,6 +588,28 @@ public class Preview implements Previewable {
 						skull.setRotation( s.getRotation() );
 						skull.setSkullType( s.getSkullType() );
 						skull.update();
+						
+						changes_applied_count++;
+						
+					}
+					
+					
+					/**
+					 * Spawner
+					 */
+					if( a instanceof SpawnerAction ){
+						
+						SpawnerAction s = (SpawnerAction) a;
+						Block block = world.getBlockAt(loc);
+						
+						// Set the material
+						block.setType(Material.MOB_SPAWNER);
+						
+						// Set skull data
+						CreatureSpawner spawner = (CreatureSpawner) block.getState();
+						spawner.setDelay(s.getDelay());
+						spawner.setSpawnedType(s.getEntityType());
+						spawner.update();
 						
 						changes_applied_count++;
 						
