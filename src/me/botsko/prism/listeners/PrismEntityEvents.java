@@ -271,18 +271,21 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
-		
+		String name;
 		ActionType action = ActionType.ENTITY_EXPLODE;
-		String name = event.getEntityType().getName().toLowerCase();
-		if(event.getEntity() instanceof Creeper){
-			action = ActionType.CREEPER_EXPLODE;
-			name = "creeper";
+		if(event.getEntity() != null){
+			name = event.getEntityType().getName().toLowerCase();
+			if(event.getEntity() instanceof Creeper){
+				action = ActionType.CREEPER_EXPLODE;
+				name = "creeper";
+			}
+			else if(event.getEntity() instanceof TNTPrimed){
+				action = ActionType.TNT_EXPLODE;
+				name = "tnt";
+			}
+		} else {
+			name = "magic";
 		}
-		else if(event.getEntity() instanceof TNTPrimed){
-			action = ActionType.TNT_EXPLODE;
-			name = "tnt";
-		}
-		
 		// Also log item-removes from chests that are blown up
 		PrismBlockEvents be = new PrismBlockEvents(plugin);		
 		for(Block block : event.blockList()){
