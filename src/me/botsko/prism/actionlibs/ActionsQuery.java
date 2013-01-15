@@ -418,7 +418,7 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildOrQuery("prism_actions.data", blockArr);
+				query += buildOrLikeQuery("prism_actions.data", blockArr);
 			}
 			
 			/**

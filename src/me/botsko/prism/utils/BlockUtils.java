@@ -579,4 +579,27 @@ public class BlockUtils {
 				return false;
 		}
 	}
+	
+	
+	/**
+     * Returns true if an item uses its damage value for something
+     * other than damage.
+     *
+     * @param id
+     * @return
+     */
+    public static boolean hasSubitems( int id ){
+        return id == 17 		// logs
+        		|| id == 18 	// leaves
+        		|| id == 31 	// tallgrass
+                || id == 35 	// wool
+                || id == 43 	// double slab
+                || id == 44 	// slab
+                || id == 98 	// stonebrick
+                || id == 263 	// charcoal
+                || id == 351    // dye
+                || id == 6		// saplings
+                || id == 373    // potions
+        		|| id == 383;   // creature eggs
+    }
 }
