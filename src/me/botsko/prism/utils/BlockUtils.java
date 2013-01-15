@@ -591,6 +591,7 @@ public class BlockUtils {
     public static boolean hasSubitems( int id ){
         return id == 17 		// logs
         		|| id == 18 	// leaves
+        		|| id == 24     // sandstone
         		|| id == 31 	// tallgrass
                 || id == 35 	// wool
                 || id == 43 	// double slab
