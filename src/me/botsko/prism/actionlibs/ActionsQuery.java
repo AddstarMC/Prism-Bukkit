@@ -280,7 +280,6 @@ public class ActionsQuery {
 		if(beforeDate != null && !beforeDate.isEmpty()){
 			try {
 				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
-				plugin.log("Deleting records prior to " + beforeDate + ": " + query);
 				plugin.dbc();
 				Statement s = plugin.conn.createStatement ();
 				rows_affected = s.executeUpdate (query);

@@ -260,7 +260,7 @@ public class PreprocessArgs {
 			// Time default
 			if(!foundArgs.containsKey("t")){
 				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.default-time-since"));
-				if(date != null){
+				if(date == null){
 					plugin.log("Error - date range configuration for prism.time-since is not valid");
 					date = translateTimeStringToDate(plugin,player,"3d");
 				}
