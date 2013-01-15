@@ -1,7 +1,5 @@
 #Prism
 
-**Stable Public Beta coming soon!**
-
 *An incredible plugin for rollbacks, restores, and more.*
 
 Prism is the ultimate grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's extremely fast, versatile, and incredibly powerful. It's smart rollback engine and a wide range of features put Prism in a class all it's own.
@@ -11,11 +9,21 @@ Prism not only offers the standard features you expect, but a **lot** more.
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
 *
 
+#### About the Beta
+
+We trust Prism enough to use it on our live 200+ player a day server, and Prism is very well tested on multiple dev and live servers, but we're now opening to the public to try. Prism is most likely very stable and is safe for use but during the initial beta period we'll update to resolve any critical issues as fast as possible.
+
 ## Official Documentation
 
 **Everything you need to know.**
 
-[Quick Demonstration Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
+[Intro & Demo Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
+
+[Video Tutorial 1: Lookups](http://www.youtube.com/watch?v=W8DpqKiiSJs)
+
+[Video Tutorial 2: Rollbacks](http://www.youtube.com/watch?v=IRr-4r_LS2I)
+
+[Video Tutorial 3: More on Rollbacks](http://www.youtube.com/watch?v=oHBXYzv7vWs)
 
 [Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
 
@@ -104,7 +112,7 @@ IRC: irc.esper.net #dhmc_us
 
 ## Donate
 
-The entire team has and will put in a LOT of work developing and testing Prism and will continue to do so. Donate to these folks today:
+I've invested a lot of time making Prism what is, along with some contributions and testing help by our server staff. Help me out, even if it's just $1 person.
 
 viveleroi - (PayPal; botsko@gmail.com) 
            
