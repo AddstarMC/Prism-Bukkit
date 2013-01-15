@@ -52,13 +52,21 @@ public class QueryResult {
 		this.actionResults = actions;
 		this.parameters = parameters;
 
-		java.util.Date date = new java.util.Date();
-		this.queryTime = date.getTime();
+		setQueryTime();
 		
 		// set counts
 		total_results = actionResults.size();
 		total_pages = (int) Math.ceil( ((double)total_results / (double)per_page) );
 		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setQueryTime(){
+		java.util.Date date = new java.util.Date();
+		this.queryTime = date.getTime();
 	}
 
 

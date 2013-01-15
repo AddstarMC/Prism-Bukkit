@@ -239,12 +239,12 @@ public class Prism extends JavaPlugin {
 		    	for (Map.Entry<String, QueryResult> query : cachedQueries.entrySet()){
 		    		QueryResult result = query.getValue();
 		    		long diff = (date.getTime() - result.getQueryTime()) / 1000;
-		    		if(diff >= 300){
+		    		if(diff >= 120){
 		    			cachedQueries.remove(query.getKey());
 		    		}
 		    	}
 		    }
-		}, 6000L, 6000L);
+		}, 2400L, 2400L);
 	}
 	
 	
