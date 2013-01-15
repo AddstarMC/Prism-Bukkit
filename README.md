@@ -108,7 +108,7 @@ Coming soon.
        
 ## Get Help
 
-IRC: irc.esper.net #dhmc_us   
+IRC: irc.esper.net #prism (recommended) or #dhmc_us  
 
 ## Donate
 
