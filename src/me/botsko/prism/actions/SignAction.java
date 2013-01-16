@@ -11,6 +11,12 @@ import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 	
+	public class SignActionData {
+		public String[] lines;
+		public String sign_type;
+		public BlockFace facing;
+	}
+	
 	/**
 	 * 
 	 */

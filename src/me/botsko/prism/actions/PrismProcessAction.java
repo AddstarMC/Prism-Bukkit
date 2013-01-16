@@ -9,6 +9,11 @@ import org.bukkit.entity.Player;
 
 public class PrismProcessAction extends GenericAction {
 	
+	public class PrismProcessActionData {
+		public String params = "";
+		public String processType;
+	}
+	
 	/**
 	 * 
 	 */

@@ -7,6 +7,14 @@ import org.bukkit.block.Block;
 
 public class BlockShiftAction extends GenericAction {
 	
+	public class BlockShiftActionData {
+		public int block_id;
+		public byte block_subid;
+		public int x;
+		public int y;
+		public int z;
+	}
+	
 	/**
 	 * 
 	 */

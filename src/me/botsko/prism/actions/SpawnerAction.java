@@ -8,6 +8,11 @@ import org.bukkit.entity.EntityType;
 
 public class SpawnerAction extends GenericAction {
 	
+	public class SpawnerActionData {
+		public String entity_type;
+		public int delay;
+	}
+	
 	/**
 	 * 
 	 */

@@ -7,6 +7,11 @@ import org.bukkit.entity.Hanging;
 
 public class HangingItemAction extends GenericAction {
 	
+	public class HangingItemActionData {
+		public String type;
+		public String direction;
+	}
+	
 	/**
 	 * 
 	 */

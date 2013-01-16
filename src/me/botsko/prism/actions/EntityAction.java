@@ -15,7 +15,14 @@ import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Villager.Profession;
 
 public class EntityAction extends GenericAction {
-
+	
+	public class EntityActionData {
+		public String entity_name;
+		public boolean isAdult;
+		public String color;
+		public String profession;
+		public String taming_owner;
+	}
 	
 	/**
 	 * 
