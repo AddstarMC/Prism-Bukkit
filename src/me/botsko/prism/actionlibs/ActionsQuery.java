@@ -151,7 +151,7 @@ public class ActionsQuery {
 	    			}
 	    			
 	    			if(baseAction == null){
-	    				baseAction = new GenericAction();
+	    				baseAction = new GenericAction(null, null);
 	    			}
 	    				
     				// Set all shared values

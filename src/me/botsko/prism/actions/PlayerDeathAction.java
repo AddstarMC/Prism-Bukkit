@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -31,9 +29,9 @@ public class PlayerDeathAction extends GenericAction {
 	 * @param player
 	 */
 	public PlayerDeathAction( ActionType action_type, Player player, String cause, String attacker ){
-		if(action_type != null){
-			this.type = action_type;
-		}
+		
+		super(action_type, player.getName());
+		
 		if(player != null){
 			this.player = player;
 			this.world_name = player.getWorld().getName();
@@ -44,10 +42,7 @@ public class PlayerDeathAction extends GenericAction {
 		}
 		this.cause = cause;
 		this.attacker = attacker;
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
-		}
+
 		// Save entity data from current entity
 		setDataFromDeathInfo();
 		getDeathInfoFromData();

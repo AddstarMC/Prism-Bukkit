@@ -1,11 +1,14 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Hanging;
 
 public class HangingItemAction extends GenericAction {
+	
+	public class HangingItemActionData {
+		public String type;
+		public String direction;
+	}
 	
 	/**
 	 * 
@@ -21,11 +24,10 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public HangingItemAction( ActionType action_type, Hanging hanging, String player ){
 		
+		super(action_type, player);
+		
 		actionData = new HangingItemActionData();
 		
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(hanging != null){
 			this.actionData.type = hanging.getType().name().toLowerCase();
 			this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
@@ -34,13 +36,7 @@ public class HangingItemAction extends GenericAction {
 			this.y = hanging.getLocation().getBlockY();
 			this.z = hanging.getLocation().getBlockZ();
 		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
-		}
+
 		// Set data from current block
 		setDataFromObject();
 		setObjectFromData();

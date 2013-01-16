@@ -1,9 +1,16 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 
 public class PrismRollbackAction extends GenericAction {
+	
+	public class PrismRollbackActionData {
+		public String onBehalfOf;
+		public int originalBlock_id;
+		public int originalBlock_subid;
+		public int newBlock_id;
+		public int newBlock_subid;
+		public int parent_id;
+	}
 	
 	/**
 	 * 
@@ -19,23 +26,16 @@ public class PrismRollbackAction extends GenericAction {
 	 */
 	public PrismRollbackAction( ActionType action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername, int parent_id ){
 		
+		super(action_type, playername);
+		
 		actionData = new PrismRollbackActionData();
 		
-		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(playername != null){
 			actionData.originalBlock_id = originalBlock_id;
 			actionData.originalBlock_subid = originalBlock_subid;
 			actionData.newBlock_id = newBlock_id;
 			actionData.newBlock_subid = newBlock_subid;
 			actionData.parent_id = parent_id;
-			this.player_name = playername;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block
