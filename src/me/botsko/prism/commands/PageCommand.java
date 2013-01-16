@@ -57,6 +57,10 @@ public class PageCommand implements SubHandler {
 			QueryResult results = plugin.cachedQueries.get(call.getPlayer().getName());
 			results.setPage(page);
 			
+			// Refresh the query time and replace
+			results.setQueryTime();
+			plugin.cachedQueries.replace(call.getPlayer().getName(), results);
+			
 			// Results?
 			if(!results.getActionResults().isEmpty()){
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );

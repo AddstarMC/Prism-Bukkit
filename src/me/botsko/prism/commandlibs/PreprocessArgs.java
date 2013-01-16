@@ -13,6 +13,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.LevenshteinDistance;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -169,22 +170,25 @@ public class PreprocessArgs {
 					
 					if(blocks.length > 0){
 						
-						String block_match = "{\"block_id\":%d,\"block_subid\":%d}";
+						String block_match = "block_id\":%s,";
+						String block_subid_match = "\"block_subid\":%s";
 						
 						for(String b : blocks){
 					
 							// if user provided id:subid
 							if(b.contains(":") && b.length() >= 3){
-								String _tmp_id = b.substring(0,1);
-								String _tmp_subid = b.substring(2);
-								if(!TypeUtils.isNumeric(_tmp_id) || !TypeUtils.isNumeric(_tmp_subid)){
-									parameters.addBlockFilter( String.format(block_match, _tmp_id, _tmp_subid) );
+								String[] ids = b.split(":");
+								if(ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])){
+									parameters.addBlockFilter( String.format(block_match+block_subid_match, ids[0], ids[1]) );
+								} else {
+									player.sendMessage( plugin.playerError("Invalid block filter '"+val+"'. Use /prism ? [command] for help.") );
+									return null;
 								}
 							} else {
 								
 								// It's id without a subid
 								if(TypeUtils.isNumeric(b)){
-									parameters.addBlockFilter( String.format(block_match, b, 0) );
+									parameters.addBlockFilter( String.format(block_match, b, "0") );
 								} else {
 									
 									// Lookup the item name, get the ids
@@ -193,7 +197,12 @@ public class PreprocessArgs {
 									if(itemIds.size() > 0){
 										for(int[] ids : itemIds){
 											if(ids.length == 2){
-												parameters.addBlockFilter( String.format(block_match, ids[0], ids[1]) );
+												// If we really care about the sub id because it's a whole different item
+												if(BlockUtils.hasSubitems(ids[0])){
+													parameters.addBlockFilter( String.format(block_match+block_subid_match, ids[0], ids[1]) );
+												} else {
+													parameters.addBlockFilter( String.format(block_match, ids[0]) );
+												}
 											}
 										}
 									}
@@ -251,7 +260,7 @@ public class PreprocessArgs {
 			// Time default
 			if(!foundArgs.containsKey("t")){
 				String date = translateTimeStringToDate(plugin,player,plugin.getConfig().getString("prism.default-time-since"));
-				if(date != null){
+				if(date == null){
 					plugin.log("Error - date range configuration for prism.time-since is not valid");
 					date = translateTimeStringToDate(plugin,player,"3d");
 				}

@@ -10,6 +10,7 @@ import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
+import me.botsko.prism.actions.SpawnerAction;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Material;
@@ -203,6 +204,12 @@ public class PrismBlockEvents implements Listener {
             plugin.actionsRecorder.addToQueue( new SkullAction(ActionType.SKULL_BREAK, block, player.getName()) );
             return;
         }
+        
+        // spawner
+        if(block.getType().equals(Material.MOB_SPAWNER)){
+        	plugin.actionsRecorder.addToQueue( new SpawnerAction(ActionType.SPAWNER_BREAK, block, player.getName()) );
+        	return;
+        }
 		
 		// Run ore find alerts
 		plugin.oreMonitor.processAlertsFromBlock(player, block);
@@ -235,6 +242,12 @@ public class PrismBlockEvents implements Listener {
         if(block.getType().equals(Material.SKULL) || block.getType().equals(Material.SKULL_ITEM)){
             plugin.actionsRecorder.addToQueue( new SkullAction(ActionType.SKULL_PLACE, block, player.getName()) );
             return;
+        }
+        
+        // spawner
+        if(block.getType().equals(Material.MOB_SPAWNER)){
+        	plugin.actionsRecorder.addToQueue( new SpawnerAction(ActionType.SPAWNER_PLACE, block, player.getName()) );
+        	return;
         }
 		
 		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, block, player.getName()) );

@@ -1,7 +1,5 @@
 #Prism
 
-**Stable Public Beta coming soon!**
-
 *An incredible plugin for rollbacks, restores, and more.*
 
 Prism is the ultimate grief management (rollbacks, restores, etc) plugin for your Bukkit server. It's extremely fast, versatile, and incredibly powerful. It's smart rollback engine and a wide range of features put Prism in a class all it's own.
@@ -11,15 +9,25 @@ Prism not only offers the standard features you expect, but a **lot** more.
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
 *
 
+#### About the Beta
+
+We trust Prism enough to use it on our live 200+ player a day server, and Prism is very well tested on multiple dev and live servers, but we're now opening to the public to try. Prism is most likely very stable and is safe for use but during the initial beta period we'll update to resolve any critical issues as fast as possible.
+
 ## Official Documentation
 
 **Everything you need to know.**
 
-[Quick Demonstration Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
+[Intro & Demo Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
+
+[Video Tutorial 1: Lookups](http://www.youtube.com/watch?v=W8DpqKiiSJs)
+
+[Video Tutorial 2: Rollbacks](http://www.youtube.com/watch?v=IRr-4r_LS2I)
+
+[Video Tutorial 3: More on Rollbacks](http://www.youtube.com/watch?v=oHBXYzv7vWs)
 
 [Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
 
-Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki:
+Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki.
 
 [Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
 
@@ -39,7 +47,7 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 
 ### Events and Lookup
 
-- Tracks 43+ player, entity, and world events.
+- Tracks 46+ player, entity, and world events.
 - Includes block changes, container access, item inserts/remove/pickups/drops, entity deaths, shearing, and a LOT more.
 - Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
 - Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
@@ -94,17 +102,17 @@ Coming soon.
 - Multi-threaded queue system for tracking events, combined with a batch recording system makes event recording happen quickly and without impacting your server.
 - Block r/r/p are also run on separate threads and queued for large changes to reduce chances of impacting the main thread.
 - Only one database table with extremely straight-forward design, as well as field types that are smart for the data we store. Records 1 million records with an average of 100MB of space consumption. A server with 200+ players per day can expect about ~2GB of data per month, depending on actions tracked and activity.
-- A dev server with 512M RAM, 2.7Ghz dual core processor, 9,446 blocks from a tnt explosion restored in 3.4 seconds - 3413 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 300ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
+- A dev server with 512M RAM, 2.7Ghz dual core processor, 6,886 blocks from a tnt explosion restored in 2.2 seconds - 2210 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 200ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
 
 
        
 ## Get Help
 
-IRC: irc.esper.net #dhmc_us   
+IRC: irc.esper.net #prism (recommended) or #dhmc_us  
 
 ## Donate
 
-The entire team has and will put in a LOT of work developing and testing Prism and will continue to do so. Donate to these folks today:
+I've invested a lot of time making Prism what is, along with some contributions and testing help by our server staff. Help me out, even if it's just $1 person.
 
 viveleroi - (PayPal; botsko@gmail.com) 
            

@@ -27,6 +27,7 @@ import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.SkullAction;
+import me.botsko.prism.actions.SpawnerAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
@@ -136,6 +137,10 @@ public class ActionsQuery {
 	    			}
 	    			else if( actionType.requiresHandler("skull") ){
 	    				SkullAction sa = new SkullAction(null, null, null);
+	    				baseAction = sa;
+	    			}
+	    			else if( actionType.requiresHandler("spawner") ){
+	    				SpawnerAction sa = new SpawnerAction(null, null, null);
 	    				baseAction = sa;
 	    			}
 	    			else if( actionType.requiresHandler("use") ){
@@ -280,7 +285,6 @@ public class ActionsQuery {
 		if(beforeDate != null && !beforeDate.isEmpty()){
 			try {
 				String query = "DELETE FROM prism_actions WHERE 1=1" + beforeDate;
-				plugin.log("Deleting records prior to " + beforeDate + ": " + query);
 				plugin.dbc();
 				Statement s = plugin.conn.createStatement ();
 				rows_affected = s.executeUpdate (query);
@@ -418,7 +422,7 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildOrQuery("prism_actions.data", blockArr);
+				query += buildOrLikeQuery("prism_actions.data", blockArr);
 			}
 			
 			/**
