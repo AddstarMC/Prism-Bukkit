@@ -92,43 +92,49 @@ public class Prism extends JavaPlugin {
 		// Load configuration, or install if new
 		loadConfig();
 		
-		// Setup databases
-		setupDatabase();
+		// init db
+		dbc();
 		
-		// Plugins we use
-		checkPluginDependancies();
+		if(isEnabled()){
 		
-		// Assign event listeners
-		getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
-		getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
-		getServer().getPluginManager().registerEvents(new PrismWorldEvents( this ), this);
-		getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
-		getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
-		
-		// Assign listeners to our own events
-//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents( this ), this);
-		getServer().getPluginManager().registerEvents(new PrismMiscEvents( this ), this);
-		
-		// Add commands
-		getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
-		
-		// Init re-used classes
-		actionsRecorder = new ActionRecorder(this);
-		actionsQuery = new ActionsQuery(this);
-		oreMonitor = new OreMonitor(this);
-		useMonitor = new UseMonitor(this);
-		
-		// Init async tasks
-		actionRecorderTask();
-		
-		// Init scheduled events
-		endExpiredQueryCaches();
-		endExpiredPreviews();
-		removeExpiredLocations();
-		
-		// Delete old data based on config
-		discardExpiredDbRecords();
-		
+			// Setup databases
+			setupDatabase();
+			
+			// Plugins we use
+			checkPluginDependancies();
+			
+			// Assign event listeners
+			getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismWorldEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
+			
+			// Assign listeners to our own events
+	//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismMiscEvents( this ), this);
+			
+			// Add commands
+			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
+			
+			// Init re-used classes
+			actionsRecorder = new ActionRecorder(this);
+			actionsQuery = new ActionsQuery(this);
+			oreMonitor = new OreMonitor(this);
+			useMonitor = new UseMonitor(this);
+			
+			// Init async tasks
+			actionRecorderTask();
+			
+			// Init scheduled events
+			endExpiredQueryCaches();
+			endExpiredPreviews();
+			removeExpiredLocations();
+			
+			// Delete old data based on config
+			discardExpiredDbRecords();
+			
+		}
 	}
 	
 	
@@ -146,12 +152,8 @@ public class Prism extends JavaPlugin {
 	
 	
 	/**
-     * Setup a generic connection all non-scheduled methods may share
-	 * @throws ClassNotFoundException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @return true if we successfully connected to the db.
-     */
+	 * 
+	 */
 	public void dbc(){
 		Mysql mysql = new Mysql(
 				config.getString("prism.mysql.username"), 
@@ -161,6 +163,10 @@ public class Prism extends JavaPlugin {
 				config.getString("prism.mysql.port")
 		);
 		conn = mysql.getConn();
+		if(conn == null){
+			this.log("Error: MySQL database connection was not established. Please check your configuration file.");
+			disablePlugin();
+		}
 	}
 	
 	
@@ -171,6 +177,7 @@ public class Prism extends JavaPlugin {
 
 		try{
 	        dbc();
+	        if(conn == null) return;
 	        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 	        		"`id` int(11) unsigned NOT NULL auto_increment," +
 	        		"`action_time` datetime NOT NULL," +
@@ -472,6 +479,14 @@ public class Prism extends JavaPlugin {
 		if(this.config.getBoolean("prism.debug")){
 			log.info("["+plugin_name+"]: " + message);
 		}
+	}
+	
+	
+	/**
+	 * Disable the plugin
+	 */
+	public void disablePlugin(){
+		this.setEnabled(false);
 	}
 	
 	
