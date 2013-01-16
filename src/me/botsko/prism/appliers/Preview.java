@@ -14,12 +14,12 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockAction.SkullActionData;
+import me.botsko.prism.actions.BlockAction.SpawnerActionData;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.actions.SkullAction;
-import me.botsko.prism.actions.SpawnerAction;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
@@ -130,10 +130,8 @@ public class Preview implements Previewable {
 		this.processStartTime = processStartTime;
 		
 		// Append all actions to the queue.
-		// @todo Is there a better way to append these to the queue?
-		for(Action a : results){
-			worldChangeQueue.add(a);
-		}
+		worldChangeQueue.addAll(results);
+		
 	}
 	
 	
@@ -258,7 +256,7 @@ public class Preview implements Previewable {
 	 */
 	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
 		
-		Material m = Material.getMaterial(b.getBlock_id());
+		Material m = Material.getMaterial(b.getActionData().getBlockId());
 		
 		if( parameters.hasFlag(Flag.NO_OVERWRITE) ){
 			// We're doing a rollback, we need to ensure the location we're replacing doesn't
@@ -286,7 +284,7 @@ public class Preview implements Previewable {
 
 			// If lilypad, check that block below is water. Be sure
 			// it's set to stationary water so the lilypad will sit
-			if( b.getBlock_id() == 111 ){
+			if( b.getActionData().getBlockId() == 111 ){
 				
 				Block below = block.getRelative(BlockFace.DOWN);
 				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
@@ -297,8 +295,40 @@ public class Preview implements Previewable {
 			}
 			
 			// Set the material
-			block.setTypeId( b.getBlock_id() );
-			block.setData( b.getBlock_subid() );
+			block.setTypeId( b.getActionData().getBlockId() );
+			block.setData( b.getActionData().getBlockSubid() );
+			
+			
+			/**
+			 * Skulls
+			 */
+			if( b.getActionData().getBlockId() == 144 || b.getActionData().getBlockId() == 397 ){
+				
+				SkullActionData s = (SkullActionData) b.getActionData();
+	
+				// Set skull data
+				Skull skull = (Skull) block.getState();
+				skull.setRotation( s.getRotation() );
+				skull.setSkullType( s.getSkullType() );
+				skull.update();
+				
+			}
+			
+			
+			/**
+			 * Spawner
+			 */
+			if( b.getActionData().getBlockId() == 52 ){
+				
+				SpawnerActionData s = (SpawnerActionData) b.getActionData();
+				
+				// Set spawner data
+				CreatureSpawner spawner = (CreatureSpawner) block.getState();
+				spawner.setDelay(s.getDelay());
+				spawner.setSpawnedType(s.getEntityType());
+				spawner.update();
+				
+			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
 			// This may need to go before setting the block, but I prefer the BlockUtil
@@ -320,11 +350,11 @@ public class Preview implements Previewable {
 			
 			// If we're rolling back a door, we need to set it properly
 			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
-				BlockUtils.properlySetDoor( block, b.getBlock_id(), b.getBlock_subid());
+				BlockUtils.properlySetDoor( block, b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
 			}
 			// Or a bed
 			else if( m.equals(Material.BED_BLOCK) ){
-				BlockUtils.properlySetBed( block, b.getBlock_id(), b.getBlock_subid());
+				BlockUtils.properlySetBed( block, b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
 			}
 		} else {
 			
@@ -334,7 +364,7 @@ public class Preview implements Previewable {
 			blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
 			
 			// Preview it
-			player.sendBlockChange(block.getLocation(), b.getBlock_id(), b.getBlock_subid());
+			player.sendBlockChange(block.getLocation(), b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
 			
 		}
 		
@@ -568,51 +598,6 @@ public class Preview implements Previewable {
 							s.update();
 							changes_applied_count++;
 						}
-					}
-					
-					
-					/**
-					 * Skulls
-					 */
-					if( a instanceof SkullAction ){
-						
-						SkullAction s = (SkullAction) a;
-						Block block = world.getBlockAt(loc);
-						
-						// Set the material
-						block.setTypeId( s.getBlock_id() );
-						block.setData( s.getBlock_subid() );
-						
-						// Set skull data
-						Skull skull = (Skull) block.getState();
-						skull.setRotation( s.getRotation() );
-						skull.setSkullType( s.getSkullType() );
-						skull.update();
-						
-						changes_applied_count++;
-						
-					}
-					
-					
-					/**
-					 * Spawner
-					 */
-					if( a instanceof SpawnerAction ){
-						
-						SpawnerAction s = (SpawnerAction) a;
-						Block block = world.getBlockAt(loc);
-						
-						// Set the material
-						block.setType(Material.MOB_SPAWNER);
-						
-						// Set skull data
-						CreatureSpawner spawner = (CreatureSpawner) block.getState();
-						spawner.setDelay(s.getDelay());
-						spawner.setSpawnedType(s.getEntityType());
-						spawner.update();
-						
-						changes_applied_count++;
-						
 					}
 					
 					if(!is_preview){
