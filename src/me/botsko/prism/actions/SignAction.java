@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
@@ -36,12 +34,11 @@ public class SignAction extends GenericAction {
 	 */
 	public SignAction( ActionType action_type, Block block, String[] lines, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new SignActionData();
 				
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(block != null){
 			actionData.sign_type = block.getType().name();
 			Sign sign = (Sign) block.getState().getData();
@@ -54,13 +51,6 @@ public class SignAction extends GenericAction {
 		}
 		if(lines != null){
 			actionData.lines = lines;
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

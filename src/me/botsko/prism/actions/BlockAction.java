@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.block.Block;
 
 public class BlockAction extends GenericAction {
@@ -25,13 +23,11 @@ public class BlockAction extends GenericAction {
 	 */
 	public BlockAction( ActionType action_type, Block block, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new BlockActionData();
 		
-		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(block != null){
 			this.block = block;
 			actionData.block_id = block.getTypeId();
@@ -40,13 +36,6 @@ public class BlockAction extends GenericAction {
 			this.x = block.getLocation().getX();
 			this.y = block.getLocation().getY();
 			this.z = block.getLocation().getZ();
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

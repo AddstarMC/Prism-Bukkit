@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,13 +24,11 @@ public class GrowAction extends GenericAction {
 	 */
 	public GrowAction( ActionType action_type, BlockState blockstate, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new BlockActionData();
-		
-		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
+
 		if(blockstate != null){
 			this.blockstate = blockstate;
 			actionData.block_id = blockstate.getTypeId();
@@ -41,13 +37,6 @@ public class GrowAction extends GenericAction {
 			this.x = blockstate.getLocation().getX();
 			this.y = blockstate.getLocation().getY();
 			this.z = blockstate.getLocation().getZ();
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

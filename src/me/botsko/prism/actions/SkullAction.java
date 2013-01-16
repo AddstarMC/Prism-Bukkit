@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -31,13 +29,11 @@ public class SkullAction extends GenericAction {
 	 */
 	public SkullAction( ActionType action_type, Block block, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new SkullActionData();
 		
-		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(block != null){
 			Skull s = (Skull)block.getState();
 			actionData.rotation = s.getRotation().name().toLowerCase();
@@ -49,13 +45,6 @@ public class SkullAction extends GenericAction {
 			this.x = block.getLocation().getX();
 			this.y = block.getLocation().getY();
 			this.z = block.getLocation().getZ();
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

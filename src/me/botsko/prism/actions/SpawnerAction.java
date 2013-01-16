@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.entity.EntityType;
@@ -27,13 +25,11 @@ public class SpawnerAction extends GenericAction {
 	 */
 	public SpawnerAction( ActionType action_type, Block block, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new SpawnerActionData();
 		
-		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(block != null){
 			CreatureSpawner s = (CreatureSpawner)block.getState();
 			actionData.entity_type = s.getSpawnedType().name().toLowerCase();
@@ -42,13 +38,6 @@ public class SpawnerAction extends GenericAction {
 			this.x = block.getLocation().getX();
 			this.y = block.getLocation().getY();
 			this.z = block.getLocation().getZ();
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

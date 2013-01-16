@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -34,13 +32,12 @@ public class BlockShiftAction extends GenericAction {
 	 */
 	public BlockShiftAction( ActionType action_type, Block from, Location to, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new BlockShiftActionData();
 		
 		// Store information for the action
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(from != null){
 			this.block = from;
 			actionData.block_id = block.getTypeId();
@@ -52,13 +49,6 @@ public class BlockShiftAction extends GenericAction {
 			this.x = to.getX();
 			this.y = to.getY();
 			this.z = to.getZ();
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Set data from current block

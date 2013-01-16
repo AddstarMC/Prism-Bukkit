@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.Location;
 
 public class CommandAction extends GenericAction {
@@ -19,22 +17,15 @@ public class CommandAction extends GenericAction {
 	 * @param player
 	 */
 	public CommandAction( ActionType action_type, String command, Location loc, String player_name ){
-		if(action_type != null){
-			this.type = action_type;
-		}
+		
+		super(action_type, player_name);
+		
 		if(command != null){
 			this.data = command;
 			this.world_name = loc.getWorld().getName();
 			this.x = loc.getX();
 			this.y = loc.getY();
 			this.z = loc.getZ();
-		}
-		if(player_name != null){
-			this.player_name = player_name;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 	}
 	

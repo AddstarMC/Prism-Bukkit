@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import java.text.SimpleDateFormat;
+
 import me.botsko.prism.MaterialAliases;
 
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
@@ -71,6 +73,28 @@ public class GenericAction implements Action {
 	 * 
 	 */
 	protected String data;
+	
+	
+	
+	/**
+	 * 
+	 * @param action_type
+	 * @param block
+	 * @param player
+	 */
+	public GenericAction( ActionType action_type, String player ){
+		
+		// Store information for the action
+		if(action_type != null){
+			this.type = action_type;
+		}
+		if(player != null){
+			this.player_name = player;
+		}
+		if(action_time == null){
+			setAction_time(null);
+		}
+	}
 
 
 	/**
@@ -101,6 +125,10 @@ public class GenericAction implements Action {
 	 * @param action_time the action_time to set
 	 */
 	public void setAction_time(String action_time) {
+		if(action_time == null){
+			java.util.Date date= new java.util.Date();
+			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
+		}
 		this.action_time = action_time;
 	}
 

@@ -1,6 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Location;
@@ -26,9 +25,9 @@ public class ItemStackAction extends GenericAction {
 	 * @param player
 	 */
 	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, Location loc, String player_name ){
-		if(action_type != null){
-			this.type = action_type;
-		}
+		
+		super(action_type, player_name);
+		
 		if(item != null){
 			this.item = item;
 			this.quantity = quantity;
@@ -37,13 +36,7 @@ public class ItemStackAction extends GenericAction {
 			this.y = loc.getY();
 			this.z = loc.getZ();
 		}
-		if(player_name != null){
-			this.player_name = player_name;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
-		}
+		
 		// Set data from current block
 		setDataFromItem();
 		setItemStackFromData();

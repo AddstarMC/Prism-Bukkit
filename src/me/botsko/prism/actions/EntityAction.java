@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.SimpleDateFormat;
-
 import org.bukkit.DyeColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
@@ -38,12 +36,11 @@ public class EntityAction extends GenericAction {
 	 */
 	public EntityAction( ActionType action_type, Entity entity, String player ){
 		
+		super(action_type, player);
+		
 		// Build an object for the specific details of this action
 		actionData = new EntityActionData();
 				
-		if(action_type != null){
-			this.type = action_type;
-		}
 		if(entity != null){
 			this.actionData.entity_name = entity.getType().getName().toLowerCase();
 			this.world_name = entity.getWorld().getName();
@@ -83,13 +80,6 @@ public class EntityAction extends GenericAction {
 	                }
 	            }
 	    	}
-		}
-		if(player != null){
-			this.player_name = player;
-		}
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
 		}
 		
 		// Save entity data from current entity
