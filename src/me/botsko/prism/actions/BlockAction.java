@@ -4,6 +4,11 @@ import org.bukkit.block.Block;
 
 public class BlockAction extends GenericAction {
 	
+	public class BlockActionData {
+		public int block_id;
+		public byte block_subid;
+	}
+	
 	/**
 	 * 
 	 */
