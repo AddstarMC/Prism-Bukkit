@@ -31,9 +31,11 @@ rm plugin-new.yml
 # replace the old one
 mv plugin-old.yml plugin.yml
 
-
 # send file to amazon bucket
 s3cmd put --acl-public Prism-$gitvers.jar s3://botsko/Prism/Prism-$gitvers.jar
+
+# Remove the file
+rm Prism-$gitvers.jar
 
 
 echo "BUILD COMPLETE"
