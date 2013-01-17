@@ -110,6 +110,26 @@ public class BlockAction extends GenericAction {
 	
 	/**
 	 * 
+	 * @param id
+	 */
+	public void setBlockId( int id ){
+		actionData.block_id = id;
+		setDataFromObject();
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setBlockSubId( byte id ){
+		actionData.block_subid = id;
+		setDataFromObject();
+	}
+	
+	
+	/**
+	 * 
 	 * @return
 	 */
 	public String getNiceName(){
@@ -146,29 +166,9 @@ public class BlockAction extends GenericAction {
 		
 		/**
 		 * 
-		 * @param id
-		 */
-		public void setBlockId( int id ){
-			block_id = id;
-			setDataFromObject();
-		}
-		
-		
-		/**
-		 * 
 		 */
 		public byte getBlockSubid(){
 			return block_subid;
-		}
-		
-		
-		/**
-		 * 
-		 * @param id
-		 */
-		public void setBlockSubId( byte id ){
-			block_subid = id;
-			setDataFromObject();
 		}
 	}
 	
