@@ -93,8 +93,20 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 		
 		// Setup databases
-		setupDatabase();
-		
+		try{
+			setupDatabase();
+		} catch (SQLException ex){
+			log.severe("An error was encountered when enabling Prism " + this.plugin_version + ". Please check to see if the " +
+					"Prism config file's MySQL information is correct and that your MySQL server is running, then restart the server.");
+			log.severe("Disabling plugin...");
+			
+			if(this.config.getBoolean("prism.debug")){
+				ex.printStackTrace();
+			}
+			
+			this.setEnabled(false);
+			return;
+		}
 		// Plugins we use
 		checkPluginDependancies();
 		
@@ -165,12 +177,11 @@ public class Prism extends JavaPlugin {
 	
 	
 	/**
+	 * @throws SQLException 
 	 * 
 	 */
-	protected void setupDatabase(){
-
-		try{
-	        dbc();
+	protected void setupDatabase() throws SQLException{
+		dbc();
 	        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 	        		"`id` int(11) unsigned NOT NULL auto_increment," +
 	        		"`action_time` datetime NOT NULL," +
@@ -188,10 +199,6 @@ public class Prism extends JavaPlugin {
             Statement st = conn.createStatement();
             st.executeUpdate(query);
             conn.close();
-	    }
-	    catch (SQLException e){
-	        e.printStackTrace();
-	    }	
 	}
 	
 	
