@@ -108,6 +108,24 @@ public class BlockAction extends GenericAction {
 	}
 	
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getNiceName(){
+		String name = "";
+		if(actionData instanceof SkullActionData){
+			SkullActionData ad = (SkullActionData) getActionData();
+			name += ad.skull_type + " ";
+		}
+		else if(actionData instanceof SpawnerActionData){
+			SpawnerActionData ad = (SpawnerActionData) getActionData();
+			name += ad.entity_type + " ";
+		}
+		name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
+		return name;
+	}
+	
 	
 	/**
 	 * 
@@ -152,15 +170,6 @@ public class BlockAction extends GenericAction {
 			block_subid = id;
 			setDataFromObject();
 		}
-		
-		
-		/**
-		 * 
-		 * @return
-		 */
-		public String getNiceName(){
-			return materialAliases.getItemStackAliasById(block_id, block_subid);
-		}
 	}
 	
 	
@@ -188,15 +197,6 @@ public class BlockAction extends GenericAction {
 		 */
 		public int getDelay(){
 			return delay;
-		}
-		
-		
-		/**
-		 * 
-		 * @return
-		 */
-		public String getNiceName(){
-			return entity_type + " spawner";
 		}
 	}
 	
@@ -233,15 +233,6 @@ public class BlockAction extends GenericAction {
 				return BlockFace.valueOf(rotation.toUpperCase());
 			}
 			return null;
-		}
-		
-		
-		/**
-		 * 
-		 * @return
-		 */
-		public String getNiceName(){
-			return skull_type + " skull";
 		}
 	}
 }
