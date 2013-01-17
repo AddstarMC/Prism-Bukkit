@@ -3,6 +3,7 @@ package me.botsko.prism.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Mysql {
 	
@@ -41,7 +42,7 @@ public class Mysql {
      */
 	public Connection getConn(){
 		
-		String dsn = ("jdbc:mysql://" + mysql_hostname + ":" + mysql_port + "/" + mysql_database);
+		String dsn = ("jdbc:mysql://" + mysql_hostname + ":" + mysql_port);
 
 		try {
 			if (conn == null || conn.isClosed() || !conn.isValid(1)) {
@@ -60,6 +61,11 @@ public class Mysql {
 					return null;
 				}
 			}
+			
+			Statement st = conn.createStatement();
+			st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + mysql_database + "`");
+			st.executeUpdate("USE `" + mysql_database + "`");
+			
 		} catch (SQLException e) {
 //			log("Error could not Connect to db " + dsn + ": " + e.getMessage());
 		}

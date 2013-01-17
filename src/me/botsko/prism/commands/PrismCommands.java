@@ -28,10 +28,11 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism lookup 
 		 */
-		addSub("l", "prism.lookup")
+		addSub("lookup", "prism.lookup")
 		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Search for actions.")
+		.addAlias("l")
 		.setHandler(new LookupCommand(plugin));
 		
 		/**
@@ -49,13 +50,15 @@ public class PrismCommands extends Executor {
 		.setMinArgs(1)
 		.setUsage("[page number]")
 		.setDescription("Displays [page] of the most recent search results.")
+		.addAlias("pg")
 		.setHandler(new PageCommand(plugin));
 		
 		/**
 		 * /prism i
 		 */
-		addSub("i", "prism.lookup")
+		addSub("inspect", "prism.lookup")
 		.setDescription("Toggles the block inspection tool to your hand.")
+		.addAlias("i")
 		.setHandler(new InspectCommand(plugin));
 		
 		/**
@@ -71,7 +74,7 @@ public class PrismCommands extends Executor {
 		addSub("tp", "prism.tp")
 		.setMinArgs(1)
 		.setUsage("[record id]")
-		.setDescription("Teleport to recordd [id].")
+		.setDescription("Teleport to record [id].")
 		.setHandler(new TeleportCommand(plugin));
 		
 		/**
