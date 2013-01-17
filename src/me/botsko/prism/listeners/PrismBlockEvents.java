@@ -46,12 +46,12 @@ public class PrismBlockEvents implements Listener {
 	 */
 	private Prism plugin;
 	
-	/**
-	 * We have to track the coords a blockfromto event triggers
-	 * a block form for, because it likes to fire several times
-	 * for the same block. It's a pretty silly thing.
-	 */
-	protected ArrayList<String> coordsUsed = new ArrayList<String>();
+//	/**
+//	 * We have to track the coords a blockfromto event triggers
+//	 * a block form for, because it likes to fire several times
+//	 * for the same block. It's a pretty silly thing.
+//	 */
+//	protected ArrayList<String> coordsUsed = new ArrayList<String>();
 	
 	
 	/**
@@ -402,9 +402,6 @@ public class PrismBlockEvents implements Listener {
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 		
-		// Clear the coords used so that we properly track a second bucket dump in the same area
-		coordsUsed.clear();
-		
 		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
 			plugin.useMonitor.alertOnItemUse(player,"poured lava");
 		}
@@ -458,13 +455,6 @@ public class PrismBlockEvents implements Listener {
 		
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
-		
-		// This event fires multiples per coordinate. We can reduce the load
-		// by only storing one.
-		String coordsKey = from.getX()+":"+from.getY()+":"+from.getZ();
-		if(coordsUsed.contains(coordsKey)) return;
-		// Add coords to list the event has already fired for
-		coordsUsed.add(coordsKey);
 		
 		// Record water flow
 		if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
