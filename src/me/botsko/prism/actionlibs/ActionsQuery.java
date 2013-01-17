@@ -136,7 +136,7 @@ public class ActionsQuery {
 	    				UseAction use = new UseAction(null, null, null, null);
 	    				baseAction = use;
 	    			} else {
-	    				plugin.log("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
+	    				plugin.debug("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}
 	    			
 	    			if(baseAction == null){
