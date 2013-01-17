@@ -304,7 +304,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void actionRecorderTask(){
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new ActionRecorder(prism), 3L, 3L);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new ActionRecorder(prism), 3L, 3L);
 	}
 	
 	

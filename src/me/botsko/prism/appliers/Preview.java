@@ -378,7 +378,6 @@ public class Preview implements Previewable {
 	 */
 	protected ChangeResultType removeBlock( Block block ){
 		
-		// @todo ensure we're not removing a new block that's been placed by someone else
 		if(!block.getType().equals(Material.AIR)){
 			if(!is_preview){
 				
