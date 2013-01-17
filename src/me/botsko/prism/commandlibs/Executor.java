@@ -21,7 +21,7 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	public java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
+	public static java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
 
 	
 	/**

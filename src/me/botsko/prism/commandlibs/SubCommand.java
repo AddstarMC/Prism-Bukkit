@@ -1,5 +1,7 @@
 package me.botsko.prism.commandlibs;
 
+import java.util.ArrayList;
+
 
 public final class SubCommand {
 	private final String name;
@@ -9,6 +11,7 @@ public final class SubCommand {
 	private String description;
 	private String usage = null;
 	private String perm_node;
+	private ArrayList<String> aliases = new ArrayList<String>();
 	
 	/**
 	 * 
@@ -88,6 +91,11 @@ public final class SubCommand {
 	 */
 	public SubCommand setHandler(SubHandler handler) {
 		this.handler = handler;
+
+		for(String alias : this.getAliases()){
+			Executor.subcommands.put(alias, this);
+		}
+		
 		return this;
 	}
 	
@@ -156,6 +164,24 @@ public final class SubCommand {
 	public SubCommand setDescription(String description) {
 		this.description = description;
 		return this;
+	}
+	
+	/**
+	 * 
+	 * @param alais
+	 * @return
+	 */
+	public SubCommand addAlias(String alias) {
+		this.aliases.add(alias);
+		return this;
+	}
+	
+	/**
+	 * 
+	 * @return aliases
+	 */
+	public ArrayList<String> getAliases(){
+		return this.aliases;
 	}
 	
 }
