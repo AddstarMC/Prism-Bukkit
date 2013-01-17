@@ -402,6 +402,9 @@ public class PrismBlockEvents implements Listener {
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
 		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 		
+		// Clear the coords used so that we properly track a second bucket dump in the same area
+		coordsUsed.clear();
+		
 		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
 			plugin.useMonitor.alertOnItemUse(player,"poured lava");
 		}
