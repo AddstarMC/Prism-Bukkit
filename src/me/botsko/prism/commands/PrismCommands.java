@@ -23,7 +23,6 @@ public class PrismCommands extends Executor {
 	 */
 	private void setupCommands() {
 		
-		// @todo add subcommand aliases
 
 		/**
 		 * /prism lookup 
@@ -65,6 +64,7 @@ public class PrismCommands extends Executor {
 		 * /prism wand
 		 */
 		addSub("wand", "prism.rollback")
+		.addAlias("w")
 		.setDescription("Toggles the wand.")
 		.setHandler(new WandCommand(plugin));
 		
@@ -139,6 +139,7 @@ public class PrismCommands extends Executor {
 		 * /prism ?
 		 */
 		addSub("?", "prism.help")
+		.addAlias("help")
 		.setDescription("This. Helpception!")
 		.setHandler(new HelpCommand(plugin));
 		
