@@ -13,6 +13,8 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 "Just switched from coreprotect to this. Totally worth it."
 
+"After 24 hours I can tell that it seems to be the best anti-griefing plugin I know."
+
 "I've only been using it for a bit and I'm beyond impressed!"
 
 ## Official Documentation
