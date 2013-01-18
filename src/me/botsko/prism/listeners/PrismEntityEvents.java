@@ -274,7 +274,7 @@ public class PrismEntityEvents implements Listener {
 		String name;
 		ActionType action = ActionType.ENTITY_EXPLODE;
 		if(event.getEntity() != null){
-			name = event.getEntityType().getName().toLowerCase();
+			name = "";
 			if(event.getEntity() instanceof Creeper){
 				action = ActionType.CREEPER_EXPLODE;
 				name = "creeper";

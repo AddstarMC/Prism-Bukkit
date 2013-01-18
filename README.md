@@ -9,9 +9,11 @@ Prism not only offers the standard features you expect, but a **lot** more.
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
 *
 
-#### About the Beta
+#### Users Say
 
-We trust Prism enough to use it on our live 200+ player a day server, and Prism is very well tested on multiple dev and live servers, but we're now opening to the public to try. Prism is most likely very stable and is safe for use but during the initial beta period we'll update to resolve any critical issues as fast as possible.
+"Just switched from coreprotect to this. Totally worth it."
+
+"I've only been using it for a bit and I'm beyond impressed!"
 
 ## Official Documentation
 
