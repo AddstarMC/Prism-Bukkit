@@ -176,8 +176,9 @@ public class Prism extends JavaPlugin {
 
 			try {
 				if( conn == null || conn.isClosed() || !conn.isValid(1) ){
-					if (conn != null && !conn.isClosed()) {
+					if (conn != null && !conn.isClosed()){
 						try {
+							this.debug("Closing MySQL connection that's no longer valid.");
 							conn.close();
 						} catch (Exception e) {
 						}
@@ -188,21 +189,20 @@ public class Prism extends JavaPlugin {
 						conn = DriverManager.getConnection(dsn, config.getString("prism.mysql.username"), config.getString("prism.mysql.password"));
 					}
 					if(conn == null || conn.isClosed()){
-						return;
+						this.debug("Error: MySQL database connection *still* not established. ");
+						disablePlugin();
 					}
 				}
-				
-				Statement st = conn.createStatement();
-				st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + config.getString("prism.mysql.database") + "`");
-				st.executeUpdate("USE `" + config.getString("prism.mysql.database") + "`");
-				
-				if(conn == null){
-					this.log("Error: MySQL database connection was not established. Please check your configuration file.");
+				if( conn == null || conn.isClosed() || !conn.isValid(1) ){
+					this.debug("Error: MySQL database connection was not established. Please check your configuration file.");
 					disablePlugin();
+				} else {
+					Statement st = conn.createStatement();
+					st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + config.getString("prism.mysql.database") + "`");
+					st.executeUpdate("USE `" + config.getString("prism.mysql.database") + "`");
 				}
-				
 			} catch (SQLException e) {
-				this.log("Error: MySQL database connection was not established. " + e.getMessage());
+				this.debug("Error: MySQL database connection was not established. " + e.getMessage());
 			}
 		}
 	}
