@@ -2,6 +2,7 @@ package me.botsko.prism;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -16,7 +17,6 @@ import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
-import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
@@ -156,14 +156,34 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void dbc(){
-		Mysql mysql = new Mysql(
-				config.getString("prism.mysql.username"), 
-				config.getString("prism.mysql.password"), 
-				config.getString("prism.mysql.hostname"), 
-				config.getString("prism.mysql.database"), 
-				config.getString("prism.mysql.port")
-		);
-		conn = mysql.getConn();
+
+		String dsn = ("jdbc:mysql://" + config.getString("prism.mysql.hostname") + ":" + config.getString("prism.mysql.port"));
+
+		try {
+			if (conn == null || conn.isClosed() || !conn.isValid(1)) {
+				if (conn != null && !conn.isClosed()) {
+					try {
+						conn.close();
+					} catch (Exception e) {
+					}
+				}
+				if ((config.getString("prism.mysql.username").equalsIgnoreCase("")) && (config.getString("prism.mysql.password").equalsIgnoreCase(""))){
+					conn = DriverManager.getConnection(dsn);
+				} else {
+					conn = DriverManager.getConnection(dsn, config.getString("prism.mysql.username"), config.getString("prism.mysql.password"));
+				}
+				if(conn == null || conn.isClosed()){
+					return;
+				}
+			}
+			
+			Statement st = conn.createStatement();
+			st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + config.getString("prism.mysql.database") + "`");
+			st.executeUpdate("USE `" + config.getString("prism.mysql.database") + "`");
+			
+		} catch (SQLException e) {
+			this.log("Error: MySQL database connection was not established. " + e.getMessage());
+		}
 		if(conn == null){
 			this.log("Error: MySQL database connection was not established. Please check your configuration file.");
 			disablePlugin();

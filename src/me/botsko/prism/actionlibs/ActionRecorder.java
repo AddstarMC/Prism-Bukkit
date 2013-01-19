@@ -197,8 +197,8 @@ public class ActionRecorder implements Runnable {
 	    try {
 	    	
 	        plugin.dbc();
-	        if(plugin.conn == null){
-				plugin.log("Prism database error. Connection should be there but it's not. These actions weren't logged.");
+	        if(plugin.conn == null || plugin.conn.isClosed()){
+				plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 				return;
 			}
 	        plugin.conn.setAutoCommit(false);
@@ -221,6 +221,10 @@ public class ActionRecorder implements Runnable {
 	            i++;
 	        }
 	        s.executeBatch();
+	        // One last check that during the batch processing the connection is still open
+	        if(plugin.conn == null || plugin.conn.isClosed()){
+	        	plugin.dbc();
+	        }
 	        plugin.conn.commit();
 	        s.close();
             plugin.conn.close();
