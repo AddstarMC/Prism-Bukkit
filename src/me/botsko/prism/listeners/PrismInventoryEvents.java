@@ -22,10 +22,6 @@ import org.bukkit.inventory.ItemStack;
 
 public class PrismInventoryEvents implements Listener {
 
-	/**
-	 * 
-	 */
-	private Prism plugin;
 	
 	/**
 	 * 
@@ -56,15 +52,6 @@ public class PrismInventoryEvents implements Listener {
 	 * 
 	 */
 	private ItemStack cursoritem;
-	
-	
-	/**
-	 * 
-	 * @param plugin
-	 */
-	public PrismInventoryEvents( Prism plugin ){
-		this.plugin = plugin;
-	}
 	
 	
 	/**
@@ -221,7 +208,7 @@ public class PrismInventoryEvents implements Listener {
 	    
 	    // Record it!
 	    if(actionType != null && containerLoc != null && item != null){
-		    plugin.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, containerLoc, player.getName()) );
+		    Prism.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, containerLoc, player.getName()) );
 	    }
 	}
 }

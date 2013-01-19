@@ -55,7 +55,8 @@ public enum ActionType {
 	TREE_GROW(true, true, true, "grow", "grew"),
 	WATER_BREAK(false, true, true, "block", "broke"),
 	WATER_BUCKET(false, false, false, null, "poured"),
-	WATER_FLOW(true, true, true, "block", "flowed into");
+	WATER_FLOW(true, true, true, "block", "flowed into"),
+	WORLD_EDIT(true, true, true, "worldedit", "edited");
 
 	
 	/**

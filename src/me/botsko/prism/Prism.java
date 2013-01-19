@@ -13,6 +13,7 @@ import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
+import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.db.Mysql;
@@ -49,7 +50,7 @@ public class Prism extends JavaPlugin {
 	public Connection conn = null;
 	public WorldEditPlugin plugin_worldEdit = null;
 	
-	public ActionRecorder actionsRecorder;
+	public static ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
 	public UseMonitor useMonitor;
@@ -106,13 +107,13 @@ public class Prism extends JavaPlugin {
 			// Assign event listeners
 			getServer().getPluginManager().registerEvents(new PrismBlockEvents( this ), this);
 			getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
-			getServer().getPluginManager().registerEvents(new PrismWorldEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
-			getServer().getPluginManager().registerEvents(new PrismInventoryEvents( this ), this);
+			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(), this);
 			
 			// Assign listeners to our own events
-	//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents( this ), this);
-			getServer().getPluginManager().registerEvents(new PrismMiscEvents( this ), this);
+	//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents(), this);
+			getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
 			
 			// Add commands
 			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
@@ -218,6 +219,7 @@ public class Prism extends JavaPlugin {
 		Plugin we = getServer().getPluginManager().getPlugin("WorldEdit");
 		if (we != null) {
 			plugin_worldEdit = (WorldEditPlugin)we;
+			PrismBlockEditSessionFactory.initialize();
 			log("WorldEdit found. Associated features enabled.");
 		}
 		else {

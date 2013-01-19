@@ -12,20 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.StructureGrowEvent;
 
 public class PrismWorldEvents implements Listener {
-
-	/**
-	 * 
-	 */
-	private Prism plugin;
-	
-	
-	/**
-	 * 
-	 * @param plugin
-	 */
-	public PrismWorldEvents( Prism plugin ){
-		this.plugin = plugin;
-	}
 	
 	
 	/**
@@ -46,11 +32,11 @@ public class PrismWorldEvents implements Listener {
 	
 			//If a player did it
 			if (event.getPlayer() != null) {
-				plugin.actionsRecorder.addToQueue( new GrowAction(type, block, event.getPlayer().getName()) );
+				Prism.actionsRecorder.addToQueue( new GrowAction(type, block, event.getPlayer().getName()) );
 			}
 			//If the environment did it
 			else {
-				plugin.actionsRecorder.addToQueue( new GrowAction(type, block, "Environment") );
+				Prism.actionsRecorder.addToQueue( new GrowAction(type, block, "Environment") );
 			}
 		}
 	}

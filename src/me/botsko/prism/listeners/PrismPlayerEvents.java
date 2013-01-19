@@ -49,7 +49,7 @@ public class PrismPlayerEvents implements Listener {
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
 		if(!event.isCancelled()){
-			plugin.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+			Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
 		}
     }
 	
@@ -79,7 +79,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
-		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -89,7 +89,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
-		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -136,7 +136,7 @@ public class PrismPlayerEvents implements Listener {
 					case ENDER_CHEST:
 					case ANVIL:
 					case BREWING_STAND:
-						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
 						break;
 					case WOODEN_DOOR:
 					case TRAP_DOOR:
@@ -144,7 +144,7 @@ public class PrismPlayerEvents implements Listener {
 					case LEVER:
 					case STONE_BUTTON:
 					case WOOD_BUTTON:
-						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
 						break;
 					case LOG:
 						recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
@@ -158,7 +158,7 @@ public class PrismPlayerEvents implements Listener {
 						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 					case TNT:
 						if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
-							plugin.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
+							Prism.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
 						}
 					default:
 						break;
@@ -173,7 +173,7 @@ public class PrismPlayerEvents implements Listener {
 			} 
 		} if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
+				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 			}
 		}
 	}
@@ -197,7 +197,7 @@ public class PrismPlayerEvents implements Listener {
 			action.setWorld_name(newLoc.getWorld().getName());
 			action.setBlockId( 127 );
 			action.setBlockSubId( (byte)1 );
-			plugin.actionsRecorder.addToQueue( action );
+			Prism.actionsRecorder.addToQueue( action );
 		}
 	}
 	
@@ -211,7 +211,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	protected void recordBonemealEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		if( inhand.getTypeId() == 351 && inhand.getDurability() == 15){
-			plugin.actionsRecorder.addToQueue( new UseAction(ActionType.BONEMEAL_USE, "bonemeal", block, player) );
+			Prism.actionsRecorder.addToQueue( new UseAction(ActionType.BONEMEAL_USE, "bonemeal", block, player) );
 		}
 	}
 	
@@ -224,6 +224,6 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
-		plugin.actionsRecorder.addToQueue( new UseAction(ActionType.SPAWNEGG_USE, "monster egg", block, player) );
+		Prism.actionsRecorder.addToQueue( new UseAction(ActionType.SPAWNEGG_USE, "monster egg", block, player) );
 	}
 }

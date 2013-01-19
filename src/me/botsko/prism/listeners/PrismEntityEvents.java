@@ -72,7 +72,7 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
 					return;
 		        	
 				}
@@ -82,7 +82,7 @@ public class PrismEntityEvents implements Listener {
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
 						return;
 			        	
 					}
@@ -94,7 +94,7 @@ public class PrismEntityEvents implements Listener {
 						name = damager.getType().getName();
 					}
 					if(name == null) name = "unknown";
-					plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
+					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
 				}
 			} else {
 				
@@ -108,7 +108,7 @@ public class PrismEntityEvents implements Listener {
 				}
 				
 				// Record the death as natural
-				plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, killer) );
+				Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, killer) );
 				
 			}
 		} else {
@@ -121,12 +121,12 @@ public class PrismEntityEvents implements Listener {
             	String owner = DeathUtils.getTameWolfOwner(event);
             	attacker = owner+"'s wolf";
             }
-	        plugin.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
+	        Prism.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
 	        
 	        // Log item drops
 	        if( !event.getDrops().isEmpty() ){
 	        	for(ItemStack i : event.getDrops()){
-	        		plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, i.getAmount(), p.getLocation(), p.getName()) );
+	        		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, i.getAmount(), p.getLocation(), p.getName()) );
 	        	}
 	        }
 		}
@@ -141,7 +141,7 @@ public class PrismEntityEvents implements Listener {
 	public void onCreatureSpawn(final CreatureSpawnEvent event){
 		String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
 		if(reason.equals("natural")) return;
-		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
+		Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
 	}
 	
 	
@@ -154,7 +154,7 @@ public class PrismEntityEvents implements Listener {
         if (event.getTarget() instanceof Player) {
         	if(event.getEntity().getType().equals(EntityType.CREEPER)){
 	            Player player = (Player) event.getTarget();
-	            plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );
+	            Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );
         	}
         }
     }
@@ -166,7 +166,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
-		plugin.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SHEAR, event.getEntity(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SHEAR, event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -176,7 +176,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
 	}
 	
 	
@@ -186,7 +186,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -212,7 +212,7 @@ public class PrismEntityEvents implements Listener {
 		String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
 		if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 			String player = plugin.preplannedBlockFalls.get(coord_key);
-			plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, e, player) );
+			Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, e, player) );
 			plugin.preplannedBlockFalls.remove(coord_key);
 		}
 	}
@@ -232,7 +232,7 @@ public class PrismEntityEvents implements Listener {
 		} else {
 			breaking_name = e.getType().getName();
 		}
-		plugin.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+		Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
 	}
 	
 	
@@ -247,17 +247,17 @@ public class PrismEntityEvents implements Listener {
 		// Technically I think that I really should name it "entity-eat" for better consistency and 
 		// in case other mobs ever are made to eat. But that's not as fun
 		if(event.getEntityType().equals(EntityType.SHEEP)){
-			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.SHEEP_EAT, event.getBlock(), entity) );
+			Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.SHEEP_EAT, event.getBlock(), entity) );
 		} else {
 			
 			if(event.getEntity() instanceof Enderman){
 	
 				if (event.getTo() == Material.AIR){
-					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PLACE, event.getBlock(), entity) );
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PLACE, event.getBlock(), entity) );
 				} else {
 					Enderman enderman = (Enderman) event.getEntity();
 					if (enderman.getCarriedMaterial() != null) {
-						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PICKUP, event.getBlock(), entity) );
+						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PICKUP, event.getBlock(), entity) );
 					}
 				}
 			}
@@ -302,7 +302,7 @@ public class PrismEntityEvents implements Listener {
 			// Log items from chests
 			be.logItemRemoveFromDestroyedContainer(name, block);
 			// Record blocks explode
-			plugin.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
+			Prism.actionsRecorder.addToQueue( new BlockAction(action, block, name) );
 			// look for relationships
 			be.logBlockRelationshipsForBlock( name, block );
 		}

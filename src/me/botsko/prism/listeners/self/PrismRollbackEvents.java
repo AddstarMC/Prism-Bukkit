@@ -15,21 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class PrismRollbackEvents implements Listener {
-	
-	/**
-	 * 
-	 */
-	private Prism plugin;
 
-	
-	/**
-	 * 
-	 * @param plugin
-	 */
-	public PrismRollbackEvents( Prism plugin ){
-		this.plugin = plugin;
-	}
-	
 	
 	/**
 	 * 
@@ -44,11 +30,11 @@ public class PrismRollbackEvents implements Listener {
 			
 			// Create an entry for the rollback as a whole
 			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
-			int id = plugin.actionsRecorder.insertActionIntoDatabase( primaryAction );
+			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;
 			}
-			plugin.actionsRecorder.shouldImmediatelyProcessQueue(false);
+			Prism.actionsRecorder.shouldImmediatelyProcessQueue(false);
 			for(BlockStateChange stateChange : blockStateChanges){
 				
 				BlockState orig = stateChange.getOriginalBlock();
@@ -61,9 +47,9 @@ public class PrismRollbackEvents implements Listener {
 				action.setY(orig.getY());
 				action.setZ(orig.getZ());
 
-				plugin.actionsRecorder.addToQueue( action );
+				Prism.actionsRecorder.addToQueue( action );
 			}
-			plugin.actionsRecorder.saveQueue();
+			Prism.actionsRecorder.saveQueue();
 		}
 	}
 }

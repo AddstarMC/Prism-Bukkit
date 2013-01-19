@@ -6,3 +6,4 @@ commands:
    prism:
       description: Base command for everything Prism
       usage: /prism ?
+      aliases: [pr]

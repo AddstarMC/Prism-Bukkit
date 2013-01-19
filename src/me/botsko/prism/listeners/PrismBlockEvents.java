@@ -76,7 +76,7 @@ public class PrismBlockEvents implements Listener {
 			Chest container = (Chest) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public class PrismBlockEvents implements Listener {
 			Dispenser container = (Dispenser) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
 				}
 			}
 		}
@@ -203,7 +203,7 @@ public class PrismBlockEvents implements Listener {
 		// Change handling a bit if it's a long block
 		block = properlyLogDoubleLengthBlocks(block);
 		
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 		
 		// log items removed from chest
 		logItemRemoveFromDestroyedContainer( player.getName(), block );
@@ -224,7 +224,7 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, block, player.getName()) );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_PLACE, block, player.getName()) );
 	
 		// Pass to the placement alerter
 		plugin.useMonitor.alertOnBlockPlacement(player, event.getBlock());
@@ -238,7 +238,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getBlock(), "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getBlock(), "Environment") );
 	}
 	
 	
@@ -249,7 +249,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(final BlockFadeEvent event) {
 		if(event.getBlock().getType().equals(Material.FIRE)) return;
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
 	}
 	
 	
@@ -259,7 +259,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onLeavesDecay(final LeavesDecayEvent event) {
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LEAF_DECAY, event.getBlock(), "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.LEAF_DECAY, event.getBlock(), "Environment") );
 	}
 	
 
@@ -270,7 +270,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(final BlockBurnEvent event) {
 		Block block = event.getBlock();
-		plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
 		// Change handling a bit if it's a long block
 		block = properlyLogDoubleLengthBlocks(block);
@@ -296,7 +296,7 @@ public class PrismBlockEvents implements Listener {
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
 				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 					String player = plugin.preplannedBlockFalls.get(coord_key);
-					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FALL, b, player) );
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FALL, b, player) );
 					plugin.preplannedBlockFalls.remove(coord_key);
 				}
 			}
@@ -316,7 +316,7 @@ public class PrismBlockEvents implements Listener {
 //					plugin.debug("Seeking block (side) detachment at: " + coord_key);
 					if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 						String player = plugin.preplannedBlockFalls.get(coord_key);
-						plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
+						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
 						plugin.preplannedBlockFalls.remove(coord_key);
 					}
 				}
@@ -332,7 +332,7 @@ public class PrismBlockEvents implements Listener {
 //				plugin.debug("Seeking block (below) detachment at: " + coord_key);
 				if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 					String player = plugin.preplannedBlockFalls.get(coord_key);
-					plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, b, player) );
 					plugin.preplannedBlockFalls.remove(coord_key);
 				}
 			}
@@ -346,7 +346,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(final SignChangeEvent event) {
-		plugin.actionsRecorder.addToQueue( new SignAction(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new SignAction(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer().getName()) );
 	}
 
 
@@ -385,7 +385,7 @@ public class PrismBlockEvents implements Listener {
 				plugin.useMonitor.alertOnItemUse(player,"used a lighter");
 			}
 			
-			plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
+			Prism.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
 			
 		}
 	}
@@ -400,7 +400,7 @@ public class PrismBlockEvents implements Listener {
 		
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
-		plugin.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 		
 		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
 			plugin.useMonitor.alertOnItemUse(player,"poured lava");
@@ -423,7 +423,7 @@ public class PrismBlockEvents implements Listener {
 
 				// Pistons move blocks to the block next to them. If nothing is there it shows as air.
 				// We should record the from coords, to coords, and block replaced, as well as the block moved.
-				plugin.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, block, block.getRelative(event.getDirection()).getLocation(), "Piston") );
+				Prism.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, block, block.getRelative(event.getDirection()).getLocation(), "Piston") );
 				
 			}
 		}
@@ -439,7 +439,7 @@ public class PrismBlockEvents implements Listener {
 		if(!event.isSticky()) return;
 		Block block = event.getBlock();
 		if(block.getType().equals(Material.AIR)) return;
-		plugin.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, event.getRetractLocation().getBlock(), block.getRelative(event.getDirection()).getLocation(), "Piston") );
+		Prism.actionsRecorder.addToQueue( new BlockShiftAction(ActionType.BLOCK_SHIFT, event.getRetractLocation().getBlock(), block.getRelative(event.getDirection()).getLocation(), "Piston") );
 	}
 	
 	
@@ -458,20 +458,20 @@ public class PrismBlockEvents implements Listener {
 		
 		// Record water flow
 		if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getBlock(), "Water"));
+			Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_FLOW, event.getBlock(), "Water"));
 		}
 		
 		// Record lava flow
 		if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getBlock(), "Lava"));
+			Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_FLOW, event.getBlock(), "Lava"));
 		}
 		
 		// Watch for blocks that the liquid can break
 		if(BlockUtils.canFlowBreakMaterial(to.getType())){
 			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_BREAK, event.getToBlock(), "Water"));
+				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.WATER_BREAK, event.getToBlock(), "Water"));
 			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_BREAK, event.getToBlock(), "Lava"));
+				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.LAVA_BREAK, event.getToBlock(), "Lava"));
 			}
 		}
 		
@@ -484,7 +484,7 @@ public class PrismBlockEvents implements Listener {
 		if( from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER) ) {
 			Block newTo = event.getToBlock();
 			newTo.setType(Material.STONE);
-			plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
+			Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, newTo, "Environment") );
 		}
 		
 	

@@ -115,6 +115,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.water-break", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", true);
+		config.addDefault("prism.tracking.world-edit", true);
 		
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);

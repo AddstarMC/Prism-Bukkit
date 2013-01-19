@@ -26,6 +26,7 @@ import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.actions.WorldeditAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 
@@ -135,6 +136,10 @@ public class ActionsQuery {
 	    			else if( actionType.requiresHandler("use") ){
 	    				UseAction use = new UseAction(null, null, null, null);
 	    				baseAction = use;
+	    			}
+	    			else if( actionType.requiresHandler("worldedit") ){
+	    				WorldeditAction wea = new WorldeditAction(null, null, 0, 0, 0, 0, null);
+	    				baseAction = wea;
 	    			} else {
 	    				plugin.debug("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
 	    			}
