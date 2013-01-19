@@ -308,10 +308,21 @@ public class ActionsQuery {
 				"prism_actions.x, " +
 				"prism_actions.y, " +
 				"prism_actions.z, " +
-				"prism_actions.data, " +
+				"prism_actions.data, ";
+		
+		if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
+			query +=
+				"date(prism_actions.action_time, '%d/%m/%Y') display_date, " +
+				"time(prism_actions.action_time, '%H:%M') display_time ";
+		}
+		else if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+			query +=
 				"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, " +
-				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time " +
-				"FROM prism_actions";
+				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time ";
+		}
+		
+		
+		query += "FROM prism_actions";
 		
 		// If the user has elected to enforce block override prevention,
 		// we'll run join conditions to exclude older records for a specific

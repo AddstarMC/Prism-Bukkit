@@ -2,6 +2,7 @@ package me.botsko.prism;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
@@ -16,7 +17,6 @@ import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
-import me.botsko.prism.db.Mysql;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
@@ -156,17 +156,54 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void dbc(){
-		Mysql mysql = new Mysql(
-				config.getString("prism.mysql.username"), 
-				config.getString("prism.mysql.password"), 
-				config.getString("prism.mysql.hostname"), 
-				config.getString("prism.mysql.database"), 
-				config.getString("prism.mysql.port")
-		);
-		conn = mysql.getConn();
-		if(conn == null){
-			this.log("Error: MySQL database connection was not established. Please check your configuration file.");
-			disablePlugin();
+		
+		// SQLITE
+		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
+	        try {
+	        	Class.forName("org.sqlite.JDBC");
+				conn = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
+			} catch (SQLException e) {
+				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+			} catch (ClassNotFoundException e) {
+				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+			}
+		}
+		
+		// MYSQL
+		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+			
+			String dsn = ("jdbc:mysql://" + config.getString("prism.mysql.hostname") + ":" + config.getString("prism.mysql.port"));
+
+			try {
+				if( conn == null || conn.isClosed() || !conn.isValid(1) ){
+					if (conn != null && !conn.isClosed()) {
+						try {
+							conn.close();
+						} catch (Exception e) {
+						}
+					}
+					if ((config.getString("prism.mysql.username").equalsIgnoreCase("")) && (config.getString("prism.mysql.password").equalsIgnoreCase(""))){
+						conn = DriverManager.getConnection(dsn);
+					} else {
+						conn = DriverManager.getConnection(dsn, config.getString("prism.mysql.username"), config.getString("prism.mysql.password"));
+					}
+					if(conn == null || conn.isClosed()){
+						return;
+					}
+				}
+				
+				Statement st = conn.createStatement();
+				st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + config.getString("prism.mysql.database") + "`");
+				st.executeUpdate("USE `" + config.getString("prism.mysql.database") + "`");
+				
+				if(conn == null){
+					this.log("Error: MySQL database connection was not established. Please check your configuration file.");
+					disablePlugin();
+				}
+				
+			} catch (SQLException e) {
+				this.log("Error: MySQL database connection was not established. " + e.getMessage());
+			}
 		}
 	}
 	
@@ -176,30 +213,61 @@ public class Prism extends JavaPlugin {
 	 */
 	protected void setupDatabase(){
 
-		try{
-	        dbc();
-	        if(conn == null) return;
-	        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
-	        		"`id` int(11) unsigned NOT NULL auto_increment," +
-	        		"`action_time` datetime NOT NULL," +
-	        		"`action_type` varchar(25) NOT NULL," +
-	        		"`player` varchar(16) NOT NULL," +
-	        		"`world` varchar(255) NOT NULL," +
-	        		"`x` int(11) NOT NULL," +
-	        		"`y` int(11) NOT NULL," +
-	        		"`z` int(11) NOT NULL," +
-	        		"`data` varchar(255) NOT NULL," +
-	        		"PRIMARY KEY  (`id`), " +
-	        		"KEY `x` (`x`)" +
-	        		") ENGINE=MyISAM;";
-	        
-            Statement st = conn.createStatement();
-            st.executeUpdate(query);
-            conn.close();
-	    }
-	    catch (SQLException e){
-	        e.printStackTrace();
-	    }	
+		// SQLITE
+		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
+			
+			 try {
+				 String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
+			        		"id INT PRIMARY KEY," +
+			        		"action_time TEXT," +
+			        		"action_type TEXT," +
+			        		"player TEXT," +
+			        		"world TEXT," +
+			        		"x INT," +
+			        		"y INT," +
+			        		"z INT," +
+			        		"data TEXT" +
+			        		")";
+					Statement st = conn.createStatement();
+					st.executeUpdate(query);
+					// @todo only do this if an index doesn't already exist
+//					st.executeUpdate("CREATE INDEX x ON prism_actions (x ASC)");
+					st.close();
+					conn.close();
+			 }
+			 catch(SQLException e){
+				 
+			 }
+		}
+		
+		// MYSQL
+		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+			try{
+		        dbc();
+		        if(conn == null) return;
+		        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
+		        		"`id` int(11) unsigned NOT NULL auto_increment," +
+		        		"`action_time` datetime NOT NULL," +
+		        		"`action_type` varchar(25) NOT NULL," +
+		        		"`player` varchar(16) NOT NULL," +
+		        		"`world` varchar(255) NOT NULL," +
+		        		"`x` int(11) NOT NULL," +
+		        		"`y` int(11) NOT NULL," +
+		        		"`z` int(11) NOT NULL," +
+		        		"`data` varchar(255) NOT NULL," +
+		        		"PRIMARY KEY  (`id`), " +
+		        		"KEY `x` (`x`)" +
+		        		") ENGINE=MyISAM;";
+		        
+	            Statement st = conn.createStatement();
+	            st.executeUpdate(query);
+	            st.close();
+	            conn.close();
+		    }
+		    catch (SQLException e){
+		        e.printStackTrace();
+		    }
+		}
 	}
 	
 	
