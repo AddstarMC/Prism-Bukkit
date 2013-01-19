@@ -20,6 +20,7 @@ import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
+import me.botsko.prism.actions.WorldeditAction;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
@@ -597,6 +598,31 @@ public class Preview implements Previewable {
 							s.update();
 							changes_applied_count++;
 						}
+					}
+					
+					
+					/**
+					 * R/R of worldedit changes
+					 */
+					if( a instanceof WorldeditAction ){
+						
+						WorldeditAction b = (WorldeditAction) a;
+						Block block = world.getBlockAt(loc);
+						
+						// Rollback replaces block with OLD block
+						if( processType.equals(PrismProcessType.ROLLBACK) ){
+							block.setTypeId(b.getOriginalBlockId());
+							block.setData( (byte)b.getOriginalBlockSubId() );
+						}
+						
+						// Restore replaces block with NEW block
+						if( processType.equals(PrismProcessType.RESTORE) ){
+							block.setTypeId(b.getNewBlockId());
+							block.setData( (byte)b.getNewBlockSubId() );
+						}
+						
+						changes_applied_count++;
+
 					}
 					
 					if(!is_preview){
