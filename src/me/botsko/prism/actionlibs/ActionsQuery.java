@@ -67,10 +67,11 @@ public class ActionsQuery {
 				
 	            PreparedStatement s;
 	    		s = plugin.conn.prepareStatement(query);
-	    		s.executeQuery();
-	    		ResultSet rs = s.getResultSet();
+	    		ResultSet rs = s.executeQuery();
 	    		
 	    		while(rs.next()){
+	    			
+//	    			plugin.debug("result: " + rs.getString("action_type") + " " + rs.getString("display_time"));
 	    			
 	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
@@ -312,13 +313,13 @@ public class ActionsQuery {
 		
 		if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 			query +=
-				"date(prism_actions.action_time, '%d/%m/%Y') display_date, " +
-				"time(prism_actions.action_time, '%H:%M') display_time ";
+				"date(prism_actions.action_time) AS display_date, " +
+				"time(prism_actions.action_time) AS display_time ";
 		}
 		else if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 			query +=
-				"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') display_date, " +
-				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') display_time ";
+				"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') AS display_date, " +
+				"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time ";
 		}
 		
 		

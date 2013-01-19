@@ -230,8 +230,7 @@ public class Prism extends JavaPlugin {
 			        		")";
 					Statement st = conn.createStatement();
 					st.executeUpdate(query);
-					// @todo only do this if an index doesn't already exist
-//					st.executeUpdate("CREATE INDEX x ON prism_actions (x ASC)");
+					st.executeUpdate("CREATE INDEX IF NOT EXISTS x ON prism_actions (x ASC)");
 					st.close();
 					conn.close();
 			 }
