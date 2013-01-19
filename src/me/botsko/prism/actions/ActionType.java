@@ -43,6 +43,7 @@ public enum ActionType {
 	LIGHTNING(false, false, false, null, "ignited"),
 	MUSHROOM_GROW(true, true, true, "grow", "grew"),
 	PLAYER_DEATH(false, false, false, "playerdeath", "died"),
+	PLAYER_CHAT(false, false, false, "command", "said"),
 	PLAYER_COMMAND(false, false, false, "command", "ran command"),
 	PRISM_DRAIN(false, true, true, "prismrollback", "drained"),
 	PRISM_PROCESS(false, false, false, "prismprocess", "ran process"),
