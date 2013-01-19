@@ -78,7 +78,6 @@ public class PlayerDeathAction extends GenericAction {
 	public EntityType getDeathInfoFromData(){
 		if(cause == null && data != null){
 			String[] dataArr = data.split(":");
-			System.out.print("SETTING DEATH MSG: " + dataArr[0]);
 			cause = dataArr[0];
 			if (dataArr.length > 1){
 				attacker = dataArr[1];
