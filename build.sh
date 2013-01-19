@@ -18,11 +18,18 @@ gitvers=`git describe`
 cp plugin.yml plugin-new.yml
 mv plugin.yml plugin-old.yml
 
+name=""
+if [ "$1" == "master" ]; then
+	name=$gitvers
+else
+	name="$1-$gitvers"
+fi
+
 # add in revision to app.default.config.php
-sed -e "s/nightly/$gitvers/g" plugin-new.yml > plugin.yml
+sed -e "s/nightly/$name/g" plugin-new.yml > plugin.yml
 
 # make the jar
-jar cf Prism-$gitvers.jar README.md items.yml languages plugin.yml -C bin .
+jar cf Prism-$name.jar README.md items.yml languages plugin.yml -C bin .
 
 # remove the build yml
 rm plugin.yml
@@ -32,10 +39,10 @@ rm plugin-new.yml
 mv plugin-old.yml plugin.yml
 
 # send file to amazon bucket
-s3cmd put --acl-public Prism-$gitvers.jar s3://botsko/Prism/Prism-$gitvers.jar
+s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
 
 # Remove the file
-rm Prism-$gitvers.jar
+rm Prism-$name.jar
 
 
 echo "BUILD COMPLETE"
