@@ -29,8 +29,12 @@ public class PlayerDeathAction extends GenericAction {
 	 * @param player
 	 */
 	public PlayerDeathAction( ActionType action_type, Player player, String cause, String attacker ){
-		
-		super(action_type, player.getName());
+	
+		super(action_type, null);
+
+		if(player != null){
+			this.player_name = player.getName();
+		}
 		
 		if(player != null){
 			this.player = player;

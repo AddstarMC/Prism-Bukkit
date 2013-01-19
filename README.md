@@ -6,14 +6,17 @@ Prism is the ultimate grief management (rollbacks, restores, etc) plugin for you
 
 Prism not only offers the standard features you expect, but a **lot** more.
 
+**Check the files tab for more recent files... bukkitdev is taking 24+ hours to approve our files**
+
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
-*
 
-#### Users Say
+### Users Say
 
-"Just switched from coreprotect to this. Totally worth it."
+"Just switched from CoreProtect to this. Totally worth it."
 
 "After 24 hours I can tell that it seems to be the best anti-griefing plugin I know."
+
+"This is definetly the best rollback plugin I have used"
 
 "I've only been using it for a bit and I'm beyond impressed!"
 
