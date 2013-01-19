@@ -17,6 +17,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -70,6 +71,16 @@ public class PrismPlayerEvents implements Listener {
 		if(plugin.playerActivePreviews.containsKey(event.getPlayer().getName())){
 			plugin.playerActivePreviews.remove(event.getPlayer().getName());
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerChat(final AsyncPlayerChatEvent event){
+		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_CHAT, event.getMessage(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	

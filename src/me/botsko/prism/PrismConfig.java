@@ -103,13 +103,10 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.lightning", true);
 		config.addDefault("prism.tracking.mushroom-grow", true);
 		config.addDefault("prism.tracking.player-death", true);
+		config.addDefault("prism.tracking.player-chat", false);
 		config.addDefault("prism.tracking.player-command", false);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
-		config.addDefault("prism.tracking.skull-break", true);
-		config.addDefault("prism.tracking.skull-place", true);
-		config.addDefault("prism.tracking.spawner-break", true);
-		config.addDefault("prism.tracking.spawner-place", true);
 		config.addDefault("prism.tracking.spawnegg-use", true);
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tnt-prime", true);
