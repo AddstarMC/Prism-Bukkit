@@ -83,7 +83,7 @@ public class ItemStackAction extends GenericAction {
 				item = new ItemStack(block_id,quantity,(short)block_subid);
 				if(blockArr.length > 3){
 					for(int i = 3; i < blockArr.length; i++){
-						item.addEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
+						item.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
 					}
 				}
 			}
