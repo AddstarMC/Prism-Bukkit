@@ -1,5 +1,8 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -47,19 +50,29 @@ public class ParamsCommand implements SubHandler {
 		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "p:[player]" + ChatColor.WHITE + " Like 'viveleroi'. No default.") );
 		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE + " Like 'grass' or '2' or '2:0'. No default.") );
 		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE + " Like 'pig'. No default.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE + " Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). No default.") );
+		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE + " Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). Default based on config.") );
 		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE + " Defaults to your current world.") );
 		
-		String actions = "";
-		int i = 1;
+		// Build short list
+		ArrayList<String> shortNames = new ArrayList<String>();
 		for(ActionType ac : ActionType.values()){
 			if(ac.name().contains("PRISM")) continue;
-			actions += ac.getActionShortType() + (i < ActionType.values().length ? ", " : "");
+			if(shortNames.contains(ac.getActionShortType())) continue;
+			shortNames.add( ac.getActionShortType() );
+		}
+		// Sort alphabetically
+		Collections.sort(shortNames);
+		
+		// Build display of shortname list
+		String actions = "";
+		int i = 1;
+		for(String shortName : shortNames){
+			actions += shortName + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
 		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actions) );
 		
-		
+		// Build display of full actions
 		actions = "";
 		i = 1;
 		for(ActionType ac : ActionType.values()){
