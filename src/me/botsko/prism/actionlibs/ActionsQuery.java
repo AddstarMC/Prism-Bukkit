@@ -77,7 +77,7 @@ public class ActionsQuery {
 	    			boolean override_data = false;
 	    			
 	    			// Pull the proper action type class
-	    			ActionType actionType = ActionType.getByActionType(rs.getString("action_type"));
+	    			ActionType actionType = ActionType.getByActionType(rs.getString(3));
 
 	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
@@ -142,7 +142,7 @@ public class ActionsQuery {
 	    				WorldeditAction wea = new WorldeditAction(null, null, 0, 0, 0, 0, null);
 	    				baseAction = wea;
 	    			} else {
-	    				plugin.debug("Important: Action type '" + rs.getString("action_type") + "' has no official handling class, will be shown as generic." );
+	    				plugin.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
 	    			}
 	    			
 	    			if(baseAction == null){
@@ -151,17 +151,17 @@ public class ActionsQuery {
 	    				
     				// Set all shared values
     				baseAction.setType( actionType );
-    				baseAction.setId( rs.getInt("id") );
-    				baseAction.setAction_time( rs.getString("action_time") );
-    				baseAction.setDisplay_date( rs.getString("display_date") );
-    				baseAction.setDisplay_time( rs.getString("display_time") );
-    				baseAction.setWorld_name( rs.getString("world") );
-    				baseAction.setPlayer_name( rs.getString("player") );
-    				baseAction.setX( rs.getInt("x") );
-    				baseAction.setY( rs.getInt("y") );
-    				baseAction.setZ( rs.getInt("z") );
+    				baseAction.setId( rs.getInt(1) );
+    				baseAction.setAction_time( rs.getString(2) );
+    				baseAction.setDisplay_date( rs.getString(10) );
+    				baseAction.setDisplay_time( rs.getString(11) );
+    				baseAction.setWorld_name( rs.getString(5) );
+    				baseAction.setPlayer_name( rs.getString(4) );
+    				baseAction.setX( rs.getInt(6) );
+    				baseAction.setY( rs.getInt(7) );
+    				baseAction.setZ( rs.getInt(8) );
     				if(!override_data){
-    					baseAction.setData( rs.getString("data") );
+    					baseAction.setData( rs.getString(9) );
     				}
     				baseAction.setMaterialAliases( plugin.getItems() );
     				
