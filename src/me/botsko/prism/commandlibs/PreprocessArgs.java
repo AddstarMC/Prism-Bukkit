@@ -227,7 +227,12 @@ public class PreprocessArgs {
 					try {
 						Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
 						if(!(parameters.hasFlag(flag))){
-							parameters.addFlag(flag);
+							if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") && flag.equals(Flag.NO_OVERWRITE)){
+								player.sendMessage( plugin.playerError("-no-overwrite is not currently supported on sqlite databases.") );
+								return null;
+							} else {
+								parameters.addFlag(flag);
+							}
 						}
 					} catch(IllegalArgumentException ex){
 						player.sendMessage( plugin.playerError("Unrecognized flag '"+val+"'. Use /prism ? [command] for help.") );

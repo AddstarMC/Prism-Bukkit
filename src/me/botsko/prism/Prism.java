@@ -17,6 +17,7 @@ import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
+import me.botsko.prism.db.MySQL;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
@@ -171,38 +172,16 @@ public class Prism extends JavaPlugin {
 		
 		// MYSQL
 		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			
-			String dsn = ("jdbc:mysql://" + config.getString("prism.mysql.hostname") + ":" + config.getString("prism.mysql.port"));
-
-			try {
-				if( conn == null || conn.isClosed() || !conn.isValid(1) ){
-					if (conn != null && !conn.isClosed()){
-						try {
-							this.debug("Closing MySQL connection that's no longer valid.");
-							conn.close();
-						} catch (Exception e) {
-						}
-					}
-					if ((config.getString("prism.mysql.username").equalsIgnoreCase("")) && (config.getString("prism.mysql.password").equalsIgnoreCase(""))){
-						conn = DriverManager.getConnection(dsn);
-					} else {
-						conn = DriverManager.getConnection(dsn, config.getString("prism.mysql.username"), config.getString("prism.mysql.password"));
-					}
-					if(conn == null || conn.isClosed()){
-						this.debug("Error: MySQL database connection *still* not established. ");
-						disablePlugin();
-					}
-				}
-				if( conn == null || conn.isClosed() || !conn.isValid(1) ){
-					this.debug("Error: MySQL database connection was not established. Please check your configuration file.");
-					disablePlugin();
-				} else {
-					Statement st = conn.createStatement();
-					st.executeUpdate("CREATE DATABASE IF NOT EXISTS `" + config.getString("prism.mysql.database") + "`");
-					st.executeUpdate("USE `" + config.getString("prism.mysql.database") + "`");
-				}
-			} catch (SQLException e) {
-				this.debug("Error: MySQL database connection was not established. " + e.getMessage());
+			MySQL mysql = new MySQL(
+							config.getString("prism.mysql.username"),
+							config.getString("prism.mysql.password"),
+							config.getString("prism.mysql.hostname"),
+							config.getString("prism.mysql.database"),
+							config.getString("prism.mysql.port"));
+			conn = mysql.getConn();
+			if(conn == null){
+				this.log("Error: MySQL database connection was not established. Please check your configuration file.");
+				disablePlugin();
 			}
 		}
 	}

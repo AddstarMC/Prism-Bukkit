@@ -330,7 +330,7 @@ public class ActionsQuery {
 		// coordinate so that we don't end up rolling back the first block break
 		// at a location when there's a newer one, because no overwrite means
 		// any after that first will be skipped.
-		if( parameters.hasFlag(Flag.NO_OVERWRITE) ){
+		if( parameters.hasFlag(Flag.NO_OVERWRITE) && plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
 				query += " JOIN (" +
 							"SELECT action_type, x, y, z, max(action_time) as action_time" +
