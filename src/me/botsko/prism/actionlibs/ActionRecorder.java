@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,6 +31,11 @@ public class ActionRecorder implements Runnable {
 	 */
 	private boolean immediatelyProcessQueue = false;
 	
+	/**
+	 * 
+	 */
+	private Connection conn = null;
+	
 	
 	/**
 	 * 
@@ -37,6 +43,7 @@ public class ActionRecorder implements Runnable {
 	 */
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
+		dbc();
 	}
 	
 	
@@ -157,12 +164,12 @@ public class ActionRecorder implements Runnable {
 	public int insertActionIntoDatabase( Action a){
 		int id = 0;
 		try {
-			plugin.dbc();
-			if(plugin.conn == null){
+			dbc();
+			if(conn == null){
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getAction_time());
 	        s.setString(2,a.getType().getActionType());
 	        s.setString(3,a.getPlayer_name());
@@ -179,7 +186,7 @@ public class ActionRecorder implements Runnable {
 	        }
 	        
     		s.close();
-            plugin.conn.close();
+            conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -196,13 +203,13 @@ public class ActionRecorder implements Runnable {
 	    PreparedStatement s = null;
 	    try {
 	    	
-	        plugin.dbc();
-	        if(plugin.conn == null || plugin.conn.isClosed()){
+	        dbc();
+	        if(conn == null || conn.isClosed()){
 				plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 				return;
 			}
-	        plugin.conn.setAutoCommit(false);
-	        s =  plugin.conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+	        conn.setAutoCommit(false);
+	        s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
 	        int i = 0;
 	        while (!queue.isEmpty()) {
 	        	Action a = queue.poll();
@@ -221,13 +228,9 @@ public class ActionRecorder implements Runnable {
 	            i++;
 	        }
 	        s.executeBatch();
-	        // One last check that during the batch processing the connection is still open
-	        if(plugin.conn == null || plugin.conn.isClosed()){
-	        	plugin.dbc();
-	        }
-	        plugin.conn.commit();
+	        conn.commit();
 	        s.close();
-            plugin.conn.close();
+            conn.close();
 	    } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -237,5 +240,19 @@ public class ActionRecorder implements Runnable {
 	@Override
 	public void run() {
 		save();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void dbc(){
+		try {
+			if (conn == null || conn.isClosed() || !conn.isValid(1)) {
+				conn = plugin.getDbConnection();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

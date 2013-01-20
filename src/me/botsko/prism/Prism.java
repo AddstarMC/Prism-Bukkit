@@ -160,11 +160,33 @@ public class Prism extends JavaPlugin {
 		
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
+        	try {
+				if( conn == null || conn.isClosed() ){
+					conn = getDbConnection();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// MYSQL
+		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+			conn = getDbConnection();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Connection getDbConnection(){
+		Connection connection = null;
+		// SQLITE
+		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 	        try {
-	        	if( conn == null || conn.isClosed() ){
-		        	Class.forName("org.sqlite.JDBC");
-					conn = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
-	        	}
+	        	Class.forName("org.sqlite.JDBC");
+	        	connection = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (SQLException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
 			} catch (ClassNotFoundException e) {
@@ -180,12 +202,13 @@ public class Prism extends JavaPlugin {
 							config.getString("prism.mysql.hostname"),
 							config.getString("prism.mysql.database"),
 							config.getString("prism.mysql.port"));
-			conn = mysql.getConn();
-			if(conn == null){
+			connection = mysql.getConn();
+			if(connection == null){
 				this.log("Error: MySQL database connection was not established. Please check your configuration file.");
 				disablePlugin();
 			}
 		}
+		return connection;
 	}
 	
 	
