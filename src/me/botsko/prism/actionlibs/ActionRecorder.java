@@ -203,7 +203,7 @@ public class ActionRecorder implements Runnable {
 	    PreparedStatement s = null;
 	    try {
 	    	
-	        dbc();
+	        final Connection conn = plugin.getDbConnection();
 	        if(conn == null || conn.isClosed()){
 				plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 				return;
