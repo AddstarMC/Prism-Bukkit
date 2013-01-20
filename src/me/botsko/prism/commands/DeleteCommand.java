@@ -27,16 +27,23 @@ public class DeleteCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle(final CallInfo call) {
 		
 		// If date provided
 		if(call.getArgs().length == 2){
 			
-			String dateBefore = PreprocessArgs.translateTimeStringToDate( plugin, call.getPlayer(), call.getArg(1) );
+			final String dateBefore = PreprocessArgs.translateTimeStringToDate( plugin, call.getPlayer(), call.getArg(1) );
 			if(dateBefore != null && !dateBefore.isEmpty()){
-				ActionsQuery aq = new ActionsQuery(plugin);
-				int rows_affected = aq.delete(dateBefore);
-				call.getPlayer().sendMessage( plugin.playerHeaderMsg( rows_affected + " records have been purged from the database."));
+				
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+				    public void run(){
+						ActionsQuery aq = new ActionsQuery(plugin);
+						int rows_affected = aq.delete(dateBefore);
+						call.getPlayer().sendMessage( plugin.playerHeaderMsg( rows_affected + " records have been purged from the database."));
+				    }
+				});
+			} else {
+				call.getPlayer().sendMessage( plugin.playerError( "Invalid time format. Try 5m for 5 minues, 1w for week, etc. No need for t: either." ));
 			}
 		}
 	}

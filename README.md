@@ -59,6 +59,7 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 - Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
 - Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
 - Tracks liquid flow and items that break because of it
+- Tracks world edits (Beta2-17+, requires world edit 5.4.5+)
 - Fine-tuned config allows you to control tracking of every single one.
 - Inspector wand allows you to find history for single blocks/spaces.
 - Near command finds recent events around you.
@@ -80,6 +81,7 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 - We're CONSTANTLY testing to ensure that rollbacks are smart - problem items like doors, beds, cactus, sugar cane, and more are always restored properly! No half-doors!
 - Rollbacks/restores can be alerted to nearby players, and to staff members (staff see actual rollback params).
 - Rollback systems moves any players in the way to a safe position on rollback
+- Rollback/restore world edits (Beta2-17+, requires world edit 5.4.5+)
 - Advanced, optional flags give you ultimate control over the rollback/restore action at command-time.
 
 
