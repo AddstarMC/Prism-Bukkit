@@ -159,6 +159,7 @@ public class PrismPlayerEvents implements Listener {
 						break;
 					case LOG:
 						recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+						break;
 					case CROPS:
 					case GRASS:
 					case MELON_STEM:
@@ -167,10 +168,12 @@ public class PrismPlayerEvents implements Listener {
 					case CARROT:
 					case POTATO:
 						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+						break;
 					case TNT:
 						if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
 							Prism.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
 						}
+						break;
 					default:
 						break;
 				}
