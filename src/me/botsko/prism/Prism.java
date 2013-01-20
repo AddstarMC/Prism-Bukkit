@@ -187,6 +187,9 @@ public class Prism extends JavaPlugin {
 	        try {
 	        	Class.forName("org.sqlite.JDBC");
 	        	connection = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
+	        	Statement st = connection.createStatement();
+				st.executeUpdate("PRAGMA journal_mode = WAL;");
+				st.close();
 			} catch (SQLException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
 			} catch (ClassNotFoundException e) {
