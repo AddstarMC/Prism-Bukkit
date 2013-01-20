@@ -161,8 +161,10 @@ public class Prism extends JavaPlugin {
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 	        try {
-	        	Class.forName("org.sqlite.JDBC");
-				conn = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
+	        	if( conn == null || conn.isClosed() ){
+		        	Class.forName("org.sqlite.JDBC");
+					conn = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
+	        	}
 			} catch (SQLException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
 			} catch (ClassNotFoundException e) {
