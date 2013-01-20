@@ -363,11 +363,15 @@ public class Prism extends JavaPlugin {
 	 */
 	public void discardExpiredDbRecords(){
 		
-		String dateBefore = PreprocessArgs.translateTimeStringToDate( this, null, getConfig().getString("prism.clear-records-after") );
+		final String dateBefore = PreprocessArgs.translateTimeStringToDate( this, null, getConfig().getString("prism.clear-records-after") );
 		if(dateBefore != null && !dateBefore.isEmpty()){
-			ActionsQuery aq = new ActionsQuery(this);
-			int rows_affected = aq.delete(dateBefore);
-			log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
+			getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+			    public void run(){
+					ActionsQuery aq = new ActionsQuery(prism);
+					int rows_affected = aq.delete(dateBefore);
+					log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
+			    }
+			});
 		}
 	}
 	
