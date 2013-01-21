@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
@@ -33,7 +33,7 @@ public class ParamsCommand implements SubHandler {
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
-		help(call.getPlayer());
+		help(call.getSender());
 	}
 	
 	
@@ -41,17 +41,17 @@ public class ParamsCommand implements SubHandler {
 	 * Display param help
 	 * @param player
 	 */
-	private void help(Player player) {
+	private void help( CommandSender sender ) {
 		
-		player.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Parameters Help ---" ) );
+		sender.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Parameters Help ---" ) );
 
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "a:[action]" + ChatColor.WHITE + " Like 'block-break' (See below for full list). No default."));
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE + " i.e. 20, or 100. Defaults to default-radius defined in config. Use r:global to force an all-world search, for lookups only.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "p:[player]" + ChatColor.WHITE + " Like 'viveleroi'. No default.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE + " Like 'grass' or '2' or '2:0'. No default.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE + " Like 'pig'. No default.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE + " Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). Default based on config.") );
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE + " Defaults to your current world.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "a:[action]" + ChatColor.WHITE + " Like 'block-break' (See below for full list). No default."));
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE + " i.e. 20, or 100. Defaults to default-radius defined in config. Use r:global to force an all-world search, for lookups only.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "p:[player]" + ChatColor.WHITE + " Like 'viveleroi'. No default.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE + " Like 'grass' or '2' or '2:0'. No default.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE + " Like 'pig'. No default.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE + " Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). Default based on config.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE + " Defaults to your current world.") );
 		
 		// Build short list
 		ArrayList<String> shortNames = new ArrayList<String>();
@@ -70,7 +70,7 @@ public class ParamsCommand implements SubHandler {
 			actions += shortName + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actions) );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actions) );
 		
 		// Build display of full actions
 		actions = "";
@@ -80,7 +80,7 @@ public class ParamsCommand implements SubHandler {
 			actions += ac.getActionType() + (i < ActionType.values().length ? ", " : "");
 			i++;
 		}
-		player.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actions) );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actions) );
 		
 	}
 }
