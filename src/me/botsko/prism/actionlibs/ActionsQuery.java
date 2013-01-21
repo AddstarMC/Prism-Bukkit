@@ -180,6 +180,8 @@ public class ActionsQuery {
 		
 		// Build result object
 		QueryResult res = new QueryResult( actions, parameters );
+		res.setPerPage( parameters.getPerPage() );
+		
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.

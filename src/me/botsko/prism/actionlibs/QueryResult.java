@@ -56,7 +56,7 @@ public class QueryResult {
 		
 		// set counts
 		total_results = actionResults.size();
-		total_pages = (int) Math.ceil( ((double)total_results / (double)per_page) );
+		setPerPage(per_page); // does the total pages calc
 		
 	}
 	
@@ -131,8 +131,9 @@ public class QueryResult {
 	/**
 	 * @param per_page the per_page to set
 	 */
-	public void setPer_page(int per_page) {
+	public void setPerPage(int per_page) {
 		this.per_page = per_page;
+		total_pages = (int) Math.ceil( ((double)total_results / (double)per_page) );
 	}
 
 

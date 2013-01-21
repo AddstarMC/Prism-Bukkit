@@ -34,6 +34,7 @@ public class QueryParameters implements Cloneable {
 	protected Vector minLoc;
 	protected Vector maxLoc;
 
+	protected int per_page = 5;
 	protected int limit = 1000000;
 
 	
@@ -376,6 +377,23 @@ public class QueryParameters implements Cloneable {
 	 */
 	public boolean hasFlag( Flag flag ){
 		return flags.contains(flag);
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int getPerPage(){
+		return per_page;
+	}
+	
+	
+	/**
+	 * 
+	 * @param per_page
+	 */
+	public void setPerPage( int per_page ){
+		this.per_page = per_page;
 	}
 	
 	

@@ -225,13 +225,27 @@ public class PreprocessArgs {
 				// Special Flags
 				if(arg_type.equals("-")){
 					try {
-						Flag flag = Flag.valueOf( val.replace("-", "_").toUpperCase() );
+						String[] flagComponents = val.split("=");
+						Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
 						if(!(parameters.hasFlag(flag))){
 							if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") && flag.equals(Flag.NO_OVERWRITE)){
 								player.sendMessage( plugin.playerError("-no-overwrite is not currently supported on sqlite databases.") );
 								return null;
 							} else {
+								
 								parameters.addFlag(flag);
+								
+								// Flag has a value
+								if( flagComponents.length > 1 ){
+									if(flag.equals(Flag.PER_PAGE)){
+										if(TypeUtils.isNumeric(flagComponents[1])){
+											parameters.setPerPage( Integer.parseInt(flagComponents[1]) );
+										} else {
+											player.sendMessage( plugin.playerError("Per-page flag value must be a number. Use /prism ? [command] for help.") );
+											return null;
+										}
+									}
+								} 
 							}
 						}
 					} catch(IllegalArgumentException ex){
