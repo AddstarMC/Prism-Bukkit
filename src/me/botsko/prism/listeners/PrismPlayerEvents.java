@@ -6,12 +6,14 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,6 +22,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -239,5 +242,32 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		Prism.actionsRecorder.addToQueue( new UseAction(ActionType.SPAWNEGG_USE, "monster egg", block, player) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerEntityInteract(final PlayerInteractEntityEvent event) {
+		
+		Player player = event.getPlayer();
+		Entity entity = event.getRightClicked();
+
+		// Are they using a wand?
+		if(plugin.playersWithActiveTools.containsKey(player.getName())){
+
+			// Pull the wand in use
+			Wand wand = plugin.playersWithActiveTools.get(player.getName());
+			if( wand != null && wand instanceof ProfileWand ){
+				
+				wand.playerRightClick( player, entity );
+				
+				// Always cancel
+				event.setCancelled(true);
+				
+			}
+		}
 	}
 }

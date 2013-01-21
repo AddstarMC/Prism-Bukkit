@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class ProfileWand implements Wand {
@@ -61,5 +62,19 @@ public class ProfileWand implements Wand {
 		player.sendMessage( plugin.playerMsg("ID: " + block.getTypeId()+":" + block.getData() ) );
 		player.sendMessage( plugin.playerMsg("Coords: "+block.getX()+" "+block.getY()+" "+block.getZ() ) );
 		
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public void playerRightClick(Player player, Entity entity) {
+		if(entity != null){
+			player.sendMessage( plugin.playerHeaderMsg("Entity Profile") );
+			player.sendMessage( plugin.playerMsg("Name: " + entity.getType().toString().toLowerCase() ) );
+			player.sendMessage( plugin.playerMsg("ID: " + entity.getEntityId() ) );
+			player.sendMessage( plugin.playerMsg("Coords: "+entity.getLocation().getX()+" "+entity.getLocation().getY()+" "+entity.getLocation().getZ() ) );
+		}
 	}
 }

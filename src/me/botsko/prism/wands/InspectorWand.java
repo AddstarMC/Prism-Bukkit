@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 public class InspectorWand implements Wand {
@@ -82,5 +83,14 @@ public class InspectorWand implements Wand {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
 			player.sendMessage( plugin.playerError( "No history for this " + space_name + " found." ) );
 		}
+	}
+
+
+	/**
+	 * 
+	 */
+	@Override
+	public void playerRightClick(Player player, Entity entity) {
+		return;
 	}
 }
