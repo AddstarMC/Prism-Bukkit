@@ -78,7 +78,7 @@ public class Prism extends JavaPlugin {
 	public void onEnable(){
 		
 		plugin_name = this.getDescription().getName();
-		plugin_version = this.getDescription().getName();
+		plugin_version = this.getDescription().getVersion();
 
 		prism = this;
 		
@@ -137,6 +137,15 @@ public class Prism extends JavaPlugin {
 			discardExpiredDbRecords();
 			
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getPrismVersion(){
+		return this.plugin_version;
 	}
 	
 	

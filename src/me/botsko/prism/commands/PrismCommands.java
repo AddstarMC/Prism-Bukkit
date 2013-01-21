@@ -23,6 +23,15 @@ public class PrismCommands extends Executor {
 	 */
 	private void setupCommands() {
 		
+		
+		/**
+		 * /prism about
+		 */
+		addSub("about", "prism.help")
+		.setDescription("About Prism")
+		.allowConsole()
+		.setHandler(new AboutCommand(plugin));
+		
 
 		/**
 		 * /prism lookup 

@@ -46,8 +46,8 @@ public class Executor implements CommandExecutor {
 		
 		// If no subcommand given
 		if (args.length == 0) {
-			sender.sendMessage( plugin.msgInvalidSubcommand() );
-			return true;
+			args = new String[1];
+			args[0] = "about";
 		}
 		
 		// Find subcommand
