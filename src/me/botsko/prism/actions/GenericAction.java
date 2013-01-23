@@ -91,9 +91,8 @@ public class GenericAction implements Action {
 		if(player != null){
 			this.player_name = player;
 		}
-		if(action_time == null){
-			setAction_time(null);
-		}
+		setAction_time(null);
+		
 	}
 
 
