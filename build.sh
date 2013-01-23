@@ -41,8 +41,15 @@ mv plugin-old.yml plugin.yml
 # send file to amazon bucket
 s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
 
-# Remove the file
+# Create a new version file
+echo $name > versions.txt
+
+# send file to amazon bucket
+s3cmd put --acl-public versions.txt s3://botsko/Prism/versions.txt
+
+# Remove the files
 rm Prism-$name.jar
+rm versions.txt
 
 
 echo "BUILD COMPLETE"
