@@ -7,6 +7,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockShiftAction;
+import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
@@ -32,6 +33,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
@@ -229,6 +231,17 @@ public class PrismBlockEvents implements Listener {
 		// Pass to the placement alerter
 		plugin.useMonitor.alertOnBlockPlacement(player, event.getBlock());
 		
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockSpread(final BlockSpreadEvent event){
+		if(event.getNewState().getType().equals(Material.FIRE)) return;
+		Prism.actionsRecorder.addToQueue( new GrowAction(ActionType.BLOCK_SPREAD, event.getNewState(), "Environment") );
 	}
 	
 	

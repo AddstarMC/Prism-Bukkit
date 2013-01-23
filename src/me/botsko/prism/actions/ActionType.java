@@ -14,6 +14,7 @@ public enum ActionType {
 	BLOCK_FORM(false, true, true, "block", "formed"),
 	BLOCK_PLACE(true, true, true, "block", "placed"),
 	BLOCK_SHIFT(true, false, false, "blockshift", "moved"),
+	BLOCK_SPREAD(true, true, true, "block", "grew"),
 	BLOCK_USE(false, false, false, "block", "used"),
 	BONEMEAL_USE(false, false, false, "use", "used"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
