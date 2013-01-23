@@ -62,6 +62,8 @@ public class ActionRecorder implements Runnable {
 	 */
 	public void addToQueue( Action a ){
 		
+		if(a == null) return;
+		
 		// Verify we're expected to track this action, world, player
 		if(!shouldTrack(a)){
 			return;
@@ -213,6 +215,7 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 	        while (!queue.isEmpty()) {
 	        	Action a = queue.poll();
+	        	if(a == null) continue;
 	        	s.setString(1,a.getAction_time());
 		        s.setString(2,a.getType().getActionType());
 		        s.setString(3,a.getPlayer_name());
