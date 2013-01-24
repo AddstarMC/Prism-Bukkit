@@ -251,7 +251,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
-		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getBlock(), "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getNewState(), null, "Environment") );
 	}
 	
 	
