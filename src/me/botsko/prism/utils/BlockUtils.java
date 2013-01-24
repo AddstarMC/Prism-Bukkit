@@ -639,4 +639,21 @@ public class BlockUtils {
         return foundBlocks;
         
     }
+    
+    
+    /**
+     * 
+     * @param m
+     * @param loc
+     * @return
+     */
+    public static Block getFirstBlockOfMaterialBelow( Material m, Location loc ){
+    	for(int y = (int) loc.getY(); y > 0; y--){
+    		loc.setY( y );
+    		if(loc.getBlock().getType().equals(m)){
+    			return loc.getBlock();
+    		}
+    	}
+    	return null;
+    }
 }

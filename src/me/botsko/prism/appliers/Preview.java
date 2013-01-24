@@ -297,6 +297,17 @@ public class Preview implements Previewable {
 				}
 			}
 			
+//			// If portal, we need to light the portal. seems to be the only way.
+//			if( b.getActionData().getBlockId() == 90 ){
+//				Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(Material.OBSIDIAN, block.getLocation());
+//				if(obsidian != null){
+//					Block above = obsidian.getRelative(BlockFace.UP);
+//					if(!above.equals(Material.PORTAL)){
+//						above.setType(Material.FIRE);
+//					}
+//				}
+//			}
+			
 			// Set the material
 			block.setTypeId( b.getActionData().getBlockId() );
 			block.setData( b.getActionData().getBlockSubid() );
