@@ -164,6 +164,8 @@ public class Preview implements Previewable {
 	public void apply_preview(){
 		player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
 		setIsPreview(false);
+		changes_applied_count = 0;
+		skipped_block_count = 0;
 		apply();
 	}
 	
