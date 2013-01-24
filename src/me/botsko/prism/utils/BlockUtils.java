@@ -603,4 +603,40 @@ public class BlockUtils {
                 || id == 373    // potions
         		|| id == 383;   // creature eggs
     }
+    
+    
+    /**
+	 * @todo move this to blockutils
+	 * @param currBlock
+	 * @param toBeFelled
+	 */
+    public static ArrayList<Block> findConnectedBlocksOfType( Material type, Block currBlock, ArrayList<Location> foundLocations ) {
+    	
+    	ArrayList<Block> foundBlocks = new ArrayList<Block>();
+    	
+    	if(foundLocations == null){
+    		foundLocations = new ArrayList<Location>();
+    	}
+        	
+    	foundBlocks.add(currBlock);
+    	foundLocations.add(currBlock.getLocation());
+    	
+    	for(int x = -1; x <= 1; x++){
+    		for(int z = -1; z <= 1; z++){
+    			for(int y = -1; y <= 1; y++){
+        			Block newblock = currBlock.getRelative(x, y, z);
+        			// ensure it matches the type and wasn't already found
+        			if( newblock.getType() == type && !foundLocations.contains(newblock.getLocation()) ){
+        				ArrayList<Block> additionalBlocks = findConnectedBlocksOfType( type, newblock, foundLocations );
+        				if(additionalBlocks.size() > 0){
+        					foundBlocks.addAll(additionalBlocks);
+        				}
+        			}
+        		}
+    		}
+    	}
+
+        return foundBlocks;
+        
+    }
 }

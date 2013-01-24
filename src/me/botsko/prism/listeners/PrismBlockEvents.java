@@ -213,6 +213,15 @@ public class PrismBlockEvents implements Listener {
 		// check for block relationships
 		logBlockRelationshipsForBlock( player.getName(), block );
 		
+		// if obsidian, log portal blocks
+		if(block.getType().equals(Material.OBSIDIAN)){
+			ArrayList<Block> blocks = BlockUtils.findConnectedBlocksOfType(Material.PORTAL, block, null);
+			if(!blocks.isEmpty()){
+				for(Block portal : blocks){
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, portal, player.getName()) );
+				}
+			}
+		}
 	}
 	
 	
