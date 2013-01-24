@@ -103,9 +103,11 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.lighter", true);
 		config.addDefault("prism.tracking.lightning", true);
 		config.addDefault("prism.tracking.mushroom-grow", true);
-		config.addDefault("prism.tracking.player-death", true);
 		config.addDefault("prism.tracking.player-chat", false);
 		config.addDefault("prism.tracking.player-command", false);
+		config.addDefault("prism.tracking.player-death", true);
+		config.addDefault("prism.tracking.player-join", false);
+		config.addDefault("prism.tracking.player-quit", false);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
 		config.addDefault("prism.tracking.spawnegg-use", true);

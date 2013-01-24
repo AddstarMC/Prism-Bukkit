@@ -5,6 +5,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
@@ -24,6 +25,7 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -62,8 +64,20 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param event
 	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerJoin(final PlayerJoinEvent event){
+		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_JOIN, event.getPlayer()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(final PlayerQuitEvent event){
+		
+		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_QUIT, event.getPlayer()) );
 
 		// Remove any active wands for this player
 		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){

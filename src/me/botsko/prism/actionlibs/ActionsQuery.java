@@ -22,6 +22,7 @@ import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.SignAction;
@@ -106,6 +107,10 @@ public class ActionsQuery {
 	    			else if( actionType.requiresHandler("itemstack") ){
 	    				ItemStackAction isa = new ItemStackAction(null, null, 0, null, null);
 	    				baseAction = isa;
+	    			}
+	    			else if( actionType.requiresHandler("player") ){
+	    				PlayerAction pa = new PlayerAction(null, null);
+	    				baseAction = pa;
 	    			}
 	    			else if( actionType.requiresHandler("playerdeath") ){
 	    				PlayerDeathAction pd = new PlayerDeathAction(null, null, null, null);
