@@ -42,7 +42,7 @@ public class EntityAction extends GenericAction {
 		actionData = new EntityActionData();
 				
 		if(entity != null){
-			this.actionData.entity_name = entity.getType().getName().toLowerCase();
+			this.actionData.entity_name = entity.getType().name().toLowerCase();
 			this.world_name = entity.getWorld().getName();
 			this.x = entity.getLocation().getX();
 			this.y = entity.getLocation().getY();
