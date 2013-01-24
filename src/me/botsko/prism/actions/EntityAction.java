@@ -121,7 +121,16 @@ public class EntityAction extends GenericAction {
 	 * @return
 	 */
 	public EntityType getEntityType(){
-		return EntityType.valueOf(actionData.entity_name.toUpperCase());
+		try {
+			EntityType e = EntityType.valueOf(actionData.entity_name.toUpperCase());
+			if(e != null){
+				return e;
+			}
+		} catch(IllegalArgumentException e){
+			// In pre-RC builds we logged the wrong name of entities, sometimes the names
+			// don't match the enum. 
+		}
+		return null;
 	}
 	
 	

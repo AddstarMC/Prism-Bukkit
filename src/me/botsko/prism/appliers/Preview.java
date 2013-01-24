@@ -501,6 +501,12 @@ public class Preview implements Previewable {
 						
 						EntityAction b = (EntityAction) a;
 						
+						if(b.getEntityType() == null){
+							skipped_block_count++;
+							worldChangeQueue.remove(a);
+							continue;
+						}
+						
 						if(!EntityUtils.mayEverSpawn(b.getEntityType())){
 							skipped_block_count++;
 							worldChangeQueue.remove(a);
