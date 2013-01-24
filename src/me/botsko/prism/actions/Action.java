@@ -71,6 +71,13 @@ public interface Action {
 	 * @return
 	 */
 	public String getDisplay_time();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getTimeSince();
 
 
 	/**

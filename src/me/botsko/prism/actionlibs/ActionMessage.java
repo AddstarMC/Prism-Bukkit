@@ -39,10 +39,17 @@ public class ActionMessage {
 			msg += ChatColor.GRAY + "[" + a.getId() + "] ";
 		}
 		
+		// Date & Time
 		msg += ChatColor.GRAY + a.getDisplay_date();
 		msg += " " + ChatColor.GRAY + a.getDisplay_time().toLowerCase();
+		
+		// +/-
 		msg += getPosNegPrefix();
+		
+		// Who
 		msg += highlight + a.getPlayer_name();
+		
+		// Description of event
 		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		if(a.getType().getHandler() != null){
 			msg += " " + highlight + a.getNiceName();
@@ -56,6 +63,13 @@ public class ActionMessage {
 				msg += " " + highlight + "water";
 			}
 		}
+		
+		// Time since
+		if(!a.getTimeSince().isEmpty()){
+			msg += ChatColor.WHITE + " " + a.getTimeSince();
+		}
+		
+		// Action type reminder
 		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
 		
 		return msg;
