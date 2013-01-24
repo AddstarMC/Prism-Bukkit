@@ -217,9 +217,8 @@ public class PrismBlockEvents implements Listener {
 		if(block.getType().equals(Material.OBSIDIAN)){
 			ArrayList<Block> blocks = BlockUtils.findConnectedBlocksOfType(Material.PORTAL, block, null);
 			if(!blocks.isEmpty()){
-				for(Block portal : blocks){
-					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, portal, player.getName()) );
-				}
+				// Only log 1 portal break, we don't need all 8
+				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, blocks.get(0), player.getName()) );
 			}
 		}
 	}

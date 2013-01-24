@@ -618,7 +618,6 @@ public class BlockUtils {
     		foundLocations = new ArrayList<Location>();
     	}
         	
-    	foundBlocks.add(currBlock);
     	foundLocations.add(currBlock.getLocation());
     	
     	for(int x = -1; x <= 1; x++){
@@ -627,6 +626,7 @@ public class BlockUtils {
         			Block newblock = currBlock.getRelative(x, y, z);
         			// ensure it matches the type and wasn't already found
         			if( newblock.getType() == type && !foundLocations.contains(newblock.getLocation()) ){
+        				foundBlocks.add(newblock);
         				ArrayList<Block> additionalBlocks = findConnectedBlocksOfType( type, newblock, foundLocations );
         				if(additionalBlocks.size() > 0){
         					foundBlocks.addAll(additionalBlocks);
