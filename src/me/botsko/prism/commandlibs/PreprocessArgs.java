@@ -270,11 +270,13 @@ public class PreprocessArgs {
 					// We'll allow no radius.
 				} else {
 					parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
+					parameters.addDefaultUsed( "r:" + parameters.getRadius() );
 				}
 			}
 			// World default
 			if(!foundArgs.containsKey("w")){
 				parameters.setWorld( player.getWorld().getName() );
+//				parameters.addDefaultUsed( "w:" + parameters.getWorld() );
 			}
 			// Time default
 			if(!foundArgs.containsKey("t")){
@@ -284,6 +286,7 @@ public class PreprocessArgs {
 					date = translateTimeStringToDate(plugin,player,"3d");
 				}
 				parameters.setTime(date);
+				parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.default-time-since") );
 			}
 			
 			// Player location

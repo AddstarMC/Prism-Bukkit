@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import me.botsko.prism.Prism;
@@ -96,6 +97,18 @@ public class PreviewCommand implements SubHandler {
 					call.getPlayer().sendMessage( plugin.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
 					return;
 				}
+				
+				// determine if defaults were used
+				ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+				String defaultsReminder = "";
+				if(!defaultsUsed.isEmpty()){
+					defaultsReminder += " using defaults:";
+					for(String d : defaultsUsed){
+						defaultsReminder += " " + d;
+					}
+				}
+				
+				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 			
 				// Perform preview
 				ActionsQuery aq = new ActionsQuery(plugin);

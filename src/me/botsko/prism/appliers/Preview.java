@@ -675,6 +675,8 @@ public class Preview implements Previewable {
 	 * Store the preview session for later use
 	 */
 	public void postProcessPreview(){
+		// Count how many time 
+		changes_applied_count += deferredChanges.size();
 		if(is_preview && changes_applied_count > 0){
 			// Append the preview and blocks temporarily
 			PreviewSession ps = new PreviewSession( player, this );
@@ -863,12 +865,12 @@ public class Preview implements Previewable {
 			} else {
 			
 				// Build the results message
-				String msg = changes_applied_count + " planned reversals.";
+				String msg = "At least " + changes_applied_count + " planned reversals.";
 				if(skipped_block_count > 0){
 					msg += " " + skipped_block_count + " skipped.";
 				}
 				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this rollback.";
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
 				player.sendMessage( plugin.playerHeaderMsg( msg ) );
 				
@@ -902,7 +904,7 @@ public class Preview implements Previewable {
 					msg += " " + skipped_block_count + " skipped.";
 				}
 				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " Use /prism preview apply to confirm this restore.";
+					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
 				player.sendMessage( plugin.playerHeaderMsg( msg ) );
 				

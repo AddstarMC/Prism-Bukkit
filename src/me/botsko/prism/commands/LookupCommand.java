@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -44,11 +45,24 @@ public class LookupCommand implements SubHandler {
 			return;
 		}
 		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
+		
+		// determine if defaults were used
+		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+		String defaultsReminder = "";
+		if(!defaultsUsed.isEmpty()){
+			defaultsReminder += "Using defaults:";
+			for(String d : defaultsUsed){
+				defaultsReminder += " " + d;
+			}
+		}
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );
 		if(!results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			if(!defaultsReminder.isEmpty()){
+				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg(defaultsReminder) );
+			}
 			List<Action> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
 				for(Action a : paginated){
@@ -62,6 +76,9 @@ public class LookupCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
+			if(!defaultsReminder.isEmpty()){
+				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg(defaultsReminder) );
+			}
 			call.getPlayer().sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 		}
 	}

@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import me.botsko.prism.Prism;
@@ -44,7 +45,17 @@ public class RollbackCommand implements SubHandler {
 		}
 		parameters.setStringFromRawArgs( call.getArgs() );
 		
-		call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results...") );
+		// determine if defaults were used
+		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+		String defaultsReminder = "";
+		if(!defaultsUsed.isEmpty()){
+			defaultsReminder += " using defaults:";
+			for(String d : defaultsUsed){
+				defaultsReminder += " " + d;
+			}
+		}
+		
+		call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( call.getPlayer(), parameters );

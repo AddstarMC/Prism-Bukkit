@@ -36,6 +36,8 @@ public class QueryParameters implements Cloneable {
 
 	protected int per_page = 5;
 	protected int limit = 1000000;
+	
+	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 
 	
 	// Directional
@@ -394,6 +396,24 @@ public class QueryParameters implements Cloneable {
 	 */
 	public void setPerPage( int per_page ){
 		this.per_page = per_page;
+	}
+	
+	
+	/**
+	 * 
+	 * @param d
+	 */
+	public void addDefaultUsed( String d ){
+		defaultsUsed.add(d);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getDefaultsUsed(){
+		return defaultsUsed;
 	}
 	
 	
