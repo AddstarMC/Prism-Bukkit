@@ -221,6 +221,10 @@ public class PrismBlockEvents implements Listener {
 				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, blocks.get(0), player.getName()) );
 			}
 		}
+		
+		// Pass to the break alerter
+		plugin.useMonitor.alertOnBlockBreak(player, event.getBlock());
+				
 	}
 	
 	

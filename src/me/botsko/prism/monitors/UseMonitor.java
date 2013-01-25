@@ -19,7 +19,12 @@ public class UseMonitor {
 	/**
 	 * 
 	 */
-	protected final ArrayList<String> blocksToAlert;
+	protected final ArrayList<String> blocksToAlertOnPlace;
+	
+	/**
+	 * 
+	 */
+	protected final ArrayList<String> blocksToAlertOnBreak;
 	
 	/**
 	 * 
@@ -34,7 +39,8 @@ public class UseMonitor {
 	@SuppressWarnings("unchecked")
 	public UseMonitor( Prism plugin ){
 		this.plugin = plugin;
-		blocksToAlert = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-placement");
+		blocksToAlertOnPlace = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-placement");
+		blocksToAlertOnBreak = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-break");
 		resetEventsQueue();
 	}
 	
@@ -69,6 +75,7 @@ public class UseMonitor {
 	 * @return
 	 */
 	protected boolean checkFeatureShouldProceed( Player player ){
+		
 		// Ensure enabled
 		if(!plugin.getConfig().getBoolean("prism.alerts.uses.enabled")){
 			return false;
@@ -103,9 +110,32 @@ public class UseMonitor {
 		String blockType = ""+block.getTypeId();
 		
 		// Ensure we're tracking this block
-		if(blocksToAlert.contains( blockType )){
+		if(blocksToAlertOnPlace.contains( blockType )){
 			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
 			incrementCount(playername, "placed "+alias);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @param block
+	 */
+	public void alertOnBlockBreak( Player player, Block block ){
+		
+		// Ensure enabled
+		if( !checkFeatureShouldProceed( player ) ){
+			return;
+		}
+		
+		String playername = player.getName();
+		String blockType = ""+block.getTypeId();
+		
+		// Ensure we're tracking this block
+		if(blocksToAlertOnBreak.contains( blockType )){
+			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
+			incrementCount(playername, "broke "+alias);
 		}
 	}
 	

@@ -143,6 +143,9 @@ public class PrismConfig {
 		monitorItems.add("10");
 		monitorItems.add("11");
 		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
+		
+		monitorItems = new ArrayList<String>();
+		config.addDefault("prism.alerts.uses.item-break", monitorItems);
 
 		// Copy defaults
 		config.options().copyDefaults(true);
