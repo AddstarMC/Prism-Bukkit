@@ -59,11 +59,11 @@ public class Updater {
             
 			dbc();
             PreparedStatement s;
-    		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver'");
+    		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver' LIMIT 0,1");
     		s.executeQuery();
     		ResultSet rs = s.getResultSet();
 
-    		if(rs.first()){
+    		while(rs.next()){
     			id = rs.getInt("v");
 			}
     		
@@ -87,22 +87,24 @@ public class Updater {
 		
 		// Apply any updates for schema 1 -> 2
 		if(clientSchemaVer < 2){
-			dbc();
-	        PreparedStatement s;
-			try {
-				
-				plugin.log("Applying database updates. This may take a while.");
-				
-				s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD INDEX ( `action_type` ) ;");
-				s.executeUpdate();
-				
-				s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `player` ) ;");
-				s.executeUpdate();
-				
-				s.close();
-				conn.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
+			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+				dbc();
+		        PreparedStatement s;
+				try {
+					
+					plugin.log("Applying database updates. This may take a while.");
+					
+					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD INDEX ( `action_type` ) ;");
+					s.executeUpdate();
+					
+					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `player` ) ;");
+					s.executeUpdate();
+					
+					s.close();
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		

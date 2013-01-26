@@ -252,6 +252,16 @@ public class Prism extends JavaPlugin {
 					Statement st = conn.createStatement();
 					st.executeUpdate(query);
 					st.executeUpdate("CREATE INDEX IF NOT EXISTS x ON prism_actions (x ASC)");
+					st.executeUpdate("CREATE INDEX IF NOT EXISTS action_type ON prism_actions (action_type ASC)");
+					st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON prism_actions (player ASC)");
+					
+					query = "CREATE TABLE IF NOT EXISTS `prism_meta` (" +
+			        		"id INT PRIMARY KEY," +
+			        		"k TEXT," +
+			        		"v TEXT" +
+			        		")";
+					st.executeUpdate(query);
+					
 					st.close();
 					conn.close();
 			 }
