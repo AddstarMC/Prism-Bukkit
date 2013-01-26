@@ -18,6 +18,7 @@ import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.db.MySQL;
+import me.botsko.prism.db.Updater;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
@@ -101,6 +102,10 @@ public class Prism extends JavaPlugin {
 		
 			// Setup databases
 			setupDatabase();
+			
+			// Apply any updates
+			Updater up = new Updater(this);
+			up.apply_updates();
 			
 			// Plugins we use
 			checkPluginDependancies();
@@ -276,6 +281,15 @@ public class Prism extends JavaPlugin {
 		        
 	            Statement st = conn.createStatement();
 	            st.executeUpdate(query);
+	            
+	            query = "CREATE TABLE IF NOT EXISTS `prism_meta` (" +
+	            		"`id` int(10) unsigned NOT NULL auto_increment," +
+	            		"`k` varchar(25) NOT NULL," +
+	            		"`v` varchar(255) NOT NULL," +
+	            		"PRIMARY KEY  (`id`)" +
+	            		") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+	            st.executeUpdate(query);
+	            
 	            st.close();
 	            conn.close();
 		    }
