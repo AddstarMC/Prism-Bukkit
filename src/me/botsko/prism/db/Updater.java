@@ -60,8 +60,7 @@ public class Updater {
 			dbc();
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver' LIMIT 0,1");
-    		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		ResultSet rs = s.executeQuery();
 
     		while(rs.next()){
     			id = rs.getInt("v");
