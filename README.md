@@ -6,7 +6,6 @@ Prism is the ultimate grief management (rollbacks, restores, etc) plugin for you
 
 Prism not only offers the standard features you expect, but a **lot** more.
 
-**Check the files tab for more recent files... bukkitdev is taking 24+ hours to approve our files**
 
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism.jpg)
 
@@ -22,7 +21,16 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 ## Official Documentation
 
-**Everything you need to know.**
+**MUST READ ;)**
+
+[Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
+
+Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki.
+
+[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
+
+
+## Some Videos
 
 [Intro & Demo Video (Pre-Beta)](http://www.youtube.com/watch?v=3b6DQQvBp30)
 
@@ -32,16 +40,9 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 [Video Tutorial 3: More on Rollbacks](http://www.youtube.com/watch?v=oHBXYzv7vWs)
 
-[Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
-
-Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki.
-
-[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
-
-
 ## Features Overview
 
-- Prism tracks 46 (and growing) different player, entity, and world events.
+- Prism tracks 51 (and growing) different player, entity, and world events.
 - Multiple tools and commands let you see exactly what happened.
 - Rollback or restore events directly, or with a safer preview mode first.
 - Safe command defaults, very clean and fun to use chat messages.
@@ -49,12 +50,13 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 - Extremely fast. Takes a pounding. 
 - Extremely configurable.
 - Dozens of extra features you don't get from other plugins.
+- **Requires MySQL** for best performance. sqlite support immature, but available and stable.
 
 ## Features Detail
 
 ### Events and Lookup
 
-- Tracks 46+ player, entity, and world events.
+- Tracks 51+ player, entity, and world events.
 - Includes block changes, container access, item inserts/remove/pickups/drops, entity deaths, shearing, and a LOT more.
 - Related events tracked to causing player, like blocks falling, blocks detaching, trees growing, and much more.
 - Smart logging and rollback of important related data like sign text, sheep color, wolf owner, animal age, villager profession, etc
@@ -87,7 +89,10 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
 
 ### Web Search Interface
 
-Coming soon.
+- Allows you to view/search your data through a website.
+- Very clean, modern design makes it an awesome experience.
+- We've worked hard to increase performance of the db/queries - databases with millions of records work just fine.
+- Optional user authentication support allows you to require people to login before using.
 
 ![Prism](http://dhmc.us.s3.amazonaws.com/prism-web.jpg)
 
@@ -109,8 +114,8 @@ Coming soon.
 ### Technical
 
 - Multi-threaded queue system for tracking events, combined with a batch recording system makes event recording happen quickly and without impacting your server.
-- Block r/r/p are also run on separate threads and queued for large changes to reduce chances of impacting the main thread.
-- Only one database table with extremely straight-forward design, as well as field types that are smart for the data we store. Records 1 million records with an average of 100MB of space consumption. A server with 200+ players per day can expect about ~2GB of data per month, depending on actions tracked and activity.
+- Block r/r/p are queued for large changes to reduce chances of impacting the main thread.
+- Extremely smart database design with a lot of time invested in structure optimization, query performance testing, and more.
 - A dev server with 512M RAM, 2.7Ghz dual core processor, 6,886 blocks from a tnt explosion restored in 2.2 seconds - 2210 milliseconds from command to rollback completion. Most common rollbacks on the same machine tend to take < 200ms to restore. Similar results on relatively equal machines from shared bukkit hosting companies during initial tests.
 
 
