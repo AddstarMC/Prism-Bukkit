@@ -85,6 +85,11 @@ public class Prism extends JavaPlugin {
 		
 		this.log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 		
+		String notice = UpdateNotification.checkForNewerBuild(plugin_version);
+		if(notice != null){
+			log(notice);
+		}
+		
 		try {
 		    Metrics metrics = new Metrics(this);
 		    metrics.start();
@@ -308,7 +313,7 @@ public class Prism extends JavaPlugin {
 		    }
 		}
 	}
-	
+
 	
 	/**
 	 * 
