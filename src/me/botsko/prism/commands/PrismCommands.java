@@ -149,6 +149,7 @@ public class PrismCommands extends Executor {
 		 */
 		addSub("?", "prism.help")
 		.addAlias("help")
+		.allowConsole()
 		.setDescription("This. Helpception!")
 		.setHandler(new HelpCommand(plugin));
 		
@@ -156,6 +157,7 @@ public class PrismCommands extends Executor {
 		 * /prism params
 		 */
 		addSub("params", "prism.help")
+		.allowConsole()
 		.setDescription("Parameter help.")
 		.setHandler(new ParamsCommand(plugin));
 		

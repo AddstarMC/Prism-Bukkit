@@ -67,6 +67,13 @@ public class Executor implements CommandExecutor {
 			sender.sendMessage( plugin.msgMissingArguments() );
 			return true;
 		}
+		// Ensure command allows console
+		if(!(sender instanceof Player)){
+			if(!sub.isConsoleAllowed()){
+				sender.sendMessage( plugin.playerError("This command may not be executed via console.") );
+				return true;
+			}
+		}
 		
 		// Pass along call to handler
 		CallInfo call = new CallInfo(sender, player, args);
