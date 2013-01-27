@@ -26,7 +26,7 @@ public class PrismProcessAction extends GenericAction {
 	 */
 	public PrismProcessAction( ActionType action_type, PrismProcessType processType, Player player, String parameters ){
 		
-		super(action_type, player.getName());
+		super(action_type, null);
 		
 		actionData = new PrismProcessActionData();
 		
@@ -35,6 +35,7 @@ public class PrismProcessAction extends GenericAction {
 			actionData.processType = processType.name().toLowerCase();
 		}
 		if(player != null){
+			this.player_name = player.getName();
 			this.world_name = player.getWorld().getName();
 			this.x = player.getLocation().getX();
 			this.y = player.getLocation().getY();
