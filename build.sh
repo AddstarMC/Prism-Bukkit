@@ -1,7 +1,7 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]; then
-	echo 1>&2 Usage: ./build.sh branch
+if [ $# -ne 2 ]; then
+	echo 1>&2 Usage: ./build.sh branch release|none
 	exit 0
 fi
 
@@ -39,13 +39,15 @@ rm plugin-new.yml
 mv plugin-old.yml plugin.yml
 
 # send file to amazon bucket
-s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
+#s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
 
 # Create a new version file
 echo $name > versions.txt
 
 # send file to amazon bucket
-s3cmd put --acl-public versions.txt s3://botsko/Prism/versions.txt
+if [ "$2" == "release" ]; then
+	s3cmd put --acl-public versions.txt s3://botsko/Prism/versions.txt
+fi
 
 # Remove the files
 rm Prism-$name.jar
