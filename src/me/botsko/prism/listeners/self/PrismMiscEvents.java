@@ -35,7 +35,6 @@ public class PrismMiscEvents implements Listener {
 			if(id == 0){
 				return;
 			}
-			Prism.actionsRecorder.shouldImmediatelyProcessQueue(false);
 			for(BlockStateChange stateChange : blockStateChanges){
 				
 				BlockState orig = stateChange.getOriginalBlock();
@@ -50,7 +49,7 @@ public class PrismMiscEvents implements Listener {
 
 				Prism.actionsRecorder.addToQueue( action );
 			}
-			Prism.actionsRecorder.saveQueue();
+			Prism.actionsRecorder.save();
 		}
 	}
 	
@@ -72,7 +71,6 @@ public class PrismMiscEvents implements Listener {
 			if(id == 0){
 				return;
 			}
-			Prism.actionsRecorder.shouldImmediatelyProcessQueue(false);
 			for(BlockStateChange stateChange : blockStateChanges){
 				
 				BlockState orig = stateChange.getOriginalBlock();
@@ -87,7 +85,7 @@ public class PrismMiscEvents implements Listener {
 
 				Prism.actionsRecorder.addToQueue( action );
 			}
-			Prism.actionsRecorder.saveQueue();
+			Prism.actionsRecorder.save();
 		}
 	}
 }

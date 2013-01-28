@@ -29,11 +29,6 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	private boolean immediatelyProcessQueue = false;
-	
-	/**
-	 * 
-	 */
 	private Connection conn = null;
 	
 	
@@ -43,16 +38,6 @@ public class ActionRecorder implements Runnable {
 	 */
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
-		dbc();
-	}
-	
-	
-	/**
-	 * 
-	 * @param immediatelyProcessQueue
-	 */
-	public void shouldImmediatelyProcessQueue(boolean immediatelyProcessQueue){
-		this.immediatelyProcessQueue = immediatelyProcessQueue;
 	}
 	
 	
@@ -78,22 +63,6 @@ public class ActionRecorder implements Runnable {
 //		if( plugin.getConfig().getBoolean("prism.debug") ){
 //			plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
 //		}
-		
-		// Only execute current batch if asked
-		if( immediatelyProcessQueue ){
-			save();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void saveQueue(){
-		save();
-		// Reset the queue empty flag since it was just
-		// emptied but whatever turned it off.
-		immediatelyProcessQueue = true;
 	}
 	
 	
@@ -150,15 +119,7 @@ public class ActionRecorder implements Runnable {
 	 */
 	public void save(){
 		if(!queue.isEmpty()){
-			if(immediatelyProcessQueue){
-				while (!queue.isEmpty()) {
-					Action a = queue.poll();
-					insertActionIntoDatabase( a );
-					queue.remove(a); //@todo unecessary?
-				}
-			} else {
-				insertActionsIntoDatabase();
-			}
+			insertActionsIntoDatabase();
 		}
 	}
 	
@@ -246,6 +207,9 @@ public class ActionRecorder implements Runnable {
 	}
 
 
+	/**
+	 * 
+	 */
 	@Override
 	public void run() {
 		save();
