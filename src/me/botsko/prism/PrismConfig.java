@@ -40,6 +40,8 @@ public class PrismConfig {
 		config.addDefault("prism.debug", false);
 //		config.addDefault("prism.language", "en-us");
 		
+		config.addDefault("prism.notify-newer-versions", true);
+		
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 		
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
