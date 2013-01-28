@@ -39,7 +39,7 @@ rm plugin-new.yml
 mv plugin-old.yml plugin.yml
 
 # send file to amazon bucket
-#s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
+s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
 
 # Create a new version file
 echo $name > versions.txt
