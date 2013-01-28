@@ -271,7 +271,8 @@ public class Prism extends JavaPlugin {
 					conn.close();
 			 }
 			 catch(SQLException e){
-				 
+				 log("Database connection error: " + e.getMessage());
+			     e.printStackTrace();
 			 }
 		}
 		
@@ -309,6 +310,7 @@ public class Prism extends JavaPlugin {
 	            conn.close();
 		    }
 		    catch (SQLException e){
+		    	log("Database connection error: " + e.getMessage());
 		        e.printStackTrace();
 		    }
 		}

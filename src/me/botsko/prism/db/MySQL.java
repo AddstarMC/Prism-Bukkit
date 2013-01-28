@@ -49,7 +49,8 @@ public class MySQL {
 				if (conn != null && !conn.isClosed()) {
 					try {
 						conn.close();
-					} catch (Exception e) {
+					} catch (Exception e){
+						System.out.print("[Prism]: Database connection close error: " + e.getMessage());
 					}
 				}
 				if ((mysql_user.equalsIgnoreCase("")) && (mysql_pass.equalsIgnoreCase(""))){
@@ -67,7 +68,7 @@ public class MySQL {
 			st.executeUpdate("USE `" + mysql_database + "`");
 			
 		} catch (SQLException e) {
-//			log("Error could not Connect to db " + dsn + ": " + e.getMessage());
+			System.out.print("[Prism]: Database connection error: " + e.getMessage());
 		}
 		return this.conn;
 	}
