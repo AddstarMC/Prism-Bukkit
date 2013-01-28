@@ -25,6 +25,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.WorldeditAction;
@@ -122,17 +123,17 @@ public class ActionsQuery {
 	    			}
 	    			else if( actionType.requiresHandler("prismrollback") ){
 	    				
-//	    				override_data = true;
-//	    				
-//	    				// Get the actual process action
-//	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
-//	    				pr.setData( rs.getString("data") );
-//	    				
-//	    				// All we really want is a block action to feed to the world change system
-//	    				BlockAction b = new BlockAction(null, null, null);
-//	    				b.setBlockId(pr.getOriginalBlockId());
-//	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
-//	    				baseAction = b;
+	    				override_data = true;
+	    				
+	    				// Get the actual process action
+	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
+	    				pr.setData( rs.getString("data") );
+	    				
+	    				// All we really want is a block action to feed to the world change system
+	    				BlockAction b = new BlockAction(null, null, null);
+	    				b.setBlockId(pr.getOriginalBlockId());
+	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
+	    				baseAction = b;
 	    				
 	    			}
 	    			else if( actionType.requiresHandler("signchange") ){
