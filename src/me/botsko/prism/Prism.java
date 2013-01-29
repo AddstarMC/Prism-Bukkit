@@ -105,6 +105,10 @@ public class Prism extends JavaPlugin {
 		// init db
 		dbc();
 		
+		if(conn == null){
+			disablePlugin();
+		}
+		
 		if(isEnabled()){
 		
 			// Setup databases
@@ -229,7 +233,6 @@ public class Prism extends JavaPlugin {
 			connection = mysql.getConn();
 			if(connection == null){
 				this.log("Error: MySQL database connection was not established. Please check your configuration file.");
-				disablePlugin();
 			}
 		}
 		return connection;
