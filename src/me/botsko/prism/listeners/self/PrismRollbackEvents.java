@@ -34,7 +34,6 @@ public class PrismRollbackEvents implements Listener {
 			if(id == 0){
 				return;
 			}
-			Prism.actionsRecorder.shouldImmediatelyProcessQueue(false);
 			for(BlockStateChange stateChange : blockStateChanges){
 				
 				BlockState orig = stateChange.getOriginalBlock();
@@ -49,7 +48,7 @@ public class PrismRollbackEvents implements Listener {
 
 				Prism.actionsRecorder.addToQueue( action );
 			}
-			Prism.actionsRecorder.saveQueue();
+			Prism.actionsRecorder.save();
 		}
 	}
 }
