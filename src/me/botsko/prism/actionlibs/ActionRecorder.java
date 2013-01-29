@@ -43,6 +43,14 @@ public class ActionRecorder implements Runnable {
 	
 	/**
 	 * 
+	 */
+	public int getQueueSize(){
+		return queue.size();
+	}
+	
+	
+	/**
+	 * 
 	 * @param a
 	 */
 	public void addToQueue( Action a ){
