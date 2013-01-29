@@ -51,6 +51,7 @@ public class MySQL {
 						conn.close();
 					} catch (Exception e){
 						System.out.print("[Prism]: Database connection close error: " + e.getMessage());
+						return null;
 					}
 				}
 				if ((mysql_user.equalsIgnoreCase("")) && (mysql_pass.equalsIgnoreCase(""))){
@@ -69,6 +70,7 @@ public class MySQL {
 			
 		} catch (SQLException e) {
 			System.out.print("[Prism]: Database connection error: " + e.getMessage());
+			return null;
 		}
 		return this.conn;
 	}

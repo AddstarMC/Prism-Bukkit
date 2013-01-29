@@ -104,11 +104,10 @@ public class Prism extends JavaPlugin {
 		
 		// init db
 		dbc();
-		
-		if(conn == null){
+		if( conn == null ){
 			disablePlugin();
 		}
-		
+
 		if(isEnabled()){
 		
 			// Setup databases
