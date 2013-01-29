@@ -19,15 +19,11 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 "I've only been using it for a bit and I'm beyond impressed!"
 
-## Official Documentation
+## Official Website & Documentation
 
 **MUST READ ;)**
 
-[Official Prism Documentation](https://github.com/botskonet/Prism-Extras/wiki )
-
-Installation, configuration, permissions, commands, tutorials, and a lot more at our official documentation wiki.
-
-[Bug Reports/Feature Requests](https://snowy-evening.com/botsko/prism/ )
+[DISCOVER-PRISM.COM](http://discover-prism.com/ )
 
 
 ## Some Videos
@@ -122,7 +118,7 @@ Installation, configuration, permissions, commands, tutorials, and a lot more at
        
 ## Get Help
 
-IRC: irc.esper.net #prism (recommended) or #dhmc_us  
+IRC: irc.esper.net #prism
 
 ## Donate
 
