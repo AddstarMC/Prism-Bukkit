@@ -6,6 +6,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.ItemStackAction;
@@ -263,7 +264,9 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
-		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, event.getNewState(), null, "Environment") );
+		Block b = event.getBlock();
+		BlockState s = event.getNewState();
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_FORM, b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
 	}
 	
 	
@@ -273,8 +276,9 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(final BlockFadeEvent event) {
-		if(event.getBlock().getType().equals(Material.FIRE)) return;
-		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FADE, event.getBlock(), "Environment") );
+		Block b = event.getBlock();
+		BlockState s = event.getNewState();
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_FADE, b.getLocation(), s.getTypeId(), s.getRawData(), b.getTypeId(), b.getData(), "Environment") );
 	}
 	
 	

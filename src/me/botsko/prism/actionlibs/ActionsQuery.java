@@ -17,6 +17,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
@@ -78,9 +79,7 @@ public class ActionsQuery {
 	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
 	    		while(rs.next()){
-	    			
-//	    			plugin.debug("result: " + rs.getString("action_type") + " " + rs.getString("display_time"));
-	    			
+
 	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
 	    			
@@ -90,6 +89,10 @@ public class ActionsQuery {
 	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
 	    				baseAction = b;
+	    			}
+	    			else if(actionType.requiresHandler("blockchange")){
+	    				BlockChangeAction bc = new BlockChangeAction(null, null, 0, (byte)0, 0, (byte)0, null);
+	    				baseAction = bc;
 	    			}
 	    			else if(actionType.requiresHandler("blockshift")){
 	    				BlockShiftAction b = new BlockShiftAction(null, null, null, null);

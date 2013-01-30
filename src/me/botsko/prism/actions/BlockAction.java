@@ -3,7 +3,6 @@ package me.botsko.prism.actions;
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.EntityType;
@@ -56,35 +55,6 @@ public class BlockAction extends GenericAction {
 			this.x = block.getLocation().getX();
 			this.y = block.getLocation().getY();
 			this.z = block.getLocation().getZ();
-		}
-		
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
-		
-	}
-	
-	
-	/**
-	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
-	 */
-	public BlockAction( ActionType action_type, BlockState blockstate, Block block, String player ){
-		
-		super(action_type, player);
-		
-		// Build an object for the specific details of this action
-		actionData = new BlockActionData();
-		
-		if(blockstate != null){
-			actionData.block_id = blockstate.getTypeId();
-			actionData.block_subid = blockstate.getRawData();
-			this.world_name = blockstate.getWorld().getName();
-			this.x = blockstate.getLocation().getX();
-			this.y = blockstate.getLocation().getY();
-			this.z = blockstate.getLocation().getZ();
 		}
 		
 		// Set data from current block

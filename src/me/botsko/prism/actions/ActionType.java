@@ -9,9 +9,9 @@ public enum ActionType {
 	 */
 	BLOCK_BREAK(false, true, true, "block", "broke"),
 	BLOCK_BURN(false, true, true, "block", "burned"),
-	BLOCK_FADE(false, true, true, "block", "faded"),
+	BLOCK_FADE(false, true, true, "blockchange", "faded"),
 	BLOCK_FALL(false, true, true, "block", "fell"),
-	BLOCK_FORM(false, true, true, "block", "formed"),
+	BLOCK_FORM(false, true, true, "blockchange", "formed"),
 	BLOCK_PLACE(true, true, true, "block", "placed"),
 	BLOCK_SHIFT(true, false, false, "blockshift", "moved"),
 	BLOCK_SPREAD(true, true, true, "block", "grew"),
