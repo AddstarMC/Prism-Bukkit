@@ -148,7 +148,9 @@ public class BlockUtils {
 				|| m.equals(Material.COCOA)
 				|| m.equals(Material.PORTAL)
 				|| m.equals(Material.PISTON_EXTENSION)
-				|| m.equals(Material.PISTON_MOVING_PIECE)){
+				|| m.equals(Material.PISTON_MOVING_PIECE)
+				|| m.equals(Material.REDSTONE_TORCH_OFF)
+				|| m.equals(Material.REDSTONE_TORCH_ON)){
 			return true;
 		}
 		return false;
