@@ -112,6 +112,15 @@ public class PrismCommands extends Executor {
 		.setHandler(new PreviewCommand(plugin));
 		
 		/**
+		 * /prism report
+		 */
+		addSub("report", "prism.report")
+		.addAlias("rp")
+		.setDescription("Reports")
+		.allowConsole()
+		.setHandler(new ReportCommand(plugin));
+		
+		/**
 		 * /prism rollback (params)
 		 */
 		addSub("rollback", "prism.rollback")

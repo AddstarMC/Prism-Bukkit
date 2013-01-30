@@ -42,11 +42,11 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Basic Usage ---" ) );
 		
 		sender.sendMessage( plugin.playerHelp("i", "Toggles the inspector wand."));
-		sender.sendMessage( plugin.playerHelp("l (params)", "Search the database"));
+		sender.sendMessage( plugin.playerHelp("(l|lookup) (params)", "Search the database"));
 		sender.sendMessage( plugin.playerHelp("near", "Find all changes nearby."));
 		sender.sendMessage( plugin.playerHelp("params", "Lists parameter help."));
-		sender.sendMessage( plugin.playerHelp("preview rollback (params)", "Preview a rollback."));
-		sender.sendMessage( plugin.playerHelp("preview restore (params)", "Preview a restoration."));
+		sender.sendMessage( plugin.playerHelp("preview (rollback|rb) (params)", "Preview a rollback."));
+		sender.sendMessage( plugin.playerHelp("preview (restore|rs) (params)", "Preview a restoration."));
 		sender.sendMessage( plugin.playerHelp("preview apply", "Applies the last preview."));
 		sender.sendMessage( plugin.playerHelp("preview cancel", "Cancels the last preview."));
 		sender.sendMessage( plugin.playerHelp("rollback (params)", "Rollback changes."));
@@ -55,6 +55,7 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( plugin.playerHelp("ex (r)", "Extinguish fires within a (r)adius."));
 		sender.sendMessage( plugin.playerHelp("drain (r)", "Drain water/lava within a (r)adius."));
 		sender.sendMessage( plugin.playerHelp("delete (t)", "Purge records before (t)ime."));
+		sender.sendMessage( plugin.playerHelp("(rp|report) queue", "Display statistics on current queues."));
 		sender.sendMessage( plugin.playerHelp("reload", "Reloads config/language files."));
 		sender.sendMessage( plugin.playerHeaderMsg("http://dhmc.us/wiki/view/prism/"));
 		

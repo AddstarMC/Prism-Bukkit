@@ -67,9 +67,13 @@ public class ActionsQuery {
 	            
 				plugin.dbc();
 				
+				plugin.eventTimer.recordTimedEvent("query started");
+				
 	            PreparedStatement s;
 	    		s = plugin.conn.prepareStatement(query);
 	    		ResultSet rs = s.executeQuery();
+	    		
+	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
 	    		while(rs.next()){
 	    			
@@ -197,6 +201,8 @@ public class ActionsQuery {
 			}
 			plugin.cachedQueries.put(player.getName(), res);
 		}
+		
+		plugin.eventTimer.recordTimedEvent("results object completed");
 		
 		// Return it
 		return res;

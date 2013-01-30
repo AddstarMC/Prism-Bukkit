@@ -1,10 +1,11 @@
 package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
@@ -84,11 +85,6 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected final long processStartTime;
-	
-	/**
-	 * 
-	 */
 	protected ArrayList<Action> deferredChanges = new ArrayList<Action>();
 	
 	/**
@@ -123,12 +119,11 @@ public class Preview implements Previewable {
 	 * @param plugin
 	 * @return 
 	 */
-	public Preview( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, long processStartTime ){
+	public Preview( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
 		this.processType = processType;
 		this.plugin = plugin;
 		this.player = player;
 		this.parameters = parameters;
-		this.processStartTime = processStartTime;
 		
 		// Append all actions to the queue.
 		worldChangeQueue.addAll(results);
@@ -758,7 +753,7 @@ public class Preview implements Previewable {
 					ActionsQuery aq = new ActionsQuery(plugin);
 					QueryResult results = aq.lookup( player, triggerParameters );
 					if(!results.getActionResults().isEmpty()){
-						Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters, processStartTime );
+						Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters );
 						rs.apply();
 					}
 				} catch (CloneNotSupportedException e) {
@@ -838,22 +833,13 @@ public class Preview implements Previewable {
 	 */
 	public void sendResultMessages(){
 		
-		// Calc the final time
-		Calendar lCDateTime = Calendar.getInstance();
-		long processEndTime = lCDateTime.getTimeInMillis();
-		long timeDiff = processEndTime - processStartTime;
-		String timeTaken = "";
-		if(plugin.getConfig().getBoolean("prism.debug")){
-			timeTaken = is_preview ? "" : " ("+timeDiff+"ms)";
-		}
-		
 		// Send player success messages
 		if(processType.equals(PrismProcessType.ROLLBACK)){
 		
 			// Build the results message
 			if(!is_preview){
 				
-				String msg = changes_applied_count + " reversals"+timeTaken+".";
+				String msg = changes_applied_count + " reversals.";
 				if(skipped_block_count > 0){
 					msg += " " + skipped_block_count + " skipped.";
 				}
@@ -887,7 +873,7 @@ public class Preview implements Previewable {
 			if(!is_preview){
 				
 				// Build the results message
-				String msg = changes_applied_count + " events restored"+timeTaken+".";
+				String msg = changes_applied_count + " events restored.";
 				if(skipped_block_count > 0){
 					msg += " " + skipped_block_count + " skipped.";
 				}
@@ -920,7 +906,7 @@ public class Preview implements Previewable {
 		if(processType.equals(PrismProcessType.UNDO)){
 				
 			// Build the results message
-			String msg = changes_applied_count + " things neverminded"+timeTaken+".";
+			String msg = changes_applied_count + " things neverminded.";
 			if(skipped_block_count > 0){
 				msg += " " + skipped_block_count + " skipped.";
 			}
@@ -930,5 +916,30 @@ public class Preview implements Previewable {
 			player.sendMessage( plugin.playerHeaderMsg( msg ) );
 			
 		}
+		
+		plugin.eventTimer.recordTimedEvent("applier function complete");
+		
+		// record timed events to log
+		if(plugin.getConfig().getBoolean("prism.debug")){
+			TreeMap<Long,String> timers = plugin.eventTimer.getEventsTimedList();
+			if(timers.size() > 0){
+				long lastTime = 0;
+				long total = 0;
+				plugin.debug("-- Timer information for last action: --");
+				for (Entry<Long, String> entry : timers.entrySet()){
+					long diff = 0;
+					if(lastTime > 0){
+						diff = entry.getKey() - lastTime;
+						total += diff;
+					}
+					plugin.debug(entry.getValue() + " " + diff + "ms");
+					lastTime = entry.getKey();
+				}
+				plugin.debug("Total time: " + total + "ms");
+				plugin.debug("Changes: " + changes_applied_count);
+				plugin.debug("Skipped: " + skipped_block_count);
+			}
+		}
+		plugin.eventTimer.resetEventList();
 	}
 }

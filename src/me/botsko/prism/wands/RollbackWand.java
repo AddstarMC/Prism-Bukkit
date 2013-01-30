@@ -1,7 +1,6 @@
 package me.botsko.prism.wands;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -63,8 +62,7 @@ public class RollbackWand implements Wand {
 	 */
 	protected void rollback( Player player, Block block ){
 		
-		Calendar lCDateTime = Calendar.getInstance();
-		long processStartTime = lCDateTime.getTimeInMillis();
+		plugin.eventTimer.recordTimedEvent("rollback wand used");
 
 		// Build params
 		QueryParameters params = new QueryParameters();
@@ -81,7 +79,7 @@ public class RollbackWand implements Wand {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( player, params );
 		if(!results.getActionResults().isEmpty()){
-			Rollback rb = new Rollback( plugin, player, PrismProcessType.ROLLBACK, results.getActionResults(), params, processStartTime );
+			Rollback rb = new Rollback( plugin, player, PrismProcessType.ROLLBACK, results.getActionResults(), params );
 			rb.apply();
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
