@@ -105,7 +105,12 @@ public class PreprocessArgs {
 				
 				// Player
 				if(arg_type.equals("p")){
-					parameters.setPlayer( val );
+					String[] playerNames = val.split(",");
+					if(playerNames.length > 0){
+						for(String playerName : playerNames){
+							parameters.addPlayerName( playerName );
+						}
+					}
 				}
 				
 				// World

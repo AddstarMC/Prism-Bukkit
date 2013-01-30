@@ -25,7 +25,7 @@ public class QueryParameters implements Cloneable {
 	protected Location specific_block_loc;
 	protected Location player_location;
 	protected int id = 0;
-	protected String player_name;
+	protected ArrayList<String> player_names = new ArrayList<String>();
 	protected String time_since;
 	protected String entity_filters;
 	protected ArrayList<String> block_filters = new ArrayList<String>();
@@ -211,16 +211,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the player
 	 */
-	public String getPlayer() {
-		return player_name;
+	public ArrayList<String> getPlayerNames() {
+		return player_names;
 	}
 	
 	
 	/**
 	 * @param player the player to set
 	 */
-	public void setPlayer(String player) {
-		this.player_name = player;
+	public void addPlayerName(String player) {
+		this.player_names.add(player);
 	}
 	
 	

@@ -359,23 +359,22 @@ public class ActionsQuery {
 			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
 				
 				query += " JOIN (" +
-						"SELECT"+(parameters.getPlayer() != null ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
+						"SELECT"+(!parameters.getPlayerNames().isEmpty() ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
 						" FROM prism_actions" +
-						" GROUP BY action_type, x, y, z"+(parameters.getPlayer() != null ? ", player" : "")+") latest" +
+						" GROUP BY action_type, x, y, z"+(!parameters.getPlayerNames().isEmpty() ? ", player" : "")+") latest" +
 						" ON prism_actions.action_time = latest.action_time" +
 						" AND prism_actions.x = latest.x" +
 						" AND prism_actions.y = latest.y" +
 						" AND prism_actions.z = latest.z" +
 						" AND prism_actions.action_type = latest.action_type";
 				
-						if(parameters.getPlayer() != null){
+						if(!parameters.getPlayerNames().isEmpty()){
 							query += " AND prism_actions.player = latest.player";
 						}
 	
 			}
 		}
 		
-		// World
 		query += " WHERE 1=1";
 		
 		/**
@@ -425,9 +424,30 @@ public class ActionsQuery {
 			/**
 			 * Players
 			 */
-			String player = parameters.getPlayer();
-			if(player != null){
-				query += buildOrQuery("prism_actions.player", player.split(","));
+			ArrayList<String> playerNames = parameters.getPlayerNames();
+			if(!playerNames.isEmpty()){
+				
+				ArrayList<String> whereIs = new ArrayList<String>();
+				ArrayList<String> whereNot = new ArrayList<String>();
+				for(String player : playerNames){
+					if(player.startsWith("!")){
+						whereNot.add(player.replace("!", ""));
+					} else {
+						whereIs.add(player);
+					}
+				}
+				// To match
+				if(!whereIs.isEmpty()){
+					String[] wherePlayers = new String[whereIs.size()];
+					wherePlayers = whereIs.toArray(wherePlayers);
+					query += buildOrQuery("prism_actions.player", wherePlayers);
+				}
+				// Not match
+				if(!whereNot.isEmpty()){
+					String[] whereNotPlayers = new String[whereNot.size()];
+					whereNotPlayers = whereNot.toArray(whereNotPlayers);
+					query += buildAndQuery("prism_actions.player", whereNotPlayers);
+				}
 			}
 			
 			/**
@@ -549,6 +569,30 @@ public class ActionsQuery {
 					where += " OR ";
 				}
 				where += fieldname + " LIKE '%"+val+"%'";
+				c++;
+			}
+			where += ")";
+		}
+		return where;
+	}
+	
+	
+	/**
+	 * 
+	 * @param fieldname
+	 * @param arg_values
+	 * @return
+	 */
+	protected String buildAndQuery( String fieldname, String[] arg_values ){
+		String where = "";
+		if(arg_values.length > 0){
+			where += " AND (";
+			int c = 1;
+			for(String val : arg_values){
+				if(c > 1 && c <= arg_values.length){
+					where += " AND ";
+				}
+				where += fieldname + " != '"+val+"'";
 				c++;
 			}
 			where += ")";

@@ -81,7 +81,7 @@ public class UndoCommand implements SubHandler {
 			QueryParameters parameters = new QueryParameters();
 			parameters.setWorld(call.getPlayer().getWorld().getName());
 			parameters.addActionType(process.getProcessChildActionType());
-			parameters.setPlayer( call.getPlayer().getName() );
+			parameters.addPlayerName( call.getPlayer().getName() );
 			parameters.setParentId(record_id);
 			
 			// make sure the distance isn't too far away
@@ -106,7 +106,7 @@ public class UndoCommand implements SubHandler {
 			QueryParameters parameters = new QueryParameters();
 			parameters.setAllow_no_radius(true);
 			parameters.addActionType(ActionType.PRISM_PROCESS);
-			parameters.setPlayer( call.getPlayer().getName() );
+			parameters.addPlayerName( call.getPlayer().getName() );
 			parameters.setLimit(5); // @todo config this, and move the logic to queryparams
 		
 			ActionsQuery aq = new ActionsQuery(plugin);
