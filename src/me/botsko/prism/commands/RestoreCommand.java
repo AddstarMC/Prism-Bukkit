@@ -35,8 +35,6 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		plugin.eventTimer.recordTimedEvent("restore command entered");
-		
 		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.RESTORE, 1 );
 		if(parameters == null){
 			return;

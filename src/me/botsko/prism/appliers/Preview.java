@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
@@ -916,20 +917,27 @@ public class Preview implements Previewable {
 			
 		}
 		
+		plugin.eventTimer.recordTimedEvent("applier function complete");
+		
 		// record timed events to log
 		if(plugin.getConfig().getBoolean("prism.debug")){
-			HashMap<Long,String> timers = plugin.eventTimer.getEventsTimedList();
+			TreeMap<Long,String> timers = plugin.eventTimer.getEventsTimedList();
 			if(timers.size() > 0){
 				long lastTime = 0;
+				long total = 0;
 				plugin.debug("-- Timer information for last action: --");
 				for (Entry<Long, String> entry : timers.entrySet()){
 					long diff = 0;
 					if(lastTime > 0){
 						diff = entry.getKey() - lastTime;
+						total += diff;
 					}
 					plugin.debug(entry.getValue() + " " + diff + "ms");
 					lastTime = entry.getKey();
 				}
+				plugin.debug("Total time: " + total + "ms");
+				plugin.debug("Changes: " + changes_applied_count);
+				plugin.debug("Skipped: " + skipped_block_count);
 			}
 		}
 		plugin.eventTimer.resetEventList();

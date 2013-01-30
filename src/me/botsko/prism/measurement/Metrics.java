@@ -1,4 +1,4 @@
-package me.botsko.prism.metrics;
+package me.botsko.prism.measurement;
 
 /*
  * Copyright 2011 Tyler Blair. All rights reserved.

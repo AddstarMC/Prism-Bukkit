@@ -77,8 +77,6 @@ public class UndoCommand implements SubHandler {
 				return;
 			}
 			
-			plugin.eventTimer.recordTimedEvent("undo command entered");
-			
 			// Pull the actual block change data for this undo event
 			QueryParameters parameters = new QueryParameters();
 			parameters.setWorld(call.getPlayer().getWorld().getName());

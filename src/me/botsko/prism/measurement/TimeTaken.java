@@ -1,21 +1,21 @@
 package me.botsko.prism.measurement;
 
 import java.util.Calendar;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class TimeTaken {
 
 	/**
 	 * 
 	 */
-	protected HashMap<Long,String> eventsTimed = new HashMap<Long,String>();
+	protected TreeMap<Long,String> eventsTimed = new TreeMap<Long,String>();
 	
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public long getTimestamp(){
+	protected long getTimestamp(){
 		Calendar lCDateTime = Calendar.getInstance();
 		return lCDateTime.getTimeInMillis();
 	}
@@ -42,7 +42,7 @@ public class TimeTaken {
 	 * 
 	 * @return
 	 */
-	public HashMap<Long,String> getEventsTimedList(){
+	public TreeMap<Long,String> getEventsTimedList(){
 		return eventsTimed;
 	}
 }

@@ -35,8 +35,6 @@ public class RollbackCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		plugin.eventTimer.recordTimedEvent("rollback command entered");
-		
 		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 1 );
 		if(parameters == null){
 			return;

@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.measurement.QueueStats;
 
 public class ActionRecorder implements Runnable {
 	
@@ -178,6 +177,7 @@ public class ActionRecorder implements Runnable {
 	 */
 	public void insertActionsIntoDatabase() {
 	    PreparedStatement s = null;
+	    int actionsRecorded = 0;
 	    try {
 	    	
 	        final Connection conn = plugin.getDbConnection();
@@ -188,8 +188,8 @@ public class ActionRecorder implements Runnable {
 	        conn.setAutoCommit(false);
 	        s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
 	        int i = 0;
-	        while (!queue.isEmpty()) {
-	        	plugin.queueStats.actionsRecorded++;
+	        while (!queue.isEmpty()){
+	        	actionsRecorded++;
 	        	Action a = queue.poll();
 	        	if(a == null) continue;
 	        	s.setString(1,a.getAction_time());
@@ -206,6 +206,10 @@ public class ActionRecorder implements Runnable {
 	            }
 	            i++;
 	        }
+	        
+	        // Save the current count to the queue for short historical data
+	        plugin.queueStats.addRunCount(actionsRecorded);
+	        
 	        s.executeBatch();
 	        conn.commit();
 	        s.close();
@@ -222,8 +226,6 @@ public class ActionRecorder implements Runnable {
 	 */
 	@Override
 	public void run() {
-		// reset queue stats
-		plugin.queueStats = new QueueStats();
 		save();
 	}
 	

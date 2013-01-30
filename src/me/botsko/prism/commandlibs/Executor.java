@@ -39,6 +39,9 @@ public class Executor implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		
+		plugin.eventTimer.resetEventList();
+		plugin.eventTimer.recordTimedEvent("command entered");
+		
 		Player player = null;
 		if (sender instanceof Player) {
 			player = (Player) sender;
