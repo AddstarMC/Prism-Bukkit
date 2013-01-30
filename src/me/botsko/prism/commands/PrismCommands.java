@@ -165,6 +165,7 @@ public class PrismCommands extends Executor {
 		 * /prism reload
 		 */
 		addSub("reload", "prism.reload")
+		.allowConsole()
 		.setDescription("Reloads the configuration files.")
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
