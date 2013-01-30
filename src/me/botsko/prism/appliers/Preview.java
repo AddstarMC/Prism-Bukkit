@@ -17,6 +17,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockAction.SkullActionData;
 import me.botsko.prism.actions.BlockAction.SpawnerActionData;
+import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
@@ -239,6 +240,31 @@ public class Preview implements Previewable {
 		// need logic to do the opposite
 		if(processType.equals(PrismProcessType.UNDO)){
 			return placeBlock(b,block,false);
+		}
+		
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected ChangeResultType applyBlockChange(BlockChangeAction b, Block block){
+		
+		BlockAction blockAction = new BlockAction(null, null, null);
+		
+		// Rollbacks will revert a block to the old state
+		if(processType.equals(PrismProcessType.ROLLBACK)){
+			blockAction.setBlockId( b.getActionData().old_id );
+			blockAction.setBlockSubId( b.getActionData().old_subid );
+			return placeBlock(blockAction,block,false);
+		}
+		
+		// Restores a block to it's new state
+		if(processType.equals(PrismProcessType.RESTORE)){
+			blockAction.setBlockId( b.getActionData().new_id );
+			blockAction.setBlockSubId( b.getActionData().new_subid );
+			return placeBlock(blockAction,block,false);
 		}
 		
 		return null;
@@ -490,6 +516,27 @@ public class Preview implements Previewable {
 					
 					
 					/**
+					 * Reverse or restore block state changes
+					 */
+					if( a instanceof BlockChangeAction ){
+						
+						// Pass along to the change handler
+						ChangeResultType result = applyBlockChange( (BlockChangeAction) a, loc.getWorld().getBlockAt(loc) );
+						
+						if(result.equals(ChangeResultType.DEFERRED)){
+							deferredChanges.add( a );
+						}
+						else if(result.equals(ChangeResultType.SKIPPED)){
+							skipped_block_count++;
+							worldChangeQueue.remove(a);
+							continue;
+						} else {
+							changes_applied_count++;
+						}
+					}
+					
+					
+					/**
 					 * Rollback entity kills
 					 */
 					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof EntityAction ){
@@ -713,8 +760,25 @@ public class Preview implements Previewable {
 				}
 			} else {
 			
+				BlockAction b = null;
+				if(a instanceof BlockChangeAction){
+					BlockChangeAction bc = (BlockChangeAction) a;
+					b = new BlockAction(null, null, null);
+					b.setWorld_name(bc.getWorld_name());
+					b.setX( bc.getX() );
+					b.setY( bc.getY() );
+					b.setZ( bc.getZ() );
+					if(processType.equals(PrismProcessType.ROLLBACK)){
+						b.setBlockId( bc.getActionData().old_id );
+						b.setBlockSubId( bc.getActionData().old_subid );
+					} else {
+						b.setBlockId( bc.getActionData().new_id );
+						b.setBlockSubId( bc.getActionData().new_subid );
+					}
+				} else {
+					b = (BlockAction) a;
+				}
 			
-				BlockAction b = (BlockAction) a;
 				World world = plugin.getServer().getWorld(b.getWorld_name());
 				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 				Block block = world.getBlockAt(loc);
