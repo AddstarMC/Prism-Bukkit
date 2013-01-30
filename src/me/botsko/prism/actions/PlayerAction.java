@@ -17,13 +17,16 @@ public class PlayerAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PlayerAction( ActionType action_type, Player player ){
+	public PlayerAction( ActionType action_type, Player player, String ip ){
 	
 		super(action_type, null);
 
+		this.data = "";
 		if(player != null){
 			this.player_name = player.getName();
-			this.data = "";
+		}
+		if(ip != null && !ip.isEmpty()){
+			this.data = ip;
 		}
 		
 		if(player != null){
@@ -42,6 +45,9 @@ public class PlayerAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
+		if(!this.data.isEmpty()){
+			return "from " + this.data;
+		}
 		return "";
 	}
 }

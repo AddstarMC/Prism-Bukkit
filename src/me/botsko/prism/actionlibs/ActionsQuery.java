@@ -110,7 +110,7 @@ public class ActionsQuery {
 	    				baseAction = isa;
 	    			}
 	    			else if( actionType.requiresHandler("player") ){
-	    				PlayerAction pa = new PlayerAction(null, null);
+	    				PlayerAction pa = new PlayerAction(null, null, null);
 	    				baseAction = pa;
 	    			}
 	    			else if( actionType.requiresHandler("playerdeath") ){

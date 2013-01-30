@@ -66,7 +66,15 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(final PlayerJoinEvent event){
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_JOIN, event.getPlayer()) );
+		
+		Player player = event.getPlayer();
+		
+		String ip = null;
+		if(plugin.getConfig().getBoolean("prism.track-player-ip-on-join")){
+			ip = player.getAddress().getAddress().getHostAddress().toString();
+		}
+		
+		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_JOIN, event.getPlayer(), ip) );
 	}
 	
 	
@@ -77,7 +85,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(final PlayerQuitEvent event){
 		
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_QUIT, event.getPlayer()) );
+		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_QUIT, event.getPlayer(), null) );
 
 		// Remove any active wands for this player
 		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){
