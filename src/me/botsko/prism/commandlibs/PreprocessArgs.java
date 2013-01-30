@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -80,10 +81,14 @@ public class PreprocessArgs {
 						for(String action : actions){
 							// Find all actions that match the action provided - whether the full name or
 							// short name.
-							ArrayList<ActionType> actionTypes = ActionType.getByActionsType( action );
+							ArrayList<ActionType> actionTypes = ActionType.getByActionsType( action.replace("!", "") );
 							if(!actionTypes.isEmpty()){
 								for(ActionType actionType : actionTypes){
-									parameters.addActionType( actionType );
+									MatchRule match = MatchRule.INCLUDE;
+									if(action.startsWith("!")){
+										match = MatchRule.EXCLUDE;
+									}
+									parameters.addActionType( actionType, match );
 								}
 							} else {
 								
@@ -94,7 +99,7 @@ public class PreprocessArgs {
 								    	foundArgs.remove(entry.getKey());
 								    }
 								}
-								player.sendMessage( plugin.playerError("Ignoring action '"+action+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+								player.sendMessage( plugin.playerError("Ignoring action '"+action.replace("!", "")+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
 								if(actions.length == 1){
 									return null;
 								}
@@ -108,7 +113,11 @@ public class PreprocessArgs {
 					String[] playerNames = val.split(",");
 					if(playerNames.length > 0){
 						for(String playerName : playerNames){
-							parameters.addPlayerName( playerName );
+							MatchRule match = MatchRule.INCLUDE;
+							if(playerName.startsWith("!")){
+								match = MatchRule.EXCLUDE;
+							}
+							parameters.addPlayerName( playerName.replace("!", ""), match );
 						}
 					}
 				}

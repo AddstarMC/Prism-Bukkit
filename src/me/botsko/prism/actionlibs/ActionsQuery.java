@@ -5,7 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -345,7 +347,7 @@ public class ActionsQuery {
 		// at a location when there's a newer one, because no overwrite means
 		// any after that first will be skipped.
 		if( parameters.hasFlag(Flag.NO_OVERWRITE) && plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().contains(ActionType.BLOCK_PLACE) ) ){
+			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().containsKey(ActionType.BLOCK_PLACE) ) ){
 				query += " JOIN (" +
 							"SELECT action_type, x, y, z, max(action_time) as action_time" +
 							" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
@@ -356,7 +358,7 @@ public class ActionsQuery {
 							" AND prism_actions.z = latest.z" +
 							" AND prism_actions.action_type = latest.action_type";
 			}
-			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().contains(ActionType.ITEM_REMOVE) ) {
+			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().containsKey(ActionType.ITEM_REMOVE) ) {
 				
 				query += " JOIN (" +
 						"SELECT"+(!parameters.getPlayerNames().isEmpty() ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
@@ -396,22 +398,15 @@ public class ActionsQuery {
 
 			/**
 			 * Actions
+			 * @todo This won't ever allow ! because we use action types, not names
 			 */
-			ArrayList<ActionType> action_types = parameters.getActionTypes();
-			if(!action_types.isEmpty()){
-				String[] actions = new String[action_types.size()];
-				int i = 0; // @todo Might be a better way to do this.
-				for(ActionType type : action_types){
-					actions[i] = type.getActionType();
-					i++;
-				}
-				query += buildOrQuery("prism_actions.action_type", actions);
-			}
+			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
+			query += buildMultipleConditions( action_types, "action_type" );
 			
 			// Make sure none of the prism process types are requested
 			boolean containtsPrismProcessType = false;
-			for(ActionType aType : action_types){
-				if(aType.getActionType().contains("prism")){
+			for (Entry<String,MatchRule> entry : action_types.entrySet()){
+				if(entry.getKey().contains("prism")){
 					containtsPrismProcessType = true;
 					break;
 				}
@@ -424,31 +419,8 @@ public class ActionsQuery {
 			/**
 			 * Players
 			 */
-			ArrayList<String> playerNames = parameters.getPlayerNames();
-			if(!playerNames.isEmpty()){
-				
-				ArrayList<String> whereIs = new ArrayList<String>();
-				ArrayList<String> whereNot = new ArrayList<String>();
-				for(String player : playerNames){
-					if(player.startsWith("!")){
-						whereNot.add(player.replace("!", ""));
-					} else {
-						whereIs.add(player);
-					}
-				}
-				// To match
-				if(!whereIs.isEmpty()){
-					String[] wherePlayers = new String[whereIs.size()];
-					wherePlayers = whereIs.toArray(wherePlayers);
-					query += buildOrQuery("prism_actions.player", wherePlayers);
-				}
-				// Not match
-				if(!whereNot.isEmpty()){
-					String[] whereNotPlayers = new String[whereNot.size()];
-					whereNotPlayers = whereNot.toArray(whereNotPlayers);
-					query += buildAndQuery("prism_actions.player", whereNotPlayers);
-				}
-			}
+			HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
+			query += buildMultipleConditions( playerNames, "player" );
 			
 			/**
 			 * Radius or Selection
@@ -526,6 +498,42 @@ public class ActionsQuery {
 		
 		return query;
 		
+	}
+	
+	
+	/**
+	 * 
+	 * @param origValues
+	 * @param field_name
+	 * @return
+	 */
+	protected String buildMultipleConditions( HashMap<String,MatchRule> origValues, String field_name ){
+		String query = "";
+		if(!origValues.isEmpty()){
+			
+			ArrayList<String> whereIs = new ArrayList<String>();
+			ArrayList<String> whereNot = new ArrayList<String>();
+			for (Entry<String,MatchRule> entry : origValues.entrySet()){
+				if(entry.getValue().equals(MatchRule.EXCLUDE)){
+					whereNot.add(entry.getKey());
+				} else {
+					whereIs.add(entry.getKey());
+				}
+			}
+			// To match
+			if(!whereIs.isEmpty()){
+				String[] whereValues = new String[whereIs.size()];
+				whereValues = whereIs.toArray(whereValues);
+				query += buildOrQuery("prism_actions."+field_name, whereValues);
+			}
+			// Not match
+			if(!whereNot.isEmpty()){
+				String[] whereNotValues = new String[whereNot.size()];
+				whereNotValues = whereNot.toArray(whereNotValues);
+				query += buildAndQuery("prism_actions."+field_name, whereNotValues);
+			}
+		}
+		return query;
 	}
 	
 	

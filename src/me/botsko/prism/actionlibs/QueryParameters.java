@@ -2,6 +2,7 @@ package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -10,41 +11,54 @@ import me.botsko.prism.commandlibs.Flag;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
+/**
+ * Query Parameters allows you to add values with which Prism
+ * will build the database queries.
+ * 
+ * @author botskonet
+ *
+ */
 public class QueryParameters implements Cloneable {
 	
-	// Internal use
+	/**
+	 * Internal use
+	 */
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
 	protected PrismProcessType lookup_type = PrismProcessType.LOOKUP;
+	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
+	protected String original_command;
 	
-	// Typically required
-	protected int radius;
-	protected String world;
-	
-	// Optional
-	protected ArrayList<ActionType> action_types = new ArrayList<ActionType>();
-	protected Location specific_block_loc;
-	protected Location player_location;
-	protected int id = 0;
-	protected ArrayList<String> player_names = new ArrayList<String>();
-	protected String time_since;
-	protected String entity_filters;
-	protected ArrayList<String> block_filters = new ArrayList<String>();
+	/**
+	 * Single-value options
+	 */
 	protected boolean allow_no_radius = false;
-	protected int parent_id = 0;
-	protected Vector minLoc;
+	protected int id = 0;
 	protected Vector maxLoc;
+	protected Vector minLoc;
+	protected int parent_id = 0;
+	protected Location player_location;
+	protected int radius;
+	protected Location specific_block_loc;
+	protected String time_since;
+	protected String world;
 
+	
+	/**
+	 * Params that allow multiple values
+	 */
+	protected HashMap<ActionType,MatchRule> actionTypeRules = new HashMap<ActionType,MatchRule>();
+	protected ArrayList<String> block_filters = new ArrayList<String>();
+	protected String entity_filters;
+	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
+	protected ArrayList<Flag> flags = new ArrayList<Flag>();
+	
+	/**
+	 * Pagination
+	 */
 	protected int per_page = 5;
 	protected int limit = 1000000;
 	
-	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 
-	
-	// Directional
-	protected ArrayList<Flag> flags = new ArrayList<Flag>();
-	
-	// Informational
-	protected String original_command;
 	
 	
 	/**
@@ -211,7 +225,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the player
 	 */
-	public ArrayList<String> getPlayerNames() {
+	public HashMap<String,MatchRule> getPlayerNames() {
 		return player_names;
 	}
 	
@@ -219,8 +233,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param player the player to set
 	 */
-	public void addPlayerName(String player) {
-		this.player_names.add(player);
+	public void addPlayerName( String player ){
+		addPlayerName(player,MatchRule.INCLUDE);
+	}
+	
+	
+	/**
+	 * @param player the player to set
+	 */
+	public void addPlayerName( String player, MatchRule match ) {
+		this.player_names.put(player,match);
 	}
 	
 	
@@ -243,8 +265,20 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the action_type
 	 */
-	public ArrayList<ActionType> getActionTypes() {
-		return action_types;
+	public HashMap<ActionType,MatchRule> getActionTypes() {
+		return actionTypeRules;
+	}
+	
+	
+	/**
+	 * @return the action_type
+	 */
+	public HashMap<String,MatchRule> getActionTypeNames() {
+		HashMap<String,MatchRule> types = new HashMap<String,MatchRule>();
+		for (Entry<ActionType,MatchRule> entry : actionTypeRules.entrySet()){
+			types.put(entry.getKey().getActionType(), entry.getValue());
+		}
+		return types;
 	}
 	
 	
@@ -252,7 +286,15 @@ public class QueryParameters implements Cloneable {
 	 * @param action_type the action_type to set
 	 */
 	public void addActionType(ActionType action_type) {
-		this.action_types.add(action_type);
+		addActionType(action_type,MatchRule.INCLUDE);
+	}
+	
+	
+	/**
+	 * @param action_type the action_type to set
+	 */
+	public void addActionType(ActionType action_type, MatchRule match) {
+		this.actionTypeRules.put(action_type,match);
 	}
 	
 	
@@ -260,7 +302,7 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 */
 	public void resetActionTypes() {
-		action_types.clear();
+		actionTypeRules.clear();
 	}
 	
 	
@@ -427,8 +469,8 @@ public class QueryParameters implements Cloneable {
 	 */
 	public boolean shouldTriggerRestoreFor( ActionType at ){
 		if(!getActionTypes().isEmpty()){
-			for(ActionType requestedType : getActionTypes()){
-				if(requestedType.shouldTriggerRestoreFor( at )){
+			for (Entry<ActionType,MatchRule> entry : getActionTypes().entrySet()){
+				if(entry.getKey().shouldTriggerRestoreFor( at )){
 					return true;
 				}
 			}
@@ -447,8 +489,8 @@ public class QueryParameters implements Cloneable {
 	 */
 	public boolean shouldTriggerRollbackFor( ActionType at ){
 		if(!getActionTypes().isEmpty()){
-			for(ActionType requestedType : getActionTypes()){
-				if(requestedType.shouldTriggerRollbackFor( at )){
+			for (Entry<ActionType,MatchRule> entry : getActionTypes().entrySet()){
+				if(entry.getKey().shouldTriggerRollbackFor( at )){
 					return true;
 				}
 			}
@@ -487,7 +529,7 @@ public class QueryParameters implements Cloneable {
 	@Override
 	public QueryParameters clone() throws CloneNotSupportedException {
 		QueryParameters cloned = (QueryParameters) super.clone();
-		cloned.action_types = new ArrayList<ActionType>(action_types);
+		cloned.actionTypeRules = new HashMap<ActionType,MatchRule>(actionTypeRules);
 		return cloned;
 	}
 }
