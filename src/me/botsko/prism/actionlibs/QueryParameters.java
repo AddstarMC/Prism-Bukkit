@@ -48,7 +48,7 @@ public class QueryParameters implements Cloneable {
 	 */
 	protected HashMap<ActionType,MatchRule> actionTypeRules = new HashMap<ActionType,MatchRule>();
 	protected ArrayList<String> block_filters = new ArrayList<String>();
-	protected String entity_filters;
+	protected HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
 	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
 	protected ArrayList<Flag> flags = new ArrayList<Flag>();
 	
@@ -80,7 +80,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the entity
 	 */
-	public String getEntity() {
+	public HashMap<String,MatchRule> getEntities() {
 		return entity_filters;
 	}
 
@@ -88,8 +88,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param entity the entity to set
 	 */
-	public void setEntity(String entity) {
-		this.entity_filters = entity;
+	public void addEntity(String entity) {
+		addEntity(entity, MatchRule.INCLUDE);
+	}
+	
+	
+	/**
+	 * @param entity the entity to set
+	 */
+	public void addEntity( String entity, MatchRule match ) {
+		this.entity_filters.put(entity, match);
 	}
 
 

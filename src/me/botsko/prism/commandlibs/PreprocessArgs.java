@@ -179,7 +179,16 @@ public class PreprocessArgs {
 				
 				// Entity
 				if(arg_type.equals("e")){
-					parameters.setEntity( val );
+					String[] entityNames = val.split(",");
+					if(entityNames.length > 0){
+						for(String entityName : entityNames){
+							MatchRule match = MatchRule.INCLUDE;
+							if(entityName.startsWith("!")){
+								match = MatchRule.EXCLUDE;
+							}
+							parameters.addEntity( entityName.replace("!", ""), match );
+						}
+					}
 				}
 				
 				// Block

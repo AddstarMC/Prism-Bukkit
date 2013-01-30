@@ -401,7 +401,7 @@ public class ActionsQuery {
 			 * @todo This won't ever allow ! because we use action types, not names
 			 */
 			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
-			query += buildMultipleConditions( action_types, "action_type" );
+			query += buildMultipleConditions( action_types, "action_type", null );
 			
 			// Make sure none of the prism process types are requested
 			boolean containtsPrismProcessType = false;
@@ -420,7 +420,7 @@ public class ActionsQuery {
 			 * Players
 			 */
 			HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
-			query += buildMultipleConditions( playerNames, "player" );
+			query += buildMultipleConditions( playerNames, "player", null );
 			
 			/**
 			 * Radius or Selection
@@ -434,25 +434,14 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildOrLikeQuery("prism_actions.data", blockArr);
+				query += buildOrLikeQuery("prism_actions.data", blockArr, null);
 			}
 			
 			/**
 			 * Entity
 			 */
-			String entity = parameters.getEntity();
-			if(entity != null){
-				String[] entities = entity.split(",");
-				if(entities.length > 0){
-					String[] entity_matches = new String[entities.length];
-					int c = 0;
-					for(String e : entities){
-						entity_matches[c] = "entity_name\":\""+e;
-						c++;
-					}
-					query += buildOrLikeQuery("prism_actions.data", entity_matches);
-				}
-			}
+			HashMap<String,MatchRule> entityNames = parameters.getEntities();
+			query += buildMultipleConditions( entityNames, "data", "entity_name\":\"%s" );
 			
 			/**
 			 * Timeframe
@@ -507,7 +496,7 @@ public class ActionsQuery {
 	 * @param field_name
 	 * @return
 	 */
-	protected String buildMultipleConditions( HashMap<String,MatchRule> origValues, String field_name ){
+	protected String buildMultipleConditions( HashMap<String,MatchRule> origValues, String field_name, String format ){
 		String query = "";
 		if(!origValues.isEmpty()){
 			
@@ -524,13 +513,22 @@ public class ActionsQuery {
 			if(!whereIs.isEmpty()){
 				String[] whereValues = new String[whereIs.size()];
 				whereValues = whereIs.toArray(whereValues);
-				query += buildOrQuery("prism_actions."+field_name, whereValues);
+				if(format == null){
+					query += buildOrQuery("prism_actions."+field_name, whereValues);
+				} else {
+					query += buildOrLikeQuery("prism_actions."+field_name, whereValues, format);
+				}
 			}
 			// Not match
 			if(!whereNot.isEmpty()){
 				String[] whereNotValues = new String[whereNot.size()];
 				whereNotValues = whereNot.toArray(whereNotValues);
-				query += buildAndQuery("prism_actions."+field_name, whereNotValues);
+				
+				if(format == null){
+					query += buildAndNotQuery("prism_actions."+field_name, whereNotValues);
+				} else {
+					query += buildAndNotLikeQuery("prism_actions."+field_name, whereNotValues, format);
+				}
 			}
 		}
 		return query;
@@ -567,7 +565,7 @@ public class ActionsQuery {
 	 * @param arg_values
 	 * @return
 	 */
-	protected String buildOrLikeQuery( String fieldname, String[] arg_values ){
+	protected String buildOrLikeQuery( String fieldname, String[] arg_values, String format ){
 		String where = "";
 		if(arg_values.length > 0){
 			where += " AND (";
@@ -576,7 +574,7 @@ public class ActionsQuery {
 				if(c > 1 && c <= arg_values.length){
 					where += " OR ";
 				}
-				where += fieldname + " LIKE '%"+val+"%'";
+				where += fieldname + " LIKE '%"+String.format(format,val)+"%'";
 				c++;
 			}
 			where += ")";
@@ -591,7 +589,7 @@ public class ActionsQuery {
 	 * @param arg_values
 	 * @return
 	 */
-	protected String buildAndQuery( String fieldname, String[] arg_values ){
+	protected String buildAndNotQuery( String fieldname, String[] arg_values ){
 		String where = "";
 		if(arg_values.length > 0){
 			where += " AND (";
@@ -601,6 +599,30 @@ public class ActionsQuery {
 					where += " AND ";
 				}
 				where += fieldname + " != '"+val+"'";
+				c++;
+			}
+			where += ")";
+		}
+		return where;
+	}
+	
+	
+	/**
+	 * 
+	 * @param fieldname
+	 * @param arg_values
+	 * @return
+	 */
+	protected String buildAndNotLikeQuery( String fieldname, String[] arg_values, String format ){
+		String where = "";
+		if(arg_values.length > 0){
+			where += " AND (";
+			int c = 1;
+			for(String val : arg_values){
+				if(c > 1 && c <= arg_values.length){
+					where += " AND ";
+				}
+				where += fieldname + " NOT LIKE '%"+String.format(format,val)+"%'";
 				c++;
 			}
 			where += ")";
