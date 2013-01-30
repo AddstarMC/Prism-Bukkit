@@ -52,6 +52,7 @@ public class ParamsCommand implements SubHandler {
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE + " Like 'pig'. No default.") );
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE + " Events after x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). Default based on config.") );
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE + " Defaults to your current world.") );
+		sender.sendMessage( plugin.playerMsg( "Prefix action, player, entity names with ! to exclude. Like p:!viveleroi") );
 		
 		// Build short list
 		ArrayList<String> shortNames = new ArrayList<String>();
