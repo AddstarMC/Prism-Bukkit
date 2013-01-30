@@ -1,7 +1,6 @@
 package me.botsko.prism.commands;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -36,8 +35,7 @@ public class RollbackCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		Calendar lCDateTime = Calendar.getInstance();
-		long processStartTime = lCDateTime.getTimeInMillis();
+		plugin.eventTimer.recordTimedEvent("rollback command entered");
 		
 		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 1 );
 		if(parameters == null){
@@ -63,7 +61,7 @@ public class RollbackCommand implements SubHandler {
 			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
 			
-			Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
+			Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
 			rb.apply();
 			
 		} else {

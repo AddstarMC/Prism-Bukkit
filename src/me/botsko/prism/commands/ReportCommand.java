@@ -47,6 +47,7 @@ public class ReportCommand implements SubHandler {
 	 * @param sender
 	 */
 	protected void queueReport( CommandSender sender ){
-		sender.sendMessage( plugin.playerHeaderMsg( "Actions in recorder queue: " + ChatColor.WHITE + Prism.actionsRecorder.getQueueSize() ) );
+		sender.sendMessage( plugin.playerHeaderMsg( "Actions in save queue: " + ChatColor.WHITE + Prism.actionsRecorder.getQueueSize() ) );
+		sender.sendMessage( plugin.playerHeaderMsg( "Recorded since last run: " + ChatColor.WHITE + plugin.queueStats.actionsRecorded ) );
 	}
 }

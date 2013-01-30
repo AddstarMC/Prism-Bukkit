@@ -1,6 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.Calendar;
 import java.util.List;
 
 import org.bukkit.ChatColor;
@@ -78,8 +77,7 @@ public class UndoCommand implements SubHandler {
 				return;
 			}
 			
-			Calendar lCDateTime = Calendar.getInstance();
-			long processStartTime = lCDateTime.getTimeInMillis();
+			plugin.eventTimer.recordTimedEvent("undo command entered");
 			
 			// Pull the actual block change data for this undo event
 			QueryParameters parameters = new QueryParameters();
@@ -95,7 +93,7 @@ public class UndoCommand implements SubHandler {
 				
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
 				
-				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters, processStartTime );
+				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters );
 				rb.apply();
 				
 			} else {

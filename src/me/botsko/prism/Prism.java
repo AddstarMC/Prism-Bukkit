@@ -25,6 +25,8 @@ import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
+import me.botsko.prism.measurement.QueueStats;
+import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.metrics.Metrics;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
@@ -60,6 +62,9 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<String,PreviewSession> playerActivePreviews = new ConcurrentHashMap<String,PreviewSession>();
 	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String,QueryResult>();
 	public ConcurrentHashMap<Location,Long> alertedBlocks = new ConcurrentHashMap<Location,Long>();
+	public TimeTaken eventTimer;
+	public QueueStats queueStats;
+
 	
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so
@@ -116,6 +121,9 @@ public class Prism extends JavaPlugin {
 			// Apply any updates
 			Updater up = new Updater(this);
 			up.apply_updates();
+			
+			eventTimer = new TimeTaken();
+			queueStats = new QueueStats();
 			
 			// Plugins we use
 			checkPluginDependancies();

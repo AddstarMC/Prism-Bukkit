@@ -1,7 +1,6 @@
 package me.botsko.prism.commands;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -84,8 +83,7 @@ public class PreviewCommand implements SubHandler {
 			 */
 			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs") ){
 				
-				Calendar lCDateTime = Calendar.getInstance();
-				long processStartTime = lCDateTime.getTimeInMillis();
+				plugin.eventTimer.recordTimedEvent("preview command entered");
 				
 				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 2 );
 				if(parameters == null){
@@ -119,11 +117,11 @@ public class PreviewCommand implements SubHandler {
 					
 					Previewable rs = null;
 					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
-						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, processStartTime );
+						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
 						rs.preview();
 					}
 					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
-						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, processStartTime );
+						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
 						rs.preview();
 					}
 					// Adding preview to player preview queue handled by postProcess
