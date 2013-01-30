@@ -145,14 +145,19 @@ public class PreprocessArgs {
 						
 						// User has asked for a global radius
 						else if(val.equals("global")){
-							if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
-								parameters.setAllow_no_radius(true);
+							if(plugin.getConfig().getBoolean("prism.limit-global-radius-override-to-lookups")){
+								if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
+									parameters.setAllow_no_radius(true);
+								} else {
+									player.sendMessage( plugin.playerError("Current configuration limits global radius to lookups.") );
+									return null;
+								}
 							} else {
-								player.sendMessage( plugin.playerError("A global radius may only be used on lookup.") );
-								return null;
+								// Allow no matter what
+								parameters.setAllow_no_radius(true);
 							}
 						} else {
-							player.sendMessage( plugin.playerError("Radius must be a number or 'global'. Use /prism ? for a assitance.") );
+							player.sendMessage( plugin.playerError("Radius must be a number, 'global', or 'we'. Use /prism ? for a assitance.") );
 							return null;
 						}
 					}

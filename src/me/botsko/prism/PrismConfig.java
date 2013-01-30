@@ -53,6 +53,7 @@ public class PrismConfig {
 		config.addDefault("prism.default-radius", 10);
 		config.addDefault("prism.default-time-since", "3d");
 		config.addDefault("prism.max-radius-unless-overridden", 100);
+		config.addDefault("prism.limit-global-radius-override-to-lookups", true);
 		
 		config.addDefault("prism.near.default-radius", 5);
 		
