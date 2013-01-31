@@ -60,27 +60,30 @@ public class PreprocessArgs {
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
 				
-				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e","-"};
-				if(!Arrays.asList(possibleArgs).contains(arg.substring(0,1))){
-					respond( sender, plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
-					return null;
-				}
 				
 				// Verify they're formatting like a:[val] or like -arg
 				if(!(arg.contains(":") || arg.contains("-"))){
 					respond( sender, plugin.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
-				if (!(arg.substring(1,2).equals(":") || arg.substring(0,1).equals("-"))){
+				if (!(arg.contains(":") || arg.substring(0,1).equals("-"))){
 					respond( sender, plugin.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
 				// Split parameter and values
-				String arg_type = arg.toLowerCase().substring(0,1);
-				String val = arg.substring(1,2).equals(":") ? arg.toLowerCase().substring(2) : arg.toLowerCase().substring(1);
+				String[] argEntry = arg.toLowerCase().split(":");
+				String arg_type = argEntry[0];
+				String val = arg.contains(":") ? argEntry[1] : argEntry[0];
 				
+				// Verify we have an arg we can match
+				String[] possibleArgs = {"a","r","t","p","w","b","e","-"};
+				if(!Arrays.asList(possibleArgs).contains(arg_type)){
+					respond( sender, plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
+					return null;
+				}
+				
+				// Verify no empty val
 				if(val.isEmpty()){
 					respond( sender, plugin.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
 					return null;
