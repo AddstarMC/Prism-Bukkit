@@ -445,7 +445,7 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildGroupConditions("data", blockArr, "%s LIKE '%%s%'", "OR", null);
+				query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
 			}
 			
 			/**
