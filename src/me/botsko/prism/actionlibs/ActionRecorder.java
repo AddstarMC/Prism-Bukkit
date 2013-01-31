@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.BlockAction;
 
 public class ActionRecorder implements Runnable {
 	
@@ -114,6 +115,17 @@ public class ActionRecorder implements Runnable {
 			if(name == null) return true;
 			Player pl = plugin.getServer().getPlayer( name );
 			if(pl != null && pl.getGameMode().equals(GameMode.CREATIVE)){
+				return false;
+			}
+		}
+		
+		// If a block action, ignore anything that's "air". This prevents grief clients
+		// or heavily disrupted/laggy connections from logging block changes as "air"
+		// However, worldedit actions have a legit need to log the change, so we will.
+		// https://snowy-evening.com/botsko/prism/228/
+		if( a instanceof BlockAction ){
+			BlockAction b = (BlockAction) a;
+			if(b.getActionData().block_id == 0){
 				return false;
 			}
 		}
