@@ -192,7 +192,7 @@ public class GenericAction implements Action {
 		    	time_ago += diff[0] + "d";
 		    }
 		    // Only show hours if > 1
-		    if(diff[1] > 1){
+		    if(diff[1] >= 1){
 		    	time_ago += diff[1] + "h";
 		    }
 		    // Only show minutes if > 1 and less than 60
