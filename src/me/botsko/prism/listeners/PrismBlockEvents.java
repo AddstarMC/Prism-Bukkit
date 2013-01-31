@@ -199,6 +199,8 @@ public class PrismBlockEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
+		if( block.getType().equals(Material.AIR) ) return;
+		
 		// Run ore find alerts
 		plugin.oreMonitor.processAlertsFromBlock(player, block);
 		
@@ -237,6 +239,8 @@ public class PrismBlockEvents implements Listener {
 		
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
+		
+		if( block.getType().equals(Material.FIRE) || block.getType().equals(Material.AIR) ) return;
 		
 		BlockState s = event.getBlockReplacedState();
 		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_PLACE, block.getLocation(), s.getTypeId(), s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
