@@ -445,7 +445,7 @@ public class ActionsQuery {
 			if(!blockfilters.isEmpty()){
 				String[] blockArr = new String[blockfilters.size()];
 				blockArr = blockfilters.toArray(blockArr);
-				query += buildOrLikeQuery("prism_actions.data", blockArr, null);
+				query += buildGroupConditions("data", blockArr, "%s LIKE '%%s%'", "OR", null);
 			}
 			
 			/**
@@ -535,9 +535,9 @@ public class ActionsQuery {
 				String[] whereValues = new String[whereIs.size()];
 				whereValues = whereIs.toArray(whereValues);
 				if(format == null){
-					query += buildOrQuery("prism_actions."+field_name, whereValues);
+					query += buildGroupConditions(field_name, whereValues, "%s = '%s'", "OR", null);
 				} else {
-					query += buildOrLikeQuery("prism_actions."+field_name, whereValues, format);
+					query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
 				}
 			}
 			// Not match
@@ -546,9 +546,9 @@ public class ActionsQuery {
 				whereNotValues = whereNot.toArray(whereNotValues);
 				
 				if(format == null){
-					query += buildAndNotQuery("prism_actions."+field_name, whereNotValues);
+					query += buildGroupConditions(field_name, whereNotValues, "%s != '%s'", null, null);
 				} else {
-					query += buildAndNotLikeQuery("prism_actions."+field_name, whereNotValues, format);
+					query += buildGroupConditions(field_name, whereNotValues, "%s NOT LIKE '%%%s%%'", null, format);
 				}
 			}
 		}
@@ -562,88 +562,21 @@ public class ActionsQuery {
 	 * @param arg_values
 	 * @return
 	 */
-	protected String buildOrQuery( String fieldname, String[] arg_values ){
+	protected String buildGroupConditions( String fieldname, String[] arg_values, String matchFormat, String matchType, String dataFormat ){
+		
 		String where = "";
-		if(arg_values.length > 0){
+		matchFormat = (matchFormat == null ? "%s = %s" : matchFormat);
+		matchType = (matchType == null ? "AND" : matchType);
+		dataFormat = (dataFormat == null ? "%s" : dataFormat);
+		
+		if( arg_values.length > 0 && !matchFormat.isEmpty() ){
 			where += " AND (";
 			int c = 1;
 			for(String val : arg_values){
 				if(c > 1 && c <= arg_values.length){
-					where += " OR ";
+					where += " "+matchType+" ";
 				}
-				where += fieldname + " = '"+val+"'";
-				c++;
-			}
-			where += ")";
-		}
-		return where;
-	}
-	
-	
-	/**
-	 * 
-	 * @param fieldname
-	 * @param arg_values
-	 * @return
-	 */
-	protected String buildOrLikeQuery( String fieldname, String[] arg_values, String format ){
-		String where = "";
-		if(arg_values.length > 0){
-			where += " AND (";
-			int c = 1;
-			for(String val : arg_values){
-				if(c > 1 && c <= arg_values.length){
-					where += " OR ";
-				}
-				where += fieldname + " LIKE '%"+String.format(format,val)+"%'";
-				c++;
-			}
-			where += ")";
-		}
-		return where;
-	}
-	
-	
-	/**
-	 * 
-	 * @param fieldname
-	 * @param arg_values
-	 * @return
-	 */
-	protected String buildAndNotQuery( String fieldname, String[] arg_values ){
-		String where = "";
-		if(arg_values.length > 0){
-			where += " AND (";
-			int c = 1;
-			for(String val : arg_values){
-				if(c > 1 && c <= arg_values.length){
-					where += " AND ";
-				}
-				where += fieldname + " != '"+val+"'";
-				c++;
-			}
-			where += ")";
-		}
-		return where;
-	}
-	
-	
-	/**
-	 * 
-	 * @param fieldname
-	 * @param arg_values
-	 * @return
-	 */
-	protected String buildAndNotLikeQuery( String fieldname, String[] arg_values, String format ){
-		String where = "";
-		if(arg_values.length > 0){
-			where += " AND (";
-			int c = 1;
-			for(String val : arg_values){
-				if(c > 1 && c <= arg_values.length){
-					where += " AND ";
-				}
-				where += fieldname + " NOT LIKE '%"+String.format(format,val)+"%'";
+				where += String.format(matchFormat, "prism_actions."+fieldname, String.format(dataFormat,val));
 				c++;
 			}
 			where += ")";
