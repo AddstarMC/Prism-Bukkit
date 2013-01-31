@@ -446,7 +446,7 @@ public class Prism extends JavaPlugin {
 		String[] configParams = getConfig().getString("prism.clear-records-after").split(" ");
 		
 		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process( prism, null, configParams, PrismProcessType.LOOKUP, 1 );
+		final QueryParameters parameters = PreprocessArgs.process( prism, null, configParams, PrismProcessType.DELETE, 1 );
 		if(parameters == null){
 			log("Invalid parameters for database purge.");
 			return;

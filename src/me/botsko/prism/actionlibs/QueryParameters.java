@@ -24,7 +24,7 @@ public class QueryParameters implements Cloneable {
 	 * Internal use
 	 */
 	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
-	protected PrismProcessType lookup_type = PrismProcessType.LOOKUP;
+	protected PrismProcessType processType = PrismProcessType.LOOKUP;
 	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 	protected String original_command;
 	
@@ -39,7 +39,8 @@ public class QueryParameters implements Cloneable {
 	protected Location player_location;
 	protected int radius;
 	protected Location specific_block_loc;
-	protected String time_since;
+	protected String since_time;
+	protected String before_time;
 	protected String world;
 
 	
@@ -317,16 +318,32 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the time
 	 */
-	public String getTime() {
-		return time_since;
+	public String getBeforeTime() {
+		return before_time;
 	}
 	
 	
 	/**
 	 * @param time the time to set
 	 */
-	public void setTime(String time) {
-		this.time_since = time;
+	public void setBeforeTime(String time) {
+		this.before_time = time;
+	}
+	
+	
+	/**
+	 * @return the time
+	 */
+	public String getSinceTime() {
+		return since_time;
+	}
+	
+	
+	/**
+	 * @param time the time to set
+	 */
+	public void setSinceTime(String time) {
+		this.since_time = time;
 	}
 
 
@@ -349,8 +366,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the lookup_type
 	 */
-	public PrismProcessType getLookup_type() {
-		return lookup_type;
+	public PrismProcessType getProcessType() {
+		return processType;
+	}
+	
+	
+	/**
+	 * @param lookup_type the lookup_type to set
+	 */
+	public void setProcessType(PrismProcessType lookup_type) {
+		this.processType = lookup_type;
 	}
 
 
@@ -369,14 +394,6 @@ public class QueryParameters implements Cloneable {
 		this.foundArgs = foundArgs;
 	}
 
-
-	/**
-	 * @param lookup_type the lookup_type to set
-	 */
-	public void setLookup_type(PrismProcessType lookup_type) {
-		this.lookup_type = lookup_type;
-	}
-	
 	
 	/**
 	 * 
@@ -404,7 +421,7 @@ public class QueryParameters implements Cloneable {
 	 * @return
 	 */
 	public String getSortDirection(){
-		if(this.lookup_type.equals(PrismProcessType.LOOKUP)){
+		if(this.processType.equals(PrismProcessType.LOOKUP)){
 			return "DESC";
 		}
 		return "ASC";

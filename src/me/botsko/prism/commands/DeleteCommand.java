@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -32,10 +34,23 @@ public class DeleteCommand implements SubHandler {
 	public void handle(final CallInfo call) {
 		
 		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.DELETE, 1 );
 		if(parameters == null){
 			return;
 		}
+		parameters.setStringFromRawArgs( call.getArgs() );
+		
+		// determine if defaults were used
+		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+		String defaultsReminder = "";
+		if(!defaultsUsed.isEmpty()){
+			defaultsReminder += " using defaults:";
+			for(String d : defaultsUsed){
+				defaultsReminder += " " + d;
+			}
+		}
+		
+		call.getSender().sendMessage( plugin.playerSubduedHeaderMsg("Purging data..." + defaultsReminder) );
 			
 		if(parameters.getFoundArgs().size() > 0){
 			plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){

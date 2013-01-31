@@ -63,7 +63,7 @@ public class ActionsQuery {
 		List<Action> actions = new ArrayList<Action>();
 		
 		// Build conditions based off final args
-		String query = getArgumentConditions(parameters,"select");
+		String query = getArgumentConditions(parameters);
 		
 		if(query!= null){
 			try {
@@ -200,7 +200,7 @@ public class ActionsQuery {
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
-		if(parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
+		if(parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
 			if(plugin.cachedQueries.containsKey(player.getName())){
 				plugin.cachedQueries.remove(player.getName());
 			}
@@ -295,20 +295,17 @@ public class ActionsQuery {
 	 */
 	public int delete( QueryParameters parameters ){
 		int rows_affected = 0;
-//		try {
-			
+		try {
 			// Build conditions based off final args
-			String query = getArgumentConditions( parameters, "delete" );
-			System.out.println(query);
-	
-//			plugin.dbc();
-//			Statement s = plugin.conn.createStatement ();
-//			rows_affected = s.executeUpdate (query);
-//			s.close();
-//			plugin.conn.close();
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
+			String query = getArgumentConditions( parameters );
+			plugin.dbc();
+			Statement s = plugin.conn.createStatement ();
+			rows_affected = s.executeUpdate (query);
+			s.close();
+			plugin.conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return rows_affected;
 	}
 	
@@ -317,13 +314,11 @@ public class ActionsQuery {
 	 * 
 	 * @param args
 	 */
-	public String getArgumentConditions( QueryParameters parameters, String query_type ){
-		
-		query_type = (query_type == null ? "select" : query_type);
+	public String getArgumentConditions( QueryParameters parameters ){
 		
 		// Build select
 		String query = "";
-		if(query_type.equals("select")){
+		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
 			query += "SELECT " +
 					"prism_actions.id, " +
 					"prism_actions.action_time, " +
@@ -345,8 +340,7 @@ public class ActionsQuery {
 					"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') AS display_date, " +
 					"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time ";
 			}
-		}
-		if(query_type.equals("delete")){
+		} else {
 			query += "DELETE ";
 		}
 		
@@ -357,34 +351,36 @@ public class ActionsQuery {
 		// coordinate so that we don't end up rolling back the first block break
 		// at a location when there's a newer one, because no overwrite means
 		// any after that first will be skipped.
-		if( parameters.hasFlag(Flag.NO_OVERWRITE) && plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().containsKey(ActionType.BLOCK_PLACE) ) ){
-				query += " JOIN (" +
-							"SELECT action_type, x, y, z, max(action_time) as action_time" +
-							" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
-							" GROUP BY action_type, x, y, z) latest" +
+		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			if( parameters.hasFlag(Flag.NO_OVERWRITE) && plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+				if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().containsKey(ActionType.BLOCK_PLACE) ) ){
+					query += " JOIN (" +
+								"SELECT action_type, x, y, z, max(action_time) as action_time" +
+								" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
+								" GROUP BY action_type, x, y, z) latest" +
+								" ON prism_actions.action_time = latest.action_time" +
+								" AND prism_actions.x = latest.x" +
+								" AND prism_actions.y = latest.y" +
+								" AND prism_actions.z = latest.z" +
+								" AND prism_actions.action_type = latest.action_type";
+				}
+				else if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().containsKey(ActionType.ITEM_REMOVE) ) {
+					
+					query += " JOIN (" +
+							"SELECT"+(!parameters.getPlayerNames().isEmpty() ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
+							" FROM prism_actions" +
+							" GROUP BY action_type, x, y, z"+(!parameters.getPlayerNames().isEmpty() ? ", player" : "")+") latest" +
 							" ON prism_actions.action_time = latest.action_time" +
 							" AND prism_actions.x = latest.x" +
 							" AND prism_actions.y = latest.y" +
 							" AND prism_actions.z = latest.z" +
 							" AND prism_actions.action_type = latest.action_type";
-			}
-			else if( parameters.getLookup_type().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().containsKey(ActionType.ITEM_REMOVE) ) {
-				
-				query += " JOIN (" +
-						"SELECT"+(!parameters.getPlayerNames().isEmpty() ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
-						" FROM prism_actions" +
-						" GROUP BY action_type, x, y, z"+(!parameters.getPlayerNames().isEmpty() ? ", player" : "")+") latest" +
-						" ON prism_actions.action_time = latest.action_time" +
-						" AND prism_actions.x = latest.x" +
-						" AND prism_actions.y = latest.y" +
-						" AND prism_actions.z = latest.z" +
-						" AND prism_actions.action_type = latest.action_type";
-				
-						if(!parameters.getPlayerNames().isEmpty()){
-							query += " AND prism_actions.player = latest.player";
-						}
-	
+					
+							if(!parameters.getPlayerNames().isEmpty()){
+								query += " AND prism_actions.player = latest.player";
+							}
+		
+				}
 			}
 		}
 		
@@ -403,7 +399,7 @@ public class ActionsQuery {
 			/**
 			 * World
 			 */
-			if( !parameters.getAllow_no_radius() && query_type.equals("select") ){
+			if( !parameters.getAllow_no_radius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
 				query += " AND world = '"+parameters.getWorld()+"'";
 			}
 
@@ -422,7 +418,7 @@ public class ActionsQuery {
 				}
 			}
 			
-			if( !containtsPrismProcessType && query_type.equals("select") ){
+			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
 				query += " AND prism_actions.action_type NOT LIKE '%prism%'";
 			}
 			
@@ -438,7 +434,7 @@ public class ActionsQuery {
 			 * Only build a radius condition if we're doing a select. If doing a delete, 
 			 * only use the radius if it was specified by the player.
 			 */
-			if( query_type.equals("select") || (query_type.equals("delete") && parameters.getFoundArgs().containsKey("r") ) ){
+			if( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ){
 				query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
 			}
 
@@ -461,10 +457,15 @@ public class ActionsQuery {
 			/**
 			 * Timeframe
 			 */
-			String time = parameters.getTime();
+			String time = parameters.getBeforeTime();
+			if(time != null){
+				query += buildTimeCondition(time,"<=");
+			}
+			time = parameters.getSinceTime();
 			if(time != null){
 				query += buildTimeCondition(time,null);
 			}
+			
 			
 			/**
 			 * Specific coords
@@ -481,7 +482,7 @@ public class ActionsQuery {
 				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"}%'";
 			}
 			
-			if(query_type.equals("select")){
+			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
 			
 				/**
 				 * Order by
@@ -498,9 +499,11 @@ public class ActionsQuery {
 				}
 			}
 		}
+		
+		query += ";";
 
 		if(plugin.getConfig().getBoolean("prism.debug")){
-			plugin.debug("Query conditions: " + query);
+			plugin.debug(query);
 		}
 		
 		return query;

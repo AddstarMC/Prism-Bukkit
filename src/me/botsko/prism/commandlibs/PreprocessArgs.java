@@ -50,7 +50,7 @@ public class PreprocessArgs {
 		QueryParameters parameters = new QueryParameters();
 		HashMap<String,String> foundArgs = new HashMap<String,String>();
 		
-		parameters.setLookup_type(processType);
+		parameters.setProcessType(processType);
 		
 		if(args != null){
 		
@@ -77,7 +77,7 @@ public class PreprocessArgs {
 				String val = arg.contains(":") ? argEntry[1] : argEntry[0];
 				
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e","-"};
+				String[] possibleArgs = {"a","r","t","p","w","b","e","before","since","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg_type)){
 					respond( sender, plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
@@ -183,7 +183,7 @@ public class PreprocessArgs {
 						// User has asked for a global radius
 						else if(val.equals("global")){
 							if(plugin.getConfig().getBoolean("prism.limit-global-radius-override-to-lookups")){
-								if( parameters.getLookup_type().equals(PrismProcessType.LOOKUP)){
+								if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
 									parameters.setAllow_no_radius(true);
 								} else {
 									respond( sender, plugin.playerError("Current configuration limits global radius to lookups.") );
@@ -264,10 +264,18 @@ public class PreprocessArgs {
 				}
 				
 				// Time
-				if(arg_type.equals("t")){
+				if(arg_type.equals("before")){
 					String date = translateTimeStringToDate(plugin,sender,val);
 					if(date != null){
-						parameters.setTime( date );
+						parameters.setBeforeTime( date );
+					} else {
+						return null;
+					}
+				}
+				if( arg_type.equals("since") || arg_type.equals("t") ){
+					String date = translateTimeStringToDate(plugin,sender,val);
+					if(date != null){
+						parameters.setSinceTime( date );
 					} else {
 						return null;
 					}
@@ -313,38 +321,41 @@ public class PreprocessArgs {
 			}
 			
 			/**
-			 * Set defaults
+			 * Enforce defaults, unless we're doing a delete
 			 */
-			// Radius default
-			if(!foundArgs.containsKey("r")){
-				if(parameters.getAllow_no_radius()){
-					// We'll allow no radius.
-				} else {
-					parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
-					parameters.addDefaultUsed( "r:" + parameters.getRadius() );
+			if( !processType.equals(PrismProcessType.DELETE) ){
+				// Radius default
+				if(!foundArgs.containsKey("r")){
+					if(parameters.getAllow_no_radius()){
+						// We'll allow no radius.
+					} else {
+						parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
+						parameters.addDefaultUsed( "r:" + parameters.getRadius() );
+					}
 				}
-			}
-			// World default
-			if(!foundArgs.containsKey("w")){
-				if(player != null){
-					parameters.setWorld( player.getWorld().getName() );
+				// World default
+				if(!foundArgs.containsKey("w")){
+					if(player != null){
+						parameters.setWorld( player.getWorld().getName() );
+					}
 				}
-			}
-			// Time default
-			if(!foundArgs.containsKey("t")){
-				String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.default-time-since"));
-				if(date == null){
-					plugin.log("Error - date range configuration for prism.time-since is not valid");
-					date = translateTimeStringToDate(plugin,sender,"3d");
+				// Time default
+				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){
+					String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.default-time-since"));
+					if(date == null){
+						plugin.log("Error - date range configuration for prism.time-since is not valid");
+						date = translateTimeStringToDate(plugin,sender,"3d");
+					}
+					parameters.setSinceTime(date);
+					parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.default-time-since") );
 				}
-				parameters.setTime(date);
-				parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.default-time-since") );
 			}
 			
 			// Player location
 			if(player != null){
 				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 			}
+			
 		}
 		return parameters;
 	}
