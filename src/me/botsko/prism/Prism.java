@@ -12,8 +12,10 @@ import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
@@ -441,13 +443,21 @@ public class Prism extends JavaPlugin {
 	 */
 	public void discardExpiredDbRecords(){
 		
-		final String dateBefore = PreprocessArgs.translateTimeStringToDate( this, null, getConfig().getString("prism.clear-records-after") );
-		if(dateBefore != null && !dateBefore.isEmpty()){
+		String[] configParams = getConfig().getString("prism.clear-records-after").split(" ");
+		
+		// Process and validate all of the arguments
+		final QueryParameters parameters = PreprocessArgs.process( prism, null, configParams, PrismProcessType.LOOKUP, 1 );
+		if(parameters == null){
+			log("Invalid parameters for database purge.");
+			return;
+		}
+		
+		if(parameters.getFoundArgs().size() > 0){
 			getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
 			    public void run(){
 					ActionsQuery aq = new ActionsQuery(prism);
-					int rows_affected = aq.delete(dateBefore);
-					log("Clearing " + rows_affected + " rows from the database. Older than " + getConfig().getString("prism.clear-records-after"));
+					int rows_affected = aq.delete(parameters);
+					log("Clearing " + rows_affected + " rows from the database. Using: " + getConfig().getString("prism.clear-records-after"));
 			    }
 			});
 		}

@@ -142,7 +142,7 @@ public class PrismCommands extends Executor {
 		 * /prism delete (time)
 		 */
 		addSub("delete", "prism.delete")
-		.setUsage("(timeframe)")
+		.allowConsole()
 		.setDescription("Deletes all records from the database before (timeframe)")
 		.setHandler(new DeleteCommand(plugin));
 		

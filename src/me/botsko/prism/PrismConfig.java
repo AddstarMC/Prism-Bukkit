@@ -61,7 +61,7 @@ public class PrismConfig {
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
-		config.addDefault("prism.clear-records-after", "8w");
+		config.addDefault("prism.clear-records-after", "t:8w");
 		
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);

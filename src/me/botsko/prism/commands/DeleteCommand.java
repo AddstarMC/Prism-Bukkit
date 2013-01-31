@@ -2,6 +2,8 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -29,22 +31,22 @@ public class DeleteCommand implements SubHandler {
 	 */
 	public void handle(final CallInfo call) {
 		
-		// If date provided
-		if(call.getArgs().length == 2){
+		// Process and validate all of the arguments
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
+		if(parameters == null){
+			return;
+		}
 			
-			final String dateBefore = PreprocessArgs.translateTimeStringToDate( plugin, call.getPlayer(), call.getArg(1) );
-			if(dateBefore != null && !dateBefore.isEmpty()){
-				
-				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-				    public void run(){
-						ActionsQuery aq = new ActionsQuery(plugin);
-						int rows_affected = aq.delete(dateBefore);
-						call.getPlayer().sendMessage( plugin.playerHeaderMsg( rows_affected + " records have been purged from the database."));
-				    }
-				});
-			} else {
-				call.getPlayer().sendMessage( plugin.playerError( "Invalid time format. Try 5m for 5 minues, 1w for week, etc. No need for t: either." ));
-			}
+		if(parameters.getFoundArgs().size() > 0){
+			plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			    public void run(){
+					ActionsQuery aq = new ActionsQuery(plugin);
+					int rows_affected = aq.delete(parameters);
+					call.getSender().sendMessage( plugin.playerHeaderMsg( rows_affected + " records have been purged from the database."));
+			    }
+			});
+		} else {
+			call.getSender().sendMessage( plugin.playerError( "You must supply at least one parameter." ));
 		}
 	}
 }
