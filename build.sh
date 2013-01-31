@@ -29,7 +29,7 @@ fi
 sed -e "s/nightly/$name/g" plugin-new.yml > plugin.yml
 
 # make the jar
-jar cf Prism-$name.jar README.md items.yml languages plugin.yml -C bin .
+jar cf Prism-$name.jar README.md LICENSE items.yml languages plugin.yml -C bin .
 
 # remove the build yml
 rm plugin.yml
