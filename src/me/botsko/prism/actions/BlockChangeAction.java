@@ -23,11 +23,14 @@ public class BlockChangeAction extends GenericAction {
 		// Build an object for the specific details of this action
 		actionData = new BlockChangeActionData();
 		
-		actionData.new_id = newId;
-		actionData.new_subid = newSubid;
-		actionData.old_id = oldId;
-		actionData.old_subid = oldSubid;
-		
+		if(newId != 0){
+			actionData.block_id = newId;
+			actionData.block_subid = newSubid;
+		}
+		if(oldId != 0){
+			actionData.old_id = oldId;
+			actionData.old_subid = oldSubid;
+		}
 		if(loc != null){
 			this.world_name = loc.getWorld().getName();
 			this.x = loc.getX();
@@ -84,7 +87,7 @@ public class BlockChangeAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "";
-		name += materialAliases.getItemStackAliasById(actionData.new_id, actionData.new_subid);
+		name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
 		return name;
 	}
 	
@@ -96,7 +99,7 @@ public class BlockChangeAction extends GenericAction {
 	public class BlockChangeActionData {
 		public int old_id;
 		public byte old_subid;
-		public int new_id;
-		public byte new_subid;
+		public int block_id;
+		public byte block_subid;
 	}
 }

@@ -262,8 +262,8 @@ public class Preview implements Previewable {
 		
 		// Restores a block to it's new state
 		if(processType.equals(PrismProcessType.RESTORE)){
-			blockAction.setBlockId( b.getActionData().new_id );
-			blockAction.setBlockSubId( b.getActionData().new_subid );
+			blockAction.setBlockId( b.getActionData().block_id );
+			blockAction.setBlockSubId( b.getActionData().block_subid );
 			return placeBlock(blockAction,block,false);
 		}
 		
@@ -772,8 +772,8 @@ public class Preview implements Previewable {
 						b.setBlockId( bc.getActionData().old_id );
 						b.setBlockSubId( bc.getActionData().old_subid );
 					} else {
-						b.setBlockId( bc.getActionData().new_id );
-						b.setBlockSubId( bc.getActionData().new_subid );
+						b.setBlockId( bc.getActionData().block_id );
+						b.setBlockSubId( bc.getActionData().block_subid );
 					}
 				} else {
 					b = (BlockAction) a;
