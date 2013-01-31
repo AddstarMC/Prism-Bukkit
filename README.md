@@ -120,6 +120,12 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 IRC: irc.esper.net #prism
 
+## License 
+
+Attribution-NonCommercial-ShareAlike 3.0 United States
+
+http://creativecommons.org/licenses/by-nc-sa/3.0/us/
+
 ## Donate
 
 I've invested a lot of time making Prism what is, along with some contributions and testing help by our server staff. Help me out, even if it's just $1 person.
@@ -135,4 +141,7 @@ This plugin was custom designed for the amazing *dhmc.us* Minecraft server.
 - nasonfish, Natman93, YeaItsMe, mafoan (*Alpha Testers*)
 - mafoan, randox24, tacovan, nehocbelac, Shampoo123, cxmmy14, Palczynski, drac17, ollie2000, PGKxNIGHTMARE, allies333, DocVanNostrand, drfizzman123, 00benallen, rachaelriott, PheonixTamer, YeaItsMe, Natman93, Brazter, sydney2005, rsleight, napalm1, Teh_Fishman, and more (*Live Testers on DHMC*)
 
-* Artwork by [LegendarySoldier](http://legendary-soldier.deviantart.com/ )
+- WorldEdit block logging [#1](https://github.com/LogBlock/LogBlock/tree/master/src/main/java/de/diddiz/worldedit ) based on work by [Ammaraskar](https://github.com/ammaraskar )
+- Time format string parsing [#2](https://github.com/oliverw92/HawkEye/blob/master/src/main/java/uk/co/oliwali/HawkEye/SearchParser.java#L155 ) and grow event [#3](https://github.com/oliverw92/HawkEye/blob/master/src/main/java/uk/co/oliwali/HawkEye/listeners/MonitorWorldListener.java#L24 ) based on work by [oliverw92](https://github.com/oliverw92 )
+- [Metrics](http://mcstats.org) class Copyright 2011 Tyler Blair. All rights reserved.
+- Artwork by [LegendarySoldier](http://legendary-soldier.deviantart.com/ )
