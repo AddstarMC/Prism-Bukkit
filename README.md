@@ -13,11 +13,13 @@ Prism not only offers the standard features you expect, but a **lot** more.
 
 "Just switched from CoreProtect to this. Totally worth it."
 
-"After 24 hours I can tell that it seems to be the best anti-griefing plugin I know."
+"The plugin is nuts. Switched over from LogBlock now and never looking back."
 
 "This is definetly the best rollback plugin I have used"
 
 "I've only been using it for a bit and I'm beyond impressed!"
+
+"I love this plugin! Seemed so hard at first, then I used it."
 
 ## Official Website & Documentation
 
