@@ -27,7 +27,6 @@ import org.bukkit.inventory.ItemStack;
 public class DeathUtils {
 
 	
-	
 	/**
 	 * 
 	 * http://jd.bukkit.org/apidocs/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html

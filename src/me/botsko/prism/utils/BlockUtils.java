@@ -255,15 +255,17 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean materialMeansBlockDetachment(Material m){
-		if( m.equals(Material.AIR) 
-				|| m.equals(Material.FIRE) 
-				|| m.equals(Material.WATER) 
-				|| m.equals(Material.STATIONARY_WATER) 
-				|| m.equals(Material.LAVA) 
-				|| m.equals(Material.STATIONARY_LAVA)){
-			return true;
+		switch(m){
+			case AIR:
+			case FIRE:
+			case WATER:
+			case STATIONARY_WATER:
+			case LAVA:
+			case STATIONARY_LAVA:
+				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 	
 	
@@ -658,4 +660,22 @@ public class BlockUtils {
     	}
     	return null;
     }
+    
+    
+    /**
+     * 
+     * @param m
+     * @return
+     */
+    public static boolean isGrowableStructure(Material m){
+		switch(m){
+			case LEAVES:
+			case LOG:
+			case HUGE_MUSHROOM_1:
+			case HUGE_MUSHROOM_2:
+				return true;
+			default:
+				return false;
+		}
+	}
 }

@@ -143,7 +143,7 @@ Prism, designed with experience from using competing products on DHMC, and deali
 - mafoan, randox24, tacovan, nehocbelac, Shampoo123, cxmmy14, Palczynski, drac17, ollie2000, PGKxNIGHTMARE, allies333, DocVanNostrand, drfizzman123, 00benallen, rachaelriott, PheonixTamer, YeaItsMe, Natman93, Brazter, sydney2005, rsleight, napalm1, Teh_Fishman, and plenty more from DHMC (*Live Testers on DHMC*)
 
 - WorldEdit block logging [#1](https://github.com/LogBlock/LogBlock/tree/master/src/main/java/de/diddiz/worldedit ) based on work by [Ammaraskar](https://github.com/ammaraskar )
-- Time format string parsing [#2](https://github.com/oliverw92/HawkEye/blob/master/src/main/java/uk/co/oliwali/HawkEye/SearchParser.java#L155 ) and grow event [#3](https://github.com/oliverw92/HawkEye/blob/master/src/main/java/uk/co/oliwali/HawkEye/listeners/MonitorWorldListener.java#L24 ) based on work by [oliverw92](https://github.com/oliverw92 )
+- Time format string parsing [#2](https://github.com/oliverw92/HawkEye/blob/master/src/main/java/uk/co/oliwali/HawkEye/SearchParser.java#L155 ) and temporary safe teleport based on work by [oliverw92](https://github.com/oliverw92 )
 - [Metrics](http://mcstats.org) class Copyright 2011 Tyler Blair. All rights reserved.
 - Artwork by [LegendarySoldier](http://legendary-soldier.deviantart.com/ )
 

@@ -9,7 +9,8 @@ public class Teleport {
 	
 	
 	/**
-	 * 
+	 * @todo this needs an overhaul. we need to tp to a nearby safe area,
+	 * etc.
 	 * @param loc
 	 * @return
 	 */

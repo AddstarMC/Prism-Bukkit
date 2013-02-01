@@ -267,8 +267,6 @@ public class ActionsQuery {
     			process.setId( rs.getInt("id") );
     			process.setType( ActionType.getByActionType( rs.getString("action_type") ) );
     			process.setAction_time( rs.getString("action_time") );
-//    			process.setDisplay_date( rs.getString("display_date") );
-//    			process.setDisplay_time( rs.getString("display_time") );
     			process.setWorld_name( rs.getString("world") );
     			process.setPlayer_name( rs.getString("player") );
     			process.setX( rs.getInt("x") );

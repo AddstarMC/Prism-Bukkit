@@ -45,6 +45,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+	
 	/**
 	 * 
 	 * @param plugin
@@ -201,7 +202,6 @@ public class PrismEntityEvents implements Listener {
 	public void onHangingBreakEvent(final HangingBreakEvent event) {
 		
 		// Ignore other causes. Entity cause already handled.
-		// @todo should we worry about explosion/obstruction causes?
 		if( !event.getCause().equals(RemoveCause.PHYSICS) ){
 			return;
 		}

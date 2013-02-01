@@ -47,6 +47,7 @@ public class EntityUtils {
 		return removed;
 	}
 
+	
 	/**
 	 *
 	 */
@@ -64,10 +65,8 @@ public class EntityUtils {
 	
 	
 	/**
-	 * Determine whether or not a block is going to detach
-	 * from the side of a block.
+	 * Determines which blocks a player my "co-exist" with.
 	 * 
-	 * Seems like there's got to be another way to do this...
 	 * @param m
 	 * @return
 	 */

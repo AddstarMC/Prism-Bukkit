@@ -67,10 +67,6 @@ public class ActionRecorder implements Runnable {
 		if(a.getData().length() > 255){
 			plugin.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
 		}
-		
-//		if( plugin.getConfig().getBoolean("prism.debug") ){
-//			plugin.debug( a.getType().getActionType() + " " + a.getData() + " in " + a.getWorld_name() + " at " + a.getX() + " " + a.getY() + " " + a.getZ() + " by " + a.getPlayer_name() );
-//		}
 	}
 	
 	
