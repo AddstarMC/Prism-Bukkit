@@ -23,7 +23,6 @@ import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.WorldeditAction;
-import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
@@ -281,13 +280,11 @@ public class Preview implements Previewable {
 	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
 		
 		Material m = Material.getMaterial(b.getActionData().getBlockId());
-		
-		if( parameters.hasFlag(Flag.NO_OVERWRITE) ){
-			// We're doing a rollback, we need to ensure the location we're replacing doesn't
-			// have a new block already.
-			if( processType.equals(PrismProcessType.ROLLBACK) && !BlockUtils.isAcceptableForBlockPlace(block) ){
-				return ChangeResultType.SKIPPED;
-			}
+
+		// We're doing a rollback, we need to ensure the location we're replacing doesn't
+		// have a new block already.
+		if( !BlockUtils.isAcceptableForBlockPlace(block) ){
+			return ChangeResultType.SKIPPED;
 		}
 		
 		// On the blacklist (except an undo)
