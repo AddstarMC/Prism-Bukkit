@@ -71,6 +71,7 @@ public class ItemStackAction extends GenericAction {
 		}
 	}
 	
+	
 	/**
 	 * We need to add the colors for Leather Armor to the data.
 	 * @return
@@ -84,6 +85,7 @@ public class ItemStackAction extends GenericAction {
 		}
 		return "";
 	}
+	
 	
 	/**
 	 * Get if the item is leather armor
