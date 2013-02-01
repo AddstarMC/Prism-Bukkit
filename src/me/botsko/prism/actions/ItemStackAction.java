@@ -3,9 +3,11 @@ package me.botsko.prism.actions;
 import java.util.Map.Entry;
 import me.botsko.prism.utils.TypeUtils;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class ItemStackAction extends GenericAction {
 	
@@ -60,6 +62,7 @@ public class ItemStackAction extends GenericAction {
 	protected void setDataFromItem(){
 		if(data == null && item != null){
 			data = item.getTypeId() + ":" + item.getDurability() + ":" + quantity;
+			data += addLeatherArmorColors();
 			if(!item.getEnchantments().isEmpty()){
 				for(Entry<Enchantment, Integer> ench : item.getEnchantments().entrySet()){
 					data += ":" + ench.getKey().getId() + "," + ench.getValue();
@@ -68,7 +71,37 @@ public class ItemStackAction extends GenericAction {
 		}
 	}
 	
+	/**
+	 * We need to add the colors for Leather Armor to the data.
+	 * @return
+	 */
+	private String addLeatherArmorColors() {
+		if(isLeather()){
+			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+			if(lam.getColor() != null){
+				return ":;" + lam.getColor().asRGB() + ";";
+			}
+		}
+		return "";
+	}
 	
+	/**
+	 * Get if the item is leather armor
+	 * @return
+	 */
+	private boolean isLeather(){
+		switch(item.getType()){
+			case LEATHER_HELMET:
+			case LEATHER_CHESTPLATE:
+			case LEATHER_LEGGINGS:
+			case LEATHER_BOOTS:
+				return true;
+			default:
+				return false;
+		}
+	}
+
+
 	/**
 	 * 
 	 */
@@ -82,8 +115,17 @@ public class ItemStackAction extends GenericAction {
 				quantity = Integer.parseInt(blockArr[2]);
 				item = new ItemStack(block_id,quantity,(short)block_subid);
 				if(blockArr.length > 3){
+					if(isLeather() && blockArr[3].contains(";")){
+						String rgb = blockArr[3].replaceAll(";", "");
+						if (!TypeUtils.isNumeric(rgb)) return;
+						int color = Integer.parseInt(rgb);
+						LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+						lam.setColor(Color.fromRGB(color));
+						item.setItemMeta(lam);
+					}
 					for(int i = 3; i < blockArr.length; i++){
-						item.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
+						if(!blockArr[i].contains(";"))
+							item.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
 					}
 				}
 			}
