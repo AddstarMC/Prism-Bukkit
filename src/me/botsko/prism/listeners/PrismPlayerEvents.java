@@ -1,5 +1,7 @@
 package me.botsko.prism.listeners;
 
+import java.util.List;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
@@ -37,13 +39,20 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+	private List<String> illegalCommands;
+	
+	private List<String> ignoreCommands;
+	
 	
 	/**
 	 * 
 	 * @param plugin
 	 */
+	@SuppressWarnings("unchecked")
 	public PrismPlayerEvents( Prism plugin ){
 		this.plugin = plugin;
+		illegalCommands = (List<String>) plugin.getConfig().getList("prism.alerts.illegal-commands.commands");
+		ignoreCommands = (List<String>) plugin.getConfig().getList("prism.do-not-track.commands");
 	}
 	
 	
@@ -52,11 +61,34 @@ public class PrismPlayerEvents implements Listener {
      * @param event
      */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+    public void onCommandPreprocess(PlayerCommandPreprocessEvent event){
+		
 		Player player = event.getPlayer();
-		if(!event.isCancelled()){
-			Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		String cmd = event.getMessage();
+		
+		String[] cmdArgs = cmd.split(" ");
+		String primaryCmd = cmdArgs[0].substring(1);
+		
+		if( plugin.getConfig().getBoolean("prism.alerts.illegal-commands.enabled") ){
+			if( illegalCommands.contains( primaryCmd) ){
+				String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: " + cmd;
+				player.sendMessage( plugin.playerError("Sorry, this command has disabled from in-game use.") );
+	        	plugin.alertPlayers( null, msg );
+	        	event.setCancelled(true);
+	        	plugin.log(msg);
+			}
 		}
+		
+		plugin.log("COMMAND: " + primaryCmd);
+
+		// Ignore some commands based on config
+		if( ignoreCommands.contains( primaryCmd ) ){
+			plugin.log("IGNORING: " + primaryCmd);
+			return;
+		}
+			
+		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		
     }
 	
 	

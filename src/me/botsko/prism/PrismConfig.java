@@ -124,6 +124,11 @@ public class PrismConfig {
 		
 		config.addDefault("prism.track-player-ip-on-join", false);
 		
+		List<String> doNotTrackCommand = new ArrayList<String>();
+		doNotTrackCommand.add("vanish");
+		doNotTrackCommand.add("v");
+		config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
+		
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
@@ -134,6 +139,15 @@ public class PrismConfig {
 		config.addDefault("prism.alerts.ores.gold", true);
 		config.addDefault("prism.alerts.ores.diamond", true);
 		config.addDefault("prism.alerts.ores.emerald", true);
+		
+		config.addDefault("prism.alerts.illegal-commands.enabled", false);
+		
+		List<String> illegal_commands = new ArrayList<String>();
+		illegal_commands.add("op");
+		illegal_commands.add("deop");
+		illegal_commands.add("stop");
+		illegal_commands.add("reload");
+		config.addDefault("prism.alerts.illegal-commands.commands", illegal_commands);
 		
 		// Enable monitoring of item use/placement
 		config.addDefault("prism.alerts.uses.enabled", true);
