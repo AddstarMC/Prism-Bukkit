@@ -25,8 +25,10 @@ else
 	name="$1-$gitvers"
 fi
 
+nameNoV=`echo $name | cut -c 2-`
+
 # add in revision to app.default.config.php
-sed -e "s/nightly/$name/g" plugin-new.yml > plugin.yml
+sed -e "s/nightly/$nameNoV/g" plugin-new.yml > plugin.yml
 
 # make the jar
 jar cf Prism-$name.jar README.md LICENSE items.yml languages plugin.yml -C bin .
@@ -44,9 +46,14 @@ s3cmd put --acl-public Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
 # Create a new version file
 echo $name > versions.txt
 
-# send file to amazon bucket
 if [ "$2" == "release" ]; then
+
+	# send file to amazon bucket
 	s3cmd put --acl-public versions.txt s3://botsko/Prism/versions.txt
+	
+	# generate docs
+	# javadoc -d docs-$name -sourcepath src -subpackages me.botsko.prism
+	
 fi
 
 # Remove the files
