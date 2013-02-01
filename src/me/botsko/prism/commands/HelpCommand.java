@@ -57,9 +57,8 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( plugin.playerHelp("drain (r)", "Drain water/lava within a (r)adius."));
 		sender.sendMessage( plugin.playerHelp("delete (params)", "Purge records based on (params). No defaults!"));
 		sender.sendMessage( plugin.playerHelp("(rp|report) queue", "Display statistics on current queues."));
-		sender.sendMessage( plugin.playerHelp("about", "Basic credits"));
 		sender.sendMessage( plugin.playerHelp("reload", "Reloads config/language files."));
-		sender.sendMessage( plugin.playerHeaderMsg("http://discover-prism.com"));
+		sender.sendMessage( plugin.playerHeaderMsg("http://dhmc.us/wiki/view/prism/"));
 		
 	}
 }

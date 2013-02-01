@@ -249,24 +249,44 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected ChangeResultType applyBlockChange(BlockChangeAction b, Block block){
-		
-		BlockAction blockAction = new BlockAction(null, null, null);
-		
-		// Rollbacks will revert a block to the old state
+		return placeBlock(b.getType(),b.getActionData().old_id,b.getActionData().old_subid,b.getActionData().block_id,b.getActionData().block_subid,block,false);
+	}
+	
+	
+	/**
+	 * 
+	 * @param type
+	 * @param old_id
+	 * @param old_subid
+	 * @param new_id
+	 * @param new_subid
+	 * @param block
+	 * @param is_deferred
+	 * @return
+	 */
+	protected ChangeResultType placeBlock( ActionType type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
+		BlockAction b = new BlockAction(type, null, null);
 		if(processType.equals(PrismProcessType.ROLLBACK)){
-			blockAction.setBlockId( b.getActionData().old_id );
-			blockAction.setBlockSubId( b.getActionData().old_subid );
-			return placeBlock(blockAction,block,false);
+			// Run verification for no-overwrite. Only reverse a change
+			// if the opposite state is what's present now.
+			if(block.getTypeId() == new_id){
+				b.setBlockId( old_id );
+				b.setBlockSubId( old_subid );
+			} else {
+				return ChangeResultType.SKIPPED;
+			}
 		}
-		
-		// Restores a block to it's new state
 		if(processType.equals(PrismProcessType.RESTORE)){
-			blockAction.setBlockId( b.getActionData().block_id );
-			blockAction.setBlockSubId( b.getActionData().block_subid );
-			return placeBlock(blockAction,block,false);
+			// Run verification for no-overwrite. Only reapply a change
+			// if the opposite state is what's present now.
+			if(block.getTypeId() == old_id){
+				b.setBlockId( new_id );
+				b.setBlockSubId( new_subid );
+			} else {
+				return ChangeResultType.SKIPPED;
+			}
 		}
-		
-		return null;
+		return placeBlock(b,block,false);
 	}
 	
 	
@@ -280,11 +300,13 @@ public class Preview implements Previewable {
 	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
 		
 		Material m = Material.getMaterial(b.getActionData().getBlockId());
-		
-		// We're doing a rollback, we need to ensure the location we're replacing doesn't
-		// have a new block already.
-		if( (processType.equals(PrismProcessType.ROLLBACK) || processType.equals(PrismProcessType.RESTORE)) && !BlockUtils.isAcceptableForBlockPlace(block) ){
-			return ChangeResultType.SKIPPED;
+
+		// Ensure block action is allowed to place a block here.
+		// (essentially liquid/air).
+		if( !b.getType().requiresHandler("blockchange") ){
+			if( !BlockUtils.isAcceptableForBlockPlace(block) ){
+				return ChangeResultType.SKIPPED;
+			}
 		}
 		
 		// On the blacklist (except an undo)
@@ -772,6 +794,7 @@ public class Preview implements Previewable {
 						b.setBlockId( bc.getActionData().block_id );
 						b.setBlockSubId( bc.getActionData().block_subid );
 					}
+					b.setType( bc.getType() );
 				} else {
 					b = (BlockAction) a;
 				}

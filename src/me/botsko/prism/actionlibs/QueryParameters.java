@@ -414,14 +414,14 @@ public class QueryParameters implements Cloneable {
 	
 	
 	/**
-	 * If we're doing a lookup, we want the most
-	 * recent actions available. However, if we're
-	 * doing a rollback we want them applied in order.
+	 * LOOKUP = Most recent actions first.
+	 * ROLLBACK = Newest->Oldest so we can "rewind" the events
+	 * RESTORE = Oldest->Newest so we can "replay" the events
 	 * 
 	 * @return
 	 */
 	public String getSortDirection(){
-		if( this.processType.equals(PrismProcessType.LOOKUP) || this.processType.equals(PrismProcessType.ROLLBACK) ){
+		if( !this.processType.equals(PrismProcessType.RESTORE) ){
 			return "DESC";
 		}
 		return "ASC";

@@ -287,7 +287,7 @@ public class PreprocessArgs {
 						String[] flagComponents = val.split("=");
 						Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
 						if(!(parameters.hasFlag(flag))){
-					
+								
 							parameters.addFlag(flag);
 							
 							// Flag has a value
