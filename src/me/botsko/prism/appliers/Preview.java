@@ -599,14 +599,17 @@ public class Preview implements Previewable {
 						// Set taming owner
 						if (entity instanceof Wolf){
 				            Wolf wolf = (Wolf)entity;
-				            Player owner = plugin.getServer().getPlayer( b.getTamingOwner() );
-				            if(owner == null){
-					            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer(b.getTamingOwner());
-					            if(offlinePlayer.hasPlayedBefore()){
-					            	owner = (Player)offlinePlayer;
+				            String tamingOwner = b.getTamingOwner();
+				            if(tamingOwner != null){
+					            Player owner = plugin.getServer().getPlayer( tamingOwner );
+					            if(owner == null){
+						            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+						            if(offlinePlayer.hasPlayedBefore()){
+						            	owner = (Player)offlinePlayer;
+						            }
 					            }
+					            if(owner != null) wolf.setOwner(owner);
 				            }
-				            if(owner != null) wolf.setOwner(owner);
 				    	}
 						
 						changes_applied_count++;
