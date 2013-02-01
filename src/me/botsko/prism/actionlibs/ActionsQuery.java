@@ -33,6 +33,7 @@ import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.WorldeditAction;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 public class ActionsQuery {
 	
@@ -343,7 +344,47 @@ public class ActionsQuery {
 			query += "DELETE ";
 		}
 		
-		query += "FROM prism_actions WHERE 1=1";
+		query += "FROM prism_actions";
+		
+		// If the user has elected to enforce block override prevention,
+		// we'll run join conditions to exclude older records for a specific
+		// coordinate so that we don't end up rolling back the first block break
+		// at a location when there's a newer one, because no overwrite means
+		// any after that first will be skipped.
+		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			if( parameters.hasFlag(Flag.NO_OVERWRITE) && plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+				if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && ( parameters.getActionTypes().containsKey(ActionType.BLOCK_PLACE) ) ){
+					query += " JOIN (" +
+								"SELECT action_type, x, y, z, max(action_time) as action_time" +
+								" FROM prism_actions WHERE (action_type = 'block-place' OR action_type = 'item-remove')" +
+								" GROUP BY action_type, x, y, z) latest" +
+								" ON prism_actions.action_time = latest.action_time" +
+								" AND prism_actions.x = latest.x" +
+								" AND prism_actions.y = latest.y" +
+								" AND prism_actions.z = latest.z" +
+								" AND prism_actions.action_type = latest.action_type";
+				}
+				else if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && !parameters.getActionTypes().containsKey(ActionType.ITEM_REMOVE) ) {
+					
+					query += " JOIN (" +
+							"SELECT"+(!parameters.getPlayerNames().isEmpty() ? " player," : "")+" action_type, x, y, z, max(action_time) as action_time" +
+							" FROM prism_actions" +
+							" GROUP BY action_type, x, y, z"+(!parameters.getPlayerNames().isEmpty() ? ", player" : "")+") latest" +
+							" ON prism_actions.action_time = latest.action_time" +
+							" AND prism_actions.x = latest.x" +
+							" AND prism_actions.y = latest.y" +
+							" AND prism_actions.z = latest.z" +
+							" AND prism_actions.action_type = latest.action_type";
+					
+							if(!parameters.getPlayerNames().isEmpty()){
+								query += " AND prism_actions.player = latest.player";
+							}
+		
+				}
+			}
+		}
+		
+		query += " WHERE 1=1";
 		
 		/**
 		 * ID
@@ -447,7 +488,7 @@ public class ActionsQuery {
 				 * Order by
 				 */
 				String sort_dir = parameters.getSortDirection();
-				query += " ORDER BY prism_actions.action_time "+sort_dir+", x ASC, z ASC, y ASC, id "+sort_dir;
+				query += " ORDER BY prism_actions.action_time DESC, x ASC, z ASC, y ASC, id "+sort_dir;
 				
 				/**
 				 * LIMIT
