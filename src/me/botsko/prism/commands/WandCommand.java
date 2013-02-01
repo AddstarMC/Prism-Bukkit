@@ -7,6 +7,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.wands.InspectorWand;
 import me.botsko.prism.wands.ProfileWand;
+import me.botsko.prism.wands.RestoreWand;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 
@@ -101,7 +102,17 @@ public class WandCommand implements SubHandler {
 		 * Restore wand
 		 * @todo
 		 */
-		else if(type.equalsIgnoreCase("rollback")){
+		else if(type.equalsIgnoreCase("restore")){
+			if(oldwand != null){
+				// If disabling this one
+				if( oldwand instanceof RestoreWand ){
+					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+					return;
+				}
+			}
+			RestoreWand wand = new RestoreWand( plugin );
+			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
+			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 		}
 		
 		/**

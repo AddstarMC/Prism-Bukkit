@@ -52,6 +52,7 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( plugin.playerHelp("rollback (params)", "Rollback changes."));
 		sender.sendMessage( plugin.playerHelp("restore (params)", "Re-applies changes."));
 		sender.sendMessage( plugin.playerHelp("wand rollback", "Toggles the rollback wand."));
+		sender.sendMessage( plugin.playerHelp("wand restore", "Toggles the restore wand."));
 		sender.sendMessage( plugin.playerHelp("ex (r)", "Extinguish fires within a (r)adius."));
 		sender.sendMessage( plugin.playerHelp("drain (r)", "Drain water/lava within a (r)adius."));
 		sender.sendMessage( plugin.playerHelp("delete (params)", "Purge records based on (params). No defaults!"));
