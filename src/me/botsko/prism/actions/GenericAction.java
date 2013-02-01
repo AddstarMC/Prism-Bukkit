@@ -7,6 +7,7 @@ import java.util.Date;
 import me.botsko.prism.MaterialAliases;
 
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
+import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
 
 
 public class GenericAction implements Action {
@@ -14,7 +15,7 @@ public class GenericAction implements Action {
 	/**
 	 * 
 	 */
-	protected Gson gson = new Gson();
+	protected Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 	
 	/**
 	 * 
