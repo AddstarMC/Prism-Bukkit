@@ -6,6 +6,5 @@ public enum Flag {
 	DRAIN_WATER,
 	NO_EXT,
 	NO_ITEMCLEAR,
-	NO_OVERWRITE,
 	PER_PAGE
 }
