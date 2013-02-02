@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import me.botsko.prism.Prism;
 
@@ -125,6 +126,45 @@ public class Updater {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			} else {
+				
+				// Sqlite doesn't have any support for altering columns. WTF
+				dbc();
+		        PreparedStatement s;
+				try {
+					
+					plugin.log("Applying database updates to schema v3. This may take a while.");
+					
+					s = conn.prepareStatement("ALTER TABLE prism_actions RENAME TO tmp_prism_actions;");
+					s.executeUpdate();
+					
+					String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
+			        		"id INT PRIMARY KEY," +
+			        		"action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+			        		"action_type TEXT," +
+			        		"player TEXT," +
+			        		"world TEXT," +
+			        		"x INT," +
+			        		"y INT," +
+			        		"z INT," +
+			        		"data TEXT" +
+			        		")";
+					Statement st = conn.createStatement();
+					st.executeUpdate(query);
+					
+					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM prism_action;");
+					s.executeUpdate();
+					
+					s = conn.prepareStatement("DROP TABLE tmp_prism_actions;");
+					s.executeUpdate();
+					
+					s.close();
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				
 			}
 		}
 		
