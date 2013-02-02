@@ -154,7 +154,7 @@ public class ActionRecorder implements Runnable {
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (NULL,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getType().getActionType());
 	        s.setString(2,a.getPlayer_name());
 	        s.setString(3,a.getWorld_name());
@@ -195,7 +195,7 @@ public class ActionRecorder implements Runnable {
 				return;
 			}
 	        conn.setAutoCommit(false);
-	        s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (NULL,?,?,?,?,?,?,?)");
+	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)");
 	        int i = 0;
 	        while (!queue.isEmpty()){
 	        	actionsRecorded++;

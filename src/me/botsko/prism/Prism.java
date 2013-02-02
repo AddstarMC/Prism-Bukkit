@@ -259,7 +259,7 @@ public class Prism extends JavaPlugin {
 			 try {
 				 String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 			        		"id INT PRIMARY KEY," +
-			        		"action_time DATETIME DEFAULT CURRENT_TIMESTAMP," +
+			        		"action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
 			        		"action_type TEXT," +
 			        		"player TEXT," +
 			        		"world TEXT," +
