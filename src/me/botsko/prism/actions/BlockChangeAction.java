@@ -87,7 +87,11 @@ public class BlockChangeAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "";
-		name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
+		if(this.getType().equals(ActionType.BLOCK_FADE)){
+			name += materialAliases.getItemStackAliasById(actionData.old_id, actionData.old_subid);
+		} else {
+			name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
+		}
 		return name;
 	}
 	
