@@ -265,6 +265,7 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(final BlockFadeEvent event) {
 		Block b = event.getBlock();
+		if( b.getType().equals(Material.FIRE) ) return;
 		BlockState s = event.getNewState();
 		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_FADE, b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
 	}
