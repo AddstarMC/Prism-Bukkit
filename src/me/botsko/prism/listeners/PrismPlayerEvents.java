@@ -64,7 +64,7 @@ public class PrismPlayerEvents implements Listener {
     public void onCommandPreprocess(PlayerCommandPreprocessEvent event){
 		
 		Player player = event.getPlayer();
-		String cmd = event.getMessage();
+		String cmd = event.getMessage().toLowerCase();
 		
 		String[] cmdArgs = cmd.split(" ");
 		String primaryCmd = cmdArgs[0].substring(1);
