@@ -605,7 +605,7 @@ public class Preview implements Previewable {
 					            if(owner == null){
 						            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
 						            if(offlinePlayer.hasPlayedBefore()){
-						            	owner = (Player)offlinePlayer;
+						            	owner = offlinePlayer.getPlayer();
 						            }
 					            }
 					            if(owner != null) wolf.setOwner(owner);
