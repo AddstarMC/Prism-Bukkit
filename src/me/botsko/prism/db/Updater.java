@@ -12,7 +12,7 @@ public class Updater {
 	/**
 	 * 
 	 */
-	protected final int currentDbSchemaVersion = 2;
+	protected final int currentDbSchemaVersion = 3;
 	
 	/**
 	 * 
@@ -91,7 +91,7 @@ public class Updater {
 		        PreparedStatement s;
 				try {
 					
-					plugin.log("Applying database updates. This may take a while.");
+					plugin.log("Applying database updates to schema v2. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD INDEX ( `action_type` ) ;");
 					s.executeUpdate();
@@ -107,6 +107,26 @@ public class Updater {
 			}
 		}
 		
+		
+		// Apply any updates for schema 1 -> 2
+		if(clientSchemaVer < 3){
+			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+				dbc();
+		        PreparedStatement s;
+				try {
+					
+					plugin.log("Applying database updates to schema v3. This may take a while.");
+					
+					s = conn.prepareStatement("ALTER TABLE `prism_actions` CHANGE `action_time` `action_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;");
+					s.executeUpdate();
+					
+					s.close();
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		
 		// Save current version
 		saveCurrentSchemaVersion();

@@ -94,8 +94,6 @@ public class GenericAction implements Action {
 		if(player != null){
 			this.player_name = player;
 		}
-		setAction_time(null);
-		
 	}
 
 
@@ -127,10 +125,6 @@ public class GenericAction implements Action {
 	 * @param action_time the action_time to set
 	 */
 	public void setAction_time(String action_time) {
-		if(action_time == null){
-			java.util.Date date= new java.util.Date();
-			action_time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.getTime());
-		}
 		this.action_time = action_time;
 	}
 

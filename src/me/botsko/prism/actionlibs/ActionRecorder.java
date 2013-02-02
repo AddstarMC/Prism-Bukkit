@@ -154,15 +154,14 @@ public class ActionRecorder implements Runnable {
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-	        s.setString(1,a.getAction_time());
-	        s.setString(2,a.getType().getActionType());
-	        s.setString(3,a.getPlayer_name());
-	        s.setString(4,a.getWorld_name());
-	        s.setInt(5,(int)a.getX());
-	        s.setInt(6,(int)a.getY());
-	        s.setInt(7,(int)a.getZ());
-	        s.setString(8,a.getData());
+	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (NULL,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        s.setString(1,a.getType().getActionType());
+	        s.setString(2,a.getPlayer_name());
+	        s.setString(3,a.getWorld_name());
+	        s.setInt(4,(int)a.getX());
+	        s.setInt(5,(int)a.getY());
+	        s.setInt(6,(int)a.getZ());
+	        s.setString(7,a.getData());
 	        s.executeUpdate();
 	        
 	        ResultSet generatedKeys = s.getGeneratedKeys();
@@ -196,20 +195,19 @@ public class ActionRecorder implements Runnable {
 				return;
 			}
 	        conn.setAutoCommit(false);
-	        s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?,?)");
+	        s = conn.prepareStatement("INSERT INTO prism_actions (action_time,action_type,player,world,x,y,z,data) VALUES (NULL,?,?,?,?,?,?,?)");
 	        int i = 0;
 	        while (!queue.isEmpty()){
 	        	actionsRecorded++;
 	        	Action a = queue.poll();
 	        	if(a == null) continue;
-	        	s.setString(1,a.getAction_time());
-		        s.setString(2,a.getType().getActionType());
-		        s.setString(3,a.getPlayer_name());
-		        s.setString(4,a.getWorld_name());
-		        s.setInt(5,(int)a.getX());
-		        s.setInt(6,(int)a.getY());
-		        s.setInt(7,(int)a.getZ());
-		        s.setString(8,a.getData());
+		        s.setString(1,a.getType().getActionType());
+		        s.setString(2,a.getPlayer_name());
+		        s.setString(3,a.getWorld_name());
+		        s.setInt(4,(int)a.getX());
+		        s.setInt(5,(int)a.getY());
+		        s.setInt(6,(int)a.getZ());
+		        s.setString(7,a.getData());
 	            s.addBatch();
 	            if ((i + 1) % 1000 == 0) {
 	                s.executeBatch(); // Execute every 1000 items.
