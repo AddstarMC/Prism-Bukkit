@@ -112,6 +112,13 @@ public class Prism extends JavaPlugin {
 		// init db
 		dbc();
 		if( conn == null ){
+			
+			String[] dbDisabled = new String[3];
+			dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
+			dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
+			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
+			logSection(dbDisabled);
+			
 			disablePlugin();
 		}
 
@@ -603,13 +610,27 @@ public class Prism extends JavaPlugin {
     }
 
 	
-	
 	/**
 	 * 
 	 * @param message
 	 */
 	public void log(String message){
 		log.info("["+plugin_name+"]: " + message);
+	}
+	
+	
+	/**
+	 * 
+	 * @param message
+	 */
+	public void logSection(String[] messages){
+		if(messages.length > 0){
+			log("--------------------- ## Important ## ---------------------");
+			for(String msg : messages){
+				log(msg);
+			}
+			log("--------------------- ## ========= ## ---------------------");
+		}
 	}
 	
 	
