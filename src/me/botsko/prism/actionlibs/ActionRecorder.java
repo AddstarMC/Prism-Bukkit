@@ -29,6 +29,21 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
+	private final List<String> ignore_players;
+	
+	/**
+	 * 
+	 */
+	private final List<String> ignore_worlds;
+	
+	/**
+	 * 
+	 */
+	private final boolean ignore_creative;
+	
+	/**
+	 * 
+	 */
 	private Connection conn = null;
 	
 	
@@ -36,8 +51,12 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 * @param plugin
 	 */
+	@SuppressWarnings("unchecked")
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
+		ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
+		ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
+		ignore_creative = plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" );
 	}
 	
 	
@@ -84,15 +103,11 @@ public class ActionRecorder implements Runnable {
 		}
 		
 		// Should we ignore this player?
-		@SuppressWarnings("unchecked")
-		List<String> ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
 		if(ignore_players != null && ignore_players.contains( a.getPlayer_name() )){
 			return false;
 		}
 		
 		// Should we ignore this world?
-		@SuppressWarnings("unchecked")
-		List<String> ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
 		if(ignore_worlds != null && ignore_worlds.contains( a.getWorld_name() )){
 			return false;
 		}
@@ -105,7 +120,7 @@ public class ActionRecorder implements Runnable {
 		
 		// Should we ignore this player for being in creative?
 		// @todo maybe we should pass the full player to actions.
-		if( plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" ) ){
+		if( ignore_creative ){
 			String name = a.getPlayer_name();
 			if(name == null) return true;
 			Player pl = plugin.getServer().getPlayer( name );

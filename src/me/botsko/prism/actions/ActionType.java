@@ -71,6 +71,7 @@ public enum ActionType {
 	private boolean canRestore;
 	private String handler;
 	private String niceDescription;
+	private String actionTypeName;
 	
 	
 	/**
@@ -86,6 +87,7 @@ public enum ActionType {
 		this.canRestore = canRestore;
 		this.handler = handler;
 		this.niceDescription = niceDescription;
+		this.actionTypeName = this.name().toLowerCase().replace("_", "-");
 	}
 
 	
@@ -192,7 +194,7 @@ public enum ActionType {
 	 * @return
 	 */
 	public String getActionType(){
-		return this.name().toLowerCase().replace("_", "-");
+		return actionTypeName;
 	}
 	
 	
