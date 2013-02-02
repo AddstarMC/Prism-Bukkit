@@ -1,12 +1,16 @@
 package me.botsko.prism.actions;
 
+import java.util.Map;
 import java.util.Map.Entry;
+
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 
 public class ItemStackAction extends GenericAction {
@@ -61,9 +65,30 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setDataFromItem(){
 		if(data == null && item != null){
+			
+			// Set item info/quant
 			data = item.getTypeId() + ":" + item.getDurability() + ":" + quantity;
-			data += addLeatherArmorColors();
-			if(!item.getEnchantments().isEmpty()){
+			
+			// Append meta info for specific item types
+			if(item.getType().name().contains("LEATHER_")){
+				data += addLeatherArmorColors();
+			}
+			
+			// Enchanted book?
+			if(item.getType().equals( Material.ENCHANTED_BOOK )){
+				EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
+				if(bookEnchantments.hasStoredEnchants()){
+					Map<Enchantment,Integer> enchs = bookEnchantments.getStoredEnchants();
+					if(enchs.size() > 0){
+						for (Map.Entry<Enchantment, Integer> ench : enchs.entrySet()){
+							data += ":" + ench.getKey().getId() + "," + ench.getValue();
+						}
+					}
+				}
+			}
+			
+			// Enchanted weapons/armor
+			else if(!item.getEnchantments().isEmpty()){
 				for(Entry<Enchantment, Integer> ench : item.getEnchantments().entrySet()){
 					data += ":" + ench.getKey().getId() + "," + ench.getValue();
 				}
@@ -77,30 +102,11 @@ public class ItemStackAction extends GenericAction {
 	 * @return
 	 */
 	private String addLeatherArmorColors() {
-		if(isLeather()){
-			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-			if(lam.getColor() != null){
-				return ":;" + lam.getColor().asRGB() + ";";
-			}
+		LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+		if(lam.getColor() != null){
+			return ":;" + lam.getColor().asRGB() + ";";
 		}
 		return "";
-	}
-	
-	
-	/**
-	 * Get if the item is leather armor
-	 * @return
-	 */
-	private boolean isLeather(){
-		switch(item.getType()){
-			case LEATHER_HELMET:
-			case LEATHER_CHESTPLATE:
-			case LEATHER_LEGGINGS:
-			case LEATHER_BOOTS:
-				return true;
-			default:
-				return false;
-		}
 	}
 
 
@@ -109,15 +115,24 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setItemStackFromData(){
 		if(item == null && data != null){
+			
 			String[] blockArr = data.split(":");
 			if (!TypeUtils.isNumeric(blockArr[0])) return;
-			int block_id = Integer.parseInt(blockArr[0]);
+			
 			if (blockArr.length >= 3){
+				
+				// Parse item/sub/quant
+				int block_id = Integer.parseInt(blockArr[0]);
 				int block_subid = Integer.parseInt(blockArr[1]);
 				quantity = Integer.parseInt(blockArr[2]);
+				
 				item = new ItemStack(block_id,quantity,(short)block_subid);
+				
+				// Append item-specific details
 				if(blockArr.length > 3){
-					if(isLeather() && blockArr[3].contains(";")){
+					
+					// Restore armor dye colors
+					if(item.getType().name().contains("LEATHER_") && blockArr[3].contains(";")){
 						String rgb = blockArr[3].replaceAll(";", "");
 						if (!TypeUtils.isNumeric(rgb)) return;
 						int color = Integer.parseInt(rgb);
@@ -125,9 +140,26 @@ public class ItemStackAction extends GenericAction {
 						lam.setColor(Color.fromRGB(color));
 						item.setItemMeta(lam);
 					}
+
+					// Restore enchantments
 					for(int i = 3; i < blockArr.length; i++){
-						if(!blockArr[i].contains(";"))
-							item.addUnsafeEnchantment(Enchantment.getById(Integer.parseInt(blockArr[i].split(",")[0])), Integer.parseInt(blockArr[i].split(",")[1]));
+						if(!blockArr[i].contains(";")){
+							
+							String[] enchArgs = blockArr[i].split(",");
+							Enchantment enchantment = Enchantment.getById(Integer.parseInt(enchArgs[0]));
+							
+							// Restore book enchantments
+							if(item.getType().equals(Material.ENCHANTED_BOOK)){
+								EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
+								bookEnchantments.addStoredEnchant(enchantment, Integer.parseInt(enchArgs[1]), false);
+								item.setItemMeta(bookEnchantments);
+							} else {
+							
+								// Restore item enchants
+								item.addUnsafeEnchantment(enchantment, Integer.parseInt(enchArgs[1]));
+								
+							}
+						}
 					}
 				}
 			}
