@@ -152,7 +152,7 @@ public class Updater {
 					Statement st = conn.createStatement();
 					st.executeUpdate(query);
 					
-					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM prism_action;");
+					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM tmp_prism_actions;");
 					s.executeUpdate();
 					
 					s = conn.prepareStatement("DROP TABLE tmp_prism_actions;");
