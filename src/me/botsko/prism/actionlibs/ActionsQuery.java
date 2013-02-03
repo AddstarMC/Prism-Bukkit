@@ -404,19 +404,19 @@ public class ActionsQuery {
 				String block_match = "block_id\":%s,";
 				String block_subid_match = "\"block_subid\":%s";
 				
-				ArrayList<String> blockMatches = new ArrayList<String>();
+				String[] blockArr = new String[blockfilters.size()];
+				int i = 0;
 				for (Entry<Integer,Byte> entry : blockfilters.entrySet()){
 					if( entry.getValue() == 0 ){
-						blockMatches.add( String.format(block_match, entry.getKey()) );
+						blockArr[i] = String.format(block_match, entry.getKey());
 					} else {
-						blockMatches.add( String.format(block_match+block_subid_match, entry.getKey(), entry.getValue()) );
+						blockArr[i] = String.format(block_match+block_subid_match, entry.getKey(), entry.getValue());
 					}
+					 i++;
 				}
-				if(blockMatches.size() > 0){
-					String[] blockArr = new String[blockfilters.size()];
-					blockArr = blockMatches.toArray(blockArr);
-					query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
-				}
+
+				query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
+				
 			}
 			
 			/**

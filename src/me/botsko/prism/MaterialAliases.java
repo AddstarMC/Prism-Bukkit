@@ -81,7 +81,7 @@ public class MaterialAliases {
 			for (Entry<String, String> entry : itemAliases.entrySet()){
 				int[] ids = new int[2];
 			    if(entry.getValue().equals( alias )){
-			    	String[] _tmp = entry.getKey().split(";");
+			    	String[] _tmp = entry.getKey().split(":");
 			    	ids[0] = Integer.parseInt(_tmp[0]);
 			    	ids[1] = Integer.parseInt(_tmp[1]);
 			    	itemIds.add(ids);
