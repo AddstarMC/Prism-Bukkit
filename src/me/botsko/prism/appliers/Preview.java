@@ -771,14 +771,22 @@ public class Preview implements Previewable {
 				// bug filed:
 				// https://bukkit.atlassian.net/browse/BUKKIT-3371
 				if( h.getHangingType().equals("item_frame") ){
-					Hanging hangingItem = world.spawn(loc, ItemFrame.class);
-					hangingItem.setFacingDirection( attachedFace, true );
-					changes_applied_count++;
+					if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
+						Hanging hangingItem = world.spawn(loc, ItemFrame.class);
+						hangingItem.setFacingDirection( attachedFace, true );
+						changes_applied_count++;
+					} else {
+						skipped_block_count++;
+					}
 				}
 				else if( h.getHangingType().equals("painting") ){
-					Hanging hangingItem = world.spawn(loc, Painting.class);
-					hangingItem.setFacingDirection( h.getDirection(), true );
-					changes_applied_count++;
+					if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
+						Hanging hangingItem = world.spawn(loc, Painting.class);
+						hangingItem.setFacingDirection( h.getDirection(), true );
+						changes_applied_count++;
+					} else {
+						skipped_block_count++;
+					}
 				}
 			} else {
 			
