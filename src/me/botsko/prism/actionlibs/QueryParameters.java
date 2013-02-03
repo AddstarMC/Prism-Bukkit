@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -23,7 +24,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Internal use
 	 */
-	protected HashMap<String,String> foundArgs = new HashMap<String,String>();
+	protected ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
 	protected PrismProcessType processType = PrismProcessType.LOOKUP;
 	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 	protected String original_command;
@@ -308,6 +309,14 @@ public class QueryParameters implements Cloneable {
 	
 	
 	/**
+	 * @return the action_type
+	 */
+	public void removeActionType(ActionType a) {
+		actionTypeRules.remove(a);
+	}
+	
+	
+	/**
 	 * 
 	 */
 	public void resetActionTypes() {
@@ -382,7 +391,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the foundArgs
 	 */
-	public HashMap<String, String> getFoundArgs() {
+	public ConcurrentHashMap<String, String> getFoundArgs() {
 		return foundArgs;
 	}
 
@@ -390,7 +399,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param foundArgs the foundArgs to set
 	 */
-	public void setFoundArgs(HashMap<String, String> foundArgs) {
+	public void setFoundArgs(ConcurrentHashMap<String, String> foundArgs) {
 		this.foundArgs = foundArgs;
 	}
 

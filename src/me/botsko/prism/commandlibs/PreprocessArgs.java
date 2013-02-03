@@ -4,8 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
@@ -48,7 +47,7 @@ public class PreprocessArgs {
 		}
 		
 		QueryParameters parameters = new QueryParameters();
-		HashMap<String,String> foundArgs = new HashMap<String,String>();
+		ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
 		
 		parameters.setProcessType(processType);
 		
@@ -112,19 +111,12 @@ public class PreprocessArgs {
 									parameters.addActionType( actionType, match );
 								}
 							} else {
-								
-								// Remove the arg. If only one action provided, this will essentially
-								// ensure a validation error prevents a query.
-								for (Entry<String, String> entry : foundArgs.entrySet()){
-								    if( entry.getKey().equals(arg_type) && entry.getValue().equals( val ) ){
-								    	foundArgs.remove(entry.getKey());
-								    }
-								}
 								respond( sender, plugin.playerError("Ignoring action '"+action.replace("!", "")+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
-								if(actions.length == 1){
-									return null;
-								}
 							}
+						}
+						// If none were valid, we end here.
+						if(parameters.getActionTypes().size() == 0){
+							return null;
 						}
 					}
 				}
@@ -311,7 +303,7 @@ public class PreprocessArgs {
 			
 			// Validate any required args are set
 			if(foundArgs.isEmpty()){
-				respond( sender, plugin.playerError("You're missing parameters. Use /prism ? for a assitance.") );
+				respond( sender, plugin.playerError("You're missing valid parameters. Use /prism ? for a assitance.") );
 				return null;
 			}
 			
