@@ -78,12 +78,9 @@ public class PrismPlayerEvents implements Listener {
 	        	plugin.log(msg);
 			}
 		}
-		
-		plugin.log("COMMAND: " + primaryCmd);
 
 		// Ignore some commands based on config
 		if( ignoreCommands.contains( primaryCmd ) ){
-			plugin.log("IGNORING: " + primaryCmd);
 			return;
 		}
 			
