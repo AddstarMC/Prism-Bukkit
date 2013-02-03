@@ -31,6 +31,8 @@ public class PreprocessArgs {
 	protected static void respond( CommandSender sender, String msg ){
 		if(sender != null){
 			sender.sendMessage(msg);
+		} else {
+//			System.out.print(msg); // @todo let this output to console, is useful for db purge debugging
 		}
 	}
 	
@@ -39,7 +41,7 @@ public class PreprocessArgs {
 	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int starting ){
+	public static QueryParameters process( Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int startAt ){
 		
 		Player player = null;
 		if(sender != null && sender instanceof Player){
@@ -52,13 +54,12 @@ public class PreprocessArgs {
 		parameters.setProcessType(processType);
 		
 		if(args != null){
-		
+
 			// Iterate over arguments
-			for (int i = starting; i < args.length; i++) {
+			for (int i = startAt; i < args.length; i++) {
 				
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
-				
 				
 				// Verify they're formatting like a:[val] or like -arg
 				if(!(arg.contains(":") || arg.contains("-"))){

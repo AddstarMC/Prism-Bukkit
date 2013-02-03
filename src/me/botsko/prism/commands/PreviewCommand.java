@@ -87,7 +87,7 @@ public class PreviewCommand implements SubHandler {
 				if(parameters == null){
 					return;
 				}
-				parameters.setStringFromRawArgs( call.getArgs() );
+				parameters.setStringFromRawArgs( call.getArgs(), 1 );
 				
 				if(parameters.getActionTypes().containsKey(ActionType.WORLD_EDIT)){
 					call.getPlayer().sendMessage( plugin.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
