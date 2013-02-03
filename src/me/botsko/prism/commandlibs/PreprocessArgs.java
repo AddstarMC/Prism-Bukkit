@@ -177,14 +177,14 @@ public class PreprocessArgs {
 						else if(val.equals("global")){
 							if(plugin.getConfig().getBoolean("prism.limit-global-radius-override-to-lookups")){
 								if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
-									parameters.setAllow_no_radius(true);
+									parameters.setAllowNoRadius(true);
 								} else {
 									respond( sender, plugin.playerError("Current configuration limits global radius to lookups.") );
 									return null;
 								}
 							} else {
 								// Allow no matter what
-								parameters.setAllow_no_radius(true);
+								parameters.setAllowNoRadius(true);
 							}
 						} else {
 							respond( sender, plugin.playerError("Radius must be a number, 'global', or 'we'. Use /prism ? for a assitance.") );
@@ -310,7 +310,7 @@ public class PreprocessArgs {
 			if( !processType.equals(PrismProcessType.DELETE) ){
 				// Radius default
 				if(!foundArgs.containsKey("r")){
-					if(parameters.getAllow_no_radius()){
+					if(parameters.allowsNoRadius()){
 						// We'll allow no radius.
 					} else {
 						parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );

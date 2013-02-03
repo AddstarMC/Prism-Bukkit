@@ -67,7 +67,7 @@ public class LookupCommand implements SubHandler {
 			if(paginated != null){
 				for(Action a : paginated){
 					ActionMessage am = new ActionMessage(a);
-					if(parameters.getAllow_no_radius()){
+					if(parameters.allowsNoRadius()){
 						am.hideId(false);
 					}
 					call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );

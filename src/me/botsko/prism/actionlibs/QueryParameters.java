@@ -44,7 +44,6 @@ public class QueryParameters implements Cloneable {
 	protected String before_time;
 	protected String world;
 
-	
 	/**
 	 * Params that allow multiple values
 	 */
@@ -61,8 +60,6 @@ public class QueryParameters implements Cloneable {
 	protected int limit = 1000000;
 	
 
-	
-	
 	/**
 	 * @return the id
 	 */
@@ -108,14 +105,6 @@ public class QueryParameters implements Cloneable {
 	 */
 	public HashMap<Integer,Byte> getBlockFilters() {
 		return block_filters;
-	}
-
-
-	/**
-	 * @param block the block to set
-	 */
-	public void setBlockFilters(HashMap<Integer,Byte> blocks) {
-		this.block_filters = blocks;
 	}
 	
 	
@@ -219,7 +208,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the allow_no_radius
 	 */
-	public boolean getAllow_no_radius() {
+	public boolean allowsNoRadius() {
 		return allow_no_radius;
 	}
 
@@ -227,7 +216,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param allow_no_radius the allow_no_radius to set
 	 */
-	public void setAllow_no_radius(boolean allow_no_radius) {
+	public void setAllowNoRadius(boolean allow_no_radius) {
 		this.allow_no_radius = allow_no_radius;
 	}
 

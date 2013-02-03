@@ -104,7 +104,7 @@ public class UndoCommand implements SubHandler {
 			// Show the list
 			// Process and validate all of the arguments
 			QueryParameters parameters = new QueryParameters();
-			parameters.setAllow_no_radius(true);
+			parameters.setAllowNoRadius(true);
 			parameters.addActionType(ActionType.PRISM_PROCESS);
 			parameters.addPlayerName( call.getPlayer().getName() );
 			parameters.setLimit(5); // @todo config this, and move the logic to queryparams
@@ -118,7 +118,7 @@ public class UndoCommand implements SubHandler {
 				if(paginated != null){
 					for(Action a : paginated){
 						ActionMessage am = new ActionMessage(a);
-						if(parameters.getAllow_no_radius()){
+						if(parameters.allowsNoRadius()){
 							am.hideId(false);
 						}
 						call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );

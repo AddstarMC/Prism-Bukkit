@@ -356,7 +356,7 @@ public class ActionsQuery {
 			/**
 			 * World
 			 */
-			if( !parameters.getAllow_no_radius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
 				query += " AND world = '"+parameters.getWorld()+"'";
 			}
 
