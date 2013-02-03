@@ -36,7 +36,7 @@ public enum ActionType {
 	ITEM_PICKUP(false, false, false, "itemstack", "picked up"),
 	ITEM_REMOVE(false, true, true, "itemstack", "removed"),
 	LAVA_BREAK(false, true, true, "block", "broke"),
-	LAVA_BUCKET(false, true, false, null, "poured"),
+	LAVA_BUCKET(true, true, true, "blockchange", "poured"),
 	LAVA_FLOW(true, true, true, "block", "flowed into"),
 	LAVA_IGNITE(false, false, false, null, "ignited"),
 	LEAF_DECAY(false, true, true, "block", "decayed"),
@@ -58,7 +58,7 @@ public enum ActionType {
 	TNT_PRIME(false, false, false, "use", "primed"),
 	TREE_GROW(true, true, true, "grow", "grew"),
 	WATER_BREAK(false, true, true, "block", "broke"),
-	WATER_BUCKET(false, false, false, null, "poured"),
+	WATER_BUCKET(true, true, true, "blockchange", "poured"),
 	WATER_FLOW(true, true, true, "block", "flowed into"),
 	WORLD_EDIT(true, true, true, "worldedit", "edited");
 

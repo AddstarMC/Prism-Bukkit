@@ -412,8 +412,11 @@ public class PrismBlockEvents implements Listener {
 		
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
-		Prism.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlockClicked().getRelative(event.getBlockFace()), player.getName()) );
 		
+		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		int newId = (cause.equals(ActionType.LAVA_BUCKET) ? 11 : 9);
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(cause, spot.getLocation(), spot.getTypeId(), spot.getData(), newId, (byte)0, player.getName()) );
+
 		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
 			plugin.useMonitor.alertOnItemUse(player,"poured lava");
 		}
