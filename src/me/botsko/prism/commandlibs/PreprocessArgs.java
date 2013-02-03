@@ -213,17 +213,13 @@ public class PreprocessArgs {
 					String[] blocks = val.split(",");
 					
 					if(blocks.length > 0){
-						
-						String block_match = "block_id\":%s,";
-						String block_subid_match = "\"block_subid\":%s";
-						
 						for(String b : blocks){
 					
 							// if user provided id:subid
 							if(b.contains(":") && b.length() >= 3){
 								String[] ids = b.split(":");
 								if(ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])){
-									parameters.addBlockFilter( String.format(block_match+block_subid_match, ids[0], ids[1]) );
+									parameters.addBlockFilter( Integer.parseInt( ids[0] ), Byte.parseByte( ids[1] ) );
 								} else {
 									respond( sender, plugin.playerError("Invalid block filter '"+val+"'. Use /prism ? [command] for help.") );
 									return null;
@@ -232,7 +228,7 @@ public class PreprocessArgs {
 								
 								// It's id without a subid
 								if(TypeUtils.isNumeric(b)){
-									parameters.addBlockFilter( String.format(block_match, b, "0") );
+									parameters.addBlockFilter( Integer.parseInt(b), (byte)0 );
 								} else {
 									
 									// Lookup the item name, get the ids
@@ -243,9 +239,9 @@ public class PreprocessArgs {
 											if(ids.length == 2){
 												// If we really care about the sub id because it's a whole different item
 												if(BlockUtils.hasSubitems(ids[0])){
-													parameters.addBlockFilter( String.format(block_match+block_subid_match, ids[0], ids[1]) );
+													parameters.addBlockFilter( ids[0], (byte) ids[1] );
 												} else {
-													parameters.addBlockFilter( String.format(block_match, ids[0]) );
+													parameters.addBlockFilter( ids[0], (byte)0 );
 												}
 											}
 										}

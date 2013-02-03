@@ -398,11 +398,25 @@ public class ActionsQuery {
 			/**
 			 * Block
 			 */
-			ArrayList<String> blockfilters = parameters.getBlockFilters();
+			HashMap<Integer,Byte> blockfilters = parameters.getBlockFilters();
 			if(!blockfilters.isEmpty()){
-				String[] blockArr = new String[blockfilters.size()];
-				blockArr = blockfilters.toArray(blockArr);
-				query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
+				
+				String block_match = "block_id\":%s,";
+				String block_subid_match = "\"block_subid\":%s";
+				
+				ArrayList<String> blockMatches = new ArrayList<String>();
+				for (Entry<Integer,Byte> entry : blockfilters.entrySet()){
+					if( entry.getValue() == 0 ){
+						blockMatches.add( String.format(block_match, entry.getKey()) );
+					} else {
+						blockMatches.add( String.format(block_match+block_subid_match, entry.getKey(), entry.getValue()) );
+					}
+				}
+				if(blockMatches.size() > 0){
+					String[] blockArr = new String[blockfilters.size()];
+					blockArr = blockMatches.toArray(blockArr);
+					query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
+				}
 			}
 			
 			/**
