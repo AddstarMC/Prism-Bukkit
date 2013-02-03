@@ -48,16 +48,22 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
 
+	/**
+	 * Protected/private
+	 */
 	protected String plugin_name;
 	protected String plugin_version;
-	public Prism prism;
-	protected Logger log = Logger.getLogger("Minecraft");
-	public FileConfiguration config;
-	protected Language language;
 	protected MaterialAliases items;
+	protected Language language;
+	protected Logger log = Logger.getLogger("Minecraft");
+	
+	/**
+	 * Public
+	 */
+	public Prism prism;
+	public FileConfiguration config;
 	public Connection conn = null;
 	public WorldEditPlugin plugin_worldEdit = null;
-	
 	public static ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
