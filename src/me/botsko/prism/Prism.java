@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -448,25 +450,41 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
+	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords(){
 		
-		String[] configParams = getConfig().getString("prism.clear-records-after").split(" ");
+		List<String> purgeRules = (List<String>) getConfig().getList("prism.db-records-purge-rules");
 		
-		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process( prism, null, configParams, PrismProcessType.DELETE, 1 );
-		if(parameters == null){
-			log("Invalid parameters for database purge.");
-			return;
-		}
-		
-		if(parameters.getFoundArgs().size() > 0){
-			getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-			    public void run(){
-					ActionsQuery aq = new ActionsQuery(prism);
-					int rows_affected = aq.delete(parameters);
-					log("Clearing " + rows_affected + " rows from the database. Using: " + getConfig().getString("prism.clear-records-after"));
-			    }
-			});
+		if(!purgeRules.isEmpty()){
+			
+			final ArrayList<QueryParameters> paramList = new ArrayList<QueryParameters>();
+			
+			for(final String purgeArgs : purgeRules){
+
+				// Process and validate all of the arguments
+				QueryParameters parameters = PreprocessArgs.process( prism, null, purgeArgs.split(" "), PrismProcessType.DELETE, 0 );
+				
+				if(parameters == null){
+					log("Invalid parameters for database purge: " + purgeArgs);
+					continue;
+				}
+				if(parameters.getFoundArgs().size() > 0){
+					parameters.setStringFromRawArgs( purgeArgs.split(" "), 0 );
+					paramList.add( parameters );
+				}
+			}
+			
+			if(paramList.size() > 0){
+				getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+				    public void run(){
+				    	for(QueryParameters param : paramList){
+							ActionsQuery aq = new ActionsQuery(prism);
+							int rows_affected = aq.delete(param);
+							log("Clearing " + rows_affected + " rows from the database. Using:" + param.getOriginalCommand() );
+				    	}
+				    }
+				});
+			}
 		}
 	}
 	

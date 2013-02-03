@@ -61,7 +61,10 @@ public class PrismConfig {
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
-		config.addDefault("prism.clear-records-after", "before:8w");
+		List<String> purgeRules = new ArrayList<String>();
+		purgeRules.add("before:8w");
+		purgeRules.add("a:water-flow before:4w");
+		config.addDefault("prism.db-records-purge-rules", purgeRules);
 		
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);

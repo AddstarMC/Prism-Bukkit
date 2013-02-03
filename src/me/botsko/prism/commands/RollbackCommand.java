@@ -39,7 +39,7 @@ public class RollbackCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
-		parameters.setStringFromRawArgs( call.getArgs() );
+		parameters.setStringFromRawArgs( call.getArgs(), 1 );
 		
 		// determine if defaults were used
 		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
