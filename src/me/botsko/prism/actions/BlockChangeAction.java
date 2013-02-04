@@ -24,6 +24,13 @@ public class BlockChangeAction extends GenericAction {
 		actionData = new BlockChangeActionData();
 		
 		if(newId != 0){
+			// Water/Lava placement always turns into stationary blocks, and a rollback would
+			// fail because we wouldn't detect the same block placed on rollback. So,
+			// we just force record the block as stationary.
+			// https://snowy-evening.com/botsko/prism/297/
+			if( action_type.equals(ActionType.BLOCK_PLACE) && (newId == 8 || newId == 10) ){
+				newId = (newId == 8 ? 9 : 11);
+			}
 			actionData.block_id = newId;
 			actionData.block_subid = newSubid;
 		}
