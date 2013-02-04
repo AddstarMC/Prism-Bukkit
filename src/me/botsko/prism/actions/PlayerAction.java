@@ -17,7 +17,7 @@ public class PlayerAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PlayerAction( ActionType action_type, Player player, String ip ){
+	public PlayerAction( ActionType action_type, Player player, String additionalInfo ){
 	
 		super(action_type, null);
 
@@ -25,8 +25,8 @@ public class PlayerAction extends GenericAction {
 		if(player != null){
 			this.player_name = player.getName();
 		}
-		if(ip != null && !ip.isEmpty()){
-			this.data = ip;
+		if(additionalInfo != null && !additionalInfo.isEmpty()){
+			this.data = additionalInfo;
 		}
 		
 		if(player != null){
@@ -46,7 +46,12 @@ public class PlayerAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		if(!this.data.isEmpty()){
-			return "from " + this.data;
+			if(this.type.equals(ActionType.XP_PICKUP)){
+				return this.data + " xp";
+			} else {
+				// is a join event
+				return "from " + this.data;
+			}
 		}
 		return "";
 	}

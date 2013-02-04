@@ -60,8 +60,9 @@ public enum ActionType {
 	WATER_BREAK(false, true, true, "block", "broke"),
 	WATER_BUCKET(true, true, true, "blockchange", "poured"),
 	WATER_FLOW(true, true, true, "block", "flowed into"),
-	WORLD_EDIT(true, true, true, "worldedit", "edited");
-
+	WORLD_EDIT(true, true, true, "worldedit", "edited"),
+	XP_PICKUP(false, false, false, "player", "picked up");
+	
 	
 	/**
 	 * Define associated values

@@ -124,6 +124,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", true);
 		config.addDefault("prism.tracking.world-edit", true);
+		config.addDefault("prism.tracking.xp-pickup", false);
 		
 		config.addDefault("prism.track-player-ip-on-join", false);
 		
