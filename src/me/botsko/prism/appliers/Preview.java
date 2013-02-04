@@ -273,6 +273,7 @@ public class Preview implements Previewable {
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
 			} else {
+				plugin.debug("Block change skipped because new id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + new_id);
 				return ChangeResultType.SKIPPED;
 			}
 		}
@@ -283,6 +284,7 @@ public class Preview implements Previewable {
 				b.setBlockId( new_id );
 				b.setBlockSubId( new_subid );
 			} else {
+				plugin.debug("Block change skipped because old id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + old_id);
 				return ChangeResultType.SKIPPED;
 			}
 		}
@@ -304,13 +306,15 @@ public class Preview implements Previewable {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 		if( !b.getType().requiresHandler("blockchange") ){
-			if( !BlockUtils.isAcceptableForBlockPlace(block) ){
+			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) ){
+				plugin.debug("Block skipped due to being unaccaptable for block place.");
 				return ChangeResultType.SKIPPED;
 			}
 		}
 		
 		// On the blacklist (except an undo)
 		if( !BlockUtils.mayEverPlace(m) && !processType.equals(PrismProcessType.UNDO) ){
+			plugin.debug("Block skipped because it's not allowed to be placed.");
 			return ChangeResultType.SKIPPED;
 		}
 			
@@ -333,6 +337,7 @@ public class Preview implements Previewable {
 				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
 					below.setType(Material.STATIONARY_WATER);
 				} else {
+					plugin.debug("Lilypad skipped because no water exists below.");
 					return ChangeResultType.SKIPPED;
 				}
 			}
@@ -629,7 +634,7 @@ public class Preview implements Previewable {
 					/**
 					 * Rollback itemstack actions
 					 */
-					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
+					if(a instanceof ItemStackAction){
 						
 						ItemStackAction b = (ItemStackAction) a;
 						
@@ -638,7 +643,7 @@ public class Preview implements Previewable {
 							Chest chest = (Chest) block.getState();
 							
 							// If item was removed, put it back.
-							if(a.getType().equals(ActionType.ITEM_REMOVE) && plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
+							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
 								HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
 								changes_applied_count++;
 								if(leftovers.size() > 0){
