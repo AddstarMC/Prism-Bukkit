@@ -269,7 +269,9 @@ public class Preview implements Previewable {
 		if(processType.equals(PrismProcessType.ROLLBACK)){
 			// Run verification for no-overwrite. Only reverse a change
 			// if the opposite state is what's present now.
-			if(block.getTypeId() == new_id){
+			// We skip this check because if we're in preview mode the block may not
+			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
+			if(block.getTypeId() == new_id || is_preview){
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
 			} else {
@@ -280,7 +282,9 @@ public class Preview implements Previewable {
 		if(processType.equals(PrismProcessType.RESTORE)){
 			// Run verification for no-overwrite. Only reapply a change
 			// if the opposite state is what's present now.
-			if(block.getTypeId() == old_id){
+			// We skip this check because if we're in preview mode the block may not
+			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
+			if(block.getTypeId() == old_id || is_preview){
 				b.setBlockId( new_id );
 				b.setBlockSubId( new_subid );
 			} else {
