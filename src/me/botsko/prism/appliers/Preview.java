@@ -9,12 +9,11 @@ import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockAction.SignActionData;
 import me.botsko.prism.actions.BlockAction.SkullActionData;
 import me.botsko.prism.actions.BlockAction.SpawnerActionData;
 import me.botsko.prism.actions.BlockChangeAction;
@@ -389,6 +388,26 @@ public class Preview implements Previewable {
 				spawner.setSpawnedType(s.getEntityType());
 				spawner.update();
 				
+			}
+			
+			
+			/**
+			 * Signs
+			 */
+			if( b.getActionData().getBlockId() == 63 || b.getActionData().getBlockId() == 68 ){
+				
+				SignActionData s = (SignActionData) b.getActionData();
+	
+				// Set sign data
+				Sign sign = (Sign) block.getState();
+				int i = 0;
+				if(s.lines.length > 0){
+					for(String line : s.lines){
+						sign.setLine(i, line);
+						i++;
+					}
+				}
+				sign.update();
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
@@ -839,30 +858,7 @@ public class Preview implements Previewable {
 			// NOTE: These params have been modified from original, so
 			// do NOT use the object for original params.
 			
-			/**
-			 * If we've done breaking-blocks rollback we also need to re-apply
-			 * any sign-change events at this location.
-			 */
-			if(parameters.shouldTriggerRestoreFor(ActionType.SIGN_CHANGE)){
-				
-				QueryParameters triggerParameters;
-				try {
-					triggerParameters = parameters.clone();
-					triggerParameters.resetActionTypes();
-					triggerParameters.addActionType(ActionType.SIGN_CHANGE);
-					
-					ActionsQuery aq = new ActionsQuery(plugin);
-					QueryResult results = aq.lookup( player, triggerParameters );
-					if(!results.getActionResults().isEmpty()){
-						Restore rs = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), triggerParameters );
-						rs.apply();
-					}
-				} catch (CloneNotSupportedException e) {
-					e.printStackTrace();
-				}
-			}
-			
-		
+
 //			/**
 //			 * If we've rolled back any containers we need to restore item-removes.
 //			 */

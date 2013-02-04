@@ -9,11 +9,13 @@ import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 	
-	public class SignActionData {
+	
+	public class SignChangeActionData {
 		public String[] lines;
 		public String sign_type;
 		public BlockFace facing;
 	}
+	
 	
 	/**
 	 * 
@@ -23,7 +25,7 @@ public class SignAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected SignActionData actionData;
+	protected SignChangeActionData actionData;
 	
 	
 	/**
@@ -37,7 +39,7 @@ public class SignAction extends GenericAction {
 		super(action_type, player);
 		
 		// Build an object for the specific details of this action
-		actionData = new SignActionData();
+		actionData = new SignChangeActionData();
 				
 		if(block != null){
 			actionData.sign_type = block.getType().name();
@@ -82,7 +84,7 @@ public class SignAction extends GenericAction {
 	 */
 	protected void setObjectFromData(){
 		if(data != null){
-			actionData = gson.fromJson(data, SignActionData.class);
+			actionData = gson.fromJson(data, SignChangeActionData.class);
 		}
 	}
 	

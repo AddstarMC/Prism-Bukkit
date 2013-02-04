@@ -1,9 +1,12 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.utils.TypeUtils;
+
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.EntityType;
 
@@ -47,6 +50,14 @@ public class BlockAction extends GenericAction {
 				skullActionData.owner = s.getOwner();
 				skullActionData.skull_type = s.getSkullType().name().toLowerCase();
 				actionData = skullActionData;
+			}
+			
+			// signs
+			else if( block != null && (block.getTypeId() == 63 || block.getTypeId() == 68) ){
+				SignActionData signActionData = new SignActionData();
+				Sign s = (Sign) block.getState();
+				signActionData.lines = s.getLines();
+				actionData = signActionData;
 			}
 			
 			actionData.block_id = block.getTypeId();
@@ -101,6 +112,9 @@ public class BlockAction extends GenericAction {
 			else if( data.contains("block_id\":52,") ){
 				actionData = gson.fromJson(data, SpawnerActionData.class);
 			}
+			else if( data.contains("block_id\":63,") || data.contains("block_id\":68,") ){
+				actionData = gson.fromJson(data, SignActionData.class);
+			}
 			else {
 				actionData = gson.fromJson(data, BlockActionData.class);
 			}
@@ -143,6 +157,12 @@ public class BlockAction extends GenericAction {
 			name += ad.entity_type + " ";
 		}
 		name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
+		if(actionData instanceof SignActionData){
+			SignActionData ad = (SignActionData) getActionData();
+			if(ad.lines != null && ad.lines.length > 0){
+				name += " (" + TypeUtils.implode(ad.lines, ", ") + ")";
+			}
+		}
 		return name;
 	}
 	
@@ -234,5 +254,16 @@ public class BlockAction extends GenericAction {
 			}
 			return null;
 		}
+	}
+	
+	
+	/**
+	 * Not to be confused with SignChangeActionData, which records
+	 * additional data we don't need here.
+	 * @author botskonet
+	 *
+	 */
+	public class SignActionData extends BlockActionData {
+		public String[] lines;
 	}
 }
