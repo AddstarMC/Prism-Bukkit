@@ -18,6 +18,7 @@ public class EntityAction extends GenericAction {
 		public String entity_name;
 		public boolean isAdult;
 		public String color;
+		public String newColor;
 		public String profession;
 		public String taming_owner;
 	}
@@ -26,6 +27,17 @@ public class EntityAction extends GenericAction {
 	 * 
 	 */
 	protected EntityActionData actionData;
+	
+	
+	/**
+	 * 
+	 * @param action_type
+	 * @param entity
+	 * @param player
+	 */
+	public EntityAction( ActionType action_type, Entity entity, String player){
+		this(action_type, entity, player, null);
+	}
 
 
 	/**
@@ -34,7 +46,7 @@ public class EntityAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityAction( ActionType action_type, Entity entity, String player ){
+	public EntityAction( ActionType action_type, Entity entity, String player, String dyeUsed ){
 		
 		super(action_type, player);
 		
@@ -56,10 +68,15 @@ public class EntityAction extends GenericAction {
 				this.actionData.isAdult = true;
 			}
 			
-			// Get sheep color
+			// Get current sheep color
 			if( entity.getType().equals(EntityType.SHEEP)){
 				Sheep sheep = ((Sheep) entity);
 				this.actionData.color = sheep.getColor().name().toLowerCase();
+			}
+			
+			// Get color it will become
+			if(dyeUsed != null){
+				this.actionData.newColor = dyeUsed;
 			}
 			
 			// Get villager type
@@ -189,6 +206,9 @@ public class EntityAction extends GenericAction {
 			name += actionData.taming_owner+"'s ";
 		}
 		name += actionData.entity_name;
+		if(this.actionData.newColor != null){
+			name += " " + this.actionData.newColor;
+		}
 		return name;
 	}
 }

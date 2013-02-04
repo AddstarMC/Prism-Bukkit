@@ -49,7 +49,7 @@ public class MaterialAliases {
 	public String getItemStackAliasById( int typeid, byte subid ){
 		String item_name = null;
 		if(!itemAliases.isEmpty()){
-			String key = typeid+";"+subid;
+			String key = typeid+":"+subid;
 			item_name = itemAliases.get(key);
 		}
 		if(item_name == null){

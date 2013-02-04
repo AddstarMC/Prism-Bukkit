@@ -39,6 +39,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -173,6 +174,22 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
 		Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SHEAR, event.getEntity(), event.getPlayer().getName()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerInteractEntityEvent(final PlayerInteractEntityEvent event) {
+		Player p = event.getPlayer();
+		Entity e = event.getRightClicked();
+		// Only track the event on sheep, when player holds dye
+		if( p.getItemInHand().getTypeId() == 351 && e.getType().equals(EntityType.SHEEP) ){
+			String newColor = plugin.getItems().getItemStackAliasById(p.getItemInHand().getTypeId(), (byte)p.getItemInHand().getDurability());
+			Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_DYE, event.getRightClicked(), event.getPlayer().getName(), newColor) );
+		}
 	}
 	
 	
