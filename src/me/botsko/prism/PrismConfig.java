@@ -114,6 +114,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.player-death", true);
 		config.addDefault("prism.tracking.player-join", false);
 		config.addDefault("prism.tracking.player-quit", false);
+		config.addDefault("prism.tracking.player-teleport", false);
 		config.addDefault("prism.tracking.sheep-eat", true);
 		config.addDefault("prism.tracking.sign-change", true);
 		config.addDefault("prism.tracking.spawnegg-use", true);

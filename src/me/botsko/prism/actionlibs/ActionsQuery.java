@@ -21,6 +21,7 @@ import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityAction;
+import me.botsko.prism.actions.EntityTravelAction;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.HangingItemAction;
@@ -104,6 +105,10 @@ public class ActionsQuery {
 	    			else if( actionType.requiresHandler("entity") ){
 	    				EntityAction eka = new EntityAction(null, null, null);
 	    				baseAction = eka;
+	    			}
+	    			else if( actionType.requiresHandler("entitytravel") ){
+	    				EntityTravelAction et = new EntityTravelAction(null, null, null, null, null);
+	    				baseAction = et;
 	    			}
 	    			else if( actionType.requiresHandler("grow") ){
 	    				GrowAction ga = new GrowAction(null, null, null);
@@ -412,7 +417,7 @@ public class ActionsQuery {
 					} else {
 						blockArr[i] = String.format(block_match+block_subid_match, entry.getKey(), entry.getValue());
 					}
-					 i++;
+					i++;
 				}
 
 				query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);

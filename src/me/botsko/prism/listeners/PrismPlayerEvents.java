@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.CommandAction;
+import me.botsko.prism.actions.EntityTravelAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.UseAction;
@@ -30,7 +31,9 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
 public class PrismPlayerEvents implements Listener {
@@ -40,8 +43,14 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	private Prism plugin;
 	
+	/**
+	 * 
+	 */
 	private List<String> illegalCommands;
 	
+	/**
+	 * 
+	 */
 	private List<String> ignoreCommands;
 	
 	
@@ -167,7 +176,20 @@ public class PrismPlayerEvents implements Listener {
 	public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
 		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.XP_PICKUP, event.getPlayer(), ""+event.getAmount()) );
 	}
-
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerPortalEvent(final PlayerPortalEvent event) {
+		TeleportCause c = event.getCause();
+		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) ){
+			Prism.actionsRecorder.addToQueue( new EntityTravelAction(ActionType.PLAYER_TELEPORT, event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
+		}
+	}
+	
 	
 	/**
 	 * 

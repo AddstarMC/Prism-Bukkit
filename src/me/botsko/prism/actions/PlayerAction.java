@@ -22,9 +22,7 @@ public class PlayerAction extends GenericAction {
 		super(action_type, null);
 
 		this.data = "";
-		if(player != null){
-			this.player_name = player.getName();
-		}
+
 		if(additionalInfo != null && !additionalInfo.isEmpty()){
 			this.data = additionalInfo;
 		}
