@@ -12,6 +12,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemStackAction extends GenericAction {
 	
@@ -72,6 +73,8 @@ public class ItemStackAction extends GenericAction {
 			// Append meta info for specific item types
 			if(item.getType().name().contains("LEATHER_")){
 				data += addLeatherArmorColors();
+			} else if(item.getType().equals(Material.SKULL_ITEM)){
+				data += addSkullItemOwner();
 			}
 			
 			// Enchanted book?
@@ -96,7 +99,19 @@ public class ItemStackAction extends GenericAction {
 		}
 	}
 	
-	
+	/**
+	 * We need to add the owner for a skull head if there is one.
+	 * @return
+	 */
+	private String addSkullItemOwner() {
+		SkullMeta meta = (SkullMeta) item.getItemMeta();
+		if(meta.hasOwner()){
+			return ":;" + meta.getOwner() + ";";
+		}
+		return "";
+	}
+
+
 	/**
 	 * We need to add the colors for Leather Armor to the data.
 	 * @return
@@ -131,14 +146,21 @@ public class ItemStackAction extends GenericAction {
 				// Append item-specific details
 				if(blockArr.length > 3){
 					
-					// Restore armor dye colors
-					if(item.getType().name().contains("LEATHER_") && blockArr[3].contains(";")){
-						String rgb = blockArr[3].replaceAll(";", "");
-						if (!TypeUtils.isNumeric(rgb)) return;
-						int color = Integer.parseInt(rgb);
-						LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-						lam.setColor(Color.fromRGB(color));
-						item.setItemMeta(lam);
+					// Restore armor dye colors or skull owner
+					if(blockArr[3].contains(";")){
+						if(item.getType().name().contains("LEATHER_")){
+							String rgb = blockArr[3].replaceAll(";", "");
+							if (!TypeUtils.isNumeric(rgb)) return;
+							int color = Integer.parseInt(rgb);
+							LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+							lam.setColor(Color.fromRGB(color));
+							item.setItemMeta(lam);
+						} else if(item.getType().equals(Material.SKULL_ITEM)){
+							String owner = blockArr[3].replaceAll(";", "");
+							SkullMeta meta = (SkullMeta) item.getItemMeta();
+							meta.setOwner(owner);
+							item.setItemMeta(meta);
+						}
 					}
 
 					// Restore enchantments
