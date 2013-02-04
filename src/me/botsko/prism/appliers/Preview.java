@@ -304,7 +304,7 @@ public class Preview implements Previewable {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 		if( !b.getType().requiresHandler("blockchange") ){
-			if( !BlockUtils.isAcceptableForBlockPlace(block) ){
+			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) ){
 				return ChangeResultType.SKIPPED;
 			}
 		}

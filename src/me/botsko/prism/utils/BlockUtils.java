@@ -41,16 +41,20 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static boolean isAcceptableForBlockPlace( Block block ){
-		if( block.getType().equals(Material.AIR) 
-				|| BlockUtils.isFallingBlock(block)
-				|| block.getType().equals(Material.WATER)
-				|| block.getType().equals(Material.STATIONARY_WATER)
-				|| block.getType().equals(Material.LAVA)
-				|| block.getType().equals(Material.STATIONARY_LAVA)){
-			return true;
+	public static boolean isAcceptableForBlockPlace( Material m ){
+		switch(m){
+			case AIR:
+			case FIRE:
+			case GRAVEL:
+			case LAVA:
+			case SAND:
+			case STATIONARY_WATER:
+			case STATIONARY_LAVA:
+			case WATER:
+				return true;
+			default:
+				return false;
 		}
-		return false;
 	}
 	
 	
