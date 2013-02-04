@@ -105,6 +105,14 @@ public class PreprocessArgs {
 							ArrayList<ActionType> actionTypes = ActionType.getByActionsType( action.replace("!", "") );
 							if(!actionTypes.isEmpty()){
 								for(ActionType actionType : actionTypes){
+									
+									// Ensure the action allows this process type
+									if( (processType.equals(PrismProcessType.ROLLBACK) && !actionType.canRollback()) || (processType.equals(PrismProcessType.RESTORE) && !actionType.canRestore()) ){
+										respond( sender, plugin.playerError("Ingoring action '"+action.replace("!", "")+"' because it doesn't support rollbacks.") );
+										continue;
+									}
+									
+									// Check match type
 									MatchRule match = MatchRule.INCLUDE;
 									if(action.startsWith("!")){
 										match = MatchRule.EXCLUDE;
