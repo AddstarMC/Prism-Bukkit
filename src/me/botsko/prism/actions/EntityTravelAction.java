@@ -37,10 +37,8 @@ public class EntityTravelAction extends GenericAction {
 		
 		super(action_type, null);
 		
-		EntityTravelActionData actionData = new EntityTravelActionData();
+		actionData = new EntityTravelActionData();
 
-		this.data = "";
-		
 		if(entity != null){
 			this.entity = entity;
 			if(entity instanceof Player){
@@ -63,6 +61,9 @@ public class EntityTravelAction extends GenericAction {
 		if(cause != null){
 			actionData.cause = cause.name().toLowerCase();
 		}
+		// Set data from current block
+		setDataFromObject();
+		setObjectFromData();
 	}
 	
 	
@@ -80,6 +81,7 @@ public class EntityTravelAction extends GenericAction {
 	 */
 	protected void setDataFromObject(){
 		data = gson.toJson(actionData);
+		System.out.print("SETTING setDataFromObject " + data);
 	}
 	
 	
@@ -108,7 +110,7 @@ public class EntityTravelAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		if(actionData != null){
-			return "used " + actionData.cause + " to " + actionData.to_x + " " + actionData.to_y + " " + actionData.to_z;
+			return "using " + actionData.cause.replace("_", " ") + " to " + actionData.to_x + " " + actionData.to_y + " " + actionData.to_z;
 		}
 		return "teleported somewhere";
 	}
