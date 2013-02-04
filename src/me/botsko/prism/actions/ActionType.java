@@ -49,6 +49,7 @@ public enum ActionType {
 	PLAYER_JOIN(false, false, false, "player", "joined"),
 	PLAYER_QUIT(false, false, false, "player", "quit"),
 	PLAYER_TELEPORT(false, false, false, "entitytravel", "teleported"),
+	POTION_SPLASH(false, false, false, "player", "threw potion"),
 	PRISM_DRAIN(false, true, true, "prismrollback", "drained"),
 	PRISM_PROCESS(false, false, false, "prismprocess", "ran process"),
 	PRISM_ROLLBACK(true, false, false, "prismrollback", "rolled back"),

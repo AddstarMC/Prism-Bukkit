@@ -46,6 +46,9 @@ public class PlayerAction extends GenericAction {
 		if(!this.data.isEmpty()){
 			if(this.type.equals(ActionType.XP_PICKUP)){
 				return this.data + " xp";
+			} 
+			else if(this.type.equals(ActionType.POTION_SPLASH)){
+				return this.data;
 			} else {
 				// is a join event
 				return "from " + this.data;

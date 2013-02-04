@@ -1,11 +1,14 @@
 package me.botsko.prism.listeners;
 
+import java.util.Collection;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.utils.DeathUtils;
 
@@ -31,12 +34,14 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 
 public class PrismEntityEvents implements Listener {
 
@@ -178,6 +183,31 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
 		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPotionSplashEvent(final PotionSplashEvent event){
+		
+		Entity entity = event.getPotion().getShooter();
+		
+		// Ignore from non-players for the time being
+		if(!(entity instanceof Player)) return;
+		
+		// What type?
+		// Right now this won't support anything with multiple effects
+		Collection<PotionEffect> potion = event.getPotion().getEffects();
+		String name = "";
+		for(PotionEffect eff : potion){
+			name = eff.getType().getName().toLowerCase();
+		}
+		
+		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.POTION_SPLASH, (Player)entity, name) );
+		
 	}
 	
 	
