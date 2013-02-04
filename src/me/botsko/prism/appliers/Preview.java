@@ -633,7 +633,7 @@ public class Preview implements Previewable {
 					/**
 					 * Rollback itemstack actions
 					 */
-					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof ItemStackAction ){
+					if(a instanceof ItemStackAction){
 						
 						ItemStackAction b = (ItemStackAction) a;
 						
@@ -642,7 +642,7 @@ public class Preview implements Previewable {
 							Chest chest = (Chest) block.getState();
 							
 							// If item was removed, put it back.
-							if(a.getType().equals(ActionType.ITEM_REMOVE) && plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
+							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
 								HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
 								changes_applied_count++;
 								if(leftovers.size() > 0){
