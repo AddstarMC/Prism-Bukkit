@@ -17,6 +17,7 @@ public enum ActionType {
 	BLOCK_SPREAD(true, true, true, "blockchange", "grew"),
 	BLOCK_USE(false, false, false, "block", "used"),
 	BONEMEAL_USE(false, false, false, "use", "used"),
+	BUCKET_FILL(false, false, false, "player", "filled"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
 	CREEPER_EXPLODE(false, true, true, "block", "blew up"),
 	CROP_TRAMPLE(false, true, true, "block", "trampled"),

@@ -5,6 +5,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.CommandAction;
 import me.botsko.prism.actions.EntityTravelAction;
 import me.botsko.prism.actions.ItemStackAction;
@@ -24,6 +25,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
@@ -175,6 +178,50 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
 		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.XP_PICKUP, event.getPlayer(), ""+event.getAmount()) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
+		
+		Player player = event.getPlayer();
+		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
+		
+		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		int newId = (cause.equals(ActionType.LAVA_BUCKET) ? 11 : 9);
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(cause, spot.getLocation(), spot.getTypeId(), spot.getData(), newId, (byte)0, player.getName()) );
+
+		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
+			plugin.useMonitor.alertOnItemUse(player,"poured lava");
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerBucketFill(final PlayerBucketFillEvent event){
+		
+		Player player = event.getPlayer();
+		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		
+		String liquid_type = ( spot.getTypeId() == 8 || spot.getTypeId() == 9 ? "water" : "lava" );
+		
+		PlayerAction pa = new PlayerAction(ActionType.BUCKET_FILL, player, liquid_type);
+		
+		// Override the location with the area taken
+		pa.setX( spot.getX() );
+		pa.setY( spot.getY() );
+		pa.setZ( spot.getZ() );
+
+		Prism.actionsRecorder.addToQueue( pa );
+
 	}
 	
 	

@@ -36,7 +36,6 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Bed;
@@ -399,26 +398,6 @@ public class PrismBlockEvents implements Listener {
 			
 			Prism.actionsRecorder.addToQueue( new BlockAction(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
 			
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
-		
-		Player player = event.getPlayer();
-		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
-		
-		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
-		int newId = (cause.equals(ActionType.LAVA_BUCKET) ? 11 : 9);
-		Prism.actionsRecorder.addToQueue( new BlockChangeAction(cause, spot.getLocation(), spot.getTypeId(), spot.getData(), newId, (byte)0, player.getName()) );
-
-		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
-			plugin.useMonitor.alertOnItemUse(player,"poured lava");
 		}
 	}
 	
