@@ -313,11 +313,11 @@ public class Prism extends JavaPlugin {
 		        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 		        		"`id` int(11) unsigned NOT NULL auto_increment," +
 		        		"`action_time` timestamp NOT NULL default CURRENT_TIMESTAMP," +
-		        		"`action_type` varchar(25) NOT NULL," +
+		        		"`action_type` varchar(20) NOT NULL," +
 		        		"`player` varchar(16) NOT NULL," +
 		        		"`world` varchar(255) NOT NULL," +
 		        		"`x` int(11) NOT NULL," +
-		        		"`y` int(11) NOT NULL," +
+		        		"`y` smallint(5) unsigned NOT NULL," +
 		        		"`z` int(11) NOT NULL," +
 		        		"`data` varchar(255) NOT NULL," +
 		        		"PRIMARY KEY  (`id`), " +
