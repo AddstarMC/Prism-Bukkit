@@ -78,7 +78,7 @@ public class PreprocessArgs {
 				
 				// Verify we have an arg we can match
 				String[] possibleArgs = {"a","r","t","p","w","b","e","before","since","-"};
-				if(!Arrays.asList(possibleArgs).contains(arg_type)){
+				if(!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")){
 					respond( sender, plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
@@ -281,11 +281,12 @@ public class PreprocessArgs {
 						return null;
 					}
 				}
+
 				
 				// Special Flags
-				if(arg_type.equals("-")){
+				if(arg_type.startsWith("-")){
 					try {
-						String[] flagComponents = val.split("=");
+						String[] flagComponents = val.substring(1).split("=");
 						Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
 						if(!(parameters.hasFlag(flag))){
 								
