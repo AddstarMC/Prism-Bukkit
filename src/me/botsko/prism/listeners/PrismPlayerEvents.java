@@ -211,7 +211,13 @@ public class PrismPlayerEvents implements Listener {
 		Player player = event.getPlayer();
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 		
-		String liquid_type = ( spot.getTypeId() == 8 || spot.getTypeId() == 9 ? "water" : "lava" );
+		String liquid_type = "milk";
+		if( spot.getTypeId() == 8 || spot.getTypeId() == 9 ){
+			liquid_type = "water";
+		} 
+		else if( spot.getTypeId() == 10 || spot.getTypeId() == 11 ){
+			liquid_type = "lava";
+		}
 		
 		PlayerAction pa = new PlayerAction(ActionType.BUCKET_FILL, player, liquid_type);
 		
