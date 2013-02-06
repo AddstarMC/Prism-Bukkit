@@ -286,6 +286,11 @@ public class BlockUtils {
 		Entity[] foundEntities = block.getChunk().getEntities();
 		if(foundEntities.length > 0){
 			for(Entity e : foundEntities){
+				// Some modded servers seems to list entities in the chunk
+				// that exists in other worlds. No idea why but we can at
+				// least check for it.
+				// https://snowy-evening.com/botsko/prism/318/
+				if( !block.getWorld().equals( e.getWorld() ) ) continue;
 				// Let's limit this to only entities within 1 block of the current.
 				if( block.getLocation().distance( e.getLocation() ) < 2 && isHangingEntity(e) ){
 					entities.add(e);
