@@ -241,7 +241,7 @@ public class PrismBlockEvents implements Listener {
 		if(event.getNewState().getType().equals(Material.FIRE)) return;
 		Block b = event.getBlock();
 		BlockState s = event.getNewState();
-		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_SPREAD, b.getLocation(), s.getTypeId(), s.getRawData(), b.getTypeId(), b.getData(), "Environment") );
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_SPREAD, b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
 	}
 	
 	
