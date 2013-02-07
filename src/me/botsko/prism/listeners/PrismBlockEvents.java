@@ -70,7 +70,7 @@ public class PrismBlockEvents implements Listener {
 			Chest container = (Chest) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public class PrismBlockEvents implements Listener {
 			Dispenser container = (Dispenser) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), block.getLocation(), player_name) );
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
 				}
 			}
 		}

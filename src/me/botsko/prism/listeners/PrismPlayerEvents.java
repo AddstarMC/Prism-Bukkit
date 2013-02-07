@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import java.util.List;
+import java.util.Map;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
@@ -18,12 +19,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -157,7 +160,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -167,7 +170,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -236,12 +239,29 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTeleportEvent(final PlayerTeleportEvent event) {
+	public void onPlayerTeleport(final PlayerTeleportEvent event) {
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){
 			Prism.actionsRecorder.addToQueue( new EntityTravelAction(ActionType.PLAYER_TELEPORT, event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
 		}
 	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEnchantItem(final EnchantItemEvent event) {
+		Player player = event.getEnchanter();
+		ItemStack item = event.getItem();
+		Map<Enchantment,Integer> enchs = event.getEnchantsToAdd();
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ENCHANT_ITEM, item, enchs, event.getEnchantBlock().getLocation(), player.getName()) );
+//		getExpLevelCost() 
+	}
+	
+	
+	
 	
 	
 	/**

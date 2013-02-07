@@ -207,7 +207,7 @@ public class PrismInventoryEvents implements Listener {
 	    
 	    // Record it!
 	    if(actionType != null && containerLoc != null && item != null && item.getTypeId() != 0 && officialQuantity > 0){
-		    Prism.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, containerLoc, player.getName()) );
+		    Prism.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, null, containerLoc, player.getName()) );
 	    }
 	}
 }

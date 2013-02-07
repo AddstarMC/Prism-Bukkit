@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 import me.botsko.prism.utils.ItemUtils;
@@ -37,6 +38,25 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected ItemStackActionData actionData;
 	
+	/**
+	 * We store the enchantments here because an event like item enchant
+	 * doesn't give us the item with the enchantments already on it.
+	 */
+	protected Map<Enchantment,Integer> enchantments;
+	
+	
+	/**
+	 * 
+	 * @param action_type
+	 * @param item
+	 * @param enchs
+	 * @param loc
+	 * @param player_name
+	 */
+	public ItemStackAction( ActionType action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
+		this(action_type,item,1,enchantments,loc,player_name);
+	}
+	
 	
 	/**
 	 * 
@@ -44,11 +64,15 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, Location loc, String player_name ){
+	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
 		
 		super(action_type, player_name);
 		
 		actionData = new ItemStackActionData();
+		
+		if(enchantments != null){
+			this.enchantments = enchantments;
+		}
 		
 		if(item != null){
 			
@@ -57,6 +81,9 @@ public class ItemStackAction extends GenericAction {
 			this.x = loc.getX();
 			this.y = loc.getY();
 			this.z = loc.getZ();
+			if(enchantments == null){
+				this.enchantments = item.getEnchantments();
+			}
 			
 			// Set basics
 			actionData.block_id = item.getTypeId();
@@ -86,10 +113,10 @@ public class ItemStackAction extends GenericAction {
 			}
 			
 			// Enchantments
-			if(!item.getEnchantments().isEmpty()){
-				String[] enchs = new String[item.getEnchantments().size()];
+			if(!this.enchantments.isEmpty()){
+				String[] enchs = new String[this.enchantments.size()];
 				int i = 0;
-				for(Entry<Enchantment, Integer> ench : item.getEnchantments().entrySet()){
+				for(Entry<Enchantment, Integer> ench : this.enchantments.entrySet()){
 					enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
 					i++;
 				}
