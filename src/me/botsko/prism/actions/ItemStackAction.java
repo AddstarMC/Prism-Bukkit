@@ -2,6 +2,7 @@ package me.botsko.prism.actions;
 
 import java.util.Map.Entry;
 
+import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Color;
@@ -307,8 +308,9 @@ public class ItemStackAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "";
-		if(actionData != null){
-			name = actionData.amt + " " + this.materialAliases.getItemStackAliasById( actionData.block_id, (byte)actionData.block_subid );
+		if(item != null){
+			String fullItemName = ItemUtils.getItemFullNiceName(item, this.materialAliases);
+			name = actionData.amt + " " + fullItemName;
 		}
 		return name;
 	}
