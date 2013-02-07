@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
@@ -362,65 +364,51 @@ public class PreprocessArgs {
 		
 		String dateFrom = null;
 
-		int type = 2;
-		for (int j = 0; j < arg_value.length(); j++) {
-			String c = arg_value.substring(j, j+1);
-			if (!TypeUtils.isNumeric(c)) {
-				if (c.equals("m") || c .equals("s") || c.equals("h") || c.equals("d") || c.equals("w"))
-					type = 0;
-				if (c.equals("-") || c.equals(":"))
-					type = 1;
-			}
-		}
+		Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
+		Calendar cal = Calendar.getInstance();
 
-		//If the time is in the format '0w0d0h0m0s'
-		if (type == 0) {
+		String[] matches = TypeUtils.preg_match_all( p, arg_value );
+		if(matches.length > 0){
+			for(String match : matches){
+	
+				Matcher m = p.matcher( match );
+				if(m.matches()){
+					
+					if( m.groupCount() == 2 ){
+						
+						int tfValue = Integer.parseInt( m.group(1) );
+						String tfFormat = m.group(2);
 
-			int weeks = 0;
-			int days = 0;
-			int hours = 0;
-			int mins = 0;
-			int secs = 0;
-
-			String nums = "";
-			for (int j = 0; j < arg_value.length(); j++) {
-				String c = arg_value.substring(j, j+1);
-				if (TypeUtils.isNumeric(c)){
-					nums += c;
-					continue;
+						if(tfFormat.equals("w")){
+							cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
+						}
+						else if(tfFormat.equals("d")){
+							cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
+						}
+						else if(tfFormat.equals("h")){
+							cal.add(Calendar.HOUR, -1 * tfValue);
+						}
+						else if(tfFormat.equals("m")){
+							cal.add(Calendar.MINUTE, -1 * tfValue);
+						}
+						else if(tfFormat.equals("s")){
+							cal.add(Calendar.SECOND, -1 * tfValue);
+						} else {
+							respond( sender, plugin.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for a help.") );
+							return null;
+						}
+					}
 				}
-				int num = Integer.parseInt(nums);
-				if (c.equals("w")) weeks = num;
-				else if (c.equals("d")) days = num;
-				else if (c.equals("h")) hours = num;
-				else if (c.equals("m")) mins = num;
-				else if (c.equals("s")) secs = num;
-				else {
-					respond( sender, plugin.playerError("Invalid time value '"+c+"'. Use /prism ? for a help.") );
-					return null;
-				}
-				nums = "";
 			}
-
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.WEEK_OF_YEAR, -1 * weeks);
-			cal.add(Calendar.DAY_OF_MONTH, -1 * days);
-			cal.add(Calendar.HOUR, -1 * hours);
-			cal.add(Calendar.MINUTE, -1 * mins);
-			cal.add(Calendar.SECOND, -1 * secs);
-			
 			SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			dateFrom = form.format(cal.getTime());
-
-		}
-		//Invalid time format
-		else if (type == 2){
-			respond( sender, plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
-			return null;
 		}
 		
+		if(dateFrom == null){
+			respond( sender, plugin.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+		}
+
 		return dateFrom;
 		
 	}
-
 }

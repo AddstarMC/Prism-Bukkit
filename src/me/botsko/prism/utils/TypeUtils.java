@@ -2,6 +2,8 @@ package me.botsko.prism.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TypeUtils {
 	
@@ -82,5 +84,24 @@ public class TypeUtils {
 	
 		return output;
 	}
-
+	
+	
+	
+	/**
+	 * Java implementation of preg_match_all by https://github.com/raimonbosch
+	 * @param p
+	 * @param subject
+	 * @return
+	 */
+	public static String[] preg_match_all(Pattern p, String subject) {
+		Matcher m = p.matcher(subject);
+		StringBuilder out = new StringBuilder();
+		boolean split = false;
+		while (m.find()) {
+			out.append(m.group());
+			out.append("~");
+			split = true;
+		}
+		return (split) ? out.toString().split("~") : new String[0];
+	}
 }
