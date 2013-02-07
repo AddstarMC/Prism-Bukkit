@@ -2,6 +2,7 @@ name: Prism
 main: me.botsko.prism.Prism
 version: nightly
 softdepend: [WorldEdit]
+default: op
 commands:
    prism:
       description: Base command for everything Prism
