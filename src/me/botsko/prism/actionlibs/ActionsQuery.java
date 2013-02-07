@@ -34,6 +34,7 @@ import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.WorldeditAction;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
 
 public class ActionsQuery {
 	
@@ -183,6 +184,13 @@ public class ActionsQuery {
     					baseAction.setData( rs.getString(9) );
     				}
     				baseAction.setMaterialAliases( plugin.getItems() );
+    				
+    				// Set aggregate counts if a lookup
+    				int aggregated = 0;
+    				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+    					aggregated = rs.getInt(12);
+    				}
+    				baseAction.setAggregateCount(aggregated);
     				
     				actions.add(baseAction);
 	    			
@@ -340,13 +348,18 @@ public class ActionsQuery {
 			else if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 				query +=
 					"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') AS display_date, " +
-					"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time ";
+					"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time";
 			}
+			
+			if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+				query += ", COUNT(id) AS counted";
+			}
+			
 		} else {
-			query += "DELETE ";
+			query += "DELETE";
 		}
 		
-		query += "FROM prism_actions WHERE 1=1";
+		query += " FROM prism_actions WHERE 1=1";
 		
 		/**
 		 * ID
@@ -459,6 +472,10 @@ public class ActionsQuery {
 			}
 			
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
+				
+				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.data";
+				}
 			
 				/**
 				 * Order by

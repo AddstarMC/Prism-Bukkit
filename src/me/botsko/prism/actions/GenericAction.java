@@ -77,6 +77,11 @@ public class GenericAction implements Action {
 	 */
 	protected String data;
 	
+	/**
+	 * 
+	 */
+	protected int aggregateCount = 0;
+	
 	
 	
 	/**
@@ -329,6 +334,24 @@ public class GenericAction implements Action {
 	 */
 	public void setMaterialAliases( MaterialAliases m ){
 		this.materialAliases = m;
+	}
+	
+	
+	/**
+	 * 
+	 * @param aggregateCount
+	 */
+	public void setAggregateCount( int aggregateCount ){
+		this.aggregateCount = aggregateCount;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getAggregateCount(){
+		return aggregateCount;
 	}
 	
 	

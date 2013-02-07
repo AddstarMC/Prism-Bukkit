@@ -91,6 +91,13 @@ public interface Action {
 	 * 
 	 * @return
 	 */
+	public int getAggregateCount();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNiceName();
 	
 }

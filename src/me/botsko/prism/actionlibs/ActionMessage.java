@@ -64,6 +64,11 @@ public class ActionMessage {
 			}
 		}
 		
+		// Aggregate count
+		if( a.getAggregateCount() > 1 ){
+			msg += ChatColor.GREEN + " x"+a.getAggregateCount();
+		}
+		
 		// Time since
 		if(!a.getTimeSince().isEmpty()){
 			msg += ChatColor.WHITE + " " + a.getTimeSince();
