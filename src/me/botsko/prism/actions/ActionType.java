@@ -19,6 +19,7 @@ public enum ActionType {
 	BONEMEAL_USE(false, false, false, "use", "used"),
 	BUCKET_FILL(false, false, false, "player", "filled"),
 	CONTAINER_ACCESS(false, false, false, "block", "accessed"),
+	CRAFT_ITEM(false, false, false, "itemstack", "crafted"),
 	CREEPER_EXPLODE(false, true, true, "block", "blew up"),
 	CROP_TRAMPLE(false, true, true, "block", "trampled"),
 	ENCHANT_ITEM(false, false, false, "itemstack", "enchanted"),

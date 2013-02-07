@@ -1,7 +1,6 @@
 package me.botsko.prism.listeners;
 
 import java.util.List;
-import java.util.Map;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
@@ -19,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -27,6 +25,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -254,14 +253,20 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(final EnchantItemEvent event) {
 		Player player = event.getEnchanter();
-		ItemStack item = event.getItem();
-		Map<Enchantment,Integer> enchs = event.getEnchantsToAdd();
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ENCHANT_ITEM, item, enchs, event.getEnchantBlock().getLocation(), player.getName()) );
-//		getExpLevelCost() 
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ENCHANT_ITEM, event.getItem(), event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player.getName()) );
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onCraftItem(final CraftItemEvent event) {
+		Player player = (Player) event.getWhoClicked();
+		ItemStack item = event.getRecipe().getResult();
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.CRAFT_ITEM, item, item.getAmount(), null, player.getLocation(), player.getName()) );
+	}
 	
 	
 	/**
