@@ -29,7 +29,8 @@ public class ItemUtils {
 		if(item.getType().name().contains("LEATHER_")){
 			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
 			if(lam.getColor() != null){
-				item_name += lam.getColor().toString() + " ";
+//				item_name += "dyed ("+lam.getColor().asRGB()+") ";
+				item_name += "dyed ";
 			}
 		}
 		
