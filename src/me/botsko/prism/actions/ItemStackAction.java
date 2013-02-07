@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -70,12 +71,9 @@ public class ItemStackAction extends GenericAction {
 			// Set item info/quant
 			data = item.getTypeId() + ":" + item.getDurability() + ":" + quantity;
 			
-			// Append meta info for specific item types
-			if(item.getType().name().contains("LEATHER_")){
-				data += addLeatherArmorColors();
-			} else if(item.getType().equals(Material.SKULL_ITEM)){
-				data += addSkullItemOwner();
-			}
+		
+			
+			addExtraData();
 			
 			// Enchanted book?
 			if(item.getType().equals( Material.ENCHANTED_BOOK )){
@@ -99,6 +97,17 @@ public class ItemStackAction extends GenericAction {
 		}
 	}
 	
+	protected void addExtraData() {
+		// Append meta info for specific item types
+		if(item.getType().name().contains("LEATHER_")){
+			data += addLeatherArmorColors();
+		} else if(item.getType().equals(Material.SKULL_ITEM)){
+			data += addSkullItemOwner();
+		}
+		data += addDisplayName();
+	}
+
+
 	/**
 	 * We need to add the owner for a skull head if there is one.
 	 * @return
@@ -106,7 +115,7 @@ public class ItemStackAction extends GenericAction {
 	private String addSkullItemOwner() {
 		SkullMeta meta = (SkullMeta) item.getItemMeta();
 		if(meta.hasOwner()){
-			return ":;" + meta.getOwner() + ";";
+			return ":skullowner~" + meta.getOwner();
 		}
 		return "";
 	}
@@ -119,9 +128,21 @@ public class ItemStackAction extends GenericAction {
 	private String addLeatherArmorColors() {
 		LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
 		if(lam.getColor() != null){
-			return ":;" + lam.getColor().asRGB() + ";";
+			return ":color~" + lam.getColor().asRGB();
 		}
 		return "";
+	}
+	
+	/**
+   * We need to add the custom name for an item
+   * @return
+   */
+	protected String addDisplayName() {
+	  ItemMeta meta = item.getItemMeta();
+	  if(meta.getDisplayName() != null){
+		  return ":name~" + meta.getDisplayName();
+	  }
+	  return "";
 	}
 
 
@@ -143,30 +164,15 @@ public class ItemStackAction extends GenericAction {
 				
 				item = new ItemStack(block_id,quantity,(short)block_subid);
 				
-				// Append item-specific details
-				if(blockArr.length > 3){
-					
-					// Restore armor dye colors or skull owner
-					if(blockArr[3].contains(";")){
-						if(item.getType().name().contains("LEATHER_")){
-							String rgb = blockArr[3].replaceAll(";", "");
-							if (!TypeUtils.isNumeric(rgb)) return;
-							int color = Integer.parseInt(rgb);
-							LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-							lam.setColor(Color.fromRGB(color));
-							item.setItemMeta(lam);
-						} else if(item.getType().equals(Material.SKULL_ITEM)){
-							String owner = blockArr[3].replaceAll(";", "");
-							SkullMeta meta = (SkullMeta) item.getItemMeta();
-							meta.setOwner(owner);
-							item.setItemMeta(meta);
-						}
-					}
-
 					// Restore enchantments
 					for(int i = 3; i < blockArr.length; i++){
-						if(!blockArr[i].contains(";")){
-							
+						if(blockArr[i].contains("~")){
+							handleExtraData(blockArr[i]);
+						} else {
+							if(blockArr[i].contains(";")){
+								handleOldDataFormat(blockArr[i]);
+								continue;
+							}
 							String[] enchArgs = blockArr[i].split(",");
 							Enchantment enchantment = Enchantment.getById(Integer.parseInt(enchArgs[0]));
 							
@@ -186,8 +192,44 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
-	}
 	
+	  /**	
+	   * Our old way of handling data used ;'s. We need to still interpret it, 
+	   * but we won't use it. Hopefully at some point we can remove this.
+	   */
+	  protected void handleOldDataFormat(String data){
+	    if(item.getType().name().contains("LEATHER_")){
+	      LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+	      lam.setColor(Color.fromRGB(Integer.parseInt(data.replaceAll(";", ""))));
+	      item.setItemMeta(lam);
+	    } else if(item.getType().equals(Material.SKULL_ITEM)){
+	      SkullMeta meta = (SkullMeta) item.getItemMeta();	
+	      meta.setOwner(data.replaceAll(";", ""));
+	      item.setItemMeta(meta);
+	     }	
+	   }
+	
+	  
+		   protected void handleExtraData(String data) {
+		     if(data.contains("color~")){
+		       String rgb = data.replace("color~", "");
+		       if (!TypeUtils.isNumeric(rgb)) return;
+		       int color = Integer.parseInt(rgb);
+		       LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+		       lam.setColor(Color.fromRGB(color));
+		       item.setItemMeta(lam);
+		     } else if(data.contains("skullowner~")){
+		       String owner = data.replace("skullowner~", "");
+		       SkullMeta meta = (SkullMeta) item.getItemMeta();
+		       meta.setOwner(owner);
+		       item.setItemMeta(meta);
+		     } else if(data.contains("name~")){
+		       String name = data.replace("name~", "");
+		       ItemMeta meta = item.getItemMeta();
+		       meta.setDisplayName(name);
+		       item.setItemMeta(meta);
+		     }
+		   }
 	
 	/**
 	 * 
