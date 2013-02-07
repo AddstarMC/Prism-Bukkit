@@ -57,7 +57,7 @@ public class PrismConfig {
 		
 		config.addDefault("prism.near.default-radius", 5);
 		
-		config.addDefault("prism.ignore.players-in-creative", true);
+		config.addDefault("prism.ignore.players-in-creative", false);
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
@@ -71,7 +71,6 @@ public class PrismConfig {
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
-//		config.addDefault("prism.appliers.remove-liquid-on-flow-rollback", true);
 		
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
@@ -105,7 +104,7 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.item-remove", true);
 		config.addDefault("prism.tracking.lava-break", true);
 		config.addDefault("prism.tracking.lava-bucket", true);
-		config.addDefault("prism.tracking.lava-flow", true);
+		config.addDefault("prism.tracking.lava-flow", false);
 		config.addDefault("prism.tracking.lava-ignite", true);
 		config.addDefault("prism.tracking.leaf-decay", true);
 		config.addDefault("prism.tracking.lighter", true);
@@ -126,8 +125,8 @@ public class PrismConfig {
 		config.addDefault("prism.tracking.tree-grow", true);
 		config.addDefault("prism.tracking.water-break", true);
 		config.addDefault("prism.tracking.water-bucket", true);
-		config.addDefault("prism.tracking.water-flow", true);
-		config.addDefault("prism.tracking.world-edit", true);
+		config.addDefault("prism.tracking.water-flow", false);
+		config.addDefault("prism.tracking.world-edit", false);
 		config.addDefault("prism.tracking.xp-pickup", false);
 		
 		config.addDefault("prism.track-player-ip-on-join", false);
