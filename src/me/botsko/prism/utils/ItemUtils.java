@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemUtils {
 	
@@ -22,6 +24,22 @@ public class ItemUtils {
 	public static String getItemFullNiceName( ItemStack item, MaterialAliases aliases ){
 		
 		String item_name = "";
+		
+		// Leather Coloring
+		if(item.getType().name().contains("LEATHER_")){
+			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+			if(lam.getColor() != null){
+				item_name += lam.getColor().toString() + " ";
+			}
+		}
+		
+		// Skull Owner
+		else if(item.getType().equals(Material.SKULL_ITEM)){
+			SkullMeta skull = (SkullMeta) item.getItemMeta();
+			if(skull.hasOwner()){
+				item_name += skull.getOwner() + "'s ";
+			}
+		}
 		
 		// Set the base item name
 		if(BlockUtils.hasSubitems(item.getTypeId())){
