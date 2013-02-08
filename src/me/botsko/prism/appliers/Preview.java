@@ -373,7 +373,9 @@ public class Preview implements Previewable {
 				Skull skull = (Skull) block.getState();
 				skull.setRotation( s.getRotation() );
 				skull.setSkullType( s.getSkullType() );
-				skull.setOwner( s.owner );
+				if(!s.owner.isEmpty()){
+					skull.setOwner( s.owner );
+				}
 				skull.update();
 				
 			}
