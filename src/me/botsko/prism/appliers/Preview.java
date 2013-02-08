@@ -22,6 +22,7 @@ import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.WorldeditAction;
+import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
@@ -270,7 +271,8 @@ public class Preview implements Previewable {
 			// if the opposite state is what's present now.
 			// We skip this check because if we're in preview mode the block may not
 			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
-			if(block.getTypeId() == new_id || is_preview){
+			// and https://snowy-evening.com/botsko/prism/258/
+			if(block.getTypeId() == new_id || is_preview || parameters.hasFlag(Flag.OVERWRITE)){
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
 			} else {
@@ -283,7 +285,8 @@ public class Preview implements Previewable {
 			// if the opposite state is what's present now.
 			// We skip this check because if we're in preview mode the block may not
 			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
-			if(block.getTypeId() == old_id || is_preview){
+			// and https://snowy-evening.com/botsko/prism/258/
+			if(block.getTypeId() == old_id || is_preview || parameters.hasFlag(Flag.OVERWRITE)){
 				b.setBlockId( new_id );
 				b.setBlockSubId( new_subid );
 			} else {
@@ -309,7 +312,7 @@ public class Preview implements Previewable {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 		if( !b.getType().requiresHandler("blockchange") ){
-			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) ){
+			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) ){
 				plugin.debug("Block skipped due to being unaccaptable for block place.");
 				return ChangeResultType.SKIPPED;
 			}
