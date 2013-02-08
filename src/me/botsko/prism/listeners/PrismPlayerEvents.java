@@ -295,11 +295,11 @@ public class PrismPlayerEvents implements Listener {
 					block = block.getRelative(event.getBlockFace());
 					wand.playerRightClick( player, block );
 				}
+				
+				if(player.getItemInHand().getTypeId() == 0){
+					event.setCancelled(true);
+				}
 			}
-			
-			// Always cancel
-			event.setCancelled(true);
-			
 		} else {
 			
 			// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4

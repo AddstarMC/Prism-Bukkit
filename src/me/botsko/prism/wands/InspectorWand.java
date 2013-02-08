@@ -36,7 +36,7 @@ public class InspectorWand implements Wand {
 	 */
 	@Override
 	public void playerLeftClick(Player player, Block block) {
-		if(block != null){
+		if(block != null && player.getItemInHand().getTypeId() == 0){
 			showBlockHistory(player, block, block.getLocation());
 		}
 	}
@@ -47,7 +47,7 @@ public class InspectorWand implements Wand {
 	 */
 	@Override
 	public void playerRightClick(Player player, Block block) {
-		if(block != null){
+		if(block != null && player.getItemInHand().getTypeId() == 0){
 			showBlockHistory(player, block, block.getLocation());
 		}
 	}
