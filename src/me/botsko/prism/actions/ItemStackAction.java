@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -26,6 +27,8 @@ public class ItemStackAction extends GenericAction {
 		public int color;
 		public String owner;
 		public String[] enchs;
+		public String by;
+		public String title;
 	}
 	
 	/**
@@ -109,6 +112,15 @@ public class ItemStackAction extends GenericAction {
 				SkullMeta skull = (SkullMeta) item.getItemMeta();
 				if(skull.hasOwner()){
 					actionData.owner = skull.getOwner();
+				}
+			}
+			
+			// Written books
+			if(item.getType().equals( Material.WRITTEN_BOOK )){
+		        BookMeta bookMeta = (BookMeta) item.getItemMeta();
+				if(bookMeta != null){
+					actionData.by = bookMeta.getAuthor();
+					actionData.title = bookMeta.getTitle();
 				}
 			}
 			
@@ -234,6 +246,15 @@ public class ItemStackAction extends GenericAction {
 			SkullMeta meta = (SkullMeta) item.getItemMeta();
 			meta.setOwner( actionData.owner );
 			item.setItemMeta(meta);
+		}
+		// Written books
+		else if(item.getType().equals( Material.WRITTEN_BOOK )){
+	        BookMeta bookMeta = (BookMeta) item.getItemMeta();
+			if(actionData.by != null && !actionData.by.isEmpty()){
+				bookMeta.setAuthor( actionData.by );
+				bookMeta.setTitle( actionData.title );
+			}
+			item.setItemMeta(bookMeta);
 		}
 		
 		// Item display names

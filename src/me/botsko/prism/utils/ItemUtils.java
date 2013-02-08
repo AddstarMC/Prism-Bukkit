@@ -56,7 +56,7 @@ public class ItemUtils {
 		if(item.getType().equals( Material.WRITTEN_BOOK )){
 	        BookMeta meta = (BookMeta) item.getItemMeta();
 			if(meta != null){
-				item_name += "'" + meta.getTitle() + "' by " + meta.getAuthor();
+				item_name += " '" + meta.getTitle() + "' by " + meta.getAuthor();
 			}
 		}
 		
