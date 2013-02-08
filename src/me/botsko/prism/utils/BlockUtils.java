@@ -687,4 +687,52 @@ public class BlockUtils {
 				return false;
 		}
 	}
+    
+    
+    /**
+     * There are several items that are officially different
+     * ItemStacks, but for the purposes of what we're doing
+     * are really considered one core item. This attempts
+     * to be a little lenient on matching the ids.
+     * 
+     * Example: Redstone lamp (off) is 123, (on) is 124 but 
+     * either id means it's a redstone lamp.
+     * 
+     * @param id1
+     * @param id2
+     * @return
+     */
+    public static boolean areBlockIdsSameCoreItem( int id1, int id2 ){
+    	
+    	// Get the obvious one out of the way.
+    	if(id1 == id2) return true;
+    	
+    	// Water
+    	if( (id1 == 8 || id1 == 9) && (id2 == 8 || id2 == 9) ){
+    		return true;
+    	}
+    	
+    	// Water
+    	if( (id1 == 10 || id1 == 11) && (id2 == 10 || id2 == 11) ){
+    		return true;
+    	}
+    	
+    	// Redstone torch
+    	if( (id1 == 75 || id1 == 76) && (id2 == 75 || id2 == 76) ){
+    		return true;
+    	}
+    	
+    	// Repeater
+    	if( (id1 == 93 || id1 == 94) && (id2 == 93 || id2 == 94) ){
+    		return true;
+    	}
+    	
+    	// Redstone lamp
+    	if( (id1 == 123 || id1 == 123) && (id2 == 124 || id2 == 124) ){
+    		return true;
+    	}
+    	
+    	return false;
+    	
+    }
 }
