@@ -373,7 +373,7 @@ public class PrismPlayerEvents implements Listener {
 			action.setX( actualBlock.getX() );
 			action.setY( actualBlock.getY() );
 			action.setZ( actualBlock.getZ() );
-			action.setWorld_name(newLoc.getWorld().getName());
+			action.setWorldName(newLoc.getWorld().getName());
 			action.setBlockId( 127 );
 			action.setBlockSubId( (byte)1 );
 			Prism.actionsRecorder.addToQueue( action );

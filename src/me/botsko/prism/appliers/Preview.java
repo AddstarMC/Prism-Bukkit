@@ -543,7 +543,7 @@ public class Preview implements Previewable {
 					}
 						
 					// Determine the location
-					World world = plugin.getServer().getWorld(a.getWorld_name());
+					World world = plugin.getServer().getWorld(a.getWorldName());
 					Location loc = new Location(world, a.getX(), a.getY(), a.getZ());
 		
 					
@@ -799,7 +799,7 @@ public class Preview implements Previewable {
 				HangingItemAction h = (HangingItemAction)a;
 				
 				BlockFace attachedFace = h.getDirection().getOppositeFace();
-				World world = plugin.getServer().getWorld(h.getWorld_name());
+				World world = plugin.getServer().getWorld(h.getWorldName());
 				Location loc = new Location(world, h.getX(), h.getY(), h.getZ()).getBlock().getRelative(h.getDirection()).getLocation();
 				
 				// bug filed:
@@ -828,7 +828,7 @@ public class Preview implements Previewable {
 				if(a instanceof BlockChangeAction){
 					BlockChangeAction bc = (BlockChangeAction) a;
 					b = new BlockAction(null, null, null);
-					b.setWorld_name(bc.getWorld_name());
+					b.setWorldName(bc.getWorldName());
 					b.setX( bc.getX() );
 					b.setY( bc.getY() );
 					b.setZ( bc.getZ() );
@@ -844,7 +844,7 @@ public class Preview implements Previewable {
 					b = (BlockAction) a;
 				}
 			
-				World world = plugin.getServer().getWorld(b.getWorld_name());
+				World world = plugin.getServer().getWorld(b.getWorldName());
 				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
 				Block block = world.getBlockAt(loc);
 				ChangeResultType res = placeBlock( b, block, true );

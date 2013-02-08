@@ -41,7 +41,7 @@ public class PrismRollbackEvents implements Listener {
 
 				// Build the action
 				PrismRollbackAction action = new PrismRollbackAction(ActionType.PRISM_ROLLBACK, orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.onBehalfOf().getName(), id);
-				action.setWorld_name(orig.getWorld().getName());
+				action.setWorldName(orig.getWorld().getName());
 				action.setX(orig.getX());
 				action.setY(orig.getY());
 				action.setZ(orig.getZ());

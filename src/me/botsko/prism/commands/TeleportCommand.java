@@ -61,7 +61,7 @@ public class TeleportCommand implements SubHandler {
 		
 		for(me.botsko.prism.actions.Action a : results.getActionResults()){
 			
-			World world = plugin.getServer().getWorld( a.getWorld_name() );
+			World world = plugin.getServer().getWorld( a.getWorldName() );
 			if(world == null){
 				call.getPlayer().sendMessage( plugin.playerError( "Action record occurred in world we can't find anymore." ) );
 				return;

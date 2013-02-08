@@ -40,14 +40,14 @@ public class ActionMessage {
 		}
 		
 		// Date & Time
-		msg += ChatColor.GRAY + a.getDisplay_date();
-		msg += " " + ChatColor.GRAY + a.getDisplay_time().toLowerCase();
+		msg += ChatColor.GRAY + a.getDisplayDate();
+		msg += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
 		
 		// +/-
 		msg += getPosNegPrefix();
 		
 		// Who
-		msg += highlight + a.getPlayer_name();
+		msg += highlight + a.getPlayerName();
 		
 		// Description of event
 		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();

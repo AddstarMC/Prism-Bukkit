@@ -121,7 +121,7 @@ public class GenericAction implements Action {
 	/**
 	 * @return the action_time
 	 */
-	public String getAction_time() {
+	public String getActionTime() {
 		return action_time;
 	}
 
@@ -129,7 +129,7 @@ public class GenericAction implements Action {
 	/**
 	 * @param action_time the action_time to set
 	 */
-	public void setAction_time(String action_time) {
+	public void setActionTime(String action_time) {
 		this.action_time = action_time;
 	}
 
@@ -137,7 +137,7 @@ public class GenericAction implements Action {
 	/**
 	 * @return the display_date
 	 */
-	public String getDisplay_date() {
+	public String getDisplayDate() {
 		return display_date;
 	}
 
@@ -145,7 +145,7 @@ public class GenericAction implements Action {
 	/**
 	 * @param display_date the display_date to set
 	 */
-	public void setDisplay_date(String display_date) {
+	public void setDisplayDate(String display_date) {
 		this.display_date = display_date;
 	}
 
@@ -153,7 +153,7 @@ public class GenericAction implements Action {
 	/**
 	 * @return the display_time
 	 */
-	public String getDisplay_time() {
+	public String getDisplayTime() {
 		return display_time;
 	}
 
@@ -161,7 +161,7 @@ public class GenericAction implements Action {
 	/**
 	 * @param display_time the display_time to set
 	 */
-	public void setDisplay_time(String display_time) {
+	public void setDisplayTime(String display_time) {
 		this.display_time = display_time;
 	}
 	
@@ -235,7 +235,7 @@ public class GenericAction implements Action {
 	/**
 	 * @return the world_name
 	 */
-	public String getWorld_name() {
+	public String getWorldName() {
 		return world_name;
 	}
 
@@ -243,7 +243,7 @@ public class GenericAction implements Action {
 	/**
 	 * @param world_name the world_name to set
 	 */
-	public void setWorld_name(String world_name) {
+	public void setWorldName(String world_name) {
 		this.world_name = world_name;
 	}
 
@@ -251,7 +251,7 @@ public class GenericAction implements Action {
 	/**
 	 * @return the player_name
 	 */
-	public String getPlayer_name() {
+	public String getPlayerName() {
 		return player_name;
 	}
 
@@ -259,7 +259,7 @@ public class GenericAction implements Action {
 	/**
 	 * @param player_name the player_name to set
 	 */
-	public void setPlayer_name(String player_name) {
+	public void setPlayerName(String player_name) {
 		this.player_name = player_name;
 	}
 

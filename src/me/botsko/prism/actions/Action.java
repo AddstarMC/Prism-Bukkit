@@ -7,7 +7,7 @@ public interface Action {
 	 * 
 	 * @return
 	 */
-	public String getAction_time();
+	public String getActionTime();
 	
 	
 	/**
@@ -21,14 +21,14 @@ public interface Action {
 	 * 
 	 * @return
 	 */
-	public String getWorld_name();
+	public String getWorldName();
 	
 	
 	/**
 	 * 
 	 * @return
 	 */
-	public String getPlayer_name();
+	public String getPlayerName();
 	
 	
 	/**
@@ -63,14 +63,14 @@ public interface Action {
 	 * 
 	 * @return
 	 */
-	public String getDisplay_date();
+	public String getDisplayDate();
 
 
 	/**
 	 * 
 	 * @return
 	 */
-	public String getDisplay_time();
+	public String getDisplayTime();
 	
 	
 	/**

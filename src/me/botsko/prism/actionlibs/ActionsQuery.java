@@ -172,11 +172,11 @@ public class ActionsQuery {
     				// Set all shared values
     				baseAction.setType( actionType );
     				baseAction.setId( rs.getInt(1) );
-    				baseAction.setAction_time( rs.getString(2) );
-    				baseAction.setDisplay_date( rs.getString(10) );
-    				baseAction.setDisplay_time( rs.getString(11) );
-    				baseAction.setWorld_name( rs.getString(5) );
-    				baseAction.setPlayer_name( rs.getString(4) );
+    				baseAction.setActionTime( rs.getString(2) );
+    				baseAction.setDisplayDate( rs.getString(10) );
+    				baseAction.setDisplayTime( rs.getString(11) );
+    				baseAction.setWorldName( rs.getString(5) );
+    				baseAction.setPlayerName( rs.getString(4) );
     				baseAction.setX( rs.getInt(6) );
     				baseAction.setY( rs.getInt(7) );
     				baseAction.setZ( rs.getInt(8) );
@@ -279,9 +279,9 @@ public class ActionsQuery {
     			// Set all shared values
     			process.setId( rs.getInt("id") );
     			process.setType( ActionType.getByActionType( rs.getString("action_type") ) );
-    			process.setAction_time( rs.getString("action_time") );
-    			process.setWorld_name( rs.getString("world") );
-    			process.setPlayer_name( rs.getString("player") );
+    			process.setActionTime( rs.getString("action_time") );
+    			process.setWorldName( rs.getString("world") );
+    			process.setPlayerName( rs.getString("player") );
     			process.setX( rs.getInt("x") );
     			process.setY( rs.getInt("y") );
     			process.setZ( rs.getInt("z") );
