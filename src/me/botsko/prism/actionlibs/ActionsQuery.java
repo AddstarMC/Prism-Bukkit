@@ -58,6 +58,15 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
+	public QueryResult lookup( QueryParameters parameters ){
+		return lookup( parameters, null );
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public QueryResult lookup( QueryParameters parameters, Player player ){
 		
 		// Pull results
