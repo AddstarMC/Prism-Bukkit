@@ -61,7 +61,7 @@ public class NearCommand implements SubHandler {
 		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( call.getPlayer(), parameters );
+		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg( "All changes within " + radius + " blocks of you..." ) );
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );

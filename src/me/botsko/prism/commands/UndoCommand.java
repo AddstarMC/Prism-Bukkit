@@ -86,7 +86,7 @@ public class UndoCommand implements SubHandler {
 			
 			// make sure the distance isn't too far away
 			
-			QueryResult results = aq.lookup( call.getPlayer(), parameters );
+			QueryResult results = aq.lookup( parameters, call.getPlayer() );
 			if(!results.getActionResults().isEmpty()){
 				
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
@@ -110,7 +110,7 @@ public class UndoCommand implements SubHandler {
 			parameters.setLimit(5); // @todo config this, and move the logic to queryparams
 		
 			ActionsQuery aq = new ActionsQuery(plugin);
-			QueryResult results = aq.lookup( call.getPlayer(), parameters );
+			QueryResult results = aq.lookup( parameters, call.getPlayer() );
 			if(!results.getActionResults().isEmpty()){
 				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process") );

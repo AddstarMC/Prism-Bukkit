@@ -54,7 +54,7 @@ public class RestoreCommand implements SubHandler {
 		call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( call.getPlayer(), parameters );
+		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
 			
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restoring changes...") );

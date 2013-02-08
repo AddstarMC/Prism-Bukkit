@@ -67,7 +67,7 @@ public class OreMonitor {
 				params.addActionType(ActionType.BLOCK_PLACE);
 				
 				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( player, params );
+				QueryResult results = aq.lookup( params, player );
 				if(!results.getActionResults().isEmpty()){
 					wasplaced = true;
 				}

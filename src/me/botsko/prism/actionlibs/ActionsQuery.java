@@ -58,7 +58,7 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	public QueryResult lookup( Player player, QueryParameters parameters ){
+	public QueryResult lookup( QueryParameters parameters, Player player ){
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
@@ -212,7 +212,7 @@ public class ActionsQuery {
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
-		if(parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
+		if(parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null){
 			if(plugin.cachedQueries.containsKey(player.getName())){
 				plugin.cachedQueries.remove(player.getName());
 			}

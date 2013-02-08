@@ -77,7 +77,7 @@ public class RestoreWand implements Wand {
 		}
 		
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( player, params );
+		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
 			Restore rb = new Restore( plugin, player, PrismProcessType.RESTORE, results.getActionResults(), params );
 			rb.apply();

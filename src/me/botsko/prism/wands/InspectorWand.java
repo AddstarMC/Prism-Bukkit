@@ -68,7 +68,7 @@ public class InspectorWand implements Wand {
 		
 		// Query
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( player, params );
+		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
 			String blockname = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
 			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );

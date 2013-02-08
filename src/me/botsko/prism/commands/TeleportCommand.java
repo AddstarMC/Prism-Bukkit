@@ -52,7 +52,7 @@ public class TeleportCommand implements SubHandler {
 
 		// Query
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( call.getPlayer(), params );
+		QueryResult results = aq.lookup( params, call.getPlayer() );
 		if(results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerError( "No records exists with this ID." ) );
 			return;

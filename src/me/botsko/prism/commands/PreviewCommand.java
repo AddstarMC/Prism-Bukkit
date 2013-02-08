@@ -108,7 +108,7 @@ public class PreviewCommand implements SubHandler {
 			
 				// Perform preview
 				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( call.getPlayer(), parameters );
+				QueryResult results = aq.lookup( parameters, call.getPlayer() );
 				if(!results.getActionResults().isEmpty()){
 					
 					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning preview...") );

@@ -57,7 +57,7 @@ public class LookupCommand implements SubHandler {
 		}
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( call.getPlayer(), parameters );
+		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
 			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			if(!defaultsReminder.isEmpty()){

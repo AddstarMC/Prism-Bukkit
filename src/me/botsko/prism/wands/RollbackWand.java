@@ -77,7 +77,7 @@ public class RollbackWand implements Wand {
 		}
 		
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( player, params );
+		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
 			Rollback rb = new Rollback( plugin, player, PrismProcessType.ROLLBACK, results.getActionResults(), params );
 			rb.apply();
