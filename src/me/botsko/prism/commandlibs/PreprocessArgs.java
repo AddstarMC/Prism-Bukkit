@@ -79,7 +79,7 @@ public class PreprocessArgs {
 				String val = arg.contains(":") ? argEntry[1] : argEntry[0];
 				
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e","before","since","-"};
+				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")){
 					respond( sender, plugin.playerError("Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
@@ -278,6 +278,12 @@ public class PreprocessArgs {
 					} else {
 						return null;
 					}
+				}
+				
+				
+				// Keyword
+				if(arg_type.equals("k")){
+					parameters.setKeyword( val );
 				}
 
 				

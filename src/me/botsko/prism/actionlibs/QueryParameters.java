@@ -43,6 +43,7 @@ public class QueryParameters implements Cloneable {
 	protected String since_time;
 	protected String before_time;
 	protected String world;
+	protected String keyword;
 
 	/**
 	 * Params that allow multiple values
@@ -258,6 +259,22 @@ public class QueryParameters implements Cloneable {
 	 */
 	public void setWorld(String world) {
 		this.world = world;
+	}
+	
+	
+	/**
+	 * @return the world
+	 */
+	public String getKeyword() {
+		return keyword;
+	}
+	
+	
+	/**
+	 * @param world the world to set
+	 */
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 	
 	

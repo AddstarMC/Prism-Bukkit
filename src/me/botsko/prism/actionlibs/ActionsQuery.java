@@ -464,6 +464,13 @@ public class ActionsQuery {
 				query += buildTimeCondition(time,null);
 			}
 			
+			/**
+			 * Keywords
+			 */
+			String keyword = parameters.getKeyword();
+			if(keyword != null){
+				query += " AND prism_actions.data LIKE '%"+keyword+"%'";
+			}
 			
 			/**
 			 * Specific coords
