@@ -76,7 +76,7 @@ public class PreprocessArgs {
 				// Split parameter and values
 				String[] argEntry = arg.toLowerCase().split(":");
 				String arg_type = argEntry[0];
-				String val = arg.contains(":") ? argEntry[1] : argEntry[0];
+				String val = arg.contains(":") ? arg.replace(argEntry[0] + ":", "") : argEntry[0];
 				
 				// Verify we have an arg we can match
 				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","-"};
@@ -153,8 +153,20 @@ public class PreprocessArgs {
 				
 				// Radius
 				if(arg_type.equals("r")){
-					if(TypeUtils.isNumeric(val)){
-						int radius = Integer.parseInt(val);
+					if(TypeUtils.isNumeric(val) || (val.contains(":") && val.split(":").length >= 1 && TypeUtils.isNumeric(val.split(":")[1]))){
+						int radius = 0;
+						if(val.contains(":")){
+							radius = Integer.parseInt(val.split(":")[1]);
+							String radiusPlayer = val.split(":")[0];
+							if(plugin.getServer().getPlayer(radiusPlayer) != null){
+								player = plugin.getServer().getPlayer(radiusPlayer);
+							} else {
+								respond( sender, plugin.playerError("Couldn't find the player named '" + radiusPlayer + "'. Perhaps they are not online or you misspelled their name?") );
+								return null;
+							}
+						} else {
+							radius = Integer.parseInt(val);
+						}
 						if(radius <= 0){
 							respond( sender, plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 							return null;
@@ -197,7 +209,7 @@ public class PreprocessArgs {
 								parameters.setAllowNoRadius(true);
 							}
 						} else {
-							respond( sender, plugin.playerError("Radius must be a number, 'global', or 'we'. Use /prism ? for a assitance.") );
+							respond( sender, plugin.playerError("Radius must be a number, 'global', 'player:number', or 'we'. Use /prism ? for a assitance.") );
 							return null;
 						}
 					}

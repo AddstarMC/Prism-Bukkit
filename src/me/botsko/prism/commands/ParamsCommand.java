@@ -46,7 +46,7 @@ public class ParamsCommand implements SubHandler {
 		sender.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Parameters Help ---" ) );
 
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "a:[action]" + ChatColor.WHITE + " Like 'block-break' (See below for full list). No default."));
-		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE + " i.e. 20, or 100. Defaults to default-radius defined in config. Use r:global to force an all-world search, for lookups only.") );
+		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE + " i.e. 20, or 100. Defaults to default-radius defined in config. Use r:global to force an all-world search, for lookups only. To use a different player's location, use p:<playername>:<radius>, like p:viveleroi:20") );
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "p:[player]" + ChatColor.WHITE + " Like 'viveleroi'. No default.") );
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE + " Like 'grass' or '2' or '2:0'. No default.") );
 		sender.sendMessage( plugin.playerMsg( ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE + " Like 'pig'. No default.") );
