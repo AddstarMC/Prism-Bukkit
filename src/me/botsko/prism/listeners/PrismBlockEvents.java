@@ -18,6 +18,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -74,15 +75,14 @@ public class PrismBlockEvents implements Listener {
 				}
 			}
 		}
-		// @todo not working. might need to record items from each slot
-//		if( block.getType().equals(Material.FURNACE) ){
-//			Furnace container = (Furnace) block.getState();
-//			for( ItemStack i : container.getInventory().getContents()){
-//				if(i != null){
-//					plugin.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, block.getLocation(), player_name) );
-//				}
-//			}
-//		}
+		if( block.getType().equals(Material.FURNACE) ){
+			Furnace container = (Furnace) block.getState();
+			for( ItemStack i : container.getInventory().getContents()){
+				if(i != null){
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
+				}
+			}
+		}
 		if( block.getType().equals(Material.DISPENSER) ){
 			Dispenser container = (Dispenser) block.getState();
 			for( ItemStack i : container.getInventory().getContents()){
