@@ -40,6 +40,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.entity.Ageable;
@@ -668,11 +669,23 @@ public class Preview implements Previewable {
 						
 						Block block = world.getBlockAt(loc);
 						if(block.getType().equals(Material.CHEST)){
-							Chest chest = (Chest) block.getState();
+							Chest container = (Chest) block.getState();
 							
 							// If item was removed, put it back.
 							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
-								HashMap<Integer,ItemStack> leftovers = chest.getInventory().addItem( b.getItem() );
+								HashMap<Integer,ItemStack> leftovers = container.getInventory().addItem( b.getItem() );
+								changes_applied_count++;
+								if(leftovers.size() > 0){
+									// @todo
+								}
+							}
+						}
+						if( block.getType().equals(Material.DISPENSER) ){
+							Dispenser container = (Dispenser) block.getState();
+							
+							// If item was removed, put it back.
+							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
+								HashMap<Integer,ItemStack> leftovers = container.getInventory().addItem( b.getItem() );
 								changes_applied_count++;
 								if(leftovers.size() > 0){
 									// @todo
