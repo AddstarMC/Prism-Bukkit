@@ -296,7 +296,7 @@ public class PrismPlayerEvents implements Listener {
 					wand.playerRightClick( player, block );
 				}
 				
-				if(player.getItemInHand().getTypeId() == 0){
+				if(player.getItemInHand().getTypeId() == 0 && (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
 					event.setCancelled(true);
 				}
 			}
