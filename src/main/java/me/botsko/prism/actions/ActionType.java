@@ -156,11 +156,7 @@ public enum ActionType {
 	 */
 	public static ActionType getByActionType(String action){
 		String _seek_type = action.toUpperCase().replace("-", "_");
-		for (ActionType me : ActionType.values()) {
-	        if (me.name().equalsIgnoreCase(_seek_type))
-	            return me;
-	    }
-	    return null;
+		return ActionType.valueOf(_seek_type);
 	}
 	
 	
