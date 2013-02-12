@@ -36,7 +36,6 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		
 		plugin.eventTimer.resetEventList();

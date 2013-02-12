@@ -28,7 +28,6 @@ public class ProfileWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerLeftClick(Player player, Block block) {
 		if(block != null){
 			showBlockProfile(player, block, block.getLocation());
@@ -39,7 +38,6 @@ public class ProfileWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerRightClick(Player player, Block block) {
 		if(block != null){
 			showBlockProfile(player, block, block.getLocation());
@@ -68,7 +66,6 @@ public class ProfileWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerRightClick(Player player, Entity entity) {
 		if(entity != null){
 			player.sendMessage( plugin.playerHeaderMsg("Entity Profile") );

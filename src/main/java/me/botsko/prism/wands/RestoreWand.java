@@ -36,7 +36,6 @@ public class RestoreWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerLeftClick(Player player, Block block) {
 		if(block != null){
 			restore( player, block );
@@ -47,7 +46,6 @@ public class RestoreWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerRightClick(Player player, Block block) {
 		if(block != null){
 			restore( player, block );
@@ -91,7 +89,6 @@ public class RestoreWand implements Wand {
 	/**
 	 * 
 	 */
-	@Override
 	public void playerRightClick(Player player, Entity entity) {
 		return;
 	}

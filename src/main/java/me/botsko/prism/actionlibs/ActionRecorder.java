@@ -231,7 +231,6 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	@Override
 	public void run() {
 		save();
 	}
