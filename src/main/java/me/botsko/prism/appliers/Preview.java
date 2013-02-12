@@ -407,17 +407,26 @@ public class Preview implements Previewable {
 			if( b.getActionData().getBlockId() == 63 || b.getActionData().getBlockId() == 68 ){
 				
 				SignActionData s = (SignActionData) b.getActionData();
-	
-				// Set sign data
-				Sign sign = (Sign) block.getState();
-				int i = 0;
-				if(s.lines.length > 0){
-					for(String line : s.lines){
-						sign.setLine(i, line);
-						i++;
+				
+				// Verify block is sign. Rarely, if the block somehow pops off or fails
+				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
+				// cannot be cast to org.bukkit.block.Sign
+				
+				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
+
+					// Set sign data
+					Sign sign = (Sign) block.getState();
+					int i = 0;
+					if(s.lines.length > 0){
+						for(String line : s.lines){
+							sign.setLine(i, line);
+							i++;
+						}
 					}
+					sign.update();
+				} else {
+					return ChangeResultType.SKIPPED;
 				}
-				sign.update();
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
