@@ -189,6 +189,11 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
+	    	int perBatch = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
+	    	if(perBatch < 0 || perBatch > 5000){
+	    		perBatch = 1000;
+	    	}
+	    	
 	    	if( !queue.isEmpty() ){
 
 		    	Connection conn = Prism.dbc();
@@ -211,7 +216,7 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(6,(int)a.getZ());
 			        s.setString(7,a.getData());
 		            s.addBatch();
-		            if ((i + 1) % 1000 == 0) {
+		            if ((i + 1) % perBatch == 0) {
 		                s.executeBatch(); // Execute every 1000 items.
 		            }
 		            i++;

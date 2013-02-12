@@ -249,6 +249,8 @@ public class Prism extends JavaPlugin {
 			pool.setUrl(dns);
 		    pool.setUsername(config.getString("prism.mysql.username"));
 		    pool.setPassword(config.getString("prism.mysql.password"));
+		    pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
+		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
 		}
 		return pool;
 	}

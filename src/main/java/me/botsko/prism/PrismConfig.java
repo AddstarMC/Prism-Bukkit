@@ -43,7 +43,7 @@ public class PrismConfig {
 		config.addDefault("prism.notify-newer-versions", true);
 		
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
-		
+
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");
 		config.addDefault("prism.mysql.password", "");
@@ -174,6 +174,11 @@ public class PrismConfig {
 		
 		monitorItems = new ArrayList<String>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
+		
+		// Some finer configs we hope people don't need to mess with
+		config.addDefault("prism.database.max-pool-connections", 20);
+		config.addDefault("prism.database.max-wait", 60000);
+		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
 		// Copy defaults
 		config.options().copyDefaults(true);
