@@ -1,8 +1,8 @@
 package me.botsko.prism;
 
+import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -21,7 +21,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
-import me.botsko.prism.db.MySQL;
 import me.botsko.prism.db.Updater;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
@@ -44,9 +43,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
+	
+	/**
+	 * Connection Pool
+	 */
+	private static ComboPooledDataSource pool = new ComboPooledDataSource();
 
 	/**
 	 * Protected/private
@@ -62,7 +67,6 @@ public class Prism extends JavaPlugin {
 	 */
 	public Prism prism;
 	public FileConfiguration config;
-	public Connection conn = null;
 	public WorldEditPlugin plugin_worldEdit = null;
 	public static ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
@@ -118,8 +122,8 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 		
 		// init db
-		dbc();
-		if( conn == null ){
+		initDbPool();
+		if( pool == null ){
 			
 			String[] dbDisabled = new String[3];
 			dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
@@ -178,7 +182,7 @@ public class Prism extends JavaPlugin {
 			
 		}
 	}
-	
+
 	
 	/**
 	 * 
@@ -204,41 +208,31 @@ public class Prism extends JavaPlugin {
 	
 	/**
 	 * 
-	 */
-	public void dbc(){
-		
-		// SQLITE
-		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
-        	try {
-				if( conn == null || conn.isClosed() ){
-					conn = getDbConnection();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		// MYSQL
-		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			conn = getDbConnection();
-		}
-	}
-	
-	
-	/**
-	 * 
 	 * @return
 	 */
-	public Connection getDbConnection(){
+	public Connection initDbPool(){
 		Connection connection = null;
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 	        try {
 	        	Class.forName("org.sqlite.JDBC");
-	        	connection = DriverManager.getConnection("jdbc:sqlite:plugins/Prism/Prism.db");
-	        	Statement st = connection.createStatement();
+	        	try {
+					String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
+					pool = new ComboPooledDataSource();
+					pool.setDriverClass("com.mysql.jdbc.Driver");
+					pool.setJdbcUrl(dns);
+					pool.setUser(config.getString("prism.mysql.username"));
+					pool.setPassword(config.getString("prism.mysql.password"));
+					pool.setMaxPoolSize(20);
+					pool.setMinPoolSize(1);
+		        } catch (PropertyVetoException ex) {
+		        	 this.log("Error: Database connection was not established. Please check your configuration file.");
+		        }
+	        	final Connection conn = dbc();
+	        	Statement st = conn.createStatement();
 				st.executeUpdate("PRAGMA journal_mode = WAL;");
 				st.close();
+				
 			} catch (SQLException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
 			} catch (ClassNotFoundException e) {
@@ -248,18 +242,32 @@ public class Prism extends JavaPlugin {
 		
 		// MYSQL
 		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			MySQL mysql = new MySQL(
-							config.getString("prism.mysql.username"),
-							config.getString("prism.mysql.password"),
-							config.getString("prism.mysql.hostname"),
-							config.getString("prism.mysql.database"),
-							config.getString("prism.mysql.port"));
-			connection = mysql.getConn();
-			if(connection == null){
-				this.log("Error: MySQL database connection was not established. Please check your configuration file.");
-			}
+			try {
+				String dns = "jdbc:mysql://"+config.getString("prism.mysql.hostname")+":"+config.getString("prism.mysql.port")+"/"+config.getString("prism.mysql.database");
+				pool = new ComboPooledDataSource();
+				pool.setDriverClass("com.mysql.jdbc.Driver");
+				pool.setJdbcUrl(dns);
+				pool.setUser(config.getString("prism.mysql.username"));
+				pool.setPassword(config.getString("prism.mysql.password"));
+				pool.setMaxPoolSize(20);
+				pool.setMinPoolSize(5);
+				pool.setAcquireIncrement(5);
+	        } catch (PropertyVetoException ex) {
+	        	 this.log("Error: Database connection was not established. Please check your configuration file.");
+	        }
 		}
 		return connection;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException 
+	 */
+	public static Connection dbc() throws SQLException{
+		System.out.println("GETTING CONNECTION " + pool.getJdbcUrl() );
+		return pool.getConnection();
 	}
 	
 	
@@ -272,6 +280,7 @@ public class Prism extends JavaPlugin {
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 			
 			 try {
+				 final Connection conn = dbc();
 				 String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 			        		"id INT PRIMARY KEY," +
 			        		"action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
@@ -295,9 +304,8 @@ public class Prism extends JavaPlugin {
 			        		"v TEXT" +
 			        		")";
 					st.executeUpdate(query);
-					
 					st.close();
-					conn.close();
+
 			 }
 			 catch(SQLException e){
 				 log("Database connection error: " + e.getMessage());
@@ -308,7 +316,7 @@ public class Prism extends JavaPlugin {
 		// MYSQL
 		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 			try{
-		        dbc();
+		        final Connection conn = dbc();
 		        if(conn == null) return;
 		        String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 		        		"`id` int(11) unsigned NOT NULL auto_increment," +
@@ -334,9 +342,7 @@ public class Prism extends JavaPlugin {
 	            		"PRIMARY KEY  (`id`)" +
 	            		") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 	            st.executeUpdate(query);
-	            
 	            st.close();
-	            conn.close();
 		    }
 		    catch (SQLException e){
 		    	log("Database connection error: " + e.getMessage());

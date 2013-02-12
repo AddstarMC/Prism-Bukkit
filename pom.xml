@@ -15,6 +15,11 @@
 			<artifactId>worldedit</artifactId>
 			<version>5.4.6-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.1.2</version>
+        </dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -26,4 +31,28 @@
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
 	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<artifactSet>
+                    <includes>
+						<include>c3p0:c3p0</include>
+                    </includes>
+                  </artifactSet>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

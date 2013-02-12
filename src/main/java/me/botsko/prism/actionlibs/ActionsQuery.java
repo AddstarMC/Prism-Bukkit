@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -75,20 +76,29 @@ public class ActionsQuery {
 		// Build conditions based off final args
 		String query = getArgumentConditions(parameters);
 		
-		if(query!= null){
+		if(query != null){
 			try {
+				
+				System.out.println("LOOKUP BEGINS");
 	            
-				plugin.dbc();
+				Connection conn = Prism.dbc();
+				
+				System.out.println("CONNECTION RETURNED");
 				
 				plugin.eventTimer.recordTimedEvent("query started");
 				
 	            PreparedStatement s;
-	    		s = plugin.conn.prepareStatement(query);
+	            System.out.println("STarting query");
+	    		s = conn.prepareStatement(query);
 	    		ResultSet rs = s.executeQuery();
+	    		
+	    		System.out.println("AFTER QUERY");
 	    		
 	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
 	    		while(rs.next()){
+	    			
+	    			System.out.println("WHILE LOOP");
 
 	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
@@ -205,9 +215,10 @@ public class ActionsQuery {
 	    			
 	    		}
 	    		
+	    		System.out.println("STEP 3");
+	    		
 	    		rs.close();
 	    		s.close();
-	            plugin.conn.close();
 	            
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -245,9 +256,9 @@ public class ActionsQuery {
 		int id = 0;
 		try {
             
-			plugin.dbc();
+			Connection conn = Prism.dbc();
             PreparedStatement s;
-    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
+    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
     		s.setString(1, playername);
     		s.executeQuery();
     		ResultSet rs = s.getResultSet();
@@ -258,7 +269,6 @@ public class ActionsQuery {
     		
     		rs.close();
     		s.close();
-            plugin.conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -276,9 +286,9 @@ public class ActionsQuery {
 		PrismProcessAction process = null;
 		try {
             
-			plugin.dbc();
+			Connection conn = Prism.dbc();
             PreparedStatement s;
-    		s = plugin.conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
+    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
     		s.setInt(1, id);
     		s.executeQuery();
     		ResultSet rs = s.getResultSet();
@@ -299,7 +309,6 @@ public class ActionsQuery {
     		
     		rs.close();
     		s.close();
-            plugin.conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -317,11 +326,10 @@ public class ActionsQuery {
 		try {
 			// Build conditions based off final args
 			String query = getArgumentConditions( parameters );
-			plugin.dbc();
-			Statement s = plugin.conn.createStatement ();
+			Connection conn = Prism.dbc();
+			Statement s = conn.createStatement ();
 			rows_affected = s.executeUpdate (query);
 			s.close();
-			plugin.conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

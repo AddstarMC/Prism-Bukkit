@@ -40,12 +40,7 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 */
 	private final boolean ignore_creative;
-	
-	/**
-	 * 
-	 */
-	private Connection conn = null;
-	
+
 	
 	/**
 	 * 
@@ -149,7 +144,7 @@ public class ActionRecorder implements Runnable {
 	public int insertActionIntoDatabase( Action a){
 		int id = 0;
 		try {
-			dbc();
+			final Connection conn = Prism.dbc();
 			if(conn == null){
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
@@ -170,7 +165,6 @@ public class ActionRecorder implements Runnable {
 	        }
 	        
     		s.close();
-            conn.close();
         } catch (SQLException e) {
         	plugin.log("Database connection error: " + e.getMessage());
 	        e.printStackTrace();
@@ -189,7 +183,7 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
-	        final Connection conn = plugin.getDbConnection();
+	        final Connection conn = Prism.dbc();
 	        if(conn == null || conn.isClosed()){
 				plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 				return;
@@ -221,7 +215,6 @@ public class ActionRecorder implements Runnable {
 	        s.executeBatch();
 	        conn.commit();
 	        s.close();
-            conn.close();
 	    } catch (SQLException e) {
 	    	plugin.log("Database connection error: " + e.getMessage());
 	        e.printStackTrace();
@@ -235,20 +228,5 @@ public class ActionRecorder implements Runnable {
 	@Override
 	public void run() {
 		save();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void dbc(){
-		try {
-			if (conn == null || conn.isClosed() || !conn.isValid(1)) {
-				conn = plugin.getDbConnection();
-			}
-		} catch (SQLException e) {
-			plugin.log("Database connection error: " + e.getMessage());
-	        e.printStackTrace();
-		}
 	}
 }

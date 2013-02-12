@@ -24,7 +24,7 @@ public class Updater {
 	 * 
 	 */
 	protected Connection conn;
-	
+
 	
 	/**
 	 * 
@@ -32,17 +32,8 @@ public class Updater {
 	 */
 	public Updater( Prism plugin ){
 		this.plugin = plugin;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void dbc(){
 		try {
-			if (conn == null || conn.isClosed() || !conn.isValid(1)) {
-				conn = plugin.getDbConnection();
-			}
+			conn = Prism.dbc();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -57,8 +48,7 @@ public class Updater {
 	protected int getClientDbSchemaVersion(){
 		int id = 0;
 		try {
-            
-			dbc();
+
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver' LIMIT 0,1");
     		ResultSet rs = s.executeQuery();
@@ -69,7 +59,6 @@ public class Updater {
     		
     		rs.close();
     		s.close();
-            conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -88,7 +77,6 @@ public class Updater {
 		// Apply any updates for schema 1 -> 2
 		if(clientSchemaVer < 2){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-				dbc();
 		        PreparedStatement s;
 				try {
 					
@@ -99,9 +87,7 @@ public class Updater {
 					
 					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `player` ) ;");
 					s.executeUpdate();
-					
 					s.close();
-					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -112,7 +98,6 @@ public class Updater {
 		// Apply any updates for schema 1 -> 2
 		if(clientSchemaVer < 3){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-				dbc();
 		        PreparedStatement s;
 				try {
 					
@@ -122,14 +107,13 @@ public class Updater {
 					s.executeUpdate();
 					
 					s.close();
-					conn.close();
+
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			} else {
 				
 				// Sqlite doesn't have any support for altering columns. WTF
-				dbc();
 		        PreparedStatement s;
 				try {
 					
@@ -159,7 +143,7 @@ public class Updater {
 					s.executeUpdate();
 					
 					s.close();
-					conn.close();
+
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
@@ -178,7 +162,6 @@ public class Updater {
 	 * Saves the current schema version to the client's db.
 	 */
 	public void saveCurrentSchemaVersion(){
-		dbc();
         PreparedStatement s;
 		try {
 			
@@ -190,7 +173,7 @@ public class Updater {
 			s.executeUpdate();
 			
 			s.close();
-			conn.close();
+	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
