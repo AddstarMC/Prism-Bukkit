@@ -326,7 +326,7 @@ public class Prism extends JavaPlugin {
 		        		"`player` varchar(16) NOT NULL," +
 		        		"`world` varchar(255) NOT NULL," +
 		        		"`x` int(11) NOT NULL," +
-		        		"`y` smallint(5) unsigned NOT NULL," +
+		        		"`y` smallint(5) NOT NULL," +
 		        		"`z` int(11) NOT NULL," +
 		        		"`data` varchar(255) NOT NULL," +
 		        		"PRIMARY KEY  (`id`), " +
