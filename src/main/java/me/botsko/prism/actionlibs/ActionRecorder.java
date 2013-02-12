@@ -81,6 +81,10 @@ public class ActionRecorder implements Runnable {
 		if(a.getData().length() > 255){
 			plugin.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
 		}
+		
+		if(a.getY() < 0 || a.getY() > 65535){
+			plugin.log("Error: Illegal Y axis value. Please inform Prism developers: " + a.getType().getActionType() + " at " + a.getY());
+		}
 	}
 	
 	
