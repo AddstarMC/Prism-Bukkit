@@ -1,6 +1,5 @@
 package me.botsko.prism;
 
-import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,6 +34,7 @@ import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
 import me.botsko.prism.wands.Wand;
 
+import org.apache.commons.dbcp.BasicDataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
@@ -43,7 +43,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
@@ -51,7 +50,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Connection Pool
 	 */
-	private static ComboPooledDataSource pool = new ComboPooledDataSource();
+	private static BasicDataSource pool = new BasicDataSource();
 
 	/**
 	 * Protected/private
@@ -122,7 +121,7 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 		
 		// init db
-		initDbPool();
+		pool = initDbPool();
 		if( pool == null ){
 			
 			String[] dbDisabled = new String[3];
@@ -210,53 +209,48 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public Connection initDbPool(){
-		Connection connection = null;
+	public BasicDataSource initDbPool(){
+		
+		BasicDataSource pool = null;
+		
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
-	        try {
-	        	Class.forName("org.sqlite.JDBC");
-	        	try {
-					String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
-					pool = new ComboPooledDataSource();
-					pool.setDriverClass("com.mysql.jdbc.Driver");
-					pool.setJdbcUrl(dns);
-					pool.setUser(config.getString("prism.mysql.username"));
-					pool.setPassword(config.getString("prism.mysql.password"));
-					pool.setMaxPoolSize(20);
-					pool.setMinPoolSize(1);
-		        } catch (PropertyVetoException ex) {
-		        	 this.log("Error: Database connection was not established. Please check your configuration file.");
-		        }
-	        	final Connection conn = dbc();
-	        	Statement st = conn.createStatement();
-				st.executeUpdate("PRAGMA journal_mode = WAL;");
-				st.close();
-				
-			} catch (SQLException e) {
-				this.log("Error: SQLite database connection was not established. " + e.getMessage());
-			} catch (ClassNotFoundException e) {
-				this.log("Error: SQLite database connection was not established. " + e.getMessage());
-			}
+//	        try {
+//	        	Class.forName("org.sqlite.JDBC");
+//	        	try {
+//					String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
+//					pool = new ComboPooledDataSource();
+//					pool.setDriverClass("com.mysql.jdbc.Driver");
+//					pool.setJdbcUrl(dns);
+//					pool.setUser(config.getString("prism.mysql.username"));
+//					pool.setPassword(config.getString("prism.mysql.password"));
+//					pool.setMaxPoolSize(20);
+//					pool.setMinPoolSize(1);
+//		        } catch (PropertyVetoException ex) {
+//		        	 this.log("Error: Database connection was not established. Please check your configuration file.");
+//		        }
+//	        	final Connection conn = dbc();
+//	        	Statement st = conn.createStatement();
+//				st.executeUpdate("PRAGMA journal_mode = WAL;");
+//				st.close();
+//				
+//			} catch (SQLException e) {
+//				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+//			} catch (ClassNotFoundException e) {
+//				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+//			}
 		}
 		
 		// MYSQL
 		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-			try {
-				String dns = "jdbc:mysql://"+config.getString("prism.mysql.hostname")+":"+config.getString("prism.mysql.port")+"/"+config.getString("prism.mysql.database");
-				pool = new ComboPooledDataSource();
-				pool.setDriverClass("com.mysql.jdbc.Driver");
-				pool.setJdbcUrl(dns);
-				pool.setUser(config.getString("prism.mysql.username"));
-				pool.setPassword(config.getString("prism.mysql.password"));
-				pool.setMaxPoolSize(20);
-				pool.setMinPoolSize(5);
-				pool.setAcquireIncrement(5);
-	        } catch (PropertyVetoException ex) {
-	        	 this.log("Error: Database connection was not established. Please check your configuration file.");
-	        }
+			String dns = "jdbc:mysql://"+config.getString("prism.mysql.hostname")+":"+config.getString("prism.mysql.port")+"/"+config.getString("prism.mysql.database");
+			pool = new BasicDataSource();
+			pool.setDriverClassName("com.mysql.jdbc.Driver");
+			pool.setUrl(dns);
+		    pool.setUsername(config.getString("prism.mysql.username"));
+		    pool.setPassword(config.getString("prism.mysql.password"));
 		}
-		return connection;
+		return pool;
 	}
 	
 	
@@ -265,9 +259,14 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 * @throws SQLException 
 	 */
-	public static Connection dbc() throws SQLException{
-		System.out.println("GETTING CONNECTION " + pool.getJdbcUrl() );
-		return pool.getConnection();
+	public static Connection dbc(){
+		Connection con = null;
+		try {
+			con = pool.getConnection();
+		} catch (SQLException e) {
+			System.out.print("Database connection failed. " + e.getMessage());
+		}
+		return con;
 	}
 	
 	

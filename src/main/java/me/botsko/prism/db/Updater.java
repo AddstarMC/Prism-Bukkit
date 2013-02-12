@@ -32,11 +32,7 @@ public class Updater {
 	 */
 	public Updater( Prism plugin ){
 		this.plugin = plugin;
-		try {
-			conn = Prism.dbc();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		conn = Prism.dbc();
 	}
 	
 	

@@ -144,7 +144,8 @@ public class ActionRecorder implements Runnable {
 	public int insertActionIntoDatabase( Action a){
 		int id = 0;
 		try {
-			final Connection conn = Prism.dbc();
+
+			Connection conn = Prism.dbc();
 			if(conn == null){
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
@@ -165,6 +166,7 @@ public class ActionRecorder implements Runnable {
 	        }
 	        
     		s.close();
+    		conn.close();
         } catch (SQLException e) {
         	plugin.log("Database connection error: " + e.getMessage());
 	        e.printStackTrace();
@@ -183,38 +185,42 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
-	        final Connection conn = Prism.dbc();
-	        if(conn == null || conn.isClosed()){
-				plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
-				return;
-			}
-	        conn.setAutoCommit(false);
-	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)");
-	        int i = 0;
-	        while (!queue.isEmpty()){
-	        	actionsRecorded++;
-	        	Action a = queue.poll();
-	        	if(a == null) continue;
-		        s.setString(1,a.getType().getActionType());
-		        s.setString(2,a.getPlayerName());
-		        s.setString(3,a.getWorldName());
-		        s.setInt(4,(int)a.getX());
-		        s.setInt(5,(int)a.getY());
-		        s.setInt(6,(int)a.getZ());
-		        s.setString(7,a.getData());
-	            s.addBatch();
-	            if ((i + 1) % 1000 == 0) {
-	                s.executeBatch(); // Execute every 1000 items.
-	            }
-	            i++;
-	        }
-	        
-	        // Save the current count to the queue for short historical data
-	        plugin.queueStats.addRunCount(actionsRecorded);
-	        
-	        s.executeBatch();
-	        conn.commit();
-	        s.close();
+	    	if( !queue.isEmpty() ){
+
+		    	Connection conn = Prism.dbc();
+		        if(conn == null || conn.isClosed()){
+					plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+					return;
+				}
+		        conn.setAutoCommit(false);
+		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)");
+		        int i = 0;
+		        while (!queue.isEmpty()){
+		        	actionsRecorded++;
+		        	Action a = queue.poll();
+		        	if(a == null) continue;
+			        s.setString(1,a.getType().getActionType());
+			        s.setString(2,a.getPlayerName());
+			        s.setString(3,a.getWorldName());
+			        s.setInt(4,(int)a.getX());
+			        s.setInt(5,(int)a.getY());
+			        s.setInt(6,(int)a.getZ());
+			        s.setString(7,a.getData());
+		            s.addBatch();
+		            if ((i + 1) % 1000 == 0) {
+		                s.executeBatch(); // Execute every 1000 items.
+		            }
+		            i++;
+		        }
+		        
+		        // Save the current count to the queue for short historical data
+		        plugin.queueStats.addRunCount(actionsRecorded);
+		        
+		        s.executeBatch();
+		        conn.commit();
+		        s.close();
+		        conn.close();
+	    	}
 	    } catch (SQLException e) {
 	    	plugin.log("Database connection error: " + e.getMessage());
 	        e.printStackTrace();

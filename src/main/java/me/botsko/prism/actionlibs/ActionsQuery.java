@@ -79,26 +79,17 @@ public class ActionsQuery {
 		if(query != null){
 			try {
 				
-				System.out.println("LOOKUP BEGINS");
-	            
 				Connection conn = Prism.dbc();
-				
-				System.out.println("CONNECTION RETURNED");
 				
 				plugin.eventTimer.recordTimedEvent("query started");
 				
 	            PreparedStatement s;
-	            System.out.println("STarting query");
 	    		s = conn.prepareStatement(query);
 	    		ResultSet rs = s.executeQuery();
-	    		
-	    		System.out.println("AFTER QUERY");
 	    		
 	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
 	    		while(rs.next()){
-	    			
-	    			System.out.println("WHILE LOOP");
 
 	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
@@ -215,10 +206,9 @@ public class ActionsQuery {
 	    			
 	    		}
 	    		
-	    		System.out.println("STEP 3");
-	    		
 	    		rs.close();
 	    		s.close();
+	    		conn.close();
 	            
 	        } catch (SQLException e) {
 	            e.printStackTrace();
@@ -269,6 +259,7 @@ public class ActionsQuery {
     		
     		rs.close();
     		s.close();
+    		conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -309,6 +300,7 @@ public class ActionsQuery {
     		
     		rs.close();
     		s.close();
+    		conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -330,6 +322,7 @@ public class ActionsQuery {
 			Statement s = conn.createStatement ();
 			rows_affected = s.executeUpdate (query);
 			s.close();
+			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

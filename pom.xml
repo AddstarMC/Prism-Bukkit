@@ -16,9 +16,9 @@
 			<version>5.4.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-            <groupId>c3p0</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>0.9.1.2</version>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.2</version>
         </dependency>
 	</dependencies>
 	<repositories>
@@ -40,7 +40,9 @@
 				<configuration>
 					<artifactSet>
                     <includes>
-						<include>c3p0:c3p0</include>
+						<include>commons-dbcp:commons-dbcp</include>
+						<include>commons-pool:commons-pool</include>
+						<include>commons-collections:commons-collections</include>
                     </includes>
                   </artifactSet>
 				</configuration>

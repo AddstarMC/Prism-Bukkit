@@ -81,7 +81,6 @@ public class EntityTravelAction extends GenericAction {
 	 */
 	protected void setDataFromObject(){
 		data = gson.toJson(actionData);
-		System.out.print("SETTING setDataFromObject " + data);
 	}
 	
 	

@@ -27,7 +27,6 @@ public class TimeTaken {
 	 */
 	public void recordTimedEvent( String eventname ){
 		eventsTimed.put(getTimestamp(), eventname);
-		System.out.println(eventname);
 	}
 	
 	
