@@ -1,4 +1,4 @@
-package me.botsko.prism.db;
+package me.botsko.prism;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import me.botsko.prism.Prism;
 
 public class Updater {
 	
