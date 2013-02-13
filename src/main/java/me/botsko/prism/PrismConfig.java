@@ -180,6 +180,9 @@ public class PrismConfig {
 		config.addDefault("prism.database.max-wait", 60000);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
+		
+		config.addDefault("prism.queue-empty-tick-delay", 3);
+		
 		// Copy defaults
 		config.options().copyDefaults(true);
 		

@@ -131,6 +131,7 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 */
 	public void save(){
+//		plugin.debug("Recorder: Checking queue for pending inserts. Queue size: " + queue.size());
 		if(!queue.isEmpty()){
 			insertActionsIntoDatabase();
 		}
@@ -213,10 +214,13 @@ public class ActionRecorder implements Runnable {
 			        s.setString(7,a.getData());
 		            s.addBatch();
 		            if ((i + 1) % perBatch == 0) {
-		                s.executeBatch(); // Execute every 1000 items.
+		            	plugin.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
+		                s.executeBatch(); // Execute every x items.
 		            }
 		            i++;
 		        }
+		        
+		        plugin.debug("Recorder: Queue emptied into single batch. Size: " + i);
 		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);

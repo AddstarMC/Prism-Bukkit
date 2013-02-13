@@ -458,7 +458,11 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void actionRecorderTask(){
-		getServer().getScheduler().runTaskTimerAsynchronously(this, new ActionRecorder(prism), 3L, 3L);
+		int recorder_tick_delay = getConfig().getInt("prism.queue-empty-tick-delay");
+		if(recorder_tick_delay < 1){
+			recorder_tick_delay = 3;
+		}
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new ActionRecorder(prism), recorder_tick_delay, recorder_tick_delay);
 	}
 	
 	
