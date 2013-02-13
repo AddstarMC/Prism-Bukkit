@@ -215,30 +215,26 @@ public class Prism extends JavaPlugin {
 		
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
-//	        try {
-//	        	Class.forName("org.sqlite.JDBC");
-//	        	try {
-//					String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
-//					pool = new ComboPooledDataSource();
-//					pool.setDriverClass("com.mysql.jdbc.Driver");
-//					pool.setJdbcUrl(dns);
-//					pool.setUser(config.getString("prism.mysql.username"));
-//					pool.setPassword(config.getString("prism.mysql.password"));
-//					pool.setMaxPoolSize(20);
-//					pool.setMinPoolSize(1);
-//		        } catch (PropertyVetoException ex) {
-//		        	 this.log("Error: Database connection was not established. Please check your configuration file.");
-//		        }
-//	        	final Connection conn = dbc();
-//	        	Statement st = conn.createStatement();
-//				st.executeUpdate("PRAGMA journal_mode = WAL;");
-//				st.close();
-//				
-//			} catch (SQLException e) {
-//				this.log("Error: SQLite database connection was not established. " + e.getMessage());
-//			} catch (ClassNotFoundException e) {
-//				this.log("Error: SQLite database connection was not established. " + e.getMessage());
-//			}
+	        try {
+	        	Class.forName("org.sqlite.JDBC");
+        		String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
+        		pool = new BasicDataSource();
+    			pool.setDriverClassName("com.mysql.jdbc.Driver");
+    			pool.setUrl(dns);
+    		    pool.setUsername(config.getString("prism.mysql.username"));
+    		    pool.setPassword(config.getString("prism.mysql.password"));
+    		    
+	        	Connection conn = dbc();
+	        	Statement st = conn.createStatement();
+				st.executeUpdate("PRAGMA journal_mode = WAL;");
+				st.close();
+				conn.close();
+				
+			} catch (SQLException e) {
+				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+			} catch (ClassNotFoundException e) {
+				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+			}
 		}
 		
 		// MYSQL
@@ -249,9 +245,15 @@ public class Prism extends JavaPlugin {
 			pool.setUrl(dns);
 		    pool.setUsername(config.getString("prism.mysql.username"));
 		    pool.setPassword(config.getString("prism.mysql.password"));
-		    pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
-		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
 		}
+		
+		if( pool != null ){
+			pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
+		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
+		} else {
+			this.log("Error: Database connection was not established. Please check your configuration file.");
+		}
+		
 		return pool;
 	}
 	
