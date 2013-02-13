@@ -91,9 +91,11 @@ public class ItemUtils {
 		
 		// Custom item names
 		ItemMeta im = item.getItemMeta();
-		String displayName = im.getDisplayName();
-		if(displayName != null){
-			item_name += ", named \"" + displayName + "\"";
+		if(im != null){
+			String displayName = im.getDisplayName();
+			if(displayName != null){
+				item_name += ", named \"" + displayName + "\"";
+			}
 		}
 		
 		return item_name;
