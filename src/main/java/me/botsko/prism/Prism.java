@@ -122,16 +122,27 @@ public class Prism extends JavaPlugin {
 		
 		// init db
 		pool = initDbPool();
-		if( pool == null ){
-			
+		Connection test_conn = dbc();
+		if( pool == null || test_conn == null ){
 			String[] dbDisabled = new String[3];
 			dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
 			dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
 			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
 			logSection(dbDisabled);
-			
 			disablePlugin();
-		}
+		} else {
+			if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
+	        	Statement st;
+				try {
+					st = test_conn.createStatement();
+					st.executeUpdate("PRAGMA journal_mode = WAL;");
+					st.close();
+					test_conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+    	}
 
 		if(isEnabled()){
 		
@@ -217,21 +228,9 @@ public class Prism extends JavaPlugin {
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 	        try {
 	        	Class.forName("org.sqlite.JDBC");
-        		String dns = "jdbc:sqlite:plugins/Prism/Prism.db";
         		pool = new BasicDataSource();
     			pool.setDriverClassName("com.mysql.jdbc.Driver");
-    			pool.setUrl(dns);
-    		    pool.setUsername(config.getString("prism.mysql.username"));
-    		    pool.setPassword(config.getString("prism.mysql.password"));
-    		    
-	        	Connection conn = dbc();
-	        	Statement st = conn.createStatement();
-				st.executeUpdate("PRAGMA journal_mode = WAL;");
-				st.close();
-				conn.close();
-				
-			} catch (SQLException e) {
-				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+    			pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (ClassNotFoundException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
 			}
@@ -269,6 +268,7 @@ public class Prism extends JavaPlugin {
 			con = pool.getConnection();
 		} catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
+			e.printStackTrace();
 		}
 		return con;
 	}
