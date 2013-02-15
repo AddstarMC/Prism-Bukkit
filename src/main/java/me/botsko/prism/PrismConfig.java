@@ -136,6 +136,10 @@ public class PrismConfig {
 		List<String> doNotTrackCommand = new ArrayList<String>();
 		doNotTrackCommand.add("vanish");
 		doNotTrackCommand.add("v");
+		doNotTrackCommand.add("login");
+		doNotTrackCommand.add("changepassword");
+		doNotTrackCommand.add("register");
+		doNotTrackCommand.add("unregister");
 		config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
 		
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
