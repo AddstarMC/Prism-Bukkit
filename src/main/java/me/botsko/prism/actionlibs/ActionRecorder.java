@@ -220,7 +220,7 @@ public class ActionRecorder implements Runnable {
 		            i++;
 		        }
 		        
-		        plugin.debug("Recorder: Queue emptied into single batch. Size: " + i);
+//		        plugin.debug("Recorder: Queue emptied into single batch. Size: " + i);
 		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);

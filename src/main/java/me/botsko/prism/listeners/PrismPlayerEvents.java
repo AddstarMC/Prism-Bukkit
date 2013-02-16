@@ -284,8 +284,8 @@ public class PrismPlayerEvents implements Listener {
 
 			// Pull the wand in use
 			Wand wand = plugin.playersWithActiveTools.get(player.getName());
-			if(wand != null){
-
+			if(wand != null && player.getItemInHand().getTypeId() == 0){
+				
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
 					wand.playerLeftClick( player, block );
@@ -296,61 +296,65 @@ public class PrismPlayerEvents implements Listener {
 					wand.playerRightClick( player, block );
 				}
 				
-				if(player.getItemInHand().getTypeId() == 0 && (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
+				if((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
+					plugin.debug("Cancelling event for wand use.");
 					event.setCancelled(true);
+					return;
 				}
 			}
-		} else {
-			
-			// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
-			if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
+		}
 
-				switch (block.getType()){
-					case FURNACE:
-					case DISPENSER:
-					case CHEST:
-					case ENDER_CHEST:
-					case ANVIL:
-					case BREWING_STAND:
-						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
-						break;
-					case WOODEN_DOOR:
-					case TRAP_DOOR:
-					case FENCE_GATE:
-					case LEVER:
-					case STONE_BUTTON:
-					case WOOD_BUTTON:
-						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
-						break;
-					case LOG:
-						recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
-						break;
-					case CROPS:
-					case GRASS:
-					case MELON_STEM:
-					case PUMPKIN_STEM:
-					case SAPLING:
-					case CARROT:
-					case POTATO:
-						recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
-						break;
-					case TNT:
-						if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
-							Prism.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
-						}
-						break;
-					default:
-						break;
-				}
-				
-				
-				// if they're holding a spawner egg
-				if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
-					recordMonsterEggUse( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
-				}
-				
-			} 
-		} if (block != null && event.getAction() == Action.PHYSICAL){
+			
+		// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
+		if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
+
+			switch (block.getType()){
+				case FURNACE:
+				case DISPENSER:
+				case CHEST:
+				case ENDER_CHEST:
+				case ANVIL:
+				case BREWING_STAND:
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
+					break;
+				case WOODEN_DOOR:
+				case TRAP_DOOR:
+				case FENCE_GATE:
+				case LEVER:
+				case STONE_BUTTON:
+				case WOOD_BUTTON:
+					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
+					break;
+				case LOG:
+					recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+					break;
+				case CROPS:
+				case GRASS:
+				case MELON_STEM:
+				case PUMPKIN_STEM:
+				case SAPLING:
+				case CARROT:
+				case POTATO:
+					recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+					break;
+				case TNT:
+					if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
+						Prism.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
+					}
+					break;
+				default:
+					break;
+			}
+			
+			
+			// if they're holding a spawner egg
+			if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
+				recordMonsterEggUse( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+			}
+			
+		}
+
+		if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
 				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
 			}
