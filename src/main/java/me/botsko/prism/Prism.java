@@ -136,12 +136,16 @@ public class Prism extends JavaPlugin {
 					st = test_conn.createStatement();
 					st.executeUpdate("PRAGMA journal_mode = WAL;");
 					st.close();
-					test_conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
     	}
+		try {
+			test_conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 		if(isEnabled()){
 		
@@ -307,6 +311,7 @@ public class Prism extends JavaPlugin {
 			        		")";
 					st.executeUpdate(query);
 					st.close();
+					conn.close();
 
 			 }
 			 catch(SQLException e){
@@ -345,6 +350,7 @@ public class Prism extends JavaPlugin {
 	            		") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 	            st.executeUpdate(query);
 	            st.close();
+	            conn.close();
 		    }
 		    catch (SQLException e){
 		    	log("Database connection error: " + e.getMessage());
