@@ -166,6 +166,7 @@ public class ActionRecorder implements Runnable {
 	        	id = generatedKeys.getInt(1);
 	        }
 	        
+	        generatedKeys.close();
     		s.close();
     		conn.close();
         } catch (SQLException e) {

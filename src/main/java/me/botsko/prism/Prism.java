@@ -311,6 +311,7 @@ public class Prism extends JavaPlugin {
 			        		")";
 					st.executeUpdate(query);
 					st.close();
+					conn.close();
 
 			 }
 			 catch(SQLException e){
@@ -349,6 +350,7 @@ public class Prism extends JavaPlugin {
 	            		") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
 	            st.executeUpdate(query);
 	            st.close();
+	            conn.close();
 		    }
 		    catch (SQLException e){
 		    	log("Database connection error: " + e.getMessage());
