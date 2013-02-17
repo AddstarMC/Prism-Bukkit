@@ -18,11 +18,6 @@ public class Updater {
 	 * 
 	 */
 	protected Prism plugin;
-	
-	/**
-	 * 
-	 */
-	protected Connection conn;
 
 	
 	/**
@@ -31,7 +26,6 @@ public class Updater {
 	 */
 	public Updater( Prism plugin ){
 		this.plugin = plugin;
-		conn = Prism.dbc();
 	}
 	
 	
@@ -44,6 +38,7 @@ public class Updater {
 		int id = 0;
 		try {
 
+			Connection conn = Prism.dbc();
             PreparedStatement s;
     		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver' LIMIT 0,1");
     		ResultSet rs = s.executeQuery();
@@ -54,6 +49,7 @@ public class Updater {
     		
     		rs.close();
     		s.close();
+    		conn.close();
             
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,6 +62,8 @@ public class Updater {
 	 * run any queries lower than current currentDbSchemaVersion
 	 */
 	public void apply_updates(){
+		
+		Connection conn = Prism.dbc();
 		
 		int clientSchemaVer = getClientDbSchemaVersion();
 		
@@ -147,6 +145,12 @@ public class Updater {
 			}
 		}
 		
+		try {
+			conn.close();
+		} catch (SQLException e) {
+//			e.printStackTrace();
+		}
+		
 		// Save current version
 		saveCurrentSchemaVersion();
 		
@@ -157,6 +161,7 @@ public class Updater {
 	 * Saves the current schema version to the client's db.
 	 */
 	public void saveCurrentSchemaVersion(){
+		Connection conn = Prism.dbc();
         PreparedStatement s;
 		try {
 			
@@ -171,6 +176,11 @@ public class Updater {
 	
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+		try {
+			conn.close();
+		} catch (SQLException e) {
+//			e.printStackTrace();
 		}
 	}
 }
