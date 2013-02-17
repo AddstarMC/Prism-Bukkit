@@ -136,12 +136,16 @@ public class Prism extends JavaPlugin {
 					st = test_conn.createStatement();
 					st.executeUpdate("PRAGMA journal_mode = WAL;");
 					st.close();
-					test_conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
 			}
     	}
+		try {
+			test_conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 		if(isEnabled()){
 		
