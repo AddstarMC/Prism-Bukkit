@@ -72,7 +72,7 @@ public class Executor implements CommandExecutor {
 		// Ensure command allows console
 		if(!(sender instanceof Player)){
 			if(!sub.isConsoleAllowed()){
-				sender.sendMessage( plugin.playerError("This command may not be executed via console.") );
+				sender.sendMessage( plugin.messenger.playerError("This command may not be executed via console.") );
 				return true;
 			}
 		}

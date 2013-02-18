@@ -28,8 +28,8 @@ public class AboutCommand implements SubHandler {
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
-		call.getSender().sendMessage( plugin.playerHeaderMsg("Prism - By viveleroi." + ChatColor.GRAY + " Version: " + plugin.getPrismVersion() ) );
-		call.getSender().sendMessage( plugin.playerSubduedHeaderMsg("IRC: irc.esper.net #prism") );
-		call.getSender().sendMessage( plugin.playerSubduedHeaderMsg("Site/Wiki: http://discover-prism.com") );
+		call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Prism - By viveleroi." + ChatColor.GRAY + " Version: " + plugin.getPrismVersion() ) );
+		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("IRC: irc.esper.net #prism") );
+		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Site/Wiki: http://discover-prism.com") );
 	}
 }

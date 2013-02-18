@@ -64,6 +64,7 @@ public class Prism extends JavaPlugin {
 	 * Public
 	 */
 	public Prism prism;
+	public Messenger messenger;
 	public FileConfiguration config;
 	public WorldEditPlugin plugin_worldEdit = null;
 	public static ActionRecorder actionsRecorder;
@@ -177,6 +178,7 @@ public class Prism extends JavaPlugin {
 			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
 			
 			// Init re-used classes
+			messenger = new Messenger( this.plugin_name );
 			actionsRecorder = new ActionRecorder(this);
 			actionsQuery = new ActionsQuery(this);
 			oreMonitor = new OreMonitor(this);
@@ -429,7 +431,7 @@ public class Prism extends JavaPlugin {
 		    			// inform player
 		    			Player player = prism.getServer().getPlayer(result.getPlayer().getName());
 		    			if(player != null){
-		    				player.sendMessage( prism.playerHeaderMsg("Canceling forgotten preview.") );
+		    				player.sendMessage( prism.messenger.playerHeaderMsg("Canceling forgotten preview.") );
 		    			}
 		    			playerActivePreviews.remove(query.getKey());
 		    		}
@@ -516,75 +518,12 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 * @param msg
-	 * @return
-	 */
-	public String playerHeaderMsg(String msg){
-		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.WHITE + msg;
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String playerSubduedHeaderMsg(String msg){
-		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.GRAY + msg;
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String playerMsg(String msg){
-		if(msg != null){
-			return ChatColor.WHITE + msg;
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * 
-	 * @param player_name
-	 * @param cmd
-	 * @param help
-	 */
-	public String playerHelp( String cmd, String help ){
-		return ChatColor.GRAY + "/prism " + ChatColor.LIGHT_PURPLE + cmd + ChatColor.WHITE + " - " + help;
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
-	 * @return
-	 */
-	public String playerError(String msg){
-		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.RED + msg;
-		}
-		return "";
-	}
-	
-	
-	/**
-	 * 
-	 * @param msg
 	 */
 	public void alertPlayers( Player player, String msg ){
 		for (Player p : getServer().getOnlinePlayers()) {
 			if( !p.equals( player ) ){
 				if (p.hasPermission("prism.alerts")){
-					p.sendMessage( playerMsg( ChatColor.RED+ "[!] "+msg ) );
+					p.sendMessage( messenger.playerMsg( ChatColor.RED+ "[!] "+msg ) );
 				}
 			}
 		}
@@ -597,7 +536,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgMissingArguments(){
-		return playerError("Missing arguments. Check /prism ? for help.");
+		return messenger.playerError("Missing arguments. Check /prism ? for help.");
 	}
 	
 	
@@ -607,7 +546,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgInvalidArguments(){
-		return playerError("Invalid arguments. Check /prism ? for help.");
+		return messenger.playerError("Invalid arguments. Check /prism ? for help.");
 	}
 	
 	
@@ -617,7 +556,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgInvalidSubcommand(){
-		return playerError("Prism doesn't have that command. Check /prism ? for help.");
+		return messenger.playerError("Prism doesn't have that command. Check /prism ? for help.");
 	}
 	
 	
@@ -627,7 +566,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgNoPermission(){
-		return playerError("You don't have permission to perform this action.");
+		return messenger.playerError("You don't have permission to perform this action.");
 	}
 	
 	
@@ -644,7 +583,7 @@ public class Prism extends JavaPlugin {
         	if( !p.equals( player ) ){
         		if(player.getWorld().equals(p.getWorld())){
 		        	if(player.getLocation().distance( p.getLocation() ) <= (radius+config.getInt("prism.appliers.notify-nearby.additional-radius"))){
-		                p.sendMessage(playerHeaderMsg(msg));
+		                p.sendMessage(messenger.playerHeaderMsg(msg));
 		        	}
         		}
         	}

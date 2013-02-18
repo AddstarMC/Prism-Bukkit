@@ -150,7 +150,7 @@ public class Preview implements Previewable {
 				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 			}
 		}
-		player.sendMessage( plugin.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
+		player.sendMessage( plugin.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
 	}
 	
 	
@@ -158,7 +158,7 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void apply_preview(){
-		player.sendMessage( plugin.playerHeaderMsg("Applying rollback from preview...") );
+		player.sendMessage( plugin.messenger.playerHeaderMsg("Applying rollback from preview...") );
 		setIsPreview(false);
 		changes_applied_count = 0;
 		skipped_block_count = 0;
@@ -523,7 +523,7 @@ public class Preview implements Previewable {
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
-					player.sendMessage( plugin.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
+					player.sendMessage( plugin.messenger.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
 					return;
 				}
 		    	
@@ -945,7 +945,7 @@ public class Preview implements Previewable {
 						}
 						if(add > 0){
 							if(entity instanceof Player){
-								((Player)entity).sendMessage(plugin.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
+								((Player)entity).sendMessage(plugin.messenger.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
 							}
 							entity.teleport(l);
 						}
@@ -974,7 +974,7 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " It's like it never happened.";
 				}
-				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 			} else {
 			
@@ -986,11 +986,11 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
-				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
 				if(changes_applied_count == 0){
-					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
+					player.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
 				}
 			}
 		}
@@ -1008,7 +1008,7 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " It's like it was always there.";
 				}
-				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 			} else {
 			
@@ -1020,11 +1020,11 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
-				player.sendMessage( plugin.playerHeaderMsg( msg ) );
+				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
 				if(changes_applied_count == 0){
-					player.sendMessage( plugin.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
+					player.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
 				}
 			}
 		}
@@ -1041,7 +1041,7 @@ public class Preview implements Previewable {
 			if(changes_applied_count > 0){
 				msg += ChatColor.GRAY + " If anyone asks, you never did that.";
 			}
-			player.sendMessage( plugin.playerHeaderMsg( msg ) );
+			player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 			
 		}
 		

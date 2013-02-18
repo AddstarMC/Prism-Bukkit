@@ -65,17 +65,17 @@ public class InspectorWand implements Wand {
 		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
 			String blockname = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
-			player.sendMessage( plugin.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );
+			player.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );
 			if(results.getActionResults().size() > 5){
-				player.sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+				player.sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			}
 			for(me.botsko.prism.actions.Action a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
-				player.sendMessage( plugin.playerMsg( am.getMessage() ) );
+				player.sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 			}
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
-			player.sendMessage( plugin.playerError( "No history for this " + space_name + " found." ) );
+			player.sendMessage( plugin.messenger.playerError( "No history for this " + space_name + " found." ) );
 		}
 	}
 

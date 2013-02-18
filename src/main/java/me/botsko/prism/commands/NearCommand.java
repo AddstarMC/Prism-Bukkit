@@ -47,11 +47,11 @@ public class NearCommand implements SubHandler {
 				if(_tmp_radius > 0){
 					radius = _tmp_radius;
 				} else {
-					call.getPlayer().sendMessage( plugin.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+					call.getPlayer().sendMessage( plugin.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 					return;
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
 				return;
 			}
 		}
@@ -63,8 +63,8 @@ public class NearCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
-			call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg( "All changes within " + radius + " blocks of you..." ) );
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("All changes within " + radius + " blocks of you..." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			List<Action> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
 				for(Action a : paginated){
@@ -72,13 +72,13 @@ public class NearCommand implements SubHandler {
 					if(parameters.allowsNoRadius()){
 						am.hideId(false);
 					}
-					call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
+					call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+				call.getPlayer().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "Couldn't find anything." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Couldn't find anything." ) );
 		}
 	}
 }

@@ -35,13 +35,13 @@ public class TeleportCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(!TypeUtils.isNumeric(call.getArg(1))){
-			call.getPlayer().sendMessage( plugin.playerError( "You must provide a numeric record ID to teleport to." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("You must provide a numeric record ID to teleport to." ) );
 			return;
 		}
 			
 		int record_id = Integer.parseInt(call.getArg(1));
 		if(record_id <= 0){
-			call.getPlayer().sendMessage( plugin.playerError( "Record id must be greater than zero." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("Record id must be greater than zero." ) );
 			return;
 		}
 			
@@ -54,7 +54,7 @@ public class TeleportCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( params, call.getPlayer() );
 		if(results.getActionResults().isEmpty()){
-			call.getPlayer().sendMessage( plugin.playerError( "No records exists with this ID." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("No records exists with this ID." ) );
 			return;
 		}
 		
@@ -63,7 +63,7 @@ public class TeleportCommand implements SubHandler {
 			
 			World world = plugin.getServer().getWorld( a.getWorldName() );
 			if(world == null){
-				call.getPlayer().sendMessage( plugin.playerError( "Action record occurred in world we can't find anymore." ) );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("Action record occurred in world we can't find anymore." ) );
 				return;
 			}
 			

@@ -56,13 +56,13 @@ public class WandCommand implements SubHandler {
 			if(oldwand != null){
 				// If disabling this one
 				if( oldwand instanceof InspectorWand ){
-					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 					return;
 				}
 			}
 			InspectorWand wand = new InspectorWand( plugin );
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 		}
 		
 		/**
@@ -72,13 +72,13 @@ public class WandCommand implements SubHandler {
 			if(oldwand != null){
 				// If disabling this one
 				if( oldwand instanceof ProfileWand ){
-					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 					return;
 				}
 			}
 			ProfileWand wand = new ProfileWand( plugin );
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 		}
 
 		
@@ -89,13 +89,13 @@ public class WandCommand implements SubHandler {
 			if(oldwand != null){
 				// If disabling this one
 				if( oldwand instanceof RollbackWand ){
-					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 					return;
 				}
 			}
 			RollbackWand wand = new RollbackWand( plugin );
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 		}
 		
 		/**
@@ -106,25 +106,25 @@ public class WandCommand implements SubHandler {
 			if(oldwand != null){
 				// If disabling this one
 				if( oldwand instanceof RestoreWand ){
-					call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 					return;
 				}
 			}
 			RestoreWand wand = new RestoreWand( plugin );
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+".") );
 		}
 		
 		/**
 		 * Off
 		 */
 		else if(type.equalsIgnoreCase("off")){
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 		}
 		
 		// Not a valid wand
 		else {
-			call.getPlayer().sendMessage( plugin.playerError("Invalid wand type. Use /prism ? for help.") );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid wand type. Use /prism ? for help.") );
 		}
 	}
 }

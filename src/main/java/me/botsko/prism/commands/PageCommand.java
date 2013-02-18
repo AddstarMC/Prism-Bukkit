@@ -36,19 +36,19 @@ public class PageCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length != 2){
-			call.getPlayer().sendMessage( plugin.playerError( "Please specify a page number. Like /prism page 2" ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Please specify a page number. Like /prism page 2" ) );
 			return;
 		}
 		
 		if(!TypeUtils.isNumeric( call.getArg(1) )){
-			call.getPlayer().sendMessage( plugin.playerError( "Page numbers need to actually be numbers. Like /prism page 2" ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Page numbers need to actually be numbers. Like /prism page 2" ) );
 			return;
 		}
 		
 		int page = Integer.parseInt(call.getArg(1));
 
 		if(page <= 0){
-			call.getPlayer().sendMessage( plugin.playerError("Page must be greater than zero.") );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("Page must be greater than zero.") );
 			return;
 		}
 		
@@ -63,7 +63,7 @@ public class PageCommand implements SubHandler {
 			
 			// Results?
 			if(!results.getActionResults().isEmpty()){
-				call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
 				List<Action> paginated = results.getPaginatedActionResults();
 				if(paginated != null){
 					for(Action a : paginated){
@@ -71,16 +71,16 @@ public class PageCommand implements SubHandler {
 						if(results.getParameters().allowsNoRadius()){
 							am.hideId(false);
 						}
-						call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
+						call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 					}
 				} else {
-					call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+					call.getPlayer().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+				call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 			}
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "There's no lookup results to show. They may have expired." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "There's no lookup results to show. They may have expired." ) );
 		}
 	}
 }

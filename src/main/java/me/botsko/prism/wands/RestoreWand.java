@@ -81,7 +81,7 @@ public class RestoreWand implements Wand {
 			rb.apply();
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
-			player.sendMessage( plugin.playerError( "Nothing to restore for this " + space_name + " found." ) );
+			player.sendMessage( plugin.messenger.playerError( "Nothing to restore for this " + space_name + " found." ) );
 		}
 	}
 	

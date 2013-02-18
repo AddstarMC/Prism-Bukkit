@@ -26,7 +26,7 @@ public class Undo extends Preview {
 	 * @return
 	 */
 	public void preview(){
-		player.sendMessage( plugin.playerError("You can't preview an undo.") );
+		player.sendMessage( plugin.messenger.playerError("You can't preview an undo.") );
 		return;
 	}
 }

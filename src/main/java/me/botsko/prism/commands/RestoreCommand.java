@@ -51,13 +51,13 @@ public class RestoreCommand implements SubHandler {
 			}
 		}
 		
-		call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Restoring changes...") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restoring changes...") );
 
 			// Inform nearby players
 			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
@@ -67,7 +67,7 @@ public class RestoreCommand implements SubHandler {
 			rs.apply();
 			
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
 		}
 	}
 }

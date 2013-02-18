@@ -180,7 +180,7 @@ public class PrismCommands extends Executor {
             public void handle(CallInfo call) {
             	plugin.reloadConfig();
 				plugin.config = plugin.getConfig();
-				call.getSender().sendMessage( plugin.playerMsg("Configuration reloaded successfully.") );
+				call.getSender().sendMessage( plugin.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});
 	}

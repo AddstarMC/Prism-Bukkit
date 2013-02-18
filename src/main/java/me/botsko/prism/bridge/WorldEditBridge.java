@@ -31,7 +31,7 @@ public class WorldEditBridge {
 			LocalWorld lw = lp.getWorld();
 			region = plugin.plugin_worldEdit.getWorldEdit().getSession(lp).getSelection(lw);
 		} catch (IncompleteRegionException e) {
-			player.sendMessage( plugin.playerError("You must have a complete WorldEdit selection before using this feature.") );
+			player.sendMessage( plugin.messenger.playerError("You must have a complete WorldEdit selection before using this feature.") );
 			return null;
 		}
 		
@@ -47,7 +47,7 @@ public class WorldEditBridge {
 		
 		int maxRadius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
 		if (maxRadius != 0 && (lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius)){
-			player.sendMessage( plugin.playerError("Selection exceeds that maximum radius allowed.") );
+			player.sendMessage( plugin.messenger.playerError("Selection exceeds that maximum radius allowed.") );
 		} else {
 			
 			parameters.setWorld(region.getWorld().getName());

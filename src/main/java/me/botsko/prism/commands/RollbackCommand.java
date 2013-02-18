@@ -51,19 +51,19 @@ public class RollbackCommand implements SubHandler {
 			}
 		}
 		
-		call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Beginning rollback...") );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Beginning rollback...") );
 			
 			Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
 			rb.apply();
 			
 		} else {
-			call.getPlayer().sendMessage( plugin.playerError( "Nothing found to rollback. Try using /prism l (args) first." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
 	}
 }

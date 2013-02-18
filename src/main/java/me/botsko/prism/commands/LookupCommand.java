@@ -59,9 +59,9 @@ public class LookupCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getPlayer() );
 		if(!results.getActionResults().isEmpty()){
-			call.getPlayer().sendMessage( plugin.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			if(!defaultsReminder.isEmpty()){
-				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
 			List<Action> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
@@ -70,16 +70,16 @@ public class LookupCommand implements SubHandler {
 					if(parameters.allowsNoRadius()){
 						am.hideId(false);
 					}
-					call.getPlayer().sendMessage( plugin.playerMsg( am.getMessage() ) );
+					call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+				call.getPlayer().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
 			if(!defaultsReminder.isEmpty()){
-				call.getPlayer().sendMessage( plugin.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
-			call.getPlayer().sendMessage( plugin.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 		}
 	}
 }

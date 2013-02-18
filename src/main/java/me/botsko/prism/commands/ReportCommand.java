@@ -35,7 +35,7 @@ public class ReportCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length != 2){
-			call.getPlayer().sendMessage( plugin.playerError( "Please specify a report. Use /prism ? for help." ) );
+			call.getPlayer().sendMessage( plugin.messenger.playerError( "Please specify a report. Use /prism ? for help." ) );
 			return;
 		}
 		
@@ -52,16 +52,16 @@ public class ReportCommand implements SubHandler {
 	 */
 	protected void queueReport( CommandSender sender ){
 		
-		sender.sendMessage( plugin.playerHeaderMsg( "Current Stats") );
+		sender.sendMessage( plugin.messenger.playerHeaderMsg( "Current Stats") );
 		
-		sender.sendMessage( plugin.playerMsg( "Actions in save queue: " + ChatColor.WHITE + Prism.actionsRecorder.getQueueSize() ) );
+		sender.sendMessage( plugin.messenger.playerMsg( "Actions in save queue: " + ChatColor.WHITE + Prism.actionsRecorder.getQueueSize() ) );
 		
 		ConcurrentSkipListMap<Long,Integer> runs = plugin.queueStats.getRecentRunCounts();
 		if(runs.size() > 0){
-			sender.sendMessage( plugin.playerHeaderMsg( "Recent queue save stats:" ) );
+			sender.sendMessage( plugin.messenger.playerHeaderMsg( "Recent queue save stats:" ) );
 			for (Entry<Long, Integer> entry : runs.entrySet()){
 				String time = new SimpleDateFormat("HH:mm:ss").format( entry.getKey());
-			    sender.sendMessage( plugin.playerMsg( ChatColor.GRAY + time + " " + ChatColor.WHITE + entry.getValue() ) );
+			    sender.sendMessage( plugin.messenger.playerMsg( ChatColor.GRAY + time + " " + ChatColor.WHITE + entry.getValue() ) );
 			}
 		}
 	}

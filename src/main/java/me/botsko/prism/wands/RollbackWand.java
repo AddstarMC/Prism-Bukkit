@@ -81,7 +81,7 @@ public class RollbackWand implements Wand {
 			rb.apply();
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
-			player.sendMessage( plugin.playerError( "Nothing to rollback for this " + space_name + " found." ) );
+			player.sendMessage( plugin.messenger.playerError( "Nothing to rollback for this " + space_name + " found." ) );
 		}
 	}
 	

@@ -48,7 +48,7 @@ public class Rollback extends Preview {
 			if( !parameters.hasFlag(Flag.NO_EXT) ){
 				ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 				if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
-					player.sendMessage( plugin.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+					player.sendMessage( plugin.messenger.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
 				}
 			}
 		}
@@ -58,7 +58,7 @@ public class Rollback extends Preview {
 			if( !parameters.hasFlag(Flag.NO_ITEMCLEAR) ){
 				int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 				if(removed > 0){
-					player.sendMessage( plugin.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+					player.sendMessage( plugin.messenger.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
 				}
 			}
 		}
@@ -75,7 +75,7 @@ public class Rollback extends Preview {
 			drained = BlockUtils.drainwater(player.getLocation(),parameters.getRadius());
 		}
 		if(drained != null && drained.size() > 0){
-			player.sendMessage( plugin.playerHeaderMsg("Draining liquid!" + ChatColor.GRAY + " Like a boss.") );
+			player.sendMessage( plugin.messenger.playerHeaderMsg("Draining liquid!" + ChatColor.GRAY + " Like a boss.") );
 		}
 			
 		// Give the results to the changequeue
