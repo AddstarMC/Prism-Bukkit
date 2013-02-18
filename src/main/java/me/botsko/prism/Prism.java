@@ -213,7 +213,7 @@ public class Prism extends JavaPlugin {
 		PrismConfig mc = new PrismConfig( this );
 		config = mc.getConfig();
 		// Load language files
-		language = new Language( this, mc.getLang() );
+		language = new Language( mc.getLang() );
 		// Load items db
 		items = new MaterialAliases( mc.getItems() );
 	}

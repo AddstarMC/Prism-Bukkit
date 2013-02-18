@@ -3,8 +3,10 @@ package me.botsko.prism;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Language {
-	
-	protected Prism plugin;
+
+	/**
+	 * 
+	 */
 	protected FileConfiguration lang;
 	
 	
@@ -12,8 +14,7 @@ public class Language {
 	 * 
 	 * @param plugin
 	 */
-	public Language( Prism plugin, FileConfiguration lang ) {
-		this.plugin = plugin;
+	public Language( FileConfiguration lang ) {
 		this.lang = lang;
 	}
 	
@@ -29,10 +30,10 @@ public class Language {
 			if(msg != null){
 				return msg;
 			} else {
-				plugin.log("No language support found for " + key);
+//				plugin.log("No language support found for " + key);
 			}
 		} else {
-			plugin.log("Language file configuration was not loaded correctly.");
+//			plugin.log("Language file configuration was not loaded correctly.");
 		}
 		return "";
 	}
