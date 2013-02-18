@@ -34,13 +34,13 @@ public class ReportCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if(call.getArgs().length != 2){
+		if(call.getArgs().length != 1){
 			call.getPlayer().sendMessage( plugin.messenger.playerError( "Please specify a report. Use /prism ? for help." ) );
 			return;
 		}
 		
 		// /prism report queue
-		if(call.getArg(1).equals("queue")){
+		if(call.getArg(0).equals("queue")){
 			queueReport( call.getSender() );
 		}
 	}

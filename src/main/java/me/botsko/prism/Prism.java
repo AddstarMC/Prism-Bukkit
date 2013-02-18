@@ -495,7 +495,7 @@ public class Prism extends JavaPlugin {
 					continue;
 				}
 				if(parameters.getFoundArgs().size() > 0){
-					parameters.setStringFromRawArgs( purgeArgs.split(" "), 0 );
+					parameters.setStringFromRawArgs( purgeArgs.split(" ") );
 					paramList.add( parameters );
 				}
 			}

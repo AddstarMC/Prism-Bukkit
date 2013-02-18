@@ -41,19 +41,19 @@ public class UndoCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if( call.getArgs().length > 1){
+		if( call.getArgs().length > 0){
 			
 			ActionsQuery aq = new ActionsQuery(plugin);
 			
 			int record_id = 0;
-			if(TypeUtils.isNumeric(call.getArg(1))){
-				record_id = Integer.parseInt(call.getArg(1));
+			if(TypeUtils.isNumeric(call.getArg(0))){
+				record_id = Integer.parseInt(call.getArg(0));
 				if(record_id <= 0){
 					call.getPlayer().sendMessage( plugin.messenger.playerError("Record id must be greater than zero." ) );
 					return;
 				}
 			} else {
-				if(call.getArg(1).equals("last")){
+				if(call.getArg(0).equals("last")){
 					record_id = aq.getUsersLastPrismProcessId( call.getPlayer().getName() );
 				}
 			}

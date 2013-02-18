@@ -34,9 +34,9 @@ public class ExtinguishCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		int radius = plugin.getConfig().getInt("default-radius");
-		if(call.getArgs().length == 2){
-			if(TypeUtils.isNumeric(call.getArg(1))){
-				int _tmp_radius = Integer.parseInt(call.getArg(1));
+		if(call.getArgs().length == 1){
+			if(TypeUtils.isNumeric(call.getArg(0))){
+				int _tmp_radius = Integer.parseInt(call.getArg(0));
 				if(_tmp_radius > 0){
 					radius = _tmp_radius;
 				} else {

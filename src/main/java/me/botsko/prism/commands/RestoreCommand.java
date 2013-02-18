@@ -39,7 +39,7 @@ public class RestoreCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
-		parameters.setStringFromRawArgs( call.getArgs(), 1 );
+		parameters.setStringFromRawArgs( call.getArgs() );
 		
 		// determine if defaults were used
 		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();

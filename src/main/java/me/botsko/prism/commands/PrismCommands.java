@@ -13,7 +13,7 @@ public class PrismCommands extends Executor {
 	 * @param prism
 	 */
 	public PrismCommands(Prism prism) {
-		super(prism);
+		super( prism, "subcommand", "prism" );
 		setupCommands();
 	}
 	
@@ -23,6 +23,7 @@ public class PrismCommands extends Executor {
 	 */
 	private void setupCommands() {
 		
+		final Prism prism = (Prism) plugin;
 		
 		/**
 		 * /prism about
@@ -30,7 +31,7 @@ public class PrismCommands extends Executor {
 		addSub("about", "prism.help")
 		.setDescription("About Prism")
 		.allowConsole()
-		.setHandler(new AboutCommand(plugin));
+		.setHandler(new AboutCommand(prism));
 		
 
 		/**
@@ -41,7 +42,7 @@ public class PrismCommands extends Executor {
 		.setUsage("(params)")
 		.setDescription("Search for actions.")
 		.addAlias("l")
-		.setHandler(new LookupCommand(plugin));
+		.setHandler(new LookupCommand(prism));
 		
 		/**
 		 * /prism near 
@@ -49,7 +50,7 @@ public class PrismCommands extends Executor {
 		addSub("near", "prism.lookup")
 		.setUsage("(params)")
 		.setDescription("Search for actions in a small radius around you.")
-		.setHandler(new NearCommand(plugin));
+		.setHandler(new NearCommand(prism));
 		
 		/**
 		 * /prism page [page] 
@@ -59,7 +60,7 @@ public class PrismCommands extends Executor {
 		.setUsage("[page number]")
 		.setDescription("Displays [page] of the most recent search results.")
 		.addAlias("pg")
-		.setHandler(new PageCommand(plugin));
+		.setHandler(new PageCommand(prism));
 		
 		/**
 		 * /prism i
@@ -67,7 +68,7 @@ public class PrismCommands extends Executor {
 		addSub("inspect", "prism.lookup")
 		.setDescription("Toggles the block inspection tool to your hand.")
 		.addAlias("i")
-		.setHandler(new InspectCommand(plugin));
+		.setHandler(new InspectCommand(prism));
 		
 		/**
 		 * /prism wand
@@ -75,7 +76,7 @@ public class PrismCommands extends Executor {
 		addSub("wand", "prism.rollback")
 		.addAlias("w")
 		.setDescription("Toggles the wand.")
-		.setHandler(new WandCommand(plugin));
+		.setHandler(new WandCommand(prism));
 		
 		/**
 		 * /prism teleport [id] 
@@ -84,7 +85,7 @@ public class PrismCommands extends Executor {
 		.setMinArgs(1)
 		.setUsage("[record id]")
 		.setDescription("Teleport to record [id].")
-		.setHandler(new TeleportCommand(plugin));
+		.setHandler(new TeleportCommand(prism));
 		
 		/**
 		 * /prism ext
@@ -92,7 +93,7 @@ public class PrismCommands extends Executor {
 		addSub("ex", "prism.extinguish")
 		.setUsage("(radius)")
 		.setDescription("Puts out any fire within (radius)")
-		.setHandler(new ExtinguishCommand(plugin));
+		.setHandler(new ExtinguishCommand(prism));
 		
 		/**
 		 * /prism drain
@@ -100,7 +101,7 @@ public class PrismCommands extends Executor {
 		addSub("drain", "prism.drain")
 		.setUsage("(radius)")
 		.setDescription("Drains lava and water within (radius)")
-		.setHandler(new DrainCommand(plugin));
+		.setHandler(new DrainCommand(prism));
 		
 		/**
 		 * /prism preview (params)
@@ -109,7 +110,7 @@ public class PrismCommands extends Executor {
 		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Preview a rollback for (params).")
-		.setHandler(new PreviewCommand(plugin));
+		.setHandler(new PreviewCommand(prism));
 		
 		/**
 		 * /prism report
@@ -118,7 +119,7 @@ public class PrismCommands extends Executor {
 		.addAlias("rp")
 		.setDescription("Reports")
 		.allowConsole()
-		.setHandler(new ReportCommand(plugin));
+		.setHandler(new ReportCommand(prism));
 		
 		/**
 		 * /prism rollback (params)
@@ -127,7 +128,7 @@ public class PrismCommands extends Executor {
 		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Rollback actions for (params).")
-		.setHandler(new RollbackCommand(plugin));
+		.setHandler(new RollbackCommand(prism));
 		
 		/**
 		 * /prism restore (params)
@@ -136,7 +137,7 @@ public class PrismCommands extends Executor {
 		.setMinArgs(1)
 		.setUsage("(params)")
 		.setDescription("Re-applies actions for (params).")
-		.setHandler(new RestoreCommand(plugin));
+		.setHandler(new RestoreCommand(prism));
 		
 		/**
 		 * /prism delete (time)
@@ -144,14 +145,14 @@ public class PrismCommands extends Executor {
 		addSub("delete", "prism.delete")
 		.allowConsole()
 		.setDescription("Deletes all records from the database before (timeframe)")
-		.setHandler(new DeleteCommand(plugin));
+		.setHandler(new DeleteCommand(prism));
 		
 		/**
 		 * /prism undo
 		 */
 		addSub("undo", "prism.rollback")
 		.setDescription("Revert a previous process.")
-		.setHandler(new UndoCommand(plugin));
+		.setHandler(new UndoCommand(prism));
 		
 		/**
 		 * /prism ?
@@ -160,7 +161,7 @@ public class PrismCommands extends Executor {
 		.addAlias("help")
 		.allowConsole()
 		.setDescription("This. Helpception!")
-		.setHandler(new HelpCommand(plugin));
+		.setHandler(new HelpCommand(prism));
 		
 		/**
 		 * /prism params
@@ -168,7 +169,7 @@ public class PrismCommands extends Executor {
 		addSub("params", "prism.help")
 		.allowConsole()
 		.setDescription("Parameter help.")
-		.setHandler(new ParamsCommand(plugin));
+		.setHandler(new ParamsCommand(prism));
 		
 		/**
 		 * /prism reload
@@ -178,9 +179,9 @@ public class PrismCommands extends Executor {
 		.setDescription("Reloads the configuration files.")
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
-            	plugin.reloadConfig();
-				plugin.config = plugin.getConfig();
-				call.getSender().sendMessage( plugin.messenger.playerMsg("Configuration reloaded successfully.") );
+            	prism.reloadConfig();
+            	prism.config = prism.getConfig();
+				call.getSender().sendMessage( prism.messenger.playerMsg("Configuration reloaded successfully.") );
             }
 		});
 	}
