@@ -109,15 +109,17 @@ public class Prism extends JavaPlugin {
 			}
 		}
 		
-		try {
-		    Metrics metrics = new Metrics(this);
-		    metrics.start();
-		} catch (IOException e) {
-		    log("MCStats submission failed.");
-		}
-		
 		// Load configuration, or install if new
 		loadConfig();
+		
+		if( getConfig().getBoolean("prism.allow-metrics") ){
+			try {
+			    Metrics metrics = new Metrics(this);
+			    metrics.start();
+			} catch (IOException e) {
+			    log("MCStats submission failed.");
+			}
+		}
 		
 		// init db
 		pool = initDbPool();
