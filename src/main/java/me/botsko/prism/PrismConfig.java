@@ -31,7 +31,8 @@ public class PrismConfig extends ConfigBase {
 //		config.addDefault("prism.language", "en-us");
 		
 		config.addDefault("prism.notify-newer-versions", true);
-		
+		config.addDefault("prism.allow-metrics", true);
+			
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
