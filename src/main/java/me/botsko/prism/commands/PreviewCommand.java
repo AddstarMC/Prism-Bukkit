@@ -38,13 +38,13 @@ public class PreviewCommand implements SubHandler {
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
-		if( call.getArgs().length >= 1 ){
+		if( call.getArgs().length >= 2 ){
 			
 			
 			/**
 			 * Apply previous preview changes
 			 */
-			if(call.getArg(0).equalsIgnoreCase("apply") ){
+			if(call.getArg(1).equalsIgnoreCase("apply") ){
 				if(plugin.playerActivePreviews.containsKey(call.getPlayer().getName())){
 					PreviewSession previewSession = plugin.playerActivePreviews.get( call.getPlayer().getName() );
 					previewSession.getPreviewer().apply_preview();
@@ -59,7 +59,7 @@ public class PreviewCommand implements SubHandler {
 			/**
 			 * Cancel preview
 			 */
-			if(call.getArg(0).equalsIgnoreCase("cancel") ){
+			if(call.getArg(1).equalsIgnoreCase("cancel") ){
 				if(plugin.playerActivePreviews.containsKey(call.getPlayer().getName())){
 					PreviewSession previewSession = plugin.playerActivePreviews.get( call.getPlayer().getName() );
 					previewSession.getPreviewer().cancel_preview();
@@ -81,13 +81,13 @@ public class PreviewCommand implements SubHandler {
 			/**
 			 * Begin a rollback or restore preview
 			 */
-			if( call.getArg(0).equalsIgnoreCase("rollback") || call.getArg(0).equalsIgnoreCase("restore") || call.getArg(0).equalsIgnoreCase("rb") || call.getArg(0).equalsIgnoreCase("rs") ){
+			if( call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs") ){
 				
 				QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 2 );
 				if(parameters == null){
 					return;
 				}
-				parameters.setStringFromRawArgs( call.getArgs() );
+				parameters.setStringFromRawArgs( call.getArgs(), 1 );
 				
 				if(parameters.getActionTypes().containsKey(ActionType.WORLD_EDIT)){
 					call.getPlayer().sendMessage( plugin.messenger.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
@@ -114,11 +114,11 @@ public class PreviewCommand implements SubHandler {
 					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Beginning preview...") );
 					
 					Previewable rs = null;
-					if(call.getArg(0).equalsIgnoreCase("rollback") || call.getArg(0).equalsIgnoreCase("rb")){
+					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
 						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
 						rs.preview();
 					}
-					if(call.getArg(0).equalsIgnoreCase("restore") || call.getArg(0).equalsIgnoreCase("rs")){
+					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
 						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
 						rs.preview();
 					}

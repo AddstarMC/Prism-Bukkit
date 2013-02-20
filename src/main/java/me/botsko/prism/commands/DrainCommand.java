@@ -37,22 +37,22 @@ public class DrainCommand implements SubHandler {
 		
 		String drain_type = "";
 		int radius = plugin.getConfig().getInt("prism.default-radius");
-		if(call.getArgs().length == 2){
-			if( call.getArg(0).equalsIgnoreCase("water") || call.getArg(0).equalsIgnoreCase("lava") ){
-				drain_type = call.getArg(0);
+		if(call.getArgs().length == 3){
+			if( call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava") ){
+				drain_type = call.getArg(1);
 			} else {
 				call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid drain type. Must be lava, water, or left out.") );
 				return;
 			}
 			// Validate radius
-			radius = validateRadius( call, call.getArg(1) );
+			radius = validateRadius( call, call.getArg(2) );
 		}
-		else if(call.getArgs().length == 1){
-			if(TypeUtils.isNumeric(call.getArg(0))){
-				radius = validateRadius( call, call.getArg(0) );
+		else if(call.getArgs().length == 2){
+			if(TypeUtils.isNumeric(call.getArg(1))){
+				radius = validateRadius( call, call.getArg(1) );
 			} else {
-				if( call.getArg(0).equalsIgnoreCase("water") || call.getArg(0).equalsIgnoreCase("lava") ){
-					drain_type = call.getArg(0);
+				if( call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava") ){
+					drain_type = call.getArg(1);
 				} else {
 					call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid drain type. Must be lava, water, or left out.") );
 					return;

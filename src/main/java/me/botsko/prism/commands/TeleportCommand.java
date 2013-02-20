@@ -34,12 +34,12 @@ public class TeleportCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if(!TypeUtils.isNumeric(call.getArg(0))){
+		if(!TypeUtils.isNumeric(call.getArg(1))){
 			call.getPlayer().sendMessage( plugin.messenger.playerError("You must provide a numeric record ID to teleport to." ) );
 			return;
 		}
 			
-		int record_id = Integer.parseInt(call.getArg(0));
+		int record_id = Integer.parseInt(call.getArg(1));
 		if(record_id <= 0){
 			call.getPlayer().sendMessage( plugin.messenger.playerError("Record id must be greater than zero." ) );
 			return;

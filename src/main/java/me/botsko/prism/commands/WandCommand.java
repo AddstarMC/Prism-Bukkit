@@ -35,8 +35,8 @@ public class WandCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		String type = "i";
-		if(call.getArgs().length == 1){
-			type = call.getArg(0);
+		if(call.getArgs().length == 2){
+			type = call.getArg(1);
 		}
 		
 		Wand oldwand = null;

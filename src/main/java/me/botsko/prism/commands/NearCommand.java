@@ -41,9 +41,9 @@ public class NearCommand implements SubHandler {
 		
 		// allow a custom near radius
 		int radius = plugin.getConfig().getInt("prism.near.default-radius");
-		if(call.getArgs().length == 1){
-			if(TypeUtils.isNumeric(call.getArg(0))){
-				int _tmp_radius = Integer.parseInt(call.getArg(0));
+		if(call.getArgs().length == 2){
+			if(TypeUtils.isNumeric(call.getArg(1))){
+				int _tmp_radius = Integer.parseInt(call.getArg(1));
 				if(_tmp_radius > 0){
 					radius = _tmp_radius;
 				} else {

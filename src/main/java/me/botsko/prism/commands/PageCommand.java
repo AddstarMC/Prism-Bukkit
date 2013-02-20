@@ -35,17 +35,17 @@ public class PageCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		if(call.getArgs().length != 1){
+		if(call.getArgs().length != 2){
 			call.getPlayer().sendMessage( plugin.messenger.playerError( "Please specify a page number. Like /prism page 2" ) );
 			return;
 		}
 		
-		if(!TypeUtils.isNumeric( call.getArg(0) )){
+		if(!TypeUtils.isNumeric( call.getArg(1) )){
 			call.getPlayer().sendMessage( plugin.messenger.playerError( "Page numbers need to actually be numbers. Like /prism page 2" ) );
 			return;
 		}
 		
-		int page = Integer.parseInt(call.getArg(0));
+		int page = Integer.parseInt(call.getArg(1));
 
 		if(page <= 0){
 			call.getPlayer().sendMessage( plugin.messenger.playerError("Page must be greater than zero.") );

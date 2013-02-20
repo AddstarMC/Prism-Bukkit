@@ -543,10 +543,10 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param args
 	 */
-	public void setStringFromRawArgs( String[] args ){
+	public void setStringFromRawArgs( String[] args, int start ){
 		String params = "";
 		if(args.length > 0){
-			for(int i = 0; i < args.length; i++){
+			for(int i = start; i < args.length; i++){
 				params += " "+args[i];
 			}
 		}
