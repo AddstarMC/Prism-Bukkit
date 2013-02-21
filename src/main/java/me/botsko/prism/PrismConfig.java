@@ -34,6 +34,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.allow-metrics", true);
 			
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
+		// Some finer configs we hope people don't need to mess with
+		config.addDefault("prism.database.max-pool-connections", 20);
+		config.addDefault("prism.database.max-wait", 30000);
+		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");
@@ -169,12 +173,6 @@ public class PrismConfig extends ConfigBase {
 		
 		monitorItems = new ArrayList<String>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
-		
-		// Some finer configs we hope people don't need to mess with
-		config.addDefault("prism.database.max-pool-connections", 20);
-		config.addDefault("prism.database.max-wait", 60000);
-		config.addDefault("prism.database.actions-per-insert-batch", 1000);
-
 		
 		config.addDefault("prism.queue-empty-tick-delay", 3);
 		

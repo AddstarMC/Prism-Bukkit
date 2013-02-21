@@ -91,11 +91,6 @@ public final class SubCommand {
 	 */
 	public SubCommand setHandler(SubHandler handler) {
 		this.handler = handler;
-
-		for(String alias : this.getAliases()){
-			Executor.subcommands.put(alias, this);
-		}
-		
 		return this;
 	}
 	
@@ -183,6 +178,4 @@ public final class SubCommand {
 	public ArrayList<String> getAliases(){
 		return this.aliases;
 	}
-	
 }
-

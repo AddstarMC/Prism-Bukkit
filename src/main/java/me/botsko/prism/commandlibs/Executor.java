@@ -4,32 +4,52 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import me.botsko.prism.Prism;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 public class Executor implements CommandExecutor {
 		
 	/**
 	 * 
 	 */
-	public Prism plugin;
+	public Plugin plugin;
+	
+	/**
+	 * Setting the executor to command mode
+	 * allows it to handle all commands the plugin
+	 * watches for. Subcommand mode allows it to
+	 * watch for commands that are secondary
+	 * to the primary command it's assigned to.
+	 */
+	public String mode = "command";
 	
 	/**
 	 * 
 	 */
-	public static java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
+	public String defaultSubcommand = "default";
+	
+	/**
+	 * 
+	 */
+	protected String perm_base = "";
+	
+	/**
+	 * 
+	 */
+	public java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
 
 	
 	/**
 	 * 
 	 * @param prism
 	 */
-	public Executor(Prism prism) {
-		this.plugin = prism;
+	public Executor( Plugin plugin, String mode, String perm_base ) {
+		this.mode = (mode == null ? "command" : mode);
+		this.perm_base = (perm_base == null ? "" : perm_base);
+		this.plugin = plugin;
 	}
 
 	
@@ -37,42 +57,45 @@ public class Executor implements CommandExecutor {
 	 * 
 	 */
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-		
-		plugin.eventTimer.resetEventList();
-		plugin.eventTimer.recordTimedEvent("command entered");
-		
+
+		// Set player
 		Player player = null;
 		if (sender instanceof Player) {
 			player = (Player) sender;
 		}
-		
-		// If no subcommand given
-		if (args.length == 0) {
-			args = new String[1];
-			args[0] = "about";
+
+
+		// Find command
+		String subcommandName = defaultSubcommand;
+		if(mode.equals("subcommand")){
+			subcommandName = args[0].toLowerCase();
+		} else {
+			subcommandName = cmd.getName();
 		}
 		
-		// Find subcommand
-		String subcommandName = args[0].toLowerCase();
+
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
-			sender.sendMessage( plugin.msgInvalidSubcommand() );
-			return true;
+			sub = subcommands.get(defaultSubcommand);
+			if (sub == null) {
+				sender.sendMessage( "Invalid command" );
+				return true;
+			}
 		}
 		// Ensure they have permission
-		else if ( player != null && !(player.hasPermission( "prism.*" ) || player.hasPermission( sub.getPermNode() )) ) {
-			sender.sendMessage( plugin.msgNoPermission() );
+		else if ( player != null && !(player.hasPermission( perm_base+".*" ) || player.hasPermission( sub.getPermNode() )) ) {
+			sender.sendMessage( "You do not have permission to use this command" );
 			return true;
 		}
 		// Ensure min number of arguments
-		else if ((args.length - 1 ) < sub.getMinArgs()) {
-			sender.sendMessage( plugin.msgMissingArguments() );
+		else if ( (mode.equals("subcommand") && (args.length - 1 ) < sub.getMinArgs()) || (mode.equals("command") && (args.length ) < sub.getMinArgs()) ) {
+			sender.sendMessage( "You're missing arguments for this command" );
 			return true;
 		}
 		// Ensure command allows console
 		if(!(sender instanceof Player)){
 			if(!sub.isConsoleAllowed()){
-				sender.sendMessage( plugin.messenger.playerError("This command may not be executed via console.") );
+				sender.sendMessage( "You must be in-game to use this command" );
 				return true;
 			}
 		}
@@ -96,6 +119,9 @@ public class Executor implements CommandExecutor {
 	protected SubCommand addSub(String name, String permission, SubHandler handler) {
 		SubCommand cmd = new SubCommand(name, permission, handler);
 		subcommands.put(name, cmd);
+		for(String alias : cmd.getAliases()){
+			subcommands.put(alias, cmd);
+		}
 		return cmd;
 	}
 	
@@ -121,7 +147,7 @@ public class Executor implements CommandExecutor {
 		ArrayList<SubCommand> items = new ArrayList<SubCommand>();
 		boolean has_player = (player != null);
 		for (SubCommand sub: subcommands.values()) {
-			if ((has_player || sub.isConsoleAllowed()) && (sender.hasPermission( "prism.*" ) || sender.hasPermission( sub.getPermNode() ) )) {
+			if ((has_player || sub.isConsoleAllowed()) && (sender.hasPermission( perm_base+".*" ) || sender.hasPermission( sub.getPermNode() ) )) {
 				items.add(sub);
 			}
 		}
