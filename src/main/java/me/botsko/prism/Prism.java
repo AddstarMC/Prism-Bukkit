@@ -144,10 +144,12 @@ public class Prism extends JavaPlugin {
 				}
 			}
     	}
-		try {
-			test_conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		if(test_conn != null){
+			try {
+				test_conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
 		if(isEnabled()){
