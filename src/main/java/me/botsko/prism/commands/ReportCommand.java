@@ -35,7 +35,7 @@ public class ReportCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		if(call.getArgs().length != 2){
-			call.getPlayer().sendMessage( plugin.playerError( "Please specify a report. Use /prism ? for help." ) );
+			call.getSender().sendMessage( plugin.playerError( "Please specify a report. Use /prism ? for help." ) );
 			return;
 		}
 		
