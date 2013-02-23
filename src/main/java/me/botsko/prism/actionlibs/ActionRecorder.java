@@ -187,6 +187,8 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
+	    	plugin.debug("Pool: MaxActive: " + Prism.getPool().getMaxActive() + " MaxIdle: " + Prism.getPool().getMaxIdle() + " Idle: " + Prism.getPool().getNumIdle() + " Active: " + Prism.getPool().getNumActive());
+	    	
 	    	int perBatch = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
 	    	if(perBatch < 0 || perBatch > 5000){
 	    		perBatch = 1000;

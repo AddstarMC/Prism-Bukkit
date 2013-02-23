@@ -267,6 +267,15 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 * @return
+	 */
+	public static BasicDataSource getPool(){
+		return Prism.pool;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
 	 * @throws SQLException 
 	 */
 	public static Connection dbc(){
