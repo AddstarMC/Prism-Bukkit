@@ -511,8 +511,12 @@ public class BlockUtils {
 				new_subid = 8;
 				break;
 		}
-		top.setTypeId(typeid);
-		top.setData((byte)new_subid);
+		if(top != null){
+			top.setTypeId(typeid);
+			top.setData((byte)new_subid);
+		} else {
+			System.out.println("Error setting bed: block top location was illegal. Data value: " + subid + " New data value: " + new_subid);
+		}
 	}
 	
 	
