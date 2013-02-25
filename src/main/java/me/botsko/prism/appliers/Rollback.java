@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -23,8 +23,8 @@ public class Rollback extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
-		super(plugin, player, processType, results, parameters);
+	public Rollback( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
+		super(plugin, sender, processType, results, parameters);
 	}
 	
 	

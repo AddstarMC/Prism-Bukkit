@@ -2,7 +2,7 @@ package me.botsko.prism.appliers;
 
 import java.util.List;
 
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -16,8 +16,8 @@ public class Restore extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
-		super(plugin, player, processType, results, parameters);
+	public Restore( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
+		super(plugin, sender, processType, results, parameters);
 	}
 	
 	

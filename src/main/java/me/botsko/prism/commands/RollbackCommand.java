@@ -35,7 +35,7 @@ public class RollbackCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.ROLLBACK, 1 );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.ROLLBACK, 1 );
 		if(parameters == null){
 			return;
 		}
@@ -51,19 +51,19 @@ public class RollbackCommand implements SubHandler {
 			}
 		}
 		
-		call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getPlayer() );
+		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Beginning rollback...") );
+			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Beginning rollback...") );
 			
-			Rollback rb = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
+			Rollback rb = new Rollback( plugin, call.getSender(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
 			rb.apply();
 			
 		} else {
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first." ) );
+			call.getSender().sendMessage( plugin.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
 	}
 }

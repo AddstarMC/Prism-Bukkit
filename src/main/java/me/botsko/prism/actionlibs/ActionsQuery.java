@@ -229,11 +229,15 @@ public class ActionsQuery {
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
-		if(parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null){
-			if(plugin.cachedQueries.containsKey(player.getName())){
-				plugin.cachedQueries.remove(player.getName());
+		if(parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
+			String keyName = "console";
+			if( player != null ){
+				keyName = player.getName();
 			}
-			plugin.cachedQueries.put(player.getName(), res);
+			if(plugin.cachedQueries.containsKey(keyName)){
+				plugin.cachedQueries.remove(keyName);
+			}
+			plugin.cachedQueries.put(keyName, res);
 		}
 		
 		plugin.eventTimer.recordTimedEvent("results object completed");

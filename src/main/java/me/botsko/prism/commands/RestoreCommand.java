@@ -2,6 +2,8 @@ package me.botsko.prism.commands;
 
 import java.util.ArrayList;
 
+import org.bukkit.entity.Player;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -35,7 +37,7 @@ public class RestoreCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.RESTORE, 1 );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.RESTORE, 1 );
 		if(parameters == null){
 			return;
 		}
@@ -51,23 +53,26 @@ public class RestoreCommand implements SubHandler {
 			}
 		}
 		
-		call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getPlayer() );
+		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restoring changes...") );
+			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Restoring changes...") );
 
 			// Inform nearby players
-			plugin.notifyNearby(call.getPlayer(), parameters.getRadius(), call.getPlayer().getDisplayName() + " is re-applying block changes nearby. Just so you know.");
+			if( call.getSender() instanceof Player ){
+				Player player = (Player) call.getSender();
+				plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
+			}
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
+			Restore rs = new Restore( plugin, call.getSender(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
 			rs.apply();
 			
 		} else {
-			call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
+			call.getSender().sendMessage( plugin.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
 		}
 	}
 }

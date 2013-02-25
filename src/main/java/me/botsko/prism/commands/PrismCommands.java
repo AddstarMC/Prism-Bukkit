@@ -105,6 +105,7 @@ public class PrismCommands extends Executor {
 		 * /prism rollback (params)
 		 */
 		addSub( new String[]{"rollback","rb"}, "prism.rollback")
+		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new RollbackCommand(prism));
 		
@@ -112,6 +113,7 @@ public class PrismCommands extends Executor {
 		 * /prism restore (params)
 		 */
 		addSub( new String[]{"restore","rs"}, "prism.restore")
+		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new RestoreCommand(prism));
 		

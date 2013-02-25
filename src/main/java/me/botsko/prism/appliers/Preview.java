@@ -43,6 +43,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -67,6 +68,11 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected final PrismProcessType processType;
+	
+	/**
+	 * 
+	 */
+	protected final CommandSender sender;
 	
 	/**
 	 * 
@@ -120,11 +126,17 @@ public class Preview implements Previewable {
 	 * @param plugin
 	 * @return 
 	 */
-	public Preview( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
+	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
 		this.processType = processType;
 		this.plugin = plugin;
-		this.player = player;
+		this.sender = sender;
 		this.parameters = parameters;
+		
+		if( sender instanceof Player ){
+			this.player = (Player) sender;
+		} else {
+			this.player = null;
+		}
 		
 		// Append all actions to the queue.
 		worldChangeQueue.addAll(results);
@@ -145,12 +157,13 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void cancel_preview(){
+		if( player == null ) return;
 		if(!blockStateChanges.isEmpty()){
 			for(BlockStateChange u : blockStateChanges){
 				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 			}
 		}
-		player.sendMessage( plugin.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
+		sender.sendMessage( plugin.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
 	}
 	
 	
@@ -158,7 +171,8 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void apply_preview(){
-		player.sendMessage( plugin.messenger.playerHeaderMsg("Applying rollback from preview...") );
+		if( player == null ) return;
+		sender.sendMessage( plugin.messenger.playerHeaderMsg("Applying rollback from preview...") );
 		setIsPreview(false);
 		changes_applied_count = 0;
 		skipped_block_count = 0;
@@ -180,7 +194,7 @@ public class Preview implements Previewable {
 		
 		if(!worldChangeQueue.isEmpty()){
 			
-			if(!is_preview){
+			if(!is_preview && player != null ){
 				
 				Wand oldwand = null;
 				if(plugin.playersWithActiveTools.containsKey(player.getName())){
@@ -523,7 +537,7 @@ public class Preview implements Previewable {
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
-					player.sendMessage( plugin.messenger.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
+					sender.sendMessage( plugin.messenger.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
 					return;
 				}
 		    	
@@ -930,7 +944,7 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected void moveEntitiesToSafety(){
-		if( parameters.getWorld() != null ){
+		if( parameters.getWorld() != null && player != null ){
 			List<Entity> entities = player.getNearbyEntities(parameters.getRadius(), parameters.getRadius(), parameters.getRadius());
 			entities.add((Entity)player);
 			for(Entity entity : entities){
@@ -974,7 +988,7 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " It's like it never happened.";
 				}
-				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 			} else {
 			
@@ -986,11 +1000,11 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
-				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
 				if(changes_applied_count == 0){
-					player.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
+					sender.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
 				}
 			}
 		}
@@ -1008,7 +1022,7 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " It's like it was always there.";
 				}
-				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 			} else {
 			
@@ -1020,11 +1034,11 @@ public class Preview implements Previewable {
 				if(changes_applied_count > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
-				player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
 				if(changes_applied_count == 0){
-					player.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
+					sender.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
 				}
 			}
 		}
@@ -1041,7 +1055,7 @@ public class Preview implements Previewable {
 			if(changes_applied_count > 0){
 				msg += ChatColor.GRAY + " If anyone asks, you never did that.";
 			}
-			player.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
+			sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
 			
 		}
 		
