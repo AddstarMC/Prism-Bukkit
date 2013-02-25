@@ -15,7 +15,7 @@ public class ActionMessage {
 	/**
 	 * 
 	 */
-	private boolean hide_id = true;
+	private boolean showExtended = false;
 	
 	
 	/**
@@ -30,52 +30,77 @@ public class ActionMessage {
 	/**
 	 * 
 	 */
-	public String getMessage(){
+	public void showExtended(){
+		showExtended = true;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public String[] getMessage(){
+		
+		String[] msg = new String[1];
+		if(showExtended){
+			msg = new String[2];
+		}
 		
 		ChatColor highlight = ChatColor.DARK_AQUA;
 		
-		String msg = "";
-		if(!hide_id){
-			msg += ChatColor.GRAY + "[" + a.getId() + "] ";
-		}
-		
-		// Date & Time
-		msg += ChatColor.GRAY + a.getDisplayDate();
-		msg += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
-		
+		String line1 = "";
+
 		// +/-
-		msg += getPosNegPrefix();
+		line1 += getPosNegPrefix();
 		
 		// Who
-		msg += highlight + a.getPlayerName();
+		line1 += highlight + a.getPlayerName();
 		
 		// Description of event
-		msg += " " + ChatColor.WHITE + a.getType().getNiceDescription();
+		line1 += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		if(a.getType().getHandler() != null){
-			msg += " " + highlight + a.getNiceName();
+			line1 += " " + highlight + a.getNiceName();
 		} else {
 			// We should really improve this, but this saves me from having to make
 			// a custom handler.
 			if(a.getType().equals(ActionType.LAVA_BUCKET)){
-				msg += " " + highlight + "lava";
+				line1 += " " + highlight + "lava";
 			} 
 			else if (a.getType().equals(ActionType.WATER_BUCKET)){
-				msg += " " + highlight + "water";
+				line1 += " " + highlight + "water";
 			}
 		}
 		
 		// Aggregate count
 		if( a.getAggregateCount() > 1 ){
-			msg += ChatColor.GREEN + " x"+a.getAggregateCount();
+			line1 += ChatColor.GREEN + " x"+a.getAggregateCount();
 		}
 		
 		// Time since
 		if(!a.getTimeSince().isEmpty()){
-			msg += ChatColor.WHITE + " " + a.getTimeSince();
+			line1 += ChatColor.WHITE + " " + a.getTimeSince();
 		}
 		
 		// Action type reminder
-		msg += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
+		line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
+		
+		
+		// Line 2
+		String line2 = ChatColor.GRAY + " --";
+		
+		line2 += ChatColor.GRAY + " " + a.getId() + " - ";
+		
+		// Date & Time
+		if(showExtended){
+			line2 += ChatColor.GRAY + a.getDisplayDate();
+			line2 += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
+			
+			line2 += " - "+a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ() + " ";
+		}
+
+		msg[0] = line1;
+		if(showExtended){
+			msg[1] = line2;
+		}
 		
 		return msg;
 		
@@ -95,13 +120,5 @@ public class ActionMessage {
 		else {
 			return ChatColor.RED + " - " + ChatColor.WHITE;
 		}
-	}
-
-
-	/**
-	 * @param hide_id the hide_id to set
-	 */
-	public void hideId(boolean hide_id) {
-		this.hide_id = hide_id;
 	}
 }

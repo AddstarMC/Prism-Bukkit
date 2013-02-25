@@ -56,6 +56,21 @@ public class Messenger {
 		}
 		return "";
 	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String[] playerMsg(String[] msg){
+		if(msg != null){
+			for(int i = 0; i < msg.length; i++){
+				msg[i] = playerMsg(msg[i]);
+			}
+		}
+		return msg;
+	}
 
 	
 	/**

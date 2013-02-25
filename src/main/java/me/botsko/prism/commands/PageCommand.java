@@ -9,6 +9,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.commandlibs.CallInfo;
+import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
 
@@ -68,8 +69,8 @@ public class PageCommand implements SubHandler {
 				if(paginated != null){
 					for(Action a : paginated){
 						ActionMessage am = new ActionMessage(a);
-						if(results.getParameters().allowsNoRadius()){
-							am.hideId(false);
+						if( results.getParameters().allowsNoRadius() || results.getParameters().hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extemded") ){
+							am.showExtended();
 						}
 						call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 					}

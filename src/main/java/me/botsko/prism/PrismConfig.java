@@ -53,6 +53,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.max-drain-radius", 10);
 		config.addDefault("prism.max-ex-radius", 100);
 		config.addDefault("prism.limit-global-radius-override-to-lookups", true);
+		config.addDefault("prism.always-show-extemded", false);
 		
 		config.addDefault("prism.near.default-radius", 5);
 		

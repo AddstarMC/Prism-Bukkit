@@ -13,6 +13,7 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
+import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 
@@ -67,8 +68,8 @@ public class LookupCommand implements SubHandler {
 			if(paginated != null){
 				for(Action a : paginated){
 					ActionMessage am = new ActionMessage(a);
-					if(parameters.allowsNoRadius()){
-						am.hideId(false);
+					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extemded") ){
+						am.showExtended();
 					}
 					call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 				}
