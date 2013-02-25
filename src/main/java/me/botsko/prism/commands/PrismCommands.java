@@ -63,7 +63,7 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism wand
 		 */
-		addSub( new String[]{"wand","w"}, "prism.rollback")
+		addSub( new String[]{"wand","w"}, new String[]{"prism.rollback","prism.restore","prism.lookup"} )
 		.setHandler(new WandCommand(prism));
 		
 		/**
@@ -88,7 +88,7 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism preview (params)
 		 */
-		addSub("preview", "prism.preview")
+		addSub(new String[]{"preview","pv"}, "prism.preview")
 		.setMinArgs(1)
 		.setHandler(new PreviewCommand(prism));
 		
@@ -102,14 +102,14 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism rollback (params)
 		 */
-		addSub("rollback", "prism.rollback")
+		addSub( new String[]{"rollback","rb"}, "prism.rollback")
 		.setMinArgs(1)
 		.setHandler(new RollbackCommand(prism));
 		
 		/**
 		 * /prism restore (params)
 		 */
-		addSub("restore", "prism.restore")
+		addSub( new String[]{"restore","rs"}, "prism.restore")
 		.setMinArgs(1)
 		.setHandler(new RestoreCommand(prism));
 		
