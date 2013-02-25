@@ -52,6 +52,11 @@ public class OreMonitor {
 		if(!plugin.getConfig().getBoolean("prism.alerts.ores.enabled")){
 			return;
 		}
+		
+		// Ignore players who would see the alerts
+		if ( plugin.getConfig().getBoolean("prism.alerts.ores.ignore-staff") && player.hasPermission("prism.alerts") ){
+			return;
+		}
 	
 		if( !player.getGameMode().equals(GameMode.CREATIVE) ){
 			
