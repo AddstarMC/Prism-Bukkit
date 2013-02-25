@@ -1,8 +1,6 @@
 package me.botsko.prism.commandlibs;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -34,11 +32,6 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	protected String perm_base = "";
-	
-	/**
-	 * 
-	 */
 	public java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
 
 	
@@ -48,7 +41,6 @@ public class Executor implements CommandExecutor {
 	 */
 	public Executor( Plugin plugin, String mode, String perm_base ) {
 		this.mode = (mode == null ? "command" : mode);
-		this.perm_base = (perm_base == null ? "" : perm_base);
 		this.plugin = plugin;
 	}
 
@@ -73,6 +65,9 @@ public class Executor implements CommandExecutor {
 			subcommandName = cmd.getName();
 		}
 		
+		System.out.print("Command: " + cmd);
+		System.out.print("Subcommand: " + subcommandName);
+		System.out.print("Args count: " + args.length);
 
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
@@ -83,7 +78,7 @@ public class Executor implements CommandExecutor {
 			}
 		}
 		// Ensure they have permission
-		else if ( player != null && !(player.hasPermission( perm_base+".*" ) || player.hasPermission( sub.getPermNode() )) ) {
+		else if ( player != null && !(sub.playerHasPermission(player))) {
 			sender.sendMessage( "You do not have permission to use this command" );
 			return true;
 		}
@@ -116,10 +111,9 @@ public class Executor implements CommandExecutor {
 	 * @param handler
 	 * @return
 	 */
-	protected SubCommand addSub(String name, String permission, SubHandler handler) {
-		SubCommand cmd = new SubCommand(name, permission, handler);
-		subcommands.put(name, cmd);
-		for(String alias : cmd.getAliases()){
+	protected SubCommand addSub( String[] commandAliases, String[] permissionNodes, SubHandler handler) {
+		SubCommand cmd = new SubCommand(commandAliases, permissionNodes, handler);
+		for(String alias : commandAliases){
 			subcommands.put(alias, cmd);
 		}
 		return cmd;
@@ -132,25 +126,43 @@ public class Executor implements CommandExecutor {
 	 * @param permission
 	 * @return
 	 */
-	protected SubCommand addSub(String name, String permission) {
-		return addSub(name, permission, null);
+	protected SubCommand addSub( String[] commandAliases, String[] permissionNodes ) {
+		return addSub(commandAliases, permissionNodes, null);
 	}
 	
 	
 	/**
 	 * 
-	 * @param sender
-	 * @param player
+	 * @param name
+	 * @param permission
+	 * @param handler
 	 * @return
 	 */
-	protected List<SubCommand> availableCommands(CommandSender sender, Player player) {
-		ArrayList<SubCommand> items = new ArrayList<SubCommand>();
-		boolean has_player = (player != null);
-		for (SubCommand sub: subcommands.values()) {
-			if ((has_player || sub.isConsoleAllowed()) && (sender.hasPermission( perm_base+".*" ) || sender.hasPermission( sub.getPermNode() ) )) {
-				items.add(sub);
-			}
-		}
-		return items;
+	protected SubCommand addSub( String[] commandAliases, String permissionNode ) {
+		return addSub( commandAliases, new String[]{permissionNode}, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @param permission
+	 * @param handler
+	 * @return
+	 */
+	protected SubCommand addSub( String commandAlias, String[] permissionNodes ) {
+		return addSub( new String[]{commandAlias}, permissionNodes, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param name
+	 * @param permission
+	 * @param handler
+	 * @return
+	 */
+	protected SubCommand addSub( String commandAlias, String permissionNode ) {
+		return addSub( new String[]{commandAlias}, new String[]{permissionNode}, null);
 	}
 }

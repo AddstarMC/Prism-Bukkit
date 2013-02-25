@@ -1,26 +1,25 @@
 package me.botsko.prism.commandlibs;
 
-import java.util.ArrayList;
+import org.bukkit.entity.Player;
 
 
 public final class SubCommand {
-	private final String name;
-	private boolean allow_console = false;
+	
+	private final String[] commandAliases;
+	private String[] permissionNodes;
 	private int minArgs = 0;
+	private boolean allow_console = false;
 	private SubHandler handler = null;
-	private String description;
-	private String usage = null;
-	private String perm_node;
-	private ArrayList<String> aliases = new ArrayList<String>();
+	
 	
 	/**
 	 * 
 	 * @param name
 	 * @param permission
 	 */
-	public SubCommand(String name, String permission) {
-		this.name = name;
-		this.perm_node = permission;
+	public SubCommand( String[] commandAliases, String[] permissionNodes ){
+		this.commandAliases = commandAliases;
+		this.permissionNodes = permissionNodes;
 	}
 
 	
@@ -30,8 +29,8 @@ public final class SubCommand {
 	 * @param permission
 	 * @param handler
 	 */
-	public SubCommand(String name, String permission, SubHandler handler) {
-		this(name, permission);
+	public SubCommand( String[] commandAliases, String[] permissionNodes, SubHandler handler ){
+		this(commandAliases, permissionNodes);
 		this.handler = handler;
 	}
 	
@@ -99,8 +98,24 @@ public final class SubCommand {
 	 * 
 	 * @return
 	 */
-	public String getPermNode(){
-		return perm_node;
+	public boolean playerHasPermission( Player player ){
+		for(String node : permissionNodes){
+			if(player.hasPermission(node)){
+				return true;
+			}
+			// Also check for global nodes
+			if(node.contains("*")) continue;
+ 
+			int index = node.lastIndexOf('.');  
+			while(index != -1) { 
+				node = node.substring(0,index);
+				if( player.hasPermission( node + ".*" )){
+					return true;
+				}
+				index = node.lastIndexOf('.');
+			}
+		}
+		return false;
 	}
 	
 	
@@ -108,74 +123,16 @@ public final class SubCommand {
 	 * 
 	 * @param node
 	 */
-	public void setPermNode( String node ){
-		perm_node = node;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getUsage() {
-		return this.usage;
-	}
-	
-	
-	/**
-	 * 
-	 * @param usage
-	 * @return
-	 */
-	public SubCommand setUsage(String usage) {
-		this.usage = usage;
-		return this;
+	public void setPermNodes( String[] permissionNodes ){
+		this.permissionNodes = permissionNodes;
 	}
 
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getDescription() {
-		return description;
-	}
-
-	
-	/**
-	 * 
-	 * @param description
-	 * @return
-	 */
-	public SubCommand setDescription(String description) {
-		this.description = description;
-		return this;
-	}
-	
-	/**
-	 * 
-	 * @param alais
-	 * @return
-	 */
-	public SubCommand addAlias(String alias) {
-		this.aliases.add(alias);
-		return this;
-	}
 	
 	/**
 	 * 
 	 * @return aliases
 	 */
-	public ArrayList<String> getAliases(){
-		return this.aliases;
+	public String[] getAliases(){
+		return this.commandAliases;
 	}
 }

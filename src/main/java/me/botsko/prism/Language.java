@@ -1,5 +1,8 @@
 package me.botsko.prism;
 
+import java.util.Hashtable;
+import java.util.Map.Entry;
+
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Language {
@@ -28,7 +31,7 @@ public class Language {
 		if(lang != null){
 			String msg = lang.getString(key);
 			if(msg != null){
-				return msg;
+				return colorize(msg);
 			} else {
 //				plugin.log("No language support found for " + key);
 			}
@@ -37,4 +40,32 @@ public class Language {
 		}
 		return "";
 	}
+	
+	
+	/**
+	 * 
+	 * @param key
+	 * @param replacer
+	 * @return
+	 */
+	public String getString( String key, Hashtable<String,String> replacer ){
+		String msg = getString( key );
+		if( !replacer.isEmpty() ){
+			for (Entry<String,String> entry : replacer.entrySet()){
+			    msg = msg.replace("%("+entry.getKey()+")", entry.getValue());
+			}
+		}
+		return msg;
+	}
+	
+	
+	/**
+	 * Converts colors place-holders.
+	 * @param text
+	 * @return
+	 */
+	protected String colorize(String text){
+        String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
+        return colorized;
+    }
 }
