@@ -45,9 +45,13 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
-		config.addDefault("prism.default-radius", 10);
+		config.addDefault("prism.default-radius", 5);
+		config.addDefault("prism.drain-default-radius", 5);
+		config.addDefault("prism.ex-default-radius", 10);
 		config.addDefault("prism.default-time-since", "3d");
 		config.addDefault("prism.max-radius-unless-overridden", 100);
+		config.addDefault("prism.max-drain-radius", 10);
+		config.addDefault("prism.max-ex-radius", 100);
 		config.addDefault("prism.limit-global-radius-override-to-lookups", true);
 		
 		config.addDefault("prism.near.default-radius", 5);
