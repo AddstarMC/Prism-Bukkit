@@ -41,7 +41,7 @@ public class LookupCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		
 		// Process and validate all of the arguments
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getPlayer(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
+		QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
 		if(parameters == null){
 			return;
 		}
@@ -58,11 +58,11 @@ public class LookupCommand implements SubHandler {
 		}
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getPlayer() );
+		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			if(!defaultsReminder.isEmpty()){
-				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
 			List<Action> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
@@ -71,16 +71,16 @@ public class LookupCommand implements SubHandler {
 					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extemded") ){
 						am.showExtended();
 					}
-					call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
+					call.getSender().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+				call.getSender().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
 			if(!defaultsReminder.isEmpty()){
-				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
-			call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+			call.getSender().sendMessage( plugin.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 		}
 	}
 }

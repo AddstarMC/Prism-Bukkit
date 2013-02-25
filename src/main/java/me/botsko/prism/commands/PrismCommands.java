@@ -38,6 +38,7 @@ public class PrismCommands extends Executor {
 		 * /prism lookup 
 		 */
 		addSub(new String[]{"lookup","l"}, "prism.lookup")
+		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new LookupCommand(prism));
 		
@@ -51,6 +52,7 @@ public class PrismCommands extends Executor {
 		 * /prism page [page] 
 		 */
 		addSub( new String[]{"page","pg"}, "prism.lookup")
+		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new PageCommand(prism));
 		

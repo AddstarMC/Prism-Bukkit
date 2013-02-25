@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
@@ -68,7 +69,13 @@ public class ActionsQuery {
 	 * 
 	 * @return
 	 */
-	public QueryResult lookup( QueryParameters parameters, Player player ){
+	public QueryResult lookup( QueryParameters parameters, CommandSender sender ){
+		
+		Player player = null;
+		if(sender instanceof Player){
+			player = (Player) sender;
+		}
+		
 		
 		// Pull results
 		List<Action> actions = new ArrayList<Action>();
@@ -385,7 +392,9 @@ public class ActionsQuery {
 			 * World
 			 */
 			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
-				query += " AND world = '"+parameters.getWorld()+"'";
+				if( parameters.getWorld() != null ){
+					query += " AND world = '"+parameters.getWorld()+"'";
+				}
 			}
 
 			/**
