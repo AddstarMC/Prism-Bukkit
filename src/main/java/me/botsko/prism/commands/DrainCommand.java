@@ -60,6 +60,8 @@ public class DrainCommand implements SubHandler {
 			}
 		}
 		
+		if(radius == 0) return;
+		
 		// Build seeking message
 		String msg = "Seeking "+drain_type+" within "+radius+" blocks.";
 		if(drain_type.equals("water")){
