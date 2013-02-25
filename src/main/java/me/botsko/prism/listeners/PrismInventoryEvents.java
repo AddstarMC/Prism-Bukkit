@@ -21,6 +21,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class PrismInventoryEvents implements Listener {
+	
+	/**
+	 * 
+	 */
+	private Prism plugin;
 
 	/**
 	 * 
@@ -54,6 +59,15 @@ public class PrismInventoryEvents implements Listener {
 	
 	
 	/**
+	 * 
+	 * @param plugin
+	 */
+	public PrismInventoryEvents( Prism plugin ){
+		this.plugin = plugin;
+	}
+	
+	
+	/**
 	 * Handle inventory transfers
 	 * @param event
 	 */
@@ -64,6 +78,10 @@ public class PrismInventoryEvents implements Listener {
 		if ( event.isCancelled() ) {
 			return;
 		}
+		
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
+				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
 		
 		// Store some info
 		Inventory inv = event.getInventory();

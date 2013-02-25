@@ -112,7 +112,7 @@ public class Prism extends JavaPlugin {
 		
 		// Load configuration, or install if new
 		loadConfig();
-		
+
 		if( getConfig().getBoolean("prism.allow-metrics") ){
 			try {
 			    Metrics metrics = new Metrics(this);
@@ -172,7 +172,7 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismEntityEvents( this ), this);
 			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
-			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(), this);
+			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
 			
 			// Assign listeners to our own events
 	//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents(), this);

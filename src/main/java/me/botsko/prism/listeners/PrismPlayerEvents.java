@@ -93,6 +93,8 @@ public class PrismPlayerEvents implements Listener {
 	        	plugin.log(msg);
 			}
 		}
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.player-command") ) return;
 
 		// Ignore some commands based on config
 		if( ignoreCommands.contains( primaryCmd ) ){
@@ -111,6 +113,8 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(final PlayerJoinEvent event){
 		
+		if( !plugin.getConfig().getBoolean("prism.tracking.player-join") ) return;
+		
 		Player player = event.getPlayer();
 		
 		String ip = null;
@@ -128,6 +132,8 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(final PlayerQuitEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.player-quit") ) return;
 		
 		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_QUIT, event.getPlayer(), null) );
 
@@ -149,6 +155,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event){
+		if( !plugin.getConfig().getBoolean("prism.tracking.player-chat") ) return;
 		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_CHAT, event.getMessage(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -159,6 +166,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.item-drop") ) return;
 		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -169,6 +177,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.item-pickup") ) return;
 		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -179,6 +188,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.xp-pickup") ) return;
 		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.XP_PICKUP, event.getPlayer(), ""+event.getAmount()) );
 	}
 	
@@ -189,6 +199,9 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.water-bucket")
+				&& !plugin.getConfig().getBoolean("prism.tracking.lava-bucket")) return;
 		
 		Player player = event.getPlayer();
 		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
@@ -209,6 +222,8 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketFill(final PlayerBucketFillEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.bucket-fill") ) return;
 		
 		Player player = event.getPlayer();
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
@@ -239,6 +254,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleport(final PlayerTeleportEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.player-teleport") ) return;
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){
 			Prism.actionsRecorder.addToQueue( new EntityTravelAction(ActionType.PLAYER_TELEPORT, event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
@@ -252,6 +268,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(final EnchantItemEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.enchant-item") ) return;
 		Player player = event.getEnchanter();
 		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ENCHANT_ITEM, event.getItem(), event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player.getName()) );
 	}
@@ -263,6 +280,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(final CraftItemEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.craft-item") ) return;
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getRecipe().getResult();
 		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.CRAFT_ITEM, item, item.getAmount(), null, player.getLocation(), player.getName()) );
@@ -303,8 +321,8 @@ public class PrismPlayerEvents implements Listener {
 				}
 			}
 		}
+		
 
-			
 		// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
 		if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
 
@@ -353,6 +371,8 @@ public class PrismPlayerEvents implements Listener {
 			}
 			
 		}
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.crop-trample") ) return;
 
 		if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil

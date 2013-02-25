@@ -177,6 +177,9 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-break") ) return;
+		
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
@@ -218,6 +221,8 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
 		
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-place") ) return;
+		
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
 		
@@ -238,6 +243,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockSpread(final BlockSpreadEvent event){
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-spread") ) return;
 		if(event.getNewState().getType().equals(Material.FIRE)) return;
 		Block b = event.getBlock();
 		BlockState s = event.getNewState();
@@ -251,6 +257,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockForm(final BlockFormEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-form") ) return;
 		Block b = event.getBlock();
 		BlockState s = event.getNewState();
 		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.BLOCK_FORM, b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
@@ -263,6 +270,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFade(final BlockFadeEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-form") ) return;
 		Block b = event.getBlock();
 		if( b.getType().equals(Material.FIRE) ) return;
 		BlockState s = event.getNewState();
@@ -276,6 +284,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onLeavesDecay(final LeavesDecayEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.leaf-decay") ) return;
 		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.LEAF_DECAY, event.getBlock(), "Environment") );
 	}
 	
@@ -286,6 +295,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockBurn(final BlockBurnEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-burn") ) return;
 		Block block = event.getBlock();
 		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BURN, block, "Environment") );
 		
@@ -308,6 +318,7 @@ public class PrismBlockEvents implements Listener {
 		// Record that a block fell, associated with the player who broke the base block.
 		Block b = event.getBlock();
 		if(BlockUtils.isFallingBlock(b)){
+			if( !plugin.getConfig().getBoolean("prism.tracking.block-fall") ) return;
 			// Only record a block-fall if there's air below.
 			if(b.getRelative(BlockFace.DOWN).getType().equals(Material.AIR)){
 				String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
@@ -318,6 +329,8 @@ public class PrismBlockEvents implements Listener {
 				}
 			}
 		}
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-break") ) return;
 		
 		// If it's an attachable item, we need to look for detachment
 		// at the sides.
@@ -362,6 +375,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(final SignChangeEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.sign-change") ) return;
 		Prism.actionsRecorder.addToQueue( new SignAction(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer().getName()) );
 	}
 
@@ -372,6 +386,11 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSetFire(final BlockIgniteEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.fireball") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.lighter") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.lava-ignite") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.lightning") ) return;
 		
 		ActionType cause = null;
 		switch (event.getCause()){
@@ -409,6 +428,8 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPistonExtend(final BlockPistonExtendEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-shift") ) return;
 
 		List<Block> blocks = event.getBlocks();
 		if(!blocks.isEmpty()){
@@ -431,6 +452,7 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPistonRetract(final BlockPistonRetractEvent event){
+		if( !plugin.getConfig().getBoolean("prism.tracking.block-shift") ) return;
 		if(!event.isSticky()) return;
 		Block block = event.getBlock();
 		if(block.getType().equals(Material.AIR)) return;
@@ -444,6 +466,11 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFromTo(final BlockFromToEvent event) {
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.water-flow") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.lava-flow") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.lava-break") 
+				&& !plugin.getConfig().getBoolean("prism.tracking.water-break") ) return;
 
 		// Ignore blocks that aren't liquid. @todo what else triggers this?
 		if (!event.getBlock().isLiquid()) return;
