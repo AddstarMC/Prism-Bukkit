@@ -159,6 +159,19 @@ public class UseMonitor {
 	
 	
 	/**
+	 * 
+	 * @param player
+	 * @param use_msg
+	 */
+	public void alertOnVanillaXray( Player player, String use_msg ){
+		
+		String playername = player.getName();
+		incrementCount(playername,use_msg);
+		
+	}
+	
+	
+	/**
 	 * Reset the queue every now and then
 	 * Technically this can reset someone's counts too early but
 	 * that just means staff will see extra warnings.

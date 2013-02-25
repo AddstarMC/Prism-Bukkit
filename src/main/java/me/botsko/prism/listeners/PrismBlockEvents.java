@@ -12,6 +12,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -428,6 +429,17 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPistonExtend(final BlockPistonExtendEvent event){
+		
+		if(plugin.getConfig().getBoolean("prism.alerts.vanilla-xray.enabled")){
+			Block noPlayer = event.getBlock().getRelative( event.getDirection() ).getRelative( event.getDirection() ).getRelative(BlockFace.DOWN);
+			for(Player pl : plugin.getServer().getOnlinePlayers()){
+				Location loc = pl.getLocation();
+				if( loc.getBlockX() == noPlayer.getX() && loc.getBlockY() == noPlayer.getY() && loc.getBlockZ() == noPlayer.getZ() ){
+					plugin.useMonitor.alertOnVanillaXray(pl,"possibly used a vanilla piston/xray trick");
+					break;
+				}
+			}
+		}
 		
 		if( !plugin.getConfig().getBoolean("prism.tracking.block-shift") ) return;
 

@@ -189,6 +189,8 @@ public class PrismConfig extends ConfigBase {
 		monitorItems = new ArrayList<String>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
 		
+		config.addDefault("prism.alerts.vanilla-xray.enabled", true);
+		
 		config.addDefault("prism.queue-empty-tick-delay", 3);
 		
 		// Copy defaults
