@@ -5,6 +5,7 @@ import java.util.Collection;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
 import me.botsko.prism.actions.ItemStackAction;
@@ -12,8 +13,10 @@ import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.utils.DeathUtils;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
@@ -25,6 +28,7 @@ import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -327,6 +331,21 @@ public class PrismEntityEvents implements Listener {
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityBlockForm(final EntityBlockFormEvent event) {
+		if( !plugin.getConfig().getBoolean("prism.tracking.entity-form")) return;
+		Block block = event.getBlock();
+		Location loc = block.getLocation();
+		BlockState newState = event.getNewState();
+		String entity = event.getEntity().getType().name().toLowerCase();
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.ENTITY_FORM, loc, block.getTypeId(), (byte)block.getData(), newState.getTypeId(), (byte)newState.getRawData(), entity) );
 	}
 	
 	

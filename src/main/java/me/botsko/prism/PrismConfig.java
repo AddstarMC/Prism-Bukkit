@@ -96,6 +96,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.entity-dye", false);
 		config.addDefault("prism.tracking.entity-explode", true);
 		config.addDefault("prism.tracking.entity-follow", true);
+		config.addDefault("prism.tracking.entity-form", true);
 		config.addDefault("prism.tracking.entity-kill", true);
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.entity-spawn", true);
