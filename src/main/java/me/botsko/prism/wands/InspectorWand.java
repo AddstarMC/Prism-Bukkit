@@ -1,10 +1,14 @@
 package me.botsko.prism.wands;
 
+import java.util.ArrayList;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -59,6 +63,18 @@ public class InspectorWand implements Wand {
 		QueryParameters params = new QueryParameters();
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation(loc);
+		
+		// Ignoring any actions via config?
+		@SuppressWarnings("unchecked")
+		ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
+		if( ignoreActions != null && !ignoreActions.isEmpty() ){
+			for(String ignore : ignoreActions){
+				ActionType ignoreType = ActionType.getByActionType(ignore);
+				if(ignoreType != null){
+					params.addActionType(ignoreType, MatchRule.EXCLUDE);
+				}
+			}
+		}
 		
 		// Query
 		ActionsQuery aq = new ActionsQuery(plugin);

@@ -128,6 +128,13 @@ public class PrismConfig extends ConfigBase {
 		
 		config.addDefault("prism.track-player-ip-on-join", false);
 		
+		List<String> ignoreActionsForInspect = new ArrayList<String>();
+		ignoreActionsForInspect.add("player-chat");
+		ignoreActionsForInspect.add("player-command");
+		ignoreActionsForInspect.add("player-join");
+		ignoreActionsForInspect.add("player-quit");
+		config.addDefault("prism.wands.inspect.ignore-actions", ignoreActionsForInspect);
+		
 		List<String> doNotTrackCommand = new ArrayList<String>();
 		doNotTrackCommand.add("vanish");
 		doNotTrackCommand.add("v");
