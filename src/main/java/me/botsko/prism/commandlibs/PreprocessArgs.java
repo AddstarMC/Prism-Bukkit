@@ -171,8 +171,8 @@ public class PreprocessArgs {
 							respond( sender, plugin.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 							return null;
 						}
-						if(radius > plugin.getConfig().getInt("prism.max-radius-unless-overridden")){
-							radius = plugin.getConfig().getInt("prism.max-radius-unless-overridden");
+						if(radius > plugin.getConfig().getInt("prism.queries.max-radius-unless-overridden")){
+							radius = plugin.getConfig().getInt("prism.queries.max-radius-unless-overridden");
 							respond( sender, plugin.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
 						}
 						if(radius > 0){
@@ -197,7 +197,7 @@ public class PreprocessArgs {
 						
 						// User has asked for a global radius
 						else if(val.equals("global")){
-							if(plugin.getConfig().getBoolean("prism.limit-global-radius-override-to-lookups")){
+							if(plugin.getConfig().getBoolean("prism.queries.limit-global-radius-override-to-lookups")){
 								if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
 									parameters.setAllowNoRadius(true);
 								} else {
@@ -336,13 +336,13 @@ public class PreprocessArgs {
 			/**
 			 * Enforce defaults, unless we're doing a delete or they've been disabled in the config
 			 */
-			if( !processType.equals(PrismProcessType.DELETE) && !plugin.getConfig().getBoolean("prism.never-use-query-defaults") ){
+			if( !processType.equals(PrismProcessType.DELETE) && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") ){
 				// Radius default
 				if(!foundArgs.containsKey("r")){
 					if(parameters.allowsNoRadius()){
 						// We'll allow no radius.
 					} else {
-						parameters.setRadius( plugin.getConfig().getInt("prism.default-radius") );
+						parameters.setRadius( plugin.getConfig().getInt("prism.queries.default-radius") );
 						parameters.addDefaultUsed( "r:" + parameters.getRadius() );
 					}
 				}
@@ -354,18 +354,18 @@ public class PreprocessArgs {
 				}
 				// Time default
 				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){
-					String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.default-time-since"));
+					String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.queries.default-time-since"));
 					if(date == null){
 						plugin.log("Error - date range configuration for prism.time-since is not valid");
 						date = translateTimeStringToDate(plugin,sender,"3d");
 					}
 					parameters.setSinceTime(date);
-					parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.default-time-since") );
+					parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.queries.default-time-since") );
 				}
 			}
 			
 			// Player location
-			if( player != null && !plugin.getConfig().getBoolean("prism.never-use-query-defaults") ){
+			if( player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") ){
 				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 			}
 			

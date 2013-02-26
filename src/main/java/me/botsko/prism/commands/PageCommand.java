@@ -76,7 +76,7 @@ public class PageCommand implements SubHandler {
 				if(paginated != null){
 					for(Action a : paginated){
 						ActionMessage am = new ActionMessage(a);
-						if( results.getParameters().allowsNoRadius() || results.getParameters().hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extended") ){
+						if( results.getParameters().allowsNoRadius() || results.getParameters().hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 							am.showExtended();
 						}
 						call.getSender().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );

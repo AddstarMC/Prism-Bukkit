@@ -33,48 +33,71 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.notify-newer-versions", true);
 		config.addDefault("prism.allow-metrics", true);
 			
+		// Database
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
-		// Some finer configs we hope people don't need to mess with
 		config.addDefault("prism.database.max-pool-connections", 20);
 		config.addDefault("prism.database.max-wait", 30000);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
+		// Mysql
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
 		config.addDefault("prism.mysql.username", "root");
 		config.addDefault("prism.mysql.password", "");
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
-		config.addDefault("prism.default-radius", 5);
-		config.addDefault("prism.default-time-since", "3d");
-		config.addDefault("prism.max-radius-unless-overridden", 100);
-		config.addDefault("prism.never-use-query-defaults", false);
+		// Wands
+		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
+		config.addDefault("prism.wands.default-item-mode-id", "280:0");
+		config.addDefault("prism.wands.default-block-mode-id", "17:1");
+		config.addDefault("prism.wands.auto-equip", true);
+		List<String> ignoreActionsForInspect = new ArrayList<String>();
+		ignoreActionsForInspect.add("player-chat");
+		ignoreActionsForInspect.add("player-command");
+		ignoreActionsForInspect.add("player-join");
+		ignoreActionsForInspect.add("player-quit");
+		config.addDefault("prism.wands.inspect.ignore-actions", ignoreActionsForInspect);
 		
-		config.addDefault("prism.limit-global-radius-override-to-lookups", true);
-		config.addDefault("prism.always-show-extended", false);
+		// Queries
+		config.addDefault("prism.queries.default-radius", 5);
+		config.addDefault("prism.queries.default-time-since", "3d");
+		config.addDefault("prism.queries.max-radius-unless-overridden", 100);
+		config.addDefault("prism.queries.never-use-defaults", false);
+		config.addDefault("prism.queries.limit-global-radius-override-to-lookups", true);
 		
+		// Messenger
+		config.addDefault("prism.messenger.always-show-extended", false);
+		
+		// Near
 		config.addDefault("prism.near.default-radius", 5);
+		
+		// Drain
 		config.addDefault("prism.drain.max-radius", 10);
 		config.addDefault("prism.drain.default-radius", 5);
 		
+		// Ex
 		config.addDefault("prism.ex.max-radius", 100);
 		config.addDefault("prism.ex.default-radius", 10);
 		
+		// Ignore
 		config.addDefault("prism.ignore.players-in-creative", false);
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
 		
+		// Purge
 		List<String> purgeRules = new ArrayList<String>();
 		purgeRules.add("before:8w");
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
 		
+		// Appliers
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
 		
+		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
 		config.addDefault("prism.tracking.block-fade", true);
@@ -136,29 +159,19 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.world-edit", false);
 		config.addDefault("prism.tracking.xp-pickup", false);
 		
-		config.addDefault("prism.track-player-ip-on-join", false);
+		// Tracker configs
+			config.addDefault("prism.track-player-ip-on-join", false);
+
+			List<String> doNotTrackCommand = new ArrayList<String>();
+			doNotTrackCommand.add("vanish");
+			doNotTrackCommand.add("v");
+			doNotTrackCommand.add("login");
+			doNotTrackCommand.add("changepassword");
+			doNotTrackCommand.add("register");
+			doNotTrackCommand.add("unregister");
+			config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
 		
-		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
-		config.addDefault("prism.wands.default-item-mode-id", "280:0");
-		config.addDefault("prism.wands.default-block-mode-id", "17:1");
-		config.addDefault("prism.wands.auto-equip", true);
-		
-		List<String> ignoreActionsForInspect = new ArrayList<String>();
-		ignoreActionsForInspect.add("player-chat");
-		ignoreActionsForInspect.add("player-command");
-		ignoreActionsForInspect.add("player-join");
-		ignoreActionsForInspect.add("player-quit");
-		config.addDefault("prism.wands.inspect.ignore-actions", ignoreActionsForInspect);
-		
-		List<String> doNotTrackCommand = new ArrayList<String>();
-		doNotTrackCommand.add("vanish");
-		doNotTrackCommand.add("v");
-		doNotTrackCommand.add("login");
-		doNotTrackCommand.add("changepassword");
-		doNotTrackCommand.add("register");
-		doNotTrackCommand.add("unregister");
-		config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
-		
+		// Ore Alerts
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.ignore-staff", true);
@@ -171,8 +184,8 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.diamond", true);
 		config.addDefault("prism.alerts.ores.emerald", true);
 		
+		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
-		
 		List<String> illegal_commands = new ArrayList<String>();
 		illegal_commands.add("op");
 		illegal_commands.add("deop");
@@ -180,7 +193,7 @@ public class PrismConfig extends ConfigBase {
 		illegal_commands.add("reload");
 		config.addDefault("prism.alerts.illegal-commands.commands", illegal_commands);
 		
-		// Enable monitoring of item use/placement
+		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
 		config.addDefault("prism.alerts.uses.ignore-staff", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
@@ -197,8 +210,10 @@ public class PrismConfig extends ConfigBase {
 		monitorItems = new ArrayList<String>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
 		
+		// Misc Alerts
 		config.addDefault("prism.alerts.vanilla-xray.enabled", true);
 		
+		// Internal
 		config.addDefault("prism.queue-empty-tick-delay", 3);
 		
 		// Copy defaults
