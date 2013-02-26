@@ -170,8 +170,7 @@ public class ActionRecorder implements Runnable {
     		s.close();
     		conn.close();
         } catch (SQLException e) {
-        	plugin.log("Database connection error: " + e.getMessage());
-	        e.printStackTrace();
+        	plugin.logDbError( e );
         }
 		return id;
 	}
@@ -234,8 +233,7 @@ public class ActionRecorder implements Runnable {
 		        conn.close();
 	    	}
 	    } catch (SQLException e) {
-	    	plugin.log("Database connection error: " + e.getMessage());
-	        e.printStackTrace();
+	    	plugin.logDbError( e );
         }
 	}
 

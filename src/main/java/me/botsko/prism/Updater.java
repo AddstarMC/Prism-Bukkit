@@ -52,7 +52,7 @@ public class Updater {
     		conn.close();
             
         } catch (SQLException e) {
-            e.printStackTrace();
+        	plugin.logDbError( e );
         }
 		return id;
 	}
@@ -82,7 +82,7 @@ public class Updater {
 					s.executeUpdate();
 					s.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					plugin.logDbError( e );
 				}
 			}
 		}
@@ -102,7 +102,7 @@ public class Updater {
 					s.close();
 
 				} catch (SQLException e) {
-					e.printStackTrace();
+					plugin.logDbError( e );
 				}
 			} else {
 				
@@ -148,7 +148,7 @@ public class Updater {
 		try {
 			conn.close();
 		} catch (SQLException e) {
-//			e.printStackTrace();
+			plugin.logDbError( e );
 		}
 		
 		// Save current version
@@ -175,12 +175,12 @@ public class Updater {
 			s.close();
 	
 		} catch (SQLException e) {
-			e.printStackTrace();
+			plugin.logDbError( e );
 		}
 		try {
 			conn.close();
 		} catch (SQLException e) {
-//			e.printStackTrace();
+//			plugin.logDbError( e );
 		}
 	}
 }

@@ -140,7 +140,7 @@ public class Prism extends JavaPlugin {
 					st.executeUpdate("PRAGMA journal_mode = WAL;");
 					st.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logDbError( e );
 				}
 			}
     	}
@@ -148,7 +148,7 @@ public class Prism extends JavaPlugin {
 			try {
 				test_conn.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logDbError( e );
 			}
 		}
 
@@ -625,6 +625,21 @@ public class Prism extends JavaPlugin {
 			}
 			log("--------------------- ## ========= ## ---------------------");
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void logDbError( SQLException e ){
+		log("Database connection error: " + e.getMessage());
+		if(e.getMessage().contains("marked as crashed")){
+			String[] msg = new String[2];
+			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
+			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
+			logSection(msg);
+		}
+		e.printStackTrace();
 	}
 	
 	

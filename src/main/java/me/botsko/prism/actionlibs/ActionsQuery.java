@@ -220,7 +220,7 @@ public class ActionsQuery {
 	    		conn.close();
 	            
 	        } catch (SQLException e) {
-	            e.printStackTrace();
+	            plugin.logDbError( e );
 	        }
 		}
 		
@@ -275,7 +275,7 @@ public class ActionsQuery {
     		conn.close();
             
         } catch (SQLException e) {
-            e.printStackTrace();
+        	plugin.logDbError( e );
         }
 		return id;
 	}
@@ -316,7 +316,7 @@ public class ActionsQuery {
     		conn.close();
             
         } catch (SQLException e) {
-            e.printStackTrace();
+        	plugin.logDbError( e );
         }
 		return process;
 	}
@@ -337,10 +337,7 @@ public class ActionsQuery {
 			s.close();
 			conn.close();
 		} catch (SQLException e) {
-			if( e.getMessage().contains("should be repaired") ){
-				plugin.logSection( new String[]{"If MySQL crashes during write it may corrupt it's indexes.","Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`."} );
-			}
-			e.printStackTrace();
+			plugin.logDbError( e );
 		}
 		return rows_affected;
 	}
