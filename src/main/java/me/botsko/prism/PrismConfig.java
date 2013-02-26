@@ -48,9 +48,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.default-radius", 5);
 		config.addDefault("prism.default-time-since", "3d");
 		config.addDefault("prism.max-radius-unless-overridden", 100);
+		config.addDefault("prism.never-use-query-defaults", false);
 		
 		config.addDefault("prism.limit-global-radius-override-to-lookups", true);
-		config.addDefault("prism.always-show-extemded", false);
+		config.addDefault("prism.always-show-extended", false);
 		
 		config.addDefault("prism.near.default-radius", 5);
 		config.addDefault("prism.drain.max-radius", 10);

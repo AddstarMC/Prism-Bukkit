@@ -68,7 +68,7 @@ public class LookupCommand implements SubHandler {
 			if(paginated != null){
 				for(Action a : paginated){
 					ActionMessage am = new ActionMessage(a);
-					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extemded") ){
+					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.always-show-extended") ){
 						am.showExtended();
 					}
 					call.getSender().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );

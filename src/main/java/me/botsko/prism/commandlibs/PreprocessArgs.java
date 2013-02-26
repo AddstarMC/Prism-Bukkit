@@ -334,9 +334,9 @@ public class PreprocessArgs {
 			}
 			
 			/**
-			 * Enforce defaults, unless we're doing a delete
+			 * Enforce defaults, unless we're doing a delete or they've been disabled in the config
 			 */
-			if( !processType.equals(PrismProcessType.DELETE) ){
+			if( !processType.equals(PrismProcessType.DELETE) && !plugin.getConfig().getBoolean("prism.never-use-query-defaults") ){
 				// Radius default
 				if(!foundArgs.containsKey("r")){
 					if(parameters.allowsNoRadius()){
@@ -365,7 +365,7 @@ public class PreprocessArgs {
 			}
 			
 			// Player location
-			if(player != null){
+			if( player != null && !plugin.getConfig().getBoolean("prism.never-use-query-defaults") ){
 				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 			}
 			
