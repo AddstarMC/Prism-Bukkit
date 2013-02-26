@@ -76,7 +76,7 @@ public class PrismEntityEvents implements Listener {
 		
 		// Mob Death
 		if(!(entity instanceof Player)){
-			if( !plugin.getConfig().getBoolean("prism.tracking.entity-kill") ) return;
+			if( !plugin.getConfig().getBoolean("prism.tracking.entity-kill") && !plugin.getConfig().getBoolean("prism.tracking.player-kill") ) return;
 			if(entity.getLastDamageCause() instanceof EntityDamageByEntityEvent){
 				
 				// Mob killed by player
@@ -84,17 +84,17 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.PLAYER_KILL, entity, player.getName()) );
 					return;
 		        	
 				}
-				// Mob shot by an arrow
+				// Mob shot by an arrow from a player
 				else if(entityDamageByEntityEvent.getDamager() instanceof Arrow){
 					Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.PLAYER_KILL, entity, player.getName()) );
 						return;
 			        	
 					}

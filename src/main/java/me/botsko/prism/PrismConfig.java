@@ -120,6 +120,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.player-command", false);
 		config.addDefault("prism.tracking.player-death", true);
 		config.addDefault("prism.tracking.player-join", false);
+		config.addDefault("prism.tracking.player-kill", true);
 		config.addDefault("prism.tracking.player-quit", false);
 		config.addDefault("prism.tracking.player-teleport", false);
 		config.addDefault("prism.tracking.potion-splash", true);
