@@ -337,6 +337,9 @@ public class ActionsQuery {
 			s.close();
 			conn.close();
 		} catch (SQLException e) {
+			if( e.getMessage().contains("should be repaired") ){
+				plugin.logSection( new String[]{"If MySQL crashes during write it may corrupt it's indexes.","Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`."} );
+			}
 			e.printStackTrace();
 		}
 		return rows_affected;
