@@ -97,6 +97,8 @@ public class ActionsQuery {
 	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
 	    		while(rs.next()){
+	    			
+	    			if( rs.getString(3) == null ) continue;
 
 	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
