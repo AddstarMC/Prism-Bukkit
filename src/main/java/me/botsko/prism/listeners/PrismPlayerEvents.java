@@ -297,8 +297,8 @@ public class PrismPlayerEvents implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 
-		// Are they using a wand?
-		if( plugin.playersWithActiveTools.containsKey(player.getName())){
+		// Are they using a wand (or do we always allow it)
+		if( plugin.playersWithActiveTools.containsKey(player.getName()) ){
 			
 			// Item to use
 			int item_id = 0;

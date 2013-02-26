@@ -136,13 +136,10 @@ public class PrismConfig extends ConfigBase {
 		
 		config.addDefault("prism.track-player-ip-on-join", false);
 		
-		
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
 		config.addDefault("prism.wands.default-item-mode-id", "280:0");
 		config.addDefault("prism.wands.default-block-mode-id", "17:1");
 		config.addDefault("prism.wands.auto-equip", true);
-		
-//		config.addDefault("prism.wands.inspect.always-on", false);
 		
 		List<String> ignoreActionsForInspect = new ArrayList<String>();
 		ignoreActionsForInspect.add("player-chat");
