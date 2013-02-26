@@ -52,15 +52,16 @@ public class PrismBlockEditSession extends EditSession {
 	 * 
 	 */
 	@Override
-	public boolean rawSetBlock(Vector pt, BaseBlock block) {
-		if (!(player.getWorld() instanceof BukkitWorld)) {
+	public boolean rawSetBlock(Vector pt, BaseBlock block){
+		if ( !(player.getWorld() instanceof BukkitWorld) || !Prism.config.getBoolean("prism.tracking.world-edit") ) {
 			return super.rawSetBlock(pt, block);
 		}
 		int typeBefore = ((BukkitWorld) player.getWorld()).getWorld().getBlockTypeIdAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
+		byte dataBefore = ((BukkitWorld) player.getWorld()).getWorld().getBlockAt(pt.getBlockX(), pt.getBlockY(), pt.getBlockZ()).getData();
 		boolean success = super.rawSetBlock(pt, block);
 		if (success) {
 			Location loc = new Location(Bukkit.getWorld(player.getWorld().getName()), pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-			Prism.actionsRecorder.addToQueue( new WorldeditAction(ActionType.WORLD_EDIT, loc, typeBefore, 0, loc.getBlock().getTypeId(), loc.getBlock().getData(), player.getName()) );
+			Prism.actionsRecorder.addToQueue( new WorldeditAction(ActionType.WORLD_EDIT, loc, typeBefore, dataBefore, loc.getBlock().getTypeId(), loc.getBlock().getData(), player.getName()) );
 		}
 		return success;
 	}

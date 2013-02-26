@@ -65,7 +65,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public Prism prism;
 	public Messenger messenger;
-	public FileConfiguration config;
+	public static FileConfiguration config;
 	public WorldEditPlugin plugin_worldEdit = null;
 	public static ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
@@ -633,7 +633,7 @@ public class Prism extends JavaPlugin {
 	 * @param message
 	 */
 	public void debug(String message){
-		if(this.config.getBoolean("prism.debug")){
+		if(config.getBoolean("prism.debug")){
 			log.info("["+plugin_name+"]: " + message);
 		}
 	}
