@@ -183,6 +183,7 @@ public class WandCommand implements SubHandler {
 				if( !ItemUtils.moveItemToHand( call.getPlayer().getInventory(), item_id, item_subid) ){
 					ItemUtils.handItemToPlayer(call.getPlayer(),  new ItemStack(item_id,1,item_subid) );
 				}
+				call.getPlayer().updateInventory();
 			}
 		}
 	}

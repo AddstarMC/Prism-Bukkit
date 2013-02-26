@@ -298,16 +298,24 @@ public class PrismPlayerEvents implements Listener {
 		Block block = event.getClickedBlock();
 
 		// Are they using a wand?
-		if( !plugin.getConfig().getString("prism.wands.default-mode").equals("block") && plugin.playersWithActiveTools.containsKey(player.getName())){
+		if( plugin.playersWithActiveTools.containsKey(player.getName())){
 			
 			// Item to use
 			int item_id = 0;
 			byte item_subid = 0;
 			if( !plugin.getConfig().getString("prism.wands.default-mode").equals("hand") ){
-				String toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
-				String[] toolKeys = toolKey.split(":");
-				item_id = Integer.parseInt(toolKeys[0]);
-				item_subid = Byte.parseByte(toolKeys[1]);
+				String toolKey = null;
+				// Determine the default item
+				if( plugin.getConfig().getString("prism.wands.default-mode").equals("block") ){
+					toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
+				} else {
+					toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
+				}
+				if( toolKey != null){
+					String[] toolKeys = toolKey.split(":");
+					item_id = Integer.parseInt(toolKeys[0]);
+					item_subid = Byte.parseByte(toolKeys[1]);
+				}
 			}
 
 			// Pull the wand in use
@@ -319,7 +327,8 @@ public class PrismPlayerEvents implements Listener {
 					wand.playerLeftClick( player, block );
 				}
 				// Right click is for relative block on blockface
-				if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				// except block placements - those will be handled by the blockplace.
+				if ( event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					block = block.getRelative(event.getBlockFace());
 					wand.playerRightClick( player, block );
 				}

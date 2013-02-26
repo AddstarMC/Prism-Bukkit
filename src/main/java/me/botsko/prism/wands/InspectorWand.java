@@ -39,9 +39,7 @@ public class InspectorWand implements Wand {
 	 * 
 	 */
 	public void playerLeftClick(Player player, Block block) {
-		if( !plugin.getConfig().getString("prism.wands.default-mode").equals("block") ){
-			showBlockHistory(player, block, block.getLocation());
-		}
+		showBlockHistory(player, block, block.getLocation());
 	}
 
 	
@@ -49,9 +47,7 @@ public class InspectorWand implements Wand {
 	 * 
 	 */
 	public void playerRightClick(Player player, Block block) {
-		if( !plugin.getConfig().getString("prism.wands.default-mode").equals("block") ){
-			showBlockHistory(player, block, block.getLocation());
-		}
+		showBlockHistory(player, block, block.getLocation());
 	}
 	
 	
