@@ -182,7 +182,6 @@ public class OreMonitor {
 	
 	
 	/**
-	 * @todo move this to blockutils
 	 * @param currBlock
 	 * @param toBeFelled
 	 */

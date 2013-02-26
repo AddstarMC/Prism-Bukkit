@@ -59,7 +59,7 @@ public class NearCommand implements SubHandler {
 		
 		parameters.setRadius(radius);
 		parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
-		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
+		parameters.setLimit( plugin.getConfig().getInt("prism.near.max-results") );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getPlayer() );

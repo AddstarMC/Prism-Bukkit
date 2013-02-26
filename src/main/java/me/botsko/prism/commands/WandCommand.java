@@ -136,7 +136,6 @@ public class WandCommand implements SubHandler {
 		
 		/**
 		 * Restore wand
-		 * @todo
 		 */
 		else if(type.equalsIgnoreCase("restore")){
 			if( !call.getPlayer().hasPermission("prism.restore") && !call.getPlayer().hasPermission("prism.wand.restore") ){

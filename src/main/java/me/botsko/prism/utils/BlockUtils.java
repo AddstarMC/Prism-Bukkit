@@ -623,7 +623,6 @@ public class BlockUtils {
     
     
     /**
-	 * @todo move this to blockutils
 	 * @param currBlock
 	 * @param toBeFelled
 	 */

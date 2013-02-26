@@ -64,12 +64,14 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.queries.max-radius-unless-overridden", 100);
 		config.addDefault("prism.queries.never-use-defaults", false);
 		config.addDefault("prism.queries.limit-global-radius-override-to-lookups", true);
+		config.addDefault("prism.queries.lookup-max-results", 1000);
 		
 		// Messenger
 		config.addDefault("prism.messenger.always-show-extended", false);
 		
 		// Near
 		config.addDefault("prism.near.default-radius", 5);
+		config.addDefault("prism.near.max-results", 100);
 		
 		// Drain
 		config.addDefault("prism.drain.max-radius", 10);

@@ -45,7 +45,7 @@ public class LookupCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
-		parameters.setLimit(1000); // @todo config this, and move the logic to queryparams
+		parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
 		
 		// determine if defaults were used
 		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
