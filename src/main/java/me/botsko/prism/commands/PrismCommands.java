@@ -59,13 +59,13 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism i
 		 */
-		addSub( new String[]{"inspect","i"}, "prism.lookup")
+		addSub( new String[]{"inspect","i"}, new String[]{"prism.lookup","prism.wand.inspect"})
 		.setHandler(new InspectCommand(prism));
 		
 		/**
 		 * /prism wand
 		 */
-		addSub( new String[]{"wand","w"}, new String[]{"prism.rollback","prism.restore","prism.lookup"} )
+		addSub( new String[]{"wand","w"}, new String[]{"prism.rollback","prism.restore","prism.lookup","prism.wand.inspect","prism.wand.profile","prism.wand.rollback","prism.wand.restore"} )
 		.setHandler(new WandCommand(prism));
 		
 		/**

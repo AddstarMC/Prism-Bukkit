@@ -53,7 +53,7 @@ public class WandCommand implements SubHandler {
 		 * Inspector wand
 		 */
 		if( type.equalsIgnoreCase("i") ){
-			if( !call.getPlayer().hasPermission("prism.lookup") ){
+			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.inspect") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
@@ -73,7 +73,7 @@ public class WandCommand implements SubHandler {
 		 * Profile wand
 		 */
 		else if( type.equalsIgnoreCase("p") ){
-			if( !call.getPlayer().hasPermission("prism.lookup") ){
+			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.profile") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
@@ -94,7 +94,7 @@ public class WandCommand implements SubHandler {
 		 * Rollback wand
 		 */
 		else if( type.equalsIgnoreCase("rollback") ){
-			if( !call.getPlayer().hasPermission("prism.rollback") ){
+			if( !call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.wand.rollback") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
@@ -115,7 +115,7 @@ public class WandCommand implements SubHandler {
 		 * @todo
 		 */
 		else if(type.equalsIgnoreCase("restore")){
-			if( !call.getPlayer().hasPermission("prism.restore") ){
+			if( !call.getPlayer().hasPermission("prism.restore") && !call.getPlayer().hasPermission("prism.wand.restore") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
