@@ -1,7 +1,10 @@
 package me.botsko.prism.commands;
 
+import java.util.HashMap;
+
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -77,6 +80,7 @@ public class WandCommand implements SubHandler {
 		}
 		
 		boolean enabled = false;
+		Wand wand = null;
 			
 		/**
 		 * Inspector wand
@@ -86,17 +90,13 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
-			if(oldwand != null){
-				// If disabling this one
-				if( oldwand instanceof InspectorWand ){
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
-					return;
-				}
+			if(oldwand != null && oldwand instanceof InspectorWand){
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			} else {
+				wand = new InspectorWand( plugin );
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				enabled = true;
 			}
-			InspectorWand wand = new InspectorWand( plugin );
-			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
-			enabled = true;
 		}
 		
 		/**
@@ -107,17 +107,13 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
-			if(oldwand != null){
-				// If disabling this one
-				if( oldwand instanceof ProfileWand ){
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
-					return;
-				}
+			if( oldwand != null && oldwand instanceof ProfileWand ){
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			} else {
+				wand = new ProfileWand( plugin );
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				enabled = true;
 			}
-			ProfileWand wand = new ProfileWand( plugin );
-			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
-			enabled = true;
 		}
 
 		
@@ -129,17 +125,13 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
-			if(oldwand != null){
-				// If disabling this one
-				if( oldwand instanceof RollbackWand ){
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
-					return;
-				}
+			if(oldwand != null && oldwand instanceof RollbackWand){
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			} else {
+				wand = new RollbackWand( plugin );
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				enabled = true;
 			}
-			RollbackWand wand = new RollbackWand( plugin );
-			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
-			enabled = true;
 		}
 		
 		/**
@@ -151,17 +143,14 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
 				return;
 			}
-			if(oldwand != null){
-				// If disabling this one
-				if( oldwand instanceof RestoreWand ){
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
-					return;
-				}
+			// If disabling this one
+			if(oldwand != null && oldwand instanceof RestoreWand){
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			} else {
+				wand = new RestoreWand( plugin );
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				enabled = true;
 			}
-			RestoreWand wand = new RestoreWand( plugin );
-			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
-			enabled = true;
 		}
 		
 		/**
@@ -176,14 +165,36 @@ public class WandCommand implements SubHandler {
 			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid wand type. Use /prism ? for help.") );
 		}
 		
-		
+		PlayerInventory inv = call.getPlayer().getInventory();
 		if( enabled ){
+			
 			// Move any existing item to the hand, otherwise give it to them
 			if( plugin.getConfig().getBoolean("prism.wands.auto-equip") ){
-				if( !ItemUtils.moveItemToHand( call.getPlayer().getInventory(), item_id, item_subid) ){
-					ItemUtils.handItemToPlayer(call.getPlayer(),  new ItemStack(item_id,1,item_subid) );
+				if( !ItemUtils.moveItemToHand( inv, item_id, item_subid) ){
+					// They don't have the item, so we need to give them an item
+					if( ItemUtils.handItemToPlayer( inv,  new ItemStack(item_id,1,item_subid) ) ){
+						wand.setItemWasGiven(true);
+					} else {
+						call.getPlayer().sendMessage( plugin.messenger.playerError("Can't fit the wand item into your inventory.") );
+					}
 				}
 				call.getPlayer().updateInventory();
+			}
+			// Store
+			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
+		} else {
+			if( oldwand.itemWasGiven() ){
+				int itemSlot = -1;
+				// Likely is what they're holding
+				if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
+					itemSlot = inv.getHeldItemSlot();
+				} else {
+					itemSlot = ItemUtils.playerInventoryHasItem(inv, item_id, item_subid);
+				}
+				if( itemSlot > -1 ){
+					ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
+					call.getPlayer().updateInventory();
+				}
 			}
 		}
 	}

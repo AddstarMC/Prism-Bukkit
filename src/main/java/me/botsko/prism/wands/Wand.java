@@ -25,5 +25,19 @@ public interface Wand {
 	 * @param entity
 	 */
 	public void playerRightClick(Player player, Entity entity);
+	
+	
+	/**
+	 * 
+	 * @param given
+	 */
+	public void setItemWasGiven( boolean given );
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean itemWasGiven();
 
 }

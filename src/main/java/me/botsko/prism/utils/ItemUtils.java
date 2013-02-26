@@ -51,6 +51,10 @@ public class ItemUtils {
 		if( slot > -1 ){
 			ItemStack item = inv.getItem(slot);
 			inv.clear(slot);
+			// If the player has an item in-hand, switch to a vacant spot
+			if( !playerHasEmptyHand(inv) ){
+				inv.setItem(slot, inv.getItemInHand());
+			}
 			inv.setItemInHand(item);
 			return true;
 		}
@@ -60,11 +64,11 @@ public class ItemUtils {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param inv
+	 * @return
 	 */
-	public static HashMap<Integer,ItemStack> giveItemToPlayer( Player player, ItemStack item ){
-		return player.getInventory().addItem(item);
-		
+	public static boolean playerHasEmptyHand( PlayerInventory inv ){
+		return (inv.getItemInHand().getTypeId() == 0);
 	}
 	
 	
@@ -72,8 +76,43 @@ public class ItemUtils {
 	 * 
 	 * @param player
 	 */
-	public static void handItemToPlayer( Player player, ItemStack item ){
-		player.getInventory().setItemInHand(item);
+	public static HashMap<Integer,ItemStack> giveItemToPlayer( PlayerInventory inv, ItemStack item ){
+		return inv.addItem(item);
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public static boolean handItemToPlayer( PlayerInventory inv, ItemStack item ){
+		// Ensure there's at least one empty inv spot
+		if( inv.firstEmpty() != -1 ){
+			// If the player has an item in-hand, switch to a vacant spot
+			if( !playerHasEmptyHand( inv ) ){
+				giveItemToPlayer( inv, inv.getItemInHand() );
+			}
+			inv.setItemInHand(item);
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param inv
+	 * @param slot
+	 * @param quant
+	 */
+	public static void subtractAmountFromPlayerInvSlot( PlayerInventory inv, int slot, int quant ){
+		ItemStack itemAtSlot = inv.getItem(slot);
+		if( itemAtSlot != null && quant <= 64 ){
+			itemAtSlot.setAmount( itemAtSlot.getAmount() - quant );
+			if( itemAtSlot.getAmount() == 0 ){
+				inv.clear(slot);
+			}
+		}
 	}
 	
 	
