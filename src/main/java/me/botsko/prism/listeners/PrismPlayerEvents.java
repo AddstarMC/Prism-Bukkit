@@ -298,11 +298,21 @@ public class PrismPlayerEvents implements Listener {
 		Block block = event.getClickedBlock();
 
 		// Are they using a wand?
-		if(plugin.playersWithActiveTools.containsKey(player.getName())){
+		if( !plugin.getConfig().getString("prism.wands.default-mode").equals("block") && plugin.playersWithActiveTools.containsKey(player.getName())){
+			
+			// Item to use
+			int item_id = 0;
+			byte item_subid = 0;
+			if( !plugin.getConfig().getString("prism.wands.default-mode").equals("hand") ){
+				String toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
+				String[] toolKeys = toolKey.split(":");
+				item_id = Integer.parseInt(toolKeys[0]);
+				item_subid = Byte.parseByte(toolKeys[1]);
+			}
 
 			// Pull the wand in use
 			Wand wand = plugin.playersWithActiveTools.get(player.getName());
-			if(wand != null && player.getItemInHand().getTypeId() == 0){
+			if(wand != null && player.getItemInHand().getTypeId() == item_id && player.getItemInHand().getDurability() == item_subid){
 				
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {

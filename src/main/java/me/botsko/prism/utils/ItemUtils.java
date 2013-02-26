@@ -1,12 +1,16 @@
 package me.botsko.prism.utils;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import me.botsko.prism.MaterialAliases;
 
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,6 +18,77 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemUtils {
+	
+	
+	/**
+	 * 
+	 * @param inv
+	 * @param item_id
+	 * @param sub_id
+	 * @return
+	 */
+	public static int playerInventoryHasItem( PlayerInventory inv, int item_id, byte sub_id ){
+		int currentSlot = 0;
+		for(ItemStack item : inv.getContents()){
+			if( item != null && item.getTypeId() == item_id && item.getDurability() == sub_id ){
+				return currentSlot;
+			}
+			currentSlot++;
+		}
+		return -1;
+	}
+	
+	
+	/**
+	 * 
+	 * @param inv
+	 * @param item_id
+	 * @param sub_id
+	 * @return
+	 */
+	public static boolean moveItemToHand( PlayerInventory inv, int item_id, byte sub_id ){
+		int slot = playerInventoryHasItem( inv, item_id, sub_id );
+		if( slot > -1 ){
+			ItemStack item = inv.getItem(slot);
+			inv.clear(slot);
+			inv.setItemInHand(item);
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public static HashMap<Integer,ItemStack> giveItemToPlayer( Player player, ItemStack item ){
+		return player.getInventory().addItem(item);
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public static void handItemToPlayer( Player player, ItemStack item ){
+		player.getInventory().setItemInHand(item);
+	}
+	
+	
+	/**
+	 * 
+	 * @param leftovers
+	 * @param player
+	 */
+	public static void dropLeftoverItems( HashMap<Integer,ItemStack> leftovers, Player player ){
+		if(!leftovers.isEmpty()){
+			for (Entry<Integer, ItemStack> entry : leftovers.entrySet()){
+			    player.getWorld().dropItemNaturally(player.getLocation(), entry.getValue());
+			}
+		}
+	}
 	
 	
 	/**
@@ -29,7 +104,6 @@ public class ItemUtils {
 		if(item.getType().name().contains("LEATHER_")){
 			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
 			if(lam.getColor() != null){
-//				item_name += "dyed ("+lam.getColor().asRGB()+") ";
 				item_name += "dyed ";
 			}
 		}
