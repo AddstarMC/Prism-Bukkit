@@ -57,15 +57,9 @@ public class PrismCommands extends Executor {
 		.setHandler(new PageCommand(prism));
 		
 		/**
-		 * /prism i
-		 */
-		addSub( new String[]{"inspect","i"}, new String[]{"prism.lookup","prism.wand.inspect"})
-		.setHandler(new InspectCommand(prism));
-		
-		/**
 		 * /prism wand
 		 */
-		addSub( new String[]{"wand","w"}, new String[]{"prism.rollback","prism.restore","prism.lookup","prism.wand.inspect","prism.wand.profile","prism.wand.rollback","prism.wand.restore"} )
+		addSub( new String[]{"wand","w","i","inspect"}, new String[]{"prism.rollback","prism.restore","prism.lookup","prism.wand.inspect","prism.wand.profile","prism.wand.rollback","prism.wand.restore"} )
 		.setHandler(new WandCommand(prism));
 		
 		/**
