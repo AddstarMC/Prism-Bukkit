@@ -735,6 +735,11 @@ public class BlockUtils {
     		return true;
     	}
     	
+    	// Furnace
+    	if( (id1 == 61 || id1 == 61) && (id2 == 62 || id2 == 62) ){
+    		return true;
+    	}
+    	
     	return false;
     	
     }
