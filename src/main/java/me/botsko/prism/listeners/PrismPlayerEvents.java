@@ -155,7 +155,11 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event){
+		
 		if( !plugin.getConfig().getBoolean("prism.tracking.player-chat") ) return;
+		
+		if( plugin.dependencyEnabled("Herochat") ) return;
+		
 		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_CHAT, event.getMessage(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	

@@ -21,6 +21,7 @@ import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismChannelChatEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
@@ -59,6 +60,7 @@ public class Prism extends JavaPlugin {
 	protected MaterialAliases items;
 	protected Language language;
 	protected Logger log = Logger.getLogger("Minecraft");
+	protected ArrayList<String> enabledPlugins = new ArrayList<String>();
 	
 	/**
 	 * Public
@@ -173,6 +175,11 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
 			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+			
+			// Assign Plugin listeners if enabled
+			if( dependencyEnabled("Herochat") && getConfig().getBoolean("prism.tracking.player-chat") ){
+				getServer().getPluginManager().registerEvents(new PrismChannelChatEvents(this), this);
+			}
 			
 			// Assign listeners to our own events
 	//		getServer().getPluginManager().registerEvents(new PrismRollbackEvents(), this);
@@ -388,6 +395,15 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void checkPluginDependancies(){
+		
+		// HeroChat
+		Plugin herochat = getServer().getPluginManager().getPlugin("Herochat");
+		if (herochat != null){
+			enabledPlugins.add("Herochat");
+			log("HeroChat found. Switching chat listener to HC events");
+		}
+		
+		// WorldEdit
 		Plugin we = getServer().getPluginManager().getPlugin("WorldEdit");
 		if (we != null) {
 			plugin_worldEdit = (WorldEditPlugin)we;
@@ -397,6 +413,15 @@ public class Prism extends JavaPlugin {
 		else {
 			log("WorldEdit not found. Certain optional features of Prism disabled.");
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean dependencyEnabled( String pluginName ){
+		return enabledPlugins.contains( pluginName );
 	}
 	
 	

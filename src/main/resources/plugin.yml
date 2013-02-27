@@ -1,7 +1,7 @@
 name: Prism
 main: me.botsko.prism.Prism
 version: nightly
-softdepend: [WorldEdit]
+softdepend: [WorldEdit,HeroChat]
 default: op
 commands:
    prism:
