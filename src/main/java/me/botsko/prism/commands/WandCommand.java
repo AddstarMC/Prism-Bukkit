@@ -188,7 +188,7 @@ public class WandCommand implements SubHandler {
 				if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
 					itemSlot = inv.getHeldItemSlot();
 				} else {
-					itemSlot = ItemUtils.playerInventoryHasItem(inv, item_id, item_subid);
+					itemSlot = ItemUtils.inventoryHasItem(inv, item_id, item_subid);
 				}
 				if( itemSlot > -1 ){
 					ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );

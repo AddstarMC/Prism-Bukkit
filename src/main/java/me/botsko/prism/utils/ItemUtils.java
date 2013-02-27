@@ -9,6 +9,7 @@ import me.botsko.prism.MaterialAliases;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
@@ -27,7 +28,7 @@ public class ItemUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static int playerInventoryHasItem( PlayerInventory inv, int item_id, byte sub_id ){
+	public static int inventoryHasItem( Inventory inv, int item_id, byte sub_id ){
 		int currentSlot = 0;
 		for(ItemStack item : inv.getContents()){
 			if( item != null && item.getTypeId() == item_id && item.getDurability() == sub_id ){
@@ -47,7 +48,7 @@ public class ItemUtils {
 	 * @return
 	 */
 	public static boolean moveItemToHand( PlayerInventory inv, int item_id, byte sub_id ){
-		int slot = playerInventoryHasItem( inv, item_id, sub_id );
+		int slot = inventoryHasItem( inv, item_id, sub_id );
 		if( slot > -1 ){
 			ItemStack item = inv.getItem(slot);
 			inv.clear(slot);
@@ -76,7 +77,7 @@ public class ItemUtils {
 	 * 
 	 * @param player
 	 */
-	public static HashMap<Integer,ItemStack> giveItemToPlayer( PlayerInventory inv, ItemStack item ){
+	public static HashMap<Integer,ItemStack> addItemToInventory( Inventory inv, ItemStack item ){
 		return inv.addItem(item);
 	}
 	
@@ -90,7 +91,7 @@ public class ItemUtils {
 		if( inv.firstEmpty() != -1 ){
 			// If the player has an item in-hand, switch to a vacant spot
 			if( !playerHasEmptyHand( inv ) ){
-				giveItemToPlayer( inv, inv.getItemInHand() );
+				addItemToInventory( inv, inv.getItemInHand() );
 			}
 			inv.setItemInHand(item);
 			return true;

@@ -146,7 +146,7 @@ public class PrismCommands extends Executor {
 		.setHandler(new SubHandler() {
             public void handle(CallInfo call) {
             	prism.reloadConfig();
-            	prism.config = plugin.getConfig();
+            	Prism.config = plugin.getConfig();
 				call.getSender().sendMessage( prism.messenger.playerHeaderMsg("Configuration reloaded successfully.") );
             }
 		});

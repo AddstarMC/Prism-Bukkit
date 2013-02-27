@@ -27,6 +27,7 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 
@@ -55,6 +56,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 public class Preview implements Previewable {
@@ -688,30 +690,49 @@ public class Preview implements Previewable {
 					 */
 					if(a instanceof ItemStackAction){
 						
-						ItemStackAction b = (ItemStackAction) a;
+						if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
 						
-						Block block = world.getBlockAt(loc);
-						if(block.getType().equals(Material.CHEST)){
-							Chest container = (Chest) block.getState();
+							ItemStackAction b = (ItemStackAction) a;
 							
-							// If item was removed, put it back.
-							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
-								HashMap<Integer,ItemStack> leftovers = container.getInventory().addItem( b.getItem() );
-								changes_applied_count++;
-								if(leftovers.size() > 0){
-									// @todo
-								}
+							Block block = world.getBlockAt(loc);
+							InventoryHolder container = null;
+							if(block.getType().equals(Material.CHEST)){
+								container = (Chest) block.getState();
 							}
-						}
-						if( block.getType().equals(Material.DISPENSER) ){
-							Dispenser container = (Dispenser) block.getState();
+							else if( block.getType().equals(Material.DISPENSER) ){
+								container = (Dispenser) block.getState();
+							}
 							
-							// If item was removed, put it back.
-							if(plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")){
-								HashMap<Integer,ItemStack> leftovers = container.getInventory().addItem( b.getItem() );
-								changes_applied_count++;
-								if(leftovers.size() > 0){
-									// @todo
+							if(container != null){
+								
+								// Rolling back a:remove should place the item into the inventory
+								// Restoring a:insert should place the item into the inventory
+								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().equals(ActionType.ITEM_REMOVE ))
+									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_INSERT )) ){
+									HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), b.getItem());
+									if(leftovers.size() > 0){
+										skipped_block_count++;
+										plugin.debug("Item placement into container skipped because chest was full.");
+									} else {
+										changes_applied_count++;
+									}
+								}
+								
+								// Rolling back a:insert should remove the item from the inventory
+								// Restoring a:remove should remove the item from the inventory
+								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().equals(ActionType.ITEM_INSERT ))
+									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_REMOVE )) ){
+										
+									// does inventory have item?
+									
+									int slot = ItemUtils.inventoryHasItem( container.getInventory(), b.getItem().getTypeId(), (byte)b.getItem().getDurability());
+									if(slot > -1){
+										container.getInventory().removeItem(b.getItem());
+										changes_applied_count++;
+									} else {
+										plugin.debug("Item removal from container skipped because it's not inside.");
+										skipped_block_count++;
+									}
 								}
 							}
 						}
