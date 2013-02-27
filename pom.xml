@@ -25,6 +25,13 @@
             <artifactId>commons-dbcp</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+		   <groupId>org.dthielke</groupId>
+		   <artifactId>Herochat</artifactId>
+		   <version>5.6.5</version>
+		   <scope>system</scope>
+		   <systemPath>${project.basedir}/../LIBS/Herochat.jar</systemPath>
+	   </dependency>
 	</dependencies>
 	<repositories>
 		<repository>
