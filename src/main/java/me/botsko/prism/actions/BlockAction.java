@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.SkullType;
@@ -60,7 +61,7 @@ public class BlockAction extends GenericAction {
 				actionData = signActionData;
 			}
 			
-			actionData.block_id = block.getTypeId();
+			actionData.block_id = BlockUtils.blockIdMustRecordAs( block.getTypeId() );
 			actionData.block_subid = block.getData();
 			this.world_name = block.getWorld().getName();
 			this.x = block.getLocation().getX();

@@ -693,6 +693,28 @@ public class BlockUtils {
     
     
     /**
+     * There are some blocks that are broken in an "on" state. Rather
+     * than record the on state we need to record the off state, something that
+     * is available to players.
+     * 
+     * Example: Player breaks a furnce mid-smelt. The block broken is 
+     * "Burning Furance #62", which means we'll restore block 62 which
+     * was not meant to be permanent.
+     * 
+     * 
+     * @param block_id
+     * @return
+     */
+    public static int blockIdMustRecordAs( int block_id ){
+    	// Burning Furnace -> Furnace
+    	if( block_id == 62 ){
+    		return 61;
+    	}
+    	return block_id;
+    }
+    
+    
+    /**
      * There are several items that are officially different
      * ItemStacks, but for the purposes of what we're doing
      * are really considered one core item. This attempts
@@ -715,7 +737,7 @@ public class BlockUtils {
     		return true;
     	}
     	
-    	// Water
+    	// Lava
     	if( (id1 == 10 || id1 == 11) && (id2 == 10 || id2 == 11) ){
     		return true;
     	}
