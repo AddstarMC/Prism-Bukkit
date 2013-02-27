@@ -108,18 +108,14 @@ public class PrismInventoryEvents implements Listener {
 	    		}
 	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
 			    	recordInvAction( currentitem, event.getRawSlot(), ActionType.ITEM_REMOVE);
-			    	plugin.debug("ITEM REMOVE: " + event.getSlot());
-			    	plugin.debug("ITEM REMOVE RAW SLOT: " + event.getRawSlot());
 			    }
 	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 			    	recordInvAction( cursoritem, event.getRawSlot(), ActionType.ITEM_INSERT);
-			    	plugin.debug("ITEM INSERT: " + event.getSlot());
-			    	plugin.debug("ITEM INSERT RAW SLOT: " + event.getRawSlot());
 			    }
 	    	}
 	    	// this triggers whether it's a shift click or not
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		recordInvAction( currentitem, event.getRawSlot(), ActionType.ITEM_INSERT);
+	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 	    	}
 	    }
 	    
@@ -139,7 +135,7 @@ public class PrismInventoryEvents implements Listener {
 			    }
 	    	}
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		recordInvAction( currentitem, event.getRawSlot(), ActionType.ITEM_INSERT);
+	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 	    	}
 	    }
 	    
@@ -176,7 +172,7 @@ public class PrismInventoryEvents implements Listener {
 				// Otherwise the player has to be clicking in their inventory. We'd record the insert
 				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
 				if( event.isShiftClick() ){
-		    		recordInvAction( currentitem, event.getRawSlot(), ActionType.ITEM_INSERT);
+		    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 				}
 			}
 		}
