@@ -91,6 +91,11 @@ public class PrismInventoryEvents implements Listener {
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
 	    
+	    plugin.debug("Raw slot: " + event.getRawSlot());
+	    plugin.debug("Slot: " + event.getSlot());
+	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
+	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
+	    
 
 	    // Chest
 	    // If the slot type is <= 35 and rawslot >= 36, it means we're shift+clicking an item into
@@ -112,8 +117,8 @@ public class PrismInventoryEvents implements Listener {
 	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 			    	recordInvAction( cursoritem, event.getRawSlot(), ActionType.ITEM_INSERT);
 			    }
+	    		return;
 	    	}
-	    	// this triggers whether it's a shift click or not
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
 	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 	    	}
@@ -133,6 +138,7 @@ public class PrismInventoryEvents implements Listener {
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 			    	recordInvAction( cursoritem, event.getRawSlot(), ActionType.ITEM_INSERT);
 			    }
+			    return;
 	    	}
 	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
 	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
@@ -150,6 +156,10 @@ public class PrismInventoryEvents implements Listener {
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 			    	recordInvAction( cursoritem, event.getRawSlot(), ActionType.ITEM_INSERT);
 			    }
+			    return;
+	    	}
+	    	if( event.isShiftClick() ){
+	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 	    	}
 	    }
 	    
@@ -191,6 +201,10 @@ public class PrismInventoryEvents implements Listener {
 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
 			    	recordInvAction( cursoritem, event.getRawSlot(), ActionType.ITEM_INSERT);
 			    }
+			    return;
+	    	}
+			if( event.isShiftClick() ){
+	    		recordInvAction( currentitem, -1, ActionType.ITEM_INSERT);
 	    	}
 		}
 	}
