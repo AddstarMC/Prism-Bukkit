@@ -29,6 +29,7 @@ public class ItemStackAction extends GenericAction {
 		public String[] enchs;
 		public String by;
 		public String title;
+		public int slot = -1;
 	}
 	
 	/**
@@ -57,7 +58,7 @@ public class ItemStackAction extends GenericAction {
 	 * @param player_name
 	 */
 	public ItemStackAction( ActionType action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
-		this(action_type,item,1,enchantments,loc,player_name);
+		this(action_type,item,1,-1,enchantments,loc,player_name);
 	}
 	
 	
@@ -67,7 +68,7 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
+	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
 		
 		super(action_type, player_name);
 		
@@ -92,6 +93,9 @@ public class ItemStackAction extends GenericAction {
 			actionData.block_id = item.getTypeId();
 			actionData.block_subid = item.getDurability();
 			actionData.amt = quantity;
+			if(slot >= 0){
+				actionData.slot = slot;
+			}
 			
 			// Set additional data all items may have
 			ItemMeta meta = item.getItemMeta();
@@ -338,6 +342,14 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ItemStackActionData getActionData(){
+		return this.actionData;
 	}
 
 	

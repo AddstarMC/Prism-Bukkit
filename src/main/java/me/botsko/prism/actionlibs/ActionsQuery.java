@@ -139,7 +139,7 @@ public class ActionsQuery {
 	    				baseAction = ha;
 	    			}
 	    			else if( actionType.requiresHandler("itemstack") ){
-	    				ItemStackAction isa = new ItemStackAction(null, null, 0, null, null, null);
+	    				ItemStackAction isa = new ItemStackAction(null, null, 0, -1, null, null, null);
 	    				baseAction = isa;
 	    			}
 	    			else if( actionType.requiresHandler("player") ){

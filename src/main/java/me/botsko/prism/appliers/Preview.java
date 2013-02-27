@@ -39,9 +39,11 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
@@ -56,6 +58,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Wolf;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -702,19 +705,43 @@ public class Preview implements Previewable {
 							else if( block.getType().equals(Material.DISPENSER) ){
 								container = (Dispenser) block.getState();
 							}
+							else if( block.getType().equals(Material.FURNACE) ){
+								container = (Furnace) block.getState();
+							}
+							else if( block.getType().equals(Material.BREWING_STAND) ){
+								container = (BrewingStand) block.getState();
+							}
 							
 							if(container != null){
+								
+								Inventory inv = container.getInventory();
 								
 								// Rolling back a:remove should place the item into the inventory
 								// Restoring a:insert should place the item into the inventory
 								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().equals(ActionType.ITEM_REMOVE ))
 									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_INSERT )) ){
-									HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), b.getItem());
-									if(leftovers.size() > 0){
-										skipped_block_count++;
-										plugin.debug("Item placement into container skipped because chest was full.");
-									} else {
-										changes_applied_count++;
+									
+									boolean added = false;
+									
+									// We'll attempt to put it back in the same slot
+									if( b.getActionData().slot >= 0 ){
+										ItemStack currentSlotItem = inv.getItem( b.getActionData().slot );
+										// Make sure nothing's there.
+										if( currentSlotItem == null ){
+											changes_applied_count++;
+											added = true;
+											inv.setItem(b.getActionData().slot, b.getItem());
+										}
+									}
+									// If that failed we'll attempt to put it anywhere
+									if( !added ){
+										HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), b.getItem());
+										if(leftovers.size() > 0){
+											skipped_block_count++;
+											plugin.debug("Item placement into container skipped because container was full.");
+										} else {
+											changes_applied_count++;
+										}
 									}
 								}
 								
@@ -724,14 +751,29 @@ public class Preview implements Previewable {
 									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_REMOVE )) ){
 										
 									// does inventory have item?
+									boolean removed = false;
 									
-									int slot = ItemUtils.inventoryHasItem( container.getInventory(), b.getItem().getTypeId(), (byte)b.getItem().getDurability());
-									if(slot > -1){
-										container.getInventory().removeItem(b.getItem());
-										changes_applied_count++;
-									} else {
-										plugin.debug("Item removal from container skipped because it's not inside.");
-										skipped_block_count++;
+									// We'll attempt to take it from the same slot
+									if( b.getActionData().slot >= 0 ){
+										ItemStack currentSlotItem = inv.getItem( b.getActionData().slot );
+										// Make sure something's there.
+										if( currentSlotItem != null ){
+											currentSlotItem.setAmount( currentSlotItem.getAmount() - b.getItem().getAmount() );
+											changes_applied_count++;
+											removed = true;
+											inv.setItem(b.getActionData().slot, currentSlotItem);
+										}
+									}
+									// If that failed we'll attempt to take it from anywhere
+									if( !removed ){
+										int slot = ItemUtils.inventoryHasItem( container.getInventory(), b.getItem().getTypeId(), (byte)b.getItem().getDurability());
+										if(slot > -1){
+											container.getInventory().removeItem(b.getItem());
+											changes_applied_count++;
+										} else {
+											plugin.debug("Item removal from container skipped because it's not inside.");
+											skipped_block_count++;
+										}
 									}
 								}
 							}

@@ -167,7 +167,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-drop") ) return;
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -178,7 +178,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-pickup") ) return;
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -283,7 +283,7 @@ public class PrismPlayerEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.craft-item") ) return;
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getRecipe().getResult();
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.CRAFT_ITEM, item, item.getAmount(), null, player.getLocation(), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.CRAFT_ITEM, item, item.getAmount(), -1, null, player.getLocation(), player.getName()) );
 	}
 	
 	

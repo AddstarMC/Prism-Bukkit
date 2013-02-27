@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
@@ -38,6 +39,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Bed;
@@ -60,36 +62,33 @@ public class PrismBlockEvents implements Listener {
 	
 	
 	/**
-	 * 
+	 * If this is a container we need to trigger item removal for everything in it.
+	 * It's important we record this *after* the block break so the log shows what
+	 * really happened.
 	 * @param player_name
 	 * @param block
 	 */
 	public void logItemRemoveFromDestroyedContainer( String player_name, Block block ){
-		// If this is a container we need to trigger item removal for everything in it.
-		// It's important we record this *after* the block break so the log shows what
-		// really happened.
-		if( block.getType().equals(Material.CHEST) ){
-			Chest container = (Chest) block.getState();
-			for( ItemStack i : container.getInventory().getContents()){
-				if(i != null){
-					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
-				}
-			}
+		InventoryHolder container = null;
+		if(block.getType().equals(Material.CHEST)){
+			container = (Chest) block.getState();
 		}
-		if( block.getType().equals(Material.FURNACE) ){
-			Furnace container = (Furnace) block.getState();
-			for( ItemStack i : container.getInventory().getContents()){
-				if(i != null){
-					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
-				}
-			}
+		else if( block.getType().equals(Material.DISPENSER) ){
+			container = (Dispenser) block.getState();
 		}
-		if( block.getType().equals(Material.DISPENSER) ){
-			Dispenser container = (Dispenser) block.getState();
+		else if( block.getType().equals(Material.FURNACE) ){
+			container = (Furnace) block.getState();
+		}
+		else if( block.getType().equals(Material.BREWING_STAND) ){
+			container = (BrewingStand) block.getState();
+		}
+		if(container != null){
+			int slot = 0;
 			for( ItemStack i : container.getInventory().getContents()){
 				if(i != null){
-					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), null, block.getLocation(), player_name) );
+					Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_REMOVE, i, i.getAmount(), slot, null, block.getLocation(), player_name) );
 				}
+				slot++;
 			}
 		}
 	}
