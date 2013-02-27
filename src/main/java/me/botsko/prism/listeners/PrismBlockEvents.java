@@ -191,10 +191,11 @@ public class PrismBlockEvents implements Listener {
 		// Change handling a bit if it's a long block
 		block = properlyLogDoubleLengthBlocks(block);
 		
-		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
-		
-		// log items removed from chest
+		// log items removed from container
+		// note: done before the container so a "rewind" for rollback will work properly
 		logItemRemoveFromDestroyedContainer( player.getName(), block );
+		
+		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_BREAK, block, player.getName()) );
 	
 		// check for block relationships
 		logBlockRelationshipsForBlock( player.getName(), block );
