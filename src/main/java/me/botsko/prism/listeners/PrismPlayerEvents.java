@@ -302,7 +302,7 @@ public class PrismPlayerEvents implements Listener {
 			
 			// Item to use
 			int item_id = 0;
-			byte item_subid = 0;
+			byte item_subid = -1;
 			if( !plugin.getConfig().getString("prism.wands.default-mode").equals("hand") ){
 				String toolKey = null;
 				// Determine the default item
