@@ -122,17 +122,6 @@ public class SetmyCommand implements SubHandler {
 				call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 				return;
 			}
-			
-			/**
-			 * Reset all custom wand configs
-			 */
-			if( setSubType.equalsIgnoreCase("reset") ){
-				Settings.deleteSetting( "wand.item", call.getPlayer() );
-				Settings.deleteSetting( "wand.mode", call.getPlayer() );
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Your personal wand settings have been reset to server defaults.") );
-				return;
-			}
-			
 		} else {
 			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 		}
