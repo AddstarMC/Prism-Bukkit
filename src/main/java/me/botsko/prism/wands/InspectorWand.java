@@ -17,18 +17,14 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class InspectorWand implements Wand {
+public class InspectorWand extends WandBase implements Wand {
 	
 	
 	/**
 	 * 
 	 */
 	private Prism plugin;
-	
-	/**
-	 * 
-	 */
-	protected boolean item_given = false;
+
 	
 	
 	/**
@@ -106,21 +102,5 @@ public class InspectorWand implements Wand {
 	 */
 	public void playerRightClick(Player player, Entity entity) {
 		return;
-	}
-
-
-	/**
-	 * 
-	 */
-	public void setItemWasGiven(boolean given) {
-		this.item_given = given;
-	}
-
-
-	/**
-	 * 
-	 */
-	public boolean itemWasGiven() {
-		return item_given;
 	}
 }

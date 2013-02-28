@@ -58,6 +58,12 @@ public class SetmyCommand implements SubHandler {
 				return;
 			}
 			
+			// Disable any current wand
+			if(plugin.playersWithActiveTools.containsKey(call.getPlayer().getName())){
+				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			}
+			
 			String setSubType = null;
 			if(call.getArgs().length >= 3){
 				setSubType = call.getArg(2);
@@ -75,6 +81,8 @@ public class SetmyCommand implements SubHandler {
 				}
 				if( setWandMode != null && (setWandMode.equals("hand") || setWandMode.equals("item") || setWandMode.equals("block")) ){
 					Settings.saveSetting("wand.mode", setWandMode, call.getPlayer());
+					// Delete the item so we don't confuse people.
+					Settings.deleteSetting( "wand.item", call.getPlayer() );
 					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Changed your personal wand to " + ChatColor.GREEN + setWandMode + ChatColor.WHITE + " mode.") );
 					return;
 				}

@@ -15,7 +15,7 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 
-public class RollbackWand implements Wand {
+public class RollbackWand extends WandBase implements Wand{
 
 	/**
 	 * 

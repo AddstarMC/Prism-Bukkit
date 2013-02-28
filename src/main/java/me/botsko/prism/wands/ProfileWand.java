@@ -7,17 +7,12 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class ProfileWand implements Wand {
+public class ProfileWand extends WandBase implements Wand{
 	
 	/**
 	 * 
 	 */
 	private Prism plugin;
-
-	/**
-	 * 
-	 */
-	protected boolean item_given = false;
 	
 	
 	/**
@@ -77,21 +72,5 @@ public class ProfileWand implements Wand {
 			player.sendMessage( plugin.messenger.playerMsg("ID: " + entity.getEntityId() ) );
 			player.sendMessage( plugin.messenger.playerMsg("Coords: "+entity.getLocation().getX()+" "+entity.getLocation().getY()+" "+entity.getLocation().getZ() ) );
 		}
-	}
-	
-
-	/**
-	 * 
-	 */
-	public void setItemWasGiven(boolean given) {
-		this.item_given = given;
-	}
-
-
-	/**
-	 * 
-	 */
-	public boolean itemWasGiven() {
-		return item_given;
 	}
 }

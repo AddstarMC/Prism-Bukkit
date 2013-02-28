@@ -15,17 +15,12 @@ import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 
-public class RestoreWand implements Wand {
+public class RestoreWand extends WandBase implements Wand {
 
 	/**
 	 * 
 	 */
 	private Prism plugin;
-
-	/**
-	 * 
-	 */
-	protected boolean item_given = false;
 	
 	
 	/**
@@ -96,22 +91,5 @@ public class RestoreWand implements Wand {
 	 */
 	public void playerRightClick(Player player, Entity entity) {
 		return;
-	}
-	
-
-
-	/**
-	 * 
-	 */
-	public void setItemWasGiven(boolean given) {
-		this.item_given = given;
-	}
-
-
-	/**
-	 * 
-	 */
-	public boolean itemWasGiven() {
-		return item_given;
 	}
 }

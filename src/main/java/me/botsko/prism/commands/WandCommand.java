@@ -66,14 +66,14 @@ public class WandCommand implements SubHandler {
 			}
 		}
 		
-		// Item to use
+		// Determine which item we're using.
 		int item_id = 0;
-		byte item_subid = 0;
+		byte item_subid = -1;
 		String toolKey = null;
 		if( mode.equals("item") ){
 			toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
 		}
-		if( mode.equals("block") ){
+		else if( mode.equals("block") ){
 			toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
 		}
 		
@@ -184,6 +184,12 @@ public class WandCommand implements SubHandler {
 		
 		PlayerInventory inv = call.getPlayer().getInventory();
 		if( enabled ){
+			
+			wand.setWandMode(mode);
+			wand.setItemId(item_id);
+			wand.setItemSubId(item_subid);
+			
+			plugin.debug("Wand activated for player - mode: " + mode + " Item:" + item_id + ":" + item_subid);
 			
 			// Move any existing item to the hand, otherwise give it to them
 			if( plugin.getConfig().getBoolean("prism.wands.auto-equip") ){

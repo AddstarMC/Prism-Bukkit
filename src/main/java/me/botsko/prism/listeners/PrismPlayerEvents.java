@@ -304,27 +304,18 @@ public class PrismPlayerEvents implements Listener {
 		// Are they using a wand (or do we always allow it)
 		if( plugin.playersWithActiveTools.containsKey(player.getName()) ){
 			
-			// Item to use
-			int item_id = 0;
-			byte item_subid = -1;
-			if( !plugin.getConfig().getString("prism.wands.default-mode").equals("hand") ){
-				String toolKey = null;
-				// Determine the default item
-				if( plugin.getConfig().getString("prism.wands.default-mode").equals("block") ){
-					toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
-				} else {
-					toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
-				}
-				if( toolKey != null){
-					String[] toolKeys = toolKey.split(":");
-					item_id = Integer.parseInt(toolKeys[0]);
-					item_subid = Byte.parseByte(toolKeys[1]);
-				}
-			}
-
-			// Pull the wand in use
 			Wand wand = plugin.playersWithActiveTools.get(player.getName());
+			
+			// The wand will tell us what to use.
+			int item_id = wand.getItemId();
+			byte item_subid = wand.getItemSubId();
+			
+//			plugin.debug("Checking active wand for player, Mode: " + wand.getWandMode() + " Item:" + item_id + ":" + item_subid + " Item in hand:" + player.getItemInHand().getTypeId() + ":" + player.getItemInHand().getDurability());
+
+			// Does the player have such item?
 			if(wand != null && player.getItemInHand().getTypeId() == item_id && player.getItemInHand().getDurability() == item_subid){
+				
+				plugin.debug("Wand in use.");
 				
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
