@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
+import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.Wand;
 
 public class SetmyCommand implements SubHandler {
@@ -118,11 +119,18 @@ public class SetmyCommand implements SubHandler {
 						item_subid = Byte.parseByte(itemIds[1]);
 					}
 					if( item_id > -1 ){
-						String itemName = plugin.getItems().getItemStackAliasById(item_id, item_subid);
-						if( itemName != null ){
+						String item_name = plugin.getItems().getItemStackAliasById(item_id, item_subid);
+						if( item_name != null ){
+							
+							if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
+								call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+								return;
+							}
+							
 							Settings.saveSetting("wand.item", setWandItem, call.getPlayer());
-							call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Changed your personal wand item to " + ChatColor.GREEN + itemName + ChatColor.WHITE + ".") );
+							call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Changed your personal wand item to " + ChatColor.GREEN + item_name + ChatColor.WHITE + ".") );
 							return;
+							
 						}
 					}
 				}

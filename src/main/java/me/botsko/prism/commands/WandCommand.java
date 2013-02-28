@@ -93,9 +93,15 @@ public class WandCommand implements SubHandler {
 		}
 		
 		String wandOn = "";
+		String item_name = "";
 		if( item_id != 0 ){
-			String item_name = plugin.getItems().getItemStackAliasById(item_id, item_subid);
+			item_name = plugin.getItems().getItemStackAliasById(item_id, item_subid);
 			wandOn += " on a " + item_name;
+		}
+		
+		if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
+			call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+			return;
 		}
 		
 		boolean enabled = false;
