@@ -63,6 +63,12 @@ public class PrismCommands extends Executor {
 		.setHandler(new WandCommand(prism));
 		
 		/**
+		 * /prism setmy
+		 */
+		addSub( new String[]{"setmy"}, new String[]{"prism.setmy.wand"} )
+		.setHandler(new SetmyCommand(prism));
+		
+		/**
 		 * /prism teleport [id] 
 		 */
 		addSub("tp", "prism.tp")

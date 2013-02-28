@@ -64,10 +64,6 @@ public class Executor implements CommandExecutor {
 		} else {
 			subcommandName = cmd.getName();
 		}
-		
-		System.out.print("Command: " + cmd);
-		System.out.print("Subcommand: " + subcommandName);
-		System.out.print("Args count: " + args.length);
 
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {

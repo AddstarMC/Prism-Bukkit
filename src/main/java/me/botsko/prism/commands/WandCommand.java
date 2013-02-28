@@ -9,6 +9,7 @@ import org.bukkit.inventory.PlayerInventory;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.InspectorWand;
 import me.botsko.prism.wands.ProfileWand;
@@ -54,20 +55,37 @@ public class WandCommand implements SubHandler {
 		plugin.playersWithActiveTools.remove(call.getPlayer().getName());
 		
 		
-		// Determine mode
+		// Determine default mode
 		String mode = plugin.getConfig().getString("prism.wands.default-mode");
+		
+		// Check if the player has a personal override
+		if( plugin.getConfig().getBoolean("prism.wands.allow-user-override") ){
+			String personalMode = Settings.getSetting("wand.mode", call.getPlayer());
+			if( personalMode != null ){
+				mode = personalMode;
+			}
+		}
 		
 		// Item to use
 		int item_id = 0;
 		byte item_subid = 0;
+		String toolKey = null;
 		if( mode.equals("item") ){
-			String toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
-			String[] toolKeys = toolKey.split(":");
-			item_id = Integer.parseInt(toolKeys[0]);
-			item_subid = Byte.parseByte(toolKeys[1]);
+			toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
 		}
 		if( mode.equals("block") ){
-			String toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
+			toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
+		}
+		
+		// Check if the player has a personal override
+		if( plugin.getConfig().getBoolean("prism.wands.allow-user-override") ){
+			String personalToolKey = Settings.getSetting("wand.item", call.getPlayer());
+			if( personalToolKey != null ){
+				toolKey = personalToolKey;
+			}
+		}
+		
+		if( toolKey != null ){
 			String[] toolKeys = toolKey.split(":");
 			item_id = Integer.parseInt(toolKeys[0]);
 			item_subid = Byte.parseByte(toolKeys[1]);
@@ -87,7 +105,7 @@ public class WandCommand implements SubHandler {
 		 */
 		if( type.equalsIgnoreCase("i") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.inspect") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if(oldwand != null && oldwand instanceof InspectorWand){
@@ -104,7 +122,7 @@ public class WandCommand implements SubHandler {
 		 */
 		else if( type.equalsIgnoreCase("p") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.profile") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if( oldwand != null && oldwand instanceof ProfileWand ){
@@ -122,7 +140,7 @@ public class WandCommand implements SubHandler {
 		 */
 		else if( type.equalsIgnoreCase("rollback") ){
 			if( !call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.wand.rollback") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if(oldwand != null && oldwand instanceof RollbackWand){
@@ -139,7 +157,7 @@ public class WandCommand implements SubHandler {
 		 */
 		else if(type.equalsIgnoreCase("restore")){
 			if( !call.getPlayer().hasPermission("prism.restore") && !call.getPlayer().hasPermission("prism.wand.restore") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("You do not have permission for this.") );
+				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			// If disabling this one

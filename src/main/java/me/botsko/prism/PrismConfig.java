@@ -51,6 +51,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.wands.default-item-mode-id", "280:0");
 		config.addDefault("prism.wands.default-block-mode-id", "17:1");
 		config.addDefault("prism.wands.auto-equip", true);
+		config.addDefault("prism.wands.allow-user-override", true);
 		List<String> ignoreActionsForInspect = new ArrayList<String>();
 		ignoreActionsForInspect.add("player-chat");
 		ignoreActionsForInspect.add("player-command");

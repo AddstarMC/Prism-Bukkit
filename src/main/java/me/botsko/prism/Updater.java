@@ -2,9 +2,10 @@ package me.botsko.prism;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import me.botsko.prism.settings.Settings;
 
 
 public class Updater {
@@ -36,24 +37,10 @@ public class Updater {
 	 */
 	protected int getClientDbSchemaVersion(){
 		int id = 0;
-		try {
-
-			Connection conn = Prism.dbc();
-            PreparedStatement s;
-    		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = 'schema_ver' LIMIT 0,1");
-    		ResultSet rs = s.executeQuery();
-
-    		while(rs.next()){
-    			id = rs.getInt("v");
-			}
-    		
-    		rs.close();
-    		s.close();
-    		conn.close();
-            
-        } catch (SQLException e) {
-        	plugin.logDbError( e );
-        }
+		String schema_ver = Settings.getSetting("schema_ver");
+		if( schema_ver != null ){
+			id = Integer.parseInt(schema_ver);
+		}
 		return id;
 	}
 	
@@ -140,8 +127,6 @@ public class Updater {
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-				
-				
 			}
 		}
 		
@@ -161,26 +146,6 @@ public class Updater {
 	 * Saves the current schema version to the client's db.
 	 */
 	public void saveCurrentSchemaVersion(){
-		Connection conn = Prism.dbc();
-        PreparedStatement s;
-		try {
-			
-			s = conn.prepareStatement ("DELETE FROM prism_meta WHERE k = 'schema_ver'");
-			s.executeUpdate();
-			
-			s = conn.prepareStatement ("INSERT INTO prism_meta (k,v) VALUES ('schema_ver',?)");
-			s.setInt(1, currentDbSchemaVersion);
-			s.executeUpdate();
-			
-			s.close();
-	
-		} catch (SQLException e) {
-			plugin.logDbError( e );
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-//			plugin.logDbError( e );
-		}
+		Settings.saveSetting("schema_ver", ""+currentDbSchemaVersion);
 	}
 }
