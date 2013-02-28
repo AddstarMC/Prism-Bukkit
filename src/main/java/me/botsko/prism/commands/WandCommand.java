@@ -104,7 +104,7 @@ public class WandCommand implements SubHandler {
 		/**
 		 * Inspector wand
 		 */
-		if( type.equalsIgnoreCase("i") ){
+		if( type.equalsIgnoreCase("i") || type.equalsIgnoreCase("inspect") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.inspect") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
@@ -121,7 +121,7 @@ public class WandCommand implements SubHandler {
 		/**
 		 * Profile wand
 		 */
-		else if( type.equalsIgnoreCase("p") ){
+		else if( type.equalsIgnoreCase("p") || type.equalsIgnoreCase("profile") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.profile") ){
 				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
