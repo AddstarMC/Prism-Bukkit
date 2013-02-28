@@ -1,5 +1,10 @@
 package me.botsko.prism.wands;
 
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.PlayerInventory;
+
+import me.botsko.prism.utils.ItemUtils;
+
 public abstract class WandBase {
 
 	
@@ -99,6 +104,27 @@ public abstract class WandBase {
 			String[] toolKeys = key.split(":");
 			item_id = Integer.parseInt(toolKeys[0]);
 			item_subid = Byte.parseByte(toolKeys[1]);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void disable( Player player ){
+		PlayerInventory inv = player.getInventory();
+		if( itemWasGiven() ){
+			int itemSlot = -1;
+			// Likely is what they're holding
+			if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
+				itemSlot = inv.getHeldItemSlot();
+			} else {
+				itemSlot = ItemUtils.inventoryHasItem(inv, item_id, item_subid);
+			}
+			if( itemSlot > -1 ){
+				ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
+				player.updateInventory();
+			}
 		}
 	}
 }

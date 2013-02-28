@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
+import me.botsko.prism.wands.Wand;
 
 public class ResetmyCommand implements SubHandler {
 	
@@ -60,6 +61,8 @@ public class ResetmyCommand implements SubHandler {
 			
 			// Disable any current wand
 			if(plugin.playersWithActiveTools.containsKey(call.getPlayer().getName())){
+				Wand oldwand = plugin.playersWithActiveTools.get(call.getPlayer().getName());
+				oldwand.disable( call.getPlayer() );
 				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
 				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			}

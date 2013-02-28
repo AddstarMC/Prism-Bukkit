@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.HashMap;
-
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -86,6 +84,9 @@ public class WandCommand implements SubHandler {
 		}
 		
 		if( toolKey != null ){
+			if(!toolKey.contains(":")){
+				toolKey += ":0";
+			}
 			String[] toolKeys = toolKey.split(":");
 			item_id = Integer.parseInt(toolKeys[0]);
 			item_subid = Byte.parseByte(toolKeys[1]);
@@ -206,19 +207,7 @@ public class WandCommand implements SubHandler {
 			// Store
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 		} else {
-			if( oldwand.itemWasGiven() ){
-				int itemSlot = -1;
-				// Likely is what they're holding
-				if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
-					itemSlot = inv.getHeldItemSlot();
-				} else {
-					itemSlot = ItemUtils.inventoryHasItem(inv, item_id, item_subid);
-				}
-				if( itemSlot > -1 ){
-					ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
-					call.getPlayer().updateInventory();
-				}
-			}
+			oldwand.disable( call.getPlayer() );
 		}
 	}
 }

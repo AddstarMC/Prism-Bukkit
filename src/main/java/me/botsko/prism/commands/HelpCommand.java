@@ -58,8 +58,8 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( plugin.messenger.playerHelp("ex (r)", "Extinguish fires within a (r)adius."));
 		sender.sendMessage( plugin.messenger.playerHelp("drain (r)", "Drain water/lava within a (r)adius."));
 		sender.sendMessage( plugin.messenger.playerHelp("delete (params)", "Purge records based on (params). No defaults!"));
-		sender.sendMessage( plugin.messenger.playerHelp("setmy (wand) (mode) (hand|item|block)", "Set your person wand mode."));
-		sender.sendMessage( plugin.messenger.playerHelp("setmy (wand) (item) (item id)", "Set your person wand item/block id:subid."));
+		sender.sendMessage( plugin.messenger.playerHelp("setmy wand mode (hand|item|block)", "Set your personal wand mode."));
+		sender.sendMessage( plugin.messenger.playerHelp("setmy wand item (item id)", "Set your personal wand item/block id:subid."));
 		sender.sendMessage( plugin.messenger.playerHelp("resetmy (wand)", "Reset your custom wand settings to server defaults."));
 		sender.sendMessage( plugin.messenger.playerHelp("(rp|report) queue", "Display statistics on current queues."));
 		sender.sendMessage( plugin.messenger.playerHelp("about", "Prism credits."));

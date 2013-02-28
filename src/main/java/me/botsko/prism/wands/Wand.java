@@ -84,5 +84,12 @@ public interface Wand {
 	 * @param key
 	 */
 	public void serItemFromKey( String key );
+	
+	
+	/**
+	 * 
+	 * @param player
+	 */
+	public void disable( Player player );
 
 }
