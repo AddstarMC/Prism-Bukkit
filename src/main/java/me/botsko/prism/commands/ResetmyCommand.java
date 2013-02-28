@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import org.bukkit.ChatColor;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -54,6 +56,12 @@ public class ResetmyCommand implements SubHandler {
 				&& !call.getPlayer().hasPermission("prism.wand.restore")){
 				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
 				return;
+			}
+			
+			// Disable any current wand
+			if(plugin.playersWithActiveTools.containsKey(call.getPlayer().getName())){
+				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
+				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			}
 			
 			Settings.deleteSetting( "wand.item", call.getPlayer() );
