@@ -30,7 +30,7 @@ public enum ActionType {
 	ENTITY_EXPLODE(false, true, true, "block", "blew up"),
 	ENTITY_FOLLOW(false, false, false, "entity", "lured"),
 	ENTITY_FORM(true, true, true, "blockchange", "formed"),
-	ENTITY_KILL(false, false, false, "entity", "killed"),
+	ENTITY_KILL(false, true, false, "entity", "killed"),
 	ENTITY_SHEAR(false, false, false, "entity", "sheared"),
 	ENTITY_SPAWN(false, false, false, "entity", "spawned"),
 	FIREBALL(false, false, false, null, "ignited"),
