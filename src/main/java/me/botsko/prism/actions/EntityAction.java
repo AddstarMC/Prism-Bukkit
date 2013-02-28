@@ -17,6 +17,7 @@ public class EntityAction extends GenericAction {
 	public class EntityActionData {
 		public String entity_name;
 		public boolean isAdult;
+		public boolean sitting;
 		public String color;
 		public String newColor;
 		public String profession;
@@ -85,9 +86,11 @@ public class EntityAction extends GenericAction {
 				this.actionData.profession = v.getProfession().toString().toLowerCase();
 			}
 			
-			// Taming owner
+			// Wolf details
 			if (entity instanceof Wolf){
 	            Wolf wolf = (Wolf)entity;
+	            
+	            // Owner
 	            if(wolf.isTamed()){
 	                if(wolf.getOwner() instanceof Player){
 	                	this.actionData.taming_owner = ((Player)wolf.getOwner()).getName();
@@ -96,6 +99,15 @@ public class EntityAction extends GenericAction {
 	                	this.actionData.taming_owner = ((OfflinePlayer)wolf.getOwner()).getName();
 	                }
 	            }
+	            
+	            // Collar color
+	            this.actionData.color = wolf.getCollarColor().name().toLowerCase();
+	            
+	            // Sitting
+	            if( wolf.isSitting() ){
+	            	this.actionData.sitting = true;
+	            }
+	            
 	    	}
 		}
 		
@@ -157,6 +169,15 @@ public class EntityAction extends GenericAction {
 	 */
 	public boolean isAdult(){
 		return this.actionData.isAdult;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean isSitting(){
+		return this.actionData.sitting;
 	}
 	
 	

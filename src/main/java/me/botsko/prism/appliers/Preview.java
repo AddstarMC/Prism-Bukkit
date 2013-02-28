@@ -662,8 +662,10 @@ public class Preview implements Previewable {
 							v.setProfession( b.getProfession() );
 						}
 						
-						// Set taming owner
+						// Set wolf details
 						if (entity instanceof Wolf){
+							
+							// Owner
 				            Wolf wolf = (Wolf)entity;
 				            String tamingOwner = b.getTamingOwner();
 				            if(tamingOwner != null){
@@ -675,6 +677,13 @@ public class Preview implements Previewable {
 						            }
 					            }
 					            if(owner != null) wolf.setOwner(owner);
+				            }
+				            
+				            // Collar color
+				            wolf.setCollarColor( b.getColor() );
+				            
+				            if(b.isSitting()){
+				            	wolf.setSitting(true);
 				            }
 				    	}
 						
