@@ -18,9 +18,9 @@ public class UseAction extends GenericAction {
 		if(block != null){
 			this.data = item_used;
 			this.world_name = block.getWorld().getName();
-			this.x = block.getLocation().getX();
-			this.y = block.getLocation().getY();
-			this.z = block.getLocation().getZ();
+			this.x = block.getLocation().getBlockX();
+			this.y = block.getLocation().getBlockY();
+			this.z = block.getLocation().getBlockZ();
 		}
 	}
 	

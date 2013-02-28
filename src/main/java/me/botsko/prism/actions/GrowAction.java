@@ -22,9 +22,9 @@ public class GrowAction extends BlockAction {
 			actionData.block_id = blockstate.getTypeId();
 			actionData.block_subid = blockstate.getData().getData();
 			this.world_name = blockstate.getWorld().getName();
-			this.x = blockstate.getLocation().getX();
-			this.y = blockstate.getLocation().getY();
-			this.z = blockstate.getLocation().getZ();
+			this.x = blockstate.getLocation().getBlockX();
+			this.y = blockstate.getLocation().getBlockY();
+			this.z = blockstate.getLocation().getBlockZ();
 		}
 		
 		// Set data from current block

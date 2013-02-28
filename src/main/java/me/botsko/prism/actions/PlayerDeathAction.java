@@ -39,9 +39,9 @@ public class PlayerDeathAction extends GenericAction {
 		if(player != null){
 			this.player = player;
 			this.world_name = player.getWorld().getName();
-			this.x = player.getLocation().getX();
-			this.y = player.getLocation().getY();
-			this.z = player.getLocation().getZ();
+			this.x = player.getLocation().getBlockX();
+			this.y = player.getLocation().getBlockY();
+			this.z = player.getLocation().getBlockZ();
 			this.player_name = player.getName();
 		}
 		this.cause = cause;

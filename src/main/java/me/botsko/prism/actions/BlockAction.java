@@ -64,9 +64,9 @@ public class BlockAction extends GenericAction {
 			actionData.block_id = BlockUtils.blockIdMustRecordAs( block.getTypeId() );
 			actionData.block_subid = block.getData();
 			this.world_name = block.getWorld().getName();
-			this.x = block.getLocation().getX();
-			this.y = block.getLocation().getY();
-			this.z = block.getLocation().getZ();
+			this.x = block.getLocation().getBlockX();
+			this.y = block.getLocation().getBlockY();
+			this.z = block.getLocation().getBlockZ();
 		}
 		
 		// Set data from current block

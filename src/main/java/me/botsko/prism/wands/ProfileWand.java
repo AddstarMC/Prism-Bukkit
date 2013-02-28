@@ -70,7 +70,7 @@ public class ProfileWand extends WandBase implements Wand{
 			player.sendMessage( plugin.messenger.playerHeaderMsg("Entity Profile") );
 			player.sendMessage( plugin.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase() ) );
 			player.sendMessage( plugin.messenger.playerMsg("ID: " + entity.getEntityId() ) );
-			player.sendMessage( plugin.messenger.playerMsg("Coords: "+entity.getLocation().getX()+" "+entity.getLocation().getY()+" "+entity.getLocation().getZ() ) );
+			player.sendMessage( plugin.messenger.playerMsg("Coords: "+entity.getLocation().getBlockX()+" "+entity.getLocation().getBlockY()+" "+entity.getLocation().getBlockZ() ) );
 		}
 	}
 }

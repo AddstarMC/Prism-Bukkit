@@ -56,9 +56,9 @@ public class EntityAction extends GenericAction {
 		if(entity != null){
 			this.actionData.entity_name = entity.getType().name().toLowerCase();
 			this.world_name = entity.getWorld().getName();
-			this.x = entity.getLocation().getX();
-			this.y = entity.getLocation().getY();
-			this.z = entity.getLocation().getZ();
+			this.x = entity.getLocation().getBlockX();
+			this.y = entity.getLocation().getBlockY();
+			this.z = entity.getLocation().getBlockZ();
 			
 			// Get animal age
 			if(entity instanceof Ageable && !(entity instanceof Monster) ){

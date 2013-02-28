@@ -637,6 +637,9 @@ public class Preview implements Previewable {
 							continue;
 						}
 						
+						loc.setX( loc.getX()+0.5 );
+						loc.setZ( loc.getZ()+0.5 );
+						
 						Entity entity = world.spawnEntity(loc, b.getEntityType());
 						
 						// Get animal age
