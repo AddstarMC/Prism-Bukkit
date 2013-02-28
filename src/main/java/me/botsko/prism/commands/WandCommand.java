@@ -181,6 +181,7 @@ public class WandCommand implements SubHandler {
 		// Not a valid wand
 		else {
 			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid wand type. Use /prism ? for help.") );
+			return;
 		}
 		
 		PlayerInventory inv = call.getPlayer().getInventory();
@@ -207,7 +208,9 @@ public class WandCommand implements SubHandler {
 			// Store
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 		} else {
-			oldwand.disable( call.getPlayer() );
+			if(oldwand != null){
+				oldwand.disable( call.getPlayer() );
+			}
 		}
 	}
 }

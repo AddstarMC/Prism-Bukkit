@@ -29,7 +29,7 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism about
 		 */
-		addSub("about", "prism.help")
+		addSub(new String[]{"about","default"}, "prism.help")
 		.allowConsole()
 		.setHandler(new AboutCommand(prism));
 		

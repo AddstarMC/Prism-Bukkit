@@ -59,7 +59,7 @@ public class Executor implements CommandExecutor {
 
 		// Find command
 		String subcommandName = defaultSubcommand;
-		if(mode.equals("subcommand")){
+		if(mode.equals("subcommand") && args.length > 0){
 			subcommandName = args[0].toLowerCase();
 		} else {
 			subcommandName = cmd.getName();
