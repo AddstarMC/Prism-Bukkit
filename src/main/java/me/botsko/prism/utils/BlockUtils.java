@@ -753,12 +753,12 @@ public class BlockUtils {
     	}
     	
     	// Redstone lamp
-    	if( (id1 == 123 || id1 == 123) && (id2 == 124 || id2 == 124) ){
+    	if( (id1 == 123 || id1 == 124) && (id2 == 123 || id2 == 124) ){
     		return true;
     	}
     	
     	// Furnace
-    	if( (id1 == 61 || id1 == 61) && (id2 == 62 || id2 == 62) ){
+    	if( (id1 == 61 || id1 == 62) && (id2 == 61 || id2 == 62) ){
     		return true;
     	}
     	
