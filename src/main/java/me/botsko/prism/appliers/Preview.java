@@ -423,7 +423,7 @@ public class Preview implements Previewable {
 			/**
 			 * Signs
 			 */
-			if( b.getActionData().getBlockId() == 63 || b.getActionData().getBlockId() == 68 ){
+			if( b.getActionData() instanceof SignActionData ){
 				
 				SignActionData s = (SignActionData) b.getActionData();
 				
