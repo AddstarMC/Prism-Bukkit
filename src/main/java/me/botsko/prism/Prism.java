@@ -701,6 +701,17 @@ public class Prism extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable(){
+		
+		// Close pool connections when plugin disables
+		if(pool != null){
+			try {
+				pool.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		this.log("Closing plugin.");
+		
 	}
 }
