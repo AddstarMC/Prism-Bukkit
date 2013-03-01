@@ -1,6 +1,6 @@
 package me.botsko.prism.utils;
 
-import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.Prism;
 
 public class LevenshteinDistance {
         private static int minimum(int a, int b, int c) {
@@ -35,8 +35,8 @@ public class LevenshteinDistance {
         	int currentTopActionDistance = Integer.MAX_VALUE;
         	int distance;
         	String act;
-        	for(ActionType possibleAct : ActionType.values()){
-        		act = possibleAct.name().replace("_", "-").toLowerCase();
+        	for(String possibleAct : Prism.getActionRegistry().listAll()){
+        		act = possibleAct.toLowerCase();
         		distance = LevenshteinDistance.computeLevenshteinDistance(action, act);
         		currentTopAction = (currentTopAction.isEmpty() ? act : currentTopActionDistance > distance ? act : currentTopAction);
         		currentTopActionDistance = (currentTopAction.equals(act) ? distance : currentTopActionDistance);

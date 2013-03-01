@@ -1,7 +1,6 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 
@@ -62,10 +61,10 @@ public class ActionMessage {
 		} else {
 			// We should really improve this, but this saves me from having to make
 			// a custom handler.
-			if(a.getType().equals(ActionType.LAVA_BUCKET)){
+			if(a.getType().getName().equals("lava-bucket")){
 				line1 += " " + highlight + "lava";
 			} 
-			else if (a.getType().equals(ActionType.WATER_BUCKET)){
+			else if (a.getType().getName().equals("water-bucket")){
 				line1 += " " + highlight + "water";
 			}
 		}
@@ -81,7 +80,7 @@ public class ActionMessage {
 		}
 		
 		// Action type reminder
-		line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getActionShortType() + ")";
+		line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getShortName() + ")";
 		
 		
 		// Line 2
@@ -114,7 +113,7 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix(){
 		
-		if( a.getType().doesCreateBlock() || a.getType().equals(ActionType.ITEM_INSERT) || a.getType().equals(ActionType.SIGN_CHANGE) ){
+		if( a.getType().doesCreateBlock() || a.getType().getName().equals("item-insert") || a.getType().getName().equals("sign-change") ){
 			return ChatColor.GREEN + " + " + ChatColor.WHITE;
 		}
 		else {

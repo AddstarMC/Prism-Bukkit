@@ -22,7 +22,7 @@ public class HangingItemAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public HangingItemAction( ActionType action_type, Hanging hanging, String player ){
+	public HangingItemAction( String action_type, Hanging hanging, String player ){
 		
 		super(action_type, player);
 		

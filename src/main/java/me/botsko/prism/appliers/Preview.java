@@ -11,7 +11,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockAction.SignActionData;
 import me.botsko.prism.actions.BlockAction.SkullActionData;
@@ -269,7 +268,7 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected ChangeResultType applyBlockChange(BlockChangeAction b, Block block){
-		return placeBlock(b.getType(),b.getActionData().old_id,b.getActionData().old_subid,b.getActionData().block_id,b.getActionData().block_subid,block,false);
+		return placeBlock(b.getType().getName(),b.getActionData().old_id,b.getActionData().old_subid,b.getActionData().block_id,b.getActionData().block_subid,block,false);
 	}
 	
 	
@@ -284,7 +283,7 @@ public class Preview implements Previewable {
 	 * @param is_deferred
 	 * @return
 	 */
-	protected ChangeResultType placeBlock( ActionType type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
+	protected ChangeResultType placeBlock( String type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
 		BlockAction b = new BlockAction(type, null, null);
 		if(processType.equals(PrismProcessType.ROLLBACK)){
 			// Run verification for no-overwrite. Only reverse a change
@@ -730,8 +729,8 @@ public class Preview implements Previewable {
 								
 								// Rolling back a:remove should place the item into the inventory
 								// Restoring a:insert should place the item into the inventory
-								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().equals(ActionType.ITEM_REMOVE ))
-									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_INSERT )) ){
+								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().getName().equals("item-remove"))
+									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().getName().equals("item-insert")) ){
 									
 									boolean added = false;
 									
@@ -759,8 +758,8 @@ public class Preview implements Previewable {
 								
 								// Rolling back a:insert should remove the item from the inventory
 								// Restoring a:remove should remove the item from the inventory
-								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().equals(ActionType.ITEM_INSERT ))
-									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().equals(ActionType.ITEM_REMOVE )) ){
+								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().getName().equals("item-insert"))
+									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().getName().equals("item-remove")) ){
 										
 									// does inventory have item?
 									boolean removed = false;

@@ -34,7 +34,7 @@ public class SignAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public SignAction( ActionType action_type, Block block, String[] lines, String player ){
+	public SignAction( String action_type, Block block, String[] lines, String player ){
 		
 		super(action_type, player);
 		

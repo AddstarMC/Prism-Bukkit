@@ -17,7 +17,6 @@ import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
@@ -104,7 +103,9 @@ public class ActionsQuery {
 	    			boolean override_data = false;
 	    			
 	    			// Pull the proper action type class
-	    			ActionType actionType = ActionType.getByActionType(rs.getString(3));
+	    			ActionType actionType = Prism.getActionRegistry().getAction(rs.getString(3));
+	    			
+	    			if(actionType == null) continue;
 
 	    			if(actionType.requiresHandler("block")){
 	    				BlockAction b = new BlockAction(null, null, null);
@@ -301,7 +302,7 @@ public class ActionsQuery {
     			process = new PrismProcessAction(null, null, null, null);
     			// Set all shared values
     			process.setId( rs.getInt("id") );
-    			process.setType( ActionType.getByActionType( rs.getString("action_type") ) );
+    			process.setType( Prism.getActionRegistry().getAction( rs.getString("action_type") ) );
     			process.setActionTime( rs.getString("action_time") );
     			process.setWorldName( rs.getString("world") );
     			process.setPlayerName( rs.getString("player") );

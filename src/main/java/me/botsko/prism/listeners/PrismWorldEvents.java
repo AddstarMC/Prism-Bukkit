@@ -1,7 +1,6 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.utils.BlockUtils;
 
@@ -20,8 +19,8 @@ public class PrismWorldEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onStructureGrow(final StructureGrowEvent event) {
-		ActionType type = ActionType.TREE_GROW;
-		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = ActionType.MUSHROOM_GROW;
+		String type = "tree-grow";
+		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
 		for (BlockState block : event.getBlocks()) {
 			if(BlockUtils.isGrowableStructure( block.getType() )){
 				String player = "Environment";

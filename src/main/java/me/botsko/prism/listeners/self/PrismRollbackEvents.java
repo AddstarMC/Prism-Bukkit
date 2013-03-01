@@ -3,7 +3,6 @@ package me.botsko.prism.listeners.self;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -29,7 +28,7 @@ public class PrismRollbackEvents implements Listener {
 		if(!blockStateChanges.isEmpty()){
 			
 			// Create an entry for the rollback as a whole
-			PrismProcessAction primaryAction = new PrismProcessAction(ActionType.PRISM_PROCESS, PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
+			PrismProcessAction primaryAction = new PrismProcessAction("prism-process", PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
 			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;
@@ -40,7 +39,7 @@ public class PrismRollbackEvents implements Listener {
 				BlockState newBlock = stateChange.getNewBlock();
 
 				// Build the action
-				PrismRollbackAction action = new PrismRollbackAction(ActionType.PRISM_ROLLBACK, orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.onBehalfOf().getName(), id);
+				PrismRollbackAction action = new PrismRollbackAction("prism-rollback", orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.onBehalfOf().getName(), id);
 				action.setWorldName(orig.getWorld().getName());
 				action.setX(orig.getX());
 				action.setY(orig.getY());

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import me.botsko.prism.MaterialAliases;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionType;
 
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
@@ -90,11 +92,11 @@ public class GenericAction implements Action {
 	 * @param block
 	 * @param player
 	 */
-	public GenericAction( ActionType action_type, String player ){
+	public GenericAction( String action_type, String player ){
 		
 		// Store information for the action
 		if(action_type != null){
-			this.type = action_type;
+			this.type = Prism.getActionRegistry().getAction( action_type );
 		}
 		if(player != null){
 			this.player_name = player;

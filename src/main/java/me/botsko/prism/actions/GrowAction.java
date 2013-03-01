@@ -11,7 +11,7 @@ public class GrowAction extends BlockAction {
 	 * @param block_filters
 	 * @param player
 	 */
-	public GrowAction( ActionType action_type, BlockState blockstate, String player ){
+	public GrowAction( String action_type, BlockState blockstate, String player ){
 		
 		super(action_type, null, player);
 		

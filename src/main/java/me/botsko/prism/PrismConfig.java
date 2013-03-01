@@ -173,6 +173,11 @@ public class PrismConfig extends ConfigBase {
 			doNotTrackCommand.add("register");
 			doNotTrackCommand.add("unregister");
 			config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
+			
+			config.addDefault("prism.tracking.api.enabled", true);
+			List<String> allowedApiPlugins = new ArrayList<String>();
+			allowedApiPlugins.add("DarkMythos");
+			config.addDefault("prism.tracking.api.allowed-plugins", allowedApiPlugins);
 		
 		// Ore Alerts
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);

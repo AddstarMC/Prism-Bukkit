@@ -2,12 +2,14 @@ package me.botsko.prism.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
+import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 
@@ -59,32 +61,33 @@ public class ParamsCommand implements SubHandler {
 		
 		// Build short list
 		ArrayList<String> shortNames = new ArrayList<String>();
-		for(ActionType ac : ActionType.values()){
-			if(ac.name().contains("PRISM")) continue;
-			if(shortNames.contains(ac.getActionShortType())) continue;
-			shortNames.add( ac.getActionShortType() );
+		HashMap<String,ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
+		for (Entry<String,ActionType> entry : actions.entrySet()){
+			if(entry.getKey().contains("prism")) continue;
+			if(shortNames.contains( entry.getValue().getShortName() )) continue;
+			shortNames.add( entry.getValue().getShortName() );
 		}
 		// Sort alphabetically
 		Collections.sort(shortNames);
 		
 		// Build display of shortname list
-		String actions = "";
+		String actionList = "";
 		int i = 1;
 		for(String shortName : shortNames){
-			actions += shortName + (i < ActionType.values().length ? ", " : "");
+			actionList += shortName + (i < shortNames.size() ? ", " : "");
 			i++;
 		}
-		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actions) );
+		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actionList) );
 		
 		// Build display of full actions
-		actions = "";
+		actionList = "";
 		i = 1;
-		for(ActionType ac : ActionType.values()){
-			if(ac.name().contains("PRISM")) continue;
-			actions += ac.getActionType() + (i < ActionType.values().length ? ", " : "");
+		for (Entry<String,ActionType> entry : actions.entrySet()){
+			if(entry.getKey().contains("prism")) continue;
+			actionList += entry.getKey() + (i < actions.size() ? ", " : "");
 			i++;
 		}
-		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actions) );
+		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actionList) );
 		
 	}
 }

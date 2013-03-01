@@ -16,7 +16,7 @@ public class CommandAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public CommandAction( ActionType action_type, String command, Location loc, String player_name ){
+	public CommandAction( String action_type, String command, Location loc, String player_name ){
 		
 		super(action_type, player_name);
 		

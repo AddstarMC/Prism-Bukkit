@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 
@@ -48,7 +47,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Params that allow multiple values
 	 */
-	protected HashMap<ActionType,MatchRule> actionTypeRules = new HashMap<ActionType,MatchRule>();
+	protected HashMap<String,MatchRule> actionTypeRules = new HashMap<String,MatchRule>();
 	protected HashMap<Integer,Byte> block_filters = new HashMap<Integer,Byte>();
 	protected HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
 	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
@@ -281,7 +280,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the action_type
 	 */
-	public HashMap<ActionType,MatchRule> getActionTypes() {
+	public HashMap<String,MatchRule> getActionTypes() {
 		return actionTypeRules;
 	}
 	
@@ -291,8 +290,8 @@ public class QueryParameters implements Cloneable {
 	 */
 	public HashMap<String,MatchRule> getActionTypeNames() {
 		HashMap<String,MatchRule> types = new HashMap<String,MatchRule>();
-		for (Entry<ActionType,MatchRule> entry : actionTypeRules.entrySet()){
-			types.put(entry.getKey().getActionType(), entry.getValue());
+		for (Entry<String,MatchRule> entry : actionTypeRules.entrySet()){
+			types.put(entry.getKey(), entry.getValue());
 		}
 		return types;
 	}
@@ -301,7 +300,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param action_type the action_type to set
 	 */
-	public void addActionType(ActionType action_type) {
+	public void addActionType(String action_type) {
 		addActionType(action_type,MatchRule.INCLUDE);
 	}
 	
@@ -309,7 +308,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param action_type the action_type to set
 	 */
-	public void addActionType(ActionType action_type, MatchRule match) {
+	public void addActionType(String action_type, MatchRule match) {
 		this.actionTypeRules.put(action_type,match);
 	}
 	
@@ -499,44 +498,49 @@ public class QueryParameters implements Cloneable {
 	}
 	
 	
-	/**
-	 * This just provides easy access to whether or not any action
-	 * type we're searching for should also trigger a restore
-	 * of any events afterwards.
-	 * 
-	 * @param at
-	 * @return
-	 */
-	public boolean shouldTriggerRestoreFor( ActionType at ){
-		if(!getActionTypes().isEmpty()){
-			for (Entry<ActionType,MatchRule> entry : getActionTypes().entrySet()){
-				if(entry.getKey().shouldTriggerRestoreFor( at )){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	
-	/**
-	 * This just provides easy access to whether or not any action
-	 * type we're searching for should also trigger a rollback
-	 * of any events afterwards.
-	 * 
-	 * @param at
-	 * @return
-	 */
-	public boolean shouldTriggerRollbackFor( ActionType at ){
-		if(!getActionTypes().isEmpty()){
-			for (Entry<ActionType,MatchRule> entry : getActionTypes().entrySet()){
-				if(entry.getKey().shouldTriggerRollbackFor( at )){
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+//	/**
+//	 * This just provides easy access to whether or not any action
+//	 * type we're searching for should also trigger a restore
+//	 * of any events afterwards.
+//	 * 
+//	 * @param at
+//	 * @return
+//	 */
+//	public boolean shouldTriggerRestoreFor( String at ){
+//		if(!getActionTypes().isEmpty()){
+//			for (Entry<String,MatchRule> entry : getActionTypes().entrySet()){
+//				if(entry.getKey().shouldTriggerRestoreFor( at )){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
+//	
+//	
+//	/**
+//	 * This just provides easy access to whether or not any action
+//	 * type we're searching for should also trigger a rollback
+//	 * of any events afterwards.
+//	 * 
+//	 * @param at
+//	 * @return
+//	 */
+//	public boolean shouldTriggerRollbackFor( String at ){
+//		ActionType actionType = Prism.getActionRegistry().getAction(at);
+//		
+//		if(!getActionTypes().isEmpty()){
+//			ActionType actionType = Prism.getActionRegistry().getAction(at);
+//			
+//			for (Entry<String,MatchRule> entry : getActionTypes().entrySet()){
+//				ActionType actionType = Prism.getActionRegistry().getAction(at);
+//				if(actionType.shouldTriggerRollbackFor( at )){
+//					return true;
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
 	
 	/**
@@ -569,7 +573,7 @@ public class QueryParameters implements Cloneable {
 	@Override
 	public QueryParameters clone() throws CloneNotSupportedException {
 		QueryParameters cloned = (QueryParameters) super.clone();
-		cloned.actionTypeRules = new HashMap<ActionType,MatchRule>(actionTypeRules);
+		cloned.actionTypeRules = new HashMap<String,MatchRule>(actionTypeRules);
 		return cloned;
 	}
 }

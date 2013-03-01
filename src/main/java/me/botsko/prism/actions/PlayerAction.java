@@ -17,7 +17,7 @@ public class PlayerAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PlayerAction( ActionType action_type, Player player, String additionalInfo ){
+	public PlayerAction( String action_type, Player player, String additionalInfo ){
 	
 		super(action_type, null);
 
@@ -44,17 +44,16 @@ public class PlayerAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		if(!this.data.isEmpty()){
-			if(this.type.equals(ActionType.XP_PICKUP)){
+			if(this.type.getName().equals("player-join")){
+				return "from " + this.data;
+			} 
+			else if(this.type.getName().equals("xp-pickup")){
 				return this.data + " xp";
 			} 
-			else if(this.type.equals(ActionType.BUCKET_FILL)){
+			else if(this.type.getName().equals("bucket-fill")){
 				return "a " + this.data + " bucket";
-			}
-			else if(this.type.equals(ActionType.POTION_SPLASH)){
-				return this.data;
 			} else {
-				// is a join event
-				return "from " + this.data;
+				return this.data;
 			}
 		}
 		return "";

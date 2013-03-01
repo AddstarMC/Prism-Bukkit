@@ -1,7 +1,5 @@
 package me.botsko.prism.wands;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -11,7 +9,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 
@@ -68,9 +65,9 @@ public class RestoreWand extends WandBase implements Wand {
 		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
 		
-		// Append actions that can be rolled back
-		ArrayList<ActionType> types = ActionType.getCanRollbackActionTypes();
-		for(ActionType type : types){
+		// Append actions that can be restored
+		String[] types = Prism.getActionRegistry().listActionsThatAllowRestore();
+		for(String type : types){
 			params.addActionType(type);
 		}
 		

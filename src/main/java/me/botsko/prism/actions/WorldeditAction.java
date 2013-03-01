@@ -25,7 +25,7 @@ public class WorldeditAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public WorldeditAction( ActionType action_type, Location loc, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername ){
+	public WorldeditAction( String action_type, Location loc, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername ){
 		
 		super(action_type, playername);
 		

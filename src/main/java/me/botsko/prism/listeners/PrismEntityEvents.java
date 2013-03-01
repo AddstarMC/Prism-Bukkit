@@ -3,7 +3,6 @@ package me.botsko.prism.listeners;
 import java.util.Collection;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.EntityAction;
@@ -84,7 +83,7 @@ public class PrismEntityEvents implements Listener {
 				if(entityDamageByEntityEvent.getDamager() instanceof Player){
 					
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
-					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.PLAYER_KILL, entity, player.getName()) );
+					Prism.actionsRecorder.addToQueue( new EntityAction("player-kill", entity, player.getName()) );
 					return;
 		        	
 				}
@@ -94,7 +93,7 @@ public class PrismEntityEvents implements Listener {
 					if(arrow.getShooter() instanceof Player){
 						
 						Player player = (Player) arrow.getShooter();
-						Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.PLAYER_KILL, entity, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new EntityAction("player-kill", entity, player.getName()) );
 						return;
 			        	
 					}
@@ -106,7 +105,7 @@ public class PrismEntityEvents implements Listener {
 						name = damager.getType().getName();
 					}
 					if(name == null) name = "unknown";
-					Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, name) );
+					Prism.actionsRecorder.addToQueue( new EntityAction("entity-kill", entity, name) );
 				}
 			} else {
 				
@@ -120,7 +119,7 @@ public class PrismEntityEvents implements Listener {
 				}
 				
 				// Record the death as natural
-				Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_KILL, entity, killer) );
+				Prism.actionsRecorder.addToQueue( new EntityAction("entity-kill", entity, killer) );
 				
 			}
 		} else {
@@ -135,12 +134,12 @@ public class PrismEntityEvents implements Listener {
             	String owner = DeathUtils.getTameWolfOwner(event);
             	attacker = owner+"'s wolf";
             }
-	        Prism.actionsRecorder.addToQueue( new PlayerDeathAction(ActionType.PLAYER_DEATH, p, cause, attacker) );
+	        Prism.actionsRecorder.addToQueue( new PlayerDeathAction("player-death", p, cause, attacker) );
 	        
 	        // Log item drops
 	        if( !event.getDrops().isEmpty() ){
 	        	for(ItemStack i : event.getDrops()){
-	        		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, i, i.getAmount(), -1, null, p.getLocation(), p.getName()) );
+	        		Prism.actionsRecorder.addToQueue( new ItemStackAction("item-drop", i, i.getAmount(), -1, null, p.getLocation(), p.getName()) );
 	        	}
 	        }
 		}
@@ -156,7 +155,7 @@ public class PrismEntityEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.entity-spawn") ) return;
 		String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
 		if(reason.equals("natural")) return;
-		Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SPAWN, event.getEntity(), reason) );
+		Prism.actionsRecorder.addToQueue( new EntityAction("entity-spawn", event.getEntity(), reason) );
 	}
 	
 	
@@ -170,7 +169,7 @@ public class PrismEntityEvents implements Listener {
         if (event.getTarget() instanceof Player) {
         	if(event.getEntity().getType().equals(EntityType.CREEPER)){
 	            Player player = (Player) event.getTarget();
-	            Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_FOLLOW, event.getEntity(), player.getName()) );
+	            Prism.actionsRecorder.addToQueue( new EntityAction("entity-follow", event.getEntity(), player.getName()) );
         	}
         }
     }
@@ -183,7 +182,7 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.entity-shear") ) return;
-		Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_SHEAR, event.getEntity(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new EntityAction("entity-shear", event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -199,7 +198,7 @@ public class PrismEntityEvents implements Listener {
 		// Only track the event on sheep, when player holds dye
 		if( p.getItemInHand().getTypeId() == 351 && e.getType().equals(EntityType.SHEEP) ){
 			String newColor = plugin.getItems().getItemStackAliasById(p.getItemInHand().getTypeId(), (byte)p.getItemInHand().getDurability());
-			Prism.actionsRecorder.addToQueue( new EntityAction(ActionType.ENTITY_DYE, event.getRightClicked(), event.getPlayer().getName(), newColor) );
+			Prism.actionsRecorder.addToQueue( new EntityAction("entity-dye", event.getRightClicked(), event.getPlayer().getName(), newColor) );
 		}
 	}
 	
@@ -211,7 +210,7 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.entity-break") ) return;
-		Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENTITY_BREAK, event.getBlock(), event.getEntityType().getName()) );
+		Prism.actionsRecorder.addToQueue( new BlockAction("entity-break", event.getBlock(), event.getEntityType().getName()) );
 	}
 	
 	
@@ -237,7 +236,7 @@ public class PrismEntityEvents implements Listener {
 			name = eff.getType().getName().toLowerCase();
 		}
 		
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.POTION_SPLASH, (Player)entity, name) );
+		Prism.actionsRecorder.addToQueue( new PlayerAction("potion-splash", (Player)entity, name) );
 		
 	}
 	
@@ -249,7 +248,7 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.hangingitem-place") ) return;
-		Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_PLACE, event.getEntity(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new HangingItemAction("hangingitem-place", event.getEntity(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -276,7 +275,7 @@ public class PrismEntityEvents implements Listener {
 		String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
 		if(plugin.preplannedBlockFalls.containsKey(coord_key)){
 			String player = plugin.preplannedBlockFalls.get(coord_key);
-			Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, e, player) );
+			Prism.actionsRecorder.addToQueue( new HangingItemAction("hangingitem-break", e, player) );
 			plugin.preplannedBlockFalls.remove(coord_key);
 		}
 	}
@@ -297,7 +296,7 @@ public class PrismEntityEvents implements Listener {
 		} else {
 			breaking_name = e.getType().getName();
 		}
-		Prism.actionsRecorder.addToQueue( new HangingItemAction(ActionType.HANGINGITEM_BREAK, event.getEntity(), breaking_name) );
+		Prism.actionsRecorder.addToQueue( new HangingItemAction("hangingitem-break", event.getEntity(), breaking_name) );
 	}
 	
 	
@@ -316,17 +315,17 @@ public class PrismEntityEvents implements Listener {
 		// Technically I think that I really should name it "entity-eat" for better consistency and 
 		// in case other mobs ever are made to eat. But that's not as fun
 		if(event.getEntityType().equals(EntityType.SHEEP)){
-			Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.SHEEP_EAT, event.getBlock(), entity) );
+			Prism.actionsRecorder.addToQueue( new BlockAction("sheep-eat", event.getBlock(), entity) );
 		} else {
 			
 			if(event.getEntity() instanceof Enderman){
 	
 				if (event.getTo() == Material.AIR){
-					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PLACE, event.getBlock(), entity) );
+					Prism.actionsRecorder.addToQueue( new BlockAction("enderman-air", event.getBlock(), entity) );
 				} else {
 					Enderman enderman = (Enderman) event.getEntity();
 					if (enderman.getCarriedMaterial() != null) {
-						Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.ENDERMAN_PICKUP, event.getBlock(), entity) );
+						Prism.actionsRecorder.addToQueue( new BlockAction("enderman-pickup", event.getBlock(), entity) );
 					}
 				}
 			}
@@ -345,7 +344,7 @@ public class PrismEntityEvents implements Listener {
 		Location loc = block.getLocation();
 		BlockState newState = event.getNewState();
 		String entity = event.getEntity().getType().name().toLowerCase();
-		Prism.actionsRecorder.addToQueue( new BlockChangeAction(ActionType.ENTITY_FORM, loc, block.getTypeId(), (byte)block.getData(), newState.getTypeId(), (byte)newState.getRawData(), entity) );
+		Prism.actionsRecorder.addToQueue( new BlockChangeAction("entity-form", loc, block.getTypeId(), (byte)block.getData(), newState.getTypeId(), (byte)newState.getRawData(), entity) );
 	}
 	
 	
@@ -361,15 +360,15 @@ public class PrismEntityEvents implements Listener {
 				&& !plugin.getConfig().getBoolean("prism.tracking.tnt-explode")) return;
 		
 		String name;
-		ActionType action = ActionType.ENTITY_EXPLODE;
+		String action = "entity-explode";
 		if(event.getEntity() != null){
 			name = "";
 			if(event.getEntity() instanceof Creeper){
-				action = ActionType.CREEPER_EXPLODE;
+				action = "creeper-explode";
 				name = "creeper";
 			}
 			else if(event.getEntity() instanceof TNTPrimed){
-				action = ActionType.TNT_EXPLODE;
+				action = "tnt-explode";
 				name = "tnt";
 			}
 		} else {

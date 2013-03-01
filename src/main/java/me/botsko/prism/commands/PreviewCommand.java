@@ -6,7 +6,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -89,7 +88,7 @@ public class PreviewCommand implements SubHandler {
 				}
 				parameters.setStringFromRawArgs( call.getArgs(), 1 );
 				
-				if(parameters.getActionTypes().containsKey(ActionType.WORLD_EDIT)){
+				if(parameters.getActionTypes().containsKey("world-edit")){
 					call.getPlayer().sendMessage( plugin.messenger.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
 					return;
 				}

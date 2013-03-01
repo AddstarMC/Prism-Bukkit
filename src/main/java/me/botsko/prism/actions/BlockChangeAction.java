@@ -16,7 +16,7 @@ public class BlockChangeAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public BlockChangeAction( ActionType action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid, String player ){
+	public BlockChangeAction( String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid, String player ){
 		
 		super(action_type, player);
 		
@@ -28,7 +28,7 @@ public class BlockChangeAction extends GenericAction {
 			// fail because we wouldn't detect the same block placed on rollback. So,
 			// we just force record the block as stationary.
 			// https://snowy-evening.com/botsko/prism/297/
-			if( action_type.equals(ActionType.BLOCK_PLACE) && (newId == 8 || newId == 10) ){
+			if( this.type.getName().equals("block-place") && (newId == 8 || newId == 10) ){
 				newId = (newId == 8 ? 9 : 11);
 			}
 			actionData.block_id = newId;
@@ -94,7 +94,7 @@ public class BlockChangeAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		String name = "";
-		if(this.getType().equals(ActionType.BLOCK_FADE)){
+		if(this.getType().getName().equals("block-fade")){
 			name += materialAliases.getItemStackAliasById(actionData.old_id, actionData.old_subid);
 		} else {
 			name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);

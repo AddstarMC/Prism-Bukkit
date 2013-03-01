@@ -1,7 +1,6 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.CommandAction;
 
 import org.bukkit.event.EventHandler;
@@ -36,6 +35,6 @@ public class PrismChannelChatEvents implements Listener {
 	public void onChannelChat(final ChannelChatEvent event){
 		if( !plugin.getConfig().getBoolean("prism.tracking.player-chat") ) return;
 		String msg = "["+event.getChannel().getNick().toLowerCase() + "] " + event.getMessage();
-		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_CHAT, msg, event.getSender().getPlayer().getLocation(), event.getSender().getName()) );
+		Prism.actionsRecorder.addToQueue( new CommandAction("player-chat", msg, event.getSender().getPlayer().getLocation(), event.getSender().getName()) );
 	}
 }

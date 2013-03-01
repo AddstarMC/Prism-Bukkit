@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.actionlibs.ActionType;
+
 public interface Action {
 	
 	

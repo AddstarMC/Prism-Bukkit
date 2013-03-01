@@ -11,7 +11,7 @@ public class UseAction extends GenericAction {
 	 * @param block_filters
 	 * @param player
 	 */
-	public UseAction( ActionType action_type, String item_used, Block block, String player ){
+	public UseAction( String action_type, String item_used, Block block, String player ){
 		
 		super(action_type, player);
 		

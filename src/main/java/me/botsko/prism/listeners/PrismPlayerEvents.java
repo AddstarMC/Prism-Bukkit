@@ -3,7 +3,6 @@ package me.botsko.prism.listeners;
 import java.util.List;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.CommandAction;
@@ -101,7 +100,7 @@ public class PrismPlayerEvents implements Listener {
 			return;
 		}
 			
-		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_COMMAND, event.getMessage(), player.getLocation(), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new CommandAction("player-command", event.getMessage(), player.getLocation(), player.getName()) );
 		
     }
 	
@@ -122,7 +121,7 @@ public class PrismPlayerEvents implements Listener {
 			ip = player.getAddress().getAddress().getHostAddress().toString();
 		}
 		
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_JOIN, event.getPlayer(), ip) );
+		Prism.actionsRecorder.addToQueue( new PlayerAction("player-join", event.getPlayer(), ip) );
 	}
 	
 	
@@ -135,7 +134,7 @@ public class PrismPlayerEvents implements Listener {
 		
 		if( !plugin.getConfig().getBoolean("prism.tracking.player-quit") ) return;
 		
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.PLAYER_QUIT, event.getPlayer(), null) );
+		Prism.actionsRecorder.addToQueue( new PlayerAction("player-quit", event.getPlayer(), null) );
 
 		// Remove any active wands for this player
 		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){
@@ -160,7 +159,7 @@ public class PrismPlayerEvents implements Listener {
 		
 		if( plugin.dependencyEnabled("Herochat") ) return;
 		
-		Prism.actionsRecorder.addToQueue( new CommandAction(ActionType.PLAYER_CHAT, event.getMessage(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new CommandAction("player-chat", event.getMessage(), event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -171,7 +170,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-drop") ) return;
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("item-drop", event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -182,7 +181,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-pickup") ) return;
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ITEM_PICKUP, event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
 	
@@ -193,7 +192,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.xp-pickup") ) return;
-		Prism.actionsRecorder.addToQueue( new PlayerAction(ActionType.XP_PICKUP, event.getPlayer(), ""+event.getAmount()) );
+		Prism.actionsRecorder.addToQueue( new PlayerAction("xp-pickup", event.getPlayer(), ""+event.getAmount()) );
 	}
 	
 	
@@ -208,10 +207,10 @@ public class PrismPlayerEvents implements Listener {
 				&& !plugin.getConfig().getBoolean("prism.tracking.lava-bucket")) return;
 		
 		Player player = event.getPlayer();
-		ActionType cause = (event.getBucket() == Material.LAVA_BUCKET ? ActionType.LAVA_BUCKET : ActionType.WATER_BUCKET);
+		String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
 		
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
-		int newId = (cause.equals(ActionType.LAVA_BUCKET) ? 11 : 9);
+		int newId = (cause.equals("lava-bucket") ? 11 : 9);
 		Prism.actionsRecorder.addToQueue( new BlockChangeAction(cause, spot.getLocation(), spot.getTypeId(), spot.getData(), newId, (byte)0, player.getName()) );
 
 		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
@@ -240,7 +239,7 @@ public class PrismPlayerEvents implements Listener {
 			liquid_type = "lava";
 		}
 		
-		PlayerAction pa = new PlayerAction(ActionType.BUCKET_FILL, player, liquid_type);
+		PlayerAction pa = new PlayerAction("bucket-fill", player, liquid_type);
 		
 		// Override the location with the area taken
 		pa.setX( spot.getX() );
@@ -261,7 +260,7 @@ public class PrismPlayerEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.player-teleport") ) return;
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){
-			Prism.actionsRecorder.addToQueue( new EntityTravelAction(ActionType.PLAYER_TELEPORT, event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
+			Prism.actionsRecorder.addToQueue( new EntityTravelAction("player-teleport", event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
 		}
 	}
 	
@@ -274,7 +273,7 @@ public class PrismPlayerEvents implements Listener {
 	public void onEnchantItem(final EnchantItemEvent event) {
 		if( !plugin.getConfig().getBoolean("prism.tracking.enchant-item") ) return;
 		Player player = event.getEnchanter();
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.ENCHANT_ITEM, event.getItem(), event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("enchant-item", event.getItem(), event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player.getName()) );
 	}
 	
 	
@@ -287,7 +286,7 @@ public class PrismPlayerEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.craft-item") ) return;
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getRecipe().getResult();
-		Prism.actionsRecorder.addToQueue( new ItemStackAction(ActionType.CRAFT_ITEM, item, item.getAmount(), -1, null, player.getLocation(), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("craft-item", item, item.getAmount(), -1, null, player.getLocation(), player.getName()) );
 	}
 	
 	
@@ -347,7 +346,7 @@ public class PrismPlayerEvents implements Listener {
 				case ENDER_CHEST:
 				case ANVIL:
 				case BREWING_STAND:
-					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CONTAINER_ACCESS, block, player.getName()) );
+					Prism.actionsRecorder.addToQueue( new BlockAction("container-access", block, player.getName()) );
 					break;
 				case WOODEN_DOOR:
 				case TRAP_DOOR:
@@ -355,7 +354,7 @@ public class PrismPlayerEvents implements Listener {
 				case LEVER:
 				case STONE_BUTTON:
 				case WOOD_BUTTON:
-					Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_USE, block, player.getName()) );
+					Prism.actionsRecorder.addToQueue( new BlockAction("block-use", block, player.getName()) );
 					break;
 				case LOG:
 					recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
@@ -371,7 +370,7 @@ public class PrismPlayerEvents implements Listener {
 					break;
 				case TNT:
 					if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
-						Prism.actionsRecorder.addToQueue( new UseAction(ActionType.TNT_PRIME, "tnt", block, player.getName()) );
+						Prism.actionsRecorder.addToQueue( new UseAction("tnt-prime", "tnt", block, player.getName()) );
 					}
 					break;
 				default:
@@ -390,7 +389,7 @@ public class PrismPlayerEvents implements Listener {
 
 		if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
-				Prism.actionsRecorder.addToQueue( new BlockAction(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player.getName()) );
+				Prism.actionsRecorder.addToQueue( new BlockAction("crop-trample", block.getRelative(BlockFace.UP), player.getName()) );
 			}
 		}
 	}
@@ -407,7 +406,7 @@ public class PrismPlayerEvents implements Listener {
 			Location newLoc = block.getRelative(clickedFace).getLocation();
 			Block actualBlock = block.getWorld().getBlockAt(newLoc);
 			// This is a lame way to do this
-			BlockAction action = new BlockAction(ActionType.BLOCK_PLACE, null, player);
+			BlockAction action = new BlockAction("block-place", null, player);
 			action.setX( actualBlock.getX() );
 			action.setY( actualBlock.getY() );
 			action.setZ( actualBlock.getZ() );
@@ -428,7 +427,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	protected void recordBonemealEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		if( inhand.getTypeId() == 351 && inhand.getDurability() == 15){
-			Prism.actionsRecorder.addToQueue( new UseAction(ActionType.BONEMEAL_USE, "bonemeal", block, player) );
+			Prism.actionsRecorder.addToQueue( new UseAction("bonemeal-use", "bonemeal", block, player) );
 		}
 	}
 	
@@ -441,7 +440,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
-		Prism.actionsRecorder.addToQueue( new UseAction(ActionType.SPAWNEGG_USE, "monster egg", block, player) );
+		Prism.actionsRecorder.addToQueue( new UseAction("spawnegg-use", "monster egg", block, player) );
 	}
 	
 	
