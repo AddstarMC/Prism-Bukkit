@@ -649,4 +649,4 @@ public class Metrics {
             return plotter.name.equals(name) && plotter.getValue() == getValue();
         }
     }
-}}
+}
