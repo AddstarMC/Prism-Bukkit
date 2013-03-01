@@ -186,7 +186,10 @@ public class EntityAction extends GenericAction {
 	 * @return
 	 */
 	public DyeColor getColor(){
-		return DyeColor.valueOf(actionData.color.toUpperCase());
+		if(actionData.color != null){
+			return DyeColor.valueOf(actionData.color.toUpperCase());
+		}
+		return null;
 	}
 	
 	
@@ -195,7 +198,10 @@ public class EntityAction extends GenericAction {
 	 * @return
 	 */
 	public Profession getProfession(){
-		return Profession.valueOf(actionData.profession.toUpperCase());
+		if(actionData.profession != null){
+			return Profession.valueOf(actionData.profession.toUpperCase());
+		}
+		return null;
 	}
 	
 	

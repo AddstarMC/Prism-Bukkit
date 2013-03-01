@@ -651,13 +651,13 @@ public class Preview implements Previewable {
 						}
 						
 						// Set sheep color
-						if( entity.getType().equals(EntityType.SHEEP)){
+						if( entity.getType().equals(EntityType.SHEEP) && b.getColor() != null ){
 							Sheep sheep = ((Sheep) entity);
 							sheep.setColor( b.getColor() );
 						}
 						
 						// Set villager profession
-						if( entity instanceof Villager ){
+						if( entity instanceof Villager && b.getProfession() != null ){
 							Villager v = (Villager)entity;
 							v.setProfession( b.getProfession() );
 						}
