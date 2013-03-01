@@ -12,9 +12,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.BlockAction.SignActionData;
-import me.botsko.prism.actions.BlockAction.SkullActionData;
-import me.botsko.prism.actions.BlockAction.SpawnerActionData;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
@@ -40,11 +37,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -268,7 +263,7 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected ChangeResultType applyBlockChange(BlockChangeAction b, Block block){
-		return placeBlock(b.getType().getName(),b.getActionData().old_id,b.getActionData().old_subid,b.getActionData().block_id,b.getActionData().block_subid,block,false);
+		return placeBlock(b.getType().getName(),b.getOldBlockId(),b.getOldBlockSubId(),b.getBlockId(),b.getBlockSubId(),block,false);
 	}
 	
 	
@@ -326,7 +321,7 @@ public class Preview implements Previewable {
 	 */
 	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
 		
-		Material m = Material.getMaterial(b.getActionData().getBlockId());
+		Material m = Material.getMaterial(b.getBlockId());
 
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
@@ -356,7 +351,7 @@ public class Preview implements Previewable {
 
 			// If lilypad, check that block below is water. Be sure
 			// it's set to stationary water so the lilypad will sit
-			if( b.getActionData().getBlockId() == 111 ){
+			if( b.getBlockId() == 111 ){
 				
 				Block below = block.getRelative(BlockFace.DOWN);
 				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
@@ -368,7 +363,7 @@ public class Preview implements Previewable {
 			}
 			
 			// If portal, we need to light the portal. seems to be the only way.
-			if( b.getActionData().getBlockId() == 90 ){
+			if( b.getBlockId() == 90 ){
 				Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(Material.OBSIDIAN, block.getLocation());
 				if(obsidian != null){
 					Block above = obsidian.getRelative(BlockFace.UP);
@@ -380,25 +375,25 @@ public class Preview implements Previewable {
 			}
 			
 			// Set the material
-			block.setTypeId( b.getActionData().getBlockId() );
-			block.setData( b.getActionData().getBlockSubid() );
+			block.setTypeId( b.getBlockId() );
+			block.setData( b.getBlockSubId() );
 			
 			
 			/**
 			 * Skulls
 			 */
-			if( b.getActionData().getBlockId() == 144 || b.getActionData().getBlockId() == 397 ){
+			if( b.getBlockId() == 144 || b.getBlockId() == 397 ){
 				
-				SkullActionData s = (SkullActionData) b.getActionData();
-	
-				// Set skull data
-				Skull skull = (Skull) block.getState();
-				skull.setRotation( s.getRotation() );
-				skull.setSkullType( s.getSkullType() );
-				if(!s.owner.isEmpty()){
-					skull.setOwner( s.owner );
-				}
-				skull.update();
+//				SkullActionData s = (SkullActionData) b.getActionData();
+//	
+//				// Set skull data
+//				Skull skull = (Skull) block.getState();
+//				skull.setRotation( s.getRotation() );
+//				skull.setSkullType( s.getSkullType() );
+//				if(!s.owner.isEmpty()){
+//					skull.setOwner( s.owner );
+//				}
+//				skull.update();
 				
 			}
 			
@@ -406,15 +401,15 @@ public class Preview implements Previewable {
 			/**
 			 * Spawner
 			 */
-			if( b.getActionData().getBlockId() == 52 ){
+			if( b.getBlockId() == 52 ){
 				
-				SpawnerActionData s = (SpawnerActionData) b.getActionData();
-				
-				// Set spawner data
-				CreatureSpawner spawner = (CreatureSpawner) block.getState();
-				spawner.setDelay(s.getDelay());
-				spawner.setSpawnedType(s.getEntityType());
-				spawner.update();
+//				SpawnerActionData s = (SpawnerActionData) b.getActionData();
+//				
+//				// Set spawner data
+//				CreatureSpawner spawner = (CreatureSpawner) block.getState();
+//				spawner.setDelay(s.getDelay());
+//				spawner.setSpawnedType(s.getEntityType());
+//				spawner.update();
 				
 			}
 			
@@ -422,29 +417,30 @@ public class Preview implements Previewable {
 			/**
 			 * Signs
 			 */
-			if( b.getActionData() instanceof SignActionData ){
-				
-				SignActionData s = (SignActionData) b.getActionData();
-				
-				// Verify block is sign. Rarely, if the block somehow pops off or fails
-				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
-				// cannot be cast to org.bukkit.block.Sign
-				
-				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
+//			if( b.getActionData() instanceof SignActionData ){
+			if( b.getBlockId() == 63 || b.getBlockId() == 68 ){
 
-					// Set sign data
-					Sign sign = (Sign) block.getState();
-					int i = 0;
-					if(s.lines.length > 0){
-						for(String line : s.lines){
-							sign.setLine(i, line);
-							i++;
-						}
-					}
-					sign.update();
-				} else {
-					return ChangeResultType.SKIPPED;
-				}
+//				SignActionData s = (SignActionData) b.getActionData();
+//				
+//				// Verify block is sign. Rarely, if the block somehow pops off or fails
+//				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
+//				// cannot be cast to org.bukkit.block.Sign
+//				
+//				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
+//
+//					// Set sign data
+//					Sign sign = (Sign) block.getState();
+//					int i = 0;
+//					if(s.lines.length > 0){
+//						for(String line : s.lines){
+//							sign.setLine(i, line);
+//							i++;
+//						}
+//					}
+//					sign.update();
+//				} else {
+//					return ChangeResultType.SKIPPED;
+//				}
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
@@ -467,11 +463,11 @@ public class Preview implements Previewable {
 			
 			// If we're rolling back a door, we need to set it properly
 			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
-				BlockUtils.properlySetDoor( block, b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
+				BlockUtils.properlySetDoor( block, b.getBlockId(), b.getBlockSubId());
 			}
 			// Or a bed
 			else if( m.equals(Material.BED_BLOCK) ){
-				BlockUtils.properlySetBed( block, b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
+				BlockUtils.properlySetBed( block, b.getBlockId(), b.getBlockSubId());
 			}
 		} else {
 			
@@ -481,7 +477,7 @@ public class Preview implements Previewable {
 			blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
 			
 			// Preview it
-			player.sendBlockChange(block.getLocation(), b.getActionData().getBlockId(), b.getActionData().getBlockSubid());
+			player.sendBlockChange(block.getLocation(), b.getBlockId(), b.getBlockSubId());
 			
 		}
 		
@@ -841,14 +837,14 @@ public class Preview implements Previewable {
 						
 						// Rollback replaces block with OLD block
 						if( processType.equals(PrismProcessType.ROLLBACK) ){
-							block.setTypeId(b.getOriginalBlockId());
-							block.setData( (byte)b.getOriginalBlockSubId() );
+							block.setTypeId(b.getOldBlockId());
+							block.setData( (byte)b.getOldBlockSubId() );
 						}
 						
 						// Restore replaces block with NEW block
 						if( processType.equals(PrismProcessType.RESTORE) ){
-							block.setTypeId(b.getNewBlockId());
-							block.setData( (byte)b.getNewBlockSubId() );
+							block.setTypeId(b.getBlockId());
+							block.setData( (byte)b.getBlockSubId() );
 						}
 						
 						changes_applied_count++;
@@ -945,11 +941,11 @@ public class Preview implements Previewable {
 					b.setY( bc.getY() );
 					b.setZ( bc.getZ() );
 					if(processType.equals(PrismProcessType.ROLLBACK)){
-						b.setBlockId( bc.getActionData().old_id );
-						b.setBlockSubId( bc.getActionData().old_subid );
+						b.setBlockId( bc.getOldBlockId() );
+						b.setBlockSubId( bc.getOldBlockSubId() );
 					} else {
-						b.setBlockId( bc.getActionData().block_id );
-						b.setBlockSubId( bc.getActionData().block_subid );
+						b.setBlockId( bc.getBlockId() );
+						b.setBlockSubId( bc.getBlockSubId() );
 					}
 					b.setType( bc.getType() );
 				} else {

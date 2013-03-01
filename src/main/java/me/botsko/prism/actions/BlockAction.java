@@ -29,10 +29,16 @@ public class BlockAction extends GenericAction {
 		
 		super(action_type, player);
 		
-		// Build an object for the specific details of this action
-		actionData = new BlockActionData();
-		
 		if(block != null){
+			
+			block_id = BlockUtils.blockIdMustRecordAs( block.getTypeId() );
+			block_subid = block.getData();
+			
+			// Build an object for the specific details of this action
+			// @todo clean this up
+			if( block_id == 144 || block_id == 397 || block_id == 52 || block_id == 63 || block_id == 68 ){
+				actionData = new BlockActionData();
+			}
 		
 			// spawner
 			if( block != null && block.getTypeId() == 52 ){
@@ -61,8 +67,6 @@ public class BlockAction extends GenericAction {
 				actionData = signActionData;
 			}
 			
-			actionData.block_id = BlockUtils.blockIdMustRecordAs( block.getTypeId() );
-			actionData.block_subid = block.getData();
 			this.world_name = block.getWorld().getName();
 			this.x = block.getLocation().getBlockX();
 			this.y = block.getLocation().getBlockY();
@@ -89,7 +93,10 @@ public class BlockAction extends GenericAction {
 	 * 
 	 */
 	protected void setDataFromObject(){
-		data = gson.toJson(actionData);
+		// Only for the blocks we store meta data for
+		if( actionData != null ){
+			data = gson.toJson(actionData);
+		}
 	}
 	
 	
@@ -107,40 +114,18 @@ public class BlockAction extends GenericAction {
 	 */
 	protected void setObjectFromData(){
 		if(data != null){
-			if( data.contains("block_id\":144,") || data.contains("block_id\":397,") ){
+			if( block_id == 144 || block_id == 397 ){
 				actionData = gson.fromJson(data, SkullActionData.class);
 			}
-			else if( data.contains("block_id\":52,") ){
+			else if( block_id == 52 ){
 				actionData = gson.fromJson(data, SpawnerActionData.class);
 			}
-			else if( data.contains("block_id\":63,") || data.contains("block_id\":68,") ){
+			else if( block_id == 63 || block_id == 68 ){
 				actionData = gson.fromJson(data, SignActionData.class);
-			}
-			else {
-				actionData = gson.fromJson(data, BlockActionData.class);
 			}
 		}
 	}
-	
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setBlockId( int id ){
-		actionData.block_id = id;
-		setDataFromObject();
-	}
-	
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setBlockSubId( byte id ){
-		actionData.block_subid = id;
-		setDataFromObject();
-	}
+
 	
 	
 	/**
@@ -157,7 +142,7 @@ public class BlockAction extends GenericAction {
 			SpawnerActionData ad = (SpawnerActionData) getActionData();
 			name += ad.entity_type + " ";
 		}
-		name += materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid);
+		name += materialAliases.getItemStackAliasById(this.block_id, this.block_subid);
 		if(actionData instanceof SignActionData){
 			SignActionData ad = (SignActionData) getActionData();
 			if(ad.lines != null && ad.lines.length > 0){
@@ -171,26 +156,11 @@ public class BlockAction extends GenericAction {
 	/**
 	 * 
 	 * @author botskonet
+	 *
 	 */
 	public class BlockActionData {
-		
 		public int block_id;
 		public byte block_subid;
-		
-		/**
-		 * 
-		 */
-		public int getBlockId(){
-			return block_id;
-		}
-		
-		
-		/**
-		 * 
-		 */
-		public byte getBlockSubid(){
-			return block_subid;
-		}
 	}
 	
 	

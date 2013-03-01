@@ -16,11 +16,11 @@ public class GrowAction extends BlockAction {
 		super(action_type, null, player);
 		
 		// Build an object for the specific details of this action
-		actionData = new BlockActionData();
+//		actionData = new BlockActionData();
 
 		if(blockstate != null){
-			actionData.block_id = blockstate.getTypeId();
-			actionData.block_subid = blockstate.getData().getData();
+			this.block_id = blockstate.getTypeId();
+			this.block_subid = blockstate.getData().getData();
 			this.world_name = blockstate.getWorld().getName();
 			this.x = blockstate.getLocation().getBlockX();
 			this.y = blockstate.getLocation().getBlockY();

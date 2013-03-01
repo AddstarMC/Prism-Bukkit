@@ -6,8 +6,6 @@ import org.bukkit.block.Block;
 public class BlockShiftAction extends GenericAction {
 	
 	public class BlockShiftActionData {
-		public int block_id;
-		public byte block_subid;
 		public int x;
 		public int y;
 		public int z;
@@ -40,8 +38,8 @@ public class BlockShiftAction extends GenericAction {
 		// Store information for the action
 		if(from != null){
 			this.block = from;
-			actionData.block_id = block.getTypeId();
-			actionData.block_subid = block.getData();
+			this.block_id = block.getTypeId();
+			this.block_subid = block.getData();
 			actionData.x = from.getX();
 			actionData.y = from.getY();
 			actionData.z = from.getZ();
@@ -87,25 +85,9 @@ public class BlockShiftAction extends GenericAction {
 	
 	/**
 	 * 
-	 */
-	public int getBlock_id(){
-		return actionData.block_id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public byte getBlock_subid(){
-		return actionData.block_subid;
-	}
-	
-	
-	/**
-	 * 
 	 * @return
 	 */
 	public String getNiceName(){
-		return this.materialAliases.getItemStackAliasById(actionData.block_id, actionData.block_subid) + " from " + actionData.x + " " + actionData.z;
+		return this.materialAliases.getItemStackAliasById(this.block_id, this.block_subid) + " from " + actionData.x + " " + actionData.z;
 	}
 }

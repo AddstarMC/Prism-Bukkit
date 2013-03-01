@@ -13,7 +13,7 @@ public class Updater {
 	/**
 	 * 
 	 */
-	protected final int currentDbSchemaVersion = 3;
+	protected final int currentDbSchemaVersion = 4;
 	
 	/**
 	 * 
@@ -75,7 +75,7 @@ public class Updater {
 		}
 		
 		
-		// Apply any updates for schema 1 -> 2
+		// Apply any updates for schema 2 -> 3
 		if(clientSchemaVer < 3){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 		        PreparedStatement s;
@@ -126,6 +126,32 @@ public class Updater {
 
 				} catch (SQLException e) {
 					e.printStackTrace();
+				}
+			}
+		}
+		
+		
+		// Apply any updates for schema 3 -> 4
+		if(clientSchemaVer < 4){
+			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
+		        PreparedStatement s;
+				try {
+					
+					plugin.log("Applying database updates to schema v4. This may take a while.");
+					
+					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `z` ;");
+					s.executeUpdate();
+					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD `block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_id` ;");
+					s.executeUpdate();
+					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `block_id` ) ;");
+					s.executeUpdate();
+					s = conn.prepareStatement ("ALTER TABLE `prism_actions` CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL ;");
+					s.executeUpdate();
+					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD `old_block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `old_block_id`;");
+					s.executeUpdate();
+					s.close();
+				} catch (SQLException e) {
+					plugin.logDbError( e );
 				}
 			}
 		}

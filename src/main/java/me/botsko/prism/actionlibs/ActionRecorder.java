@@ -78,7 +78,7 @@ public class ActionRecorder implements Runnable {
 		
 		queue.add(a);
 		
-		if(a.getData().length() > 255){
+		if(a.getData() != null && a.getData().length() > 255){
 			plugin.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
 		}
 	}
@@ -151,14 +151,16 @@ public class ActionRecorder implements Runnable {
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getType().getName());
 	        s.setString(2,a.getPlayerName());
 	        s.setString(3,a.getWorldName());
-	        s.setInt(4,(int)a.getX());
-	        s.setInt(5,(int)a.getY());
-	        s.setInt(6,(int)a.getZ());
-	        s.setString(7,a.getData());
+	        s.setInt(4,a.getBlockId());
+	        s.setInt(5,a.getBlockSubId());
+	        s.setInt(6,(int)a.getX());
+	        s.setInt(7,(int)a.getY());
+	        s.setInt(8,(int)a.getZ());
+	        s.setString(9,a.getData());
 	        s.executeUpdate();
 	        
 	        ResultSet generatedKeys = s.getGeneratedKeys();
@@ -201,7 +203,7 @@ public class ActionRecorder implements Runnable {
 					return;
 				}
 		        conn.setAutoCommit(false);
-		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)");
+		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?)");
 		        int i = 0;
 		        while (!queue.isEmpty()){
 		        	actionsRecorded++;
@@ -210,10 +212,12 @@ public class ActionRecorder implements Runnable {
 			        s.setString(1,a.getType().getName());
 			        s.setString(2,a.getPlayerName());
 			        s.setString(3,a.getWorldName());
-			        s.setInt(4,(int)a.getX());
-			        s.setInt(5,(int)a.getY());
-			        s.setInt(6,(int)a.getZ());
-			        s.setString(7,a.getData());
+			        s.setInt(4,a.getBlockId());
+			        s.setInt(5,a.getBlockSubId());
+			        s.setInt(6,(int)a.getX());
+			        s.setInt(7,(int)a.getY());
+			        s.setInt(8,(int)a.getZ());
+			        s.setString(9,a.getData());
 		            s.addBatch();
 		            if ((i + 1) % perBatch == 0) {
 		            	plugin.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());

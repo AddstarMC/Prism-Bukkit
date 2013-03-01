@@ -201,14 +201,16 @@ public class ActionsQuery {
     				baseAction.setY( rs.getInt(7) );
     				baseAction.setZ( rs.getInt(8) );
     				if(!override_data){
-    					baseAction.setData( rs.getString(9) );
+    					baseAction.setBlockId( rs.getInt(9) );
+        				baseAction.setBlockSubId( rs.getByte(10) );
+    					baseAction.setData( rs.getString(11) );
     				}
     				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
     				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
-    					aggregated = rs.getInt(12);
+    					aggregated = rs.getInt(14);
     				}
     				baseAction.setAggregateCount(aggregated);
     				
@@ -362,6 +364,8 @@ public class ActionsQuery {
 					"prism_actions.x, " +
 					"prism_actions.y, " +
 					"prism_actions.z, " +
+					"prism_actions.block_id, " +
+					"prism_actions.block_subid, " +
 					"prism_actions.data, ";
 			
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
@@ -444,23 +448,17 @@ public class ActionsQuery {
 			 */
 			HashMap<Integer,Byte> blockfilters = parameters.getBlockFilters();
 			if(!blockfilters.isEmpty()){
-				
-				String block_match = "block_id\":%s,";
-				String block_subid_match = "\"block_subid\":%s";
-				
 				String[] blockArr = new String[blockfilters.size()];
 				int i = 0;
 				for (Entry<Integer,Byte> entry : blockfilters.entrySet()){
 					if( entry.getValue() == 0 ){
-						blockArr[i] = String.format(block_match, entry.getKey());
+						blockArr[i] = "prism_actions.block_id = " + entry.getKey();
 					} else {
-						blockArr[i] = String.format(block_match+block_subid_match, entry.getKey(), entry.getValue());
+						blockArr[i] = "prism_actions.block_id = " + entry.getKey() + " AND prism_actions.block_subid = " +  entry.getValue();
 					}
 					i++;
 				}
-
-				query += buildGroupConditions("data", blockArr, "%s LIKE '%%%s%%'", "OR", null);
-				
+				query += buildGroupConditions("data", blockArr, "%", "OR", null);
 			}
 			
 			/**
@@ -507,7 +505,7 @@ public class ActionsQuery {
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
 				
 				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
-					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.data";
+					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
 				}
 			
 				/**
@@ -521,7 +519,7 @@ public class ActionsQuery {
 				 */
 				int limit = parameters.getLimit();
 				if(limit > 0){
-					query += " LIMIT 0,"+limit;
+					query += " LIMIT "+limit;
 				}
 			}
 		}

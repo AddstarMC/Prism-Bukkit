@@ -20,8 +20,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class ItemStackAction extends GenericAction {
 	
 	public class ItemStackActionData {
-		public int block_id;
-		public int block_subid;
 		public int amt;
 		public String name;
 		public int color;
@@ -90,8 +88,8 @@ public class ItemStackAction extends GenericAction {
 			}
 			
 			// Set basics
-			actionData.block_id = item.getTypeId();
-			actionData.block_subid = item.getDurability();
+			this.block_id = item.getTypeId();
+			this.block_subid = (byte) item.getDurability();
 			actionData.amt = quantity;
 			if(slot >= 0){
 				actionData.slot = slot;
@@ -219,7 +217,7 @@ public class ItemStackAction extends GenericAction {
 		// Set json data back to object
 		setObjectFromData();
 		
-		item = new ItemStack(actionData.block_id,actionData.amt,(short)actionData.block_subid);
+		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 		
 		// Restore enchantment
 		if(actionData.enchs != null && actionData.enchs.length > 0){
@@ -282,11 +280,11 @@ public class ItemStackAction extends GenericAction {
 		if (blockArr.length >= 3){
 			
 			// Parse item/sub/quant
-			actionData.block_id = Integer.parseInt(blockArr[0]);
-			actionData.block_subid = Integer.parseInt(blockArr[1]);
+			this.block_id = Integer.parseInt(blockArr[0]);
+			this.block_subid = Byte.parseByte(blockArr[1]);
 			actionData.amt = Integer.parseInt(blockArr[2]);
 			
-			item = new ItemStack(actionData.block_id,actionData.amt,(short)actionData.block_subid);
+			item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 			
 			// Restore enchantments
 			for(int i = 3; i < blockArr.length; i++){

@@ -77,6 +77,26 @@ public class GenericAction implements Action {
 	/**
 	 * 
 	 */
+	protected int block_id;
+	
+	/**
+	 * 
+	 */
+	protected byte block_subid;
+	
+	/**
+	 * 
+	 */
+	protected int old_block_id;
+	
+	/**
+	 * 
+	 */
+	protected byte old_block_subid;
+	
+	/**
+	 * 
+	 */
 	protected String data;
 	
 	/**
@@ -311,6 +331,56 @@ public class GenericAction implements Action {
 	 */
 	public void setZ(double z) {
 		this.z = z;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setBlockId( int id ){
+		this.block_id = id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setBlockSubId( byte id ){
+		this.block_subid = id;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int getBlockId(){
+		return block_id;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public byte getBlockSubId(){
+		return block_subid;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int getOldBlockId(){
+		return old_block_id;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public byte getOldBlockSubId(){
+		return old_block_subid;
 	}
 
 	

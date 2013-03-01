@@ -326,6 +326,10 @@ public class Prism extends JavaPlugin {
 			        		"x INT," +
 			        		"y INT," +
 			        		"z INT," +
+			        		"block_id INT," +
+			        		"block_subid INT," +
+			        		"old_block_id INT," +
+			        		"old_block_subid INT," +
 			        		"data TEXT" +
 			        		")";
 					Statement st = conn.createStatement();
@@ -364,11 +368,16 @@ public class Prism extends JavaPlugin {
 		        		"`x` int(11) NOT NULL," +
 		        		"`y` smallint(5) NOT NULL," +
 		        		"`z` int(11) NOT NULL," +
-		        		"`data` varchar(255) NOT NULL," +
+		        		"`block_id` mediumint(5) unsigned default NULL," +
+		        		"`block_subid` mediumint(5) unsigned default NULL," +
+		        		"`old_block_id` mediumint(5) unsigned default NULL," +
+		        		"`old_block_subid` mediumint(5) unsigned default NULL," +
+		        		"`data` varchar(255) NULL," +
 		        		"PRIMARY KEY  (`id`), " +
-		        		"KEY `x` (`x`)" +
+		        		"KEY `x` (`x`), " +
+		        		"KEY `block_id` (`block_id`)" +
 		        		") ENGINE=MyISAM;";
-		        
+
 	            Statement st = conn.createStatement();
 	            st.executeUpdate(query);
 	            

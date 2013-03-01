@@ -58,6 +58,20 @@ public interface Action {
 	 * 
 	 * @return
 	 */
+	public int getBlockId();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public byte getBlockSubId();
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getData();
 
 	
