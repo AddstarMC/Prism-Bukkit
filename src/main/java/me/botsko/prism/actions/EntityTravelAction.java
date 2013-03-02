@@ -33,7 +33,7 @@ public class EntityTravelAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityTravelAction( ActionType action_type, Entity entity, Location from, Location to, TeleportCause cause ){
+	public EntityTravelAction( String action_type, Entity entity, Location from, Location to, TeleportCause cause ){
 		
 		super(action_type, null);
 		

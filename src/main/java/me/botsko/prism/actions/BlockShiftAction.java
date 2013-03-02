@@ -30,7 +30,7 @@ public class BlockShiftAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public BlockShiftAction( ActionType action_type, Block from, Location to, String player ){
+	public BlockShiftAction( String action_type, Block from, Location to, String player ){
 		
 		super(action_type, player);
 		

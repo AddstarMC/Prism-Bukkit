@@ -24,7 +24,7 @@ public class PrismRollbackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PrismRollbackAction( ActionType action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername, int parent_id ){
+	public PrismRollbackAction( String action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername, int parent_id ){
 		
 		super(action_type, playername);
 		

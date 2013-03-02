@@ -28,7 +28,7 @@ public class PlayerDeathAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PlayerDeathAction( ActionType action_type, Player player, String cause, String attacker ){
+	public PlayerDeathAction( String action_type, Player player, String cause, String attacker ){
 	
 		super(action_type, null);
 

@@ -36,7 +36,7 @@ public class EntityAction extends GenericAction {
 	 * @param entity
 	 * @param player
 	 */
-	public EntityAction( ActionType action_type, Entity entity, String player){
+	public EntityAction( String action_type, Entity entity, String player){
 		this(action_type, entity, player, null);
 	}
 
@@ -47,7 +47,7 @@ public class EntityAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityAction( ActionType action_type, Entity entity, String player, String dyeUsed ){
+	public EntityAction( String action_type, Entity entity, String player, String dyeUsed ){
 		
 		super(action_type, player);
 		

@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class PrismProcessAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PrismProcessAction( ActionType action_type, PrismProcessType processType, Player player, String parameters ){
+	public PrismProcessAction( String action_type, PrismProcessType processType, Player player, String parameters ){
 		
 		super(action_type, null);
 		
@@ -80,8 +81,8 @@ public class PrismProcessAction extends GenericAction {
 	 * 
 	 * @return
 	 */
-	public ActionType getProcessChildActionType(){
-		return ActionType.getByActionType( "prism-"+actionData.processType );
+	public String getProcessChildActionType(){
+		return Prism.getActionRegistry().getAction( "prism-"+actionData.processType ).getName();
 	}
 	
 	

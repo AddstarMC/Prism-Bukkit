@@ -93,7 +93,7 @@ public class ActionRecorder implements Runnable {
 		
 		// Always track Prism actions - it's mainly internal
 		// use anyway.
-		if(a.getType().getActionType().contains("prism")){
+		if(a.getType().getName().contains("prism")){
 			return true;
 		}
 		
@@ -108,7 +108,7 @@ public class ActionRecorder implements Runnable {
 		}
 		
 		// Should we ignore this action type?
-		String action_type = a.getType().getActionType();
+		String action_type = a.getType().getName();
 		if(!plugin.getConfig().getBoolean( "prism.tracking." + action_type )){
 			return false;
 		}
@@ -152,7 +152,7 @@ public class ActionRecorder implements Runnable {
 				return 0;
 			}
 	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-	        s.setString(1,a.getType().getActionType());
+	        s.setString(1,a.getType().getName());
 	        s.setString(2,a.getPlayerName());
 	        s.setString(3,a.getWorldName());
 	        s.setInt(4,(int)a.getX());
@@ -207,7 +207,7 @@ public class ActionRecorder implements Runnable {
 		        	actionsRecorded++;
 		        	Action a = queue.poll();
 		        	if(a == null) continue;
-			        s.setString(1,a.getType().getActionType());
+			        s.setString(1,a.getType().getName());
 			        s.setString(2,a.getPlayerName());
 			        s.setString(3,a.getWorldName());
 			        s.setInt(4,(int)a.getX());

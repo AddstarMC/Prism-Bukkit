@@ -8,7 +8,6 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -70,10 +69,7 @@ public class InspectorWand extends WandBase implements Wand {
 		ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
 		if( ignoreActions != null && !ignoreActions.isEmpty() ){
 			for(String ignore : ignoreActions){
-				ActionType ignoreType = ActionType.getByActionType(ignore);
-				if(ignoreType != null){
-					params.addActionType(ignoreType, MatchRule.EXCLUDE);
-				}
+				params.addActionType(ignore, MatchRule.EXCLUDE);
 			}
 		}
 		

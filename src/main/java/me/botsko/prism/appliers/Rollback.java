@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
@@ -44,7 +43,7 @@ public class Rollback extends Preview {
 	public void apply(){
 		
 		// Remove any fire at this location
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().containsKey(ActionType.BLOCK_BURN)){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback") && parameters.getActionTypes().containsKey("block-burn")){
 			if( !parameters.hasFlag(Flag.NO_EXT) ){
 				ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 				if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
@@ -54,7 +53,7 @@ public class Rollback extends Preview {
 		}
 		
 		// Remove item drops in this radius
-		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback") && (parameters.getActionTypes().containsKey(ActionType.TNT_EXPLODE) || parameters.getActionTypes().containsKey(ActionType.CREEPER_EXPLODE)) ){
+		if(plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback") && (parameters.getActionTypes().containsKey("tnt-explode") || parameters.getActionTypes().containsKey("creeper-explode")) ){
 			if( !parameters.hasFlag(Flag.NO_ITEMCLEAR) ){
 				int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 				if(removed > 0){

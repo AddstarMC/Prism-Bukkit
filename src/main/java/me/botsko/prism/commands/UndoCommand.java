@@ -10,7 +10,6 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Undo;
@@ -73,7 +72,7 @@ public class UndoCommand implements SubHandler {
 			}
 
 			// We only support this for drains
-			if(!process.getProcessChildActionType().equals(ActionType.PRISM_DRAIN)){
+			if(!process.getProcessChildActionType().equals("prism-drain")){
 				call.getPlayer().sendMessage( plugin.messenger.playerError("You can't currently undo anything other than a drain process." ) );
 				return;
 			}
@@ -106,7 +105,7 @@ public class UndoCommand implements SubHandler {
 			// Process and validate all of the arguments
 			QueryParameters parameters = new QueryParameters();
 			parameters.setAllowNoRadius(true);
-			parameters.addActionType(ActionType.PRISM_PROCESS);
+			parameters.addActionType("prism-process");
 			parameters.addPlayerName( call.getPlayer().getName() );
 			parameters.setLimit(5); // @todo config this, and move the logic to queryparams
 		

@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 
 import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.ActionType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.BlockUtils;
@@ -104,7 +104,7 @@ public class PreprocessArgs {
 						for(String action : actions){
 							// Find all actions that match the action provided - whether the full name or
 							// short name.
-							ArrayList<ActionType> actionTypes = ActionType.getByActionsType( action.replace("!", "") );
+							ArrayList<ActionType> actionTypes = Prism.getActionRegistry().getActionsByShortname( action.replace("!", "") );
 							if(!actionTypes.isEmpty()){
 								for(ActionType actionType : actionTypes){
 									
@@ -119,7 +119,7 @@ public class PreprocessArgs {
 									if(action.startsWith("!")){
 										match = MatchRule.EXCLUDE;
 									}
-									parameters.addActionType( actionType, match );
+									parameters.addActionType( actionType.getName(), match );
 								}
 							} else {
 								respond( sender, plugin.messenger.playerError("Ignoring action '"+action.replace("!", "")+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );

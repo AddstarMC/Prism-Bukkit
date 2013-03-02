@@ -57,7 +57,7 @@ public class ItemStackAction extends GenericAction {
 	 * @param loc
 	 * @param player_name
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
+	public ItemStackAction( String action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
 		this(action_type,item,1,-1,enchantments,loc,player_name);
 	}
 	
@@ -68,7 +68,7 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( ActionType action_type, ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
+	public ItemStackAction( String action_type, ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
 		
 		super(action_type, player_name);
 		

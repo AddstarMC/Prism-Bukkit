@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
+import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -22,6 +23,7 @@ import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismChannelChatEvents;
+import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
@@ -55,12 +57,13 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Protected/private
 	 */
-	protected String plugin_name;
-	protected String plugin_version;
-	protected MaterialAliases items;
-	protected Language language;
-	protected Logger log = Logger.getLogger("Minecraft");
-	protected ArrayList<String> enabledPlugins = new ArrayList<String>();
+	private String plugin_name;
+	private String plugin_version;
+	private MaterialAliases items;
+	private Language language;
+	private Logger log = Logger.getLogger("Minecraft");
+	private ArrayList<String> enabledPlugins = new ArrayList<String>();
+	private static ActionRegistry actionRegistry; 
 	
 	/**
 	 * Public
@@ -165,6 +168,7 @@ public class Prism extends JavaPlugin {
 			
 			eventTimer = new TimeTaken();
 			queueStats = new QueueStats();
+			actionRegistry = new ActionRegistry();
 			
 			// Plugins we use
 			checkPluginDependancies();
@@ -175,6 +179,10 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
 			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+
+			if( getConfig().getBoolean("prism.tracking.api.enabled") ){
+				getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
+			}
 			
 			// Assign Plugin listeners if enabled
 			if( dependencyEnabled("Herochat") && getConfig().getBoolean("prism.tracking.player-chat") ){
@@ -431,6 +439,15 @@ public class Prism extends JavaPlugin {
 	 */
 	public MaterialAliases getItems(){
 		return this.items;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static ActionRegistry getActionRegistry(){
+		return actionRegistry;
 	}
 	
 	

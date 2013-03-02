@@ -6,7 +6,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.ActionType;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -69,7 +68,7 @@ public class OreMonitor {
 				QueryParameters params = new QueryParameters();
 				params.setWorld( player.getWorld().getName() );
 				params.setSpecificBlockLocation(block.getLocation());
-				params.addActionType(ActionType.BLOCK_PLACE);
+				params.addActionType("block-place");
 				
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( params, player );

@@ -25,7 +25,7 @@ public class BlockAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public BlockAction( ActionType action_type, Block block, String player ){
+	public BlockAction( String action_type, Block block, String player ){
 		
 		super(action_type, player);
 		
