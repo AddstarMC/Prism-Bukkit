@@ -680,7 +680,9 @@ public class Preview implements Previewable {
 				            }
 				            
 				            // Collar color
-				            wolf.setCollarColor( b.getColor() );
+				            if( b.getColor() != null ){
+				            	wolf.setCollarColor( b.getColor() );
+				            }
 				            
 				            if(b.isSitting()){
 				            	wolf.setSitting(true);
