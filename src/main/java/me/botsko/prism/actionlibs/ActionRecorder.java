@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
+import me.botsko.prism.utils.TypeUtils;
 
 public class ActionRecorder implements Runnable {
 	
@@ -109,7 +110,7 @@ public class ActionRecorder implements Runnable {
 		
 		// Should we ignore this action type?
 		String action_type = a.getType().getName();
-		if(!plugin.getConfig().getBoolean( "prism.tracking." + action_type )){
+		if( (TypeUtils.subStrOccurences(action_type, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + action_type )) ){
 			return false;
 		}
 		

@@ -104,4 +104,23 @@ public class TypeUtils {
 		}
 		return (split) ? out.toString().split("~") : new String[0];
 	}
+	
+	
+	/**
+	 * 
+	 * @param str
+	 * @param findStr
+	 * @return
+	 */
+	public static int subStrOccurences( String str, String findStr ){
+		int lastIndex = 0, count = 0;
+		while(lastIndex != -1){
+	       lastIndex = str.indexOf(findStr,lastIndex);
+	       if( lastIndex != -1){
+             count ++;
+             lastIndex+=findStr.length();
+	      }
+		}
+		return count;
+	}
 }

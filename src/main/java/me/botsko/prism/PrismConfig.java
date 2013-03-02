@@ -177,6 +177,7 @@ public class PrismConfig extends ConfigBase {
 			config.addDefault("prism.tracking.api.enabled", true);
 			List<String> allowedApiPlugins = new ArrayList<String>();
 			allowedApiPlugins.add("DarkMythos");
+			allowedApiPlugins.add("PrismApiDemo");
 			config.addDefault("prism.tracking.api.allowed-plugins", allowedApiPlugins);
 		
 		// Ore Alerts

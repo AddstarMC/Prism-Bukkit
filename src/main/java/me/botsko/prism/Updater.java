@@ -139,19 +139,51 @@ public class Updater {
 					
 					plugin.log("Applying database updates to schema v4. This may take a while.");
 					
-					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `z` ;");
-					s.executeUpdate();
-					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD `block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_id` ;");
-					s.executeUpdate();
-					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `block_id` ) ;");
-					s.executeUpdate();
-					s = conn.prepareStatement ("ALTER TABLE `prism_actions` CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL ;");
-					s.executeUpdate();
-					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD `old_block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `old_block_id`;");
+					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `z`, ADD `block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_id`, ADD INDEX ( `block_id` ), CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, ADD `old_block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `old_block_id`;");
 					s.executeUpdate();
 					s.close();
 				} catch (SQLException e) {
 					plugin.logDbError( e );
+				}
+			} else {
+				
+				// Sqlite doesn't have any support for altering columns. WTF
+		        PreparedStatement s;
+				try {
+					
+					plugin.log("Applying database updates to schema v4. This may take a while.");
+					
+					s = conn.prepareStatement("ALTER TABLE prism_actions RENAME TO tmp_prism_actions;");
+					s.executeUpdate();
+					
+					String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
+			        		"id INT PRIMARY KEY," +
+			        		"action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+			        		"action_type TEXT," +
+			        		"player TEXT," +
+			        		"world TEXT," +
+			        		"x INT," +
+			        		"y INT," +
+			        		"z INT," +
+			        		"block_id INT," +
+			        		"block_subid INT," +
+			        		"old_block_id INT," +
+			        		"old_block_subid INT," +
+			        		"data TEXT" +
+			        		")";
+					Statement st = conn.createStatement();
+					st.executeUpdate(query);
+					
+					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM tmp_prism_actions;");
+					s.executeUpdate();
+					
+					s = conn.prepareStatement("DROP TABLE tmp_prism_actions;");
+					s.executeUpdate();
+					
+					s.close();
+
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 		}
