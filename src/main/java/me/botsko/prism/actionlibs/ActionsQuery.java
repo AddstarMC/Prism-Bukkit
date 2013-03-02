@@ -420,14 +420,18 @@ public class ActionsQuery {
 			
 			// Make sure none of the prism process types are requested
 			boolean containtsPrismProcessType = false;
+			boolean hasPositiveMatchRule = false;
 			for (Entry<String,MatchRule> entry : action_types.entrySet()){
 				if(entry.getKey().contains("prism")){
 					containtsPrismProcessType = true;
 					break;
 				}
+				if(entry.getValue().equals(MatchRule.INCLUDE)){
+					hasPositiveMatchRule = true;
+				}
 			}
 			
-			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
 				query += " AND prism_actions.action_type NOT LIKE '%prism%'";
 			}
 			
