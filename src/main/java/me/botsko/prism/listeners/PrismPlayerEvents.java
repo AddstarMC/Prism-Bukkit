@@ -376,11 +376,16 @@ public class PrismPlayerEvents implements Listener {
 				default:
 					break;
 			}
-			
+
 			
 			// if they're holding a spawner egg
 			if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
 				recordMonsterEggUse( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+			}
+			
+			// if they're holding a rocket
+			if( player.getItemInHand().getType().equals(Material.FIREWORK) ){
+				recordRocketLaunch( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 			}
 			
 		}
@@ -441,6 +446,18 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		Prism.actionsRecorder.addToQueue( new UseAction("spawnegg-use", "monster egg", block, player) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param inhand
+	 * @param clickedFace
+	 * @param player
+	 */
+	protected void recordRocketLaunch( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("firework-launch", inhand, null, block.getLocation(), player) );
 	}
 	
 	

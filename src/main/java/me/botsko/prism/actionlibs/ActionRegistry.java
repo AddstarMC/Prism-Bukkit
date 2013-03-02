@@ -176,6 +176,7 @@ public class ActionRegistry {
 		registerAction( new ActionType( "entity-shear", false, false, false, "entity", "sheared") );
 		registerAction( new ActionType( "entity-spawn", false, false, false, "entity", "spawned") );
 		registerAction( new ActionType( "fireball", false, false, false, null, "ignited") );
+		registerAction( new ActionType( "firework-launch", false, false, false, "itemstack", "launched") );
 		registerAction( new ActionType( "hangingitem-break", false, true, true, "hangingitem", "broke") );
 		registerAction( new ActionType( "hangingitem-place", true, true, true, "hangingitem", "hung") );
 		registerAction( new ActionType( "item-drop", false, false, false, "itemstack", "dropped") );

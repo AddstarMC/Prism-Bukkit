@@ -161,7 +161,7 @@ public class ItemStackAction extends GenericAction {
 			}
 			
 			// Fireworks
-			if( block_id == 401 || block_id == 402 ){
+			if( block_id == 402 ){
 				FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 				if( fireworkMeta.hasEffect() ){
 					FireworkEffect effect = fireworkMeta.getEffect();
@@ -298,7 +298,7 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Fireworks
-		if( block_id == 401 || block_id == 402 ){
+		if( block_id == 402 ){
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			Builder effect = FireworkEffect.builder();
 			if( actionData.effectColors != null ){
