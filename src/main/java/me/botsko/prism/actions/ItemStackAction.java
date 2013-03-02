@@ -7,12 +7,15 @@ import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Color;
+import org.bukkit.FireworkEffect;
+import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
+import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -28,6 +31,10 @@ public class ItemStackAction extends GenericAction {
 		public String by;
 		public String title;
 		public int slot = -1;
+		public int[] effectColors;
+		public int[] fadeColors;
+		public boolean hasFlicker;
+		public boolean hasTrail;
 	}
 	
 	/**
@@ -152,6 +159,37 @@ public class ItemStackAction extends GenericAction {
 					}
 				}
 			}
+			
+			// Fireworks
+			if( block_id == 401 || block_id == 402 ){
+				FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+				if( fireworkMeta.hasEffect() ){
+					FireworkEffect effect = fireworkMeta.getEffect();
+					if( !effect.getColors().isEmpty() ){
+						int[] effectColors = new int[ effect.getColors().size() ];
+						int i = 0;
+						for (Color effectColor : effect.getColors()){
+							effectColors[i] = effectColor.asRGB();
+							i++;
+						}
+						actionData.effectColors = effectColors;
+					}
+					if( !effect.getFadeColors().isEmpty() ){
+						int[] fadeColors = new int[ effect.getColors().size() ];
+						int i = 0;
+					    for (Color fadeColor : effect.getFadeColors()){
+					    	fadeColors[i] = fadeColor.asRGB();
+					    }
+					    actionData.fadeColors = fadeColors;
+					}
+					if(effect.hasFlicker()){
+						actionData.hasFlicker = true;
+					}
+					if(effect.hasTrail()){
+						actionData.hasTrail = true;
+					}
+				}
+			}
 		}
 		
 		setDataFromObject();
@@ -257,6 +295,32 @@ public class ItemStackAction extends GenericAction {
 				bookMeta.setTitle( actionData.title );
 			}
 			item.setItemMeta(bookMeta);
+		}
+		
+		// Fireworks
+		if( block_id == 401 || block_id == 402 ){
+			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+			Builder effect = FireworkEffect.builder();
+			if( actionData.effectColors != null ){
+				for(int i = 0; i < actionData.effectColors.length; i++ ){
+					effect.withColor( Color.fromRGB( actionData.effectColors[i] ) );
+				}
+				fireworkMeta.setEffect(effect.build());
+			}
+			if( actionData.fadeColors != null ){
+				for(int i = 0; i < actionData.fadeColors.length; i++ ){
+					effect.withFade( Color.fromRGB( actionData.fadeColors[i] ) );
+				}
+				fireworkMeta.setEffect(effect.build());
+			}
+			if(actionData.hasFlicker){
+				effect.flicker(true);
+			}
+			if(actionData.hasTrail){
+				effect.trail(true);
+			}
+			fireworkMeta.setEffect(effect.build());
+			item.setItemMeta(fireworkMeta);
 		}
 		
 		// Item display names

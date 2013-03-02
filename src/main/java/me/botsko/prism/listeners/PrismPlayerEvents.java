@@ -286,7 +286,7 @@ public class PrismPlayerEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.craft-item") ) return;
 		Player player = (Player) event.getWhoClicked();
 		ItemStack item = event.getRecipe().getResult();
-		Prism.actionsRecorder.addToQueue( new ItemStackAction("craft-item", item, item.getAmount(), -1, null, player.getLocation(), player.getName()) );
+		Prism.actionsRecorder.addToQueue( new ItemStackAction("craft-item", item, 1, -1, null, player.getLocation(), player.getName()) );
 	}
 	
 	
