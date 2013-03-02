@@ -370,6 +370,24 @@ public class GenericAction implements Action {
 	
 	/**
 	 * 
+	 * @param id
+	 */
+	public void setOldBlockId( int id ){
+		this.old_block_id = id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param id
+	 */
+	public void setOldBlockSubId( byte id ){
+		this.old_block_subid = id;
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public int getOldBlockId(){
 		return old_block_id;

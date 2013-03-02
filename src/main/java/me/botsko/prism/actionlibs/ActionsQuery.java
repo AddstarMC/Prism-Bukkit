@@ -193,24 +193,26 @@ public class ActionsQuery {
     				baseAction.setType( actionType );
     				baseAction.setId( rs.getInt(1) );
     				baseAction.setActionTime( rs.getString(2) );
-    				baseAction.setDisplayDate( rs.getString(10) );
-    				baseAction.setDisplayTime( rs.getString(11) );
-    				baseAction.setWorldName( rs.getString(5) );
     				baseAction.setPlayerName( rs.getString(4) );
+    				baseAction.setWorldName( rs.getString(5) );
     				baseAction.setX( rs.getInt(6) );
     				baseAction.setY( rs.getInt(7) );
     				baseAction.setZ( rs.getInt(8) );
+    				baseAction.setDisplayDate( rs.getString(14) );
+    				baseAction.setDisplayTime( rs.getString(15) );
     				if(!override_data){
     					baseAction.setBlockId( rs.getInt(9) );
         				baseAction.setBlockSubId( rs.getByte(10) );
-    					baseAction.setData( rs.getString(11) );
+        				baseAction.setOldBlockId( rs.getInt(11) );
+        				baseAction.setOldBlockSubId( rs.getByte(12) );
+    					baseAction.setData( rs.getString(13) );
     				}
     				baseAction.setMaterialAliases( plugin.getItems() );
     				
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
     				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
-    					aggregated = rs.getInt(14);
+    					aggregated = rs.getInt(16);
     				}
     				baseAction.setAggregateCount(aggregated);
     				
@@ -366,6 +368,8 @@ public class ActionsQuery {
 					"prism_actions.z, " +
 					"prism_actions.block_id, " +
 					"prism_actions.block_subid, " +
+					"prism_actions.old_block_id, " +
+					"prism_actions.old_block_subid, " +
 					"prism_actions.data, ";
 			
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){

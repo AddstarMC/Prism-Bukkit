@@ -79,7 +79,7 @@ public class PreprocessArgs {
 				String val = arg.contains(":") ? arg.replace(argEntry[0] + ":", "") : argEntry[0];
 				
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","-"};
+				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","id","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")){
 					respond( sender, plugin.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
@@ -292,12 +292,22 @@ public class PreprocessArgs {
 					}
 				}
 				
-				
 				// Keyword
 				if(arg_type.equals("k")){
 					parameters.setKeyword( val );
 				}
-
+				
+				// ID
+				if(arg_type.equals("id")){
+					
+					if(TypeUtils.isNumeric( val )){
+						
+					} else {
+						respond( sender, plugin.messenger.playerError("ID must be a number. Use /prism ? for help.") );
+						return null;
+					}
+					parameters.setId( Integer.parseInt(val) );
+				}
 				
 				// Special Flags
 				if(arg_type.startsWith("-")){
@@ -314,7 +324,7 @@ public class PreprocessArgs {
 									if(TypeUtils.isNumeric(flagComponents[1])){
 										parameters.setPerPage( Integer.parseInt(flagComponents[1]) );
 									} else {
-										respond( sender, plugin.messenger.playerError("Per-page flag value must be a number. Use /prism ? [command] for help.") );
+										respond( sender, plugin.messenger.playerError("Per-page flag value must be a number. Use /prism ? for help.") );
 										return null;
 									}
 								}

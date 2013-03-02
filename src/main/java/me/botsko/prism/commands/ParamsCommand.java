@@ -57,6 +57,7 @@ public class ParamsCommand implements SubHandler {
 		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "before:[time]" + ChatColor.WHITE + " Events prior to x long ago.") );
 		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE + " Defaults to your current world.") );
 		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "k:[text]" + ChatColor.WHITE + " Keyword search. Mainly for command/chat logging.") );
+		sender.sendMessage( plugin.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "id:[#]" + ChatColor.WHITE + " Record id. Useful for single item rollbacks/restores without a wand.") );
 		sender.sendMessage( plugin.messenger.playerMsg( "Prefix action, player, entity names with ! to exclude. Like p:!viveleroi") );
 		
 		// Build short list
