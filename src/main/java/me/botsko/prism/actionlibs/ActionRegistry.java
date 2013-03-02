@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.bukkit.plugin.Plugin;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.exceptions.InvalidActionException;
+import me.botsko.prism.utils.TypeUtils;
+
 public class ActionRegistry {
 	
 	
@@ -25,8 +31,32 @@ public class ActionRegistry {
 	 * Register a new action type for event recording, lookups, etc.
 	 * @param actionType
 	 */
-	public void registerAction( ActionType actionType ){
+	protected void registerAction( ActionType actionType ){
 		registeredActions.put(actionType.getName(), actionType);
+	}
+	
+	
+	/**
+	 * Register a new action type for event recording, lookups, etc.
+	 * @param actionType
+	 * @throws InvalidActionException 
+	 */
+	public void registerCustomAction( Plugin apiPlugin, ActionType actionType ) throws InvalidActionException{
+		
+		// Is plugin allowed?
+		@SuppressWarnings("unchecked")
+		ArrayList<String> allowedPlugins = (ArrayList<String>) Prism.config.getList("prism.tracking.api.allowed-plugins");
+		if( !allowedPlugins.contains( apiPlugin.getName() ) ){
+			throw new InvalidActionException("Registering action type not allowed. Plugin '" + apiPlugin.getName() + "' is not in list of allowed plugins.");
+		}
+		
+		// Is action type formatted right
+		if( TypeUtils.subStrOccurences(actionType.getName(), "-") != 2 ){
+			throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.");
+		}
+		
+		registeredActions.put(actionType.getName(), actionType);
+		
 	}
 	
 	

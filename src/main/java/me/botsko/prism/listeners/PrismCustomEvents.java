@@ -37,8 +37,6 @@ public class PrismCustomEvents implements Listener {
 		ArrayList<String> allowedPlugins = (ArrayList<String>) plugin.getConfig().getList("prism.tracking.api.allowed-plugins");
 		if( allowedPlugins.contains( event.getPluginName() ) ){
 			Prism.actionsRecorder.addToQueue( new PlayerAction( event.getActionTypeName(), event.getPlayer(), event.getMessage()) );
-		} else {
-			plugin.log("Custom event recording rejected for " + event.getPluginName() + " - not in list of allowed plugins.");
 		}
 	}
 }
