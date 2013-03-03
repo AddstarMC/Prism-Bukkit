@@ -16,8 +16,10 @@ import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Spider;
+import org.bukkit.entity.Wither;
 import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
+import org.bukkit.entity.Skeleton.SkeletonType;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -61,6 +63,9 @@ public class DeathUtils {
         	cause = "pvp";
         }
         if(damageCause.equals(DamageCause.ENTITY_ATTACK) && !(p.getKiller() instanceof Player)){
+        	cause = "mob";
+        }
+        if(cause == "ENTITY_ATTACK" && p.getKiller() instanceof Wither){
         	cause = "mob";
         }
         if(damageCause.equals(DamageCause.PROJECTILE) && !(p.getKiller() instanceof Player)){
@@ -137,7 +142,12 @@ public class DeathUtils {
             		attacker = "silverfish";
             	}
             	if (killer instanceof Skeleton){
-            		attacker = "skeleton";
+            		Skeleton skele = (Skeleton) killer;
+            		if(skele.getSkeletonType() == SkeletonType.WITHER){
+            			attacker = "witherskeleton";
+            		} else {
+            			attacker = "skeleton";
+            		}
             	}
             	if (killer instanceof Arrow){
             		attacker = "skeleton";
@@ -147,6 +157,9 @@ public class DeathUtils {
             	}
             	if (killer instanceof Spider){
             		attacker = "spider";
+            	}
+            	if (killer instanceof Wither){
+            		attacker = "wither";
             	}
             	if (killer instanceof Wolf){
                     Wolf wolf = (Wolf)killer;
