@@ -141,14 +141,14 @@ public class PrismCommands extends Executor {
 		 */
 		addSub( new String[]{"help","?"}, "prism.help")
 		.allowConsole()
-		.setHandler(new HelpCommand(prism));
+		.setHandler(new HelpCommand());
 		
 		/**
 		 * /prism params
 		 */
 		addSub("params", "prism.help")
 		.allowConsole()
-		.setHandler(new ParamsCommand(prism));
+		.setHandler(new ParamsCommand());
 		
 		/**
 		 * /prism reload
@@ -159,7 +159,7 @@ public class PrismCommands extends Executor {
             public void handle(CallInfo call) {
             	prism.reloadConfig();
             	Prism.config = plugin.getConfig();
-				call.getSender().sendMessage( prism.messenger.playerHeaderMsg("Configuration reloaded successfully.") );
+				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Configuration reloaded successfully.") );
             }
 		});
 	}

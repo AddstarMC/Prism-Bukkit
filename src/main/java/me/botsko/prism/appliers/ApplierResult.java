@@ -9,22 +9,27 @@ public class ApplierResult {
 	/**
 	 * 
 	 */
-	protected final int changes_applied;
+	private final int changes_applied;
 	
 	/**
 	 * 
 	 */
-	protected final int changes_skipped;
+	private final int changes_skipped;
 	
 	/**
 	 * 
 	 */
-	protected final boolean is_preview;
+	private final boolean is_preview;
 	
 	/**
 	 * 
 	 */
-	protected final ArrayList<BlockStateChange> blockStateChanges;
+	private final ArrayList<BlockStateChange> blockStateChanges;
+	
+	/**
+	 * 
+	 */
+	private final PrismProcessType processType;
 	
 	
 	/**
@@ -33,18 +38,19 @@ public class ApplierResult {
 	 * @param changes_skipped
 	 * @param messages
 	 */
-	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, ArrayList<BlockStateChange> blockStateChanges ){
+	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, ArrayList<BlockStateChange> blockStateChanges, PrismProcessType processType ){
 		this.changes_applied = changes_applied;
 		this.changes_skipped = changes_skipped;
 		this.is_preview = is_preview;
 		this.blockStateChanges = blockStateChanges;
+		this.processType = processType;
 	}
 
 
 	/**
 	 * @return the changes_applied
 	 */
-	public int getChanges_applied() {
+	public int getChangesApplied() {
 		return changes_applied;
 	}
 
@@ -52,7 +58,7 @@ public class ApplierResult {
 	/**
 	 * @return the changes_skipped
 	 */
-	public int getChanges_skipped() {
+	public int getChangesSkipped() {
 		return changes_skipped;
 	}
 
@@ -70,5 +76,14 @@ public class ApplierResult {
 	 */
 	public ArrayList<BlockStateChange> getBlockStateChanges(){
 		return blockStateChanges;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public PrismProcessType getProcessType(){
+		return processType;
 	}
 }

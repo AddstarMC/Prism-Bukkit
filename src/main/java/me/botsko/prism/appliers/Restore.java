@@ -16,8 +16,8 @@ public class Restore extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
-		super(plugin, sender, processType, results, parameters);
+	public Restore( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
+		super(plugin, sender, processType, results, parameters, callback);
 	}
 	
 	

@@ -39,17 +39,17 @@ public class ExtinguishCommand implements SubHandler {
 				int _tmp_radius = Integer.parseInt(call.getArg(1));
 				if(_tmp_radius > 0){
 					if( _tmp_radius > plugin.getConfig().getInt("prism.ex.max-radius") ){
-						call.getPlayer().sendMessage( plugin.messenger.playerError("Radius exceeds max set in config.") );
+						call.getPlayer().sendMessage( Prism.messenger.playerError("Radius exceeds max set in config.") );
 						return;
 					} else {
 						radius = _tmp_radius;
 					}
 				} else {
-					call.getPlayer().sendMessage( plugin.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 					return;
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
 				return;
 			}
 		}
@@ -57,14 +57,14 @@ public class ExtinguishCommand implements SubHandler {
 		ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(call.getPlayer().getLocation(), radius);
 		if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
 			
-			call.getPlayer().sendMessage(plugin.messenger.playerHeaderMsg("Extinguished nearby fire! Cool!"));
+			call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Extinguished nearby fire! Cool!"));
 			
 			// Trigger the event
 			PrismBlocksExtinguishEvent event = new PrismBlocksExtinguishEvent(blockStateChanges, call.getPlayer(), radius);
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 		} else {
-			call.getPlayer().sendMessage(plugin.messenger.playerError("No fired found within that radius to extinguish."));
+			call.getPlayer().sendMessage(Prism.messenger.playerError("No fired found within that radius to extinguish."));
 		}
 	}
 }

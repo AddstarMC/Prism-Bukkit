@@ -52,12 +52,12 @@ public class ProfileWand extends WandBase implements Wand{
 	 */
 	protected void showBlockProfile( Player player, Block block, Location loc ){
 		
-		player.sendMessage( plugin.messenger.playerHeaderMsg("Block Profile") );
+		player.sendMessage( Prism.messenger.playerHeaderMsg("Block Profile") );
 		
-		player.sendMessage( plugin.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase() ) );
-		player.sendMessage( plugin.messenger.playerMsg("Alias: " + plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData()) ) );
-		player.sendMessage( plugin.messenger.playerMsg("ID: " + block.getTypeId()+":" + block.getData() ) );
-		player.sendMessage( plugin.messenger.playerMsg("Coords: "+block.getX()+" "+block.getY()+" "+block.getZ() ) );
+		player.sendMessage( Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase() ) );
+		player.sendMessage( Prism.messenger.playerMsg("Alias: " + plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData()) ) );
+		player.sendMessage( Prism.messenger.playerMsg("ID: " + block.getTypeId()+":" + block.getData() ) );
+		player.sendMessage( Prism.messenger.playerMsg("Coords: "+block.getX()+" "+block.getY()+" "+block.getZ() ) );
 		
 	}
 	
@@ -67,10 +67,10 @@ public class ProfileWand extends WandBase implements Wand{
 	 */
 	public void playerRightClick(Player player, Entity entity) {
 		if(entity != null){
-			player.sendMessage( plugin.messenger.playerHeaderMsg("Entity Profile") );
-			player.sendMessage( plugin.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase() ) );
-			player.sendMessage( plugin.messenger.playerMsg("ID: " + entity.getEntityId() ) );
-			player.sendMessage( plugin.messenger.playerMsg("Coords: "+entity.getLocation().getBlockX()+" "+entity.getLocation().getBlockY()+" "+entity.getLocation().getBlockZ() ) );
+			player.sendMessage( Prism.messenger.playerHeaderMsg("Entity Profile") );
+			player.sendMessage( Prism.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase() ) );
+			player.sendMessage( Prism.messenger.playerMsg("ID: " + entity.getEntityId() ) );
+			player.sendMessage( Prism.messenger.playerMsg("Coords: "+entity.getLocation().getBlockX()+" "+entity.getLocation().getBlockY()+" "+entity.getLocation().getBlockZ() ) );
 		}
 	}
 }

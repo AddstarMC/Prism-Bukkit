@@ -100,7 +100,7 @@ public class WandCommand implements SubHandler {
 		}
 		
 		if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
 			return;
 		}
 		
@@ -112,14 +112,14 @@ public class WandCommand implements SubHandler {
 		 */
 		if( type.equalsIgnoreCase("i") || type.equalsIgnoreCase("inspect") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.inspect") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if(oldwand != null && oldwand instanceof InspectorWand){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new InspectorWand( plugin );
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
 				enabled = true;
 			}
 		}
@@ -129,14 +129,14 @@ public class WandCommand implements SubHandler {
 		 */
 		else if( type.equalsIgnoreCase("p") || type.equalsIgnoreCase("profile") ){
 			if( !call.getPlayer().hasPermission("prism.lookup") && !call.getPlayer().hasPermission("prism.wand.profile") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if( oldwand != null && oldwand instanceof ProfileWand ){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new ProfileWand( plugin );
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
 				enabled = true;
 			}
 		}
@@ -147,14 +147,14 @@ public class WandCommand implements SubHandler {
 		 */
 		else if( type.equalsIgnoreCase("rollback") ){
 			if( !call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.wand.rollback") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			if(oldwand != null && oldwand instanceof RollbackWand){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new RollbackWand( plugin );
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
 				enabled = true;
 			}
 		}
@@ -164,15 +164,15 @@ public class WandCommand implements SubHandler {
 		 */
 		else if(type.equalsIgnoreCase("restore")){
 			if( !call.getPlayer().hasPermission("prism.restore") && !call.getPlayer().hasPermission("prism.wand.restore") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			// If disabling this one
 			if(oldwand != null && oldwand instanceof RestoreWand){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new RestoreWand( plugin );
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
 				enabled = true;
 			}
 		}
@@ -181,12 +181,12 @@ public class WandCommand implements SubHandler {
 		 * Off
 		 */
 		else if(type.equalsIgnoreCase("off")){
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+			call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 		}
 		
 		// Not a valid wand
 		else {
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid wand type. Use /prism ? for help.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid wand type. Use /prism ? for help.") );
 			return;
 		}
 		
@@ -208,7 +208,7 @@ public class WandCommand implements SubHandler {
 					if( ItemUtils.handItemToPlayer( inv,  new ItemStack(item_id,1,item_subid) ) ){
 						wand.setItemWasGiven(true);
 					} else {
-						call.getPlayer().sendMessage( plugin.messenger.playerError("Can't fit the wand item into your inventory.") );
+						call.getPlayer().sendMessage( Prism.messenger.playerError("Can't fit the wand item into your inventory.") );
 					}
 				}
 				call.getPlayer().updateInventory();

@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -51,19 +52,19 @@ public class RollbackCommand implements SubHandler {
 			}
 		}
 		
-		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Beginning rollback...") );
+			call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Beginning rollback...") );
 			
-			Rollback rb = new Rollback( plugin, call.getSender(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
+			Rollback rb = new Rollback( plugin, call.getSender(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, new PrismApplierCallback() );
 			rb.apply();
 			
 		} else {
-			call.getSender().sendMessage( plugin.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first." ) );
+			call.getSender().sendMessage( Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first." ) );
 		}
 	}
 }

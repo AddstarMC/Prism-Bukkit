@@ -16,8 +16,8 @@ public class Undo extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Undo( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
-		super(plugin, player, processType, results, parameters);
+	public Undo( Prism plugin, Player player, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
+		super(plugin, player, processType, results, parameters, callback);
 	}
 	
 	
@@ -26,7 +26,7 @@ public class Undo extends Preview {
 	 * @return
 	 */
 	public void preview(){
-		player.sendMessage( plugin.messenger.playerError("You can't preview an undo.") );
+		player.sendMessage( Prism.messenger.playerError("You can't preview an undo.") );
 		return;
 	}
 }

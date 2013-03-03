@@ -11,6 +11,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -49,7 +50,7 @@ public class UndoCommand implements SubHandler {
 			if(TypeUtils.isNumeric(call.getArg(1))){
 				record_id = Integer.parseInt(call.getArg(1));
 				if(record_id <= 0){
-					call.getPlayer().sendMessage( plugin.messenger.playerError("Record id must be greater than zero." ) );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Record id must be greater than zero." ) );
 					return;
 				}
 			} else {
@@ -60,20 +61,20 @@ public class UndoCommand implements SubHandler {
 			
 			// Invalid id
 			if(record_id == 0){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Either you have no last process or an invalid id." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Either you have no last process or an invalid id." ) );
 				return;
 			}
 			
 			
 			PrismProcessAction process = aq.getPrismProcessRecord( record_id );
 			if(process == null){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("A process does not exists with that value." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("A process does not exists with that value." ) );
 				return;
 			}
 
 			// We only support this for drains
 			if(!process.getProcessChildActionType().equals("prism-drain")){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You can't currently undo anything other than a drain process." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You can't currently undo anything other than a drain process." ) );
 				return;
 			}
 			
@@ -89,13 +90,13 @@ public class UndoCommand implements SubHandler {
 			QueryResult results = aq.lookup( parameters, call.getPlayer() );
 			if(!results.getActionResults().isEmpty()){
 				
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
 				
-				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters );
+				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters, new PrismApplierCallback() );
 				rb.apply();
 				
 			} else {
-				call.getPlayer().sendMessage( plugin.messenger.playerError( "Nothing found to undo. Must be a problem with Prism." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError( "Nothing found to undo. Must be a problem with Prism." ) );
 			}
 			
 			
@@ -112,8 +113,8 @@ public class UndoCommand implements SubHandler {
 			ActionsQuery aq = new ActionsQuery(plugin);
 			QueryResult results = aq.lookup( parameters, call.getPlayer() );
 			if(!results.getActionResults().isEmpty()){
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
-				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+				call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process") );
 				List<Action> paginated = results.getPaginatedActionResults();
 				if(paginated != null){
 					for(Action a : paginated){
@@ -121,13 +122,13 @@ public class UndoCommand implements SubHandler {
 						if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 							am.showExtended();
 						}
-						call.getPlayer().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
+						call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 					}
 				} else {
-					call.getPlayer().sendMessage( plugin.messenger.playerError("Pagination can't find anything. Do you have the right page number?" ) );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Pagination can't find anything. Do you have the right page number?" ) );
 				}
 			} else {
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 			}
 		}
 	}

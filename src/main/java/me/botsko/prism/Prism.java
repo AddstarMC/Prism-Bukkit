@@ -71,7 +71,7 @@ public class Prism extends JavaPlugin {
 	 * Public
 	 */
 	public Prism prism;
-	public Messenger messenger;
+	public static Messenger messenger;
 	public static FileConfiguration config;
 	public WorldEditPlugin plugin_worldEdit = null;
 	public static ActionRecorder actionsRecorder;
@@ -516,7 +516,7 @@ public class Prism extends JavaPlugin {
 		    			// inform player
 		    			Player player = prism.getServer().getPlayer(result.getPlayer().getName());
 		    			if(player != null){
-		    				player.sendMessage( prism.messenger.playerHeaderMsg("Canceling forgotten preview.") );
+		    				player.sendMessage( Prism.messenger.playerHeaderMsg("Canceling forgotten preview.") );
 		    			}
 		    			playerActivePreviews.remove(query.getKey());
 		    		}

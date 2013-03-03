@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
+import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
@@ -49,7 +50,7 @@ public class PreviewCommand implements SubHandler {
 					previewSession.getPreviewer().apply_preview();
 					plugin.playerActivePreviews.remove( call.getPlayer().getName() );
 				} else {
-					call.getPlayer().sendMessage( plugin.messenger.playerError("You have no preview pending.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("You have no preview pending.") );
 				}
 				return;
 			}
@@ -64,7 +65,7 @@ public class PreviewCommand implements SubHandler {
 					previewSession.getPreviewer().cancel_preview();
 					plugin.playerActivePreviews.remove( call.getPlayer().getName() );
 				} else {
-					call.getPlayer().sendMessage( plugin.messenger.playerError("You have no preview pending.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("You have no preview pending.") );
 				}
 				return;
 			}
@@ -72,7 +73,7 @@ public class PreviewCommand implements SubHandler {
 			
 			// Ensure no current preview is waiting
 			if(plugin.playerActivePreviews.containsKey(call.getPlayer().getName())){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You have an existing preview pending. Please apply or cancel before moving on.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You have an existing preview pending. Please apply or cancel before moving on.") );
 				return;
 			}
 			
@@ -89,7 +90,7 @@ public class PreviewCommand implements SubHandler {
 				parameters.setStringFromRawArgs( call.getArgs(), 1 );
 				
 				if(parameters.getActionTypes().containsKey("world-edit")){
-					call.getPlayer().sendMessage( plugin.messenger.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
 					return;
 				}
 				
@@ -103,32 +104,32 @@ public class PreviewCommand implements SubHandler {
 					}
 				}
 				
-				call.getPlayer().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+				call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 			
 				// Perform preview
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( parameters, call.getPlayer() );
 				if(!results.getActionResults().isEmpty()){
 					
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Beginning preview...") );
+					call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Beginning preview...") );
 					
 					Previewable rs = null;
 					if(call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")){
-						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters );
+						rs = new Rollback( plugin, call.getPlayer(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, new PrismApplierCallback() );
 						rs.preview();
 					}
 					if(call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")){
-						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
+						rs = new Restore( plugin, call.getPlayer(), PrismProcessType.RESTORE, results.getActionResults(), parameters, new PrismApplierCallback() );
 						rs.preview();
 					}
 					// Adding preview to player preview queue handled by postProcess
 				} else {
-					call.getPlayer().sendMessage( plugin.messenger.playerError("Nothing found to preview.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Nothing found to preview.") );
 				}
 				return;
 			}
 			
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid command. Check /prism ? for help.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid command. Check /prism ? for help.") );
 			
 		}
 	}

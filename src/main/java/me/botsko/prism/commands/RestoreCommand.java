@@ -8,6 +8,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -53,13 +54,13 @@ public class RestoreCommand implements SubHandler {
 			}
 		}
 		
-		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
 	
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
 			
-			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Restoring changes...") );
+			call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Restoring changes...") );
 
 			// Inform nearby players
 			if( call.getSender() instanceof Player ){
@@ -68,11 +69,11 @@ public class RestoreCommand implements SubHandler {
 			}
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, call.getSender(), PrismProcessType.RESTORE, results.getActionResults(), parameters );
+			Restore rs = new Restore( plugin, call.getSender(), PrismProcessType.RESTORE, results.getActionResults(), parameters, new PrismApplierCallback() );
 			rs.apply();
 			
 		} else {
-			call.getSender().sendMessage( plugin.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
+			call.getSender().sendMessage( Prism.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
 		}
 	}
 }

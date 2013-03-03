@@ -44,7 +44,7 @@ public class ResetmyCommand implements SubHandler {
 			
 			// Ensure it's enabled
 			if( !plugin.getConfig().getBoolean("prism.wands.allow-user-override") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry, but personalizing the wand is currently not allowed.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry, but personalizing the wand is currently not allowed.") );
 			}
 			
 			// Check for any wand permissions. @todo There should be some central way to handle this - some way to centralize it at least
@@ -55,7 +55,7 @@ public class ResetmyCommand implements SubHandler {
 				&& !call.getPlayer().hasPermission("prism.wand.profile")
 				&& !call.getPlayer().hasPermission("prism.wand.rollback")
 				&& !call.getPlayer().hasPermission("prism.wand.restore")){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			
@@ -64,16 +64,16 @@ public class ResetmyCommand implements SubHandler {
 				Wand oldwand = plugin.playersWithActiveTools.get(call.getPlayer().getName());
 				oldwand.disable( call.getPlayer() );
 				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			}
 			
 			Settings.deleteSetting( "wand.item", call.getPlayer() );
 			Settings.deleteSetting( "wand.mode", call.getPlayer() );
-			call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Your personal wand settings have been reset to server defaults.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Your personal wand settings have been reset to server defaults.") );
 			return;
 	
 		} else {
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 		}
 	}
 }

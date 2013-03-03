@@ -45,7 +45,7 @@ public class SetmyCommand implements SubHandler {
 			
 			// Ensure it's enabled
 			if( !plugin.getConfig().getBoolean("prism.wands.allow-user-override") ){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry, but personalizing the wand is currently not allowed.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry, but personalizing the wand is currently not allowed.") );
 			}
 			
 			// Check for any wand permissions. @todo There should be some central way to handle this - some way to centralize it at least
@@ -56,7 +56,7 @@ public class SetmyCommand implements SubHandler {
 				&& !call.getPlayer().hasPermission("prism.wand.profile")
 				&& !call.getPlayer().hasPermission("prism.wand.rollback")
 				&& !call.getPlayer().hasPermission("prism.wand.restore")){
-				call.getPlayer().sendMessage( plugin.messenger.playerError("You do not have permission for this.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
 			}
 			
@@ -65,7 +65,7 @@ public class SetmyCommand implements SubHandler {
 				Wand oldwand = plugin.playersWithActiveTools.get(call.getPlayer().getName());
 				oldwand.disable( call.getPlayer() );
 				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
-				call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			}
 			
 			String setSubType = null;
@@ -87,10 +87,10 @@ public class SetmyCommand implements SubHandler {
 					Settings.saveSetting("wand.mode", setWandMode, call.getPlayer());
 					// Delete the item so we don't confuse people.
 					Settings.deleteSetting( "wand.item", call.getPlayer() );
-					call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Changed your personal wand to " + ChatColor.GREEN + setWandMode + ChatColor.WHITE + " mode.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Changed your personal wand to " + ChatColor.GREEN + setWandMode + ChatColor.WHITE + " mode.") );
 					return;
 				}
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 				return;
 			}
 			
@@ -123,22 +123,22 @@ public class SetmyCommand implements SubHandler {
 						if( item_name != null ){
 							
 							if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
-								call.getPlayer().sendMessage( plugin.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+								call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
 								return;
 							}
 							
 							Settings.saveSetting("wand.item", setWandItem, call.getPlayer());
-							call.getPlayer().sendMessage( plugin.messenger.playerHeaderMsg("Changed your personal wand item to " + ChatColor.GREEN + item_name + ChatColor.WHITE + ".") );
+							call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Changed your personal wand item to " + ChatColor.GREEN + item_name + ChatColor.WHITE + ".") );
 							return;
 							
 						}
 					}
 				}
-				call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 				return;
 			}
 		} else {
-			call.getPlayer().sendMessage( plugin.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
 		}
 	}
 }

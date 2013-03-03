@@ -60,9 +60,9 @@ public class LookupCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getSender() );
 		if(!results.getActionResults().isEmpty()){
-			call.getSender().sendMessage( plugin.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+			call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			if(!defaultsReminder.isEmpty()){
-				call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
 			List<Action> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
@@ -71,16 +71,16 @@ public class LookupCommand implements SubHandler {
 					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 						am.showExtended();
 					}
-					call.getSender().sendMessage( plugin.messenger.playerMsg( am.getMessage() ) );
+					call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 				}
 			} else {
-				call.getSender().sendMessage( plugin.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+				call.getSender().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
 		} else {
 			if(!defaultsReminder.isEmpty()){
-				call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+				call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
-			call.getSender().sendMessage( plugin.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+			call.getSender().sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 		}
 	}
 }

@@ -123,6 +123,11 @@ public class Preview implements Previewable {
 	 */
 	protected int worldChangeQueueTaskId;
 	
+	/**
+	 * 
+	 */
+	protected ApplierCallback callback;
+	
 	
 	
 	/**
@@ -130,7 +135,7 @@ public class Preview implements Previewable {
 	 * @param plugin
 	 * @return 
 	 */
-	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters ){
+	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
 		this.processType = processType;
 		this.plugin = plugin;
 		this.sender = sender;
@@ -140,6 +145,10 @@ public class Preview implements Previewable {
 			this.player = (Player) sender;
 		} else {
 			this.player = null;
+		}
+		
+		if(callback != null){
+			this.callback = callback;
 		}
 		
 		// Append all actions to the queue.
@@ -167,7 +176,7 @@ public class Preview implements Previewable {
 				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 			}
 		}
-		sender.sendMessage( plugin.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
+		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
 	}
 	
 	
@@ -176,7 +185,7 @@ public class Preview implements Previewable {
 	 */
 	public void apply_preview(){
 		if( player == null ) return;
-		sender.sendMessage( plugin.messenger.playerHeaderMsg("Applying rollback from preview...") );
+		sender.sendMessage( Prism.messenger.playerHeaderMsg("Applying rollback from preview...") );
 		setIsPreview(false);
 		changes_applied_count = 0;
 		skipped_block_count = 0;
@@ -542,7 +551,7 @@ public class Preview implements Previewable {
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
-					sender.sendMessage( plugin.messenger.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
+					sender.sendMessage( Prism.messenger.playerError( ChatColor.GRAY + "No actions found that match the criteria." ) );
 					return;
 				}
 		    	
@@ -894,7 +903,7 @@ public class Preview implements Previewable {
 			plugin.playerActivePreviews.put(player.getName(), ps);
 			moveEntitiesToSafety();
 		}
-		sendResultMessages();
+		fireApplierCallback();
 	}
 	
 	
@@ -1012,7 +1021,7 @@ public class Preview implements Previewable {
 		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
 		plugin.getServer().getPluginManager().callEvent(event);
 		
-		sendResultMessages();
+		fireApplierCallback();
 		
 	}
 	
@@ -1036,7 +1045,7 @@ public class Preview implements Previewable {
 						}
 						if(add > 0){
 							if(entity instanceof Player){
-								((Player)entity).sendMessage(plugin.messenger.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
+								((Player)entity).sendMessage(Prism.messenger.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
 							}
 							entity.teleport(l);
 						}
@@ -1050,90 +1059,10 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	public void sendResultMessages(){
+	public void fireApplierCallback(){
 		
-		// Send player success messages
-		if(processType.equals(PrismProcessType.ROLLBACK)){
-		
-			// Build the results message
-			if(!is_preview){
-				
-				String msg = changes_applied_count + " reversals.";
-				if(skipped_block_count > 0){
-					msg += " " + skipped_block_count + " skipped.";
-				}
-				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " It's like it never happened.";
-				}
-				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
-				
-			} else {
-			
-				// Build the results message
-				String msg = "At least " + changes_applied_count + " planned reversals.";
-				if(skipped_block_count > 0){
-					msg += " " + skipped_block_count + " skipped.";
-				}
-				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
-				}
-				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
-				
-				// Let me know there's no need to cancel/apply
-				if(changes_applied_count == 0){
-					sender.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
-				}
-			}
-		}
-		
-		
-		// Build the results message
-		if(processType.equals(PrismProcessType.RESTORE)){
-			if(!is_preview){
-				
-				// Build the results message
-				String msg = changes_applied_count + " events restored.";
-				if(skipped_block_count > 0){
-					msg += " " + skipped_block_count + " skipped.";
-				}
-				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " It's like it was always there.";
-				}
-				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
-				
-			} else {
-			
-				// Build the results message
-				String msg = changes_applied_count + " planned restorations.";
-				if(skipped_block_count > 0){
-					msg += " " + skipped_block_count + " skipped.";
-				}
-				if(changes_applied_count > 0){
-					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
-				}
-				sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
-				
-				// Let me know there's no need to cancel/apply
-				if(changes_applied_count == 0){
-					sender.sendMessage( plugin.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
-				}
-			}
-		}
-		
-		
-		// Build the results message
-		if(processType.equals(PrismProcessType.UNDO)){
-				
-			// Build the results message
-			String msg = changes_applied_count + " things neverminded.";
-			if(skipped_block_count > 0){
-				msg += " " + skipped_block_count + " skipped.";
-			}
-			if(changes_applied_count > 0){
-				msg += ChatColor.GRAY + " If anyone asks, you never did that.";
-			}
-			sender.sendMessage( plugin.messenger.playerHeaderMsg( msg ) );
-			
+		if(callback != null){
+			callback.handle(sender, new ApplierResult(is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType));
 		}
 		
 		plugin.eventTimer.recordTimedEvent("applier function complete");

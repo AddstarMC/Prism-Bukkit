@@ -50,18 +50,18 @@ public class DeleteCommand implements SubHandler {
 			}
 		}
 		
-		call.getSender().sendMessage( plugin.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder) );
+		call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder) );
 			
 		if(parameters.getFoundArgs().size() > 0){
 			plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			    public void run(){
 					ActionsQuery aq = new ActionsQuery(plugin);
 					int rows_affected = aq.delete(parameters);
-					call.getSender().sendMessage( plugin.messenger.playerHeaderMsg(rows_affected + " records have been purged from the database."));
+					call.getSender().sendMessage( Prism.messenger.playerHeaderMsg(rows_affected + " records have been purged from the database."));
 			    }
 			});
 		} else {
-			call.getSender().sendMessage( plugin.messenger.playerError("You must supply at least one parameter." ));
+			call.getSender().sendMessage( Prism.messenger.playerError("You must supply at least one parameter." ));
 		}
 	}
 }
