@@ -1,6 +1,7 @@
 package me.botsko.prism.wands;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import me.botsko.prism.utils.ItemUtils;
@@ -27,6 +28,11 @@ public abstract class WandBase {
 	 * 
 	 */
 	protected byte item_subid = 0;
+	
+	/**
+	 * 
+	 */
+	protected ItemStack original_item;
 	
 
 	/**
@@ -99,11 +105,22 @@ public abstract class WandBase {
 	 * 
 	 * @param key
 	 */
-	public void serItemFromKey( String key ){
+	public void setItemFromKey( String key ){
 		if(key.contains(":")){
 			String[] toolKeys = key.split(":");
 			item_id = Integer.parseInt(toolKeys[0]);
 			item_subid = Byte.parseByte(toolKeys[1]);
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param item
+	 */
+	public void setOriginallyHeldItem( ItemStack item ){
+		if(item.getTypeId() > 0){
+			original_item = item;
 		}
 	}
 	
@@ -125,6 +142,9 @@ public abstract class WandBase {
 				ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
 				player.updateInventory();
 			}
+		}
+		if( original_item != null ){
+			ItemUtils.moveItemToHand(inv, original_item.getTypeId(), (byte)original_item.getDurability());
 		}
 	}
 }

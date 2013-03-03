@@ -3,6 +3,7 @@ package me.botsko.prism.wands;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public interface Wand {
 	
@@ -83,7 +84,14 @@ public interface Wand {
 	 * 
 	 * @param key
 	 */
-	public void serItemFromKey( String key );
+	public void setItemFromKey( String key );
+	
+	
+	/**
+	 * 
+	 * @param item
+	 */
+	public void setOriginallyHeldItem( ItemStack item );
 	
 	
 	/**

@@ -202,6 +202,8 @@ public class WandCommand implements SubHandler {
 			// Move any existing item to the hand, otherwise give it to them
 			if( plugin.getConfig().getBoolean("prism.wands.auto-equip") ){
 				if( !ItemUtils.moveItemToHand( inv, item_id, item_subid) ){
+					// Store the item they're holding, if any
+					wand.setOriginallyHeldItem( inv.getItemInHand() );
 					// They don't have the item, so we need to give them an item
 					if( ItemUtils.handItemToPlayer( inv,  new ItemStack(item_id,1,item_subid) ) ){
 						wand.setItemWasGiven(true);
