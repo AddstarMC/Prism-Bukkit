@@ -74,7 +74,7 @@ public class Executor implements CommandExecutor {
 			}
 		}
 		// Ensure they have permission
-		else if ( player != null && !(sub.playerHasPermission(player))) {
+		if ( player != null && !(sub.playerHasPermission(player))) {
 			sender.sendMessage( "You do not have permission to use this command" );
 			return true;
 		}

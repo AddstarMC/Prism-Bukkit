@@ -141,6 +141,12 @@ public class PrismBlockEvents implements Listener {
 			}
 		}
 		
+		// Some blocks will essentially never have attachments - not
+		// even worth spending time looking for them.
+		if( !block.getType().isSolid() ){
+			return;
+		}
+		
 		// Find a list of side-face attached blocks that we expect will detach
 		ArrayList<Block> detached_blocks = BlockUtils.findSideFaceAttachedBlocks(block);
 		if(detached_blocks.size() > 0){
@@ -185,7 +191,9 @@ public class PrismBlockEvents implements Listener {
 		if( block.getType().equals(Material.AIR) ) return;
 		
 		// Run ore find alerts
-		plugin.oreMonitor.processAlertsFromBlock(player, block);
+		if( block.getType().name().contains("_ore") ){
+			plugin.oreMonitor.processAlertsFromBlock(player, block);
+		}
 		
 		// Change handling a bit if it's a long block
 		block = properlyLogDoubleLengthBlocks(block);
