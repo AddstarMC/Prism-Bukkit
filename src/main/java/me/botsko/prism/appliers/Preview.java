@@ -12,6 +12,9 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Action;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.BlockAction.SignActionData;
+import me.botsko.prism.actions.BlockAction.SkullActionData;
+import me.botsko.prism.actions.BlockAction.SpawnerActionData;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.HangingItemAction;
@@ -37,9 +40,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -384,16 +389,16 @@ public class Preview implements Previewable {
 			 */
 			if( b.getBlockId() == 144 || b.getBlockId() == 397 ){
 				
-//				SkullActionData s = (SkullActionData) b.getActionData();
-//	
-//				// Set skull data
-//				Skull skull = (Skull) block.getState();
-//				skull.setRotation( s.getRotation() );
-//				skull.setSkullType( s.getSkullType() );
-//				if(!s.owner.isEmpty()){
-//					skull.setOwner( s.owner );
-//				}
-//				skull.update();
+				SkullActionData s = (SkullActionData) b.getActionData();
+	
+				// Set skull data
+				Skull skull = (Skull) block.getState();
+				skull.setRotation( s.getRotation() );
+				skull.setSkullType( s.getSkullType() );
+				if(!s.owner.isEmpty()){
+					skull.setOwner( s.owner );
+				}
+				skull.update();
 				
 			}
 			
@@ -403,13 +408,13 @@ public class Preview implements Previewable {
 			 */
 			if( b.getBlockId() == 52 ){
 				
-//				SpawnerActionData s = (SpawnerActionData) b.getActionData();
-//				
-//				// Set spawner data
-//				CreatureSpawner spawner = (CreatureSpawner) block.getState();
-//				spawner.setDelay(s.getDelay());
-//				spawner.setSpawnedType(s.getEntityType());
-//				spawner.update();
+				SpawnerActionData s = (SpawnerActionData) b.getActionData();
+				
+				// Set spawner data
+				CreatureSpawner spawner = (CreatureSpawner) block.getState();
+				spawner.setDelay(s.getDelay());
+				spawner.setSpawnedType(s.getEntityType());
+				spawner.update();
 				
 			}
 			
@@ -420,27 +425,27 @@ public class Preview implements Previewable {
 //			if( b.getActionData() instanceof SignActionData ){
 			if( b.getBlockId() == 63 || b.getBlockId() == 68 ){
 
-//				SignActionData s = (SignActionData) b.getActionData();
-//				
-//				// Verify block is sign. Rarely, if the block somehow pops off or fails
-//				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
-//				// cannot be cast to org.bukkit.block.Sign
-//				
-//				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
-//
-//					// Set sign data
-//					Sign sign = (Sign) block.getState();
-//					int i = 0;
-//					if(s.lines.length > 0){
-//						for(String line : s.lines){
-//							sign.setLine(i, line);
-//							i++;
-//						}
-//					}
-//					sign.update();
-//				} else {
-//					return ChangeResultType.SKIPPED;
-//				}
+				SignActionData s = (SignActionData) b.getActionData();
+				
+				// Verify block is sign. Rarely, if the block somehow pops off or fails
+				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
+				// cannot be cast to org.bukkit.block.Sign
+				
+				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
+
+					// Set sign data
+					Sign sign = (Sign) block.getState();
+					int i = 0;
+					if(s.lines.length > 0){
+						for(String line : s.lines){
+							sign.setLine(i, line);
+							i++;
+						}
+					}
+					sign.update();
+				} else {
+					return ChangeResultType.SKIPPED;
+				}
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
