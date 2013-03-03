@@ -5,15 +5,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
-
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Action;
-import me.botsko.prism.utils.TypeUtils;
 
 public class ActionRecorder implements Runnable {
 	
@@ -26,33 +21,14 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 */
 	private static final LinkedBlockingQueue<Action> queue = new LinkedBlockingQueue<Action>();
-	
-	/**
-	 * 
-	 */
-	private final List<String> ignore_players;
-	
-	/**
-	 * 
-	 */
-	private final List<String> ignore_worlds;
-	
-	/**
-	 * 
-	 */
-	private final boolean ignore_creative;
 
 	
 	/**
 	 * 
 	 * @param plugin
 	 */
-	@SuppressWarnings("unchecked")
 	public ActionRecorder( Prism plugin ){
 		this.plugin = plugin;
-		ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
-		ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
-		ignore_creative = plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" );
 	}
 	
 	
@@ -72,11 +48,6 @@ public class ActionRecorder implements Runnable {
 		
 		if(a == null) return;
 		
-		// Verify we're expected to track this action, world, player
-		if(!shouldTrack(a)){
-			return;
-		}
-		
 		queue.add(a);
 		
 		if(a.getData() != null && a.getData().length() > 255){
@@ -87,52 +58,8 @@ public class ActionRecorder implements Runnable {
 	
 	/**
 	 * 
-	 * @param a
-	 * @return
-	 */
-	protected boolean shouldTrack( Action a ){
-		
-		// Always track Prism actions - it's mainly internal
-		// use anyway.
-		if(a.getType().getName().contains("prism")){
-			return true;
-		}
-		
-		// Should we ignore this player?
-		if(ignore_players != null && ignore_players.contains( a.getPlayerName() )){
-			return false;
-		}
-		
-		// Should we ignore this world?
-		if(ignore_worlds != null && ignore_worlds.contains( a.getWorldName() )){
-			return false;
-		}
-		
-		// Should we ignore this action type?
-		String action_type = a.getType().getName();
-		if( (TypeUtils.subStrOccurences(action_type, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + action_type )) ){
-			return false;
-		}
-		
-		// Should we ignore this player for being in creative?
-		// @todo maybe we should pass the full player to actions.
-		if( ignore_creative ){
-			String name = a.getPlayerName();
-			if(name == null) return true;
-			Player pl = plugin.getServer().getPlayer( name );
-			if(pl != null && pl.getGameMode().equals(GameMode.CREATIVE)){
-				return false;
-			}
-		}
-		return true;
-	}
-	
-	
-	/**
-	 * 
 	 */
 	public void save(){
-//		plugin.debug("Recorder: Checking queue for pending inserts. Queue size: " + queue.size());
 		if(!queue.isEmpty()){
 			insertActionsIntoDatabase();
 		}

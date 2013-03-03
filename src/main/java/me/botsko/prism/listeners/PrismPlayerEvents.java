@@ -93,7 +93,7 @@ public class PrismPlayerEvents implements Listener {
 			}
 		}
 		
-		if( !plugin.getConfig().getBoolean("prism.tracking.player-command") ) return;
+		if( !Prism.getIgnore().event("player-command",player) ) return;
 
 		// Ignore some commands based on config
 		if( ignoreCommands.contains( primaryCmd ) ){
@@ -111,10 +111,9 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerJoin(final PlayerJoinEvent event){
-		
-		if( !plugin.getConfig().getBoolean("prism.tracking.player-join") ) return;
-		
+
 		Player player = event.getPlayer();
+		if( !Prism.getIgnore().event("player-join",player) ) return;
 		
 		String ip = null;
 		if(plugin.getConfig().getBoolean("prism.track-player-ip-on-join")){
@@ -132,7 +131,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(final PlayerQuitEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.tracking.player-quit") ) return;
+		if( !Prism.getIgnore().event("player-quit",event.getPlayer()) ) return;
 		
 		Prism.actionsRecorder.addToQueue( new PlayerAction("player-quit", event.getPlayer(), null) );
 
@@ -155,7 +154,7 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerChat(final AsyncPlayerChatEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.tracking.player-chat") ) return;
+		if( !Prism.getIgnore().event("player-chat",event.getPlayer()) ) return;
 		
 		if( plugin.dependencyEnabled("Herochat") ) return;
 		
@@ -169,7 +168,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.item-drop") ) return;
+		if( !Prism.getIgnore().event("item-drop",event.getPlayer()) ) return;
 		Prism.actionsRecorder.addToQueue( new ItemStackAction("item-drop", event.getItemDrop().getItemStack(), event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -180,7 +179,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.item-pickup") ) return;
+		if( !Prism.getIgnore().event("item-pickup",event.getPlayer()) ) return;
 		Prism.actionsRecorder.addToQueue( new ItemStackAction("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
 	}
 	
@@ -191,7 +190,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.xp-pickup") ) return;
+		if( !Prism.getIgnore().event("xp-pickup",event.getPlayer()) ) return;
 		Prism.actionsRecorder.addToQueue( new PlayerAction("xp-pickup", event.getPlayer(), ""+event.getAmount()) );
 	}
 	
@@ -202,12 +201,11 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event){
-		
-		if( !plugin.getConfig().getBoolean("prism.tracking.water-bucket")
-				&& !plugin.getConfig().getBoolean("prism.tracking.lava-bucket")) return;
-		
+
 		Player player = event.getPlayer();
 		String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
+		
+		if( !Prism.getIgnore().event(cause,player) ) return;
 		
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 		int newId = (cause.equals("lava-bucket") ? 11 : 9);
@@ -226,9 +224,8 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerBucketFill(final PlayerBucketFillEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.tracking.bucket-fill") ) return;
-		
 		Player player = event.getPlayer();
+		if( !Prism.getIgnore().event("bucket-fill",player) ) return;
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 		
 		String liquid_type = "milk";
@@ -257,7 +254,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerTeleport(final PlayerTeleportEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.player-teleport") ) return;
+		if( !Prism.getIgnore().event("player-teleport",event.getPlayer()) ) return;
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){
 			Prism.actionsRecorder.addToQueue( new EntityTravelAction("player-teleport", event.getPlayer(), event.getFrom(), event.getTo(), event.getCause()) );
@@ -271,7 +268,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEnchantItem(final EnchantItemEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.enchant-item") ) return;
+		if( !Prism.getIgnore().event("enchant-item",event.getEnchanter()) ) return;
 		Player player = event.getEnchanter();
 		Prism.actionsRecorder.addToQueue( new ItemStackAction("enchant-item", event.getItem(), event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player.getName()) );
 	}
@@ -283,8 +280,8 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCraftItem(final CraftItemEvent event) {
-		if( !plugin.getConfig().getBoolean("prism.tracking.craft-item") ) return;
 		Player player = (Player) event.getWhoClicked();
+		if( !Prism.getIgnore().event("craft-item",player) ) return;
 		ItemStack item = event.getRecipe().getResult();
 		Prism.actionsRecorder.addToQueue( new ItemStackAction("craft-item", item, 1, -1, null, player.getLocation(), player.getName()) );
 	}
@@ -313,8 +310,6 @@ public class PrismPlayerEvents implements Listener {
 
 			// Does the player have such item?
 			if(wand != null && player.getItemInHand().getTypeId() == item_id && player.getItemInHand().getDurability() == item_subid){
-				
-				plugin.debug("Wand in use.");
 				
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -346,6 +341,7 @@ public class PrismPlayerEvents implements Listener {
 				case ENDER_CHEST:
 				case ANVIL:
 				case BREWING_STAND:
+					if( !Prism.getIgnore().event("container-access",player) ) return;
 					Prism.actionsRecorder.addToQueue( new BlockAction("container-access", block, player.getName()) );
 					break;
 				case WOODEN_DOOR:
@@ -354,6 +350,7 @@ public class PrismPlayerEvents implements Listener {
 				case LEVER:
 				case STONE_BUTTON:
 				case WOOD_BUTTON:
+					if( !Prism.getIgnore().event("block-use",player) ) return;
 					Prism.actionsRecorder.addToQueue( new BlockAction("block-use", block, player.getName()) );
 					break;
 				case LOG:
@@ -370,6 +367,7 @@ public class PrismPlayerEvents implements Listener {
 					break;
 				case TNT:
 					if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
+						if( !Prism.getIgnore().event("tnt-prime",player) ) return;
 						Prism.actionsRecorder.addToQueue( new UseAction("tnt-prime", "tnt", block, player.getName()) );
 					}
 					break;
@@ -394,6 +392,7 @@ public class PrismPlayerEvents implements Listener {
 
 		if (block != null && event.getAction() == Action.PHYSICAL){
 			if(block.getType() == Material.SOIL){ // They are stepping on soil
+				if( !Prism.getIgnore().event("crop=trample",player) ) return;
 				Prism.actionsRecorder.addToQueue( new BlockAction("crop-trample", block.getRelative(BlockFace.UP), player.getName()) );
 			}
 		}
@@ -407,6 +406,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordCocoaPlantEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		if( !Prism.getIgnore().event("block-place",block) ) return;
 		if(block.getType().equals(Material.LOG) && block.getData() >= 3 && inhand.getTypeId() == 351 && inhand.getDurability() == 3){
 			Location newLoc = block.getRelative(clickedFace).getLocation();
 			Block actualBlock = block.getWorld().getBlockAt(newLoc);
@@ -432,6 +432,7 @@ public class PrismPlayerEvents implements Listener {
 	 */
 	protected void recordBonemealEvent( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		if( inhand.getTypeId() == 351 && inhand.getDurability() == 15){
+			if( !Prism.getIgnore().event("bonemeal-use",block) ) return;
 			Prism.actionsRecorder.addToQueue( new UseAction("bonemeal-use", "bonemeal", block, player) );
 		}
 	}
@@ -445,6 +446,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		if( !Prism.getIgnore().event("spawnegg-use",block) ) return;
 		Prism.actionsRecorder.addToQueue( new UseAction("spawnegg-use", "monster egg", block, player) );
 	}
 	
@@ -457,6 +459,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordRocketLaunch( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+		if( !Prism.getIgnore().event("firework-launch",block) ) return;
 		Prism.actionsRecorder.addToQueue( new ItemStackAction("firework-launch", inhand, null, block.getLocation(), player) );
 	}
 	

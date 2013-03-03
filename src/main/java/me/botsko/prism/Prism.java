@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.Ignore;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
@@ -63,7 +64,8 @@ public class Prism extends JavaPlugin {
 	private Language language;
 	private Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> enabledPlugins = new ArrayList<String>();
-	private static ActionRegistry actionRegistry; 
+	private static ActionRegistry actionRegistry;
+	private static Ignore ignore;
 	
 	/**
 	 * Public
@@ -178,6 +180,7 @@ public class Prism extends JavaPlugin {
 			eventTimer = new TimeTaken();
 			queueStats = new QueueStats();
 			actionRegistry = new ActionRegistry();
+			ignore = new Ignore( this );
 			
 			// Plugins we use
 			checkPluginDependancies();
@@ -195,7 +198,7 @@ public class Prism extends JavaPlugin {
 			
 			// Assign Plugin listeners if enabled
 			if( dependencyEnabled("Herochat") && getConfig().getBoolean("prism.tracking.player-chat") ){
-				getServer().getPluginManager().registerEvents(new PrismChannelChatEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismChannelChatEvents(), this);
 			}
 			
 			// Assign listeners to our own events
@@ -466,6 +469,15 @@ public class Prism extends JavaPlugin {
 	 */
 	public static ActionRegistry getActionRegistry(){
 		return actionRegistry;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static Ignore getIgnore(){
+		return ignore;
 	}
 	
 	
