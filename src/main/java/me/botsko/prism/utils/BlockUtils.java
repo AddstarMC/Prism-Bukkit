@@ -737,6 +737,11 @@ public class BlockUtils {
     		return true;
     	}
     	
+    	// Mycel/Dirt
+    	if( (id1 == 110 || id1 == 3) && (id2 == 110 || id2 == 3) ){
+    		return true;
+    	}
+    	
     	// Water
     	if( (id1 == 8 || id1 == 9) && (id2 == 8 || id2 == 9) ){
     		return true;
