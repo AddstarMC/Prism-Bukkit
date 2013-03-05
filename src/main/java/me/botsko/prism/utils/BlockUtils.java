@@ -732,6 +732,11 @@ public class BlockUtils {
     	// Get the obvious one out of the way.
     	if(id1 == id2) return true;
     	
+    	// Grass/Dirt
+    	if( (id1 == 2 || id1 == 3) && (id2 == 2 || id2 == 3) ){
+    		return true;
+    	}
+    	
     	// Water
     	if( (id1 == 8 || id1 == 9) && (id2 == 8 || id2 == 9) ){
     		return true;
