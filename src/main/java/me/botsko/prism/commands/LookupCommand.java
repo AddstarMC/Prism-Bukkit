@@ -46,6 +46,7 @@ public class LookupCommand implements SubHandler {
 			return;
 		}
 		parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
+		parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
 		
 		// determine if defaults were used
 		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
