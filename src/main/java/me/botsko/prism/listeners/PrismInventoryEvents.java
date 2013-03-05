@@ -1,7 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.ItemStackAction;
+import me.botsko.prism.actionlibs.ActionFactory;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -240,7 +240,7 @@ public class PrismInventoryEvents implements Listener {
 	    
 	    // Record it!
 	    if(actionType != null && containerLoc != null && item != null && item.getTypeId() != 0 && officialQuantity > 0){
-		    Prism.actionsRecorder.addToQueue( new ItemStackAction(actionType, item, officialQuantity, slot, null, containerLoc, player.getName()) );
+		    Prism.actionsRecorder.addToQueue( ActionFactory.create(actionType, item, officialQuantity, slot, null, containerLoc, player.getName()) );
 	    }
 	}
 }

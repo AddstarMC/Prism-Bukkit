@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.actionlibs.Ignore;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -65,6 +66,7 @@ public class Prism extends JavaPlugin {
 	private Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> enabledPlugins = new ArrayList<String>();
 	private static ActionRegistry actionRegistry;
+	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
 	
 	/**
@@ -100,6 +102,7 @@ public class Prism extends JavaPlugin {
     /**
      * Enables the plugin and activates our player listeners
      */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onEnable(){
 		
@@ -179,6 +182,7 @@ public class Prism extends JavaPlugin {
 			
 			eventTimer = new TimeTaken();
 			queueStats = new QueueStats();
+			handlerRegistry = new HandlerRegistry();
 			actionRegistry = new ActionRegistry();
 			ignore = new Ignore( this );
 			
@@ -469,6 +473,15 @@ public class Prism extends JavaPlugin {
 	 */
 	public static ActionRegistry getActionRegistry(){
 		return actionRegistry;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static HandlerRegistry<?> getHandlerRegistry(){
+		return handlerRegistry;
 	}
 	
 	

@@ -10,7 +10,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
@@ -64,9 +64,9 @@ public class LookupCommand implements SubHandler {
 			if(!defaultsReminder.isEmpty()){
 				call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 			}
-			List<Action> paginated = results.getPaginatedActionResults();
+			List<Handler> paginated = results.getPaginatedActionResults();
 			if(paginated != null){
-				for(Action a : paginated){
+				for(Handler a : paginated){
 					ActionMessage am = new ActionMessage(a);
 					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 						am.showExtended();

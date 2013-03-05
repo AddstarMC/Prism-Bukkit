@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -72,9 +72,9 @@ public class PageCommand implements SubHandler {
 			// Results?
 			if(!results.getActionResults().isEmpty()){
 				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
-				List<Action> paginated = results.getPaginatedActionResults();
+				List<Handler> paginated = results.getPaginatedActionResults();
 				if(paginated != null){
-					for(Action a : paginated){
+					for(Handler a : paginated){
 						ActionMessage am = new ActionMessage(a);
 						if( results.getParameters().allowsNoRadius() || results.getParameters().hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 							am.showExtended();

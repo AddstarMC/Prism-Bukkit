@@ -10,12 +10,7 @@ public class BlockShiftAction extends GenericAction {
 		public int y;
 		public int z;
 	}
-	
-	/**
-	 * 
-	 */
-	protected Block block;
-	
+
 	/**
 	 * 
 	 */
@@ -28,31 +23,42 @@ public class BlockShiftAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public BlockShiftAction( String action_type, Block from, Location to, String player ){
-		
-		super(action_type, player);
+	public void setBlock( Block from ){
 		
 		// Build an object for the specific details of this action
 		actionData = new BlockShiftActionData();
 		
 		// Store information for the action
 		if(from != null){
-			this.block = from;
-			this.block_id = block.getTypeId();
-			this.block_subid = block.getData();
+			this.block_id = from.getTypeId();
+			this.block_subid = from.getData();
 			actionData.x = from.getX();
 			actionData.y = from.getY();
 			actionData.z = from.getZ();
-			this.world_name = block.getWorld().getName();
-			this.x = to.getX();
-			this.y = to.getY();
-			this.z = to.getZ();
+			this.world_name = from.getWorld().getName();
+			
 		}
-		
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
-		
+	}
+	
+	
+	/**
+	 * 
+	 * @param to
+	 */
+	public void setToLocation( Location to ){
+		if(to != null){
+			this.x = to.getBlockX();
+			this.y = to.getBlockY();
+			this.z = to.getBlockZ();
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void save(){
+		data = gson.toJson(actionData);
 	}
 	
 	
@@ -61,22 +67,6 @@ public class BlockShiftAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setObjectFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromObject(){
-		data = gson.toJson(actionData);
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setObjectFromData(){
 		if(data != null){
 			actionData = gson.fromJson(data, BlockShiftActionData.class);
 		}

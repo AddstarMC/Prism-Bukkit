@@ -1,7 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.GrowAction;
+import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.block.BlockState;
@@ -28,7 +28,7 @@ public class PrismWorldEvents implements Listener {
 				if (event.getPlayer() != null){
 					player = event.getPlayer().getName();
 				}
-				Prism.actionsRecorder.addToQueue( new GrowAction(type, block, player) );
+				Prism.actionsRecorder.addToQueue( ActionFactory.create(type, block, player) );
 			}
 		}
 	}

@@ -7,12 +7,23 @@ import java.util.Date;
 import me.botsko.prism.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
 
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 
-public class GenericAction implements Action {
+public class GenericAction implements Handler {
+	
+	/**
+	 * 
+	 */
+	protected Plugin plugin;
 	
 	/**
 	 * 
@@ -105,92 +116,91 @@ public class GenericAction implements Action {
 	protected int aggregateCount = 0;
 	
 	
+	/**
+	 * 
+	 */
+	public void setPlugin( Plugin plugin ){
+		this.plugin = plugin;
+	}
+	
 	
 	/**
 	 * 
 	 * @param action_type
-	 * @param block
-	 * @param player
 	 */
-	public GenericAction( String action_type, String player ){
-		
-		// Store information for the action
+	public void setActionType(String action_type){
 		if(action_type != null){
 			this.type = Prism.getActionRegistry().getAction( action_type );
-		}
-		if(player != null){
-			this.player_name = player;
 		}
 	}
 
 
-	/**
-	 * @return the id
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getId()
 	 */
 	public int getId() {
 		return id;
 	}
 	
 	
-	/**
-	 * @param id the id to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setId(int)
 	 */
 	public void setId(int id) {
 		this.id = id;
 	}
 
 	
-	/**
-	 * @return the action_time
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getActionTime()
 	 */
 	public String getActionTime() {
 		return action_time;
 	}
 
 	
-	/**
-	 * @param action_time the action_time to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setActionTime(java.lang.String)
 	 */
 	public void setActionTime(String action_time) {
 		this.action_time = action_time;
 	}
 
 	
-	/**
-	 * @return the display_date
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getDisplayDate()
 	 */
 	public String getDisplayDate() {
 		return display_date;
 	}
 
 	
-	/**
-	 * @param display_date the display_date to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
 	 */
 	public void setDisplayDate(String display_date) {
 		this.display_date = display_date;
 	}
 
 	
-	/**
-	 * @return the display_time
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getDisplayTime()
 	 */
 	public String getDisplayTime() {
 		return display_time;
 	}
 
 	
-	/**
-	 * @param display_time the display_time to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setDisplayTime(java.lang.String)
 	 */
 	public void setDisplayTime(String display_time) {
 		this.display_time = display_time;
 	}
 	
 	
-	/**
-	 * 
-	 * @return
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getTimeSince()
 	 */
 	public String getTimeSince(){
 		
@@ -237,97 +247,107 @@ public class GenericAction implements Action {
 	}
 
 	
-	/**
-	 * @return the action_type
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getType()
 	 */
 	public ActionType getType() {
 		return type;
 	}
 	
 	
-	/**
-	 * 
-	 * @param type
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setType(me.botsko.prism.actionlibs.ActionType)
 	 */
 	public void setType( ActionType type ){
 		this.type = type;
 	}
 
 	
-	/**
-	 * @return the world_name
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getWorldName()
 	 */
 	public String getWorldName() {
 		return world_name;
 	}
 
 	
-	/**
-	 * @param world_name the world_name to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setWorldName(java.lang.String)
 	 */
 	public void setWorldName(String world_name) {
 		this.world_name = world_name;
 	}
-
+	
 	
 	/**
-	 * @return the player_name
+	 * 
+	 * @param player
+	 */
+	public void setPlayerName( Player player ){
+		if(player != null){
+			this.player_name = player.getName();
+		}
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getPlayerName()
 	 */
 	public String getPlayerName() {
 		return player_name;
 	}
 
 	
-	/**
-	 * @param player_name the player_name to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
 	 */
 	public void setPlayerName(String player_name) {
 		this.player_name = player_name;
 	}
 
 	
-	/**
-	 * @return the x
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getX()
 	 */
 	public double getX() {
 		return x;
 	}
 
 	
-	/**
-	 * @param x the x to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setX(double)
 	 */
 	public void setX(double x) {
 		this.x = x;
 	}
 
 	
-	/**
-	 * @return the y
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getY()
 	 */
 	public double getY() {
 		return y;
 	}
 
 	
-	/**
-	 * @param y the y to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setY(double)
 	 */
 	public void setY(double y) {
 		this.y = y;
 	}
 
 	
-	/**
-	 * @return the z
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getZ()
 	 */
 	public double getZ() {
 		return z;
 	}
 
 	
-	/**
-	 * @param z the z to set
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setZ(double)
 	 */
 	public void setZ(double z) {
 		this.z = z;
@@ -336,103 +356,15 @@ public class GenericAction implements Action {
 	
 	/**
 	 * 
-	 * @param id
+	 * @param loc
 	 */
-	public void setBlockId( int id ){
-		this.block_id = id;
-	}
-	
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setBlockSubId( byte id ){
-		this.block_subid = id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public int getBlockId(){
-		return block_id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public byte getBlockSubId(){
-		return block_subid;
-	}
-	
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setOldBlockId( int id ){
-		this.old_block_id = id;
-	}
-	
-	
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setOldBlockSubId( byte id ){
-		this.old_block_subid = id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public int getOldBlockId(){
-		return old_block_id;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public byte getOldBlockSubId(){
-		return old_block_subid;
-	}
-
-	
-	/**
-	 * @return the data
-	 */
-	public String getData() {
-		return data;
-	}
-
-	
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(String data) {
-		this.data = data;
-	}
-	
-	
-	/**
-	 * 
-	 * @param m
-	 */
-	public void setMaterialAliases( MaterialAliases m ){
-		this.materialAliases = m;
-	}
-	
-	
-	/**
-	 * 
-	 * @param aggregateCount
-	 */
-	public void setAggregateCount( int aggregateCount ){
-		this.aggregateCount = aggregateCount;
+	public void setLoc( Location loc ){
+		if(loc != null){
+			this.world_name = loc.getWorld().getName();
+			this.x = loc.getX();
+			this.y = loc.getY();
+			this.z = loc.getZ();
+		}
 	}
 	
 	
@@ -440,15 +372,176 @@ public class GenericAction implements Action {
 	 * 
 	 * @return
 	 */
+	public World getWorld(){
+		return plugin.getServer().getWorld(getWorldName());
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Location getLoc(){
+		return new Location(getWorld(), getX(), getY(), getZ());
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setBlockId(int)
+	 */
+	public void setBlockId( int id ){
+		// Water/Lava placement always turns into stationary blocks, and a rollback would
+		// fail because we wouldn't detect the same block placed on rollback. So,
+		// we just force record the block as stationary.
+		// https://snowy-evening.com/botsko/prism/297/
+		if( this.type.getName().equals("block-place") && (id == 8 || id == 10) ){
+			id = (id == 8 ? 9 : 11);
+		}
+		this.block_id = id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
+	 */
+	public void setBlockSubId( byte id ){
+		this.block_subid = id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getBlockId()
+	 */
+	public int getBlockId(){
+		return block_id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getBlockSubId()
+	 */
+	public byte getBlockSubId(){
+		return block_subid;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setOldBlockId(int)
+	 */
+	public void setOldBlockId( int id ){
+		this.old_block_id = id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
+	 */
+	public void setOldBlockSubId( byte id ){
+		this.old_block_subid = id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getOldBlockId()
+	 */
+	public int getOldBlockId(){
+		return old_block_id;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
+	 */
+	public byte getOldBlockSubId(){
+		return old_block_subid;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getData()
+	 */
+	public String getData() {
+		return data;
+	}
+
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setData(java.lang.String)
+	 */
+	public void setData(String data) {
+		this.data = data;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setMaterialAliases(me.botsko.prism.MaterialAliases)
+	 */
+	public void setMaterialAliases( MaterialAliases m ){
+		this.materialAliases = m;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
+	 */
+	public void setAggregateCount( int aggregateCount ){
+		this.aggregateCount = aggregateCount;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getAggregateCount()
+	 */
 	public int getAggregateCount(){
 		return aggregateCount;
+	}
+	
+	
+	/* (non-Javadoc)
+	 * @see me.botsko.prism.actions.Handler#getNiceName()
+	 */
+	public String getNiceName(){
+		return "something";
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public String getNiceName(){
-		return "something";
+	public void save(){
+		// data is already set - anything not encoding a json
+		// object is already ready.
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ChangeResult applyUndo( Player player, QueryParameters parameters, boolean is_preview ){
+		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ChangeResult applyDeferred( Player player, QueryParameters parameters, boolean is_preview ){
+		return null;
 	}
 }

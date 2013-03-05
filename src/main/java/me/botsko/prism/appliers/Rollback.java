@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
@@ -22,7 +22,7 @@ public class Rollback extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
+	public Rollback( Prism plugin, CommandSender sender, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
 		super(plugin, sender, processType, results, parameters, callback);
 	}
 	

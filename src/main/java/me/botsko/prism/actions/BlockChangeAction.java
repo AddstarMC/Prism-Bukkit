@@ -1,57 +1,23 @@
 package me.botsko.prism.actions;
 
-import org.bukkit.Location;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.utils.BlockUtils;
 
-public class BlockChangeAction extends GenericAction {
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
-	
-	/**
-	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
-	 */
-	public BlockChangeAction( String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid, String player ){
-		
-		super(action_type, player);
-		
-		if(newId != 0){
-			// Water/Lava placement always turns into stationary blocks, and a rollback would
-			// fail because we wouldn't detect the same block placed on rollback. So,
-			// we just force record the block as stationary.
-			// https://snowy-evening.com/botsko/prism/297/
-			if( this.type.getName().equals("block-place") && (newId == 8 || newId == 10) ){
-				newId = (newId == 8 ? 9 : 11);
-			}
-			this.block_id = newId;
-			this.block_subid = newSubid;
-		}
-		if(oldId != 0){
-			this.old_block_id = oldId;
-			this.old_block_subid = oldSubid;
-		}
-		if(loc != null){
-			this.world_name = loc.getWorld().getName();
-			this.x = loc.getX();
-			this.y = loc.getY();
-			this.z = loc.getZ();
-		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void setData( String data ){
-		this.data = data;
-	}
-	
-	
+public class BlockChangeAction extends BlockAction {
+
 	
 	/**
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getNiceName(){
 		String name = "";
 		if(this.getType().getName().equals("block-fade")){
@@ -65,10 +31,85 @@ public class BlockChangeAction extends GenericAction {
 	
 	/**
 	 * 
-	 * @author botskonet
 	 */
-	public class BlockChangeActionData {
-		public int old_id;
-		public byte old_subid;
+	@Override
+	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
+		Block block = getWorld().getBlockAt( getLoc() );
+		return placeBlock( player, parameters, is_preview, getType().getName(),getOldBlockId(),getOldBlockSubId(),getBlockId(),getBlockSubId(),block,false );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
+		Block block = getWorld().getBlockAt( getLoc() );
+		return placeBlock( player, parameters, is_preview, getType().getName(),getOldBlockId(),getOldBlockSubId(),getBlockId(),getBlockSubId(),block,false );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ChangeResult applyUndo( Player player, QueryParameters parameters, boolean is_preview ){
+		Block block = getWorld().getBlockAt( getLoc() );
+		return placeBlock( player, parameters, is_preview, getType().getName(),getOldBlockId(),getOldBlockSubId(),getBlockId(),getBlockSubId(),block,false );
+	}
+	
+	
+	/**
+	 * 
+	 * @param type
+	 * @param old_id
+	 * @param old_subid
+	 * @param new_id
+	 * @param new_subid
+	 * @param block
+	 * @param is_deferred
+	 * @return
+	 */
+	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, String type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
+		
+		BlockAction b = new BlockAction();
+		b.setActionType(type);
+		b.setPlugin( plugin );
+		b.setWorldName(getWorldName());
+		b.setX( getX() );
+		b.setY( getY() );
+		b.setZ( getZ() );
+		if(parameters.getProcessType().equals(PrismProcessType.ROLLBACK)){
+			// Run verification for no-overwrite. Only reverse a change
+			// if the opposite state is what's present now.
+			// We skip this check because if we're in preview mode the block may not
+			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
+			// and https://snowy-evening.com/botsko/prism/258/
+			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
+				System.out.println("OLD ID: " + old_id);
+				b.setBlockId( old_id );
+				b.setBlockSubId( old_subid );
+				return b.placeBlock( player, parameters, is_preview, block, false );
+			} else {
+//				plugin.debug("Block change skipped because new id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + new_id);
+				return new ChangeResult( ChangeResultType.SKIPPED, null );
+			}
+		}
+		if(parameters.getProcessType().equals(PrismProcessType.RESTORE)){
+			// Run verification for no-overwrite. Only reapply a change
+			// if the opposite state is what's present now.
+			// We skip this check because if we're in preview mode the block may not
+			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
+			// and https://snowy-evening.com/botsko/prism/258/
+			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), old_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
+				b.setBlockId( new_id );
+				b.setBlockSubId( new_subid );
+				return b.placeBlock( player, parameters, is_preview, block, false );
+			} else {
+//				plugin.debug("Block change skipped because old id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + old_id);
+				return new ChangeResult( ChangeResultType.SKIPPED, null );
+			}
+		}
+		return new ChangeResult( ChangeResultType.SKIPPED, null );
 	}
 }

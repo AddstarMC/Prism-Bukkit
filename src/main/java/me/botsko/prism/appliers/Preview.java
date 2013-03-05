@@ -1,7 +1,6 @@
 package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -10,56 +9,19 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.BlockAction.SignActionData;
-import me.botsko.prism.actions.BlockAction.SkullActionData;
-import me.botsko.prism.actions.BlockAction.SpawnerActionData;
-import me.botsko.prism.actions.BlockChangeAction;
-import me.botsko.prism.actions.EntityAction;
-import me.botsko.prism.actions.HangingItemAction;
-import me.botsko.prism.actions.ItemStackAction;
-import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.actions.WorldeditAction;
-import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
-import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Wolf;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 public class Preview implements Previewable {
 	
@@ -96,7 +58,7 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected ArrayList<Action> deferredChanges = new ArrayList<Action>();
+	protected ArrayList<Handler> deferredChanges = new ArrayList<Handler>();
 	
 	/**
 	 * 
@@ -116,7 +78,7 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected final LinkedBlockingQueue<Action> worldChangeQueue = new LinkedBlockingQueue<Action>();
+	protected final LinkedBlockingQueue<Handler> worldChangeQueue = new LinkedBlockingQueue<Handler>();
 	
 	/**
 	 * 
@@ -135,7 +97,7 @@ public class Preview implements Previewable {
 	 * @param plugin
 	 * @return 
 	 */
-	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
+	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
 		this.processType = processType;
 		this.plugin = plugin;
 		this.sender = sender;
@@ -237,306 +199,7 @@ public class Preview implements Previewable {
 			processWorldChanges();
 		}
 	}
-	
-	
-	/**
-	 * 
-	 */
-	protected ChangeResultType applyBlockChange(BlockAction b, Block block){
-		
-		// Rollbacks remove blocks players created, and restore blocks player's removed
-		if(processType.equals(PrismProcessType.ROLLBACK)){
-			if(b.getType().doesCreateBlock()){
-				return removeBlock(block);
-			} else {
-				return placeBlock(b,block,false);
-			}
-		}
-		
-		// Restores break blocks players placed again, and re-place blocks player's have placed before
-		if(processType.equals(PrismProcessType.RESTORE)){
-			if(b.getType().doesCreateBlock()){
-				return placeBlock(b,block,false);
-			} else {
-				return removeBlock(block);
-			}
-		}
-		
-		// Undo a drain/ext event (which always remove blocks)
-		// @todo if we ever track rollback/restore for undo, we'll
-		// need logic to do the opposite
-		if(processType.equals(PrismProcessType.UNDO)){
-			return placeBlock(b,block,false);
-		}
-		
-		return null;
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected ChangeResultType applyBlockChange(BlockChangeAction b, Block block){
-		return placeBlock(b.getType().getName(),b.getOldBlockId(),b.getOldBlockSubId(),b.getBlockId(),b.getBlockSubId(),block,false);
-	}
-	
-	
-	/**
-	 * 
-	 * @param type
-	 * @param old_id
-	 * @param old_subid
-	 * @param new_id
-	 * @param new_subid
-	 * @param block
-	 * @param is_deferred
-	 * @return
-	 */
-	protected ChangeResultType placeBlock( String type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
-		BlockAction b = new BlockAction(type, null, null);
-		if(processType.equals(PrismProcessType.ROLLBACK)){
-			// Run verification for no-overwrite. Only reverse a change
-			// if the opposite state is what's present now.
-			// We skip this check because if we're in preview mode the block may not
-			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
-			// and https://snowy-evening.com/botsko/prism/258/
-			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
-				b.setBlockId( old_id );
-				b.setBlockSubId( old_subid );
-			} else {
-				plugin.debug("Block change skipped because new id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + new_id);
-				return ChangeResultType.SKIPPED;
-			}
-		}
-		if(processType.equals(PrismProcessType.RESTORE)){
-			// Run verification for no-overwrite. Only reapply a change
-			// if the opposite state is what's present now.
-			// We skip this check because if we're in preview mode the block may not
-			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
-			// and https://snowy-evening.com/botsko/prism/258/
-			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), old_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
-				b.setBlockId( new_id );
-				b.setBlockSubId( new_subid );
-			} else {
-				plugin.debug("Block change skipped because old id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + old_id);
-				return ChangeResultType.SKIPPED;
-			}
-		}
-		return placeBlock(b,block,false);
-	}
-	
-	
-	/**
-	 * Place a block unless something other than air occupies the spot, or if we detect 
-	 * a falling block now sits there. This resolves
-	 * the issue of falling blocks taking up the space, preventing this rollback.
-	 * However, it also means that a rollback *could* interfere with a player-placed
-	 * block.
-	 */
-	protected ChangeResultType placeBlock( final BlockAction b, Block block, boolean is_deferred ){
-		
-		Material m = Material.getMaterial(b.getBlockId());
 
-		// Ensure block action is allowed to place a block here.
-		// (essentially liquid/air).
-		if( !b.getType().requiresHandler("blockchange") ){
-			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) ){
-				plugin.debug("Block skipped due to being unaccaptable for block place.");
-				return ChangeResultType.SKIPPED;
-			}
-		}
-		
-		// On the blacklist (except an undo)
-		if( !BlockUtils.mayEverPlace(m) && !processType.equals(PrismProcessType.UNDO) ){
-			plugin.debug("Block skipped because it's not allowed to be placed.");
-			return ChangeResultType.SKIPPED;
-		}
-			
-		// If it's attachable to the sides or top, we need to delay unless we're handling those now
-		if( !is_deferred && (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m))){
-			return ChangeResultType.DEFERRED;
-		}
-
-		// If we're not in a preview, actually apply this block
-		if(!is_preview){
-			
-			// Capture the block before we change it
-			BlockState originalBlock = block.getState();
-
-			// If lilypad, check that block below is water. Be sure
-			// it's set to stationary water so the lilypad will sit
-			if( b.getBlockId() == 111 ){
-				
-				Block below = block.getRelative(BlockFace.DOWN);
-				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
-					below.setType(Material.STATIONARY_WATER);
-				} else {
-					plugin.debug("Lilypad skipped because no water exists below.");
-					return ChangeResultType.SKIPPED;
-				}
-			}
-			
-			// If portal, we need to light the portal. seems to be the only way.
-			if( b.getBlockId() == 90 ){
-				Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(Material.OBSIDIAN, block.getLocation());
-				if(obsidian != null){
-					Block above = obsidian.getRelative(BlockFace.UP);
-					if(!above.equals(Material.PORTAL)){
-						above.setType(Material.FIRE);
-						return ChangeResultType.APPLIED;
-					}
-				}
-			}
-			
-			// Set the material
-			block.setTypeId( b.getBlockId() );
-			block.setData( b.getBlockSubId() );
-			
-			
-			/**
-			 * Skulls
-			 */
-			if( b.getBlockId() == 144 || b.getBlockId() == 397 ){
-				
-				SkullActionData s = (SkullActionData) b.getActionData();
-	
-				// Set skull data
-				Skull skull = (Skull) block.getState();
-				skull.setRotation( s.getRotation() );
-				skull.setSkullType( s.getSkullType() );
-				if(!s.owner.isEmpty()){
-					skull.setOwner( s.owner );
-				}
-				skull.update();
-				
-			}
-			
-			
-			/**
-			 * Spawner
-			 */
-			if( b.getBlockId() == 52 ){
-				
-				SpawnerActionData s = (SpawnerActionData) b.getActionData();
-				
-				// Set spawner data
-				CreatureSpawner spawner = (CreatureSpawner) block.getState();
-				spawner.setDelay(s.getDelay());
-				spawner.setSpawnedType(s.getEntityType());
-				spawner.update();
-				
-			}
-			
-			
-			/**
-			 * Signs
-			 */
-//			if( b.getActionData() instanceof SignActionData ){
-			if( b.getBlockId() == 63 || b.getBlockId() == 68 ){
-
-				SignActionData s = (SignActionData) b.getActionData();
-				
-				// Verify block is sign. Rarely, if the block somehow pops off or fails
-				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
-				// cannot be cast to org.bukkit.block.Sign
-				
-				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
-
-					// Set sign data
-					Sign sign = (Sign) block.getState();
-					int i = 0;
-					if(s.lines.length > 0){
-						for(String line : s.lines){
-							sign.setLine(i, line);
-							i++;
-						}
-					}
-					sign.update();
-				} else {
-					return ChangeResultType.SKIPPED;
-				}
-			}
-			
-			// If the material is a crop that needs soil, we must restore the soil
-			// This may need to go before setting the block, but I prefer the BlockUtil
-			// logic to use materials.
-			if( BlockUtils.materialRequiresSoil(block.getType()) ){
-				Block below = block.getRelative(BlockFace.DOWN);
-				if( below.getType().equals(Material.DIRT) || below.getType().equals(Material.AIR) || below.getType().equals(Material.GRASS) ){
-					below.setType(Material.SOIL);
-				} else {
-					return ChangeResultType.SKIPPED;
-				}
-			}
-			
-			// Capture the new state
-			BlockState newBlock = block.getState();
-			
-			// Store the state change
-			blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
-			
-			// If we're rolling back a door, we need to set it properly
-			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
-				BlockUtils.properlySetDoor( block, b.getBlockId(), b.getBlockSubId());
-			}
-			// Or a bed
-			else if( m.equals(Material.BED_BLOCK) ){
-				BlockUtils.properlySetBed( block, b.getBlockId(), b.getBlockSubId());
-			}
-		} else {
-			
-			// Otherwise, save the state so we can cancel if needed
-			BlockState originalBlock = block.getState();
-			// Note: we save the original state as both old/new so we can re-use blockStateChanges
-			blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
-			
-			// Preview it
-			player.sendBlockChange(block.getLocation(), b.getBlockId(), b.getBlockSubId());
-			
-		}
-		
-		return ChangeResultType.APPLIED;
-
-	}
-
-
-	/***
-	 * 
-	 */
-	protected ChangeResultType removeBlock( Block block ){
-		
-		if(!block.getType().equals(Material.AIR)){
-			if(!is_preview){
-				
-				// Capture the block before we change it
-				BlockState originalBlock = block.getState();
-				
-				// Set
-				block.setType(Material.AIR);
-				
-				// Capture the new state
-				BlockState newBlock = block.getState();
-				
-				// Store the state change
-				blockStateChanges.add( new BlockStateChange(originalBlock,newBlock) );
-				
-			} else {
-				
-				// Otherwise, save the state so we can cancel if needed
-				BlockState originalBlock = block.getState();
-				// Note: we save the original state as both old/new so we can re-use blockStateChanges
-				blockStateChanges.add( new BlockStateChange(originalBlock,originalBlock) );
-				
-				// Preview it
-				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
-				
-			}
-			return ChangeResultType.APPLIED;
-		}
-		return ChangeResultType.SKIPPED;
-	}
-	
-	
 	
 	/**
 	 * 
@@ -544,7 +207,7 @@ public class Preview implements Previewable {
 	public void processWorldChanges(){
 		worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			
-		    public void run() {
+		    public void run(){
 		    	
 		    	if(plugin.getConfig().getBoolean("prism.debug")){
 		    		plugin.debug("World change queue size: " + worldChangeQueue.size() );
@@ -556,8 +219,8 @@ public class Preview implements Previewable {
 				}
 		    	
 		    	int iterationCount = 0;
-	    		for (Iterator<Action> iterator = worldChangeQueue.iterator(); iterator.hasNext(); ) {
-	    			Action a = iterator.next(); 
+				for (Iterator<Handler> iterator = worldChangeQueue.iterator(); iterator.hasNext(); ) {
+					Handler a = iterator.next();
 		    		
 		    		// We only want to process a set number of block changes per 
 		    		// schedule. Breaking here will leave the rest in the queue.
@@ -580,291 +243,43 @@ public class Preview implements Previewable {
 						continue;
 					}
 						
-					// Determine the location
-					World world = plugin.getServer().getWorld(a.getWorldName());
-					Location loc = new Location(world, a.getX(), a.getY(), a.getZ());
-		
-					
+
 					/**
-					 * Reverse or restore block changes
+					 * Reverse or restore block changes by allowing the handler
+					 * to decide what needs to happen.
 					 */
-					if( a instanceof BlockAction ){
-						
-						// Pass along to the change handler
-						ChangeResultType result = applyBlockChange( (BlockAction) a, loc.getWorld().getBlockAt(loc) );
-						
-						if(result.equals(ChangeResultType.DEFERRED)){
-							deferredChanges.add( a );
-						}
-						else if(result.equals(ChangeResultType.SKIPPED)){
-							skipped_block_count++;
-							worldChangeQueue.remove(a);
-							continue;
-						} else {
-							changes_applied_count++;
-						}
+					ChangeResult result = null;
+					if(processType.equals(PrismProcessType.ROLLBACK)){
+						result = a.applyRollback( player, parameters, is_preview );
+					}
+					if(processType.equals(PrismProcessType.RESTORE)){
+						result = a.applyRestore( player, parameters, is_preview );
+					}
+					if(processType.equals(PrismProcessType.UNDO)){
+						result = a.applyUndo( player, parameters, is_preview );
 					}
 					
-					
-					/**
-					 * Reverse or restore block state changes
-					 */
-					if( a instanceof BlockChangeAction ){
-						
-						// Pass along to the change handler
-						ChangeResultType result = applyBlockChange( (BlockChangeAction) a, loc.getWorld().getBlockAt(loc) );
-						
-						if(result.equals(ChangeResultType.DEFERRED)){
-							deferredChanges.add( a );
-						}
-						else if(result.equals(ChangeResultType.SKIPPED)){
-							skipped_block_count++;
-							worldChangeQueue.remove(a);
-							continue;
-						} else {
-							changes_applied_count++;
-						}
+					// No action, continue
+					if( result == null ){
+						worldChangeQueue.remove(a);
+						continue;
 					}
-					
-					
-					/**
-					 * Rollback entity kills
-					 */
-					if( processType.equals(PrismProcessType.ROLLBACK) && a instanceof EntityAction ){
-						
-						EntityAction b = (EntityAction) a;
-						
-						if(b.getEntityType() == null){
-							skipped_block_count++;
-							worldChangeQueue.remove(a);
-							continue;
-						}
-						
-						if(!EntityUtils.mayEverSpawn(b.getEntityType())){
-							skipped_block_count++;
-							worldChangeQueue.remove(a);
-							continue;
-						}
-						
-						loc.setX( loc.getX()+0.5 );
-						loc.setZ( loc.getZ()+0.5 );
-						
-						Entity entity = world.spawnEntity(loc, b.getEntityType());
-						
-						// Get animal age
-						if(entity instanceof Ageable){
-							Ageable age = (Ageable)entity;
-							if(!b.isAdult()){
-								age.setBaby();
-							}
-						}
-						
-						// Set sheep color
-						if( entity.getType().equals(EntityType.SHEEP) && b.getColor() != null ){
-							Sheep sheep = ((Sheep) entity);
-							sheep.setColor( b.getColor() );
-						}
-						
-						// Set villager profession
-						if( entity instanceof Villager && b.getProfession() != null ){
-							Villager v = (Villager)entity;
-							v.setProfession( b.getProfession() );
-						}
-						
-						// Set wolf details
-						if (entity instanceof Wolf){
-							
-							// Owner
-				            Wolf wolf = (Wolf)entity;
-				            String tamingOwner = b.getTamingOwner();
-				            if(tamingOwner != null){
-					            Player owner = plugin.getServer().getPlayer( tamingOwner );
-					            if(owner == null){
-						            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-						            if(offlinePlayer.hasPlayedBefore()){
-						            	owner = offlinePlayer.getPlayer();
-						            }
-					            }
-					            if(owner != null) wolf.setOwner(owner);
-				            }
-				            
-				            // Collar color
-				            if( b.getColor() != null ){
-				            	wolf.setCollarColor( b.getColor() );
-				            }
-				            
-				            if(b.isSitting()){
-				            	wolf.setSitting(true);
-				            }
-				    	}
-						
-						changes_applied_count++;
-						
-					}
-					
-					
-					/**
-					 * Hanging items
-					 */
-					if( a instanceof HangingItemAction){
+					// Deferring attachments/etc until required blocks are ready
+					else if(result.getType().equals(ChangeResultType.DEFERRED)){
 						deferredChanges.add( a );
 					}
-					
-					
-					/**
-					 * Rollback itemstack actions
-					 */
-					if(a instanceof ItemStackAction){
-						
-						if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
-						
-							ItemStackAction b = (ItemStackAction) a;
-							
-							Block block = world.getBlockAt(loc);
-							InventoryHolder container = null;
-							if(block.getType().equals(Material.CHEST)){
-								container = (Chest) block.getState();
-							}
-							else if( block.getType().equals(Material.DISPENSER) ){
-								container = (Dispenser) block.getState();
-							}
-							else if( block.getType().equals(Material.FURNACE) ){
-								container = (Furnace) block.getState();
-							}
-							else if( block.getType().equals(Material.BREWING_STAND) ){
-								container = (BrewingStand) block.getState();
-							}
-							
-							if(container != null){
-								
-								Inventory inv = container.getInventory();
-								
-								// Rolling back a:remove should place the item into the inventory
-								// Restoring a:insert should place the item into the inventory
-								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().getName().equals("item-remove"))
-									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().getName().equals("item-insert")) ){
-									
-									boolean added = false;
-									
-									// We'll attempt to put it back in the same slot
-									if( b.getActionData().slot >= 0 ){
-										ItemStack currentSlotItem = inv.getItem( b.getActionData().slot );
-										// Make sure nothing's there.
-										if( currentSlotItem == null ){
-											changes_applied_count++;
-											added = true;
-											inv.setItem(b.getActionData().slot, b.getItem());
-										}
-									}
-									// If that failed we'll attempt to put it anywhere
-									if( !added ){
-										HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), b.getItem());
-										if(leftovers.size() > 0){
-											skipped_block_count++;
-											plugin.debug("Item placement into container skipped because container was full.");
-										} else {
-											changes_applied_count++;
-										}
-									}
-								}
-								
-								// Rolling back a:insert should remove the item from the inventory
-								// Restoring a:remove should remove the item from the inventory
-								if( (processType.equals(PrismProcessType.ROLLBACK) && a.getType().getName().equals("item-insert"))
-									|| (processType.equals(PrismProcessType.RESTORE) && a.getType().getName().equals("item-remove")) ){
-										
-									// does inventory have item?
-									boolean removed = false;
-									
-									// We'll attempt to take it from the same slot
-									if( b.getActionData().slot >= 0 ){
-										ItemStack currentSlotItem = inv.getItem( b.getActionData().slot );
-										// Make sure something's there.
-										if( currentSlotItem != null ){
-											currentSlotItem.setAmount( currentSlotItem.getAmount() - b.getItem().getAmount() );
-											changes_applied_count++;
-											removed = true;
-											inv.setItem(b.getActionData().slot, currentSlotItem);
-										}
-									}
-									// If that failed we'll attempt to take it from anywhere
-									if( !removed ){
-										int slot = ItemUtils.inventoryHasItem( container.getInventory(), b.getItem().getTypeId(), (byte)b.getItem().getDurability());
-										if(slot > -1){
-											container.getInventory().removeItem(b.getItem());
-											changes_applied_count++;
-										} else {
-											plugin.debug("Item removal from container skipped because it's not inside.");
-											skipped_block_count++;
-										}
-									}
-								}
-							}
-						}
+					// Skipping
+					else if(result.getType().equals(ChangeResultType.SKIPPED)){
+						skipped_block_count++;
+						worldChangeQueue.remove(a);
+						continue;
 					}
-					
-
-					/**
-					 * Restore sign actions
-					 */
-					if( processType.equals(PrismProcessType.RESTORE) && a instanceof SignAction ){
-						
-						SignAction b = (SignAction) a;
-						Block block = world.getBlockAt(loc);
-						
-						// Ensure a sign exists there (and no other block)
-						if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
-							
-							if( block.getType().equals(Material.AIR) ){
-								block.setType(b.getSignType());
-							}
-							
-							// Set the facing direction
-							Sign s = (Sign)block.getState();
-							
-							if(block.getType().equals(Material.SIGN)){
-								((org.bukkit.material.Sign)s.getData()).setFacingDirection(b.getFacing());
-							}
-							
-							// Set content
-							String[] lines = b.getLines();
-							int i = 0;
-							if(lines.length > 0){
-								for(String line : lines){
-									s.setLine(i, line);
-									i++;
-								}
-							}
-							s.update();
-							changes_applied_count++;
-						}
-					}
-					
-					
-					/**
-					 * R/R of worldedit changes
-					 */
-					if( a instanceof WorldeditAction ){
-						
-						WorldeditAction b = (WorldeditAction) a;
-						Block block = world.getBlockAt(loc);
-						
-						// Rollback replaces block with OLD block
-						if( processType.equals(PrismProcessType.ROLLBACK) ){
-							block.setTypeId(b.getOldBlockId());
-							block.setData( (byte)b.getOldBlockSubId() );
-						}
-						
-						// Restore replaces block with NEW block
-						if( processType.equals(PrismProcessType.RESTORE) ){
-							block.setTypeId(b.getBlockId());
-							block.setData( (byte)b.getBlockSubId() );
-						}
-						
+					// Change applied
+					else {
+						blockStateChanges.add( result.getBlockStateChange() );
 						changes_applied_count++;
-
 					}
-					
+					// Unless a preview, remove from queue
 					if(!is_preview){
 						worldChangeQueue.remove(a);
 					}
@@ -914,70 +329,28 @@ public class Preview implements Previewable {
 	public void postProcess(){
 		
 		// Apply deferred block changes
-		for(Action a : deferredChanges){
+		for(Handler a : deferredChanges){
 			
-			if( a instanceof HangingItemAction){
-				
-				HangingItemAction h = (HangingItemAction)a;
-				
-				BlockFace attachedFace = h.getDirection().getOppositeFace();
-				World world = plugin.getServer().getWorld(h.getWorldName());
-				Location loc = new Location(world, h.getX(), h.getY(), h.getZ()).getBlock().getRelative(h.getDirection()).getLocation();
-				
-				// bug filed:
-				// https://bukkit.atlassian.net/browse/BUKKIT-3371
-				if( h.getHangingType().equals("item_frame") ){
-					if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
-						Hanging hangingItem = world.spawn(loc, ItemFrame.class);
-						hangingItem.setFacingDirection( attachedFace, true );
-						changes_applied_count++;
-					} else {
-						skipped_block_count++;
-					}
-				}
-				else if( h.getHangingType().equals("painting") ){
-					if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
-						Hanging hangingItem = world.spawn(loc, Painting.class);
-						hangingItem.setFacingDirection( h.getDirection(), true );
-						changes_applied_count++;
-					} else {
-						skipped_block_count++;
-					}
-				}
-			} else {
-			
-				BlockAction b = null;
-				if(a instanceof BlockChangeAction){
-					BlockChangeAction bc = (BlockChangeAction) a;
-					b = new BlockAction(null, null, null);
-					b.setWorldName(bc.getWorldName());
-					b.setX( bc.getX() );
-					b.setY( bc.getY() );
-					b.setZ( bc.getZ() );
-					if(processType.equals(PrismProcessType.ROLLBACK)){
-						b.setBlockId( bc.getOldBlockId() );
-						b.setBlockSubId( bc.getOldBlockSubId() );
-					} else {
-						b.setBlockId( bc.getBlockId() );
-						b.setBlockSubId( bc.getBlockSubId() );
-					}
-					b.setType( bc.getType() );
-				} else {
-					b = (BlockAction) a;
-				}
-			
-				World world = plugin.getServer().getWorld(b.getWorldName());
-				Location loc = new Location(world, b.getX(), b.getY(), b.getZ());
-				Block block = world.getBlockAt(loc);
-				ChangeResultType res = placeBlock( b, block, true );
-				if(res.equals(ChangeResultType.APPLIED)){
-					changes_applied_count++;
-				}
-				else if(res.equals(ChangeResultType.SKIPPED)){
-					skipped_block_count++;
-				} else {
-					plugin.log("Error: Deferred block placement encountered an additional deferral for block "+block.getTypeId()+":"+block.getData()+". Report to Prism developers.");
-				}
+			ChangeResult result = a.applyDeferred( player, parameters, is_preview );
+			// No action, continue
+			if( result == null ){
+				worldChangeQueue.remove(a);
+				continue;
+			}
+			// Deferring attachments/etc until required blocks are ready
+			else if(result.getType().equals(ChangeResultType.DEFERRED)){
+				deferredChanges.add( a );
+			}
+			// Skipping
+			else if(result.getType().equals(ChangeResultType.SKIPPED)){
+				skipped_block_count++;
+				worldChangeQueue.remove(a);
+				continue;
+			}
+			// Change applied
+			else {
+				blockStateChanges.add( result.getBlockStateChange() );
+				changes_applied_count++;
 			}
 		}
 		

@@ -3,7 +3,8 @@ package me.botsko.prism.listeners.self;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
@@ -28,7 +29,7 @@ public class PrismRollbackEvents implements Listener {
 		if(!blockStateChanges.isEmpty()){
 			
 			// Create an entry for the rollback as a whole
-			PrismProcessAction primaryAction = new PrismProcessAction("prism-process", PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
+			Handler primaryAction = ActionFactory.create("prism-process", PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
 			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;

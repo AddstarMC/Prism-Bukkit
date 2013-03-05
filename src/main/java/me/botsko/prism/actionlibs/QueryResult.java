@@ -3,14 +3,14 @@ package me.botsko.prism.actionlibs;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 
 public class QueryResult {
 	
 	/**
 	 * 
 	 */
-	protected List<Action> actionResults = new ArrayList<Action>();
+	protected List<Handler> actionResults = new ArrayList<Handler>();
 	
 	/**
 	 * 
@@ -47,7 +47,7 @@ public class QueryResult {
 	 * 
 	 * @param actions
 	 */
-	public QueryResult( List<Action> actions, QueryParameters parameters ){
+	public QueryResult( List<Handler> actions, QueryParameters parameters ){
 		
 		this.actionResults = actions;
 		this.parameters = parameters;
@@ -73,7 +73,7 @@ public class QueryResult {
 	/**
 	 * @return the actionResults
 	 */
-	public List<Action> getActionResults() {
+	public List<Handler> getActionResults() {
 		return actionResults;
 	}
 	
@@ -81,7 +81,7 @@ public class QueryResult {
 	/**
 	 * @return the actionResults
 	 */
-	public List<Action> getPaginatedActionResults() {
+	public List<Handler> getPaginatedActionResults() {
 		
 		int limit = (page * per_page);
 		int offset = (limit - per_page);

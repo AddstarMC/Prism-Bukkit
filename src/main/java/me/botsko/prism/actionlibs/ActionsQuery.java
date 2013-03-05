@@ -16,24 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.Action;
-import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.BlockChangeAction;
-import me.botsko.prism.actions.BlockShiftAction;
-import me.botsko.prism.actions.CommandAction;
-import me.botsko.prism.actions.EntityAction;
-import me.botsko.prism.actions.EntityTravelAction;
-import me.botsko.prism.actions.GenericAction;
-import me.botsko.prism.actions.GrowAction;
-import me.botsko.prism.actions.HangingItemAction;
-import me.botsko.prism.actions.ItemStackAction;
-import me.botsko.prism.actions.PlayerAction;
-import me.botsko.prism.actions.PlayerDeathAction;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismProcessAction;
-import me.botsko.prism.actions.PrismRollbackAction;
-import me.botsko.prism.actions.SignAction;
-import me.botsko.prism.actions.UseAction;
-import me.botsko.prism.actions.WorldeditAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 
@@ -77,7 +61,7 @@ public class ActionsQuery {
 		
 		
 		// Pull results
-		List<Action> actions = new ArrayList<Action>();
+		List<Handler> actions = new ArrayList<Handler>();
 		
 		// Build conditions based off final args
 		String query = getArgumentConditions(parameters);
@@ -99,124 +83,63 @@ public class ActionsQuery {
 	    			
 	    			if( rs.getString(3) == null ) continue;
 
-	    			GenericAction baseAction = null;
 	    			boolean override_data = false;
 	    			
-	    			// Pull the proper action type class
+	    			// Get the action handler
 	    			ActionType actionType = Prism.getActionRegistry().getAction(rs.getString(3));
 	    			
 	    			if(actionType == null) continue;
-
-	    			if(actionType.requiresHandler("block")){
-	    				BlockAction b = new BlockAction(null, null, null);
-	    				baseAction = b;
-	    			}
-	    			else if(actionType.requiresHandler("blockchange")){
-	    				BlockChangeAction bc = new BlockChangeAction(null, null, 0, (byte)0, 0, (byte)0, null);
-	    				baseAction = bc;
-	    			}
-	    			else if(actionType.requiresHandler("blockshift")){
-	    				BlockShiftAction b = new BlockShiftAction(null, null, null, null);
-	    				baseAction = b;
-	    			}
-	    			else if(actionType.requiresHandler("command")){
-	    				CommandAction b = new CommandAction(null, null, null, null);
-	    				baseAction = b;
-	    			}
-	    			else if( actionType.requiresHandler("entity") ){
-	    				EntityAction eka = new EntityAction(null, null, null);
-	    				baseAction = eka;
-	    			}
-	    			else if( actionType.requiresHandler("entitytravel") ){
-	    				EntityTravelAction et = new EntityTravelAction(null, null, null, null, null);
-	    				baseAction = et;
-	    			}
-	    			else if( actionType.requiresHandler("grow") ){
-	    				GrowAction ga = new GrowAction(null, null, null);
-	    				baseAction = ga;
-	    			}
-	    			else if( actionType.requiresHandler("hangingitem") ){
-	    				HangingItemAction ha = new HangingItemAction(null, null, null);
-	    				baseAction = ha;
-	    			}
-	    			else if( actionType.requiresHandler("itemstack") ){
-	    				ItemStackAction isa = new ItemStackAction(null, null, 0, -1, null, null, null);
-	    				baseAction = isa;
-	    			}
-	    			else if( actionType.requiresHandler("player") ){
-	    				PlayerAction pa = new PlayerAction(null, null, null);
-	    				baseAction = pa;
-	    			}
-	    			else if( actionType.requiresHandler("playerdeath") ){
-	    				PlayerDeathAction pd = new PlayerDeathAction(null, null, null, null);
-	    				baseAction = pd;
-	    			}
-	    			else if( actionType.requiresHandler("prismprocess") ){
-	    				PrismProcessAction ps = new PrismProcessAction(null, null, null, null);
-	    				baseAction = ps;
-	    			}
-	    			else if( actionType.requiresHandler("prismrollback") ){
-	    				
-	    				override_data = true;
-	    				
-	    				// Get the actual process action
-	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
-	    				pr.setData( rs.getString("data") );
-	    				
-	    				// All we really want is a block action to feed to the world change system
-	    				BlockAction b = new BlockAction(null, null, null);
-	    				b.setBlockId(pr.getOriginalBlockId());
-	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
-	    				baseAction = b;
-	    				
-	    			}
-	    			else if( actionType.requiresHandler("signchange") ){
-	    				SignAction sa = new SignAction(null, null, null, null);
-	    				baseAction = sa;
-	    			}
-	    			else if( actionType.requiresHandler("use") ){
-	    				UseAction use = new UseAction(null, null, null, null);
-	    				baseAction = use;
-	    			}
-	    			else if( actionType.requiresHandler("worldedit") ){
-	    				WorldeditAction wea = new WorldeditAction(null, null, 0, 0, 0, 0, null);
-	    				baseAction = wea;
-	    			} else {
-	    				plugin.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
-	    			}
 	    			
-	    			if(baseAction == null){
-	    				baseAction = new GenericAction(null, null);
-	    			}
-	    				
+	    			Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
+
+	    			// @todo this system was unused at time of refactor
+//	    			else if( actionType.requiresHandler("prismrollback") ){
+//	    				
+//	    				override_data = true;
+//	    				
+//	    				// Get the actual process action
+//	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
+//	    				pr.setData( rs.getString("data") );
+//	    				
+//	    				// All we really want is a block action to feed to the world change system
+//	    				BlockAction b = new BlockAction(null, null, null);
+//	    				b.setBlockId(pr.getOriginalBlockId());
+//	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
+//	    				baseAction = b;
+//	    				
+//	    			}
+	   
+//	    			plugin.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
+
     				// Set all shared values
-    				baseAction.setType( actionType );
-    				baseAction.setId( rs.getInt(1) );
-    				baseAction.setActionTime( rs.getString(2) );
-    				baseAction.setPlayerName( rs.getString(4) );
-    				baseAction.setWorldName( rs.getString(5) );
-    				baseAction.setX( rs.getInt(6) );
-    				baseAction.setY( rs.getInt(7) );
-    				baseAction.setZ( rs.getInt(8) );
-    				baseAction.setDisplayDate( rs.getString(14) );
-    				baseAction.setDisplayTime( rs.getString(15) );
+	    			baseHandler.setPlugin( plugin );
+	    			baseHandler.setType( actionType );
+	    			baseHandler.setId( rs.getInt(1) );
+	    			baseHandler.setActionTime( rs.getString(2) );
+	    			baseHandler.setPlayerName( rs.getString(4) );
+	    			baseHandler.setWorldName( rs.getString(5) );
+	    			baseHandler.setX( rs.getInt(6) );
+	    			baseHandler.setY( rs.getInt(7) );
+	    			baseHandler.setZ( rs.getInt(8) );
+	    			baseHandler.setDisplayDate( rs.getString(14) );
+	    			baseHandler.setDisplayTime( rs.getString(15) );
     				if(!override_data){
-    					baseAction.setBlockId( rs.getInt(9) );
-        				baseAction.setBlockSubId( rs.getByte(10) );
-        				baseAction.setOldBlockId( rs.getInt(11) );
-        				baseAction.setOldBlockSubId( rs.getByte(12) );
-    					baseAction.setData( rs.getString(13) );
+    					baseHandler.setBlockId( rs.getInt(9) );
+    					baseHandler.setBlockSubId( rs.getByte(10) );
+    					baseHandler.setOldBlockId( rs.getInt(11) );
+    					baseHandler.setOldBlockSubId( rs.getByte(12) );
+    					baseHandler.setData( rs.getString(13) );
     				}
-    				baseAction.setMaterialAliases( plugin.getItems() );
+    				baseHandler.setMaterialAliases( plugin.getItems() );
     				
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
     				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
     					aggregated = rs.getInt(16);
     				}
-    				baseAction.setAggregateCount(aggregated);
+    				baseHandler.setAggregateCount(aggregated);
     				
-    				actions.add(baseAction);
+    				actions.add(baseHandler);
 	    			
 	    		}
 	    		
@@ -303,7 +226,7 @@ public class ActionsQuery {
     		ResultSet rs = s.getResultSet();
 
     		if(rs.first()){
-    			process = new PrismProcessAction(null, null, null, null);
+    			process = new PrismProcessAction();
     			// Set all shared values
     			process.setId( rs.getInt("id") );
     			process.setType( Prism.getActionRegistry().getAction( rs.getString("action_type") ) );

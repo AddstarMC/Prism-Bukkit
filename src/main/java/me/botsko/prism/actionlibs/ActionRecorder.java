@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 
 public class ActionRecorder implements Runnable {
 	
@@ -20,7 +20,7 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	private static final LinkedBlockingQueue<Action> queue = new LinkedBlockingQueue<Action>();
+	private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
 
 	
 	/**
@@ -44,9 +44,12 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 * @param a
 	 */
-	public void addToQueue( Action a ){
+	public void addToQueue( Handler a ){
 		
 		if(a == null) return;
+		
+		// prepare to save to the db
+		a.save();
 		
 		queue.add(a);
 		
@@ -70,7 +73,7 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 * @param a
 	 */
-	public int insertActionIntoDatabase( Action a){
+	public int insertActionIntoDatabase( Handler a){
 		int id = 0;
 		try {
 
@@ -79,16 +82,18 @@ public class ActionRecorder implements Runnable {
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getType().getName());
 	        s.setString(2,a.getPlayerName());
 	        s.setString(3,a.getWorldName());
 	        s.setInt(4,a.getBlockId());
 	        s.setInt(5,a.getBlockSubId());
-	        s.setInt(6,(int)a.getX());
-	        s.setInt(7,(int)a.getY());
-	        s.setInt(8,(int)a.getZ());
-	        s.setString(9,a.getData());
+	        s.setInt(6,a.getOldBlockId());
+	        s.setInt(7,a.getOldBlockSubId());
+	        s.setInt(8,(int)a.getX());
+	        s.setInt(9,(int)a.getY());
+	        s.setInt(10,(int)a.getZ());
+	        s.setString(11,a.getData());
 	        s.executeUpdate();
 	        
 	        ResultSet generatedKeys = s.getGeneratedKeys();
@@ -131,21 +136,23 @@ public class ActionRecorder implements Runnable {
 					return;
 				}
 		        conn.setAutoCommit(false);
-		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?)");
+		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 		        int i = 0;
 		        while (!queue.isEmpty()){
 		        	actionsRecorded++;
-		        	Action a = queue.poll();
+		        	Handler a = queue.poll();
 		        	if(a == null) continue;
 			        s.setString(1,a.getType().getName());
 			        s.setString(2,a.getPlayerName());
 			        s.setString(3,a.getWorldName());
 			        s.setInt(4,a.getBlockId());
 			        s.setInt(5,a.getBlockSubId());
-			        s.setInt(6,(int)a.getX());
-			        s.setInt(7,(int)a.getY());
-			        s.setInt(8,(int)a.getZ());
-			        s.setString(9,a.getData());
+			        s.setInt(6,a.getOldBlockId());
+			        s.setInt(7,a.getOldBlockSubId());
+			        s.setInt(8,(int)a.getX());
+			        s.setInt(9,(int)a.getY());
+			        s.setInt(10,(int)a.getZ());
+			        s.setString(11,a.getData());
 		            s.addBatch();
 		            if ((i + 1) % perBatch == 0) {
 		            	plugin.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());

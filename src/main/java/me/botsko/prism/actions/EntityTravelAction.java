@@ -7,7 +7,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class EntityTravelAction extends GenericAction {
 	
-	
 	public class EntityTravelActionData {
 		int to_x;
 		int to_y;
@@ -15,11 +14,6 @@ public class EntityTravelAction extends GenericAction {
 		String cause;
 	}
 
-	
-	/**
-	 * 
-	 */
-	protected Entity entity;
 	
 	/**
 	 * 
@@ -33,37 +27,46 @@ public class EntityTravelAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityTravelAction( String action_type, Entity entity, Location from, Location to, TeleportCause cause ){
-		
-		super(action_type, null);
-		
+	public EntityTravelAction( ){
 		actionData = new EntityTravelActionData();
-
+	}
+	
+	/**
+	 * 
+	 * @param entity
+	 */
+	public void setEntity( Entity entity ){
 		if(entity != null){
-			this.entity = entity;
 			if(entity instanceof Player){
 				this.player_name = ((Player)entity).getName();
 			} else {
 				this.player_name = entity.getType().name().toLowerCase();
 			}
 		}
-		if(from != null){
-			this.world_name = from.getWorld().getName();
-			this.x = from.getX();
-			this.y = from.getY();
-			this.z = from.getZ();
-		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param to
+	 */
+	public void setToLocation( Location to ){
 		if(to != null){
 			actionData.to_x = to.getBlockX();
 			actionData.to_y = to.getBlockY();
 			actionData.to_z = to.getBlockZ();
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param cause
+	 */
+	public void setCause( TeleportCause cause ){
 		if(cause != null){
 			actionData.cause = cause.name().toLowerCase();
 		}
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
 	}
 	
 	
@@ -72,26 +75,19 @@ public class EntityTravelAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setObjectFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromObject(){
-		data = gson.toJson(actionData);
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setObjectFromData(){
 		if(data != null){
 			actionData = gson.fromJson(data, EntityTravelActionData.class);
 		}
 	}
+	
+	
+	/**
+	 * 
+	 */
+	public void save(){
+		data = gson.toJson(actionData);
+	}
+
 	
 	
 	/**

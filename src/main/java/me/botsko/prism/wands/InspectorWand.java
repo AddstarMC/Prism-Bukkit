@@ -82,7 +82,7 @@ public class InspectorWand extends WandBase implements Wand {
 			if(results.getActionResults().size() > 5){
 				player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 			}
-			for(me.botsko.prism.actions.Action a : results.getPaginatedActionResults()){
+			for(me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
 				player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 			}

@@ -1,10 +1,14 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.Player;
 import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
@@ -34,9 +38,7 @@ public class SignAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public SignAction( String action_type, Block block, String[] lines, String player ){
-		
-		super(action_type, player);
+	public void setBlock( Block block, String[] lines ){
 		
 		// Build an object for the specific details of this action
 		actionData = new SignChangeActionData();
@@ -54,11 +56,6 @@ public class SignAction extends GenericAction {
 		if(lines != null){
 			actionData.lines = lines;
 		}
-		
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
-		
 	}
 	
 	
@@ -67,25 +64,17 @@ public class SignAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setObjectFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromObject(){
-		data = gson.toJson(actionData);
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setObjectFromData(){
 		if(data != null){
 			actionData = gson.fromJson(data, SignChangeActionData.class);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void save(){
+		data = gson.toJson(actionData);
 	}
 	
 	
@@ -135,5 +124,43 @@ public class SignAction extends GenericAction {
 		}
 		name += ")";
 		return name;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
+
+		Block block = getWorld().getBlockAt( getLoc() );
+		
+		// Ensure a sign exists there (and no other block)
+		if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
+			
+			if( block.getType().equals(Material.AIR) ){
+				block.setType(getSignType());
+			}
+			
+			// Set the facing direction
+			if (block.getState() instanceof Sign){
+				org.bukkit.material.Sign s = (org.bukkit.material.Sign)block.getState();
+				s.setFacingDirection(getFacing());
+				
+				// Set content
+				org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState().getData();
+				String[] lines = getLines();
+				int i = 0;
+				if(lines.length > 0){
+					for(String line : lines){
+						sign.setLine(i, line);
+						i++;
+					}
+				}
+				sign.update();
+			}
+			return new ChangeResult( ChangeResultType.APPLIED, null );
+		}
+		return new ChangeResult( ChangeResultType.SKIPPED, null );
 	}
 }

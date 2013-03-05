@@ -9,7 +9,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -115,9 +115,9 @@ public class UndoCommand implements SubHandler {
 			if(!results.getActionResults().isEmpty()){
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
 				call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process") );
-				List<Action> paginated = results.getPaginatedActionResults();
+				List<Handler> paginated = results.getPaginatedActionResults();
 				if(paginated != null){
-					for(Action a : paginated){
+					for(Handler a : paginated){
 						ActionMessage am = new ActionMessage(a);
 						if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 							am.showExtended();

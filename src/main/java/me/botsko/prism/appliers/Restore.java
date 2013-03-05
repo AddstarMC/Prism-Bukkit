@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 
 public class Restore extends Preview {
 	
@@ -16,7 +16,7 @@ public class Restore extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Restore( Prism plugin, CommandSender sender, PrismProcessType processType, List<Action> results, QueryParameters parameters, ApplierCallback callback ){
+	public Restore( Prism plugin, CommandSender sender, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
 		super(plugin, sender, processType, results, parameters, callback);
 	}
 	

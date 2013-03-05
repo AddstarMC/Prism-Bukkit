@@ -59,7 +59,7 @@ public class TeleportCommand implements SubHandler {
 		}
 		
 		
-		for(me.botsko.prism.actions.Action a : results.getActionResults()){
+		for(me.botsko.prism.actions.Handler a : results.getActionResults()){
 			
 			World world = plugin.getServer().getWorld( a.getWorldName() );
 			if(world == null){

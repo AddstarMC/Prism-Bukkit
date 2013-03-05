@@ -11,13 +11,7 @@ public class GrowAction extends BlockAction {
 	 * @param block_filters
 	 * @param player
 	 */
-	public GrowAction( String action_type, BlockState blockstate, String player ){
-		
-		super(action_type, null, player);
-		
-		// Build an object for the specific details of this action
-//		actionData = new BlockActionData();
-
+	public void setBlock( BlockState blockstate ){
 		if(blockstate != null){
 			this.block_id = blockstate.getTypeId();
 			this.block_subid = blockstate.getData().getData();
@@ -26,10 +20,5 @@ public class GrowAction extends BlockAction {
 			this.y = blockstate.getLocation().getBlockY();
 			this.z = blockstate.getLocation().getBlockZ();
 		}
-		
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
-		
 	}
 }

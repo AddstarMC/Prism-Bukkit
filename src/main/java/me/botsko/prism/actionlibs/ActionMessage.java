@@ -1,6 +1,6 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.actions.Action;
+import me.botsko.prism.actions.Handler;
 
 import org.bukkit.ChatColor;
 
@@ -9,7 +9,7 @@ public class ActionMessage {
 	/**
 	 * 
 	 */
-	protected Action a;
+	protected Handler a;
 	
 	/**
 	 * 
@@ -21,7 +21,7 @@ public class ActionMessage {
 	 * 
 	 * @param a
 	 */
-	public ActionMessage( Action a ){
+	public ActionMessage( Handler a ){
 		this.a = a;
 	}
 	

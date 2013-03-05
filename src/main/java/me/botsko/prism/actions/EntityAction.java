@@ -1,6 +1,12 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.utils.EntityUtils;
+
 import org.bukkit.DyeColor;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -29,17 +35,6 @@ public class EntityAction extends GenericAction {
 	 */
 	protected EntityActionData actionData;
 	
-	
-	/**
-	 * 
-	 * @param action_type
-	 * @param entity
-	 * @param player
-	 */
-	public EntityAction( String action_type, Entity entity, String player){
-		this(action_type, entity, player, null);
-	}
-
 
 	/**
 	 * 
@@ -47,9 +42,7 @@ public class EntityAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public EntityAction( String action_type, Entity entity, String player, String dyeUsed ){
-		
-		super(action_type, player);
+	public void setEntity( Entity entity, String dyeUsed ){
 		
 		// Build an object for the specific details of this action
 		actionData = new EntityActionData();
@@ -110,27 +103,13 @@ public class EntityAction extends GenericAction {
 	            
 	    	}
 		}
-		
-		// Save entity data from current entity
-		setDataFromObject();
-		setObjectFromData();
-		
 	}
 	
 	
 	/**
 	 * 
 	 */
-	public void setData( String data ){
-		this.data = data;
-		setObjectFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromObject(){
+	public void save(){
 		data = gson.toJson(actionData);
 	}
 	
@@ -138,7 +117,7 @@ public class EntityAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected void setObjectFromData(){
+	public void setData( String data ){
 		if(data != null){
 			actionData = gson.fromJson(data, EntityActionData.class);
 		}
@@ -237,5 +216,75 @@ public class EntityAction extends GenericAction {
 			name += " " + this.actionData.newColor;
 		}
 		return name;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
+		
+		if(getEntityType() == null){
+			return new ChangeResult( ChangeResultType.SKIPPED, null );
+		}
+		
+		if(!EntityUtils.mayEverSpawn(getEntityType())){
+			return new ChangeResult( ChangeResultType.SKIPPED, null );
+		}
+		
+		Location loc = getLoc();
+		
+		loc.setX( loc.getX()+0.5 );
+		loc.setZ( loc.getZ()+0.5 );
+		
+		Entity entity = loc.getWorld().spawnEntity(loc, getEntityType());
+		
+		// Get animal age
+		if(entity instanceof Ageable){
+			Ageable age = (Ageable)entity;
+			if(!isAdult()){
+				age.setBaby();
+			}
+		}
+		
+		// Set sheep color
+		if( entity.getType().equals(EntityType.SHEEP) && getColor() != null ){
+			Sheep sheep = ((Sheep) entity);
+			sheep.setColor( getColor() );
+		}
+		
+		// Set villager profession
+		if( entity instanceof Villager && getProfession() != null ){
+			Villager v = (Villager)entity;
+			v.setProfession( getProfession() );
+		}
+		
+		// Set wolf details
+		if (entity instanceof Wolf){
+			
+			// Owner
+            Wolf wolf = (Wolf)entity;
+            String tamingOwner = getTamingOwner();
+            if(tamingOwner != null){
+	            Player owner = plugin.getServer().getPlayer( tamingOwner );
+	            if(owner == null){
+		            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+		            if(offlinePlayer.hasPlayedBefore()){
+		            	owner = offlinePlayer.getPlayer();
+		            }
+	            }
+	            if(owner != null) wolf.setOwner(owner);
+            }
+            
+            // Collar color
+            if( getColor() != null ){
+            	wolf.setCollarColor( getColor() );
+            }
+            
+            if(isSitting()){
+            	wolf.setSitting(true);
+            }
+    	}
+		return new ChangeResult( ChangeResultType.APPLIED, null );
 	}
 }

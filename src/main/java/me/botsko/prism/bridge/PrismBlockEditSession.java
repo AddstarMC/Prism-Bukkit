@@ -1,7 +1,7 @@
 package me.botsko.prism.bridge;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.WorldeditAction;
+import me.botsko.prism.actionlibs.ActionFactory;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -60,7 +60,7 @@ public class PrismBlockEditSession extends EditSession {
 		boolean success = super.rawSetBlock(pt, block);
 		if (success) {
 			Location loc = new Location(Bukkit.getWorld(player.getWorld().getName()), pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
-			Prism.actionsRecorder.addToQueue( new WorldeditAction( "world-edit", loc, typeBefore, dataBefore, loc.getBlock().getTypeId(), loc.getBlock().getData(), player.getName()) );
+			Prism.actionsRecorder.addToQueue( ActionFactory.create( "world-edit", loc, typeBefore, dataBefore, loc.getBlock().getTypeId(), loc.getBlock().getData(), player.getName()) );
 		}
 		return success;
 	}

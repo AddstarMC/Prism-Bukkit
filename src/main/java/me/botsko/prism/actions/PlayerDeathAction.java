@@ -1,16 +1,7 @@
 package me.botsko.prism.actions;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-
 public class PlayerDeathAction extends GenericAction {
 
-	
-	/**
-	 * 
-	 */
-	protected Player player;
-	
 	/**
 	 * 
 	 */
@@ -21,35 +12,22 @@ public class PlayerDeathAction extends GenericAction {
 	 */
 	protected String attacker;
 
-
+	
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param cause
 	 */
-	public PlayerDeathAction( String action_type, Player player, String cause, String attacker ){
-	
-		super(action_type, null);
-
-		if(player != null){
-			this.player_name = player.getName();
-		}
-		
-		if(player != null){
-			this.player = player;
-			this.world_name = player.getWorld().getName();
-			this.x = player.getLocation().getBlockX();
-			this.y = player.getLocation().getBlockY();
-			this.z = player.getLocation().getBlockZ();
-			this.player_name = player.getName();
-		}
+	public void setCause( String cause ){
 		this.cause = cause;
+	}
+	
+	
+	/**
+	 * 
+	 * @param attacker
+	 */
+	public void setAttacker( String attacker ){
 		this.attacker = attacker;
-
-		// Save entity data from current entity
-		setDataFromDeathInfo();
-		getDeathInfoFromData();
 	}
 	
 	
@@ -58,24 +36,6 @@ public class PlayerDeathAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		getDeathInfoFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromDeathInfo(){
-		if(data == null && cause != null){
-			data = cause+":"+attacker;
-		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public EntityType getDeathInfoFromData(){
 		if(cause == null && data != null){
 			String[] dataArr = data.split(":");
 			cause = dataArr[0];
@@ -83,7 +43,16 @@ public class PlayerDeathAction extends GenericAction {
 				attacker = dataArr[1];
 			}
 		}
-		return null;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void save(){
+		if(data == null && cause != null){
+			data = cause+":"+attacker;
+		}
 	}
 	
 	

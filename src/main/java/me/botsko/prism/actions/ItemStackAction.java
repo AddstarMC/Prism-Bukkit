@@ -1,17 +1,29 @@
 package me.botsko.prism.actions;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
-import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BrewingStand;
+import org.bukkit.block.Chest;
+import org.bukkit.block.Dispenser;
+import org.bukkit.block.Furnace;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -57,25 +69,10 @@ public class ItemStackAction extends GenericAction {
 	/**
 	 * 
 	 * @param action_type
-	 * @param item
-	 * @param enchs
-	 * @param loc
-	 * @param player_name
-	 */
-	public ItemStackAction( String action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
-		this(action_type,item,1,-1,enchantments,loc,player_name);
-	}
-	
-	
-	/**
-	 * 
-	 * @param action_type
 	 * @param block
 	 * @param player
 	 */
-	public ItemStackAction( String action_type, ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments, Location loc, String player_name ){
-		
-		super(action_type, player_name);
+	public void setItem( ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments ){
 		
 		actionData = new ItemStackActionData();
 		
@@ -86,10 +83,6 @@ public class ItemStackAction extends GenericAction {
 		if(item != null){
 			
 			this.item = item;
-			this.world_name = loc.getWorld().getName();
-			this.x = loc.getX();
-			this.y = loc.getY();
-			this.z = loc.getZ();
 			if(enchantments == null){
 				this.enchantments = item.getEnchantments();
 			}
@@ -191,9 +184,6 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
-		
-		setDataFromObject();
-		
 	}
 	
 	
@@ -232,18 +222,8 @@ public class ItemStackAction extends GenericAction {
 	/**
 	 * 
 	 */
-	protected void setDataFromObject(){
+	public void save(){
 		data = gson.toJson(actionData);
-	}
-
-	
-	/**
-	 * 
-	 */
-	protected void setObjectFromData(){
-		if(data != null){
-			actionData = gson.fromJson(data, ItemStackActionData.class);
-		}
 	}
 	
 	
@@ -252,8 +232,7 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setItemStackFromNewDataFormat(){
 		
-		// Set json data back to object
-		setObjectFromData();
+		actionData = gson.fromJson(data, ItemStackActionData.class);
 		
 		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 		
@@ -435,5 +414,119 @@ public class ItemStackAction extends GenericAction {
 			name = actionData.amt + " " + fullItemName;
 		}
 		return name;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
+		return placeItems( player, parameters, is_preview );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
+		return placeItems( player, parameters, is_preview );
+	}
+	
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected ChangeResult placeItems( Player player, QueryParameters parameters, boolean is_preview ){
+		
+		ChangeResultType result = null;
+		
+		if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
+			
+			Block block = getWorld().getBlockAt( getLoc() );
+			InventoryHolder container = null;
+			if(block.getType().equals(Material.CHEST)){
+				container = (Chest) block.getState();
+			}
+			else if( block.getType().equals(Material.DISPENSER) ){
+				container = (Dispenser) block.getState();
+			}
+			else if( block.getType().equals(Material.FURNACE) ){
+				container = (Furnace) block.getState();
+			}
+			else if( block.getType().equals(Material.BREWING_STAND) ){
+				container = (BrewingStand) block.getState();
+			}
+			
+			if(container != null){
+				
+				Inventory inv = container.getInventory();
+				
+				// Rolling back a:remove should place the item into the inventory
+				// Restoring a:insert should place the item into the inventory
+				if( (parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && getType().getName().equals("item-remove"))
+					|| (parameters.getProcessType().equals(PrismProcessType.RESTORE) && getType().getName().equals("item-insert")) ){
+					
+					boolean added = false;
+					
+					// We'll attempt to put it back in the same slot
+					if( getActionData().slot >= 0 ){
+						ItemStack currentSlotItem = inv.getItem( getActionData().slot );
+						// Make sure nothing's there.
+						if( currentSlotItem == null ){
+							result = ChangeResultType.APPLIED;
+							added = true;
+							inv.setItem(getActionData().slot, getItem());
+						}
+					}
+					// If that failed we'll attempt to put it anywhere
+					if( !added ){
+						HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), getItem());
+						if(leftovers.size() > 0){
+							result = ChangeResultType.SKIPPED;
+//							plugin.debug("Item placement into container skipped because container was full.");
+						} else {
+							result = ChangeResultType.APPLIED;
+						}
+					}
+				}
+				
+				// Rolling back a:insert should remove the item from the inventory
+				// Restoring a:remove should remove the item from the inventory
+				if( (parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && getType().getName().equals("item-insert"))
+					|| (parameters.getProcessType().equals(PrismProcessType.RESTORE) && getType().getName().equals("item-remove")) ){
+						
+					// does inventory have item?
+					boolean removed = false;
+					
+					// We'll attempt to take it from the same slot
+					if( getActionData().slot >= 0 ){
+						ItemStack currentSlotItem = inv.getItem( getActionData().slot );
+						// Make sure something's there.
+						if( currentSlotItem != null ){
+							currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
+							result = ChangeResultType.APPLIED;
+							removed = true;
+							inv.setItem(getActionData().slot, currentSlotItem);
+						}
+					}
+					// If that failed we'll attempt to take it from anywhere
+					if( !removed ){
+						int slot = ItemUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), (byte)getItem().getDurability());
+						if(slot > -1){
+							container.getInventory().removeItem(getItem());
+							result = ChangeResultType.APPLIED;
+						} else {
+//							plugin.debug("Item removal from container skipped because it's not inside.");
+							result = ChangeResultType.SKIPPED;
+						}
+					}
+				}
+			}
+		}
+		return new ChangeResult( result, null );
 	}
 }
