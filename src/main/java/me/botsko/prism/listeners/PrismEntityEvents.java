@@ -17,6 +17,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -189,9 +190,17 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteractEntityEvent(final PlayerInteractEntityEvent event) {
-		if( !Prism.getIgnore().event("entity-dye",event.getPlayer()) ) return;
+		
 		Player p = event.getPlayer();
 		Entity e = event.getRightClicked();
+		
+		// if they're holding coal (or charcoal, a subitem) and they click a powered minecart
+		if( p.getItemInHand().getType().equals(Material.COAL) && e instanceof PoweredMinecart ){
+			if( !Prism.getIgnore().event("item-insert",p) ) return;
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", p.getItemInHand(), 1, 0, null, e.getLocation(), p.getName()) );
+		}
+		
+		if( !Prism.getIgnore().event("entity-dye",p) ) return;
 		// Only track the event on sheep, when player holds dye
 		if( p.getItemInHand().getTypeId() == 351 && e.getType().equals(EntityType.SHEEP) ){
 			String newColor = plugin.getItems().getItemStackAliasById(p.getItemInHand().getTypeId(), (byte)p.getItemInHand().getDurability());
