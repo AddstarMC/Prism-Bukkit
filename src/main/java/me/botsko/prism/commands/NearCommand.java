@@ -38,6 +38,7 @@ public class NearCommand implements SubHandler {
 
 		// Build params
 		QueryParameters parameters = new QueryParameters();
+		parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
 		parameters.setWorld( call.getPlayer().getWorld().getName() );
 		
 		// allow a custom near radius

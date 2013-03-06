@@ -66,6 +66,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.queries.never-use-defaults", false);
 		config.addDefault("prism.queries.limit-global-radius-override-to-lookups", true);
 		config.addDefault("prism.queries.lookup-max-results", 1000);
+		config.addDefault("prism.queries.default-results-per-page", 5);
 		
 		// Messenger
 		config.addDefault("prism.messenger.always-show-extended", false);
