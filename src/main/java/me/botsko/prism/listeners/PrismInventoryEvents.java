@@ -11,6 +11,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Furnace;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -90,10 +91,10 @@ public class PrismInventoryEvents implements Listener {
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
 	    
-//	    plugin.debug("Raw slot: " + event.getRawSlot());
-//	    plugin.debug("Slot: " + event.getSlot());
-//	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
-//	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
+	    plugin.debug("Raw slot: " + event.getRawSlot());
+	    plugin.debug("Slot: " + event.getSlot());
+	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
+	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 	    
 
 	    // Chest
@@ -206,6 +207,33 @@ public class PrismInventoryEvents implements Listener {
 	    		recordInvAction( player, currentitem, -1, "item-insert");
 	    	}
 		}
+	    
+	    // Storage Minecart
+	    // If the slot type is <= 35 and rawslot >= 36, it means we're shift+clicking an item into
+	    // the chest.
+		else if(ih instanceof StorageMinecart) {
+			StorageMinecart eventChest = (StorageMinecart) ih;
+		    containerLoc = eventChest.getLocation();
+	    	if( event.getSlot() == event.getRawSlot() ){
+	    		
+	    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
+	    		// and remove for the current.
+	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+	    			recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+	    		}
+	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+			    	recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+			    }
+	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+			    }
+	    		return;
+	    	}
+	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
+	    		recordInvAction( player, currentitem, -1, "item-insert");
+	    	}
+	    }
 	}
 	
 	
