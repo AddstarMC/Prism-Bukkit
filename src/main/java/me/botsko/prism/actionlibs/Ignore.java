@@ -51,6 +51,26 @@ public class Ignore {
 	 * @param a
 	 * @return
 	 */
+	public boolean event( String actionTypeName, World world, String player ){
+		
+		if( !event( actionTypeName, world ) ){
+			return false;
+		}
+
+		// Should we ignore this player?
+		if(ignore_players != null && ignore_players.contains( player )){
+			return false;
+		}
+
+		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param a
+	 * @return
+	 */
 	public boolean event( String actionTypeName, Player player ){
 		
 		if( !event( actionTypeName, player.getWorld() ) ){

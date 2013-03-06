@@ -21,6 +21,7 @@ import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.exceptions.InvalidActionException;
 
 public class HandlerRegistry<H> {
@@ -112,6 +113,7 @@ public class HandlerRegistry<H> {
 		registerHandler( PrismProcessAction.class );
 		registerHandler( SignAction.class );
 		registerHandler( UseAction.class );
+		registerHandler( VehicleAction.class );
 		
 	}
 }

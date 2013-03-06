@@ -158,6 +158,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.tnt-explode", true);
 		config.addDefault("prism.tracking.tnt-prime", true);
 		config.addDefault("prism.tracking.tree-grow", true);
+		config.addDefault("prism.tracking.vehicle-break", true);
+		config.addDefault("prism.tracking.vehicle-enter", true);
+		config.addDefault("prism.tracking.vehicle-exit", true);
+		config.addDefault("prism.tracking.vehicle-place", true);
 		config.addDefault("prism.tracking.water-break", true);
 		config.addDefault("prism.tracking.water-bucket", true);
 		config.addDefault("prism.tracking.water-flow", false);

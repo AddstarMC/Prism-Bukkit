@@ -29,6 +29,7 @@ import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismVehicleEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.Metrics;
@@ -97,6 +98,13 @@ public class Prism extends JavaPlugin {
 	 * data should not remain here long.
 	 */
 	public ConcurrentHashMap<String,String> preplannedBlockFalls = new ConcurrentHashMap<String,String>();
+	
+	
+	/**
+	 * VehicleCreateEvents do not include the player/entity that created it, so we need
+	 * to track players right-clicking rails with minecart vehicles, or water for boats
+	 */
+	public ConcurrentHashMap<String,String> preplannedVehiclePlacement = new ConcurrentHashMap<String,String>();
 	
 	
     /**
@@ -195,6 +203,7 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents( this ), this);
 			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 
 			if( getConfig().getBoolean("prism.tracking.api.enabled") ){
 				getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
