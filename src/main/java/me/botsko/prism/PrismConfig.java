@@ -184,7 +184,6 @@ public class PrismConfig extends ConfigBase {
 		// Ore Alerts
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
-		config.addDefault("prism.alerts.ores.ignore-staff", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		config.addDefault("prism.alerts.ores.coal", false);
 		config.addDefault("prism.alerts.ores.redstone", false);
@@ -205,7 +204,6 @@ public class PrismConfig extends ConfigBase {
 		
 		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
-		config.addDefault("prism.alerts.uses.ignore-staff", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
 		
