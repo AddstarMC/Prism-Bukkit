@@ -207,7 +207,7 @@ public class PrismPlayerEvents implements Listener {
 		int newId = (cause.equals("lava-bucket") ? 11 : 9);
 		Prism.actionsRecorder.addToQueue( ActionFactory.create(cause, spot.getLocation(), spot.getTypeId(), spot.getData(), newId, (byte)0, player.getName()) );
 
-		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET){
+		if(plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET && !player.hasPermission("prism.alerts.use.lavabucket.ignore") && !player.hasPermission("prism.alerts.ignore") ){
 			plugin.useMonitor.alertOnItemUse(player,"poured lava");
 		}
 	}

@@ -188,7 +188,7 @@ public class PrismBlockEvents implements Listener {
 		if( block.getType().equals(Material.AIR) ) return;
 		
 		// Run ore find alerts
-		if( block.getType().name().contains("_ore") ){
+		if( block.getType().name().contains("_ore") && !player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")  ){
 			plugin.oreMonitor.processAlertsFromBlock(player, block);
 		}
 		
@@ -214,8 +214,9 @@ public class PrismBlockEvents implements Listener {
 		}
 		
 		// Pass to the break alerter
-		plugin.useMonitor.alertOnBlockBreak(player, event.getBlock());
-				
+		if( !player.hasPermission("prism.alerts.use.break.ignore") && !player.hasPermission("prism.alerts.ignore") ){
+			plugin.useMonitor.alertOnBlockBreak(player, event.getBlock());
+		}	
 	}
 	
 	
@@ -237,8 +238,9 @@ public class PrismBlockEvents implements Listener {
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-place", block.getLocation(), s.getTypeId(), s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
 	
 		// Pass to the placement alerter
-		plugin.useMonitor.alertOnBlockPlacement(player, block);
-		
+		if( !player.hasPermission("prism.alerts.use.place.ignore") && !player.hasPermission("prism.alerts.ignore") ){
+			plugin.useMonitor.alertOnBlockPlacement(player, block);
+		}
 	}
 	
 	
@@ -414,7 +416,7 @@ public class PrismBlockEvents implements Listener {
 			
 			if( !Prism.getIgnore().event(cause, player) ) return;
 			
-			if( cause.equals("lighter") && plugin.getConfig().getBoolean("prism.alerts.uses.lighter") ){
+			if( cause.equals("lighter") && plugin.getConfig().getBoolean("prism.alerts.uses.lighter") && !player.hasPermission("prism.alerts.use.lighter.ignore") && !player.hasPermission("prism.alerts.ignore") ){
 				plugin.useMonitor.alertOnItemUse(player,"used a lighter");
 			}
 			
