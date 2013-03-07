@@ -412,16 +412,18 @@ public class PrismBlockEvents implements Listener {
 		}
 		if(cause != null){
 			
+			if( !Prism.getIgnore().event(cause, event.getBlock().getWorld()) ) return;
+			
 			Player player = event.getPlayer();
-			
-			if( !Prism.getIgnore().event(cause, player) ) return;
-			
-			if( cause.equals("lighter") && plugin.getConfig().getBoolean("prism.alerts.uses.lighter") && !player.hasPermission("prism.alerts.use.lighter.ignore") && !player.hasPermission("prism.alerts.ignore") ){
-				plugin.useMonitor.alertOnItemUse(player,"used a lighter");
+
+			if( player != null ){
+				if( cause.equals("lighter") && plugin.getConfig().getBoolean("prism.alerts.uses.lighter") && !player.hasPermission("prism.alerts.use.lighter.ignore") && !player.hasPermission("prism.alerts.ignore") ){
+					plugin.useMonitor.alertOnItemUse(player,"used a lighter");
+				}
 			}
 			
 			Prism.actionsRecorder.addToQueue( ActionFactory.create(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
-			
+	
 		}
 	}
 	
