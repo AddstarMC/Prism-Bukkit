@@ -16,6 +16,7 @@ import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
+import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Location;
@@ -25,6 +26,7 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -253,6 +255,22 @@ public class ActionFactory {
 		a.setPlayerName(player);
 		a.setLoc( block.getLocation() );
 		a.setData(item_used);
+		return a;
+	}
+	
+	
+	/**
+	 * VehicleAction
+	 * @param action_type
+	 * @param block
+	 * @param player
+	 */
+	public static Handler create( String action_type, Vehicle vehicle, String player ){
+		VehicleAction a = new VehicleAction();
+		a.setActionType(action_type);
+		a.setPlayerName(player);
+		a.setLoc( vehicle.getLocation() );
+		a.setVehicle(vehicle);
 		return a;
 	}
 }

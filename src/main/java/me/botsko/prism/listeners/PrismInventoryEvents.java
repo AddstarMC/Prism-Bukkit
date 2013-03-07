@@ -91,10 +91,10 @@ public class PrismInventoryEvents implements Listener {
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
 	    
-	    plugin.debug("Raw slot: " + event.getRawSlot());
-	    plugin.debug("Slot: " + event.getSlot());
-	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
-	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
+//	    plugin.debug("Raw slot: " + event.getRawSlot());
+//	    plugin.debug("Slot: " + event.getSlot());
+//	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
+//	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 	    
 
 	    // Chest

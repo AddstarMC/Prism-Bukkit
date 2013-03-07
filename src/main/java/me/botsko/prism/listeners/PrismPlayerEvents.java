@@ -330,6 +330,7 @@ public class PrismPlayerEvents implements Listener {
 		// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
 		if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
 
+			String coord_key = null;
 			switch (block.getType()){
 				case FURNACE:
 				case DISPENSER:
@@ -361,6 +362,12 @@ public class PrismPlayerEvents implements Listener {
 				case POTATO:
 					recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 					break;
+				case RAILS:
+				case DETECTOR_RAIL:
+				case POWERED_RAIL:
+					coord_key = block.getX() + ":" + block.getY() + ":" + block.getZ();
+					plugin.preplannedVehiclePlacement.put(coord_key, player.getName());
+					break;
 				case TNT:
 					if(player.getItemInHand().getType().equals(Material.FLINT_AND_STEEL)){
 						if( !Prism.getIgnore().event("tnt-prime",player) ) return;
@@ -370,7 +377,6 @@ public class PrismPlayerEvents implements Listener {
 				default:
 					break;
 			}
-
 			
 			// if they're holding a spawner egg
 			if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
@@ -382,6 +388,11 @@ public class PrismPlayerEvents implements Listener {
 				recordRocketLaunch( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
 			}
 			
+			// if they're holding a boat (why they hell can you put boats on anything...)
+			if( player.getItemInHand().getType().equals(Material.BOAT) ){
+				coord_key = block.getX() + ":" + (block.getY()+1) + ":" + block.getZ();
+				plugin.preplannedVehiclePlacement.put(coord_key, player.getName());
+			}
 		}
 		
 		if( !plugin.getConfig().getBoolean("prism.tracking.crop-trample") ) return;

@@ -208,6 +208,10 @@ public class ActionRegistry {
 		registerAction( new ActionType( "tnt-explode", false, true, true, "BlockAction", "blew up") );
 		registerAction( new ActionType( "tnt-prime", false, false, false, "UseAction", "primed") );
 		registerAction( new ActionType( "tree-grow", true, true, true, "GrowAction", "grew") );
+		registerAction( new ActionType( "vehicle-break", false, true, false, "VehicleAction", "broke") );
+		registerAction( new ActionType( "vehicle-enter", false, false, false, "VehicleAction", "entered") );
+		registerAction( new ActionType( "vehicle-exit", false, false, false, "VehicleAction", "exited") );
+		registerAction( new ActionType( "vehicle-place", true, false, false, "VehicleAction", "placed") );
 		registerAction( new ActionType( "water-break", false, true, true, "BlockAction", "broke") );
 		registerAction( new ActionType( "water-bucket", true, true, true, "BlockChangeAction", "poured") );
 		registerAction( new ActionType( "water-flow", true, true, true, "BlockAction", "flowed into") );
