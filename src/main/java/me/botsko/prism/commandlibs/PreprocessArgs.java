@@ -110,7 +110,8 @@ public class PreprocessArgs {
 									
 									// Ensure the action allows this process type
 									if( (processType.equals(PrismProcessType.ROLLBACK) && !actionType.canRollback()) || (processType.equals(PrismProcessType.RESTORE) && !actionType.canRestore()) ){
-										respond( sender, Prism.messenger.playerError("Ingoring action '"+action.replace("!", "")+"' because it doesn't support rollbacks.") );
+										// @todo this is important information but is too spammy with a:place, because vehicle-place doesn't support a rollback etc
+//										respond( sender, Prism.messenger.playerError("Ingoring action '"+actionType.getName()+"' because it doesn't support rollbacks.") );
 										continue;
 									}
 									

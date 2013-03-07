@@ -97,6 +97,10 @@ public class BlockAction extends GenericAction {
 			} else {
 				// No longer used except for pre-1.5 data formats
 				actionData = gson.fromJson(data, BlockActionData.class);
+				if( actionData.block_id > 0 ){
+					this.block_id = actionData.block_id;
+					this.block_subid = actionData.block_subid;
+				}
 			}
 		}
 	}
