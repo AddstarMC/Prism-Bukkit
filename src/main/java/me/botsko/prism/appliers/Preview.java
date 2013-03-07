@@ -1,6 +1,7 @@
 package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -54,6 +55,11 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected boolean is_preview = false;
+	
+	/**
+	 * 
+	 */
+	protected HashMap<Entity,Integer> entities_moved = new HashMap<Entity,Integer>();
 	
 	/**
 	 * 
@@ -417,9 +423,7 @@ public class Preview implements Previewable {
 							l.setY(l.getY() + 1);
 						}
 						if(add > 0){
-							if(entity instanceof Player){
-								((Player)entity).sendMessage(Prism.messenger.playerSubduedHeaderMsg("Moved you " + add + " blocks to safety due to a rollback."));
-							}
+							entities_moved.put( entity, add );
 							entity.teleport(l);
 						}
 					}
@@ -435,7 +439,7 @@ public class Preview implements Previewable {
 	public void fireApplierCallback(){
 		
 		if(callback != null){
-			callback.handle(sender, new ApplierResult(is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType));
+			callback.handle(sender, new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType, entities_moved ));
 		}
 		
 		plugin.eventTimer.recordTimedEvent("applier function complete");
