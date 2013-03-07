@@ -396,10 +396,6 @@ public class Preview implements Previewable {
 		
 		moveEntitiesToSafety();
 		
-		// Trigger the rollback event
-		PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters.getOriginalCommand());
-		plugin.getServer().getPluginManager().callEvent(event);
-		
 		fireApplierCallback();
 		
 	}
@@ -438,8 +434,16 @@ public class Preview implements Previewable {
 	 */
 	public void fireApplierCallback(){
 		
+		ApplierResult results = new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType, entities_moved );
+		
 		if(callback != null){
-			callback.handle(sender, new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType, entities_moved ));
+			callback.handle(sender, results);
+		}
+		
+		// Trigger the events
+		if(processType.equals(PrismProcessType.ROLLBACK)){
+			PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent( blockStateChanges, player, parameters, results );
+			plugin.getServer().getPluginManager().callEvent(event);
 		}
 		
 		plugin.eventTimer.recordTimedEvent("applier function complete");

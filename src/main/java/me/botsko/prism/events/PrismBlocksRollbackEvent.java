@@ -4,6 +4,9 @@ package me.botsko.prism.events;
 import java.util.ArrayList;
 
 
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ApplierResult;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -28,17 +31,23 @@ public class PrismBlocksRollbackEvent extends Event {
     /**
      * 
      */
-    private final String commandParameters;
+    private final QueryParameters parameters;
+    
+    /**
+     * 
+     */
+    private final ApplierResult result;
  
     
     /**
      * 
      * @param example
      */
-    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, String commandParameters ) {
+    public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, QueryParameters parameters, ApplierResult result ) {
         this.blockStateChanges = blockStateChanges;
         this.onBehalfOf = onBehalfOf;
-        this.commandParameters = commandParameters;
+        this.parameters = parameters;
+        this.result = result;
     }
  
     
@@ -62,8 +71,17 @@ public class PrismBlocksRollbackEvent extends Event {
 	 * 
 	 * @return
 	 */
-	public String getCommandParams(){
-		return commandParameters;
+	public QueryParameters getQueryParameters(){
+		return parameters;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ApplierResult getResult(){
+		return result;
 	}
 
 
