@@ -38,7 +38,7 @@ import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
 import me.botsko.prism.wands.Wand;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
@@ -54,7 +54,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Connection Pool
 	 */
-	private static BasicDataSource pool = new BasicDataSource();
+	private static DataSource pool = new DataSource();
 
 	/**
 	 * Protected/private
@@ -260,15 +260,15 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public BasicDataSource initDbPool(){
+	public DataSource initDbPool(){
 		
-		BasicDataSource pool = null;
+		DataSource pool = null;
 		
 		// SQLITE
 		if( getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
 	        try {
 	        	Class.forName("org.sqlite.JDBC");
-        		pool = new BasicDataSource();
+        		pool = new DataSource();
     			pool.setDriverClassName("com.mysql.jdbc.Driver");
     			pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (ClassNotFoundException e) {
@@ -279,7 +279,7 @@ public class Prism extends JavaPlugin {
 		// MYSQL
 		else if( getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 			String dns = "jdbc:mysql://"+config.getString("prism.mysql.hostname")+":"+config.getString("prism.mysql.port")+"/"+config.getString("prism.mysql.database");
-			pool = new BasicDataSource();
+			pool = new DataSource();
 			pool.setDriverClassName("com.mysql.jdbc.Driver");
 			pool.setUrl(dns);
 		    pool.setUsername(config.getString("prism.mysql.username"));
@@ -301,7 +301,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public static BasicDataSource getPool(){
+	public static DataSource getPool(){
 		return Prism.pool;
 	}
 	
@@ -764,11 +764,7 @@ public class Prism extends JavaPlugin {
 		
 		// Close pool connections when plugin disables
 		if(pool != null){
-			try {
-				pool.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			pool.close();
 		}
 		
 		this.log("Closing plugin.");
