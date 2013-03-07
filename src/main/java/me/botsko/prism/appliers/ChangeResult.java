@@ -20,6 +20,16 @@ public class ChangeResult {
 	 * @param changeResultType
 	 * @param blockStateChange
 	 */
+	public ChangeResult( ChangeResultType changeResultType ){
+		this(changeResultType, null);
+	}
+	
+	
+	/**
+	 * 
+	 * @param changeResultType
+	 * @param blockStateChange
+	 */
 	public ChangeResult( ChangeResultType changeResultType, BlockStateChange blockStateChange ){
 		this.blockStateChange = blockStateChange;
 		this.changeResultType = changeResultType;
