@@ -94,6 +94,9 @@ public class BlockAction extends GenericAction {
 			}
 			else if( block_id == 63 || block_id == 68 ){
 				actionData = gson.fromJson(data, SignActionData.class);
+			} else {
+				// No longer used except for pre-1.5 data formats
+				actionData = gson.fromJson(data, BlockActionData.class);
 			}
 		}
 	}
