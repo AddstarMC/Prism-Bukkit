@@ -58,8 +58,8 @@ public class PreprocessArgs {
 		if(args != null){
 
 			// Iterate over arguments
-			for (int i = startAt; i < args.length; i++) {
-				
+			for (int i = startAt; i < args.length; i++){
+
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
 				
