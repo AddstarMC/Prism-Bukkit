@@ -33,14 +33,13 @@ public class PrismRollbackAction extends GenericAction {
 	public void setBlockChange(  BlockState oldblock, BlockState newBlock, int parent_id ){
 		
 		actionData = new PrismRollbackActionData();
+		actionData.parent_id = parent_id;
 		
 		if(oldblock != null){
 			this.old_block_id = oldblock.getTypeId();
 			this.old_block_subid = oldblock.getRawData();
 			this.block_id = oldblock.getTypeId();
 			this.block_subid = oldblock.getRawData();
-
-			actionData.parent_id = parent_id;
 		}
 	}
 	
@@ -50,22 +49,6 @@ public class PrismRollbackAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		setObjectFromData();
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setDataFromObject(){
-		data = gson.toJson(actionData);
-	}
-	
-	
-	/**
-	 * 
-	 */
-	protected void setObjectFromData(){
 		if(data != null && data.contains("{")){
 			actionData = gson.fromJson(data, PrismRollbackActionData.class);
 			this.old_block_id = actionData.originalBlock_id;
@@ -73,6 +56,14 @@ public class PrismRollbackAction extends GenericAction {
 			this.block_id = actionData.newBlock_id;
 			this.block_subid =(byte) actionData.newBlock_subid;
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void save(){
+		data = gson.toJson(actionData);
 	}
 
 	

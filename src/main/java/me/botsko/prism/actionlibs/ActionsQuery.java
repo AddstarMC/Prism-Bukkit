@@ -346,8 +346,6 @@ public class ActionsQuery {
 			if( !action_types.isEmpty() ){
 				query += buildMultipleConditions( action_types, "action_type", null );
 				for (Entry<String,MatchRule> entry : action_types.entrySet()){
-					System.out.print("KEY: " + entry.getKey());
-					System.out.print("SIZE: " + action_types.size());
 					if(entry.getKey().contains("prism")){
 						containtsPrismProcessType = true;
 						break;

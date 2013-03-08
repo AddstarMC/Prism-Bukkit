@@ -76,6 +76,9 @@ public class ActionRecorder implements Runnable {
 	public int insertActionIntoDatabase( Handler a){
 		int id = 0;
 		try {
+			
+			// prepare to save to the db
+			a.save();
 
 			Connection conn = Prism.dbc();
 			if(conn == null){
@@ -121,7 +124,7 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
-	    	plugin.debug("Pool: MaxActive: " + Prism.getPool().getMaxActive() + " MaxIdle: " + Prism.getPool().getMaxIdle() + " Idle: " + Prism.getPool().getNumIdle() + " Active: " + Prism.getPool().getNumActive());
+//	    	plugin.debug("Pool: MaxActive: " + Prism.getPool().getMaxActive() + " MaxIdle: " + Prism.getPool().getMaxIdle() + " Idle: " + Prism.getPool().getNumIdle() + " Active: " + Prism.getPool().getNumActive());
 	    	
 	    	int perBatch = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
 	    	if(perBatch < 0 || perBatch > 5000){

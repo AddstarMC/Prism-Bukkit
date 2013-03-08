@@ -142,7 +142,6 @@ public class BlockChangeAction extends BlockAction {
 			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
 			// and https://snowy-evening.com/botsko/prism/258/
 			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
-				System.out.println("OLD ID: " + old_id);
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
 				return b.placeBlock( player, parameters, is_preview, block, false );
