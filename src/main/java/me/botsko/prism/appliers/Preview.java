@@ -103,8 +103,9 @@ public class Preview implements Previewable {
 	 * @param plugin
 	 * @return 
 	 */
-	public Preview( Prism plugin, CommandSender sender, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
-		this.processType = processType;
+	public Preview( Prism plugin, CommandSender sender, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
+		
+		this.processType = parameters.getProcessType();
 		this.plugin = plugin;
 		this.sender = sender;
 		this.parameters = parameters;

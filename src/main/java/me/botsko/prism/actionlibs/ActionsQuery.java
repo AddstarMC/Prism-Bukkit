@@ -82,8 +82,6 @@ public class ActionsQuery {
 	    		while(rs.next()){
 	    			
 	    			if( rs.getString(3) == null ) continue;
-
-	    			boolean override_data = false;
 	    			
 	    			// Get the action handler
 	    			ActionType actionType = Prism.getActionRegistry().getAction(rs.getString(3));
@@ -91,23 +89,6 @@ public class ActionsQuery {
 	    			if(actionType == null) continue;
 	    			
 	    			Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
-
-	    			// @todo this system was unused at time of refactor
-//	    			else if( actionType.requiresHandler("prismrollback") ){
-//	    				
-//	    				override_data = true;
-//	    				
-//	    				// Get the actual process action
-//	    				PrismRollbackAction pr = new PrismRollbackAction(null, 0, 0, 0, 0, null, 0);
-//	    				pr.setData( rs.getString("data") );
-//	    				
-//	    				// All we really want is a block action to feed to the world change system
-//	    				BlockAction b = new BlockAction(null, null, null);
-//	    				b.setBlockId(pr.getOriginalBlockId());
-//	    				b.setBlockSubId((byte)pr.getOriginalBlockSubId());
-//	    				baseAction = b;
-//	    				
-//	    			}
 	   
 //	    			plugin.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
 
@@ -123,13 +104,11 @@ public class ActionsQuery {
 	    			baseHandler.setZ( rs.getInt(8) );
 	    			baseHandler.setDisplayDate( rs.getString(14) );
 	    			baseHandler.setDisplayTime( rs.getString(15) );
-    				if(!override_data){
-    					baseHandler.setBlockId( rs.getInt(9) );
-    					baseHandler.setBlockSubId( rs.getByte(10) );
-    					baseHandler.setOldBlockId( rs.getInt(11) );
-    					baseHandler.setOldBlockSubId( rs.getByte(12) );
-    					baseHandler.setData( rs.getString(13) );
-    				}
+					baseHandler.setBlockId( rs.getInt(9) );
+					baseHandler.setBlockSubId( rs.getByte(10) );
+					baseHandler.setOldBlockId( rs.getInt(11) );
+					baseHandler.setOldBlockSubId( rs.getByte(12) );
+					baseHandler.setData( rs.getString(13) );
     				baseHandler.setMaterialAliases( plugin.getItems() );
     				
     				// Set aggregate counts if a lookup
@@ -432,7 +411,7 @@ public class ActionsQuery {
 			 * Parent process id
 			 */
 			if(parameters.getParentId() > 0){
-				query += " AND data LIKE '%parent_id\":"+parameters.getParentId()+"}%'";
+				query += " AND data = " + parameters.getParentId();
 			}
 			
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){

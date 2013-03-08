@@ -84,6 +84,7 @@ public class UndoCommand implements SubHandler {
 			parameters.addActionType(process.getProcessChildActionType());
 			parameters.addPlayerName( call.getPlayer().getName() );
 			parameters.setParentId(record_id);
+			parameters.setProcessType(PrismProcessType.UNDO);
 			
 			// make sure the distance isn't too far away
 			
@@ -92,7 +93,7 @@ public class UndoCommand implements SubHandler {
 				
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!") );
 				
-				Undo rb = new Undo( plugin, call.getPlayer(), PrismProcessType.UNDO, results.getActionResults(), parameters, new PrismApplierCallback() );
+				Undo rb = new Undo( plugin, call.getPlayer(), results.getActionResults(), parameters, new PrismApplierCallback() );
 				rb.apply();
 				
 			} else {

@@ -42,6 +42,7 @@ public class RestoreCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
+		parameters.setProcessType(PrismProcessType.RESTORE);
 		parameters.setStringFromRawArgs( call.getArgs(), 1 );
 		
 		// determine if defaults were used
@@ -69,7 +70,7 @@ public class RestoreCommand implements SubHandler {
 			}
 			
 			// Perform restore
-			Restore rs = new Restore( plugin, call.getSender(), PrismProcessType.RESTORE, results.getActionResults(), parameters, new PrismApplierCallback() );
+			Restore rs = new Restore( plugin, call.getSender(), results.getActionResults(), parameters, new PrismApplierCallback() );
 			rs.apply();
 			
 		} else {

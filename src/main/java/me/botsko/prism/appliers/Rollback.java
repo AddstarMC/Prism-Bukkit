@@ -22,8 +22,8 @@ public class Rollback extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Rollback( Prism plugin, CommandSender sender, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
-		super(plugin, sender, processType, results, parameters, callback);
+	public Rollback( Prism plugin, CommandSender sender, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
+		super(plugin, sender, results, parameters, callback);
 	}
 	
 	

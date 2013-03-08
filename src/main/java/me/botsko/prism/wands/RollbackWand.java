@@ -72,6 +72,7 @@ public class RollbackWand extends WandBase implements Wand{
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
+		params.setProcessType(PrismProcessType.ROLLBACK);
 		
 		// Append actions that can be rolled back
 		ArrayList<String> types = Prism.getActionRegistry().listActionsThatAllowRollback();
@@ -82,7 +83,7 @@ public class RollbackWand extends WandBase implements Wand{
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
-			Rollback rb = new Rollback( plugin, player, PrismProcessType.ROLLBACK, results.getActionResults(), params, new PrismApplierCallback() );
+			Rollback rb = new Rollback( plugin, player, results.getActionResults(), params, new PrismApplierCallback() );
 			rb.apply();
 		} else {
 			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");

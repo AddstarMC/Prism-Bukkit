@@ -16,8 +16,8 @@ public class Undo extends Preview {
 	 * @param plugin
 	 * @return 
 	 */
-	public Undo( Prism plugin, Player player, PrismProcessType processType, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
-		super(plugin, player, processType, results, parameters, callback);
+	public Undo( Prism plugin, Player player, List<Handler> results, QueryParameters parameters, ApplierCallback callback ){
+		super(plugin, player, results, parameters, callback);
 	}
 	
 	

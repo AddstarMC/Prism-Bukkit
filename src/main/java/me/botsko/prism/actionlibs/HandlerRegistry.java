@@ -19,6 +19,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
@@ -111,6 +112,7 @@ public class HandlerRegistry<H> {
 		registerHandler( PlayerAction.class );
 		registerHandler( PlayerDeathAction.class );
 		registerHandler( PrismProcessAction.class );
+		registerHandler( PrismRollbackAction.class );
 		registerHandler( SignAction.class );
 		registerHandler( UseAction.class );
 		registerHandler( VehicleAction.class );

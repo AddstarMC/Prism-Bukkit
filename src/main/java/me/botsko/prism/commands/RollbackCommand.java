@@ -40,6 +40,7 @@ public class RollbackCommand implements SubHandler {
 		if(parameters == null){
 			return;
 		}
+		parameters.setProcessType(PrismProcessType.ROLLBACK);
 		parameters.setStringFromRawArgs( call.getArgs(), 1 );
 		
 		// determine if defaults were used
@@ -60,7 +61,7 @@ public class RollbackCommand implements SubHandler {
 			
 			call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Beginning rollback...") );
 			
-			Rollback rb = new Rollback( plugin, call.getSender(), PrismProcessType.ROLLBACK, results.getActionResults(), parameters, new PrismApplierCallback() );
+			Rollback rb = new Rollback( plugin, call.getSender(), results.getActionResults(), parameters, new PrismApplierCallback() );
 			rb.apply();
 			
 		} else {
