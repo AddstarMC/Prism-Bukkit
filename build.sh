@@ -58,7 +58,7 @@ if [ "$2" == "release" ]; then
 	# send file to amazon bucket
 	s3cmd put --acl-public versions.txt s3://botsko/Prism/versions.txt
 	# generate docs
-	# javadoc -d docs-$name -sourcepath src -subpackages me.botsko.prism
+	# javadoc -d docs-$name -sourcepath src/main/java -subpackages me.botsko.prism
 fi
 
 # Remove the files

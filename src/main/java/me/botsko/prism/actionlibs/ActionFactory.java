@@ -14,6 +14,7 @@ import me.botsko.prism.actions.ItemStackAction;
 import me.botsko.prism.actions.PlayerAction;
 import me.botsko.prism.actions.PlayerDeathAction;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
@@ -224,6 +225,22 @@ public class ActionFactory {
 		a.setPlayerName(player);
 		a.setLoc( player.getLocation() );
 		a.setProcessData(processType,parameters);
+		return a;
+	}
+	
+	
+	/**
+	 * PrismRollbackAction
+	 * @param action_type
+	 * @param block
+	 * @param player
+	 */
+	public static Handler create( String action_type, BlockState oldblock, BlockState newBlock, String player, int parent_id ){
+		PrismRollbackAction a = new PrismRollbackAction();
+		a.setActionType(action_type);
+		a.setPlayerName(player);
+		a.setLoc(oldblock.getLocation());
+		a.setBlockChange(oldblock, newBlock, parent_id);
 		return a;
 	}
 	

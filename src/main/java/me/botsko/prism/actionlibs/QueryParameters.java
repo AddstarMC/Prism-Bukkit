@@ -2,7 +2,6 @@ package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.appliers.PrismProcessType;
@@ -289,11 +288,7 @@ public class QueryParameters implements Cloneable {
 	 * @return the action_type
 	 */
 	public HashMap<String,MatchRule> getActionTypeNames() {
-		HashMap<String,MatchRule> types = new HashMap<String,MatchRule>();
-		for (Entry<String,MatchRule> entry : actionTypeRules.entrySet()){
-			types.put(entry.getKey(), entry.getValue());
-		}
-		return types;
+		return actionTypeRules;
 	}
 	
 	

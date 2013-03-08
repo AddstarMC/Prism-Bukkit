@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actions.Handler;
-import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
@@ -41,13 +40,8 @@ public class PrismMiscEvents implements Listener {
 				BlockState newBlock = stateChange.getNewBlock();
 
 				// Build the action
-				PrismRollbackAction action = new PrismRollbackAction("prism-drain", orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.onBehalfOf().getName(), id);
-				action.setWorldName(orig.getWorld().getName());
-				action.setX(orig.getX());
-				action.setY(orig.getY());
-				action.setZ(orig.getZ());
-
-				Prism.actionsRecorder.addToQueue( action );
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("prism-drain", orig, newBlock, event.onBehalfOf().getName(), id) );
+				
 			}
 			Prism.actionsRecorder.save();
 		}
@@ -77,13 +71,8 @@ public class PrismMiscEvents implements Listener {
 				BlockState newBlock = stateChange.getNewBlock();
 
 				// Build the action
-				PrismRollbackAction action = new PrismRollbackAction("prism-extinguish", orig.getTypeId(), orig.getRawData(), newBlock.getTypeId(), newBlock.getRawData(), event.onBehalfOf().getName(), id);
-				action.setWorldName(orig.getWorld().getName());
-				action.setX(orig.getX());
-				action.setY(orig.getY());
-				action.setZ(orig.getZ());
-
-				Prism.actionsRecorder.addToQueue( action );
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("prism-extinguish", orig, newBlock, event.onBehalfOf().getName(), id) );
+				
 			}
 			Prism.actionsRecorder.save();
 		}

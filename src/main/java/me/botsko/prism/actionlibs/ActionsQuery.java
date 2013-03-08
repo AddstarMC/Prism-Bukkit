@@ -339,18 +339,22 @@ public class ActionsQuery {
 			 * Actions
 			 */
 			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
-			query += buildMultipleConditions( action_types, "action_type", null );
 			
 			// Make sure none of the prism process types are requested
 			boolean containtsPrismProcessType = false;
 			boolean hasPositiveMatchRule = false;
-			for (Entry<String,MatchRule> entry : action_types.entrySet()){
-				if(entry.getKey().contains("prism")){
-					containtsPrismProcessType = true;
-					break;
-				}
-				if(entry.getValue().equals(MatchRule.INCLUDE)){
-					hasPositiveMatchRule = true;
+			if( !action_types.isEmpty() ){
+				query += buildMultipleConditions( action_types, "action_type", null );
+				for (Entry<String,MatchRule> entry : action_types.entrySet()){
+					System.out.print("KEY: " + entry.getKey());
+					System.out.print("SIZE: " + action_types.size());
+					if(entry.getKey().contains("prism")){
+						containtsPrismProcessType = true;
+						break;
+					}
+					if(entry.getValue().equals(MatchRule.INCLUDE)){
+						hasPositiveMatchRule = true;
+					}
 				}
 			}
 			

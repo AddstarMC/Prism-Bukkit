@@ -1,5 +1,7 @@
 package me.botsko.prism.wands;
 
+import java.util.ArrayList;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -72,7 +74,7 @@ public class RollbackWand extends WandBase implements Wand{
 		params.setLimit(1);
 		
 		// Append actions that can be rolled back
-		String[] types = Prism.getActionRegistry().listActionsThatAllowRollback();
+		ArrayList<String> types = Prism.getActionRegistry().listActionsThatAllowRollback();
 		for(String type : types){
 			params.addActionType(type);
 		}

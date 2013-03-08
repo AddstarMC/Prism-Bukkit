@@ -1,10 +1,16 @@
 package me.botsko.prism.actions;
 
+import org.bukkit.block.BlockState;
+
 
 public class PrismRollbackAction extends GenericAction {
 	
+	/**
+	 * 
+	 * @author botskonet
+	 * @deprecated
+	 */
 	public class PrismRollbackActionData {
-		public String onBehalfOf;
 		public int originalBlock_id;
 		public int originalBlock_subid;
 		public int newBlock_id;
@@ -24,24 +30,18 @@ public class PrismRollbackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public PrismRollbackAction( String action_type, int originalBlock_id, int originalBlock_subid, int newBlock_id, int newBlock_subid, String playername, int parent_id ){
-		
-//		super(action_type, playername);
+	public void setBlockChange(  BlockState oldblock, BlockState newBlock, int parent_id ){
 		
 		actionData = new PrismRollbackActionData();
 		
-		if(playername != null){
-			actionData.originalBlock_id = originalBlock_id;
-			actionData.originalBlock_subid = originalBlock_subid;
-			actionData.newBlock_id = newBlock_id;
-			actionData.newBlock_subid = newBlock_subid;
+		if(oldblock != null){
+			this.old_block_id = oldblock.getTypeId();
+			this.old_block_subid = oldblock.getRawData();
+			this.block_id = oldblock.getTypeId();
+			this.block_subid = oldblock.getRawData();
+
 			actionData.parent_id = parent_id;
 		}
-		
-		// Set data from current block
-		setDataFromObject();
-		setObjectFromData();
-		
 	}
 	
 	
@@ -66,49 +66,13 @@ public class PrismRollbackAction extends GenericAction {
 	 * 
 	 */
 	protected void setObjectFromData(){
-		if(data != null){
+		if(data != null && data.contains("{")){
 			actionData = gson.fromJson(data, PrismRollbackActionData.class);
+			this.old_block_id = actionData.originalBlock_id;
+			this.old_block_subid = (byte)actionData.originalBlock_subid;
+			this.block_id = actionData.newBlock_id;
+			this.block_subid =(byte) actionData.newBlock_subid;
 		}
-	}
-
-	
-	/**
-	 * @return the onBehalfOf
-	 */
-	public String getOnBehalfOf() {
-		return actionData.onBehalfOf;
-	}
-
-	
-	/**
-	 * @return the originalBlock_id
-	 */
-	public int getOriginalBlockId() {
-		return actionData.originalBlock_id;
-	}
-
-	
-	/**
-	 * @return the originalBlock_subid
-	 */
-	public int getOriginalBlockSubId() {
-		return actionData.originalBlock_subid;
-	}
-
-	
-	/**
-	 * @return the newBlock_id
-	 */
-	public int getNewBlockId() {
-		return actionData.newBlock_id;
-	}
-
-	
-	/**
-	 * @return the newBlock_subid
-	 */
-	public int getNewBlockSubId() {
-		return actionData.newBlock_subid;
 	}
 
 	

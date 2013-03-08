@@ -115,14 +115,12 @@ public class ActionRegistry {
 	 * 
 	 * @return
 	 */
-	public String[] listActionsThatAllowRollback(){
-		String[] names = new String[ registeredActions.size() ];
-		int i = 0;
+	public ArrayList<String> listActionsThatAllowRollback(){
+		ArrayList<String> names = new ArrayList<String>();
 		for (Entry<String,ActionType> entry : registeredActions.entrySet()){
 			if(entry.getValue().canRollback()){
-				names[i] = entry.getKey();
+				names.add( entry.getKey() );
 			}
-			i++;
 		}
 		return names;
 	}
