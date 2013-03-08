@@ -130,14 +130,12 @@ public class ActionRegistry {
 	 * 
 	 * @return
 	 */
-	public String[] listActionsThatAllowRestore(){
-		String[] names = new String[ registeredActions.size() ];
-		int i = 0;
+	public ArrayList<String> listActionsThatAllowRestore(){
+		ArrayList<String> names = new ArrayList<String>();
 		for (Entry<String,ActionType> entry : registeredActions.entrySet()){
 			if(entry.getValue().canRestore()){
-				names[i] = entry.getKey();
+				names.add( entry.getKey() );
 			}
-			i++;
 		}
 		return names;
 	}
