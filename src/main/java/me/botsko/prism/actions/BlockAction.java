@@ -332,7 +332,7 @@ public class BlockAction extends GenericAction {
 		if( !getType().requiresHandler("BlockChangeAction") && !getType().requiresHandler("PrismRollbackAction") ){
 			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) ){
 //				plugin.debug("Block skipped due to being unaccaptable for block place.");
-				System.out.print("Block skipped due to being unaccaptable for block place.");
+//				System.out.print("Block skipped due to being unaccaptable for block place.");
 				return new ChangeResult( ChangeResultType.SKIPPED, null );
 			}
 		}
@@ -340,7 +340,7 @@ public class BlockAction extends GenericAction {
 		// On the blacklist (except an undo)
 		if( !BlockUtils.mayEverPlace(m) && !parameters.getProcessType().equals(PrismProcessType.UNDO) ){
 //			plugin.debug("Block skipped because it's not allowed to be placed.");
-			System.out.print("Block skipped because it's not allowed to be placed.");
+//			System.out.print("Block skipped because it's not allowed to be placed.");
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
 			

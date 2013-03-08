@@ -127,7 +127,6 @@ public class BlockChangeAction extends BlockAction {
 	 * @return
 	 */
 	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, String type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
-		System.out.print("BLOCKCHANGEACTIONS");
 		BlockAction b = new BlockAction();
 		b.setActionType(type);
 		b.setPlugin( plugin );
@@ -166,7 +165,6 @@ public class BlockChangeAction extends BlockAction {
 			}
 		}
 		if(parameters.getProcessType().equals(PrismProcessType.UNDO)){
-			System.out.print("UNDO");
 			b.setBlockId( old_id );
 			b.setBlockSubId( old_subid );
 			return b.placeBlock( player, parameters, is_preview, block, false );
