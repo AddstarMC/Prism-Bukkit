@@ -348,8 +348,8 @@ public class PreprocessArgs {
 			 * Enforce defaults, unless we're doing a delete or they've been disabled in the config
 			 */
 			if( !processType.equals(PrismProcessType.DELETE) && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") ){
-				// Radius default
-				if(!foundArgs.containsKey("r")){
+				// Radius default, apply only if player present
+				if( !foundArgs.containsKey("r") && player != null ){
 					if(parameters.allowsNoRadius()){
 						// We'll allow no radius.
 					} else {
