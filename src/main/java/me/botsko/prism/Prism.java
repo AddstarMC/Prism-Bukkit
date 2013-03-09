@@ -47,6 +47,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
@@ -69,6 +70,8 @@ public class Prism extends JavaPlugin {
 	private static ActionRegistry actionRegistry;
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
+	protected BukkitTask deleteTask;
+	protected int total_records_affected = 0, cycle_rows_affected = 0;
 	
 	/**
 	 * Public
@@ -591,7 +594,7 @@ public class Prism extends JavaPlugin {
 		if(!purgeRules.isEmpty()){
 			
 			final ArrayList<QueryParameters> paramList = new ArrayList<QueryParameters>();
-			
+
 			for(final String purgeArgs : purgeRules){
 
 				// Process and validate all of the arguments
@@ -608,15 +611,30 @@ public class Prism extends JavaPlugin {
 			}
 			
 			if(paramList.size() > 0){
-				getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+				
+				int purge_tick_delay = getConfig().getInt("prism.purge.batch-tick-delay");
+				if(purge_tick_delay < 1){
+					purge_tick_delay = 20;
+				}
+				
+				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
+				deleteTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
 				    public void run(){
 				    	for(QueryParameters param : paramList){
 							ActionsQuery aq = new ActionsQuery(prism);
-							int rows_affected = aq.delete(param);
-							log("Clearing " + rows_affected + " rows from the database. Using:" + param.getOriginalCommand() );
+							// Execute in batches so we don't tie up the db with one massive query
+	
+							cycle_rows_affected = aq.delete(param);
+							debug("Purge cycle cleared " + cycle_rows_affected + " rows.");
+							total_records_affected += cycle_rows_affected;
+							
+							if( cycle_rows_affected == 0){
+								deleteTask.cancel();
+								log("Cleared " + total_records_affected + " rows from the database. Using:" + param.getOriginalCommand() );
+							}
 				    	}
 				    }
-				});
+				}, purge_tick_delay, purge_tick_delay);
 			}
 		}
 	}

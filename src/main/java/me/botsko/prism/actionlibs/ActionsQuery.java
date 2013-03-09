@@ -234,19 +234,20 @@ public class ActionsQuery {
 	 * @return
 	 */
 	public int delete( QueryParameters parameters ){
-		int rows_affected = 0;
+		int total_rows_affected = 0, cycle_rows_affected;
 		try {
 			// Build conditions based off final args
 			String query = getArgumentConditions( parameters );
 			Connection conn = Prism.dbc();
-			Statement s = conn.createStatement ();
-			rows_affected = s.executeUpdate (query);
+			Statement s = conn.createStatement();
+			cycle_rows_affected = s.executeUpdate (query);
+			total_rows_affected += cycle_rows_affected;
 			s.close();
 			conn.close();
 		} catch (SQLException e) {
 			plugin.logDbError( e );
 		}
-		return rows_affected;
+		return total_rows_affected;
 	}
 	
 	
@@ -433,6 +434,12 @@ public class ActionsQuery {
 				if(limit > 0){
 					query += " LIMIT "+limit;
 				}
+			} else {
+				int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
+				if( perBatch < 100){
+					perBatch = 100;
+				}
+				query += " LIMIT " + perBatch;
 			}
 		}
 		
