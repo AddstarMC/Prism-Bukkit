@@ -232,7 +232,7 @@ public class PrismBlockEvents implements Listener {
 		
 		if( !Prism.getIgnore().event("block-place",player) ) return;
 		
-		if( block.getType().equals(Material.FIRE) || block.getType().equals(Material.AIR) ) return;
+		if( block.getType().equals(Material.AIR) ) return;
 		
 		BlockState s = event.getBlockReplacedState();
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-place", block.getLocation(), s.getTypeId(), s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
