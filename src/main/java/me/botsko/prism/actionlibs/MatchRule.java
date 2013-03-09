@@ -1,5 +1,5 @@
 package me.botsko.prism.actionlibs;
 
 public enum MatchRule {
-	INCLUDE, EXCLUDE
+	INCLUDE, EXCLUDE, PARTIAL
 }

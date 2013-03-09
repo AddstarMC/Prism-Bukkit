@@ -154,8 +154,13 @@ public class PreprocessArgs {
 							MatchRule match = MatchRule.INCLUDE;
 							if(playerName.startsWith("!")){
 								match = MatchRule.EXCLUDE;
+								playerName = playerName.replace("!", "");
 							}
-							parameters.addPlayerName( playerName.replace("!", ""), match );
+							else if(playerName.startsWith("~")){
+								match = MatchRule.PARTIAL;
+								playerName = playerName.replace("~", "");
+							}
+							parameters.addPlayerName( playerName, match );
 						}
 					}
 				}

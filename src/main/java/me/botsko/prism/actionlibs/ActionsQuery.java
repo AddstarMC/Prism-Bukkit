@@ -459,9 +459,13 @@ public class ActionsQuery {
 			
 			ArrayList<String> whereIs = new ArrayList<String>();
 			ArrayList<String> whereNot = new ArrayList<String>();
+			ArrayList<String> whereIsLike = new ArrayList<String>();
 			for (Entry<String,MatchRule> entry : origValues.entrySet()){
 				if(entry.getValue().equals(MatchRule.EXCLUDE)){
 					whereNot.add(entry.getKey());
+				}
+				else if(entry.getValue().equals(MatchRule.PARTIAL)){
+					whereIsLike.add(entry.getKey());
 				} else {
 					whereIs.add(entry.getKey());
 				}
@@ -475,6 +479,12 @@ public class ActionsQuery {
 				} else {
 					query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
 				}
+			}
+			// To match partial
+			if(!whereIsLike.isEmpty()){
+				String[] whereValues = new String[whereIsLike.size()];
+				whereValues = whereIsLike.toArray(whereValues);
+				query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
 			}
 			// Not match
 			if(!whereNot.isEmpty()){
