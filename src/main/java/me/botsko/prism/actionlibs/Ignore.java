@@ -51,6 +51,28 @@ public class Ignore {
 	 * @param a
 	 * @return
 	 */
+	public boolean event( String actionTypeName ){
+
+		// Always track Prism actions - it's mainly internal
+		// use anyway.
+		if(actionTypeName.contains("prism")){
+			return true;
+		}
+		
+		// Should we ignore this action type?
+		if( (TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + actionTypeName )) ){
+			return false;
+		}
+
+		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param a
+	 * @return
+	 */
 	public boolean event( String actionTypeName, World world, String player ){
 		
 		if( !event( actionTypeName, world ) ){
@@ -115,23 +137,12 @@ public class Ignore {
 	 */
 	public boolean event( String actionTypeName, World world ){
 		
-		// Always track Prism actions - it's mainly internal
-		// use anyway.
-		if(actionTypeName.contains("prism")){
-			return true;
-		}
-		
 		// Should we ignore this world?
 		if(ignore_worlds != null && ignore_worlds.contains( world.getName() )){
 			return false;
 		}
 		
-		// Should we ignore this action type?
-		if( (TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + actionTypeName )) ){
-			return false;
-		}
-		
-		return true;
+		return event( actionTypeName );
 		
 	}
 }

@@ -250,11 +250,19 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockSpread(final BlockSpreadEvent event){
-		if( !Prism.getIgnore().event("block-spread", event.getBlock()) ) return;
-		if(event.getNewState().getType().equals(Material.FIRE)) return;
+		
+		// If fire, do we track fire spread? If not, do we track block-spread
+		String type = "block-spread";
+		if(event.getNewState().getType().equals(Material.FIRE)){
+			if( !Prism.getIgnore().event("fire-spread") ) return;
+			type = "fire-spread";
+		} else {
+			if( !Prism.getIgnore().event("block-spread", event.getBlock()) ) return;
+		}
+		
 		Block b = event.getBlock();
 		BlockState s = event.getNewState();
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-spread", b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
+		Prism.actionsRecorder.addToQueue( ActionFactory.create(type, b.getLocation(), b.getTypeId(), b.getData(), s.getTypeId(), s.getRawData(), "Environment") );
 	}
 	
 	

@@ -129,6 +129,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.entity-spawn", true);
 		config.addDefault("prism.tracking.fireball", true);
+		config.addDefault("prism.tracking.fire-spread", false);
 		config.addDefault("prism.tracking.firework-launch", true);
 		config.addDefault("prism.tracking.hangingitem-break", true);
 		config.addDefault("prism.tracking.hangingitem-place", true);
