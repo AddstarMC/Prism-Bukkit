@@ -143,18 +143,19 @@ public class BlockUtils {
 	 */
 	public static boolean isSideFaceDetachableMaterial( Material m ){
 		if( m.equals(Material.WALL_SIGN) 
-				|| m.equals(Material.TORCH) 
-				|| m.equals(Material.LEVER) 
-				|| m.equals(Material.WOOD_BUTTON) 
-				|| m.equals(Material.STONE_BUTTON) 
-				|| m.equals(Material.LADDER)
-				|| m.equals(Material.VINE)
-				|| m.equals(Material.COCOA)
-				|| m.equals(Material.PORTAL)
-				|| m.equals(Material.PISTON_EXTENSION)
-				|| m.equals(Material.PISTON_MOVING_PIECE)
-				|| m.equals(Material.REDSTONE_TORCH_OFF)
-				|| m.equals(Material.REDSTONE_TORCH_ON)){
+			|| m.equals(Material.TORCH) 
+			|| m.equals(Material.LEVER) 
+			|| m.equals(Material.WOOD_BUTTON) 
+			|| m.equals(Material.STONE_BUTTON) 
+			|| m.equals(Material.LADDER)
+			|| m.equals(Material.VINE)
+			|| m.equals(Material.COCOA)
+			|| m.equals(Material.PORTAL)
+			|| m.equals(Material.PISTON_EXTENSION)
+			|| m.equals(Material.PISTON_MOVING_PIECE)
+			|| m.equals(Material.REDSTONE_TORCH_OFF)
+			|| m.equals(Material.REDSTONE_TORCH_ON)
+			|| m.equals(Material.TRAP_DOOR)){
 			return true;
 		}
 		return false;
