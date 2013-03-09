@@ -149,6 +149,9 @@ public class BlockAction extends GenericAction {
 				name += " (" + TypeUtils.implode(ad.lines, ", ") + ")";
 			}
 		}
+		if( type.getName().equals("crop-trample") && block_id == 0 ){
+			return "empty soil";
+		}
 		return name;
 	}
 	
