@@ -21,7 +21,7 @@ public class PrismWorldEvents implements Listener {
 	public void onStructureGrow(final StructureGrowEvent event) {
 		String type = "tree-grow";
 		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
-		if( !Prism.getIgnore().event(type,event.getPlayer()) ) return;
+		if( !Prism.getIgnore().event(type,event.getWorld()) ) return;
 		for (BlockState block : event.getBlocks()) {
 			if(BlockUtils.isGrowableStructure( block.getType() )){
 				String player = "Environment";
