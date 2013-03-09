@@ -63,15 +63,16 @@ public class PreprocessArgs {
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
 				
-				// Verify they're formatting like a:[val] or like -arg
-				if(!(arg.contains(":") || arg.contains("-"))){
-					respond( sender, Prism.messenger.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
-					return null;
-				}
-				if (!(arg.contains(":") || arg.substring(0,1).equals("-"))){
-					respond( sender, Prism.messenger.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
-					return null;
-				}
+				// disabling because the alt player syntax won't work
+//				// Verify they're formatting like a:[val] or like -arg
+//				if(!(arg.contains(":") || arg.contains("-"))){
+//					respond( sender, Prism.messenger.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
+//					return null;
+//				}
+//				if (!(arg.contains(":") || arg.substring(0,1).equals("-"))){
+//					respond( sender, Prism.messenger.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
+//					return null;
+//				}
 				
 				// Split parameter and values
 				String[] argEntry = arg.toLowerCase().split(":");
@@ -81,8 +82,20 @@ public class PreprocessArgs {
 				// Verify we have an arg we can match
 				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","id","-"};
 				if(!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")){
-					respond( sender, Prism.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
-					return null;
+					
+					// We support an alternate player syntax so that people can use the tab-complete
+					// feature of minecraft. Using p: prevents it.
+					Player autoFillPlayer = plugin.getServer().getPlayer(arg_type);
+					if( autoFillPlayer != null ){
+						MatchRule match = MatchRule.INCLUDE;
+						if(arg_type.startsWith("!")){
+							match = MatchRule.EXCLUDE;
+						}
+						parameters.addPlayerName( arg_type.replace("!", ""), match );
+					} else {
+						respond( sender, Prism.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
+						return null;
+					}
 				}
 				
 				// Verify no empty val
