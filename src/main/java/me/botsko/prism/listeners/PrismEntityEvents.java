@@ -232,7 +232,9 @@ public class PrismEntityEvents implements Listener {
 		// Ignore from non-players for the time being
 		if(!(entity instanceof Player)) return;
 		
-		if( !Prism.getIgnore().event("potion-splash",(Player)event) ) return;
+		Player player = (Player) entity;
+		
+		if( !Prism.getIgnore().event("potion-splash",player ) ) return;
 		
 		// What type?
 		// Right now this won't support anything with multiple effects
@@ -242,7 +244,7 @@ public class PrismEntityEvents implements Listener {
 			name = eff.getType().getName().toLowerCase();
 		}
 		
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("potion-splash", (Player)entity, name) );
+		Prism.actionsRecorder.addToQueue( ActionFactory.create("potion-splash", player, name) );
 		
 	}
 	
