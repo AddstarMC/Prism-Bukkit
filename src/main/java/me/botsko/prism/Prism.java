@@ -278,7 +278,7 @@ public class Prism extends JavaPlugin {
 	        try {
 	        	Class.forName("org.sqlite.JDBC");
         		pool = new DataSource();
-    			pool.setDriverClassName("com.mysql.jdbc.Driver");
+    			pool.setDriverClassName("org.sqlite.JDBC");
     			pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (ClassNotFoundException e) {
 				this.log("Error: SQLite database connection was not established. " + e.getMessage());
@@ -393,10 +393,10 @@ public class Prism extends JavaPlugin {
 		        		"`x` int(11) NOT NULL," +
 		        		"`y` smallint(5) NOT NULL," +
 		        		"`z` int(11) NOT NULL," +
-		        		"`block_id` mediumint(5) unsigned default NULL," +
-		        		"`block_subid` mediumint(5) unsigned default NULL," +
-		        		"`old_block_id` mediumint(5) unsigned default NULL," +
-		        		"`old_block_subid` mediumint(5) unsigned default NULL," +
+		        		"`block_id` mediumint(5) default NULL," +
+		        		"`block_subid` mediumint(5) default NULL," +
+		        		"`old_block_id` mediumint(5) default NULL," +
+		        		"`old_block_subid` mediumint(5) default NULL," +
 		        		"`data` varchar(255) NULL," +
 		        		"PRIMARY KEY  (`id`), " +
 		        		"KEY `x` (`x`), " +

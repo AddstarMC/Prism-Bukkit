@@ -195,7 +195,7 @@ public class ActionRegistry {
 		registerAction( new ActionType( "player-kill", false, true, false, "EntityAction", "killed") );
 		registerAction( new ActionType( "player-quit", false, false, false, "PlayerAction", "quit") );
 		registerAction( new ActionType( "player-teleport", false, false, false, "EntityTravelAction", "teleported") );
-		registerAction( new ActionType( "poition-splash", false, false, false, "PlayerAction", "threw potion") );
+		registerAction( new ActionType( "potion-splash", false, false, false, "PlayerAction", "threw potion") );
 		registerAction( new ActionType( "prism-drain", false, true, true, "PrismRollbackAction", "drained") );
 		registerAction( new ActionType( "prism-process", false, false, false, "PrismProcessAction", "ran process") );
 		registerAction( new ActionType( "prism-rollback", true, false, false, "PrismRollbackAction", "rolled back") );

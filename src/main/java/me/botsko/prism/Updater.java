@@ -139,7 +139,7 @@ public class Updater {
 					
 					plugin.log("Applying database updates to schema v4. This may take a while.");
 					
-					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `z`, ADD `block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_id`, ADD INDEX ( `block_id` ), CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, ADD `old_block_id` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) UNSIGNED NULL AFTER `old_block_id`;");
+					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) NULL AFTER `z`, ADD `block_subid` MEDIUMINT( 5 ) NULL AFTER `block_id`, ADD INDEX ( `block_id` ), CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, ADD `old_block_id` MEDIUMINT( 5 ) NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) NULL AFTER `old_block_id`;");
 					s.executeUpdate();
 					s.close();
 				} catch (SQLException e) {
