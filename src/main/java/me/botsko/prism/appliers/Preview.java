@@ -271,6 +271,13 @@ public class Preview implements Previewable {
 						worldChangeQueue.remove(a);
 						continue;
 					}
+					// Skip actions that have not returned any results
+					if( result.getType() == null ){
+//						plugin.log("Error: Result type was null when it should not be. " + a.getData());
+						skipped_block_count++;
+						worldChangeQueue.remove(a);
+						continue;
+					}
 					// Deferring attachments/etc until required blocks are ready
 					else if(result.getType().equals(ChangeResultType.DEFERRED)){
 						deferredChanges.add( a );
