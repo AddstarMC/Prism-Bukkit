@@ -73,8 +73,8 @@ public class PrismVehicleEvents implements Listener {
 			
 			// Otherwise its driver was reckless
 			Entity passenger = vehicle.getPassenger();
-			if( passenger instanceof Player ){
-				if( !Prism.getIgnore().event("vehicle-break",((Player)attacker)) ) return;
+			if( passenger != null && passenger instanceof Player ){
+				if( !Prism.getIgnore().event("vehicle-break",((Player)passenger)) ) return;
 				Prism.actionsRecorder.addToQueue( ActionFactory.create("vehicle-break", vehicle, ((Player)passenger).getName()) );
 			}
 		}
