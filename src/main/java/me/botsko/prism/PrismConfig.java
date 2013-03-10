@@ -93,8 +93,8 @@ public class PrismConfig extends ConfigBase {
 		purgeRules.add("before:8w");
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
-		config.addDefault("prism.purge.batch-tick-delay", 100);
-		config.addDefault("prism.purge.records-per-batch", 5000);
+		config.addDefault("prism.purge.batch-tick-delay", 60);
+		config.addDefault("prism.purge.records-per-batch", 20000);
 		
 		// Appliers
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
