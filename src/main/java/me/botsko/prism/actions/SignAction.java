@@ -115,6 +115,7 @@ public class SignAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getNiceName(){
 		String name = "sign (";
 		if(actionData.lines != null && actionData.lines.length > 0){

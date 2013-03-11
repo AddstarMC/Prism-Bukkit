@@ -201,7 +201,7 @@ public class ActionRegistry {
 		registerAction( new ActionType( "prism-process", false, false, false, "PrismProcessAction", "ran process") );
 		registerAction( new ActionType( "prism-rollback", true, false, false, "PrismRollbackAction", "rolled back") );
 		registerAction( new ActionType( "sheep-eat", false, false, false, "BlockAction", "ate") );
-		registerAction( new ActionType( "sign-change", false, false, true, "SignChangeAction", "wrote") );
+		registerAction( new ActionType( "sign-change", false, false, true, "SignAction", "wrote") );
 		registerAction( new ActionType( "spawnegg-use", false, false, false, "UseAction", "used") );
 		registerAction( new ActionType( "tnt-explode", false, true, true, "BlockAction", "blew up") );
 		registerAction( new ActionType( "tnt-prime", false, false, false, "UseAction", "primed") );
