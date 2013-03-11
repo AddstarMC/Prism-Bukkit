@@ -426,7 +426,7 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Signs
 			 */
-			if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && ( getBlockId() == 63 || getBlockId() == 68 ) ){
+			if( parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && ( getBlockId() == 63 || getBlockId() == 68 ) && getActionData() instanceof SignActionData ){
 
 				SignActionData s = (SignActionData)getActionData();
 				
@@ -434,21 +434,17 @@ public class BlockAction extends GenericAction {
 				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
 				// cannot be cast to org.bukkit.block.Sign
 				
-				if( block.getTypeId() == 63 || block.getTypeId() == 68 || block.getTypeId() == 323 ){
-
-					// Set sign data
-					Sign sign = (Sign) block.getState();
-					int i = 0;
-					if(s.lines != null && s.lines.length > 0){
-						for(String line : s.lines){
-							sign.setLine(i, line);
-							i++;
-						}
+				// Set sign data
+				Sign sign = (Sign) block.getState();
+				int i = 0;
+				if(s.lines != null && s.lines.length > 0){
+					for(String line : s.lines){
+						sign.setLine(i, line);
+						i++;
 					}
-					sign.update();
-				} else {
-					return new ChangeResult( ChangeResultType.SKIPPED, null );
 				}
+				sign.update();
+
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
