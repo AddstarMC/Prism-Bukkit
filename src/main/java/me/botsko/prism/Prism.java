@@ -631,6 +631,7 @@ public class Prism extends JavaPlugin {
 							if( cycle_rows_affected == 0){
 								deleteTask.cancel();
 								log("Cleared " + total_records_affected + " rows from the database. Using:" + param.getOriginalCommand() );
+								total_records_affected = 0;
 							}
 				    	}
 				    }

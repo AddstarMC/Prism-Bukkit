@@ -80,7 +80,12 @@ public class PrismBlockEvents implements Listener {
 		if(container != null){
 			int slot = 0;
 			for( ItemStack i : container.getInventory().getContents()){
+				// when double chests are broken, they record *all* contents
+				// even though only half of the chest breaks.
+				if( slot > 26 ) break;
+				// record item
 				if(i != null){
+					System.out.println("RECORDING SLOT: " + slot);
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), slot, null, block.getLocation(), player_name) );
 				}
 				slot++;

@@ -489,6 +489,7 @@ public class ItemStackAction extends GenericAction {
 							ItemStack currentSlotItem = inv.getItem( getActionData().slot );
 							// Make sure nothing's there.
 							if( currentSlotItem == null ){
+								System.out.println("ITEM quant " + getItem().getAmount() + " into SLOT " + getActionData().slot);
 								result = ChangeResultType.APPLIED;
 								added = true;
 								inv.setItem(getActionData().slot, getItem());
@@ -497,6 +498,7 @@ public class ItemStackAction extends GenericAction {
 					}
 					// If that failed we'll attempt to put it anywhere
 					if( !added ){
+						System.out.println("ITEM quant " + getItem().getAmount() + " added to inv, any slot");
 						HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), getItem());
 						if(leftovers.size() > 0){
 							result = ChangeResultType.SKIPPED;

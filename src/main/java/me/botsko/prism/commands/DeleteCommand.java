@@ -89,6 +89,7 @@ public class DeleteCommand implements SubHandler {
 						deleteTask.cancel();
 						plugin.log("Cleared " + total_records_affected + " rows from the database. Using:" + parameters.getOriginalCommand() );
 						call.getSender().sendMessage( Prism.messenger.playerHeaderMsg(total_records_affected + " records have been purged."));
+						total_records_affected = 0;
 					} else {
 						call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Purge cycle cleared " + cycle_rows_affected + " records."));
 					}
