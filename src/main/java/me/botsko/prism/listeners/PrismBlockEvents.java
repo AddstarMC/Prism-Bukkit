@@ -85,7 +85,6 @@ public class PrismBlockEvents implements Listener {
 				if( slot > 26 ) break;
 				// record item
 				if(i != null){
-					System.out.println("RECORDING SLOT: " + slot);
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), slot, null, block.getLocation(), player_name) );
 				}
 				slot++;
