@@ -480,12 +480,19 @@ public class ItemStackAction extends GenericAction {
 					
 					// We'll attempt to put it back in the same slot
 					if( getActionData().slot >= 0 ){
-						ItemStack currentSlotItem = inv.getItem( getActionData().slot );
-						// Make sure nothing's there.
-						if( currentSlotItem == null ){
-							result = ChangeResultType.APPLIED;
-							added = true;
-							inv.setItem(getActionData().slot, getItem());
+						// Ensure slot exists in this inventory
+						// I'm not sure why this happens but sometimes
+						// a slot larger than the contents size is recorded
+						// and triggers ArrayIndexOutOfBounds
+						// https://snowy-evening.com/botsko/prism/450/
+						if( getActionData().slot <= inv.getSize() ){
+							ItemStack currentSlotItem = inv.getItem( getActionData().slot );
+							// Make sure nothing's there.
+							if( currentSlotItem == null ){
+								result = ChangeResultType.APPLIED;
+								added = true;
+								inv.setItem(getActionData().slot, getItem());
+							}
 						}
 					}
 					// If that failed we'll attempt to put it anywhere
