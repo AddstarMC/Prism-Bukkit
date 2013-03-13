@@ -323,6 +323,8 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setItemStackFromOldDataFormat(){
 		
+		actionData = new ItemStackActionData();
+		
 		String[] blockArr = data.split(":");
 		if (!TypeUtils.isNumeric(blockArr[0])) return;
 		
