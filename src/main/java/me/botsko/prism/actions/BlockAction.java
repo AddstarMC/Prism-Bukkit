@@ -433,18 +433,20 @@ public class BlockAction extends GenericAction {
 				// Verify block is sign. Rarely, if the block somehow pops off or fails
 				// to set it causes ClassCastException: org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState 
 				// cannot be cast to org.bukkit.block.Sign
+				// https://snowy-evening.com/botsko/prism/455/
+				if( block.getState() instanceof Sign ){
 				
-				// Set sign data
-				Sign sign = (Sign) block.getState();
-				int i = 0;
-				if(s.lines != null && s.lines.length > 0){
-					for(String line : s.lines){
-						sign.setLine(i, line);
-						i++;
+					// Set sign data
+					Sign sign = (Sign) block.getState();
+					int i = 0;
+					if(s.lines != null && s.lines.length > 0){
+						for(String line : s.lines){
+							sign.setLine(i, line);
+							i++;
+						}
 					}
+					sign.update();
 				}
-				sign.update();
-
 			}
 			
 			// If the material is a crop that needs soil, we must restore the soil
