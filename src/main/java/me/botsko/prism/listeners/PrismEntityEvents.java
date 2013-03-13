@@ -377,7 +377,7 @@ public class PrismEntityEvents implements Listener {
 				name = "tnt";
 			}
 		} else {
-			if( !Prism.getIgnore().event("entity-explode",event.getEntity().getWorld()) ) return;
+			if( !Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()) ) return;
 			name = "magic";
 		}
 		// Also log item-removes from chests that are blown up
