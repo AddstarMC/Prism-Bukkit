@@ -67,6 +67,15 @@ public class VehicleAction extends GenericAction {
 		else if( this.data.equals("storage minecart") ){
 			vehicle = getWorld().spawn( getLoc(), StorageMinecart.class );
 		}
+		else if( this.data.equals("tnt minecart") ){
+			vehicle = getWorld().spawn( getLoc(), MinecartTNT.class );
+		}
+		else if( this.data.equals("spawner minecart") ){
+			vehicle = getWorld().spawn( getLoc(), MinecartMobSpawner.class );
+		}
+		else if( this.data.equals("minecart hopper") ){
+			vehicle = getWorld().spawn( getLoc(), MinecartHopper.class );
+		}
 		else if( this.data.equals("minecart") ){
 			vehicle = getWorld().spawn( getLoc(), Minecart.class );
 		}
