@@ -7,6 +7,9 @@ import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
+import org.bukkit.entity.MinecartHopper;
+import org.bukkit.entity.MinecartMobSpawner;
+import org.bukkit.entity.MinecartTNT;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.PoweredMinecart;
 import org.bukkit.entity.StorageMinecart;
@@ -24,9 +27,19 @@ public class VehicleAction extends GenericAction {
 		if( vehicle instanceof PoweredMinecart ){
 			this.data = "powered minecart";
 		}
+		else if( vehicle instanceof MinecartHopper ){
+			this.data = "minecart hopper";
+		}
+		else if( vehicle instanceof MinecartMobSpawner ){
+			this.data = "spawner minecart";
+		}
+		else if( vehicle instanceof MinecartTNT ){
+			this.data = "tnt minecart";
+		}
 		else if( vehicle instanceof StorageMinecart ){
 			this.data = "storage minecart";
-		} else {
+		}
+		else {
 			this.data = vehicle.getType().name().toLowerCase();
 		}
 	}
