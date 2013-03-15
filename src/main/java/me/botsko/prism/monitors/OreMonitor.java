@@ -125,6 +125,8 @@ public class OreMonitor {
 				return ChatColor.RED;
 			case EMERALD_ORE:
 				return ChatColor.GREEN;
+			case QUARTZ_ORE:
+				return ChatColor.WHITE;
 			default:
 				return ChatColor.WHITE;
 		}
@@ -169,6 +171,9 @@ public class OreMonitor {
 			return true;
 		}
 		if(type == Material.EMERALD_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.emerald")){
+			return true;
+		}
+		if(type == Material.QUARTZ_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.nether-quartz")){
 			return true;
 		}
 		return false;

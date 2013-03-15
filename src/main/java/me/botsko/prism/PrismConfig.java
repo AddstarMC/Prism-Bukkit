@@ -200,6 +200,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.gold", true);
 		config.addDefault("prism.alerts.ores.diamond", true);
 		config.addDefault("prism.alerts.ores.emerald", true);
+		config.addDefault("prism.alerts.ores.nether-quartz", false);
 		
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
