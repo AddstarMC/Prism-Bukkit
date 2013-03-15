@@ -202,6 +202,7 @@ public class BlockUtils {
 	 */
 	public static boolean isTopFaceDetachableMaterial( Material m ){
 		switch(m){
+			case ACTIVATOR_RAIL:
 			case BROWN_MUSHROOM:
 			case CACTUS:
 			case CARROT:
@@ -213,8 +214,10 @@ public class BlockUtils {
 			case DIODE_BLOCK_OFF:
 			case DIODE_BLOCK_ON:
 			case FLOWER_POT:
+			case GOLD_PLATE:
 			case IRON_DOOR:
 			case IRON_DOOR_BLOCK:
+			case IRON_PLATE:
 			case LEVER:
 			case LONG_GRASS:
 			case MELON_STEM:
@@ -226,6 +229,8 @@ public class BlockUtils {
 			case RED_MUSHROOM:
 			case RED_ROSE:
 			case REDSTONE:
+			case REDSTONE_COMPARATOR_OFF:
+			case REDSTONE_COMPARATOR_ON:
 			case REDSTONE_TORCH_OFF:
 			case REDSTONE_TORCH_ON:
 			case REDSTONE_WIRE:
@@ -528,6 +533,7 @@ public class BlockUtils {
 	 */
 	public static boolean canFlowBreakMaterial(Material m){
 		switch(m){
+			case ACTIVATOR_RAIL:
 			case BROWN_MUSHROOM:
 			case CACTUS:
 			case CARROT:
@@ -553,6 +559,8 @@ public class BlockUtils {
 			case RED_MUSHROOM:
 			case RED_ROSE:
 			case REDSTONE:
+			case REDSTONE_COMPARATOR_OFF:
+			case REDSTONE_COMPARATOR_ON:
 			case REDSTONE_TORCH_OFF:
 			case REDSTONE_TORCH_ON:
 			case REDSTONE_WIRE:
