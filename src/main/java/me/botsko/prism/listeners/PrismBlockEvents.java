@@ -192,7 +192,7 @@ public class PrismBlockEvents implements Listener {
 		if( block.getType().equals(Material.AIR) ) return;
 		
 		// Run ore find alerts
-		if( block.getType().name().contains("_ore") && !player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")  ){
+		if( block.getType().name().contains("_ORE") && !player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")  ){
 			plugin.oreMonitor.processAlertsFromBlock(player, block);
 		}
 		
