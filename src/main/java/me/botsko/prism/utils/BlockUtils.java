@@ -773,6 +773,11 @@ public class BlockUtils {
     		return true;
     	}
     	
+    	// Redstone comparator
+    	if( (id1 == 149 || id1 == 150) && (id2 == 149 || id2 == 150) ){
+    		return true;
+    	}
+    	
     	return false;
     	
     }
