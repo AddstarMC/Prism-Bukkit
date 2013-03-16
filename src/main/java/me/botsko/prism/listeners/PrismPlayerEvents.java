@@ -249,7 +249,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTeleport(final PlayerTeleportEvent event) {
+	public void onPlayerTeleport(final PlayerTeleportEvent event){
 		if( !Prism.getIgnore().event("player-teleport",event.getPlayer()) ) return;
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){

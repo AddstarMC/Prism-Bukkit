@@ -124,6 +124,7 @@ public class ActionFactory {
 	 */
 	public static Handler create( String action_type, Entity entity, Location from, Location to, TeleportCause cause ){
 		EntityTravelAction a = new EntityTravelAction();
+		a.setEntity(entity);
 		a.setActionType(action_type);
 		a.setLoc(from);
 		a.setToLocation(to);
