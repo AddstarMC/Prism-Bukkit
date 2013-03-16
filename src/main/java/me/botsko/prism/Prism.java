@@ -300,6 +300,7 @@ public class Prism extends JavaPlugin {
 		
 		if( pool != null ){
 			pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
+			pool.setMaxIdle( config.getInt("prism.database.max-pool-connections") );
 		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
 		} else {
 			this.log("Error: Database connection was not established. Please check your configuration file.");
