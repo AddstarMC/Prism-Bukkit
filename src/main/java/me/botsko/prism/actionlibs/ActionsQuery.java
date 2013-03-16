@@ -435,11 +435,14 @@ public class ActionsQuery {
 					query += " LIMIT "+limit;
 				}
 			} else {
-				int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
-				if( perBatch < 100){
-					perBatch = 100;
+				// Only limit delete records if using mysql or sqlite has delete limits enabled
+				if( plugin.getConfig().getString("prism.database.mode").equals("mysql") || plugin.getConfig().getBoolean("prism.sqlite.enable-delete-limit") ){
+					int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
+					if( perBatch < 100){
+						perBatch = 100;
+					}
+					query += " LIMIT " + perBatch;
 				}
-				query += " LIMIT " + perBatch;
 			}
 		}
 		

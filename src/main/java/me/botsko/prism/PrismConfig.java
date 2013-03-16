@@ -46,6 +46,9 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
+		// Sqlite
+		config.addDefault("prism.sqlite.enable-delete-limit", false);
+		
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
 		config.addDefault("prism.wands.default-item-mode-id", "280:0");
