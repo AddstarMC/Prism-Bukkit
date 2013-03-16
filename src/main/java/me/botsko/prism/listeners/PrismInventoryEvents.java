@@ -91,10 +91,10 @@ public class PrismInventoryEvents implements Listener {
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
 	    
-//	    plugin.debug("Raw slot: " + event.getRawSlot());
-//	    plugin.debug("Slot: " + event.getSlot());
-//	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
-//	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
+	    plugin.debug("Raw slot: " + event.getRawSlot());
+	    plugin.debug("Slot: " + event.getSlot());
+	    plugin.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
+	    plugin.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 	    
 
 	    // Chest
@@ -186,6 +186,52 @@ public class PrismInventoryEvents implements Listener {
 				}
 			}
 		}
+	    
+//	    // Dropper
+//	    // Took a bit of effort to figure.
+//	    // http://forums.bukkit.org/threads/excluding-player-inventory-clicks-when-using-dispenser.120495/
+//		else if(ih instanceof Dropper) {
+//			Dropper dropper = (Dropper) ih;
+//			containerLoc = dropper.getLocation();
+//			
+//			// Only a click in the dispenser can trigger a slot < 9
+//			if(event.getRawSlot() <= 8){
+//				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+//					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+//			    }
+//			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+//			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+//			    }
+//			} else {
+//				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+//				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+//				if( event.isShiftClick() ){
+//		    		recordInvAction( player, currentitem, -1, "item-insert");
+//				}
+//			}
+//		}
+//	   
+//	    // Hopper
+//		else if(ih instanceof Hopper) {
+//			Hopper hopper = (Hopper) ih;
+//			containerLoc = hopper.getLocation();
+//			
+//			// Only a click in the hopper can trigger a slot < 5
+//			if(event.getRawSlot() <= 4){
+//				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+//					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+//			    }
+//			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+//			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+//			    }
+//			} else {
+//				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+//				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+//				if( event.isShiftClick() ){
+//		    		recordInvAction( player, currentitem, -1, "item-insert");
+//				}
+//			}
+//		}
 	    
 	    // Brewing stand
 		else if(ih instanceof BrewingStand) {
