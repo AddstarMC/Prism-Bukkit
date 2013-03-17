@@ -64,6 +64,8 @@ public class Executor implements CommandExecutor {
 		} else {
 			subcommandName = cmd.getName();
 		}
+		
+		String currentMode = mode;
 
 		SubCommand sub = subcommands.get(subcommandName);
 		if (sub == null) {
@@ -71,15 +73,24 @@ public class Executor implements CommandExecutor {
 			if (sub == null) {
 				sender.sendMessage( "Invalid command" );
 				return true;
+			} else {
+				// The default is used, we must switch back to command mode
+				currentMode = "command";
 			}
 		}
+		
+//		System.out.print("MODE: " + currentMode);
+//		System.out.print("SUBCMD: " + subcommandName);
+//		System.out.print("MIN ARGS: " + sub.getMinArgs());
+//		System.out.print("ARGS: " + args.length);
+		
 		// Ensure they have permission
 		if ( player != null && !(sub.playerHasPermission(player))) {
 			sender.sendMessage( "You do not have permission to use this command" );
 			return true;
 		}
 		// Ensure min number of arguments
-		else if ( (mode.equals("subcommand") && (args.length - 1 ) < sub.getMinArgs()) || (mode.equals("command") && (args.length ) < sub.getMinArgs()) ) {
+		else if ( (currentMode.equals("subcommand") && (args.length - 1 ) < sub.getMinArgs()) || (currentMode.equals("command") && (args.length ) < sub.getMinArgs()) ) {
 			sender.sendMessage( "You're missing arguments for this command" );
 			return true;
 		}
