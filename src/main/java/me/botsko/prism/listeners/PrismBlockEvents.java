@@ -39,6 +39,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Bed;
+import org.bukkit.material.Sign;
 
 public class PrismBlockEvents implements Listener {
 	
@@ -402,7 +403,9 @@ public class PrismBlockEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onSignChange(final SignChangeEvent event) {
 		if( !Prism.getIgnore().event("sign-change", event.getPlayer()) ) return;
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("sign-change", event.getBlock(), event.getLines(), event.getPlayer().getName()) );
+		if( event.getBlock().getState().getData() instanceof Sign ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("sign-change", event.getBlock(), event.getLines(), event.getPlayer().getName()) );
+		}
 	}
 
 

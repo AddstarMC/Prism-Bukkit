@@ -324,7 +324,7 @@ public class ActionsQuery {
 			boolean containtsPrismProcessType = false;
 			boolean hasPositiveMatchRule = false;
 			if( !action_types.isEmpty() ){
-				query += buildMultipleConditions( action_types, "action_type", null );
+				query += buildMultipleConditions( action_types, "prism_actions.action_type", null );
 				for (Entry<String,MatchRule> entry : action_types.entrySet()){
 					if(entry.getKey().contains("prism")){
 						containtsPrismProcessType = true;
@@ -344,7 +344,7 @@ public class ActionsQuery {
 			 * Players
 			 */
 			HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
-			query += buildMultipleConditions( playerNames, "player", null );
+			query += buildMultipleConditions( playerNames, "prism_actions.player", null );
 			
 			/**
 			 * Radius
@@ -371,14 +371,14 @@ public class ActionsQuery {
 					}
 					i++;
 				}
-				query += buildGroupConditions("data", blockArr, "%", "OR", null);
+				query += buildGroupConditions(null, blockArr, "%s%s", "OR", null);
 			}
 			
 			/**
 			 * Entity
 			 */
 			HashMap<String,MatchRule> entityNames = parameters.getEntities();
-			query += buildMultipleConditions( entityNames, "data", "entity_name\":\"%s" );
+			query += buildMultipleConditions( entityNames, "prism_actions.data", "entity_name\":\"%s" );
 			
 			/**
 			 * Timeframe
@@ -524,7 +524,7 @@ public class ActionsQuery {
 		matchFormat = (matchFormat == null ? "%s = %s" : matchFormat);
 		matchType = (matchType == null ? "AND" : matchType);
 		dataFormat = (dataFormat == null ? "%s" : dataFormat);
-		
+
 		if( arg_values.length > 0 && !matchFormat.isEmpty() ){
 			where += " AND (";
 			int c = 1;
@@ -532,7 +532,8 @@ public class ActionsQuery {
 				if(c > 1 && c <= arg_values.length){
 					where += " "+matchType+" ";
 				}
-				where += String.format(matchFormat, "prism_actions."+fieldname, String.format(dataFormat,val));
+				fieldname = ( fieldname == null ? "" : fieldname );
+				where += String.format(matchFormat, fieldname, String.format(dataFormat,val));
 				c++;
 			}
 			where += ")";
