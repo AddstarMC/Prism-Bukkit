@@ -36,12 +36,11 @@ public class Updater {
 	 * @param account_name
 	 */
 	protected int getClientDbSchemaVersion(){
-		int id = 0;
 		String schema_ver = Settings.getSetting("schema_ver");
 		if( schema_ver != null ){
-			id = Integer.parseInt(schema_ver);
+			return Integer.parseInt(schema_ver);
 		}
-		return id;
+		return currentDbSchemaVersion;
 	}
 	
 	
