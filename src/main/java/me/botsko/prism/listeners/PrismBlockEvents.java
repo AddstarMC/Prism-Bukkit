@@ -16,6 +16,7 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.Furnace;
+import org.bukkit.block.Hopper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,6 +79,12 @@ public class PrismBlockEvents implements Listener {
 		else if( block.getType().equals(Material.BREWING_STAND) ){
 			container = (BrewingStand) block.getState();
 		}
+		else if( block.getType().equals(Material.HOPPER) ){
+			container = (Hopper) block.getState();
+		}
+//		else if( block.getType().equals(Material.DROPPER) ){
+//			container = (Dropper) block.getState();
+//		}
 		if(container != null){
 			int slot = 0;
 			for( ItemStack i : container.getInventory().getContents()){
