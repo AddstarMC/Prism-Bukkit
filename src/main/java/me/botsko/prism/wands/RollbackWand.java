@@ -14,13 +14,9 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
+import org.bukkit.ChatColor;
 
-public class RollbackWand extends WandBase implements Wand{
-
-	/**
-	 * 
-	 */
-	private Prism plugin;
+public class RollbackWand extends QueryWandBase implements Wand{
 
 	/**
 	 * 
@@ -34,7 +30,7 @@ public class RollbackWand extends WandBase implements Wand{
 	 * @return 
 	 */
 	public RollbackWand(Prism plugin) {
-		this.plugin = plugin;
+		super(plugin);
 	}
 	
 	
@@ -68,7 +64,13 @@ public class RollbackWand extends WandBase implements Wand{
 		plugin.eventTimer.recordTimedEvent("rollback wand used");
 
 		// Build params
-		QueryParameters params = new QueryParameters();
+		QueryParameters params;
+		try {
+			params = parameters.clone();
+		} catch (CloneNotSupportedException ex) {
+			params = new QueryParameters();
+			player.sendMessage(Prism.messenger.playerError(ChatColor.YELLOW + "Warning: An error occurred while trying to retrieve the params from this wand. Checking with default parameters."));
+		}
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);

@@ -37,7 +37,13 @@
 		   <scope>system</scope>
 		   <systemPath>${project.basedir}/../LIBS/Herochat.jar</systemPath>
 	   </dependency>
-	</dependencies>
+  	   <dependency>
+  	      <groupId>org.bukkit</groupId>
+  	      <artifactId>craftbukkit</artifactId>
+  	      <version>1.5-R0.1-SNAPSHOT</version>
+  	      <type>jar</type>
+  	   </dependency>
+  	</dependencies>
 	<repositories>
 		<repository>
 			<id>dhmc-repo</id>
