@@ -249,7 +249,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTeleport(final PlayerTeleportEvent event) {
+	public void onPlayerTeleport(final PlayerTeleportEvent event){
 		if( !Prism.getIgnore().event("player-teleport",event.getPlayer()) ) return;
 		TeleportCause c = event.getCause();
 		if( c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL) || c.equals(TeleportCause.ENDER_PEARL) ){
@@ -336,8 +336,12 @@ public class PrismPlayerEvents implements Listener {
 				case DISPENSER:
 				case CHEST:
 				case ENDER_CHEST:
+				case ENCHANTMENT_TABLE:
 				case ANVIL:
 				case BREWING_STAND:
+				case TRAPPED_CHEST:
+				case HOPPER:
+				case DROPPER:
 					if( !Prism.getIgnore().event("container-access",player) ) return;
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
 					break;
