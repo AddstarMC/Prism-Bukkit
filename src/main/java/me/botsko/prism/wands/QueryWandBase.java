@@ -9,7 +9,6 @@ import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.utils.BlockUtils;

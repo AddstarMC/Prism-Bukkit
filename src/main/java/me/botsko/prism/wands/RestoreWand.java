@@ -1,8 +1,6 @@
 package me.botsko.prism.wands;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -73,12 +71,6 @@ public class RestoreWand extends QueryWandBase implements Wand {
 		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
 		params.setProcessType(PrismProcessType.RESTORE);
-		
-		// Append actions that can be restored
-		ArrayList<String> types = Prism.getActionRegistry().listActionsThatAllowRestore();
-		for(String type : types){
-			params.addActionType(type);
-		}
 		
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( params, player );

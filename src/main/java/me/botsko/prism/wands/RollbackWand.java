@@ -76,12 +76,6 @@ public class RollbackWand extends QueryWandBase implements Wand{
 		params.setLimit(1);
 		params.setProcessType(PrismProcessType.ROLLBACK);
 		
-		// Append actions that can be rolled back
-		ArrayList<String> types = Prism.getActionRegistry().listActionsThatAllowRollback();
-		for(String type : types){
-			params.addActionType(type);
-		}
-		
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){
@@ -98,13 +92,13 @@ public class RollbackWand extends QueryWandBase implements Wand{
 	 * 
 	 */
 	public void playerRightClick(Player player, Entity entity) {
-		return;
 	}
 
 
 	/**
 	 * 
 	 */
+	@Override
 	public void setItemWasGiven(boolean given) {
 		this.item_given = given;
 	}
@@ -113,6 +107,7 @@ public class RollbackWand extends QueryWandBase implements Wand{
 	/**
 	 * 
 	 */
+	@Override
 	public boolean itemWasGiven() {
 		return item_given;
 	}
