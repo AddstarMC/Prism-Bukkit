@@ -133,7 +133,7 @@ public interface Handler {
 	 * 
 	 * @param id
 	 */
-	public abstract void setBlockSubId(byte id);
+	public abstract void setBlockSubId(int id);
 
 	/**
 	 * 
@@ -143,7 +143,7 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	public abstract byte getBlockSubId();
+	public abstract int getBlockSubId();
 
 	/**
 	 * 
@@ -155,7 +155,7 @@ public interface Handler {
 	 * 
 	 * @param id
 	 */
-	public abstract void setOldBlockSubId(byte id);
+	public abstract void setOldBlockSubId(int id);
 
 	/**
 	 * 
@@ -165,7 +165,7 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	public abstract byte getOldBlockSubId();
+	public abstract int getOldBlockSubId();
 
 	/**
 	 * @return the data

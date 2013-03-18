@@ -385,7 +385,7 @@ public class BlockAction extends GenericAction {
 			
 			// Set the material
 			block.setTypeId(getBlockId() );
-			block.setData(getBlockSubId() );
+			block.setData( (byte)getBlockSubId() );
 			
 			
 			/**
@@ -469,11 +469,11 @@ public class BlockAction extends GenericAction {
 			
 			// If we're rolling back a door, we need to set it properly
 			if( m.equals(Material.WOODEN_DOOR) || m.equals(Material.IRON_DOOR_BLOCK) ){
-				BlockUtils.properlySetDoor( block,getBlockId(),getBlockSubId());
+				BlockUtils.properlySetDoor( block,getBlockId(),(byte)getBlockSubId());
 			}
 			// Or a bed
 			else if( m.equals(Material.BED_BLOCK) ){
-				BlockUtils.properlySetBed( block,getBlockId(),getBlockSubId());
+				BlockUtils.properlySetBed( block,getBlockId(),(byte)getBlockSubId());
 			}
 		} else {
 			
@@ -483,7 +483,7 @@ public class BlockAction extends GenericAction {
 			stateChange = new BlockStateChange(originalBlock,originalBlock);
 			
 			// Preview it
-			player.sendBlockChange(block.getLocation(),getBlockId(),getBlockSubId());
+			player.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
 			
 		}
 		

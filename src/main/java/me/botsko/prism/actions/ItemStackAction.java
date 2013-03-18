@@ -37,7 +37,7 @@ public class ItemStackAction extends GenericAction {
 	
 	public class ItemStackActionData {
 		public int block_id; // only for pre-1.5 compat
-		public byte block_subid; // only for pre-1.5 compat
+		public int block_subid; // only for pre-1.5 compat
 		public int amt;
 		public String name;
 		public int color;
@@ -92,7 +92,7 @@ public class ItemStackAction extends GenericAction {
 			
 			// Set basics
 			this.block_id = item.getTypeId();
-			this.block_subid = (byte) item.getDurability();
+			this.block_subid = item.getDurability();
 			actionData.amt = quantity;
 			if(slot >= 0){
 				actionData.slot = slot;
@@ -240,6 +240,8 @@ public class ItemStackAction extends GenericAction {
 			this.block_id = actionData.block_id;
 			this.block_subid = actionData.block_subid;
 		}
+		
+		System.out.print("SETTING ITEM DATA TO : " + this.block_subid);
 		
 		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 		

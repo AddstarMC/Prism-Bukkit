@@ -93,7 +93,7 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected byte block_subid;
+	protected int block_subid;
 	
 	/**
 	 * 
@@ -103,7 +103,7 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected byte old_block_subid;
+	protected int old_block_subid;
 	
 	/**
 	 * 
@@ -404,7 +404,7 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
 	 */
-	public void setBlockSubId( byte id ){
+	public void setBlockSubId( int id ){
 		this.block_subid = id;
 	}
 	
@@ -420,7 +420,7 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#getBlockSubId()
 	 */
-	public byte getBlockSubId(){
+	public int getBlockSubId(){
 		return block_subid;
 	}
 	
@@ -436,7 +436,7 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
 	 */
-	public void setOldBlockSubId( byte id ){
+	public void setOldBlockSubId( int id ){
 		this.old_block_subid = id;
 	}
 	
@@ -452,7 +452,7 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
 	 */
-	public byte getOldBlockSubId(){
+	public int getOldBlockSubId(){
 		return old_block_subid;
 	}
 

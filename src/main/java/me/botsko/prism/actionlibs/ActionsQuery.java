@@ -105,9 +105,9 @@ public class ActionsQuery {
 	    			baseHandler.setDisplayDate( rs.getString(14) );
 	    			baseHandler.setDisplayTime( rs.getString(15) );
 					baseHandler.setBlockId( rs.getInt(9) );
-					baseHandler.setBlockSubId( rs.getByte(10) );
+					baseHandler.setBlockSubId( rs.getInt(10) );
 					baseHandler.setOldBlockId( rs.getInt(11) );
-					baseHandler.setOldBlockSubId( rs.getByte(12) );
+					baseHandler.setOldBlockSubId( rs.getInt(12) );
 					baseHandler.setData( rs.getString(13) );
     				baseHandler.setMaterialAliases( plugin.getItems() );
     				

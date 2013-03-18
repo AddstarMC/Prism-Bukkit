@@ -46,7 +46,7 @@ public class MaterialAliases {
 	 * @param subid
 	 * @return
 	 */
-	public String getItemStackAliasById( int typeid, byte subid ){
+	public String getItemStackAliasById( int typeid, int subid ){
 		String item_name = null;
 		if(!itemAliases.isEmpty()){
 			String key = typeid+":"+subid;

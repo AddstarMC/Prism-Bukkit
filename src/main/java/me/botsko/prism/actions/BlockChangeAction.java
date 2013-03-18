@@ -126,7 +126,7 @@ public class BlockChangeAction extends BlockAction {
 	 * @param is_deferred
 	 * @return
 	 */
-	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, String type, int old_id, byte old_subid, int new_id, byte new_subid, Block block, boolean is_deferred ){
+	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, String type, int old_id, int old_subid, int new_id, int new_subid, Block block, boolean is_deferred ){
 		BlockAction b = new BlockAction();
 		b.setActionType(type);
 		b.setPlugin( plugin );
