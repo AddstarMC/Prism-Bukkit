@@ -69,6 +69,9 @@ public class PrismBlockEvents implements Listener {
 		if(block.getType().equals(Material.CHEST)){
 			container = (Chest) block.getState();
 		}
+		else if(block.getType().equals(Material.TRAPPED_CHEST)){
+			container = (Chest) block.getState();
+		}
 		else if( block.getType().equals(Material.DISPENSER) ){
 			container = (Dispenser) block.getState();
 		}
