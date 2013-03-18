@@ -498,33 +498,37 @@ public class PrismBlockEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onBlockFromTo(final BlockFromToEvent event) {
-
+		
 		// Ignore blocks that aren't liquid. @todo what else triggers this?
 		if (!event.getBlock().isLiquid()) return;
 		
 		BlockState from = event.getBlock().getState();
 		BlockState to = event.getToBlock().getState();
 		
+		// Watch for blocks that the liquid can break
+		if(BlockUtils.canFlowBreakMaterial(to.getType())){
+			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
+				if( Prism.getIgnore().event("water-break", event.getBlock()) ){
+					Prism.actionsRecorder.addToQueue( ActionFactory.create("water-break", event.getToBlock(), "Water"));
+				}
+			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
+				if( Prism.getIgnore().event("lava-break", event.getBlock()) ){
+					Prism.actionsRecorder.addToQueue( ActionFactory.create("lava-break", event.getToBlock(), "Lava"));
+				}
+			}
+		}
+		
 		// Record water flow
 		if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-			if( !Prism.getIgnore().event("water-flow", event.getBlock()) ) return;
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("water-flow", event.getBlock(), "Water"));
+			if( Prism.getIgnore().event("water-flow", event.getBlock()) ){
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("water-flow", event.getBlock(), "Water"));
+			}
 		}
 		
 		// Record lava flow
 		if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-			if( !Prism.getIgnore().event("lava-flow", event.getBlock()) ) return;
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("lava-flow", event.getBlock(), "Lava"));
-		}
-		
-		// Watch for blocks that the liquid can break
-		if(BlockUtils.canFlowBreakMaterial(to.getType())){
-			if(from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER){
-				if( !Prism.getIgnore().event("water-break", event.getBlock()) ) return;
-				Prism.actionsRecorder.addToQueue( ActionFactory.create("water-break", event.getToBlock(), "Water"));
-			} else if(from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA){
-				if( !Prism.getIgnore().event("lava-break", event.getBlock()) ) return;
-				Prism.actionsRecorder.addToQueue( ActionFactory.create("lava-break", event.getToBlock(), "Lava"));
+			if( Prism.getIgnore().event("lava-flow", event.getBlock()) ){
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("lava-flow", event.getBlock(), "Lava"));
 			}
 		}
 		
