@@ -61,16 +61,6 @@ public class ConfigBase {
 	
 	
 	/**
-	 * Loads item database
-	 * @return
-	 */
-	public FileConfiguration getItems(){
-		config = loadConfig( "", "items" );
-		return config;
-	}
-	
-	
-	/**
 	 * Returns base directory for config
 	 * @return
 	 */
@@ -102,7 +92,7 @@ public class ConfigBase {
 		} else {
 			// Look for defaults in the jar
 		    InputStream defConfigStream = plugin.getResource(default_folder+filename+".yml");
-		    if (defConfigStream != null) {
+		    if (defConfigStream != null){
 		        return YamlConfiguration.loadConfiguration(defConfigStream);
 		    }
 		    return null;

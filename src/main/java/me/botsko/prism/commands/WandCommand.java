@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import me.botsko.elixr.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -201,11 +202,11 @@ public class WandCommand implements SubHandler {
 			
 			// Move any existing item to the hand, otherwise give it to them
 			if( plugin.getConfig().getBoolean("prism.wands.auto-equip") ){
-				if( !ItemUtils.moveItemToHand( inv, item_id, item_subid) ){
+				if( !InventoryUtils.moveItemToHand( inv, item_id, item_subid) ){
 					// Store the item they're holding, if any
 					wand.setOriginallyHeldItem( inv.getItemInHand() );
 					// They don't have the item, so we need to give them an item
-					if( ItemUtils.handItemToPlayer( inv,  new ItemStack(item_id,1,item_subid) ) ){
+					if( InventoryUtils.handItemToPlayer( inv,  new ItemStack(item_id,1,item_subid) ) ){
 						wand.setItemWasGiven(true);
 					} else {
 						call.getPlayer().sendMessage( Prism.messenger.playerError("Can't fit the wand item into your inventory.") );

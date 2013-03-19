@@ -8,7 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.botsko.prism.MaterialAliases;
+import me.botsko.elixr.MaterialAliases;
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -17,7 +18,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.LevenshteinDistance;
-import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -4,12 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.botsko.elixr.InventoryUtils;
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.ItemUtils;
-import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
@@ -508,7 +509,7 @@ public class ItemStackAction extends GenericAction {
 					}
 					// If that failed we'll attempt to put it anywhere
 					if( !added ){
-						HashMap<Integer,ItemStack> leftovers = ItemUtils.addItemToInventory(container.getInventory(), getItem());
+						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(container.getInventory(), getItem());
 						if(leftovers.size() > 0){
 							result = ChangeResultType.SKIPPED;
 //							plugin.debug("Item placement into container skipped because container was full.");
@@ -539,7 +540,7 @@ public class ItemStackAction extends GenericAction {
 					}
 					// If that failed we'll attempt to take it from anywhere
 					if( !removed ){
-						int slot = ItemUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), (byte)getItem().getDurability());
+						int slot = InventoryUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), (byte)getItem().getDurability());
 						if(slot > -1){
 							container.getInventory().removeItem(getItem());
 							result = ChangeResultType.APPLIED;

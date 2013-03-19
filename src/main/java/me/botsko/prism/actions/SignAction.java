@@ -1,9 +1,9 @@
 package me.botsko.prism.actions;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -119,7 +119,7 @@ public class SignAction extends GenericAction {
 	public String getNiceName(){
 		String name = "sign (";
 		if(actionData.lines != null && actionData.lines.length > 0){
-			name += TypeUtils.implode(actionData.lines, ", ");
+			name += TypeUtils.join(actionData.lines, ", ");
 		} else {
 			name += "no text";
 		}

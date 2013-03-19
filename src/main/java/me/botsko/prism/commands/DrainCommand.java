@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.TypeUtils;
 
 public class DrainCommand implements SubHandler {
 	

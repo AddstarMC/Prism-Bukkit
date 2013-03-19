@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -7,7 +8,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.TypeUtils;
 
 import org.bukkit.Material;
 import org.bukkit.SkullType;
@@ -146,7 +146,7 @@ public class BlockAction extends GenericAction {
 		if(actionData instanceof SignActionData){
 			SignActionData ad = (SignActionData) getActionData();
 			if(ad.lines != null && ad.lines.length > 0){
-				name += " (" + TypeUtils.implode(ad.lines, ", ") + ")";
+				name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
 			}
 		}
 		if( type.getName().equals("crop-trample") && block_id == 0 ){

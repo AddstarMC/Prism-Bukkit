@@ -5,6 +5,11 @@
   <version>nightly</version>
   <name>prism</name>
   	<dependencies>
+  		<dependency>
+			<groupId>me.botsko</groupId>
+			<artifactId>elixr</artifactId>
+			<version>nightly</version>
+		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
@@ -34,6 +39,10 @@
 	   </dependency>
 	</dependencies>
 	<repositories>
+		<repository>
+			<id>dhmc-repo</id>
+			<url>http://dhmc.us:8081/nexus/content/repositories</url>
+		</repository>
 		<repository>
 			<id>repobo-snap</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
