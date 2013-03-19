@@ -198,7 +198,7 @@ public class ActionRegistry {
 		registerAction( new ActionType( "player-teleport", false, false, false, "EntityTravelAction", "teleported") );
 		registerAction( new ActionType( "potion-splash", false, false, false, "PlayerAction", "threw potion") );
 		registerAction( new ActionType( "prism-drain", false, true, true, "PrismRollbackAction", "drained") );
-		registerAction( new ActionType( "prism-extinguish", false, true, true, "PrismRollbackAction", "drained") );
+		registerAction( new ActionType( "prism-extinguish", false, true, true, "PrismRollbackAction", "extinguished") );
 		registerAction( new ActionType( "prism-process", false, false, false, "PrismProcessAction", "ran process") );
 		registerAction( new ActionType( "prism-rollback", true, false, false, "PrismRollbackAction", "rolled back") );
 		registerAction( new ActionType( "sheep-eat", false, false, false, "BlockAction", "ate") );
