@@ -240,9 +240,7 @@ public class ItemStackAction extends GenericAction {
 			this.block_id = actionData.block_id;
 			this.block_subid = actionData.block_subid;
 		}
-		
-		System.out.print("SETTING ITEM DATA TO : " + this.block_subid);
-		
+
 		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 		
 		// Restore enchantment
