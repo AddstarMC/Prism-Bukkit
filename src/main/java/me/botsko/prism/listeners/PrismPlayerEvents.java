@@ -399,6 +399,14 @@ public class PrismPlayerEvents implements Listener {
 			}
 		}
 		
+		// Punching fire
+		if (block != null && event.getAction() == Action.LEFT_CLICK_BLOCK){
+			Block above = block.getRelative(BlockFace.UP);
+			if( above.getType().equals(Material.FIRE) ){
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", above, player.getName()) );
+			}
+		}
+		
 		if( !plugin.getConfig().getBoolean("prism.tracking.crop-trample") ) return;
 
 		if (block != null && event.getAction() == Action.PHYSICAL){
