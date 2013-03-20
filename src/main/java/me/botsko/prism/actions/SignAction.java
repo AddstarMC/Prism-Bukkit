@@ -9,7 +9,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 	
@@ -45,7 +44,7 @@ public class SignAction extends GenericAction {
 				
 		if(block != null){
 			actionData.sign_type = block.getType().name();
-			Sign sign = (Sign) block.getState().getData();
+			org.bukkit.material.Sign sign = (org.bukkit.material.Sign) block.getState().getData();
 			actionData.facing = sign.getFacing();
 			this.block = block;
 			this.world_name = block.getWorld().getName();
@@ -138,29 +137,32 @@ public class SignAction extends GenericAction {
 		
 		// Ensure a sign exists there (and no other block)
 		if( block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST) || block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN) ){
-			
+
 			if( block.getType().equals(Material.AIR) ){
 				block.setType(getSignType());
 			}
 			
 			// Set the facing direction
-			if (block.getState() instanceof Sign){
-				org.bukkit.material.Sign s = (org.bukkit.material.Sign)block.getState();
+			if( block.getState().getData() instanceof org.bukkit.material.Sign ){
+				org.bukkit.material.Sign s = (org.bukkit.material.Sign)block.getState().getData();
 				s.setFacingDirection(getFacing());
+			}
+			// Set the content
+			if( block.getState() instanceof org.bukkit.block.Sign ){
 				
-				// Set content
-				org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState().getData();
+				// Set sign data
 				String[] lines = getLines();
+				org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
 				int i = 0;
-				if(lines.length > 0){
+				if(lines != null && lines.length > 0){
 					for(String line : lines){
 						sign.setLine(i, line);
 						i++;
 					}
 				}
 				sign.update();
+				return new ChangeResult( ChangeResultType.APPLIED, null );
 			}
-			return new ChangeResult( ChangeResultType.APPLIED, null );
 		}
 		return new ChangeResult( ChangeResultType.SKIPPED, null );
 	}
