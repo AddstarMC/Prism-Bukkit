@@ -11,6 +11,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Sheep;
@@ -22,6 +23,7 @@ public class EntityAction extends GenericAction {
 	
 	public class EntityActionData {
 		public String entity_name;
+		public String custom_name;
 		public boolean isAdult;
 		public boolean sitting;
 		public String color;
@@ -53,6 +55,12 @@ public class EntityAction extends GenericAction {
 			this.x = entity.getLocation().getBlockX();
 			this.y = entity.getLocation().getBlockY();
 			this.z = entity.getLocation().getBlockZ();
+			
+			
+			// Get custom name
+			if( entity instanceof LivingEntity ){
+				this.actionData.custom_name = ((LivingEntity)entity).getCustomName();
+			}
 			
 			// Get animal age
 			if(entity instanceof Ageable && !(entity instanceof Monster) ){
@@ -197,6 +205,15 @@ public class EntityAction extends GenericAction {
 	 * 
 	 * @return
 	 */
+	public String getCustomName(){
+		return this.actionData.custom_name;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getNiceName(){
 		String name = "";
 		if(actionData.color != null && !actionData.color.isEmpty()){
@@ -214,6 +231,9 @@ public class EntityAction extends GenericAction {
 		name += actionData.entity_name;
 		if(this.actionData.newColor != null){
 			name += " " + this.actionData.newColor;
+		}
+		if(this.actionData.custom_name != null){
+			name += " named " + this.actionData.custom_name;
 		}
 		return name;
 	}
@@ -238,6 +258,12 @@ public class EntityAction extends GenericAction {
 		loc.setZ( loc.getZ()+0.5 );
 		
 		Entity entity = loc.getWorld().spawnEntity(loc, getEntityType());
+		
+		// Get custom name
+		if( entity instanceof LivingEntity && getCustomName() != null ){
+			LivingEntity namedEntity = (LivingEntity)entity;
+			namedEntity.setCustomName( getCustomName() );
+		}
 		
 		// Get animal age
 		if(entity instanceof Ageable){
