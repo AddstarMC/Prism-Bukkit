@@ -417,7 +417,7 @@ public class ActionsQuery {
 			
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
 				
-				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) && !parameters.hasFlag(Flag.EXTENDED) ){
 					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
 				}
 			
