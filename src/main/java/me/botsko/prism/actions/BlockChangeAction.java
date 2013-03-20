@@ -117,6 +117,16 @@ public class BlockChangeAction extends BlockAction {
 	
 	/**
 	 * 
+	 */
+	@Override
+	public ChangeResult applyDeferred( Player player, QueryParameters parameters, boolean is_preview ){
+		Block block = getWorld().getBlockAt( getLoc() );
+		return placeBlock( player, parameters, is_preview, getType().getName(),getOldBlockId(),getOldBlockSubId(),getBlockId(),getBlockSubId(),block,true );
+	}
+	
+	
+	/**
+	 * 
 	 * @param type
 	 * @param old_id
 	 * @param old_subid
@@ -127,6 +137,7 @@ public class BlockChangeAction extends BlockAction {
 	 * @return
 	 */
 	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, String type, int old_id, int old_subid, int new_id, int new_subid, Block block, boolean is_deferred ){
+		
 		BlockAction b = new BlockAction();
 		b.setActionType(type);
 		b.setPlugin( plugin );
@@ -143,9 +154,9 @@ public class BlockChangeAction extends BlockAction {
 			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
-				return b.placeBlock( player, parameters, is_preview, block, false );
+				return b.placeBlock( player, parameters, is_preview, block, is_deferred );
 			} else {
-//				plugin.debug("Block change skipped because new id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + new_id);
+//				System.out.print("Block change skipped because new id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + new_id);
 				return new ChangeResult( ChangeResultType.SKIPPED, null );
 			}
 		}
@@ -158,16 +169,16 @@ public class BlockChangeAction extends BlockAction {
 			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), old_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
 				b.setBlockId( new_id );
 				b.setBlockSubId( new_subid );
-				return b.placeBlock( player, parameters, is_preview, block, false );
+				return b.placeBlock( player, parameters, is_preview, block, is_deferred );
 			} else {
-//				plugin.debug("Block change skipped because old id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + old_id);
+//				System.out.print("Block change skipped because old id doesn't match what's there now. There now: " + block.getTypeId() + " vs " + old_id);
 				return new ChangeResult( ChangeResultType.SKIPPED, null );
 			}
 		}
 		if(parameters.getProcessType().equals(PrismProcessType.UNDO)){
 			b.setBlockId( old_id );
 			b.setBlockSubId( old_subid );
-			return b.placeBlock( player, parameters, is_preview, block, false );
+			return b.placeBlock( player, parameters, is_preview, block, is_deferred );
 		}
 		return new ChangeResult( ChangeResultType.SKIPPED, null );
 	}

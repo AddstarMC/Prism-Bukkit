@@ -291,30 +291,8 @@ public class BlockAction extends GenericAction {
 	 */
 	@Override
 	public ChangeResult applyDeferred( Player player, QueryParameters parameters, boolean is_preview ){
-		
-//		BlockAction b = null;
-//		if(a instanceof BlockChangeAction){
-//			BlockChangeAction bc = (BlockChangeAction) a;
-//			b = new BlockAction();
-//			b.setWorldName(bc.getWorldName());
-//			b.setX( bc.getX() );
-//			b.setY( bc.getY() );
-//			b.setZ( bc.getZ() );
-//			if(parameters.getProcessType().equals(PrismProcessType.ROLLBACK)){
-//				b.setBlockId( bc.getOldBlockId() );
-//				b.setBlockSubId( bc.getOldBlockSubId() );
-//			} else {
-//				b.setBlockId( bc.getBlockId() );
-//				b.setBlockSubId( bc.getBlockSubId() );
-//			}
-//			b.setType( bc.getType() );
-//		} else {
-//			b = (BlockAction) a;
-//		}
-	
 		Block block = getWorld().getBlockAt( getLoc() );
 		return placeBlock( player, parameters, is_preview, block, true );
-		
 	}
 	
 	
@@ -334,7 +312,6 @@ public class BlockAction extends GenericAction {
 		// (essentially liquid/air).
 		if( !getType().requiresHandler("BlockChangeAction") && !getType().requiresHandler("PrismRollbackAction") ){
 			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) ){
-//				plugin.debug("Block skipped due to being unaccaptable for block place.");
 //				System.out.print("Block skipped due to being unaccaptable for block place.");
 				return new ChangeResult( ChangeResultType.SKIPPED, null );
 			}
@@ -342,7 +319,6 @@ public class BlockAction extends GenericAction {
 		
 		// On the blacklist (except an undo)
 		if( !BlockUtils.mayEverPlace(m) && !parameters.getProcessType().equals(PrismProcessType.UNDO) ){
-//			plugin.debug("Block skipped because it's not allowed to be placed.");
 //			System.out.print("Block skipped because it's not allowed to be placed.");
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
