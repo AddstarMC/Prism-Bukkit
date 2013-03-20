@@ -8,7 +8,7 @@
   		<dependency>
 			<groupId>me.botsko</groupId>
 			<artifactId>elixr</artifactId>
-			<version>nightly</version>
+			<version>1.0-dev-4-geaba2bb</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
@@ -73,6 +73,7 @@
                     <includes>
 						<include>org.apache.tomcat:com.springsource.org.apache.tomcat.jdbc</include>
 						<include>org.apache.juli:com.springsource.org.apache.juli.extras</include>
+						<include>me.botsko:elixr:jar:*</include>
                     </includes>
                   </artifactSet>
 				</configuration>
