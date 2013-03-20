@@ -2,9 +2,9 @@ package me.botsko.prism.listeners;
 
 import java.util.Collection;
 
+import me.botsko.elixr.DeathUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
-import me.botsko.prism.utils.DeathUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

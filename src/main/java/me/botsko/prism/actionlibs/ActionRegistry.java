@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 
 import org.bukkit.plugin.Plugin;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.exceptions.InvalidActionException;
-import me.botsko.prism.utils.TypeUtils;
 
 public class ActionRegistry {
 	

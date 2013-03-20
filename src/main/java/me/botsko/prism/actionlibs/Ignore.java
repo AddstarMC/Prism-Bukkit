@@ -7,8 +7,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
-import me.botsko.prism.utils.TypeUtils;
 
 public class Ignore {
 	

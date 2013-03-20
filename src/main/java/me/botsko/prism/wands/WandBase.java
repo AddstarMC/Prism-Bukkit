@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import me.botsko.prism.utils.ItemUtils;
+import me.botsko.elixr.InventoryUtils;
 
 public abstract class WandBase {
 
@@ -136,15 +136,15 @@ public abstract class WandBase {
 			if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
 				itemSlot = inv.getHeldItemSlot();
 			} else {
-				itemSlot = ItemUtils.inventoryHasItem(inv, item_id, item_subid);
+				itemSlot = InventoryUtils.inventoryHasItem(inv, item_id, item_subid);
 			}
 			if( itemSlot > -1 ){
-				ItemUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
+				InventoryUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
 				player.updateInventory();
 			}
 		}
 		if( original_item != null ){
-			ItemUtils.moveItemToHand(inv, original_item.getTypeId(), (byte)original_item.getDurability());
+			InventoryUtils.moveItemToHand(inv, original_item.getTypeId(), (byte)original_item.getDurability());
 		}
 	}
 }

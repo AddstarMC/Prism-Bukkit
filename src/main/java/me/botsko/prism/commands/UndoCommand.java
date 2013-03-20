@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -17,7 +18,6 @@ import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.utils.TypeUtils;
 
 public class UndoCommand implements SubHandler {
 	

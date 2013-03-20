@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import me.botsko.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -264,7 +265,7 @@ public class Prism extends JavaPlugin {
 		// Load language files
 //		language = new Language( mc.getLang() );
 		// Load items db
-		items = new MaterialAliases( mc.getItems() );
+		items = new MaterialAliases();
 	}
 	
 	
