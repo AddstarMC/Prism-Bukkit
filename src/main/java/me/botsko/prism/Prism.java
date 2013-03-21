@@ -139,12 +139,13 @@ public class Prism extends JavaPlugin {
 			    Metrics metrics = new Metrics(this);
 			    
 			    // See who's using mysql vs sqlite
-			    metrics.addCustomData(new Metrics.Plotter("Database Mode"){
-			        @Override
-			        public int getValue() {
-			            return getConfig().getString("prism.database.mode").equals("mysql") ? 1 : 0;
-			        }
-			    });
+	            Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
+	            databaseGraph.addPlotter(new Metrics.Plotter( prism.getConfig().getString("prism.database.mode") ) {
+	                @Override
+	                public int getValue(){
+	                    return 1;
+	                }
+	            });
 			    
 			    metrics.start();
 			} catch (IOException e) {
