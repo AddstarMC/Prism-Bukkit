@@ -8,6 +8,8 @@ public class Messenger {
 	 * 
 	 */
 	protected String plugin_name;
+
+    protected Prism prism;
 	
 	
 	/**
@@ -17,7 +19,6 @@ public class Messenger {
 	public Messenger( String plugin_name ){
 		this.plugin_name = plugin_name;
 	}
-	
 
 	/**
 	 * 
@@ -26,7 +27,7 @@ public class Messenger {
 	 */
 	public String playerHeaderMsg(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.WHITE + msg;
+			return (prism.getConfig().getBoolean("prism.messages.branding", true) ? ChatColor.LIGHT_PURPLE + plugin_name + " // " : null) + ChatColor.WHITE + msg;
 		}
 		return "";
 	}
@@ -39,7 +40,7 @@ public class Messenger {
 	 */
 	public String playerSubduedHeaderMsg(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.GRAY + msg;
+			return (prism.getConfig().getBoolean("prism.messages.branding", true) ? ChatColor.LIGHT_PURPLE + plugin_name + " // " : null) + ChatColor.GRAY + msg;
 		}
 		return "";
 	}
@@ -91,7 +92,7 @@ public class Messenger {
 	 */
 	public String playerError(String msg){
 		if(msg != null){
-			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.RED + msg;
+			return (prism.getConfig().getBoolean("prism.messages.branding", true) ? ChatColor.LIGHT_PURPLE + plugin_name + " // " : null) + ChatColor.RED + msg;
 		}
 		return "";
 	}

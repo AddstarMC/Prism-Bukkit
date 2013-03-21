@@ -32,6 +32,10 @@ public class PrismConfig extends ConfigBase {
 		
 		config.addDefault("prism.notify-newer-versions", true);
 		config.addDefault("prism.allow-metrics", true);
+
+        // Messages
+        config.addDefault("prism.messages.branding", true);
+        config.addDefault("prism.messages.assurances", true);
 			
 		// Database
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql

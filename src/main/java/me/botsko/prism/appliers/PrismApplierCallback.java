@@ -12,7 +12,8 @@ import org.bukkit.entity.Player;
 
 public class PrismApplierCallback implements ApplierCallback {
 	
-	
+	protected Prism prism;
+
 	/**
 	 * 
 	 */
@@ -39,7 +40,7 @@ public class PrismApplierCallback implements ApplierCallback {
 				if(result.getChangesSkipped() > 0){
 					msg += " " + result.getChangesSkipped() + " skipped.";
 				}
-				if(result.getChangesApplied() > 0){
+				if(result.getChangesApplied() > 0 && prism.getConfig().getBoolean("prism.messages.assurances", true)){
 					msg += ChatColor.GRAY + " It's like it never happened.";
 				}
 				sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
@@ -73,7 +74,7 @@ public class PrismApplierCallback implements ApplierCallback {
 				if(result.getChangesSkipped() > 0){
 					msg += " " + result.getChangesSkipped() + " skipped.";
 				}
-				if(result.getChangesApplied() > 0){
+				if(result.getChangesApplied() > 0 && prism.getConfig().getBoolean("prism.messages.assurances", true)){
 					msg += ChatColor.GRAY + " It's like it was always there.";
 				}
 				sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
@@ -106,7 +107,7 @@ public class PrismApplierCallback implements ApplierCallback {
 			if(result.getChangesSkipped() > 0){
 				msg += " " + result.getChangesSkipped() + " skipped.";
 			}
-			if(result.getChangesApplied() > 0){
+			if(result.getChangesApplied() > 0 && prism.getConfig().getBoolean("prism.messages.assurances", true)){
 				msg += ChatColor.GRAY + " If anyone asks, you never did that.";
 			}
 			sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
