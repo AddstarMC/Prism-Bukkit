@@ -123,8 +123,8 @@ public class PrismEntityEvents implements Listener {
 			// Determine who died and what the exact cause was
 	        Player p = (Player)event.getEntity();
 	        if( Prism.getIgnore().event("player-death",p) ){
-		        String cause = DeathUtils.getCauseOfDeath( event, p );
-		        String attacker = DeathUtils.getAttacker(event, p);
+		        String cause = DeathUtils.getCauseNiceName( p );
+		        String attacker = DeathUtils.getAttackerName( p );
 		        if(attacker == "pvpwolf"){
 	            	String owner = DeathUtils.getTameWolfOwner(event);
 	            	attacker = owner+"'s wolf";
@@ -203,7 +203,7 @@ public class PrismEntityEvents implements Listener {
 		if( !Prism.getIgnore().event("entity-dye",p) ) return;
 		// Only track the event on sheep, when player holds dye
 		if( p.getItemInHand().getTypeId() == 351 && e.getType().equals(EntityType.SHEEP) ){
-			String newColor = plugin.getItems().getItemStackAliasById(p.getItemInHand().getTypeId(), (byte)p.getItemInHand().getDurability());
+			String newColor = plugin.getItems().getAlias(p.getItemInHand().getTypeId(), (byte)p.getItemInHand().getDurability());
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-dye", event.getRightClicked(), event.getPlayer().getName(), newColor) );
 		}
 	}

@@ -111,7 +111,7 @@ public class UseMonitor {
 		
 		// Ensure we're tracking this block
 		if(blocksToAlertOnPlace.contains( blockType )){
-			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
+			String alias = plugin.getItems().getAlias(block.getTypeId(), block.getData());
 			incrementCount(playername, "placed "+alias);
 		}
 	}
@@ -134,7 +134,7 @@ public class UseMonitor {
 		
 		// Ensure we're tracking this block
 		if(blocksToAlertOnBreak.contains( blockType )){
-			String alias = plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData());
+			String alias = plugin.getItems().getAlias(block.getTypeId(), block.getData());
 			incrementCount(playername, "broke "+alias);
 		}
 	}

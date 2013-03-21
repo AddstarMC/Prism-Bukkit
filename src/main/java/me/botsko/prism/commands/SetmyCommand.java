@@ -119,7 +119,7 @@ public class SetmyCommand implements SubHandler {
 						item_subid = Byte.parseByte(itemIds[1]);
 					}
 					if( item_id > -1 ){
-						String item_name = plugin.getItems().getItemStackAliasById(item_id, item_subid);
+						String item_name = plugin.getItems().getAlias(item_id, item_subid);
 						if( item_name != null ){
 							
 							if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){

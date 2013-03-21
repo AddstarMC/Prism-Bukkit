@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.botsko.elixr.ItemUtils;
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
@@ -16,7 +17,6 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.LevenshteinDistance;
 
 import org.bukkit.command.CommandSender;
@@ -274,12 +274,12 @@ public class PreprocessArgs {
 									
 									// Lookup the item name, get the ids
 									MaterialAliases items = plugin.getItems();
-									ArrayList<int[]> itemIds = items.getItemIdsByAlias( b );
+									ArrayList<int[]> itemIds = items.getIdsByAlias( b );
 									if(itemIds.size() > 0){
 										for(int[] ids : itemIds){
 											if(ids.length == 2){
 												// If we really care about the sub id because it's a whole different item
-												if(BlockUtils.hasSubitems(ids[0])){
+												if(ItemUtils.dataValueUsedForSubitems(ids[0])){
 													parameters.addBlockFilter( ids[0], (byte) ids[1] );
 												} else {
 													parameters.addBlockFilter( ids[0], (byte)0 );

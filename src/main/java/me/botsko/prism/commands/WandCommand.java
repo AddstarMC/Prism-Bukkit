@@ -96,7 +96,7 @@ public class WandCommand implements SubHandler {
 		String wandOn = "";
 		String item_name = "";
 		if( item_id != 0 ){
-			item_name = plugin.getItems().getItemStackAliasById(item_id, item_subid);
+			item_name = plugin.getItems().getAlias(item_id, item_subid);
 			wandOn += " on a " + item_name;
 		}
 		

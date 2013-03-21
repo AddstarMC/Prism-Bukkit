@@ -142,7 +142,7 @@ public class BlockAction extends GenericAction {
 			SpawnerActionData ad = (SpawnerActionData) getActionData();
 			name += ad.entity_type + " ";
 		}
-		name += materialAliases.getItemStackAliasById(this.block_id, this.block_subid);
+		name += materialAliases.getAlias(this.block_id, this.block_subid);
 		if(actionData instanceof SignActionData){
 			SignActionData ad = (SignActionData) getActionData();
 			if(ad.lines != null && ad.lines.length > 0){

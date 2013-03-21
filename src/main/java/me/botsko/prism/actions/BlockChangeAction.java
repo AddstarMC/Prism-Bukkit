@@ -77,9 +77,9 @@ public class BlockChangeAction extends BlockAction {
 	public String getNiceName(){
 		String name = "";
 		if(this.getType().getName().equals("block-fade")){
-			name += materialAliases.getItemStackAliasById(this.old_block_id, this.old_block_subid);
+			name += materialAliases.getAlias(this.old_block_id, this.old_block_subid);
 		} else {
-			name += materialAliases.getItemStackAliasById(this.block_id, this.block_subid);
+			name += materialAliases.getAlias(this.block_id, this.block_subid);
 		}
 		return name;
 	}

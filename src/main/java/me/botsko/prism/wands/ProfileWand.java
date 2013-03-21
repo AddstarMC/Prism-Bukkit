@@ -55,7 +55,7 @@ public class ProfileWand extends WandBase implements Wand{
 		player.sendMessage( Prism.messenger.playerHeaderMsg("Block Profile") );
 		
 		player.sendMessage( Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase() ) );
-		player.sendMessage( Prism.messenger.playerMsg("Alias: " + plugin.getItems().getItemStackAliasById(block.getTypeId(), block.getData()) ) );
+		player.sendMessage( Prism.messenger.playerMsg("Alias: " + plugin.getItems().getAlias(block.getTypeId(), block.getData()) ) );
 		player.sendMessage( Prism.messenger.playerMsg("ID: " + block.getTypeId()+":" + block.getData() ) );
 		player.sendMessage( Prism.messenger.playerMsg("Coords: "+block.getX()+" "+block.getY()+" "+block.getZ() ) );
 		

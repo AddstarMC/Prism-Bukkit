@@ -78,6 +78,6 @@ public class BlockShiftAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
-		return this.materialAliases.getItemStackAliasById(this.block_id, this.block_subid) + " from " + actionData.x + " " + actionData.z;
+		return this.materialAliases.getAlias(this.block_id, this.block_subid) + " from " + actionData.x + " " + actionData.z;
 	}
 }
