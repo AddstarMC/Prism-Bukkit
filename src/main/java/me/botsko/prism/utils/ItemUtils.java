@@ -28,7 +28,7 @@ public class ItemUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static int inventoryHasItem( Inventory inv, int item_id, byte sub_id ){
+	public static int inventoryHasItem( Inventory inv, int item_id, int sub_id ){
 		int currentSlot = 0;
 		for(ItemStack item : inv.getContents()){
 			if( item != null && item.getTypeId() == item_id && item.getDurability() == sub_id ){

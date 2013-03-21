@@ -333,7 +333,7 @@ public class ItemStackAction extends GenericAction {
 			
 			// Parse item/sub/quant
 			this.block_id = Integer.parseInt(blockArr[0]);
-			this.block_subid = Byte.parseByte(blockArr[1]);
+			this.block_subid = Integer.parseInt(blockArr[1]);
 			actionData.amt = Integer.parseInt(blockArr[2]);
 			
 			item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
@@ -537,7 +537,7 @@ public class ItemStackAction extends GenericAction {
 					}
 					// If that failed we'll attempt to take it from anywhere
 					if( !removed ){
-						int slot = ItemUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), (byte)getItem().getDurability());
+						int slot = ItemUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), getItem().getDurability());
 						if(slot > -1){
 							container.getInventory().removeItem(getItem());
 							result = ChangeResultType.APPLIED;
