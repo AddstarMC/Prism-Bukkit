@@ -83,107 +83,109 @@ public class ItemStackAction extends GenericAction {
 			this.enchantments = enchantments;
 		}
 		
-		if(item != null){
+		if( item == null || item.getAmount() <= 0 ){
+			this.setCanceled(true);
+			return;
+		}
 			
-			this.item = item;
-			if(enchantments == null){
-				this.enchantments = item.getEnchantments();
-			}
-			
-			// Set basics
-			this.block_id = item.getTypeId();
-			this.block_subid = item.getDurability();
-			actionData.amt = quantity;
-			if(slot >= 0){
-				actionData.slot = slot;
-			}
-			
-			// Set additional data all items may have
-			ItemMeta meta = item.getItemMeta();
-			if(meta.getDisplayName() != null){
-				actionData.name = meta.getDisplayName();
-			}
+		this.item = item;
+		if(enchantments == null){
+			this.enchantments = item.getEnchantments();
+		}
+		
+		// Set basics
+		this.block_id = item.getTypeId();
+		this.block_subid = item.getDurability();
+		actionData.amt = quantity;
+		if(slot >= 0){
+			actionData.slot = slot;
+		}
+		
+		// Set additional data all items may have
+		ItemMeta meta = item.getItemMeta();
+		if(meta.getDisplayName() != null){
+			actionData.name = meta.getDisplayName();
+		}
 
-			// Leather Coloring
-			if(item.getType().name().contains("LEATHER_")){
-				LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-				if(lam.getColor() != null){
-					actionData.color = lam.getColor().asRGB();
-				}
+		// Leather Coloring
+		if(item.getType().name().contains("LEATHER_")){
+			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+			if(lam.getColor() != null){
+				actionData.color = lam.getColor().asRGB();
 			}
-			
-			// Skull Owner
-			else if(item.getType().equals(Material.SKULL_ITEM)){
-				SkullMeta skull = (SkullMeta) item.getItemMeta();
-				if(skull.hasOwner()){
-					actionData.owner = skull.getOwner();
-				}
+		}
+		
+		// Skull Owner
+		else if(item.getType().equals(Material.SKULL_ITEM)){
+			SkullMeta skull = (SkullMeta) item.getItemMeta();
+			if(skull.hasOwner()){
+				actionData.owner = skull.getOwner();
 			}
-			
-			// Written books
-			if(item.getType().equals( Material.WRITTEN_BOOK )){
-		        BookMeta bookMeta = (BookMeta) item.getItemMeta();
-				if(bookMeta != null){
-					actionData.by = bookMeta.getAuthor();
-					actionData.title = bookMeta.getTitle();
-				}
+		}
+		
+		// Written books
+		if(item.getType().equals( Material.WRITTEN_BOOK )){
+	        BookMeta bookMeta = (BookMeta) item.getItemMeta();
+			if(bookMeta != null){
+				actionData.by = bookMeta.getAuthor();
+				actionData.title = bookMeta.getTitle();
 			}
-			
-			// Enchantments
-			if(!this.enchantments.isEmpty()){
-				String[] enchs = new String[this.enchantments.size()];
-				int i = 0;
-				for(Entry<Enchantment, Integer> ench : this.enchantments.entrySet()){
-					enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-					i++;
-				}
-				actionData.enchs = enchs;
+		}
+		
+		// Enchantments
+		if(!this.enchantments.isEmpty()){
+			String[] enchs = new String[this.enchantments.size()];
+			int i = 0;
+			for(Entry<Enchantment, Integer> ench : this.enchantments.entrySet()){
+				enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
+				i++;
 			}
+			actionData.enchs = enchs;
+		}
 
-			// Book enchantments
-			else if(item.getType().equals( Material.ENCHANTED_BOOK )){
-				EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
-				if(bookEnchantments.hasStoredEnchants()){
-					if(bookEnchantments.getStoredEnchants().size() > 0){
-						String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
-						int i = 0;
-						for(Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet()){
-							enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-							i++;
-						}
-						actionData.enchs = enchs;
+		// Book enchantments
+		else if(item.getType().equals( Material.ENCHANTED_BOOK )){
+			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
+			if(bookEnchantments.hasStoredEnchants()){
+				if(bookEnchantments.getStoredEnchants().size() > 0){
+					String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
+					int i = 0;
+					for(Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet()){
+						enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
+						i++;
 					}
+					actionData.enchs = enchs;
 				}
 			}
-			
-			// Fireworks
-			if( block_id == 402 ){
-				FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
-				if( fireworkMeta.hasEffect() ){
-					FireworkEffect effect = fireworkMeta.getEffect();
-					if( !effect.getColors().isEmpty() ){
-						int[] effectColors = new int[ effect.getColors().size() ];
-						int i = 0;
-						for (Color effectColor : effect.getColors()){
-							effectColors[i] = effectColor.asRGB();
-							i++;
-						}
-						actionData.effectColors = effectColors;
+		}
+		
+		// Fireworks
+		if( block_id == 402 ){
+			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+			if( fireworkMeta.hasEffect() ){
+				FireworkEffect effect = fireworkMeta.getEffect();
+				if( !effect.getColors().isEmpty() ){
+					int[] effectColors = new int[ effect.getColors().size() ];
+					int i = 0;
+					for (Color effectColor : effect.getColors()){
+						effectColors[i] = effectColor.asRGB();
+						i++;
 					}
-					if( !effect.getFadeColors().isEmpty() ){
-						int[] fadeColors = new int[ effect.getColors().size() ];
-						int i = 0;
-					    for (Color fadeColor : effect.getFadeColors()){
-					    	fadeColors[i] = fadeColor.asRGB();
-					    }
-					    actionData.fadeColors = fadeColors;
-					}
-					if(effect.hasFlicker()){
-						actionData.hasFlicker = true;
-					}
-					if(effect.hasTrail()){
-						actionData.hasTrail = true;
-					}
+					actionData.effectColors = effectColors;
+				}
+				if( !effect.getFadeColors().isEmpty() ){
+					int[] fadeColors = new int[ effect.getColors().size() ];
+					int i = 0;
+				    for (Color fadeColor : effect.getFadeColors()){
+				    	fadeColors[i] = fadeColor.asRGB();
+				    }
+				    actionData.fadeColors = fadeColors;
+				}
+				if(effect.hasFlicker()){
+					actionData.hasFlicker = true;
+				}
+				if(effect.hasTrail()){
+					actionData.hasTrail = true;
 				}
 			}
 		}
