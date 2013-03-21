@@ -144,7 +144,7 @@ public class ActionRecorder implements Runnable {
 		        while (!queue.isEmpty()){
 		        	actionsRecorded++;
 		        	Handler a = queue.poll();
-		        	if(a == null) continue;
+		        	if( a == null || a.isCanceled() ) continue;
 			        s.setString(1,a.getType().getName());
 			        s.setString(2,a.getPlayerName());
 			        s.setString(3,a.getWorldName());
