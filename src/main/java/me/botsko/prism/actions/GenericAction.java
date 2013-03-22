@@ -28,6 +28,11 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
+	protected boolean canceled = false;
+	
+	/**
+	 * 
+	 */
 	protected Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 	
 	/**
@@ -502,6 +507,22 @@ public class GenericAction implements Handler {
 	 */
 	public String getNiceName(){
 		return "something";
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public boolean isCanceled(){
+		return canceled;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void setCanceled( boolean cancel ){
+		this.canceled = cancel;
 	}
 	
 	

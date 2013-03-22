@@ -51,11 +51,13 @@ public class ActionRecorder implements Runnable {
 		// prepare to save to the db
 		a.save();
 		
-		queue.add(a);
-		
 		if(a.getData() != null && a.getData().length() > 255){
 			plugin.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
+			return;
 		}
+		
+		queue.add(a);
+
 	}
 	
 	
@@ -144,7 +146,7 @@ public class ActionRecorder implements Runnable {
 		        while (!queue.isEmpty()){
 		        	actionsRecorded++;
 		        	Handler a = queue.poll();
-		        	if(a == null) continue;
+		        	if( a == null || a.isCanceled() ) continue;
 			        s.setString(1,a.getType().getName());
 			        s.setString(2,a.getPlayerName());
 			        s.setString(3,a.getWorldName());

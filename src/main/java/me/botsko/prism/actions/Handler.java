@@ -205,6 +205,21 @@ public interface Handler {
 	 */
 	public abstract void save();
 	
+	
+	/**
+	 * 
+	 * @param pl
+	 */
+	public abstract boolean isCanceled();
+	
+	
+	/**
+	 * 
+	 * @param pl
+	 */
+	public abstract void setCanceled( boolean cancel );
+	
+	
 	/**
 	 * 
 	 * @param player
