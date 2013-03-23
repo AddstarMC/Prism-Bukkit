@@ -252,65 +252,69 @@ public class EntityAction extends GenericAction {
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
 		
-		Location loc = getLoc();
+		if( !is_preview ){
 		
-		loc.setX( loc.getX()+0.5 );
-		loc.setZ( loc.getZ()+0.5 );
-		
-		Entity entity = loc.getWorld().spawnEntity(loc, getEntityType());
-		
-		// Get custom name
-		if( entity instanceof LivingEntity && getCustomName() != null ){
-			LivingEntity namedEntity = (LivingEntity)entity;
-			namedEntity.setCustomName( getCustomName() );
-		}
-		
-		// Get animal age
-		if(entity instanceof Ageable){
-			Ageable age = (Ageable)entity;
-			if(!isAdult()){
-				age.setBaby();
-			}
-		}
-		
-		// Set sheep color
-		if( entity.getType().equals(EntityType.SHEEP) && getColor() != null ){
-			Sheep sheep = ((Sheep) entity);
-			sheep.setColor( getColor() );
-		}
-		
-		// Set villager profession
-		if( entity instanceof Villager && getProfession() != null ){
-			Villager v = (Villager)entity;
-			v.setProfession( getProfession() );
-		}
-		
-		// Set wolf details
-		if (entity instanceof Wolf){
+			Location loc = getLoc();
 			
-			// Owner
-            Wolf wolf = (Wolf)entity;
-            String tamingOwner = getTamingOwner();
-            if(tamingOwner != null){
-	            Player owner = plugin.getServer().getPlayer( tamingOwner );
-	            if(owner == null){
-		            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-		            if(offlinePlayer.hasPlayedBefore()){
-		            	owner = offlinePlayer.getPlayer();
+			loc.setX( loc.getX()+0.5 );
+			loc.setZ( loc.getZ()+0.5 );
+			
+			Entity entity = loc.getWorld().spawnEntity(loc, getEntityType());
+			
+			// Get custom name
+			if( entity instanceof LivingEntity && getCustomName() != null ){
+				LivingEntity namedEntity = (LivingEntity)entity;
+				namedEntity.setCustomName( getCustomName() );
+			}
+			
+			// Get animal age
+			if(entity instanceof Ageable){
+				Ageable age = (Ageable)entity;
+				if(!isAdult()){
+					age.setBaby();
+				}
+			}
+			
+			// Set sheep color
+			if( entity.getType().equals(EntityType.SHEEP) && getColor() != null ){
+				Sheep sheep = ((Sheep) entity);
+				sheep.setColor( getColor() );
+			}
+			
+			// Set villager profession
+			if( entity instanceof Villager && getProfession() != null ){
+				Villager v = (Villager)entity;
+				v.setProfession( getProfession() );
+			}
+			
+			// Set wolf details
+			if (entity instanceof Wolf){
+				
+				// Owner
+	            Wolf wolf = (Wolf)entity;
+	            String tamingOwner = getTamingOwner();
+	            if(tamingOwner != null){
+		            Player owner = plugin.getServer().getPlayer( tamingOwner );
+		            if(owner == null){
+			            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+			            if(offlinePlayer.hasPlayedBefore()){
+			            	owner = offlinePlayer.getPlayer();
+			            }
 		            }
+		            if(owner != null) wolf.setOwner(owner);
 	            }
-	            if(owner != null) wolf.setOwner(owner);
-            }
-            
-            // Collar color
-            if( getColor() != null ){
-            	wolf.setCollarColor( getColor() );
-            }
-            
-            if(isSitting()){
-            	wolf.setSitting(true);
-            }
-    	}
-		return new ChangeResult( ChangeResultType.APPLIED, null );
+	            
+	            // Collar color
+	            if( getColor() != null ){
+	            	wolf.setCollarColor( getColor() );
+	            }
+	            
+	            if(isSitting()){
+	            	wolf.setSitting(true);
+	            }
+	    	}
+			return new ChangeResult( ChangeResultType.APPLIED, null );
+		}
+		return new ChangeResult( ChangeResultType.DEFERRED, null );
 	}
 }
