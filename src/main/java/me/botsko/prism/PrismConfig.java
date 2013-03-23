@@ -208,6 +208,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
+		config.addDefault("prism.alerts.illegal-commands.log-to-console", true);
 		List<String> illegal_commands = new ArrayList<String>();
 		illegal_commands.add("op");
 		illegal_commands.add("deop");
@@ -217,6 +218,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
+		config.addDefault("prism.alerts.uses.log-to-console", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
 		

@@ -85,7 +85,10 @@ public class PrismPlayerEvents implements Listener {
 				player.sendMessage( Prism.messenger.playerError("Sorry, this command has disabled from in-game use.") );
 	        	plugin.alertPlayers( null, msg );
 	        	event.setCancelled(true);
-	        	plugin.log(msg);
+	        	// Log to console
+				if(plugin.getConfig().getBoolean("prism.alerts.illegal-commands.log-to-console")){
+					plugin.log( msg );
+				}
 			}
 		}
 		
