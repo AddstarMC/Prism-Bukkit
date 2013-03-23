@@ -324,8 +324,11 @@ public class Preview implements Previewable {
 	 * Store the preview session for later use
 	 */
 	public void postProcessPreview(){
+		// Initiates deferred changes but they're still
+		// set to preview only
+		applyDeferred();
 		// Count how many time 
-		changes_applied_count += deferredChanges.size();
+//		changes_applied_count += deferredChanges.size();
 		if(is_preview && changes_applied_count > 0){
 			// Append the preview and blocks temporarily
 			PreviewSession ps = new PreviewSession( player, this );
@@ -336,12 +339,7 @@ public class Preview implements Previewable {
 	}
 	
 	
-	/**
-	 * 
-	 * @return
-	 */
-	public void postProcess(){
-		
+	protected void applyDeferred(){
 		// Apply deferred block changes
 		for(Handler a : deferredChanges){
 			
@@ -367,6 +365,16 @@ public class Preview implements Previewable {
 				changes_applied_count++;
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public void postProcess(){
+		
+		applyDeferred();
 		
 		// POST ROLLBACK TRIGGERS
 		if(processType.equals(PrismProcessType.ROLLBACK)){

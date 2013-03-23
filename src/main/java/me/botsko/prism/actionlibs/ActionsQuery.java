@@ -28,6 +28,11 @@ public class ActionsQuery {
 	 */
 	private Prism plugin;
 	
+	/**
+	 * 
+	 */
+	private boolean shouldGroup = false;
+	
 	
 	/**
 	 * 
@@ -57,6 +62,20 @@ public class ActionsQuery {
 		Player player = null;
 		if(sender instanceof Player){
 			player = (Player) sender;
+		}
+		
+		// If lookup, determine if we need to group
+		shouldGroup = false;
+		if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
+			shouldGroup = true;
+			// What to default to
+			if( !plugin.getConfig().getBoolean("prism.queries.lookup-auto-group") ){
+				shouldGroup = false;
+			}
+			// Any overriding flags passed?
+			if( parameters.hasFlag(Flag.NO_GROUP) || parameters.hasFlag(Flag.EXTENDED) ){
+				shouldGroup = false;
+			}
 		}
 		
 		
@@ -113,7 +132,7 @@ public class ActionsQuery {
     				
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
-    				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+    				if( shouldGroup ){
     					aggregated = rs.getInt(16);
     				}
     				baseHandler.setAggregateCount(aggregated);
@@ -286,7 +305,7 @@ public class ActionsQuery {
 					"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time";
 			}
 			
-			if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) ){
+			if( shouldGroup ){
 				query += ", COUNT(id) AS counted";
 			}
 			
@@ -417,7 +436,9 @@ public class ActionsQuery {
 			
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
 				
-				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) && !parameters.hasFlag(Flag.EXTENDED) ){
+				// If lookup, determine if we need to group
+				// Do it! Or not...
+				if( shouldGroup ){
 					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
 				}
 			

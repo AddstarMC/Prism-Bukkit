@@ -367,7 +367,7 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Skulls
 			 */
-			if(getBlockId() == 144 ||getBlockId() == 397 ){
+			if( (getBlockId() == 144 || getBlockId() == 397) && getActionData() instanceof SkullActionData ){
 				
 				SkullActionData s = (SkullActionData)getActionData();
 	
