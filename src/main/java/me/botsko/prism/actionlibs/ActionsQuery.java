@@ -417,9 +417,23 @@ public class ActionsQuery {
 			
 			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
 				
-				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !parameters.hasFlag(Flag.NO_GROUP) && !parameters.hasFlag(Flag.EXTENDED) ){
-					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
+				// If lookup, determine if we need to group
+				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
+					boolean shouldGroup = true;
+					// What to default to
+					if( !plugin.getConfig().getBoolean("prism.queries.lookup-auto-group") ){
+						shouldGroup = false;
+					}
+					// Any overriding flags passed?
+					if( parameters.hasFlag(Flag.NO_GROUP) || parameters.hasFlag(Flag.EXTENDED) ){
+						shouldGroup = false;
+					}
+					// Do it! Or not...
+					if( shouldGroup ){
+						query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
+					}
 				}
+	
 			
 				/**
 				 * Order by
