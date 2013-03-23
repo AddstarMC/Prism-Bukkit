@@ -9,6 +9,7 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
+import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
@@ -188,27 +189,27 @@ public class PrismInventoryEvents implements Listener {
 			}
 		}
 	    
-//	    // Dropper
-//		else if(ih instanceof Dropper){
-//			Dropper dropper = (Dropper) ih;
-//			containerLoc = dropper.getLocation();
-//			
-//			// Only a click in the dispenser can trigger a slot < 9
-//			if(event.getRawSlot() <= 8){
-//				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-//					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-//			    }
-//			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-//			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-//			    }
-//			} else {
-//				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-//				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-//				if( event.isShiftClick() ){
-//		    		recordInvAction( player, currentitem, -1, "item-insert");
-//				}
-//			}
-//		}
+	    // Dropper
+		else if(ih instanceof Dropper){
+			Dropper dropper = (Dropper) ih;
+			containerLoc = dropper.getLocation();
+			
+			// Only a click in the dispenser can trigger a slot < 9
+			if(event.getRawSlot() <= 8){
+				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+			    }
+			} else {
+				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+				if( event.isShiftClick() ){
+		    		recordInvAction( player, currentitem, -1, "item-insert");
+				}
+			}
+		}
 	   
 	    // Hopper
 		else if(ih instanceof Hopper) {
