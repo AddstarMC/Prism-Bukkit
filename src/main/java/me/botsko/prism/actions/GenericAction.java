@@ -225,7 +225,7 @@ public class GenericAction implements Handler {
 		    /* days */	diff[0] = (diffInSeconds = (diffInSeconds / 24));
 
 		    // Only show days if more than 1
-		    if(diff[0] > 1){
+		    if(diff[0] >= 1){
 		    	time_ago += diff[0] + "d";
 		    }
 		    // Only show hours if > 1
