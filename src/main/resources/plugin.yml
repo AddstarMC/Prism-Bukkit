@@ -9,6 +9,10 @@ commands:
       description: Base command for everything Prism
       usage: /prism ?
       aliases: [pr]
+   what:
+      description: Identifies the held item according to the prism profiling system
+      usage: /what
+      aliases: [wtfisthis]
 permissions:
     prism.help:
         default: op

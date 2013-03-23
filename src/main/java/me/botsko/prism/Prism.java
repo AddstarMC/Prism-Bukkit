@@ -23,6 +23,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
+import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismChannelChatEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
@@ -224,6 +225,7 @@ public class Prism extends JavaPlugin {
 			
 			// Add commands
 			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
+			getCommand("what").setExecutor( (CommandExecutor) new WhatCommand(this) );
 			
 			// Init re-used classes
 			messenger = new Messenger( this.plugin_name );
