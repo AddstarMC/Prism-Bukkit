@@ -624,10 +624,10 @@ public class Prism extends JavaPlugin {
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
 				deleteTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
 				    public void run(){
+				    	ActionsQuery aq = new ActionsQuery(prism);
+				    	// Execute in batches so we don't tie up the db with one massive query
 				    	for(QueryParameters param : paramList){
-							ActionsQuery aq = new ActionsQuery(prism);
-							// Execute in batches so we don't tie up the db with one massive query
-	
+
 							cycle_rows_affected = aq.delete(param);
 							debug("Purge cycle cleared " + cycle_rows_affected + " rows.");
 							total_records_affected += cycle_rows_affected;
