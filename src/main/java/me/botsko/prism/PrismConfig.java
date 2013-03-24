@@ -36,6 +36,8 @@ public class PrismConfig extends ConfigBase {
 		// Database
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 		config.addDefault("prism.database.max-pool-connections", 20);
+		config.addDefault("prism.database.pool-initial-size", 10);
+		config.addDefault("prism.database.max-idle-connections", 10);
 		config.addDefault("prism.database.max-wait", 30000);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
