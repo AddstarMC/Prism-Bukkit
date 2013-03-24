@@ -306,11 +306,26 @@ public class Prism extends JavaPlugin {
 			pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
 			pool.setMaxIdle( config.getInt("prism.database.max-idle-connections") );
 		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
+		    pool.setRemoveAbandoned(true);
+		    pool.setRemoveAbandonedTimeout(60);
 		} else {
 			this.log("Error: Database connection was not established. Please check your configuration file.");
 		}
 		
 		return pool;
+	}
+	
+	
+	/**
+	 * Attempt to rebuild the pool, useful for reloads
+	 * and failed database connections being restored
+	 */
+	public void rebuildPool(){
+		// Close pool connections when plugin disables
+		if(pool != null){
+			pool.close();
+		}
+		initDbPool();
 	}
 	
 	
@@ -334,7 +349,9 @@ public class Prism extends JavaPlugin {
 			con = pool.getConnection();
 		} catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
-			e.printStackTrace();
+			if( !e.getMessage().contains("Pool empty") ){
+				e.printStackTrace();
+			}
 		}
 		return con;
 	}

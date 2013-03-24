@@ -21,6 +21,18 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 */
 	private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
+	
+	/**
+	 * If the recorder skips running we need to count because
+	 * if this happens x times in a row, the recorder
+	 * will delay itself so we don't kill the server
+	 */
+	private int failedDbConnectionCount = 0;
+	
+	/**
+	 * Track the timestamp at which we last paused
+	 */
+	private long lastPauseTime = 0;
 
 	
 	/**
@@ -138,6 +150,11 @@ public class ActionRecorder implements Runnable {
 		    	Connection conn = Prism.dbc();
 		        if(conn == null || conn.isClosed()){
 					plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+					failedDbConnectionCount++;
+					if( failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
+						lastPauseTime = System.currentTimeMillis();
+						plugin.log("Too many problems connecting. Let's wait for "+plugin.getConfig().getInt("prism.database.wait-on-failure-duration")+" seconds before we try again.");
+					}
 					return;
 				}
 		        conn.setAutoCommit(false);
@@ -185,7 +202,20 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	public void run() {
+	public void run(){
+		long currentTime = System.currentTimeMillis();
+		long diff = currentTime - lastPauseTime;
+		if( lastPauseTime > 0 ){
+			// see if we need to wait
+			if( diff < (plugin.getConfig().getInt("prism.database.wait-on-failure-duration")*1000) ){
+				return;
+			} else {
+				plugin.rebuildPool();
+				// Otherwise, reset the pause
+				lastPauseTime = 0;
+				failedDbConnectionCount = 0;
+			}
+		}
 		save();
 	}
 }
