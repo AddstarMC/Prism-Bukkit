@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.commandlibs.Flag;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -85,6 +86,9 @@ public class InspectorWand extends QueryWandBase implements Wand {
 			}
 			for(me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
+				if( parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
+					am.showExtended();
+				}
 				player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 			}
 		} else {

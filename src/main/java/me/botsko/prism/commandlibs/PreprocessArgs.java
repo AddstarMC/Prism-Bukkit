@@ -167,6 +167,9 @@ public class PreprocessArgs {
 				
 				// World
 				if(arg_type.equals("w")){
+					if(val.equalsIgnoreCase("current")){
+						val = player.getWorld().getName();
+					}
 					parameters.setWorld( val );
 				}
 				
