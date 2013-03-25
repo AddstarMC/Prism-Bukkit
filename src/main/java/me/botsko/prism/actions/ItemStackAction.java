@@ -19,6 +19,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
+import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.enchantments.Enchantment;
@@ -471,9 +472,9 @@ public class ItemStackAction extends GenericAction {
 			else if( block.getType().equals(Material.BREWING_STAND) ){
 				container = (BrewingStand) block.getState();
 			}
-//			else if( block.getType().equals(Material.DROPPER) ){
-//				container = (Dropper) block.getState();
-//			}
+			else if( block.getType().equals(Material.DROPPER) ){
+				container = (Dropper) block.getState();
+			}
 			else if( block.getType().equals(Material.HOPPER) ){
 				container = (Hopper) block.getState();
 			}
@@ -496,7 +497,7 @@ public class ItemStackAction extends GenericAction {
 						// a slot larger than the contents size is recorded
 						// and triggers ArrayIndexOutOfBounds
 						// https://snowy-evening.com/botsko/prism/450/
-						if( getActionData().slot <= inv.getSize() ){
+						if( getActionData().slot < inv.getSize() ){
 							ItemStack currentSlotItem = inv.getItem( getActionData().slot );
 							// Make sure nothing's there.
 							if( currentSlotItem == null ){
