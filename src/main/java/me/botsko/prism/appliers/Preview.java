@@ -463,7 +463,7 @@ public class Preview implements Previewable {
 		
 		// If previewing, the applied count will never apply, we'll
 		// assume it's all planned counts
-		if( is_preview && changes_planned_count > 0 ){
+		if( is_preview ){
 			changes_planned_count += changes_applied_count;
 			changes_applied_count = 0;
 		}
