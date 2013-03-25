@@ -47,17 +47,17 @@ public class PrismApplierCallback implements ApplierCallback {
 			} else {
 			
 				// Build the results message
-				String msg = "At least " + result.getChangesApplied() + " planned reversals.";
+				String msg = "At least " + result.getChangesPlanned() + " planned reversals.";
 				if(result.getChangesSkipped() > 0){
 					msg += " " + result.getChangesSkipped() + " skipped.";
 				}
-				if(result.getChangesApplied() > 0){
+				if(result.getChangesPlanned() > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
 				sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
-				if(result.getChangesApplied() == 0){
+				if(result.getChangesPlanned() == 0){
 					sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to rollback, preview canceled for you." ) );
 				}
 			}
@@ -81,17 +81,17 @@ public class PrismApplierCallback implements ApplierCallback {
 			} else {
 			
 				// Build the results message
-				String msg = result.getChangesApplied() + " planned restorations.";
+				String msg = result.getChangesPlanned() + " planned restorations.";
 				if(result.getChangesSkipped() > 0){
 					msg += " " + result.getChangesSkipped() + " skipped.";
 				}
-				if(result.getChangesApplied() > 0){
+				if(result.getChangesPlanned() > 0){
 					msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
 				}
 				sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
 				
 				// Let me know there's no need to cancel/apply
-				if(result.getChangesApplied() == 0){
+				if(result.getChangesPlanned() == 0){
 					sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GRAY + "Nothing to restore, preview canceled for you." ) );
 				}
 			}

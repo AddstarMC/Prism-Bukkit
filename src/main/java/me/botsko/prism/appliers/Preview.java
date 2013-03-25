@@ -84,6 +84,11 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
+	protected int changes_planned_count;
+	
+	/**
+	 * 
+	 */
 	protected final LinkedBlockingQueue<Handler> worldChangeQueue = new LinkedBlockingQueue<Handler>();
 	
 	/**
@@ -158,6 +163,7 @@ public class Preview implements Previewable {
 		setIsPreview(false);
 		changes_applied_count = 0;
 		skipped_block_count = 0;
+		changes_planned_count = 0;
 		apply();
 	}
 	
@@ -288,6 +294,12 @@ public class Preview implements Previewable {
 						worldChangeQueue.remove(a);
 						continue;
 					}
+					// Skipping, but change planned
+					else if(result.getType().equals(ChangeResultType.PLANNED)){
+						changes_planned_count++;
+						worldChangeQueue.remove(a);
+						continue;
+					}
 					// Change applied
 					else {
 						blockStateChanges.add( result.getBlockStateChange() );
@@ -299,22 +311,16 @@ public class Preview implements Previewable {
 					}
 				}
 	    		
+				
 	    		// The task for this action is done being used
 	    		if(worldChangeQueue.isEmpty() || is_preview){
 	    			plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
+	    			if( is_preview ){
+	    				postProcessPreview();
+	    			} else {
+	    				postProcess();
+	    			}
 	    		}
-	    		
-		    	// If the queue is empty, we're done
-		    	if(worldChangeQueue.isEmpty()){
-		    		postProcess();
-		    	} else {
-		    		
-		    		// otherwise we're previewing and need
-		    		// info about the planned rollback
-		    		if(is_preview){
-		    			postProcessPreview();
-		    		}
-		    	}
 		    }
 		}, 2L, 2L);
 	}
@@ -327,9 +333,8 @@ public class Preview implements Previewable {
 		// Initiates deferred changes but they're still
 		// set to preview only
 		applyDeferred();
-		// Count how many time 
-//		changes_applied_count += deferredChanges.size();
-		if(is_preview && changes_applied_count > 0){
+		// If there's planned changes, save the preview
+		if(is_preview && (changes_applied_count > 0 || changes_planned_count > 0 ) ){
 			// Append the preview and blocks temporarily
 			PreviewSession ps = new PreviewSession( player, this );
 			plugin.playerActivePreviews.put(player.getName(), ps);
@@ -356,6 +361,12 @@ public class Preview implements Previewable {
 			// Skipping
 			else if(result.getType().equals(ChangeResultType.SKIPPED)){
 				skipped_block_count++;
+				worldChangeQueue.remove(a);
+				continue;
+			}
+			// Skipping, but planned
+			else if(result.getType().equals(ChangeResultType.PLANNED)){
+				changes_planned_count++;
 				worldChangeQueue.remove(a);
 				continue;
 			}
@@ -450,7 +461,14 @@ public class Preview implements Previewable {
 	 */
 	public void fireApplierCallback(){
 		
-		ApplierResult results = new ApplierResult( is_preview, changes_applied_count, skipped_block_count, blockStateChanges, processType, entities_moved );
+		// If previewing, the applied count will never apply, we'll
+		// assume it's all planned counts
+		if( is_preview && changes_planned_count > 0 ){
+			changes_planned_count += changes_applied_count;
+			changes_applied_count = 0;
+		}
+		
+		ApplierResult results = new ApplierResult( is_preview, changes_applied_count, skipped_block_count, changes_planned_count, blockStateChanges, processType, entities_moved );
 		
 		if(callback != null){
 			callback.handle(sender, results);
@@ -482,6 +500,7 @@ public class Preview implements Previewable {
 				}
 				plugin.debug("Total time: " + total + "ms");
 				plugin.debug("Changes: " + changes_applied_count);
+				plugin.debug("Planned: " + changes_planned_count);
 				plugin.debug("Skipped: " + skipped_block_count);
 			}
 		}

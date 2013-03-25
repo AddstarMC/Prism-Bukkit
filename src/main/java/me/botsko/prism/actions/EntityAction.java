@@ -315,6 +315,6 @@ public class EntityAction extends GenericAction {
 	    	}
 			return new ChangeResult( ChangeResultType.APPLIED, null );
 		}
-		return new ChangeResult( ChangeResultType.DEFERRED, null );
+		return new ChangeResult( ChangeResultType.PLANNED, null );
 	}
 }
