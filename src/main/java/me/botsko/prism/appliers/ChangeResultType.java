@@ -1,5 +1,5 @@
 package me.botsko.prism.appliers;
 
 public enum ChangeResultType {
-	APPLIED, SKIPPED, DEFERRED
+	APPLIED, SKIPPED, DEFERRED, PLANNED
 }

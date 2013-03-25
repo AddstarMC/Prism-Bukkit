@@ -151,6 +151,20 @@ public class PrismCommands extends Executor {
 		.setHandler(new ParamsCommand());
 		
 		/**
+		 * /prism actions
+		 */
+		addSub("actions", "prism.help")
+		.allowConsole()
+		.setHandler(new ActionsCommand());
+		
+		/**
+		 * /prism flags
+		 */
+		addSub("flags", "prism.help")
+		.allowConsole()
+		.setHandler(new FlagsCommand());
+		
+		/**
 		 * /prism reload
 		 */
 		addSub("reload", "prism.reload")

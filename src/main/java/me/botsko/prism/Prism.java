@@ -24,6 +24,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
+import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismChannelChatEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
@@ -225,6 +226,7 @@ public class Prism extends JavaPlugin {
 			
 			// Add commands
 			getCommand("prism").setExecutor( (CommandExecutor) new PrismCommands(this) );
+			getCommand("what").setExecutor( (CommandExecutor) new WhatCommand(this) );
 			
 			// Init re-used classes
 			messenger = new Messenger( this.plugin_name );
@@ -301,14 +303,30 @@ public class Prism extends JavaPlugin {
 		}
 		
 		if( pool != null ){
+			pool.setInitialSize( config.getInt("prism.database.pool-initial-size") );
 			pool.setMaxActive( config.getInt("prism.database.max-pool-connections") );
-			pool.setMaxIdle( config.getInt("prism.database.max-pool-connections") );
+			pool.setMaxIdle( config.getInt("prism.database.max-idle-connections") );
 		    pool.setMaxWait( config.getInt("prism.database.max-wait") );
+		    pool.setRemoveAbandoned(true);
+		    pool.setRemoveAbandonedTimeout(60);
 		} else {
 			this.log("Error: Database connection was not established. Please check your configuration file.");
 		}
 		
 		return pool;
+	}
+	
+	
+	/**
+	 * Attempt to rebuild the pool, useful for reloads
+	 * and failed database connections being restored
+	 */
+	public void rebuildPool(){
+		// Close pool connections when plugin disables
+		if(pool != null){
+			pool.close();
+		}
+		initDbPool();
 	}
 	
 	
@@ -332,7 +350,9 @@ public class Prism extends JavaPlugin {
 			con = pool.getConnection();
 		} catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
-			e.printStackTrace();
+			if( !e.getMessage().contains("Pool empty") ){
+				e.printStackTrace();
+			}
 		}
 		return con;
 	}
@@ -623,10 +643,10 @@ public class Prism extends JavaPlugin {
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
 				deleteTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
 				    public void run(){
+				    	ActionsQuery aq = new ActionsQuery(prism);
+				    	// Execute in batches so we don't tie up the db with one massive query
 				    	for(QueryParameters param : paramList){
-							ActionsQuery aq = new ActionsQuery(prism);
-							// Execute in batches so we don't tie up the db with one massive query
-	
+
 							cycle_rows_affected = aq.delete(param);
 							debug("Purge cycle cleared " + cycle_rows_affected + " rows.");
 							total_records_affected += cycle_rows_affected;

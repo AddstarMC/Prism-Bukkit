@@ -30,6 +30,8 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( Prism.messenger.playerHelp("(l|lookup) (params)", "Search the database"));
 		sender.sendMessage( Prism.messenger.playerHelp("near", "Find all changes nearby."));
 		sender.sendMessage( Prism.messenger.playerHelp("params", "Lists parameter help."));
+		sender.sendMessage( Prism.messenger.playerHelp("actions", "Lists actions."));
+		sender.sendMessage( Prism.messenger.playerHelp("flags", "Lists possible applier flags."));
 		sender.sendMessage( Prism.messenger.playerHelp("(preview|pv) (rollback|rb) (params)", "Preview a rollback."));
 		sender.sendMessage( Prism.messenger.playerHelp("(preview|pv) (restore|rs) (params)", "Preview a restoration."));
 		sender.sendMessage( Prism.messenger.playerHelp("(preview|pv) apply", "Applies the last preview."));

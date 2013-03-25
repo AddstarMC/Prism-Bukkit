@@ -36,7 +36,11 @@ public class PrismConfig extends ConfigBase {
 		// Database
 		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 		config.addDefault("prism.database.max-pool-connections", 20);
+		config.addDefault("prism.database.pool-initial-size", 10);
+		config.addDefault("prism.database.max-idle-connections", 10);
 		config.addDefault("prism.database.max-wait", 30000);
+		config.addDefault("prism.database.max-failures-before-wait", 5);
+		config.addDefault("prism.database.wait-on-failure-duration", 5);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
 		// Mysql
@@ -98,7 +102,7 @@ public class PrismConfig extends ConfigBase {
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
 		config.addDefault("prism.purge.batch-tick-delay", 60);
-		config.addDefault("prism.purge.records-per-batch", 20000);
+		config.addDefault("prism.purge.records-per-batch", 5000);
 		
 		// Appliers
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
@@ -208,6 +212,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
+		config.addDefault("prism.alerts.illegal-commands.log-to-console", true);
 		List<String> illegal_commands = new ArrayList<String>();
 		illegal_commands.add("op");
 		illegal_commands.add("deop");
@@ -217,6 +222,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
+		config.addDefault("prism.alerts.uses.log-to-console", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
 		

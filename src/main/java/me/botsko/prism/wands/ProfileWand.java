@@ -7,7 +7,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class ProfileWand extends WandBase implements Wand{
+public class ProfileWand extends WandBase implements Wand {
 	
 	/**
 	 * 

@@ -59,12 +59,14 @@ public class UseMonitor {
 		count++;
 		countedEvents.put(playername, count );
 		
+		msg = ChatColor.GRAY + playername + " " + msg;
 		if(count == 5){
-			plugin.alertPlayers(null, playername + " continues - pausing warnings.");
-		} else {
-			if(count < 5){
-				plugin.alertPlayers(null, ChatColor.GRAY + playername + " " + msg);
-			}
+			msg = playername + " continues - pausing warnings.";
+		}
+		
+		if( count <= 5 && plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")){
+			plugin.alertPlayers(null, msg);
+			plugin.log( msg );
 		}
 	}
 	

@@ -22,6 +22,11 @@ public class ApplierResult {
 	/**
 	 * 
 	 */
+	private final int changes_planned;
+	
+	/**
+	 * 
+	 */
 	private final boolean is_preview;
 	
 	/**
@@ -46,9 +51,10 @@ public class ApplierResult {
 	 * @param changes_skipped
 	 * @param messages
 	 */
-	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, ArrayList<BlockStateChange> blockStateChanges, PrismProcessType processType, HashMap<Entity,Integer> entities_moved ){
+	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, int changes_planned, ArrayList<BlockStateChange> blockStateChanges, PrismProcessType processType, HashMap<Entity,Integer> entities_moved ){
 		this.changes_applied = changes_applied;
 		this.changes_skipped = changes_skipped;
+		this.changes_planned = changes_planned;
 		this.is_preview = is_preview;
 		this.blockStateChanges = blockStateChanges;
 		this.processType = processType;
@@ -69,6 +75,15 @@ public class ApplierResult {
 	 */
 	public int getChangesSkipped() {
 		return changes_skipped;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getChangesPlanned(){
+		return changes_planned;
 	}
 
 
