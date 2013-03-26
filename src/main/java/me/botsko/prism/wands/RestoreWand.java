@@ -1,7 +1,5 @@
 package me.botsko.prism.wands;
 
-import java.util.ArrayList;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

@@ -61,7 +61,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 			params = parameters.clone();
 		} catch (CloneNotSupportedException ex) {
 			params = new QueryParameters();
-			player.sendMessage(Prism.messenger.playerError(ChatColor.YELLOW + "Warning: An error occurred while trying to retrieve the params from this wand. Checking with default parameters."));
+			player.sendMessage(Prism.messenger.playerError("Error retreiving parameters. Checking with default parameters."));
 		}
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation(loc);

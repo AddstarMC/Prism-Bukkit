@@ -60,14 +60,14 @@ public class LookupCommand implements SubHandler {
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( parameters, call.getSender() );
 		String sharingWithPlayers = "";
-		for(String sharee : parameters.getShared_players()){ // Probably not the right word, but whatever, it's just a variable.
+		for(String sharee : parameters.getSharedPlayers()){ // Probably not the right word, but whatever, it's just a variable.
 			sharingWithPlayers += sharee + ", ";
 		}
 		sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
 		
-		parameters.addShared_player(call.getSender().getName());
+		parameters.addSharedPlayer(call.getSender().getName());
 		
-		for(String playerName : parameters.getShared_players()){
+		for(String playerName : parameters.getSharedPlayers()){
 			
 			boolean isSender = playerName.equals(call.getSender().getName());
 			

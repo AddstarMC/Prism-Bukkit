@@ -5,8 +5,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.PreprocessArgs;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 
 /**
  * A base class for Wands that use 
@@ -28,6 +28,7 @@ public abstract class QueryWandBase extends WandBase {
 	 */
 	protected Prism plugin;
 	
+	
 	/**
 	 * When we initialize the class, make the {@link #parameters}
 	 * equal to a fresh QueryParameters.
@@ -36,6 +37,7 @@ public abstract class QueryWandBase extends WandBase {
 		parameters = new QueryParameters();
 		this.plugin = plugin;
 	}
+	
 	
 	/**
 	 * Set the field {@link #parameters} with the parameters here.
@@ -61,6 +63,7 @@ public abstract class QueryWandBase extends WandBase {
 			return true;
 		}
 	}
+	
 	
 	/**
 	 * Get the {@link #parameters} set from {@link #setParameters}.

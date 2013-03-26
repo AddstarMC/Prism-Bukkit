@@ -562,21 +562,24 @@ public class QueryParameters implements Cloneable {
 		return original_command;
 	}
 	
+	
 	/**
 	 * Get the players that you're sharing your lookup with.
 	 * @return
 	 */
-	public ArrayList<String> getShared_players(){
+	public ArrayList<String> getSharedPlayers(){
 		return shared_players;
 	}
+	
 	
 	/**
 	 * Set the players you're sharing the lookup with.
 	 * @param players 
 	 */
-	public void addShared_player(String player){
+	public void addSharedPlayer(String player){
 		this.shared_players.add(player);
 	}
+	
 	
 	/**
 	 * 

@@ -18,7 +18,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.LevenshteinDistance;
-import org.bukkit.Bukkit;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -353,12 +352,13 @@ public class PreprocessArgs {
 								} else if (flag.equals(Flag.SHARE)){
 									for(String sharePlayer : flagComponents[1].split(",")){
 										if(sharePlayer.equals(sender.getName())){
-											sender.sendMessage(Prism.messenger.playerError( "You can't share lookup results with yourself, silly!" ));
+											respond( sender, Prism.messenger.playerError("You can't share lookup results with yourself!") );
+											return null;
 										}
 										if(plugin.getServer().getPlayer(sharePlayer) != null || sharePlayer.equalsIgnoreCase("CONSOLE")){
-											parameters.addShared_player(sharePlayer);
+											parameters.addSharedPlayer(sharePlayer);
 										} else {
-											sender.sendMessage(Prism.messenger.playerError( "I can't share the results with '" + sharePlayer + "' because I can't find them. Are they not online? Check your spelling." ));
+											sender.sendMessage(Prism.messenger.playerError( "Can't share with " + sharePlayer + ". Are they online?" ));
 										}
 									}
 								}

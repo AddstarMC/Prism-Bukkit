@@ -104,7 +104,7 @@ public class WandCommand implements SubHandler {
 		
 		for(int i = (isInspect ? 1 : 2); i < call.getArgs().length; i++){
 			if(parameters.isEmpty()){
-				parameters += " with parameters:";
+				parameters += " using:" + ChatColor.GRAY;
 			}
 			parameters += " " + call.getArg(i);
 		}
@@ -225,9 +225,9 @@ public class WandCommand implements SubHandler {
 			}
 			
 			// Let's build the QueryParameters for it if it's a Query wand.
-			if(wand instanceof QueryWandBase){
-				if(!((QueryWandBase) wand).setParameters(call.getPlayer(), call.getArgs(), (isInspect ? 1 : 2))){ // This returns if it was successful
-					call.getPlayer().sendMessage( Prism.messenger.playerError("Warning: Only some parameters may be in effect. Re-enter your command, fixing any issues in it, to make sure all parameters work.") );
+			if( wand instanceof QueryWandBase ){
+				if( !((QueryWandBase) wand).setParameters(call.getPlayer(), call.getArgs(), (isInspect ? 1 : 2)) ){ // This returns if it was successful
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Notice: Only some parameters used..") );
 				}
 			}
 			
