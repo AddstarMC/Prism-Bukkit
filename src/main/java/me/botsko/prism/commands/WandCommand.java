@@ -12,6 +12,7 @@ import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.InspectorWand;
 import me.botsko.prism.wands.ProfileWand;
+import me.botsko.prism.wands.QueryWandBase;
 import me.botsko.prism.wands.RestoreWand;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
@@ -38,9 +39,9 @@ public class WandCommand implements SubHandler {
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
-		
 		String type = "i";
-		if(call.getArgs().length == 2){
+		boolean isInspect = call.getArg(0).equalsIgnoreCase("inspect") || call.getArg(0).equalsIgnoreCase("i");
+		if(!isInspect){
 			type = call.getArg(1);
 		}
 		
@@ -95,13 +96,21 @@ public class WandCommand implements SubHandler {
 		
 		String wandOn = "";
 		String item_name = "";
+		String parameters = "";
 		if( item_id != 0 ){
 			item_name = plugin.getItems().getAlias(item_id, item_subid);
 			wandOn += " on a " + item_name;
 		}
 		
+		for(int i = (isInspect ? 1 : 2); i < call.getArgs().length; i++){
+			if(parameters.isEmpty()){
+				parameters += " with parameters:";
+			}
+			parameters += " " + call.getArg(i);
+		}
+		
 		if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
-			call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+			call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry, but you may not use " + item_name + " for a wand.") );
 			return;
 		}
 		
@@ -120,7 +129,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new InspectorWand( plugin );
-				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+parameters+".") );
 				enabled = true;
 			}
 		}
@@ -155,7 +164,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new RollbackWand( plugin );
-				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Rollback wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+parameters+".") );
 				enabled = true;
 			}
 		}
@@ -173,7 +182,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
 				wand = new RestoreWand( plugin );
-				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
+				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Restore wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+parameters+".") );
 				enabled = true;
 			}
 		}
@@ -214,6 +223,14 @@ public class WandCommand implements SubHandler {
 				}
 				call.getPlayer().updateInventory();
 			}
+			
+			// Let's build the QueryParameters for it if it's a Query wand.
+			if(wand instanceof QueryWandBase){
+				if(!((QueryWandBase) wand).setParameters(call.getPlayer(), call.getArgs(), (isInspect ? 1 : 2))){ // This returns if it was successful
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Warning: Only some parameters may be in effect. Re-enter your command, fixing any issues in it, to make sure all parameters work.") );
+				}
+			}
+			
 			// Store
 			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 		} else {

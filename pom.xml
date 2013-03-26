@@ -8,7 +8,7 @@
   		<dependency>
 			<groupId>me.botsko</groupId>
 			<artifactId>elixr</artifactId>
-			<version>1.0-dev-17-g62eb894-SNAPSHOT</version>
+			<version>1.0-dev-21-g9892ef2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
@@ -37,11 +37,11 @@
 		   <scope>system</scope>
 		   <systemPath>${project.basedir}/../LIBS/Herochat.jar</systemPath>
 	   </dependency>
-	</dependencies>
+  	</dependencies>
 	<repositories>
 		<repository>
 			<id>dhmc-repo</id>
-			<url>http://dhmc.us:8081/nexus/content/repositories</url>
+			<url>http://dhmc.us:8081/nexus/content/repositories/snapshots</url>
 		</repository>
 		<repository>
 			<id>repobo-snap</id>

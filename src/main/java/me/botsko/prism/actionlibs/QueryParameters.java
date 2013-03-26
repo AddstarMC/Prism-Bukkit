@@ -51,6 +51,7 @@ public class QueryParameters implements Cloneable {
 	protected HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
 	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
 	protected ArrayList<Flag> flags = new ArrayList<Flag>();
+	protected ArrayList<String> shared_players = new ArrayList<String>();
 	
 	/**
 	 * Pagination
@@ -561,6 +562,21 @@ public class QueryParameters implements Cloneable {
 		return original_command;
 	}
 	
+	/**
+	 * Get the players that you're sharing your lookup with.
+	 * @return
+	 */
+	public ArrayList<String> getShared_players(){
+		return shared_players;
+	}
+	
+	/**
+	 * Set the players you're sharing the lookup with.
+	 * @param players 
+	 */
+	public void addShared_player(String player){
+		this.shared_players.add(player);
+	}
 	
 	/**
 	 * 

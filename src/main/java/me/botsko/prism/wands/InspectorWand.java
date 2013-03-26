@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.commandlibs.Flag;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -16,13 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class InspectorWand extends WandBase implements Wand {
-	
-	
-	/**
-	 * 
-	 */
-	private Prism plugin;
+public class InspectorWand extends QueryWandBase implements Wand {
 
 	
 	
@@ -31,7 +26,7 @@ public class InspectorWand extends WandBase implements Wand {
 	 * @param plugin
 	 */
 	public InspectorWand( Prism plugin ){
-		this.plugin = plugin;
+		super(plugin);
 	}
 	
 	
@@ -60,7 +55,14 @@ public class InspectorWand extends WandBase implements Wand {
 	protected void showBlockHistory( Player player, Block block, Location loc ){
 
 		// Build params
-		QueryParameters params = new QueryParameters();
+		QueryParameters params;
+		
+		try {
+			params = parameters.clone();
+		} catch (CloneNotSupportedException ex) {
+			params = new QueryParameters();
+			player.sendMessage(Prism.messenger.playerError(ChatColor.YELLOW + "Warning: An error occurred while trying to retrieve the params from this wand. Checking with default parameters."));
+		}
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation(loc);
 		
@@ -84,6 +86,9 @@ public class InspectorWand extends WandBase implements Wand {
 			}
 			for(me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()){
 				ActionMessage am = new ActionMessage(a);
+				if( parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
+					am.showExtended();
+				}
 				player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 			}
 		} else {
