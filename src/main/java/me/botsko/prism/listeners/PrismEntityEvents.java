@@ -12,6 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -365,7 +366,6 @@ public class PrismEntityEvents implements Listener {
 		String name;
 		String action = "entity-explode";
 		if(event.getEntity() != null){
-			name = "";
 			if(event.getEntity() instanceof Creeper){
 				if( !Prism.getIgnore().event("creeper-explode",event.getEntity().getWorld()) ) return;
 				action = "creeper-explode";
@@ -375,6 +375,14 @@ public class PrismEntityEvents implements Listener {
 				if( !Prism.getIgnore().event("tnt-explode",event.getEntity().getWorld()) ) return;
 				action = "tnt-explode";
 				name = "tnt";
+			} else if(event.getEntity() instanceof EnderDragon){
+				if( !Prism.getIgnore().event("dragon-eat", event.getEntity().getWorld()) ) return;
+				action = "dragon-eat";
+				name = "enderdragon";
+			} else {
+				if( !Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()) ) return;
+				name = event.getEntity().getType().getName().replace("_", " ");
+				name = name.length() > 15 ? name.substring(0, 15) : name; // I don't think this can happen, but just in case. Might look weird, but that's better than breaking stuff.
 			}
 		} else {
 			if( !Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()) ) return;

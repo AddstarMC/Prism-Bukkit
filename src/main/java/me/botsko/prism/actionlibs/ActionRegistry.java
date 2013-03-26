@@ -161,6 +161,7 @@ public class ActionRegistry {
 		registerAction( new ActionType( "craft-item", false, false, false, "ItemStackAction", "crafted") );
 		registerAction( new ActionType( "creeper-explode", false, true, true, "BlockAction", "blew up") );
 		registerAction( new ActionType( "crop-trample", false, true, true, "BlockAction", "trampled") );
+		registerAction( new ActionType( "dragon-eat", false, true, true, "BlockAction", "ate" ) );
 		registerAction( new ActionType( "enchant-item", false, false, false, "ItemStackAction", "enchanted") );
 		registerAction( new ActionType( "enderman-pickup", false, true, true, "BlockAction", "picked up") );
 		registerAction( new ActionType( "enderman-place", true, true, true, "BlockAction", "placed") );
