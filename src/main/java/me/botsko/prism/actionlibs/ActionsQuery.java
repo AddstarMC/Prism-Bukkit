@@ -302,7 +302,7 @@ public class ActionsQuery {
 			else if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
 				query +=
 					"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') AS display_date, " +
-					"DATE_FORMAT(prism_actions.action_time, '%l:%i%p') AS display_time";
+					"DATE_FORMAT(prism_actions.action_time, '%l:%i:%s%p') AS display_time";
 			}
 			
 			if( shouldGroup ){
