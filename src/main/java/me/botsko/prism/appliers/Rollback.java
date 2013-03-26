@@ -15,7 +15,8 @@ import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 
 public class Rollback extends Preview {
-	
+
+    protected Prism prism;
 	
 	/**
 	 * 
@@ -47,7 +48,7 @@ public class Rollback extends Preview {
 			if( !parameters.hasFlag(Flag.NO_EXT) ){
 				ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),parameters.getRadius());
 				if( blockStateChanges != null && !blockStateChanges.isEmpty() ){
-					player.sendMessage( Prism.messenger.playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss.") );
+					player.sendMessage( Prism.messenger.playerHeaderMsg("Extinguishing fire!" + (prism.getConfig().getBoolean("prism.messages.assurances", true) ? ChatColor.GRAY + " Like a boss." : null)) );
 				}
 			}
 		}
@@ -57,7 +58,7 @@ public class Rollback extends Preview {
 			if( !parameters.hasFlag(Flag.NO_ITEMCLEAR) ){
 				int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
 				if(removed > 0){
-					player.sendMessage( Prism.messenger.playerHeaderMsg("Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss.") );
+					player.sendMessage( Prism.messenger.playerHeaderMsg("Removed " + removed + " drops in affected area." + (prism.getConfig().getBoolean("prism.messages.assurances", true) ? ChatColor.GRAY + " Like a boss." : null)) );
 				}
 			}
 		}
@@ -74,7 +75,7 @@ public class Rollback extends Preview {
 			drained = BlockUtils.drainwater(player.getLocation(),parameters.getRadius());
 		}
 		if(drained != null && drained.size() > 0){
-			player.sendMessage( Prism.messenger.playerHeaderMsg("Draining liquid!" + ChatColor.GRAY + " Like a boss.") );
+			player.sendMessage( Prism.messenger.playerHeaderMsg("Draining liquid!" + (prism.getConfig().getBoolean("prism.messages.assurances", true) ? ChatColor.GRAY + " Like a boss." : null)) );
 		}
 			
 		// Give the results to the changequeue

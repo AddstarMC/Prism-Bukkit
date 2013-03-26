@@ -150,7 +150,7 @@ public class Preview implements Previewable {
 				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 			}
 		}
-		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
+		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Preview canceled." + (plugin.getConfig().getBoolean("prism.messages.assurances", true) ? ChatColor.GRAY + " Please come again!" : null)) );
 	}
 	
 	

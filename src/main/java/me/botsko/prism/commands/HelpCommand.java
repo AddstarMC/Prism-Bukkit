@@ -9,7 +9,8 @@ import me.botsko.prism.commandlibs.SubHandler;
 
 public class HelpCommand implements SubHandler {
 
-	
+	protected Prism prism;
+
 	/**
 	 * Handle the command
 	 */
@@ -24,7 +25,7 @@ public class HelpCommand implements SubHandler {
 	 */
 	protected void help( CommandSender sender ){
 		
-		sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Basic Usage ---" ) );
+		sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "---" + (prism.getConfig().getBoolean("prism.messages.branding", true) ? null : " Prism:") + " Basic Usage ---" ) );
 		
 		sender.sendMessage( Prism.messenger.playerHelp("i", "Toggles the inspector wand."));
 		sender.sendMessage( Prism.messenger.playerHelp("(l|lookup) (params)", "Search the database"));
