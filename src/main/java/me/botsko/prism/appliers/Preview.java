@@ -297,7 +297,6 @@ public class Preview implements Previewable {
 					// Skipping, but change planned
 					else if(result.getType().equals(ChangeResultType.PLANNED)){
 						changes_planned_count++;
-						worldChangeQueue.remove(a);
 						continue;
 					}
 					// Change applied
