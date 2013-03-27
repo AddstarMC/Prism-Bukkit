@@ -332,7 +332,7 @@ public class ActionsQuery {
 			/**
 			 * World
 			 */
-			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getSpecificBlockLocation() == null ){
 				if( parameters.getWorld() != null ){
 					query += " AND world = '"+parameters.getWorld()+"'";
 				}
@@ -374,8 +374,10 @@ public class ActionsQuery {
 			 * 
 			 * Only build a radius condition if we're doing a select. If doing a delete, 
 			 * only use the radius if it was specified by the player.
+			 * 
+			 * If we're using a specific block location, don't use a radius.
 			 */
-			if( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ){
+			if( ( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ) && parameters.getSpecificBlockLocation() == null ){
 				query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
 			}
 
