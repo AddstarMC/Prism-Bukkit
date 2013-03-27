@@ -89,17 +89,20 @@ public class ActionRecorder implements Runnable {
 	 */
 	public int insertActionIntoDatabase( Handler a){
 		int id = 0;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet generatedKeys = null;
 		try {
 			
 			// prepare to save to the db
 			a.save();
 
-			Connection conn = Prism.dbc();
+			conn = Prism.dbc();
 			if(conn == null){
 				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        PreparedStatement s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setString(1,a.getType().getName());
 	        s.setString(2,a.getPlayerName());
 	        s.setString(3,a.getWorldName());
@@ -113,16 +116,17 @@ public class ActionRecorder implements Runnable {
 	        s.setString(11,a.getData());
 	        s.executeUpdate();
 	        
-	        ResultSet generatedKeys = s.getGeneratedKeys();
+	        generatedKeys = s.getGeneratedKeys();
 	        if(generatedKeys.next()){
 	        	id = generatedKeys.getInt(1);
 	        }
 	        
-	        generatedKeys.close();
-    		s.close();
-    		conn.close();
         } catch (SQLException e) {
         	plugin.logDbError( e );
+        } finally {
+        	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return id;
 	}
@@ -134,7 +138,10 @@ public class ActionRecorder implements Runnable {
 	 * @throws SQLException
 	 */
 	public void insertActionsIntoDatabase() {
+		
 	    PreparedStatement s = null;
+	    Connection conn = null;
+	    
 	    int actionsRecorded = 0;
 	    try {
 	    	
@@ -147,9 +154,11 @@ public class ActionRecorder implements Runnable {
 	    	
 	    	if( !queue.isEmpty() ){
 
-		    	Connection conn = Prism.dbc();
+		    	conn = Prism.dbc();
 		        if(conn == null || conn.isClosed()){
-					plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+		        	if( failedDbConnectionCount < 1 ){
+		        		plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+		        	}
 					failedDbConnectionCount++;
 					if( failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
 						lastPauseTime = System.currentTimeMillis();
@@ -190,11 +199,13 @@ public class ActionRecorder implements Runnable {
 		        
 		        s.executeBatch();
 		        conn.commit();
-		        s.close();
-		        conn.close();
+
 	    	}
 	    } catch (SQLException e) {
 	    	plugin.logDbError( e );
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
 
