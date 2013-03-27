@@ -86,15 +86,16 @@ public class ActionsQuery {
 		String query = getArgumentConditions(parameters);
 		
 		if(query != null){
+			Connection conn = null;
+			PreparedStatement s = null;
+			ResultSet rs = null;
 			try {
-				
-				Connection conn = Prism.dbc();
 				
 				plugin.eventTimer.recordTimedEvent("query started");
 				
-	            PreparedStatement s;
+				conn = Prism.dbc();
 	    		s = conn.prepareStatement(query);
-	    		ResultSet rs = s.executeQuery();
+	    		rs = s.executeQuery();
 	    		
 	    		plugin.eventTimer.recordTimedEvent("query returned, building results");
 	    		
@@ -140,20 +141,19 @@ public class ActionsQuery {
     				actions.add(baseHandler);
 	    			
 	    		}
-	    		
-	    		rs.close();
-	    		s.close();
-	    		conn.close();
 	            
 	        } catch (SQLException e) {
 	            plugin.logDbError( e );
+	        } finally {
+	        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+	        	if(s != null) try { s.close(); } catch (SQLException e) {}
+	        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
 	        }
 		}
 		
 		// Build result object
 		QueryResult res = new QueryResult( actions, parameters );
 		res.setPerPage( parameters.getPerPage() );
-		
 		
 		// Cache it if we're doing a lookup. Otherwise we don't
 		// need a cache.
@@ -187,25 +187,27 @@ public class ActionsQuery {
 	 */
 	public int getUsersLastPrismProcessId( String playername ){
 		int id = 0;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
             
-			Connection conn = Prism.dbc();
-            PreparedStatement s;
+			conn = Prism.dbc();
     		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
     		s.setString(1, playername);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
 
     		if(rs.first()){
     			id = rs.getInt("id");
 			}
-    		
-    		rs.close();
-    		s.close();
-    		conn.close();
             
         } catch (SQLException e) {
         	plugin.logDbError( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return id;
 	}
@@ -218,14 +220,16 @@ public class ActionsQuery {
 	 */
 	public PrismProcessAction getPrismProcessRecord( int id ){
 		PrismProcessAction process = null;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
             
-			Connection conn = Prism.dbc();
-            PreparedStatement s;
+			conn = Prism.dbc();
     		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
     		s.setInt(1, id);
     		s.executeQuery();
-    		ResultSet rs = s.getResultSet();
+    		rs = s.getResultSet();
 
     		if(rs.first()){
     			process = new PrismProcessAction();
@@ -240,13 +244,13 @@ public class ActionsQuery {
     			process.setZ( rs.getInt("z") );
     			process.setData( rs.getString("data") );
 			}
-    		
-    		rs.close();
-    		s.close();
-    		conn.close();
             
         } catch (SQLException e) {
         	plugin.logDbError( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return process;
 	}
@@ -258,18 +262,21 @@ public class ActionsQuery {
 	 */
 	public int delete( QueryParameters parameters ){
 		int total_rows_affected = 0, cycle_rows_affected;
+		Connection conn = null;
+		Statement s = null;
 		try {
 			// Build conditions based off final args
 			String query = getArgumentConditions( parameters );
-			Connection conn = Prism.dbc();
-			Statement s = conn.createStatement();
+			conn = Prism.dbc();
+			s = conn.createStatement();
 			cycle_rows_affected = s.executeUpdate (query);
 			total_rows_affected += cycle_rows_affected;
-			s.close();
-			conn.close();
 		} catch (SQLException e) {
 			plugin.logDbError( e );
-		}
+		} finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
 		return total_rows_affected;
 	}
 	

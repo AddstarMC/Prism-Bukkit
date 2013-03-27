@@ -326,7 +326,7 @@ public class Prism extends JavaPlugin {
 		if(pool != null){
 			pool.close();
 		}
-		initDbPool();
+		pool = initDbPool();
 	}
 	
 	

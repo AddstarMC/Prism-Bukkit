@@ -37,8 +37,8 @@ public class Settings {
 	 * @param key
 	 */
 	public static void deleteSetting( String key, Player player ){
-		Connection conn = Prism.dbc();
-        PreparedStatement s;
+		Connection conn = null;
+        PreparedStatement s = null;
 		try {
 			
 			String finalKey = key;
@@ -46,20 +46,17 @@ public class Settings {
 				finalKey = getPlayerKey(player,key);
 			}
 			
+			conn = Prism.dbc();
 			s = conn.prepareStatement ("DELETE FROM prism_meta WHERE k = ?");
 			s.setString(1, finalKey);
 			s.executeUpdate();
-			
-			s.close();
 	
 		} catch (SQLException e) {
 //			plugin.logDbError( e );
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-//			plugin.logDbError( e );
-		}
+		} finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
 	}
 	
 	
@@ -81,8 +78,8 @@ public class Settings {
 	 * @return
 	 */
 	public static void saveSetting( String key, String value, Player player ){
-		Connection conn = Prism.dbc();
-        PreparedStatement s;
+		Connection conn = null;
+        PreparedStatement s = null;
 		try {
 			
 			String finalKey = key;
@@ -90,6 +87,7 @@ public class Settings {
 				finalKey = getPlayerKey(player,key);
 			}
 			
+			conn = Prism.dbc();
 			s = conn.prepareStatement ("DELETE FROM prism_meta WHERE k = ?");
 			s.setString(1, finalKey);
 			s.executeUpdate();
@@ -98,17 +96,13 @@ public class Settings {
 			s.setString(1, finalKey);
 			s.setString(2, value);
 			s.executeUpdate();
-			
-			s.close();
 	
 		} catch (SQLException e) {
 //			plugin.logDbError( e );
-		}
-		try {
-			conn.close();
-		} catch (SQLException e) {
-//			plugin.logDbError( e );
-		}
+		} finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
 	}
 	
 	
@@ -129,6 +123,9 @@ public class Settings {
 	 */
 	public static String getSetting( String key, Player player ){
 		String value = null;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
 		try {
 			
 			String finalKey = key;
@@ -136,22 +133,21 @@ public class Settings {
 				finalKey = getPlayerKey(player,key);
 			}
 
-			Connection conn = Prism.dbc();
-            PreparedStatement s;
+			conn = Prism.dbc();
     		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = ? LIMIT 0,1");
     		s.setString(1, finalKey);
-    		ResultSet rs = s.executeQuery();
+    		rs = s.executeQuery();
 
     		while(rs.next()){
     			value = rs.getString("v");
 			}
     		
-    		rs.close();
-    		s.close();
-    		conn.close();
-            
         } catch (SQLException e) {
 //        	plugin.logDbError( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return value;
 	}

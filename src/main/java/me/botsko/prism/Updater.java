@@ -49,15 +49,16 @@ public class Updater {
 	 */
 	public void apply_updates(){
 		
-		Connection conn = Prism.dbc();
-		
 		int clientSchemaVer = getClientDbSchemaVersion();
 		
 		// Apply any updates for schema 1 -> 2
 		if(clientSchemaVer < 2){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-		        PreparedStatement s;
+		        PreparedStatement s = null;
+		        Connection conn = null;
 				try {
+					
+					conn = Prism.dbc();
 					
 					plugin.log("Applying database updates to schema v2. This may take a while.");
 					
@@ -66,10 +67,13 @@ public class Updater {
 					
 					s = conn.prepareStatement ("ALTER TABLE `prism_actions` ADD INDEX ( `player` ) ;");
 					s.executeUpdate();
-					s.close();
+		
 				} catch (SQLException e) {
 					plugin.logDbError( e );
-				}
+				} finally {
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			}
 		}
 		
@@ -77,24 +81,32 @@ public class Updater {
 		// Apply any updates for schema 2 -> 3
 		if(clientSchemaVer < 3){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-		        PreparedStatement s;
+		        PreparedStatement s = null;
+		        Connection conn = null;
 				try {
+					
+					conn = Prism.dbc();
 					
 					plugin.log("Applying database updates to schema v3. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` CHANGE `action_time` `action_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;");
 					s.executeUpdate();
 					
-					s.close();
-
 				} catch (SQLException e) {
 					plugin.logDbError( e );
-				}
+				} finally {
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			} else {
 				
 				// Sqlite doesn't have any support for altering columns. WTF
-		        PreparedStatement s;
+				Connection conn = null;
+		        PreparedStatement s = null;
+		        Statement st = null;
 				try {
+					
+					conn = Prism.dbc();
 					
 					plugin.log("Applying database updates to schema v3. This may take a while.");
 					
@@ -112,7 +124,7 @@ public class Updater {
 			        		"z INT," +
 			        		"data TEXT" +
 			        		")";
-					Statement st = conn.createStatement();
+					st = conn.createStatement();
 					st.executeUpdate(query);
 					
 					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM tmp_prism_actions;");
@@ -120,12 +132,14 @@ public class Updater {
 					
 					s = conn.prepareStatement("DROP TABLE tmp_prism_actions;");
 					s.executeUpdate();
-					
-					s.close();
 
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}
+				} finally {
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(st != null) try { st.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			}
 		}
 		
@@ -133,22 +147,32 @@ public class Updater {
 		// Apply any updates for schema 3 -> 4
 		if(clientSchemaVer < 4){
 			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-		        PreparedStatement s;
+		        PreparedStatement s = null;
+		        Connection conn = null;
 				try {
+					
+					conn = Prism.dbc();
 					
 					plugin.log("Applying database updates to schema v4. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) NULL AFTER `z`, ADD `block_subid` MEDIUMINT( 5 ) NULL AFTER `block_id`, ADD INDEX ( `block_id` ), CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, ADD `old_block_id` MEDIUMINT( 5 ) NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) NULL AFTER `old_block_id`;");
 					s.executeUpdate();
-					s.close();
+	
 				} catch (SQLException e) {
 					plugin.logDbError( e );
-				}
+				} finally {
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			} else {
 				
 				// Sqlite doesn't have any support for altering columns. WTF
-		        PreparedStatement s;
+				Connection conn = null;
+		        PreparedStatement s = null;
+		        Statement st = null;
 				try {
+					
+					conn = Prism.dbc();
 					
 					plugin.log("Applying database updates to schema v4. This may take a while.");
 					
@@ -170,7 +194,7 @@ public class Updater {
 			        		"old_block_subid INT," +
 			        		"data TEXT" +
 			        		")";
-					Statement st = conn.createStatement();
+					st = conn.createStatement();
 					st.executeUpdate(query);
 					
 					s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,x,y,z,data) SELECT action_type,player,world,x,y,z,data FROM tmp_prism_actions;");
@@ -178,19 +202,15 @@ public class Updater {
 					
 					s = conn.prepareStatement("DROP TABLE tmp_prism_actions;");
 					s.executeUpdate();
-					
-					s.close();
 
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}
+				} finally {
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(st != null) try { st.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			}
-		}
-		
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			plugin.logDbError( e );
 		}
 		
 		// Save current version

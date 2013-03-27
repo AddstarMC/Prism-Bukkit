@@ -53,6 +53,8 @@ public class PreprocessArgs {
 		QueryParameters parameters = new QueryParameters();
 		ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
 		
+		parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
+		parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
 		parameters.setProcessType(processType);
 		
 		if(args != null){
