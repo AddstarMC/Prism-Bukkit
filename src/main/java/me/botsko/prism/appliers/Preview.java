@@ -64,11 +64,6 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected ArrayList<Handler> deferredChanges = new ArrayList<Handler>();
-	
-	/**
-	 * 
-	 */
 	protected ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 	
 	/**
@@ -284,10 +279,6 @@ public class Preview implements Previewable {
 						worldChangeQueue.remove(a);
 						continue;
 					}
-					// Deferring attachments/etc until required blocks are ready
-					else if(result.getType().equals(ChangeResultType.DEFERRED)){
-						deferredChanges.add( a );
-					}
 					// Skipping
 					else if(result.getType().equals(ChangeResultType.SKIPPED)){
 						skipped_block_count++;
@@ -329,9 +320,6 @@ public class Preview implements Previewable {
 	 * Store the preview session for later use
 	 */
 	public void postProcessPreview(){
-		// Initiates deferred changes but they're still
-		// set to preview only
-		applyDeferred();
 		// If there's planned changes, save the preview
 		if(is_preview && (changes_applied_count > 0 || changes_planned_count > 0 ) ){
 			// Append the preview and blocks temporarily
@@ -343,48 +331,11 @@ public class Preview implements Previewable {
 	}
 	
 	
-	protected void applyDeferred(){
-		// Apply deferred block changes
-		for(Handler a : deferredChanges){
-			
-			ChangeResult result = a.applyDeferred( player, parameters, is_preview );
-			// No action, continue
-			if( result == null ){
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Deferring attachments/etc until required blocks are ready
-			else if(result.getType().equals(ChangeResultType.DEFERRED)){
-				deferredChanges.add( a );
-			}
-			// Skipping
-			else if(result.getType().equals(ChangeResultType.SKIPPED)){
-				skipped_block_count++;
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Skipping, but planned
-			else if(result.getType().equals(ChangeResultType.PLANNED)){
-				changes_planned_count++;
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Change applied
-			else {
-				blockStateChanges.add( result.getBlockStateChange() );
-				changes_applied_count++;
-			}
-		}
-	}
-	
-	
 	/**
 	 * 
 	 * @return
 	 */
 	public void postProcess(){
-		
-		applyDeferred();
 		
 		// POST ROLLBACK TRIGGERS
 		if(processType.equals(PrismProcessType.ROLLBACK)){

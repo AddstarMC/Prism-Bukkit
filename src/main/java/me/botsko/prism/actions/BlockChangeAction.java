@@ -151,7 +151,7 @@ public class BlockChangeAction extends BlockAction {
 			// We skip this check because if we're in preview mode the block may not
 			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
 			// and https://snowy-evening.com/botsko/prism/258/
-			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
+			if( BlockUtils.isAcceptableForBlockPlace(block.getType()) || BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), new_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
 				b.setBlockId( old_id );
 				b.setBlockSubId( old_subid );
 				return b.placeBlock( player, parameters, is_preview, block, is_deferred );
@@ -166,7 +166,7 @@ public class BlockChangeAction extends BlockAction {
 			// We skip this check because if we're in preview mode the block may not
 			// have been properly changed yet. https://snowy-evening.com/botsko/prism/302/
 			// and https://snowy-evening.com/botsko/prism/258/
-			if( BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), old_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
+			if( BlockUtils.isAcceptableForBlockPlace(block.getType()) || BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), old_id) || is_preview || parameters.hasFlag(Flag.OVERWRITE) ){
 				b.setBlockId( new_id );
 				b.setBlockSubId( new_subid );
 				return b.placeBlock( player, parameters, is_preview, block, is_deferred );

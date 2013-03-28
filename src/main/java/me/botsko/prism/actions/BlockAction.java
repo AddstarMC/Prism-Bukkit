@@ -304,7 +304,7 @@ public class BlockAction extends GenericAction {
 	 * block.
 	 */
 	protected ChangeResult placeBlock( Player player, QueryParameters parameters, boolean is_preview, Block block, boolean is_deferred ){
-		
+
 		Material m = Material.getMaterial(getBlockId());
 		BlockStateChange stateChange = null;
 
@@ -323,10 +323,10 @@ public class BlockAction extends GenericAction {
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
 			
-		// If it's attachable to the sides or top, we need to delay unless we're handling those now
-		if( !is_deferred && (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m))){
-			return new ChangeResult( ChangeResultType.DEFERRED, null );
-		}
+//		// If it's attachable to the sides or top, we need to delay unless we're handling those now
+//		if( !is_deferred && (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m))){
+//			return new ChangeResult( ChangeResultType.DEFERRED, null );
+//		}
 
 		// If we're not in a preview, actually apply this block
 		if(!is_preview){
@@ -433,6 +433,7 @@ public class BlockAction extends GenericAction {
 				if( below.getType().equals(Material.DIRT) || below.getType().equals(Material.AIR) || below.getType().equals(Material.GRASS) ){
 					below.setType(Material.SOIL);
 				} else {
+//					System.out.print("Block skipped because there's no soil below.");
 					return new ChangeResult( ChangeResultType.SKIPPED, null );
 				}
 			}
