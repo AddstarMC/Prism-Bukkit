@@ -33,10 +33,10 @@ public class Language {
 			if(msg != null){
 				return colorize(msg);
 			} else {
-//				plugin.log("No language support found for " + key);
+//				Prism.log("No language support found for " + key);
 			}
 		} else {
-//			plugin.log("Language file configuration was not loaded correctly.");
+//			Prism.log("Language file configuration was not loaded correctly.");
 		}
 		return "";
 	}

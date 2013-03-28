@@ -342,7 +342,7 @@ public class BlockAction extends GenericAction {
 				if( below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR) || below.getType().equals(Material.STATIONARY_WATER) ){
 					below.setType(Material.STATIONARY_WATER);
 				} else {
-//					plugin.debug("Lilypad skipped because no water exists below.");
+//					Prism.debug("Lilypad skipped because no water exists below.");
 					return new ChangeResult( ChangeResultType.SKIPPED, null );
 				}
 			}

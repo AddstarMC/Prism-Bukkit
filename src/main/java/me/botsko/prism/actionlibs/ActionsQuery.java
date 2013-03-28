@@ -110,7 +110,7 @@ public class ActionsQuery {
 	    			
 	    			Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
 	   
-//	    			plugin.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
+//	    			Prism.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
 
     				// Set all shared values
 	    			baseHandler.setPlugin( plugin );
@@ -143,7 +143,7 @@ public class ActionsQuery {
 	    		}
 	            
 	        } catch (SQLException e) {
-	            plugin.logDbError( e );
+	            Prism.logDbError( e );
 	        } finally {
 	        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
 	        	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -199,7 +199,7 @@ public class ActionsQuery {
 			}
             
         } catch (SQLException e) {
-        	plugin.logDbError( e );
+        	Prism.logDbError( e );
         } finally {
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -242,7 +242,7 @@ public class ActionsQuery {
 			}
             
         } catch (SQLException e) {
-        	plugin.logDbError( e );
+        	Prism.logDbError( e );
         } finally {
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -268,7 +268,7 @@ public class ActionsQuery {
 			cycle_rows_affected = s.executeUpdate (query);
 			total_rows_affected += cycle_rows_affected;
 		} catch (SQLException e) {
-			plugin.logDbError( e );
+			Prism.logDbError( e );
 		} finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -477,7 +477,7 @@ public class ActionsQuery {
 		query += ";";
 
 		if(plugin.getConfig().getBoolean("prism.debug")){
-			plugin.debug(query);
+			Prism.debug(query);
 		}
 		
 		return query;

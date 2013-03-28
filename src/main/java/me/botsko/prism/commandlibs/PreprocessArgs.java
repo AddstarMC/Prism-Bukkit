@@ -387,7 +387,7 @@ public class PreprocessArgs {
 				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){
 					String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.queries.default-time-since"));
 					if(date == null){
-						plugin.log("Error - date range configuration for prism.time-since is not valid");
+						Prism.log("Error - date range configuration for prism.time-since is not valid");
 						date = translateTimeStringToDate(plugin,sender,"3d");
 					}
 					parameters.setSinceTime(date);

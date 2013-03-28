@@ -64,7 +64,7 @@ public class ActionRecorder implements Runnable {
 		a.save();
 		
 		if(a.getData() != null && a.getData().length() > 255){
-			plugin.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
+			Prism.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
 			return;
 		}
 		
@@ -99,7 +99,7 @@ public class ActionRecorder implements Runnable {
 
 			conn = Prism.dbc();
 			if(conn == null){
-				plugin.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
+				Prism.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
 	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
@@ -122,7 +122,7 @@ public class ActionRecorder implements Runnable {
 	        }
 	        
         } catch (SQLException e) {
-        	plugin.logDbError( e );
+        	Prism.logDbError( e );
         } finally {
         	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -145,7 +145,7 @@ public class ActionRecorder implements Runnable {
 	    int actionsRecorded = 0;
 	    try {
 	    	
-//	    	plugin.debug("Pool: MaxActive: " + Prism.getPool().getMaxActive() + " MaxIdle: " + Prism.getPool().getMaxIdle() + " Idle: " + Prism.getPool().getNumIdle() + " Active: " + Prism.getPool().getNumActive());
+//	    	Prism.debug("Pool: MaxActive: " + Prism.getPool().getMaxActive() + " MaxIdle: " + Prism.getPool().getMaxIdle() + " Idle: " + Prism.getPool().getNumIdle() + " Active: " + Prism.getPool().getNumActive());
 	    	
 	    	int perBatch = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
 	    	if(perBatch < 0 || perBatch > 5000){
@@ -157,12 +157,12 @@ public class ActionRecorder implements Runnable {
 		    	conn = Prism.dbc();
 		        if(conn == null || conn.isClosed()){
 		        	if( failedDbConnectionCount < 1 ){
-		        		plugin.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+		        		Prism.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 		        	}
 					failedDbConnectionCount++;
 					if( failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
 						lastPauseTime = System.currentTimeMillis();
-						plugin.log("Too many problems connecting. Let's wait for "+plugin.getConfig().getInt("prism.database.wait-on-failure-duration")+" seconds before we try again.");
+						Prism.log("Too many problems connecting. Let's wait for "+plugin.getConfig().getInt("prism.database.wait-on-failure-duration")+" seconds before we try again.");
 					}
 					return;
 				}
@@ -186,13 +186,13 @@ public class ActionRecorder implements Runnable {
 			        s.setString(11,a.getData());
 		            s.addBatch();
 		            if ((i + 1) % perBatch == 0) {
-		            	plugin.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
+		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
 		                s.executeBatch(); // Execute every x items.
 		            }
 		            i++;
 		        }
 		        
-//		        plugin.debug("Recorder: Queue emptied into single batch. Size: " + i);
+//		        Prism.debug("Recorder: Queue emptied into single batch. Size: " + i);
 		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);
@@ -202,7 +202,7 @@ public class ActionRecorder implements Runnable {
 
 	    	}
 	    } catch (SQLException e) {
-	    	plugin.logDbError( e );
+	    	Prism.logDbError( e );
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}

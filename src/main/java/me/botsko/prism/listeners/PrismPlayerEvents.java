@@ -87,7 +87,7 @@ public class PrismPlayerEvents implements Listener {
 	        	event.setCancelled(true);
 	        	// Log to console
 				if(plugin.getConfig().getBoolean("prism.alerts.illegal-commands.log-to-console")){
-					plugin.log( msg );
+					Prism.log( msg );
 				}
 			}
 		}
@@ -305,7 +305,7 @@ public class PrismPlayerEvents implements Listener {
 			int item_id = wand.getItemId();
 			byte item_subid = wand.getItemSubId();
 			
-//			plugin.debug("Checking active wand for player, Mode: " + wand.getWandMode() + " Item:" + item_id + ":" + item_subid + " Item in hand:" + player.getItemInHand().getTypeId() + ":" + player.getItemInHand().getDurability());
+//			Prism.debug("Checking active wand for player, Mode: " + wand.getWandMode() + " Item:" + item_id + ":" + item_subid + " Item in hand:" + player.getItemInHand().getTypeId() + ":" + player.getItemInHand().getDurability());
 
 			// Does the player have such item?
 			if(wand != null && player.getItemInHand().getTypeId() == item_id && player.getItemInHand().getDurability() == item_subid){
@@ -322,7 +322,7 @@ public class PrismPlayerEvents implements Listener {
 				}
 				
 				if((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
-					plugin.debug("Cancelling event for wand use.");
+					Prism.debug("Cancelling event for wand use.");
 					event.setCancelled(true);
 					return;
 				}

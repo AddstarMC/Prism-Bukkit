@@ -197,7 +197,7 @@ public class WandCommand implements SubHandler {
 			wand.setItemId(item_id);
 			wand.setItemSubId(item_subid);
 			
-			plugin.debug("Wand activated for player - mode: " + mode + " Item:" + item_id + ":" + item_subid);
+			Prism.debug("Wand activated for player - mode: " + mode + " Item:" + item_id + ":" + item_subid);
 			
 			// Move any existing item to the hand, otherwise give it to them
 			if( plugin.getConfig().getBoolean("prism.wands.auto-equip") ){

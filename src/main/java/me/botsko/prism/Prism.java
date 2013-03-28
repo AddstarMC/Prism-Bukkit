@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import me.botsko.prism.actionlibs.ActionRecorder;
@@ -38,6 +39,8 @@ import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
+import me.botsko.prism.purge.LogPurgeCallback;
+import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.wands.Wand;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -62,17 +65,17 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Protected/private
 	 */
-	private String plugin_name;
+	private static String plugin_name;
 	private String plugin_version;
 	private MaterialAliases items;
 	private Language language;
-	private Logger log = Logger.getLogger("Minecraft");
+	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> enabledPlugins = new ArrayList<String>();
 	private static ActionRegistry actionRegistry;
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
-	protected BukkitTask deleteTask;
-	protected int total_records_affected = 0, cycle_rows_affected = 0;
+	public BukkitTask deleteTask;
+	public int total_records_affected = 0;
 	
 	/**
 	 * Public
@@ -123,7 +126,7 @@ public class Prism extends JavaPlugin {
 
 		prism = this;
 		
-		this.log("Initializing Prism " + plugin_version + ". By Viveleroi.");
+		log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 		
 		if(getConfig().getBoolean("prism.notify-newer-versions")){
 			String notice = UpdateNotification.checkForNewerBuild(plugin_version);
@@ -228,7 +231,7 @@ public class Prism extends JavaPlugin {
 			getCommand("what").setExecutor( (CommandExecutor) new WhatCommand(this) );
 			
 			// Init re-used classes
-			messenger = new Messenger( this.plugin_name );
+			messenger = new Messenger( plugin_name );
 			actionsRecorder = new ActionRecorder(this);
 			actionsQuery = new ActionsQuery(this);
 			oreMonitor = new OreMonitor(this);
@@ -246,6 +249,15 @@ public class Prism extends JavaPlugin {
 			discardExpiredDbRecords();
 			
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static String getPrismName(){
+		return plugin_name;
 	}
 
 	
@@ -287,7 +299,7 @@ public class Prism extends JavaPlugin {
     			pool.setDriverClassName("org.sqlite.JDBC");
     			pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (ClassNotFoundException e) {
-				this.log("Error: SQLite database connection was not established. " + e.getMessage());
+				log("Error: SQLite database connection was not established. " + e.getMessage());
 			}
 		}
 		
@@ -309,7 +321,7 @@ public class Prism extends JavaPlugin {
 		    pool.setRemoveAbandoned(true);
 		    pool.setRemoveAbandonedTimeout(60);
 		} else {
-			this.log("Error: Database connection was not established. Please check your configuration file.");
+			log("Error: Database connection was not established. Please check your configuration file.");
 		}
 		
 		return pool;
@@ -615,7 +627,7 @@ public class Prism extends JavaPlugin {
 		
 		if(!purgeRules.isEmpty()){
 			
-			final ArrayList<QueryParameters> paramList = new ArrayList<QueryParameters>();
+			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
 
 			for(final String purgeArgs : purgeRules){
 
@@ -639,26 +651,14 @@ public class Prism extends JavaPlugin {
 					purge_tick_delay = 20;
 				}
 				
+				/**
+				 * We're going to cycle through the param rules, one rule at a time in a single async task.
+				 * This task will reschedule itself when each purge cycle has completed and records remain
+				 */
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler().runTaskTimerAsynchronously(this, new Runnable(){
-				    public void run(){
-				    	ActionsQuery aq = new ActionsQuery(prism);
-				    	// Execute in batches so we don't tie up the db with one massive query
-				    	for(QueryParameters param : paramList){
-
-							cycle_rows_affected = aq.delete(param);
-							debug("Purge cycle cleared " + cycle_rows_affected + " rows.");
-							total_records_affected += cycle_rows_affected;
-							
-							if( cycle_rows_affected == 0){
-								deleteTask.cancel();
-								log("Cleared " + total_records_affected + " rows from the database. Using:" + param.getOriginalCommand() );
-								total_records_affected = 0;
-							}
-				    	}
-				    }
-				}, purge_tick_delay, purge_tick_delay);
-			}
+				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new PurgeTask( this, paramList, purge_tick_delay, new LogPurgeCallback() ), purge_tick_delay);
+				
+			}	    
 		}
 	}
 	
@@ -743,8 +743,8 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void log(String message){
-		log.info("["+plugin_name+"]: " + message);
+	public static void log(String message){
+		log.info("["+getPrismName()+"]: " + message);
 	}
 	
 	
@@ -752,7 +752,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void logSection(String[] messages){
+	public static void logSection(String[] messages){
 		if(messages.length > 0){
 			log("--------------------- ## Important ## ---------------------");
 			for(String msg : messages){
@@ -766,7 +766,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	public void logDbError( SQLException e ){
+	public static void logDbError( SQLException e ){
 		log("Database connection error: " + e.getMessage());
 		if(e.getMessage().contains("marked as crashed")){
 			String[] msg = new String[2];
@@ -782,7 +782,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void debug(String message){
+	public static void debug(String message){
 		if(config.getBoolean("prism.debug")){
 			log.info("["+plugin_name+"]: " + message);
 		}
@@ -793,7 +793,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @param message
 	 */
-	public void debug( Location loc ){
+	public static void debug( Location loc ){
 		debug( "Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() );
 	}
 	
@@ -817,7 +817,7 @@ public class Prism extends JavaPlugin {
 			pool.close();
 		}
 		
-		this.log("Closing plugin.");
+		log("Closing plugin.");
 		
 	}
 }

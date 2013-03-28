@@ -223,7 +223,7 @@ public class Preview implements Previewable {
 		    public void run(){
 		    	
 		    	if(plugin.getConfig().getBoolean("prism.debug")){
-		    		plugin.debug("World change queue size: " + worldChangeQueue.size() );
+		    		Prism.debug("World change queue size: " + worldChangeQueue.size() );
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
@@ -279,7 +279,7 @@ public class Preview implements Previewable {
 					}
 					// Skip actions that have not returned any results
 					if( result.getType() == null ){
-//						plugin.log("Error: Result type was null when it should not be. " + a.getData());
+//						Prism.log("Error: Result type was null when it should not be. " + a.getData());
 						skipped_block_count++;
 						worldChangeQueue.remove(a);
 						continue;
@@ -400,7 +400,7 @@ public class Preview implements Previewable {
 //			 */
 //			if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
 //				
-//				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+//				Prism.debug("Action being rolled back triggers a second rollback: Item Remove");
 //				
 //				QueryParameters triggerParameters;
 //				try {
@@ -487,20 +487,20 @@ public class Preview implements Previewable {
 			if(timers.size() > 0){
 				long lastTime = 0;
 				long total = 0;
-				plugin.debug("-- Timer information for last action: --");
+				Prism.debug("-- Timer information for last action: --");
 				for (Entry<Long, String> entry : timers.entrySet()){
 					long diff = 0;
 					if(lastTime > 0){
 						diff = entry.getKey() - lastTime;
 						total += diff;
 					}
-					plugin.debug(entry.getValue() + " " + diff + "ms");
+					Prism.debug(entry.getValue() + " " + diff + "ms");
 					lastTime = entry.getKey();
 				}
-				plugin.debug("Total time: " + total + "ms");
-				plugin.debug("Changes: " + changes_applied_count);
-				plugin.debug("Planned: " + changes_planned_count);
-				plugin.debug("Skipped: " + skipped_block_count);
+				Prism.debug("Total time: " + total + "ms");
+				Prism.debug("Changes: " + changes_applied_count);
+				Prism.debug("Planned: " + changes_planned_count);
+				Prism.debug("Skipped: " + skipped_block_count);
 			}
 		}
 		plugin.eventTimer.resetEventList();
