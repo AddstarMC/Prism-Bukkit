@@ -109,7 +109,7 @@ public class ConfigBase {
 		try {
 			config.save(file);
 		} catch (IOException e) {
-//			plugin.log("Could not save the configuration file to "+file);
+//			Prism.log("Could not save the configuration file to "+file);
 			// Throw exception
 		}
 	}

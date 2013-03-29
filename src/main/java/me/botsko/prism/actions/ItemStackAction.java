@@ -517,7 +517,7 @@ public class ItemStackAction extends GenericAction {
 						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(container.getInventory(), getItem());
 						if(leftovers.size() > 0){
 							result = ChangeResultType.SKIPPED;
-//							plugin.debug("Item placement into container skipped because container was full.");
+//							Prism.debug("Item placement into container skipped because container was full.");
 						} else {
 							result = ChangeResultType.APPLIED;
 						}
@@ -550,7 +550,7 @@ public class ItemStackAction extends GenericAction {
 							container.getInventory().removeItem(getItem());
 							result = ChangeResultType.APPLIED;
 						} else {
-//							plugin.debug("Item removal from container skipped because it's not inside.");
+//							Prism.debug("Item removal from container skipped because it's not inside.");
 							result = ChangeResultType.SKIPPED;
 						}
 					}

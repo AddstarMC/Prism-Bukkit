@@ -60,7 +60,7 @@ public class Updater {
 					
 					conn = Prism.dbc();
 					
-					plugin.log("Applying database updates to schema v2. This may take a while.");
+					Prism.log("Applying database updates to schema v2. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD INDEX ( `action_type` ) ;");
 					s.executeUpdate();
@@ -69,7 +69,7 @@ public class Updater {
 					s.executeUpdate();
 		
 				} catch (SQLException e) {
-					plugin.logDbError( e );
+					Prism.logDbError( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -87,13 +87,13 @@ public class Updater {
 					
 					conn = Prism.dbc();
 					
-					plugin.log("Applying database updates to schema v3. This may take a while.");
+					Prism.log("Applying database updates to schema v3. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` CHANGE `action_time` `action_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;");
 					s.executeUpdate();
 					
 				} catch (SQLException e) {
-					plugin.logDbError( e );
+					Prism.logDbError( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -108,7 +108,7 @@ public class Updater {
 					
 					conn = Prism.dbc();
 					
-					plugin.log("Applying database updates to schema v3. This may take a while.");
+					Prism.log("Applying database updates to schema v3. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE prism_actions RENAME TO tmp_prism_actions;");
 					s.executeUpdate();
@@ -153,13 +153,13 @@ public class Updater {
 					
 					conn = Prism.dbc();
 					
-					plugin.log("Applying database updates to schema v4. This may take a while.");
+					Prism.log("Applying database updates to schema v4. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE `prism_actions` ADD `block_id` MEDIUMINT( 5 ) NULL AFTER `z`, ADD `block_subid` MEDIUMINT( 5 ) NULL AFTER `block_id`, ADD INDEX ( `block_id` ), CHANGE `data` `data` VARCHAR( 255 ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NULL, ADD `old_block_id` MEDIUMINT( 5 ) NULL AFTER `block_subid` , ADD `old_block_subid` MEDIUMINT( 5 ) NULL AFTER `old_block_id`;");
 					s.executeUpdate();
 	
 				} catch (SQLException e) {
-					plugin.logDbError( e );
+					Prism.logDbError( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -174,7 +174,7 @@ public class Updater {
 					
 					conn = Prism.dbc();
 					
-					plugin.log("Applying database updates to schema v4. This may take a while.");
+					Prism.log("Applying database updates to schema v4. This may take a while.");
 					
 					s = conn.prepareStatement("ALTER TABLE prism_actions RENAME TO tmp_prism_actions;");
 					s.executeUpdate();

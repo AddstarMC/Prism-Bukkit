@@ -105,7 +105,7 @@ public class HangingItemAction extends GenericAction {
 	 */
 	@Override
 	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
-		return new ChangeResult( ChangeResultType.DEFERRED, null );
+		return hangItem( player, parameters, is_preview );
 	}
 	
 	
@@ -114,15 +114,14 @@ public class HangingItemAction extends GenericAction {
 	 */
 	@Override
 	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
-		return new ChangeResult( ChangeResultType.DEFERRED, null );
+		return hangItem( player, parameters, is_preview );
 	}
 	
 	
 	/**
 	 * 
 	 */
-	@Override
-	public ChangeResult applyDeferred( Player player, QueryParameters parameters, boolean is_preview ){
+	public ChangeResult hangItem( Player player, QueryParameters parameters, boolean is_preview ){
 		
 		BlockFace attachedFace = getDirection().getOppositeFace();
 

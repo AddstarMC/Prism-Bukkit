@@ -66,7 +66,7 @@ public class UseMonitor {
 		
 		if( count <= 5 && plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")){
 			plugin.alertPlayers(null, msg);
-			plugin.log( msg );
+			Prism.log( msg );
 		}
 	}
 	

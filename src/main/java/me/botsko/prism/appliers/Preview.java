@@ -64,11 +64,6 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected ArrayList<Handler> deferredChanges = new ArrayList<Handler>();
-	
-	/**
-	 * 
-	 */
 	protected ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 	
 	/**
@@ -223,7 +218,7 @@ public class Preview implements Previewable {
 		    public void run(){
 		    	
 		    	if(plugin.getConfig().getBoolean("prism.debug")){
-		    		plugin.debug("World change queue size: " + worldChangeQueue.size() );
+		    		Prism.debug("World change queue size: " + worldChangeQueue.size() );
 		    	}
 		    	
 				if(worldChangeQueue.isEmpty()){
@@ -279,14 +274,10 @@ public class Preview implements Previewable {
 					}
 					// Skip actions that have not returned any results
 					if( result.getType() == null ){
-//						plugin.log("Error: Result type was null when it should not be. " + a.getData());
+//						Prism.log("Error: Result type was null when it should not be. " + a.getData());
 						skipped_block_count++;
 						worldChangeQueue.remove(a);
 						continue;
-					}
-					// Deferring attachments/etc until required blocks are ready
-					else if(result.getType().equals(ChangeResultType.DEFERRED)){
-						deferredChanges.add( a );
 					}
 					// Skipping
 					else if(result.getType().equals(ChangeResultType.SKIPPED)){
@@ -329,9 +320,6 @@ public class Preview implements Previewable {
 	 * Store the preview session for later use
 	 */
 	public void postProcessPreview(){
-		// Initiates deferred changes but they're still
-		// set to preview only
-		applyDeferred();
 		// If there's planned changes, save the preview
 		if(is_preview && (changes_applied_count > 0 || changes_planned_count > 0 ) ){
 			// Append the preview and blocks temporarily
@@ -343,48 +331,11 @@ public class Preview implements Previewable {
 	}
 	
 	
-	protected void applyDeferred(){
-		// Apply deferred block changes
-		for(Handler a : deferredChanges){
-			
-			ChangeResult result = a.applyDeferred( player, parameters, is_preview );
-			// No action, continue
-			if( result == null ){
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Deferring attachments/etc until required blocks are ready
-			else if(result.getType().equals(ChangeResultType.DEFERRED)){
-				deferredChanges.add( a );
-			}
-			// Skipping
-			else if(result.getType().equals(ChangeResultType.SKIPPED)){
-				skipped_block_count++;
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Skipping, but planned
-			else if(result.getType().equals(ChangeResultType.PLANNED)){
-				changes_planned_count++;
-				worldChangeQueue.remove(a);
-				continue;
-			}
-			// Change applied
-			else {
-				blockStateChanges.add( result.getBlockStateChange() );
-				changes_applied_count++;
-			}
-		}
-	}
-	
-	
 	/**
 	 * 
 	 * @return
 	 */
 	public void postProcess(){
-		
-		applyDeferred();
 		
 		// POST ROLLBACK TRIGGERS
 		if(processType.equals(PrismProcessType.ROLLBACK)){
@@ -400,7 +351,7 @@ public class Preview implements Previewable {
 //			 */
 //			if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
 //				
-//				plugin.debug("Action being rolled back triggers a second rollback: Item Remove");
+//				Prism.debug("Action being rolled back triggers a second rollback: Item Remove");
 //				
 //				QueryParameters triggerParameters;
 //				try {
@@ -487,20 +438,20 @@ public class Preview implements Previewable {
 			if(timers.size() > 0){
 				long lastTime = 0;
 				long total = 0;
-				plugin.debug("-- Timer information for last action: --");
+				Prism.debug("-- Timer information for last action: --");
 				for (Entry<Long, String> entry : timers.entrySet()){
 					long diff = 0;
 					if(lastTime > 0){
 						diff = entry.getKey() - lastTime;
 						total += diff;
 					}
-					plugin.debug(entry.getValue() + " " + diff + "ms");
+					Prism.debug(entry.getValue() + " " + diff + "ms");
 					lastTime = entry.getKey();
 				}
-				plugin.debug("Total time: " + total + "ms");
-				plugin.debug("Changes: " + changes_applied_count);
-				plugin.debug("Planned: " + changes_planned_count);
-				plugin.debug("Skipped: " + skipped_block_count);
+				Prism.debug("Total time: " + total + "ms");
+				Prism.debug("Changes: " + changes_applied_count);
+				Prism.debug("Planned: " + changes_planned_count);
+				Prism.debug("Skipped: " + skipped_block_count);
 			}
 		}
 		plugin.eventTimer.resetEventList();

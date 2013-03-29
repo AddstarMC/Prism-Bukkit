@@ -578,7 +578,7 @@ public class PrismBlockEvents implements Listener {
 //						String coordsKey = r.getX()+":"+r.getY()+":"+r.getZ();
 //						 if(coordsUsed.contains(coordsKey)) continue;
 //						 coordsUsed.add(coordsKey);
-//						 plugin.debug("COBBLE FORMED " + r.getType().name());
+//						 Prism.debug("COBBLE FORMED " + r.getType().name());
 ////						 r.setType(Material.COBBLESTONE);
 //						 plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, r, "Environment") );
 //					}
@@ -589,7 +589,7 @@ public class PrismBlockEvents implements Listener {
 //
 //		// Water flowing into lava forms obsidian or cobble
 //		if ( from.getType().equals(Material.STATIONARY_WATER) && to.getType().equals(Material.STATIONARY_LAVA) ) {
-//			plugin.debug("FROM WATER to " + to.getType().name());
+//			Prism.debug("FROM WATER to " + to.getType().name());
 //			BlockState lower = event.getToBlock().getRelative(BlockFace.DOWN).getState();
 //			// Obsidian can form below 
 //			if( lower.getType().equals(Material.OBSIDIAN) ){
@@ -597,7 +597,7 @@ public class PrismBlockEvents implements Listener {
 //				if(coordsUsed.contains(coordsKey)) return;
 //				// Add coords to list the event has already fired for
 //				coordsUsed.add(coordsKey);
-//				plugin.debug("COBBLE/OBY FORMED BELOW " + coordsKey);
+//				Prism.debug("COBBLE/OBY FORMED BELOW " + coordsKey);
 //				plugin.actionsRecorder.addToQueue( new BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment") );
 //			}
 //
