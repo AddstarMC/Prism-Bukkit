@@ -34,10 +34,10 @@ public class NearCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle( final CallInfo call){
 
 		// Build params
-		QueryParameters parameters = new QueryParameters();
+		final QueryParameters parameters = new QueryParameters();
 		parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
 		parameters.setWorld( call.getPlayer().getWorld().getName() );
 		
@@ -61,26 +61,35 @@ public class NearCommand implements SubHandler {
 		parameters.setRadius(radius);
 		parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
 		parameters.setLimit( plugin.getConfig().getInt("prism.near.max-results") );
+		
+		
+		/**
+		 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
+		 */
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
 	
-		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getPlayer() );
-		if(!results.getActionResults().isEmpty()){
-			call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("All changes within " + radius + " blocks of you..." ) );
-			call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
-			List<Handler> paginated = results.getPaginatedActionResults();
-			if(paginated != null){
-				for(Handler a : paginated){
-					ActionMessage am = new ActionMessage(a);
-					if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
-						am.showExtended();
+				ActionsQuery aq = new ActionsQuery(plugin);
+				QueryResult results = aq.lookup( parameters, call.getPlayer() );
+				if(!results.getActionResults().isEmpty()){
+					call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("All changes within " + parameters.getRadius() + " blocks of you..." ) );
+					call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+					List<Handler> paginated = results.getPaginatedActionResults();
+					if(paginated != null){
+						for(Handler a : paginated){
+							ActionMessage am = new ActionMessage(a);
+							if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
+								am.showExtended();
+							}
+							call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+						}
+					} else {
+						call.getPlayer().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 					}
-					call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+				} else {
+					call.getPlayer().sendMessage( Prism.messenger.playerError( "Couldn't find anything." ) );
 				}
-			} else {
-				call.getPlayer().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 			}
-		} else {
-			call.getPlayer().sendMessage( Prism.messenger.playerError( "Couldn't find anything." ) );
-		}
+		});
 	}
 }

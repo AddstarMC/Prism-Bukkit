@@ -37,74 +37,83 @@ public class LookupCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle( final CallInfo call) {
 		
 		// Process and validate all of the arguments
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1 );
 		if(parameters == null){
 			return;
 		}
 		
-		// determine if defaults were used
-		ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-		String defaultsReminder = "";
-		if(!defaultsUsed.isEmpty()){
-			defaultsReminder += "Using defaults:";
-			for(String d : defaultsUsed){
-				defaultsReminder += " " + d;
-			}
-		}
-	
-		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getSender() );
-		String sharingWithPlayers = "";
-		for(String sharee : parameters.getSharedPlayers()){ // Probably not the right word, but whatever, it's just a variable.
-			sharingWithPlayers += sharee + ", ";
-		}
-		sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
 		
-		parameters.addSharedPlayer(call.getSender().getName());
-		
-		for(String playerName : parameters.getSharedPlayers()){
-			
-			boolean isSender = playerName.equals(call.getSender().getName());
-			
-			CommandSender player = playerName.equalsIgnoreCase("CONSOLE") ? plugin.getServer().getConsoleSender() : plugin.getServer().getPlayer(playerName);
-			if(player == null) continue;
-			
-			if(!isSender){
-				player.sendMessage(Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName() + ChatColor.GOLD + " shared these Prism lookup logs with you:" ));
-			} else if(!sharingWithPlayers.isEmpty()){
-				player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "Sharing results with players: " + ChatColor.YELLOW + "" + ChatColor.ITALIC + sharingWithPlayers));
-			}
-			
-			if(!results.getActionResults().isEmpty()){
-				player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
-				if(!defaultsReminder.isEmpty() && isSender){
-					player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+		/**
+		 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
+		 */
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
+				
+				// determine if defaults were used
+				ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+				String defaultsReminder = "";
+				if(!defaultsUsed.isEmpty()){
+					defaultsReminder += "Using defaults:";
+					for(String d : defaultsUsed){
+						defaultsReminder += " " + d;
+					}
 				}
-				List<Handler> paginated = results.getPaginatedActionResults();
-				if(paginated != null){
-					for(Handler a : paginated){
-						ActionMessage am = new ActionMessage(a);
-						if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
-							am.showExtended();
+				
+				ActionsQuery aq = new ActionsQuery(plugin);
+				QueryResult results = aq.lookup( parameters, call.getSender() );
+				String sharingWithPlayers = "";
+				for(String sharee : parameters.getSharedPlayers()){ // Probably not the right word, but whatever, it's just a variable.
+					sharingWithPlayers += sharee + ", ";
+				}
+				sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
+				
+				parameters.addSharedPlayer(call.getSender().getName());
+				
+				for(String playerName : parameters.getSharedPlayers()){
+					
+					boolean isSender = playerName.equals(call.getSender().getName());
+					
+					CommandSender player = playerName.equalsIgnoreCase("CONSOLE") ? plugin.getServer().getConsoleSender() : plugin.getServer().getPlayer(playerName);
+					if(player == null) continue;
+					
+					if(!isSender){
+						player.sendMessage(Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName() + ChatColor.GOLD + " shared these Prism lookup logs with you:" ));
+					} else if(!sharingWithPlayers.isEmpty()){
+						player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "Sharing results with players: " + ChatColor.YELLOW + "" + ChatColor.ITALIC + sharingWithPlayers));
+					}
+					
+					if(!results.getActionResults().isEmpty()){
+						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+						if(!defaultsReminder.isEmpty() && isSender){
+							player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 						}
-						player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+						List<Handler> paginated = results.getPaginatedActionResults();
+						if(paginated != null){
+							for(Handler a : paginated){
+								ActionMessage am = new ActionMessage(a);
+								if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
+									am.showExtended();
+								}
+								player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+							}
+						} else {
+							player.sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+						}
+					} else {
+						if(!defaultsReminder.isEmpty()){
+							if(isSender){
+								player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+							}
+						}
+						if(isSender){
+							player.sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+						}
 					}
-				} else {
-					player.sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
-				}
-			} else {
-				if(!defaultsReminder.isEmpty()){
-					if(isSender){
-						player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
-					}
-				}
-				if(isSender){
-					player.sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
 				}
 			}
-		}
+		});
 	}
 }

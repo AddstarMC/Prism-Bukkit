@@ -12,7 +12,6 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
-import org.bukkit.ChatColor;
 
 public class RollbackWand extends QueryWandBase implements Wand{
 
