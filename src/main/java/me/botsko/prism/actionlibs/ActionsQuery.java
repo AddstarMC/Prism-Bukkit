@@ -458,9 +458,11 @@ public class ActionsQuery {
 				/**
 				 * LIMIT
 				 */
-				int limit = parameters.getLimit();
-				if(limit > 0){
-					query += " LIMIT "+limit;
+				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) ){
+					int limit = parameters.getLimit();
+					if(limit > 0){
+						query += " LIMIT "+limit;
+					}
 				}
 			} else {
 				// Only limit delete records if using mysql or sqlite has delete limits enabled
