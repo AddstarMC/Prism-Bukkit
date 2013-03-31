@@ -18,6 +18,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.LevenshteinDistance;
+import org.bukkit.Location;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,9 +53,10 @@ public class PreprocessArgs {
 		
 		QueryParameters parameters = new QueryParameters();
 		ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
-		
-		parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
-		parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
+		if(processType.equals(PrismProcessType.LOOKUP)){
+			parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
+			parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
+		}
 		parameters.setProcessType(processType);
 		
 		if(args != null){
@@ -170,7 +172,12 @@ public class PreprocessArgs {
 				// World
 				if(arg_type.equals("w")){
 					if(val.equalsIgnoreCase("current")){
-						val = player.getWorld().getName();
+						if(player != null){
+							val = player.getWorld().getName();
+						} else {
+							sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+							val = plugin.getServer().getWorlds().get(0).getName();
+						}
 					}
 					parameters.setWorld( val );
 				}
@@ -178,14 +185,36 @@ public class PreprocessArgs {
 				// Radius
 				if(arg_type.equals("r")){
 					if(TypeUtils.isNumeric(val) || (val.contains(":") && val.split(":").length >= 1 && TypeUtils.isNumeric(val.split(":")[1]))){
-						int radius = 0;
+						int radius;
+						Location coordsLoc = null;
 						if(val.contains(":")){
 							radius = Integer.parseInt(val.split(":")[1]);
-							String radiusPlayer = val.split(":")[0];
-							if(plugin.getServer().getPlayer(radiusPlayer) != null){
-								player = plugin.getServer().getPlayer(radiusPlayer);
+							String radiusLocOrPlayer = val.split(":")[0];
+							if(radiusLocOrPlayer.contains(",")){ // Cooridinates; x,y,z
+								String[] coordinates = radiusLocOrPlayer.split(",");
+								if(coordinates.length != 3){
+									respond( sender, Prism.messenger.playerError("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?") );
+									return null;
+								}
+								for(String s : coordinates){
+									if(!TypeUtils.isNumeric(s)){
+										respond( sender, Prism.messenger.playerError("The coordinate '" + s + "' is not a number.") );
+										return null;
+									}
+								}
+								coordsLoc = (new Location(
+										player != null ? player.getWorld() : 
+										(parameters.getWorld() != null ? plugin.getServer().getWorld(parameters.getWorld()) : 
+										plugin.getServer().getWorlds().get(0)), 
+										Integer.parseInt(coordinates[0]), 
+										Integer.parseInt(coordinates[1]), 
+										Integer.parseInt(coordinates[2])));
+								
+							}
+							else if(plugin.getServer().getPlayer(radiusLocOrPlayer) != null){
+								player = plugin.getServer().getPlayer(radiusLocOrPlayer);
 							} else {
-								respond( sender, Prism.messenger.playerError("Couldn't find the player named '" + radiusPlayer + "'. Perhaps they are not online or you misspelled their name?") );
+								respond( sender, Prism.messenger.playerError("Couldn't find the player named '" + radiusLocOrPlayer + "'. Perhaps they are not online or you misspelled their name?") );
 								return null;
 							}
 						} else {
@@ -201,6 +230,9 @@ public class PreprocessArgs {
 						}
 						if(radius > 0){
 							parameters.setRadius( radius );
+							if(coordsLoc != null){
+								parameters.setMinMaxVectorsFromPlayerLocation(coordsLoc); // We need to set this *after* the radius has been set or it won't work.
+							}
 						}
 					} else {
 						
@@ -411,7 +443,7 @@ public class PreprocessArgs {
 			}
 			
 			// Player location
-			if( player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") ){
+			if( player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") && parameters.getPlayerLocation() == null ){
 				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 			}
 			
