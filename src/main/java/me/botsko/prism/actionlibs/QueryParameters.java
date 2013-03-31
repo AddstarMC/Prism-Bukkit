@@ -313,7 +313,7 @@ public class QueryParameters implements Cloneable {
 	 * @return the action_type
 	 */
 	public void removeActionType(ActionType a) {
-		actionTypeRules.remove(a);
+		actionTypeRules.remove(a.getName());
 	}
 	
 	
