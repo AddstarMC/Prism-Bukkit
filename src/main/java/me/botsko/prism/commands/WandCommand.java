@@ -42,6 +42,10 @@ public class WandCommand implements SubHandler {
 		String type = "i";
 		boolean isInspect = call.getArg(0).equalsIgnoreCase("inspect") || call.getArg(0).equalsIgnoreCase("i");
 		if(!isInspect){
+			if(call.getArgs().length < 2){
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You need to specify a wand type. Use '/prism ?' for help.") );
+				return;
+			}
 			type = call.getArg(1);
 		}
 		
