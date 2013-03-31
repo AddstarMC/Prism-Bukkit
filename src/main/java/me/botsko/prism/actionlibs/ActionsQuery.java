@@ -143,7 +143,7 @@ public class ActionsQuery {
 	    		}
 	            
 	        } catch (SQLException e) {
-	            Prism.logDbError( e );
+	        	plugin.handleDatabaseException( e );
 	        } finally {
 	        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
 	        	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -199,7 +199,7 @@ public class ActionsQuery {
 			}
             
         } catch (SQLException e) {
-        	Prism.logDbError( e );
+        	plugin.handleDatabaseException( e );
         } finally {
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -242,7 +242,7 @@ public class ActionsQuery {
 			}
             
         } catch (SQLException e) {
-        	Prism.logDbError( e );
+        	plugin.handleDatabaseException( e );
         } finally {
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -268,7 +268,7 @@ public class ActionsQuery {
 			cycle_rows_affected = s.executeUpdate (query);
 			total_rows_affected += cycle_rows_affected;
 		} catch (SQLException e) {
-			Prism.logDbError( e );
+			plugin.handleDatabaseException( e );
 		} finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
