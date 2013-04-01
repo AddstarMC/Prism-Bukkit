@@ -122,7 +122,7 @@ public class ActionRecorder implements Runnable {
 	        }
 	        
         } catch (SQLException e) {
-        	Prism.logDbError( e );
+        	plugin.handleDatabaseException( e );
         } finally {
         	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -201,8 +201,8 @@ public class ActionRecorder implements Runnable {
 		        conn.commit();
 
 	    	}
-	    } catch (SQLException e) {
-	    	Prism.logDbError( e );
+	    } catch (SQLException e){
+	    	plugin.handleDatabaseException( e );
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}

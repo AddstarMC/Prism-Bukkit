@@ -69,7 +69,7 @@ public class Updater {
 					s.executeUpdate();
 		
 				} catch (SQLException e) {
-					Prism.logDbError( e );
+					plugin.handleDatabaseException( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -93,7 +93,7 @@ public class Updater {
 					s.executeUpdate();
 					
 				} catch (SQLException e) {
-					Prism.logDbError( e );
+					plugin.handleDatabaseException( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
@@ -159,7 +159,7 @@ public class Updater {
 					s.executeUpdate();
 	
 				} catch (SQLException e) {
-					Prism.logDbError( e );
+					plugin.handleDatabaseException( e );
 				} finally {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
