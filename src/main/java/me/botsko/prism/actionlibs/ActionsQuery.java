@@ -6,14 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
@@ -31,6 +27,11 @@ public class ActionsQuery {
 	/**
 	 * 
 	 */
+	private QueryBuilder qb;
+	
+	/**
+	 * 
+	 */
 	private boolean shouldGroup = false;
 	
 	
@@ -41,6 +42,7 @@ public class ActionsQuery {
 	 */
 	public ActionsQuery(Prism plugin) {
 		this.plugin = plugin;
+		this.qb = new QueryBuilder(plugin);
 	}
 	
 	
@@ -83,7 +85,7 @@ public class ActionsQuery {
 		List<Handler> actions = new ArrayList<Handler>();
 		
 		// Build conditions based off final args
-		String query = getArgumentConditions(parameters);
+		String query = qb.buildQuery(parameters, shouldGroup);
 		
 		if(query != null){
 			Connection conn = null;
@@ -262,7 +264,7 @@ public class ActionsQuery {
 		Statement s = null;
 		try {
 			// Build conditions based off final args
-			String query = getArgumentConditions( parameters );
+			String query = qb.buildQuery(parameters, shouldGroup);
 			conn = Prism.dbc();
 			s = conn.createStatement();
 			cycle_rows_affected = s.executeUpdate (query);
@@ -274,334 +276,5 @@ public class ActionsQuery {
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 		return total_rows_affected;
-	}
-	
-	
-	/**
-	 * 
-	 * @param args
-	 */
-	public String getArgumentConditions( QueryParameters parameters ){
-		
-		// Build select
-		String query = "";
-		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
-			query += "SELECT " +
-					"prism_actions.id, " +
-					"prism_actions.action_time, " +
-					"prism_actions.action_type, " +
-					"prism_actions.player, " +
-					"prism_actions.world, " +
-					"prism_actions.x, " +
-					"prism_actions.y, " +
-					"prism_actions.z, " +
-					"prism_actions.block_id, " +
-					"prism_actions.block_subid, " +
-					"prism_actions.old_block_id, " +
-					"prism_actions.old_block_subid, " +
-					"prism_actions.data, ";
-			
-			if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite") ){
-				query +=
-					"date(prism_actions.action_time) AS display_date, " +
-					"time(prism_actions.action_time) AS display_time ";
-			}
-			else if( plugin.getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql") ){
-				query +=
-					"DATE_FORMAT(prism_actions.action_time, '%c/%e/%y') AS display_date, " +
-					"DATE_FORMAT(prism_actions.action_time, '%l:%i:%s%p') AS display_time";
-			}
-			
-			if( shouldGroup ){
-				query += ", COUNT(id) AS counted";
-			}
-			
-		} else {
-			query += "DELETE";
-		}
-		
-		query += " FROM prism_actions WHERE 1=1";
-		
-		/**
-		 * ID
-		 * 
-		 * If we're querying for an ID, none of the other arguments matter.
-		 */
-		int id = parameters.getId();
-		if(id > 0){
-			query += " AND id = " + id;
-		} else {
-			
-			/**
-			 * World
-			 */
-			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
-				if( parameters.getWorld() != null ){
-					query += " AND world = '"+parameters.getWorld()+"'";
-				}
-			}
-
-			/**
-			 * Actions
-			 */
-			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
-			
-			// Make sure none of the prism process types are requested
-			boolean containtsPrismProcessType = false;
-			boolean hasPositiveMatchRule = false;
-			if( !action_types.isEmpty() ){
-				query += buildMultipleConditions( action_types, "prism_actions.action_type", null );
-				for (Entry<String,MatchRule> entry : action_types.entrySet()){
-					if(entry.getKey().contains("prism")){
-						containtsPrismProcessType = true;
-						break;
-					}
-					if(entry.getValue().equals(MatchRule.INCLUDE)){
-						hasPositiveMatchRule = true;
-					}
-				}
-			}
-			
-			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
-				query += " AND prism_actions.action_type NOT LIKE '%prism%'";
-			}
-			
-			/**
-			 * Players
-			 */
-			HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
-			query += buildMultipleConditions( playerNames, "prism_actions.player", null );
-			
-			/**
-			 * Radius
-			 * 
-			 * Only build a radius condition if we're doing a select. If doing a delete, 
-			 * only use the radius if it was specified by the player.
-			 */
-			if( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ){
-				query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
-			}
-
-			/**
-			 * Block
-			 */
-			HashMap<Integer,Byte> blockfilters = parameters.getBlockFilters();
-			if(!blockfilters.isEmpty()){
-				String[] blockArr = new String[blockfilters.size()];
-				int i = 0;
-				for (Entry<Integer,Byte> entry : blockfilters.entrySet()){
-					if( entry.getValue() == 0 ){
-						blockArr[i] = "prism_actions.block_id = " + entry.getKey();
-					} else {
-						blockArr[i] = "prism_actions.block_id = " + entry.getKey() + " AND prism_actions.block_subid = " +  entry.getValue();
-					}
-					i++;
-				}
-				query += buildGroupConditions(null, blockArr, "%s%s", "OR", null);
-			}
-			
-			/**
-			 * Entity
-			 */
-			HashMap<String,MatchRule> entityNames = parameters.getEntities();
-			query += buildMultipleConditions( entityNames, "prism_actions.data", "entity_name\":\"%s" );
-			
-			/**
-			 * Timeframe
-			 */
-			String time = parameters.getBeforeTime();
-			if(time != null){
-				query += buildTimeCondition(time,"<=");
-			}
-			time = parameters.getSinceTime();
-			if(time != null){
-				query += buildTimeCondition(time,null);
-			}
-			
-			/**
-			 * Keywords
-			 */
-			String keyword = parameters.getKeyword();
-			if(keyword != null){
-				query += " AND prism_actions.data LIKE '%"+keyword+"%'";
-			}
-			
-			/**
-			 * Specific coords
-			 */
-			Location loc = parameters.getSpecificBlockLocation();
-			if(loc != null){
-				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
-			}
-			
-			/**
-			 * Parent process id
-			 */
-			if(parameters.getParentId() > 0){
-				query += " AND data = " + parameters.getParentId();
-			}
-			
-			if(!parameters.getProcessType().equals(PrismProcessType.DELETE)){
-				
-				// If lookup, determine if we need to group
-				// Do it! Or not...
-				if( shouldGroup ){
-					query += " GROUP BY prism_actions.action_type, prism_actions.player, prism_actions.block_id, prism_actions.data";
-				}
-			
-				/**
-				 * Order by
-				 */
-				String sort_dir = parameters.getSortDirection();
-				query += " ORDER BY prism_actions.action_time "+sort_dir+", x ASC, z ASC, y ASC, id "+sort_dir;
-				
-				/**
-				 * LIMIT
-				 */
-				if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) ){
-					int limit = parameters.getLimit();
-					if(limit > 0){
-						query += " LIMIT "+limit;
-					}
-				}
-			} else {
-				// Only limit delete records if using mysql or sqlite has delete limits enabled
-				if( plugin.getConfig().getString("prism.database.mode").equals("mysql") || plugin.getConfig().getBoolean("prism.sqlite.enable-delete-limit") ){
-					int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
-					if( perBatch < 100){
-						perBatch = 100;
-					}
-					query += " LIMIT " + perBatch;
-				}
-			}
-		}
-		
-		query += ";";
-
-		if(plugin.getConfig().getBoolean("prism.debug")){
-			Prism.debug(query);
-		}
-		
-		return query;
-		
-	}
-	
-	
-	/**
-	 * 
-	 * @param origValues
-	 * @param field_name
-	 * @return
-	 */
-	protected String buildMultipleConditions( HashMap<String,MatchRule> origValues, String field_name, String format ){
-		String query = "";
-		if(!origValues.isEmpty()){
-			
-			ArrayList<String> whereIs = new ArrayList<String>();
-			ArrayList<String> whereNot = new ArrayList<String>();
-			ArrayList<String> whereIsLike = new ArrayList<String>();
-			for (Entry<String,MatchRule> entry : origValues.entrySet()){
-				if(entry.getValue().equals(MatchRule.EXCLUDE)){
-					whereNot.add(entry.getKey());
-				}
-				else if(entry.getValue().equals(MatchRule.PARTIAL)){
-					whereIsLike.add(entry.getKey());
-				} else {
-					whereIs.add(entry.getKey());
-				}
-			}
-			// To match
-			if(!whereIs.isEmpty()){
-				String[] whereValues = new String[whereIs.size()];
-				whereValues = whereIs.toArray(whereValues);
-				if(format == null){
-					query += buildGroupConditions(field_name, whereValues, "%s = '%s'", "OR", null);
-				} else {
-					query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
-				}
-			}
-			// To match partial
-			if(!whereIsLike.isEmpty()){
-				String[] whereValues = new String[whereIsLike.size()];
-				whereValues = whereIsLike.toArray(whereValues);
-				query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
-			}
-			// Not match
-			if(!whereNot.isEmpty()){
-				String[] whereNotValues = new String[whereNot.size()];
-				whereNotValues = whereNot.toArray(whereNotValues);
-				
-				if(format == null){
-					query += buildGroupConditions(field_name, whereNotValues, "%s != '%s'", null, null);
-				} else {
-					query += buildGroupConditions(field_name, whereNotValues, "%s NOT LIKE '%%%s%%'", null, format);
-				}
-			}
-		}
-		return query;
-	}
-	
-	
-	/**
-	 * 
-	 * @param fieldname
-	 * @param arg_values
-	 * @return
-	 */
-	protected String buildGroupConditions( String fieldname, String[] arg_values, String matchFormat, String matchType, String dataFormat ){
-		
-		String where = "";
-		matchFormat = (matchFormat == null ? "%s = %s" : matchFormat);
-		matchType = (matchType == null ? "AND" : matchType);
-		dataFormat = (dataFormat == null ? "%s" : dataFormat);
-
-		if( arg_values.length > 0 && !matchFormat.isEmpty() ){
-			where += " AND (";
-			int c = 1;
-			for(String val : arg_values){
-				if(c > 1 && c <= arg_values.length){
-					where += " "+matchType+" ";
-				}
-				fieldname = ( fieldname == null ? "" : fieldname );
-				where += String.format(matchFormat, fieldname, String.format(dataFormat,val));
-				c++;
-			}
-			where += ")";
-		}
-		return where;
-	}
-	
-	
-	/**
-	 * 
-	 * @param arg_values
-	 * @param player_name
-	 * @return
-	 */
-	protected String buildRadiusCondition( Vector minLoc, Vector maxLoc ){
-		String where = "";
-		if(minLoc != null && maxLoc != null ){
-			where += " AND (prism_actions.x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")";
-			where += " AND (prism_actions.y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")";
-			where += " AND (prism_actions.z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")";
-		}
-		return where;
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	protected String buildTimeCondition( String dateFrom, String equation ){
-		String where = "";
-		if(dateFrom != null){
-			if(equation == null){
-				where += " AND prism_actions.action_time >= '" + dateFrom + "'";
-			} else {
-				where += " AND prism_actions.action_time "+equation+" '" + dateFrom + "'";
-			}
-		}
-		return where;
 	}
 }
