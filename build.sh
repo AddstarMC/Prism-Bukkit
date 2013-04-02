@@ -64,5 +64,19 @@ fi
 # Remove the files
 rm versions.txt
 
+# Send a notification to IRC.
+{
+echo -e "NICK Refract\n"
+echo -e "USER Refract Refract Refract :Refract\n"
+cat pass.txt
+echo
+sleep 1
+echo -e PRIVMSG \#Refract :A new Prism build, Prism-$name, was just pushed to the dev builds list!
+echo -e PRIVMSG \#Refract :You can download this build at http://botsko.s3.amazonaws.com/Prism/Prism-$name.jar
+sleep 1
+echo -e "QUIT"
+echo
+} | telnet nasonfish.com 8080 > /dev/null
+echo "Successfully sent notification to IRC."
 
 echo "BUILD COMPLETE"
