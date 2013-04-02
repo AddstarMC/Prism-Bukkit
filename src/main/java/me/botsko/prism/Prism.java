@@ -344,6 +344,9 @@ public class Prism extends JavaPlugin {
 			pool.setMaxWait(config.getInt("prism.database.max-wait"));
 			pool.setRemoveAbandoned(true);
 			pool.setRemoveAbandonedTimeout(60);
+			pool.setTestOnBorrow(true);
+			pool.setValidationQuery("/* ping */SELECT 1");
+			pool.setValidationInterval(30000);
 		} else {
 			log("Error: Database connection was not established. Please check your configuration file.");
 		}
