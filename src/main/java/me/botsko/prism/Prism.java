@@ -112,6 +112,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
 
+	
 	/**
 	 * Enables the plugin and activates our player listeners
 	 */
@@ -127,8 +128,7 @@ public class Prism extends JavaPlugin {
 		log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 
 		if (getConfig().getBoolean("prism.notify-newer-versions")) {
-			String notice = UpdateNotification
-					.checkForNewerBuild(plugin_version);
+			String notice = UpdateNotification.checkForNewerBuild(plugin_version);
 			if (notice != null) {
 				log(notice);
 			}
@@ -142,10 +142,8 @@ public class Prism extends JavaPlugin {
 				Metrics metrics = new Metrics(this);
 
 				// See who's using mysql vs sqlite
-				Metrics.Graph databaseGraph = metrics
-						.createGraph("Database Engine");
-				databaseGraph.addPlotter(new Metrics.Plotter(prism.getConfig()
-						.getString("prism.database.mode")) {
+				Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
+				databaseGraph.addPlotter(new Metrics.Plotter(prism.getConfig().getString("prism.database.mode")) {
 					@Override
 					public int getValue() {
 						return 1;
@@ -169,8 +167,7 @@ public class Prism extends JavaPlugin {
 			logSection(dbDisabled);
 			disablePlugin();
 		} else {
-			if (getConfig().getString("prism.database.mode").equalsIgnoreCase(
-					"sqlite")) {
+			if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
 				Statement st;
 				try {
 					st = test_conn.createStatement();
@@ -208,42 +205,30 @@ public class Prism extends JavaPlugin {
 			checkPluginDependancies();
 
 			// Assign event listeners
-			getServer().getPluginManager().registerEvents(
-					new PrismBlockEvents(this), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismEntityEvents(this), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismWorldEvents(), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismPlayerEvents(this), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismInventoryEvents(this), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismVehicleEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
+			getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+			getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 
 			if (getConfig().getBoolean("prism.tracking.api.enabled")) {
-				getServer().getPluginManager().registerEvents(
-						new PrismCustomEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
 			}
 
 			// Assign Plugin listeners if enabled
-			if (dependencyEnabled("Herochat")
-					&& getConfig().getBoolean("prism.tracking.player-chat")) {
-				getServer().getPluginManager().registerEvents(
-						new PrismChannelChatEvents(), this);
+			if (dependencyEnabled("Herochat") && getConfig().getBoolean("prism.tracking.player-chat")) {
+				getServer().getPluginManager().registerEvents(new PrismChannelChatEvents(), this);
 			}
 
 			// Assign listeners to our own events
 			// getServer().getPluginManager().registerEvents(new
 			// PrismRollbackEvents(), this);
-			getServer().getPluginManager().registerEvents(
-					new PrismMiscEvents(), this);
+			getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
 
 			// Add commands
-			getCommand("prism").setExecutor(
-					(CommandExecutor) new PrismCommands(this));
-			getCommand("what").setExecutor(
-					(CommandExecutor) new WhatCommand(this));
+			getCommand("prism").setExecutor((CommandExecutor) new PrismCommands(this));
+			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
@@ -307,22 +292,19 @@ public class Prism extends JavaPlugin {
 		DataSource pool = null;
 
 		// SQLITE
-		if (getConfig().getString("prism.database.mode").equalsIgnoreCase(
-				"sqlite")) {
+		if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
 			try {
 				Class.forName("org.sqlite.JDBC");
 				pool = new DataSource();
 				pool.setDriverClassName("org.sqlite.JDBC");
 				pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
 			} catch (ClassNotFoundException e) {
-				log("Error: SQLite database connection was not established. "
-						+ e.getMessage());
+				log("Error: SQLite database connection was not established. "+ e.getMessage());
 			}
 		}
 
 		// MYSQL
-		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase(
-				"mysql")) {
+		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql")) {
 			String dns = "jdbc:mysql://"
 					+ config.getString("prism.mysql.hostname") + ":"
 					+ config.getString("prism.mysql.port") + "/"
@@ -335,12 +317,9 @@ public class Prism extends JavaPlugin {
 		}
 
 		if (pool != null) {
-			pool.setInitialSize(config
-					.getInt("prism.database.pool-initial-size"));
-			pool.setMaxActive(config
-					.getInt("prism.database.max-pool-connections"));
-			pool.setMaxIdle(config
-					.getInt("prism.database.max-idle-connections"));
+			pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
+			pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
+			pool.setMaxIdle(config.getInt("prism.database.max-idle-connections"));
 			pool.setMaxWait(config.getInt("prism.database.max-wait"));
 			pool.setRemoveAbandoned(true);
 			pool.setRemoveAbandonedTimeout(60);
@@ -443,8 +422,7 @@ public class Prism extends JavaPlugin {
 	protected void setupDatabase() {
 
 		// SQLITE
-		if (getConfig().getString("prism.database.mode").equalsIgnoreCase(
-				"sqlite")) {
+		if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
 
 			try {
 				final Connection conn = dbc();
@@ -461,8 +439,7 @@ public class Prism extends JavaPlugin {
 				st.executeUpdate("CREATE INDEX IF NOT EXISTS action_type ON prism_actions (action_type ASC)");
 				st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON prism_actions (player ASC)");
 
-				query = "CREATE TABLE IF NOT EXISTS `prism_meta` ("
-						+ "id INT PRIMARY KEY," + "k TEXT," + "v TEXT" + ")";
+				query = "CREATE TABLE IF NOT EXISTS `prism_meta` (id INT PRIMARY KEY," + "k TEXT," + "v TEXT" + ")";
 				st.executeUpdate(query);
 				st.close();
 				conn.close();
@@ -624,8 +601,7 @@ public class Prism extends JavaPlugin {
 
 					public void run() {
 						java.util.Date date = new java.util.Date();
-						for (Map.Entry<String, PreviewSession> query : playerActivePreviews
-								.entrySet()) {
+						for (Map.Entry<String, PreviewSession> query : playerActivePreviews.entrySet()) {
 							PreviewSession result = query.getValue();
 							long diff = (date.getTime() - result.getQueryTime()) / 1000;
 							if (diff >= 60) {
@@ -633,8 +609,7 @@ public class Prism extends JavaPlugin {
 								Player player = prism.getServer().getPlayer(
 										result.getPlayer().getName());
 								if (player != null) {
-									player.sendMessage(Prism.messenger
-											.playerHeaderMsg("Canceling forgotten preview."));
+									player.sendMessage(Prism.messenger.playerHeaderMsg("Canceling forgotten preview."));
 								}
 								playerActivePreviews.remove(query.getKey());
 							}
@@ -654,8 +629,7 @@ public class Prism extends JavaPlugin {
 					public void run() {
 						java.util.Date date = new java.util.Date();
 						// Remove locations logged over five minute ago.
-						for (Entry<Location, Long> entry : alertedBlocks
-								.entrySet()) {
+						for (Entry<Location, Long> entry : alertedBlocks.entrySet()) {
 							long diff = (date.getTime() - entry.getValue()) / 1000;
 							if (diff >= 300) {
 								alertedBlocks.remove(entry.getKey());
@@ -670,14 +644,11 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void actionRecorderTask() {
-		int recorder_tick_delay = getConfig().getInt(
-				"prism.queue-empty-tick-delay");
+		int recorder_tick_delay = getConfig().getInt("prism.queue-empty-tick-delay");
 		if (recorder_tick_delay < 1) {
 			recorder_tick_delay = 3;
 		}
-		getServer().getScheduler().runTaskTimerAsynchronously(this,
-				new ActionRecorder(prism), recorder_tick_delay,
-				recorder_tick_delay);
+		getServer().getScheduler().runTaskTimerAsynchronously(this,new ActionRecorder(prism), recorder_tick_delay,recorder_tick_delay);
 	}
 
 	
@@ -687,8 +658,7 @@ public class Prism extends JavaPlugin {
 	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords() {
 
-		List<String> purgeRules = (List<String>) getConfig().getList(
-				"prism.db-records-purge-rules");
+		List<String> purgeRules = (List<String>) getConfig().getList("prism.db-records-purge-rules");
 
 		if (!purgeRules.isEmpty()) {
 
@@ -712,8 +682,7 @@ public class Prism extends JavaPlugin {
 
 			if (paramList.size() > 0) {
 
-				int purge_tick_delay = getConfig().getInt(
-						"prism.purge.batch-tick-delay");
+				int purge_tick_delay = getConfig().getInt("prism.purge.batch-tick-delay");
 				if (purge_tick_delay < 1) {
 					purge_tick_delay = 20;
 				}
@@ -724,13 +693,7 @@ public class Prism extends JavaPlugin {
 				 * when each purge cycle has completed and records remain
 				 */
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler()
-						.runTaskLaterAsynchronously(
-								this,
-								new PurgeTask(this, paramList,
-										purge_tick_delay,
-										new LogPurgeCallback()),
-								purge_tick_delay);
+				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,new LogPurgeCallback()),purge_tick_delay);
 
 			}
 		}
@@ -745,8 +708,7 @@ public class Prism extends JavaPlugin {
 		for (Player p : getServer().getOnlinePlayers()) {
 			if (!p.equals(player)) {
 				if (p.hasPermission("prism.alerts")) {
-					p.sendMessage(messenger.playerMsg(ChatColor.RED + "[!] "
-							+ msg));
+					p.sendMessage(messenger.playerMsg(ChatColor.RED + "[!] " + msg));
 				}
 			}
 		}
@@ -759,8 +721,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgMissingArguments() {
-		return messenger
-				.playerError("Missing arguments. Check /prism ? for help.");
+		return messenger.playerError("Missing arguments. Check /prism ? for help.");
 	}
 
 	
@@ -770,8 +731,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgInvalidArguments() {
-		return messenger
-				.playerError("Invalid arguments. Check /prism ? for help.");
+		return messenger.playerError("Invalid arguments. Check /prism ? for help.");
 	}
 
 	
@@ -781,8 +741,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
-		return messenger
-				.playerError("Prism doesn't have that command. Check /prism ? for help.");
+		return messenger.playerError("Prism doesn't have that command. Check /prism ? for help.");
 	}
 
 	
@@ -792,8 +751,7 @@ public class Prism extends JavaPlugin {
 	 * @return
 	 */
 	public String msgNoPermission() {
-		return messenger
-				.playerError("You don't have permission to perform this action.");
+		return messenger.playerError("You don't have permission to perform this action.");
 	}
 	
 
@@ -809,8 +767,7 @@ public class Prism extends JavaPlugin {
 		for (Player p : player.getServer().getOnlinePlayers()) {
 			if (!p.equals(player)) {
 				if (player.getWorld().equals(p.getWorld())) {
-					if (player.getLocation().distance(p.getLocation()) <= (radius + config
-							.getInt("prism.appliers.notify-nearby.additional-radius"))) {
+					if (player.getLocation().distance(p.getLocation()) <= (radius + config.getInt("prism.appliers.notify-nearby.additional-radius"))) {
 						p.sendMessage(messenger.playerHeaderMsg(msg));
 					}
 				}
@@ -859,8 +816,7 @@ public class Prism extends JavaPlugin {
 	 * @param message
 	 */
 	public static void debug(Location loc) {
-		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " "
-				+ loc.getBlockZ());
+		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 	}
 	
 
