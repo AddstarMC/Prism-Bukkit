@@ -71,8 +71,8 @@ echo -e "USER Refract Refract Refract :Refract\n"
 cat pass.txt
 echo
 sleep 1
-echo -e PRIVMSG \#Refract :A new Prism build, Prism-$name, was just pushed to the dev builds list!
-echo -e PRIVMSG \#Refract :You can download this build at http://botsko.s3.amazonaws.com/Prism/Prism-$name.jar
+echo -e PRIVMSG \#Prism :A new Prism build, Prism-$name, was just pushed to the dev builds list!
+echo -e PRIVMSG \#Prism :You can download this build at http://botsko.s3.amazonaws.com/Prism/Prism-$name.jar or view all of the dev builds at http://discover-prism.com/dev/builds/
 sleep 1
 echo -e "QUIT"
 echo
