@@ -79,6 +79,15 @@ public class InspectorWand extends QueryWandBase implements Wand {
 						params.addActionType(ignore, MatchRule.EXCLUDE);
 					}
 				}
+				boolean timeDefault = false;
+				for(String _default : params.getDefaultsUsed()){
+					if(_default.startsWith("t:")){
+						timeDefault = true;
+					}
+				}
+				if(timeDefault){
+					params.setIgnoreTime(true);
+				}
 		
 				// Query
 				ActionsQuery aq = new ActionsQuery(plugin);
