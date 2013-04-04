@@ -69,6 +69,16 @@ public class RestoreWand extends QueryWandBase implements Wand {
 		params.setLimit(1);
 		params.setProcessType(PrismProcessType.RESTORE);
 		
+		boolean timeDefault = false;
+		for(String _default : params.getDefaultsUsed()){
+			if(_default.startsWith("t:")){
+				timeDefault = true;
+			}
+		}
+		if(timeDefault){
+			params.setIgnoreTime(true);
+		}
+		
 		ActionsQuery aq = new ActionsQuery(plugin);
 		QueryResult results = aq.lookup( params, player );
 		if(!results.getActionResults().isEmpty()){

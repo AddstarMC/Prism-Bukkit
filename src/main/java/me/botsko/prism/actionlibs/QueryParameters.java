@@ -42,7 +42,8 @@ public class QueryParameters implements Cloneable {
 	protected String before_time;
 	protected String world;
 	protected String keyword;
-
+	protected boolean ignoreTime;
+	
 	/**
 	 * Params that allow multiple values
 	 */
@@ -58,6 +59,7 @@ public class QueryParameters implements Cloneable {
 	 */
 	protected int per_page = 5;
 	protected int limit = 1000000;
+	
 	
 
 	/**
@@ -589,5 +591,21 @@ public class QueryParameters implements Cloneable {
 		QueryParameters cloned = (QueryParameters) super.clone();
 		cloned.actionTypeRules = new HashMap<String,MatchRule>(actionTypeRules);
 		return cloned;
+	}
+
+	/**
+	 * Ignore the time.
+	 * @param b 
+	 */
+	public void setIgnoreTime(boolean ignore) {
+		this.ignoreTime = ignore;
+	}
+	
+	/**
+	 * Check if we are ignoring the time.
+	 * @return 
+	 */
+	public boolean getIgnoreTime(){
+		return ignoreTime;
 	}
 }
