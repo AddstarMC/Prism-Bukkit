@@ -415,13 +415,15 @@ public class ActionsQuery {
 			/**
 			 * Timeframe
 			 */
-			String time = parameters.getBeforeTime();
-			if(time != null){
-				query += buildTimeCondition(time,"<=");
-			}
-			time = parameters.getSinceTime();
-			if(time != null){
-				query += buildTimeCondition(time,null);
+			if(!parameters.getIgnoreTime()){
+				String time = parameters.getBeforeTime();
+				if(time != null){
+					query += buildTimeCondition(time,"<=");
+				}
+				time = parameters.getSinceTime();
+				if(time != null){
+					query += buildTimeCondition(time,null);
+				}
 			}
 			
 			/**

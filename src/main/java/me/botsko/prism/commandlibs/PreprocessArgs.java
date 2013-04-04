@@ -340,11 +340,15 @@ public class PreprocessArgs {
 					}
 				}
 				if( arg_type.equals("since") || arg_type.equals("t") ){
-					String date = translateTimeStringToDate(plugin,sender,val);
-					if(date != null){
-						parameters.setSinceTime( date );
+					if(val.equalsIgnoreCase("none")){
+						parameters.setIgnoreTime(true);
 					} else {
-						return null;
+						String date = translateTimeStringToDate(plugin,sender,val);
+						if(date != null){
+							parameters.setSinceTime( date );
+						} else {
+							return null;
+						}
 					}
 				}
 				
