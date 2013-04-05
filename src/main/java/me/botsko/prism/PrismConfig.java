@@ -111,6 +111,19 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
 		
+		// Illegal Entity Rollbacks
+		List<String> illegalEntities = new ArrayList<String>();
+		illegalEntities.add("creeper");
+		config.addDefault("prism.appliers.never-spawn-entity", illegalEntities);
+		
+		// Illegal Block Rollbacks
+		List<Integer> illegalBlocks = new ArrayList<Integer>();
+		illegalBlocks.add(10);
+		illegalBlocks.add(11);
+		illegalBlocks.add(46);
+		illegalBlocks.add(51);
+		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
+		
 		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);

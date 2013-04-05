@@ -1,9 +1,9 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.utils.EntityUtils;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -248,7 +248,7 @@ public class EntityAction extends GenericAction {
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
 		
-		if(!EntityUtils.mayEverSpawn(getEntityType())){
+		if( Prism.getIllegalEntities().contains( getEntityType().name().toLowerCase() ) ){
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
 		

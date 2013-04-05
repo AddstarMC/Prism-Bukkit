@@ -6,13 +6,13 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import me.botsko.elixr.EntityUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.EntityUtils;
 
 public class Rollback extends Preview {
 	

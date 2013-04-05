@@ -8,12 +8,12 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import me.botsko.elixr.EntityUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
-import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 
@@ -91,6 +91,7 @@ public class Preview implements Previewable {
 	 */
 	protected int worldChangeQueueTaskId;
 	
+	
 	/**
 	 * 
 	 */
@@ -119,7 +120,7 @@ public class Preview implements Previewable {
 		if(callback != null){
 			this.callback = callback;
 		}
-		
+
 		// Append all actions to the queue.
 		worldChangeQueue.addAll(results);
 		

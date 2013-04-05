@@ -75,8 +75,8 @@ public class Prism extends JavaPlugin {
 	private static ActionRegistry actionRegistry;
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
-	public BukkitTask deleteTask;
-	public int total_records_affected = 0;
+	protected static ArrayList<Integer> illegalBlocks;
+	protected static ArrayList<String> illegalEntities;
 
 	/**
 	 * Public
@@ -95,6 +95,8 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<Location, Long>();
 	public TimeTaken eventTimer;
 	public QueueStats queueStats;
+	public BukkitTask deleteTask;
+	public int total_records_affected = 0;
 
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so that when
@@ -274,9 +276,15 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Load configuration and language files
 	 */
+	@SuppressWarnings("unchecked")
 	public void loadConfig() {
 		PrismConfig mc = new PrismConfig(this);
 		config = mc.getConfig();
+		
+		// Cache illegal entities/blocks
+		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
+		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
+		
 		// Load language files
 		// language = new Language( mc.getLang() );
 		// Load items db
@@ -532,6 +540,23 @@ public class Prism extends JavaPlugin {
 	 */
 	public boolean dependencyEnabled(String pluginName) {
 		return enabledPlugins.contains(pluginName);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalBlocks(){
+		return illegalBlocks;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static ArrayList<String> getIllegalEntities(){
+		return illegalEntities;
 	}
 
 	

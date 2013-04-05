@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -331,7 +332,7 @@ public class BlockAction extends GenericAction {
 		}
 		
 		// On the blacklist (except an undo)
-		if( !BlockUtils.mayEverPlace(m) && !parameters.getProcessType().equals(PrismProcessType.UNDO) ){
+		if( Prism.getIllegalBlocks().contains( getBlockId() ) && !parameters.getProcessType().equals(PrismProcessType.UNDO) ){
 //			System.out.print("Block skipped because it's not allowed to be placed.");
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
