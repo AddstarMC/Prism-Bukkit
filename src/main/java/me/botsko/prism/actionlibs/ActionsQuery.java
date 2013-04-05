@@ -339,7 +339,7 @@ public class ActionsQuery {
 			/**
 			 * World
 			 */
-			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getSpecificBlockLocation() == null ){
+			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getSpecificBlockLocations().size() == 0 ){
 				if( parameters.getWorld() != null ){
 					query += " AND world = '"+parameters.getWorld()+"'";
 				}
@@ -384,7 +384,7 @@ public class ActionsQuery {
 			 * 
 			 * If we're using a specific block location, don't use a radius.
 			 */
-			if( ( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ) && parameters.getSpecificBlockLocation() == null ){
+			if( ( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ) && parameters.getSpecificBlockLocations().size() == 0 ){
 				query += buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
 			}
 
@@ -437,9 +437,15 @@ public class ActionsQuery {
 			/**
 			 * Specific coords
 			 */
-			Location loc = parameters.getSpecificBlockLocation();
-			if(loc != null){
-				query += " AND prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
+			ArrayList<Location> locations = parameters.getSpecificBlockLocations();
+			if( locations.size() >0 ){
+				query += " AND (";
+				int l = 0;
+				for( Location loc : locations ){
+					query += (l > 0 ? " OR" : "" ) + " prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
+					l++;
+				}
+				query += ")";
 			}
 			
 			/**

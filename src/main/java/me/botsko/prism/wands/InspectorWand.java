@@ -69,7 +69,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 					player.sendMessage(Prism.messenger.playerError("Error retreiving parameters. Checking with default parameters."));
 				}
 				params.setWorld( player.getWorld().getName() );
-				params.setSpecificBlockLocation(loc);
+				params.addSpecificBlockLocation(loc);
 				
 				// Ignoring any actions via config?
 				@SuppressWarnings("unchecked")

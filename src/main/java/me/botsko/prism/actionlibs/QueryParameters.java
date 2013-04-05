@@ -37,7 +37,7 @@ public class QueryParameters implements Cloneable {
 	protected int parent_id = 0;
 	protected Location player_location;
 	protected int radius;
-	protected Location specific_block_loc;
+	protected ArrayList<Location> specific_block_locations = new ArrayList<Location>();
 	protected String since_time;
 	protected String before_time;
 	protected String world;
@@ -121,16 +121,16 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the loc
 	 */
-	public Location getSpecificBlockLocation() {
-		return specific_block_loc;
+	public ArrayList<Location> getSpecificBlockLocations() {
+		return specific_block_locations;
 	}
 	
 	
 	/**
 	 * @param loc the loc to set
 	 */
-	public void setSpecificBlockLocation(Location loc) {
-		this.specific_block_loc = loc;
+	public void addSpecificBlockLocation(Location loc) {
+		this.specific_block_locations.add( loc );
 	}
 	
 	
@@ -494,51 +494,6 @@ public class QueryParameters implements Cloneable {
 	public ArrayList<String> getDefaultsUsed(){
 		return defaultsUsed;
 	}
-	
-	
-//	/**
-//	 * This just provides easy access to whether or not any action
-//	 * type we're searching for should also trigger a restore
-//	 * of any events afterwards.
-//	 * 
-//	 * @param at
-//	 * @return
-//	 */
-//	public boolean shouldTriggerRestoreFor( String at ){
-//		if(!getActionTypes().isEmpty()){
-//			for (Entry<String,MatchRule> entry : getActionTypes().entrySet()){
-//				if(entry.getKey().shouldTriggerRestoreFor( at )){
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
-//	
-//	
-//	/**
-//	 * This just provides easy access to whether or not any action
-//	 * type we're searching for should also trigger a rollback
-//	 * of any events afterwards.
-//	 * 
-//	 * @param at
-//	 * @return
-//	 */
-//	public boolean shouldTriggerRollbackFor( String at ){
-//		ActionType actionType = Prism.getActionRegistry().getAction(at);
-//		
-//		if(!getActionTypes().isEmpty()){
-//			ActionType actionType = Prism.getActionRegistry().getAction(at);
-//			
-//			for (Entry<String,MatchRule> entry : getActionTypes().entrySet()){
-//				ActionType actionType = Prism.getActionRegistry().getAction(at);
-//				if(actionType.shouldTriggerRollbackFor( at )){
-//					return true;
-//				}
-//			}
-//		}
-//		return false;
-//	}
 	
 	
 	/**
