@@ -18,6 +18,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -87,6 +88,13 @@ public class PrismBlockEvents implements Listener {
 		}
 		else if( block.getType().equals(Material.DROPPER) ){
 			container = (Dropper) block.getState();
+		}
+		else if(block.getType().equals(Material.JUKEBOX)){
+			Jukebox jukebox = (Jukebox) block.getState();
+			if( jukebox.getPlaying() == null ) return;
+			ItemStack i = new ItemStack(jukebox.getPlaying(),1);
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player_name) );
+			return;
 		}
 		if(container != null){
 			int slot = 0;

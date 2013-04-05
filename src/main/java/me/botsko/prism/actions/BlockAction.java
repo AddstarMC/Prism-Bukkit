@@ -373,6 +373,12 @@ public class BlockAction extends GenericAction {
 				}
 			}
 			
+			// Jukebox, never use the data val because
+			// it becomes unplayable
+			if( getBlockId() == 84 ){
+				block_subid = 0;
+			}
+			
 			// Set the material
 			block.setTypeId(getBlockId() );
 			block.setData( (byte)getBlockSubId() );

@@ -23,6 +23,7 @@ import org.bukkit.block.Dispenser;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
+import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -482,6 +483,11 @@ public class ItemStackAction extends GenericAction {
 			}
 			else if( block.getType().equals(Material.HOPPER) ){
 				container = (Hopper) block.getState();
+			}
+			else if( block.getType().equals(Material.JUKEBOX) ){
+				Jukebox jukebox = (Jukebox) block.getState();
+				jukebox.setPlaying( item.getType() );
+				jukebox.update();
 			}
 			
 			if(container != null){
