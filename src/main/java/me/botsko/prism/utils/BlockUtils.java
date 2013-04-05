@@ -9,7 +9,9 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.material.Bed;
 
 public class BlockUtils extends me.botsko.elixr.BlockUtils {
 	
@@ -27,6 +29,33 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
 			return false;
 		}
 		return true;
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 */
+	public static Block getSiblingForDoubleLengthBlock( Block block ){
+		/**
+		 * Handle special double-length blocks
+		 */
+		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
+			// If you've broken the top half of a door, we need to record the action for the bottom.
+			// This is because a top half break doesn't record the orientation of the door while the bottom does,
+			// and we have code in the rollback/restore to add the top half back in.
+			if(block.getData() == 8 || block.getData() == 9){
+				return block.getRelative(BlockFace.DOWN);
+			}
+		}
+		// If it's a bed, we always record the lower half and rely on appliers
+		if( block.getType().equals(Material.BED_BLOCK) ){
+			Bed b = (Bed)block.getState().getData();
+			if(b.isHeadOfBed()){
+	            return block.getRelative(b.getFacing().getOppositeFace());
+	        }
+		}
+		return null;
 	}
     
     

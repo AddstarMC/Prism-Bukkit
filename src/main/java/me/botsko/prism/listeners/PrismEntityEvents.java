@@ -5,6 +5,7 @@ import java.util.Collection;
 import me.botsko.elixr.DeathUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -400,7 +401,11 @@ public class PrismEntityEvents implements Listener {
 			}
 			
 			// Change handling a bit if it's a long block
-			block = be.properlyLogDoubleLengthBlocks(block);
+			Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+			if( sibling != null ){
+				block = sibling;
+			}
+			
 			// Log items from chests
 			be.logItemRemoveFromDestroyedContainer(name, block);
 			// Record blocks explode

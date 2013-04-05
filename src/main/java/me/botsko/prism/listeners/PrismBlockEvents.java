@@ -39,7 +39,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
-import org.bukkit.material.Bed;
 import org.bukkit.material.Sign;
 
 public class PrismBlockEvents implements Listener {
@@ -102,33 +101,6 @@ public class PrismBlockEvents implements Listener {
 				slot++;
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param block
-	 */
-	public Block properlyLogDoubleLengthBlocks( Block block ){
-		/**
-		 * Handle special double-length blocks
-		 */
-		if( block.getType().equals(Material.WOODEN_DOOR) || block.getType().equals(Material.IRON_DOOR_BLOCK) ){
-			// If you've broken the top half of a door, we need to record the action for the bottom.
-			// This is because a top half break doesn't record the orientation of the door while the bottom does,
-			// and we have code in the rollback/restore to add the top half back in.
-			if(block.getData() == 8 || block.getData() == 9){
-				block = block.getRelative(BlockFace.DOWN);
-			}
-		}
-		// If it's a bed, we always record the lower half and rely on appliers
-		if( block.getType().equals(Material.BED_BLOCK) ){
-			Bed b = (Bed)block.getState().getData();
-			if(b.isHeadOfBed()){
-	            block = block.getRelative(b.getFacing().getOppositeFace());
-	        }
-		}
-		return block;
 	}
 	
 	
@@ -209,7 +181,10 @@ public class PrismBlockEvents implements Listener {
 		}
 		
 		// Change handling a bit if it's a long block
-		block = properlyLogDoubleLengthBlocks(block);
+		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+		if( sibling != null ){
+			block = sibling;
+		}
 		
 		// log items removed from container
 		// note: done before the container so a "rewind" for rollback will work properly
@@ -331,7 +306,10 @@ public class PrismBlockEvents implements Listener {
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-burn", block, "Environment") );
 		
 		// Change handling a bit if it's a long block
-		block = properlyLogDoubleLengthBlocks(block);
+		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+		if( sibling != null ){
+			block = sibling;
+		}
 		
 		// check for block relationships
 		logBlockRelationshipsForBlock( "Environment", block );

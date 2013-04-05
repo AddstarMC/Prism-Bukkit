@@ -442,7 +442,7 @@ public class ActionsQuery {
 				query += " AND (";
 				int l = 0;
 				for( Location loc : locations ){
-					query += (l > 0 ? " OR" : "" ) + " prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ();
+					query += (l > 0 ? " OR" : "" ) + " (prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ() + ")";
 					l++;
 				}
 				query += ")";
