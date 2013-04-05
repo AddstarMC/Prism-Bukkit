@@ -127,21 +127,27 @@ public class HangingItemAction extends GenericAction {
 
 		Location loc = new Location( getWorld(), getX(), getY(), getZ()).getBlock().getRelative(getDirection()).getLocation();
 		
+		// Ensure there's a block at this location that accepts an attachment
+		if( BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ){
+			return new ChangeResult( ChangeResultType.SKIPPED, null );
+		}
+		
 		// bug filed:
 		// https://bukkit.atlassian.net/browse/BUKKIT-3371
-		if( getHangingType().equals("item_frame") ){
-			if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
+		
+		try {
+			if( getHangingType().equals("item_frame") ){
 				Hanging hangingItem = getWorld().spawn(loc, ItemFrame.class);
 				hangingItem.setFacingDirection( attachedFace, true );
 				return new ChangeResult( ChangeResultType.APPLIED, null );
 			}
-		}
-		else if( getHangingType().equals("painting") ){
-			if(!BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() )){
+			else if( getHangingType().equals("painting") ){
 				Hanging hangingItem = getWorld().spawn(loc, Painting.class);
 				hangingItem.setFacingDirection( getDirection(), true );
 				return new ChangeResult( ChangeResultType.APPLIED, null );
 			}
+		} catch ( IllegalArgumentException e ){
+			// Something interfered with being able to place the painting
 		}
 		return new ChangeResult( ChangeResultType.SKIPPED, null );
 	}
