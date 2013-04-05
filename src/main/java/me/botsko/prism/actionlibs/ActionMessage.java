@@ -16,6 +16,11 @@ public class ActionMessage {
 	 */
 	private boolean showExtended = false;
 	
+	/**
+	 * 
+	 */
+	private int index = 0;
+	
 	
 	/**
 	 * 
@@ -36,6 +41,15 @@ public class ActionMessage {
 	
 	/**
 	 * 
+	 * @param index
+	 */
+	public void setResultIndex( int index ){
+		this.index = index;
+	}
+	
+	
+	/**
+	 * 
 	 */
 	public String[] getMessage(){
 		
@@ -50,6 +64,11 @@ public class ActionMessage {
 
 		// +/-
 		line1 += getPosNegPrefix();
+		
+		// Result index for teleporting
+		if( index > 0 ){
+			line1 += ChatColor.GRAY + " ["+index+"] ";
+		}
 		
 		// Who
 		line1 += highlight + a.getPlayerName();

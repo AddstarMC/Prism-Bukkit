@@ -92,12 +92,15 @@ public class LookupCommand implements SubHandler {
 						}
 						List<Handler> paginated = results.getPaginatedActionResults();
 						if(paginated != null){
+							int result_count = 1;
 							for(Handler a : paginated){
 								ActionMessage am = new ActionMessage(a);
 								if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 									am.showExtended();
 								}
+								am.setResultIndex( result_count );
 								player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+								result_count++;
 							}
 						} else {
 							player.sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
