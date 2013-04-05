@@ -159,7 +159,7 @@ public class WandCommand implements SubHandler {
 		/**
 		 * Rollback wand
 		 */
-		else if( type.equalsIgnoreCase("rollback") ){
+		else if( type.equalsIgnoreCase("rollback") || type.equalsIgnoreCase("rb") ){
 			if( !call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.wand.rollback") ){
 				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
@@ -176,7 +176,7 @@ public class WandCommand implements SubHandler {
 		/**
 		 * Restore wand
 		 */
-		else if(type.equalsIgnoreCase("restore")){
+		else if( type.equalsIgnoreCase("restore") || type.equalsIgnoreCase("rs") ){
 			if( !call.getPlayer().hasPermission("prism.restore") && !call.getPlayer().hasPermission("prism.wand.restore") ){
 				call.getPlayer().sendMessage( Prism.messenger.playerError("You do not have permission for this.") );
 				return;
