@@ -14,6 +14,7 @@ import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
@@ -71,6 +72,12 @@ public class BlockAction extends GenericAction {
 				actionData = signActionData;
 			}
 			
+			// command block
+			else if( block != null && (block.getTypeId() == 137) ){
+				CommandBlock cmdblock = (CommandBlock) block.getState();
+				data = cmdblock.getCommand();
+			}
+			
 			this.world_name = block.getWorld().getName();
 			this.x = block.getLocation().getBlockX();
 			this.y = block.getLocation().getBlockY();
@@ -94,6 +101,9 @@ public class BlockAction extends GenericAction {
 			}
 			else if( block_id == 63 || block_id == 68 ){
 				actionData = gson.fromJson(data, SignActionData.class);
+			}
+			else if( block_id == 137 ){
+				actionData = new BlockActionData();
 			} else {
 				// No longer used except for pre-1.5 data formats
 				actionData = gson.fromJson(data, BlockActionData.class);
@@ -148,6 +158,9 @@ public class BlockAction extends GenericAction {
 			if(ad.lines != null && ad.lines.length > 0){
 				name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
 			}
+		}
+		else if( block_id == 137 ){
+			name += " (" + data + ")";
 		}
 		if( type.getName().equals("crop-trample") && block_id == 0 ){
 			return "empty soil";
@@ -396,6 +409,16 @@ public class BlockAction extends GenericAction {
 				spawner.setSpawnedType(s.getEntityType());
 				spawner.update();
 				
+			}
+			
+			
+			/**
+			 * Restoring command block
+			 */
+			if(getBlockId() == 137 ){
+				CommandBlock cmdblock = (CommandBlock) block.getState();
+				cmdblock.setCommand( data );
+				cmdblock.update();
 			}
 			
 			
