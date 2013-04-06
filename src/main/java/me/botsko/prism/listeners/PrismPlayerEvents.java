@@ -352,6 +352,9 @@ public class PrismPlayerEvents implements Listener {
 				case JUKEBOX:
 					recordDiscInsert( block, player );
 					break;
+				case CAKE_BLOCK:
+					recordCakeEat( block, player );
+					break;
 				case WOODEN_DOOR:
 				case TRAP_DOOR:
 				case FENCE_GATE:
@@ -391,7 +394,7 @@ public class PrismPlayerEvents implements Listener {
 			
 			// if they're holding a spawner egg
 			if( player.getItemInHand().getType().equals(Material.MONSTER_EGG) ){
-				recordMonsterEggUse( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+				recordMonsterEggUse( block, player.getItemInHand(), player.getName() );
 			}
 			
 			// if they're holding a rocket
@@ -473,7 +476,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param clickedFace
 	 * @param player
 	 */
-	protected void recordMonsterEggUse( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
+	protected void recordMonsterEggUse( Block block, ItemStack inhand, String player ){
 		if( !Prism.getIgnore().event("spawnegg-use",block) ) return;
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("spawnegg-use", "monster egg", block, player) );
 	}
@@ -489,6 +492,17 @@ public class PrismPlayerEvents implements Listener {
 	protected void recordRocketLaunch( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		if( !Prism.getIgnore().event("firework-launch",block) ) return;
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("firework-launch", inhand, null, block.getLocation(), player) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param player
+	 */
+	protected void recordCakeEat( Block block, Player player ){
+		if( !Prism.getIgnore().event("cake-eat",block) ) return;
+		Prism.actionsRecorder.addToQueue( ActionFactory.create("cake-eat", "cake", block, player.getName()) );
 	}
 	
 	

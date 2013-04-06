@@ -137,6 +137,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.bucket-fill", true);
 		config.addDefault("prism.tracking.bonemeal-use", true);
 		config.addDefault("prism.tracking.container-access", true);
+		config.addDefault("prism.tracking.cake-eat", true);
 		config.addDefault("prism.tracking.craft-item", false);
 		config.addDefault("prism.tracking.creeper-explode", true);
 		config.addDefault("prism.tracking.crop-trample", true);
