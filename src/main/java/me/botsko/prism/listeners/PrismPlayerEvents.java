@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -348,6 +349,9 @@ public class PrismPlayerEvents implements Listener {
 					if( !Prism.getIgnore().event("container-access",player) ) return;
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
 					break;
+				case JUKEBOX:
+					recordDiscInsert( block, player );
+					break;
 				case WOODEN_DOOR:
 				case TRAP_DOOR:
 				case FENCE_GATE:
@@ -485,6 +489,34 @@ public class PrismPlayerEvents implements Listener {
 	protected void recordRocketLaunch( Block block, ItemStack inhand, BlockFace clickedFace, String player ){
 		if( !Prism.getIgnore().event("firework-launch",block) ) return;
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("firework-launch", inhand, null, block.getLocation(), player) );
+	}
+	
+	
+	/**
+	 * 
+	 * @param block
+	 * @param player
+	 */
+	protected void recordDiscInsert( Block block, Player player ){
+		
+		// They have to be holding a record
+		if( !player.getItemInHand().getType().isRecord() ) return;
+
+		Jukebox jukebox = (Jukebox) block.getState();
+		
+		// Do we have a disc inside? This will pop it out
+		if( !jukebox.getPlaying().equals(Material.AIR) ){
+		
+			// Record currently playing disc
+			ItemStack i = new ItemStack(jukebox.getPlaying(),1);
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player.getName()) );
+			
+		} else {
+
+			// Record the insert
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", player.getItemInHand(), 1, 0, null, block.getLocation(), player.getName()) );
+		
+		}
 	}
 	
 	

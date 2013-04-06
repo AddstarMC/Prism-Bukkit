@@ -91,7 +91,8 @@ public class PrismBlockEvents implements Listener {
 		}
 		else if(block.getType().equals(Material.JUKEBOX)){
 			Jukebox jukebox = (Jukebox) block.getState();
-			if( jukebox.getPlaying() == null ) return;
+			Material playing = jukebox.getPlaying();
+			if( playing == null || playing.equals(Material.AIR) ) return;
 			ItemStack i = new ItemStack(jukebox.getPlaying(),1);
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player_name) );
 			return;

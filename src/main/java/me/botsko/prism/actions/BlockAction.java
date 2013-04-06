@@ -336,11 +336,6 @@ public class BlockAction extends GenericAction {
 //			System.out.print("Block skipped because it's not allowed to be placed.");
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
-			
-//		// If it's attachable to the sides or top, we need to delay unless we're handling those now
-//		if( !is_deferred && (BlockUtils.isSideFaceDetachableMaterial(m) || BlockUtils.isTopFaceDetachableMaterial(m))){
-//			return new ChangeResult( ChangeResultType.DEFERRED, null );
-//		}
 
 		// If we're not in a preview, actually apply this block
 		if(!is_preview){
