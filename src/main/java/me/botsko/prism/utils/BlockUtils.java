@@ -51,6 +51,9 @@ public class BlockUtils {
 			case STATIONARY_WATER:
 			case STATIONARY_LAVA:
 			case WATER:
+			case SNOW:
+			case SNOW_BLOCK:
+			case LONG_GRASS:
 				return true;
 			default:
 				return false;
