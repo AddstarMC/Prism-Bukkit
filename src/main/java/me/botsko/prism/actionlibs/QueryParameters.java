@@ -126,6 +126,15 @@ public class QueryParameters implements Cloneable {
 	}
 	
 	
+	/*
+	 * @param loc the loc to set
+	 */
+	public void setSpecificBlockLocation(Location loc){
+		this.specific_block_locations.clear();
+		addSpecificBlockLocation( loc );
+	}
+	
+	
 	/**
 	 * @param loc the loc to set
 	 */
@@ -152,6 +161,15 @@ public class QueryParameters implements Cloneable {
 			minLoc = new Vector(loc.getX() - radius, loc.getY() - radius, loc.getZ() - radius);
 			maxLoc = new Vector(loc.getX() + radius, loc.getY() + radius, loc.getZ() + radius);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void resetMinMaxVectors(){
+		minLoc = null;
+		maxLoc = null;
 	}
 	
 	

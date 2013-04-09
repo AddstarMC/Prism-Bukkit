@@ -65,7 +65,7 @@ public class RestoreWand extends QueryWandBase implements Wand {
 		}
 		
 		params.setWorld( player.getWorld().getName() );
-		params.addSpecificBlockLocation( block.getLocation());
+		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
 		params.setProcessType(PrismProcessType.RESTORE);
 		

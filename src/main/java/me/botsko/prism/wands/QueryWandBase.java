@@ -59,6 +59,7 @@ public abstract class QueryWandBase extends WandBase {
 		if(params == null){
 			return false;
 		} else {
+			params.resetMinMaxVectors();
 			this.parameters = params;
 			return true;
 		}

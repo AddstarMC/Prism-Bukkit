@@ -69,7 +69,7 @@ public class RollbackWand extends QueryWandBase implements Wand{
 			player.sendMessage(Prism.messenger.playerError("Error retreiving parameters. Checking with default parameters."));
 		}
 		params.setWorld( player.getWorld().getName() );
-		params.addSpecificBlockLocation( block.getLocation());
+		params.setSpecificBlockLocation( block.getLocation());
 		params.setLimit(1);
 		params.setProcessType(PrismProcessType.ROLLBACK);
 		
