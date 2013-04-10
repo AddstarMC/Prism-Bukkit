@@ -13,6 +13,7 @@ import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -280,6 +281,28 @@ public class PrismInventoryEvents implements Listener {
 	    		recordInvAction( player, currentitem, -1, "item-insert");
 	    	}
 	    }
+	    
+	    // Hopper Minecart
+		else if(ih instanceof HopperMinecart) {
+			HopperMinecart hopper = (HopperMinecart) ih;
+			containerLoc = hopper.getLocation();
+			
+			// Only a click in the hopper can trigger a slot < 5
+			if(event.getRawSlot() <= 4){
+				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+			    }
+			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+			    }
+			} else {
+				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+				if( event.isShiftClick() ){
+		    		recordInvAction( player, currentitem, -1, "item-insert");
+				}
+			}
+		}
 	}
 	
 	
