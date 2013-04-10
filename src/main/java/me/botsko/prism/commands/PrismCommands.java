@@ -137,6 +137,13 @@ public class PrismCommands extends Executor {
 		.setHandler(new UndoCommand(prism));
 		
 		/**
+		 * /prism view 
+		 */
+		addSub(new String[]{"view","v"}, "prism.view")
+		.setMinArgs(1)
+		.setHandler(new ViewCommand(prism));
+		
+		/**
 		 * /prism ?
 		 */
 		addSub( new String[]{"help","?"}, "prism.help")

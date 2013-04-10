@@ -411,9 +411,9 @@ public class QueryBuilder {
 	 */
 	protected void buildRadiusCondition( Vector minLoc, Vector maxLoc ){
 		if(minLoc != null && maxLoc != null ){
-			addCondition( "("+tableName+".x BETWEEN " + minLoc.getX() + " AND " + maxLoc.getX() + ")" );
-			addCondition( "("+tableName+".y BETWEEN " + minLoc.getY() + " AND " + maxLoc.getY() + ")" );
-			addCondition( "("+tableName+".z BETWEEN " + minLoc.getZ() + " AND " + maxLoc.getZ() + ")" );
+			addCondition( "("+tableName+".x BETWEEN " + minLoc.getBlockX() + " AND " + maxLoc.getBlockX() + ")" );
+			addCondition( "("+tableName+".y BETWEEN " + minLoc.getBlockY() + " AND " + maxLoc.getBlockY() + ")" );
+			addCondition( "("+tableName+".z BETWEEN " + minLoc.getBlockZ() + " AND " + maxLoc.getBlockZ() + ")" );
 		}
 	}
 	

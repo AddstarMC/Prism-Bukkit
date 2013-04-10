@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import me.botsko.elixr.ChunkUtils;
 import me.botsko.elixr.ItemUtils;
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
@@ -18,6 +19,8 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.LevenshteinDistance;
+
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 
 import org.bukkit.command.CommandSender;
@@ -260,6 +263,21 @@ public class PreprocessArgs {
 									parameters = WorldEditBridge.getSelectedArea(plugin, player, parameters);
 								}
 							}
+						}
+						
+						// Confine to the chunk
+						else if(val.equals("c") || val.equals("chunk")){
+								
+							if( player == null ){
+								respond( sender, Prism.messenger.playerError("Chunks cannot be used as a radius without a player.") );
+								return null;
+							}
+
+							Chunk ch = player.getLocation().getChunk();
+							parameters.setWorld(ch.getWorld().getName());
+							parameters.setMinLocation( ChunkUtils.getChunkMinVector( ch ) );
+							parameters.setMaxLocation( ChunkUtils.getChunkMaxVector( ch ) );
+							
 						}
 						
 						// User wants no radius, but contained within the current world
