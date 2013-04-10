@@ -262,6 +262,35 @@ public class PreprocessArgs {
 							}
 						}
 						
+						// User wants no radius, but contained within the current world
+						else if(val.equals("world")){
+							// Do they have permission to override the global lookup radius
+							if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+								return null;
+							}
+							// Do they have permission to override the global applier radius
+							if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+								return null;
+							}
+							// Use the world defined in the w: param
+							if( parameters.getWorld() != null ){
+								val = parameters.getWorld();
+							}
+							// Use the current world
+							else if(player != null){
+								val = player.getWorld().getName();
+							} 
+							// Use the default world
+							else {
+								sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+								val = plugin.getServer().getWorlds().get(0).getName();
+							}
+							parameters.setWorld( val );
+							parameters.setAllowNoRadius(true);
+						}
+						
 						// User has asked for a global radius
 						else if(val.equals("global")){
 							// Do they have permission to override the global lookup radius
@@ -275,6 +304,7 @@ public class PreprocessArgs {
 								return null;
 							}
 							// Either they have permission or player is null
+							parameters.setWorld(null);
 							parameters.setAllowNoRadius(true);
 							
 						} else {
@@ -442,10 +472,8 @@ public class PreprocessArgs {
 					}
 				}
 				// World default
-				if(!foundArgs.containsKey("w")){
-					if(player != null){
-						parameters.setWorld( player.getWorld().getName() );
-					}
+				if( player != null && !foundArgs.containsKey("w") && !parameters.allowsNoRadius()){
+					parameters.setWorld( player.getWorld().getName() );
 				}
 				// Time default
 				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){

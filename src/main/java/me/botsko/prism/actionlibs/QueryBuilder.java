@@ -125,10 +125,8 @@ public class QueryBuilder {
 			/**
 			 * World
 			 */
-			if( !parameters.allowsNoRadius() && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
-				if( parameters.getWorld() != null ){
-					addCondition( String.format(tableName+".world = '%s'", parameters.getWorld()) );
-				}
+			if( !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getWorld() != null ){
+				addCondition( String.format(tableName+".world = '%s'", parameters.getWorld()) );
 			}
 
 			/**
