@@ -98,6 +98,10 @@ public class TeleportCommand implements SubHandler {
 			// Get the result index specified
 			destinationAction = results.getActionResults().get( (record_id-1) );
 			
+			// Refresh the query time and replace
+			results.setQueryTime();
+			plugin.cachedQueries.replace( keyName, results);
+			
 		}
 		
 		
