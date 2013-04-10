@@ -89,9 +89,21 @@ public class ItemUtils {
 	public static boolean handItemToPlayer( PlayerInventory inv, ItemStack item ){
 		// Ensure there's at least one empty inv spot
 		if( inv.firstEmpty() != -1 ){
+			ItemStack originalItem = inv.getItemInHand().clone();
 			// If the player has an item in-hand, switch to a vacant spot
 			if( !playerHasEmptyHand( inv ) ){
-				addItemToInventory( inv, inv.getItemInHand() );
+				// We need to manually add the item stack to a different
+				// slot because by default, bukkit combines items with addItem
+				// and that was causing items to be lost unless they were the max
+				// stack size
+				for(int i = 0; i <= inv.getSize(); i++){
+					if( i == inv.getHeldItemSlot() ) continue;
+					ItemStack current = inv.getItem(i);
+					if( current == null ){
+						inv.setItem(i, originalItem);
+						break;
+					}
+				}
 			}
 			inv.setItemInHand(item);
 			return true;
