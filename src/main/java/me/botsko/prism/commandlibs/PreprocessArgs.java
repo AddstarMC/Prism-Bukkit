@@ -224,9 +224,20 @@ public class PreprocessArgs {
 							respond( sender, Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 							return null;
 						}
-						if(radius > plugin.getConfig().getInt("prism.queries.max-radius-unless-overridden")){
-							radius = plugin.getConfig().getInt("prism.queries.max-radius-unless-overridden");
-							respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
+						// Does the radius exceed the configured max?
+						if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-lookup-radius") ){
+							// If player does not have permission to override the max
+							if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+								radius = plugin.getConfig().getInt("prism.queries.max-lookup-radius");
+								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
+							}
+						}
+						if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-applier-radius") ){
+							// If player does not have permission to override the max
+							if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+								radius = plugin.getConfig().getInt("prism.queries.max-applier-radius");
+								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
+							}
 						}
 						if(radius > 0){
 							parameters.setRadius( radius );
@@ -253,19 +264,21 @@ public class PreprocessArgs {
 						
 						// User has asked for a global radius
 						else if(val.equals("global")){
-							if(plugin.getConfig().getBoolean("prism.queries.limit-global-radius-override-to-lookups")){
-								if( parameters.getProcessType().equals(PrismProcessType.LOOKUP)){
-									parameters.setAllowNoRadius(true);
-								} else {
-									respond( sender, Prism.messenger.playerError("Current configuration limits global radius to lookups.") );
-									return null;
-								}
-							} else {
-								// Allow no matter what
-								parameters.setAllowNoRadius(true);
+							// Do they have permission to override the global lookup radius
+							if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+								return null;
 							}
+							// Do they have permission to override the global applier radius
+							if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+								return null;
+							}
+							// Either they have permission or player is null
+							parameters.setAllowNoRadius(true);
+							
 						} else {
-							respond( sender, Prism.messenger.playerError("Radius must be a number, 'global', 'player:number', or 'we'. Use /prism ? for a assitance.") );
+							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for a assitance.") );
 							return null;
 						}
 					}

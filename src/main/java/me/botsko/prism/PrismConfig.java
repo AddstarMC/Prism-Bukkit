@@ -69,9 +69,9 @@ public class PrismConfig extends ConfigBase {
 		// Queries
 		config.addDefault("prism.queries.default-radius", 5);
 		config.addDefault("prism.queries.default-time-since", "3d");
-		config.addDefault("prism.queries.max-radius-unless-overridden", 100);
+		config.addDefault("prism.queries.max-lookup-radius", 100);
+		config.addDefault("prism.queries.max-applier-radius", 100);
 		config.addDefault("prism.queries.never-use-defaults", false);
-		config.addDefault("prism.queries.limit-global-radius-override-to-lookups", true);
 		config.addDefault("prism.queries.lookup-max-results", 1000);
 		config.addDefault("prism.queries.default-results-per-page", 5);
 		config.addDefault("prism.queries.lookup-auto-group", true);

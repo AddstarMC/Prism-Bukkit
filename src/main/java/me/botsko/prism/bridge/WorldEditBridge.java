@@ -45,7 +45,7 @@ public class WorldEditBridge {
 		double wRadius = Math.ceil(sel.getWidth() / 2);
 		double hRadius = Math.ceil(sel.getHeight() / 2);
 		
-		int maxRadius = plugin.getConfig().getInt("prism.queries.max-radius-unless-overridden");
+		int maxRadius = plugin.getConfig().getInt("prism.queries.max-applier-radius");
 		if (maxRadius != 0 && (lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius)){
 			player.sendMessage( Prism.messenger.playerError("Selection exceeds that maximum radius allowed.") );
 		} else {
