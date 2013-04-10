@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -77,13 +78,42 @@ public class PrismInventoryEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryPickup(final InventoryPickupItemEvent event){
+	public void onInventoryPickupItem(final InventoryPickupItemEvent event){
 		
 		if( !Prism.getIgnore().event("item-pickup") ) return;
 		
 		// If hopper
 		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
+		
+		if( !Prism.getIgnore().event("item-insert") ) return;
+		
+		// Get container
+		InventoryHolder ih = event.getDestination().getHolder();
+		Location containerLoc = null;
+		if(ih instanceof Chest){
+	    	Chest eventChest = (Chest) ih;
+		    containerLoc = eventChest.getLocation();
+		}
+		else if(ih instanceof DoubleChest){
+			DoubleChest eventChest = (DoubleChest) ih;
+		    containerLoc = eventChest.getLocation();
+		}
+		
+		if( containerLoc == null ) return;
+		
+		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
 		}
 	}
 	
