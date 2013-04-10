@@ -19,6 +19,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -67,6 +69,22 @@ public class PrismInventoryEvents implements Listener {
 	 */
 	public PrismInventoryEvents( Prism plugin ){
 		this.plugin = plugin;
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onInventoryPickup(final InventoryPickupItemEvent event){
+		
+		if( !Prism.getIgnore().event("item-pickup") ) return;
+		
+		// If hopper
+		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
+		}
 	}
 	
 	
