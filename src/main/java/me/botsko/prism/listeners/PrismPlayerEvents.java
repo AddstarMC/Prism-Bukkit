@@ -325,6 +325,7 @@ public class PrismPlayerEvents implements Listener {
 				if((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
 					Prism.debug("Cancelling event for wand use.");
 					event.setCancelled(true);
+					player.updateInventory();
 					return;
 				}
 			}
