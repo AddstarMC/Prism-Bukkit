@@ -1,7 +1,10 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+
 import org.bukkit.ChatColor;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -106,6 +109,19 @@ public class SetmyCommand implements SubHandler {
 				}
 				if( setWandItem != null){
 					
+					// If non-numeric, check for name
+					if( !TypeUtils.isNumeric( setWandItem ) ){
+						ArrayList<int[]> itemIds = plugin.getItems().getIdsByAlias( setWandItem );
+						if(itemIds.size() > 0){
+							int[] ids = itemIds.get(0);
+							setWandItem = ids[0]+":"+ids[1];
+						} else {
+							call.getPlayer().sendMessage( Prism.messenger.playerError("There's no item matching that name.") );
+							return;
+						}
+					}
+	
+					// Standardize
 					if(!setWandItem.contains(":")){
 						setWandItem += ":0";
 					}
