@@ -454,8 +454,9 @@ public class PreprocessArgs {
 											respond( sender, Prism.messenger.playerError("You can't share lookup results with yourself!") );
 											return null;
 										}
-										if(plugin.getServer().getPlayer(sharePlayer) != null || sharePlayer.equalsIgnoreCase("CONSOLE")){
-											parameters.addSharedPlayer(sharePlayer);
+										Player shareWith = plugin.getServer().getPlayer(sharePlayer);
+										if( shareWith != null ){
+											parameters.addSharedPlayer( shareWith );
 										} else {
 											sender.sendMessage(Prism.messenger.playerError( "Can't share with " + sharePlayer + ". Are they online?" ));
 										}

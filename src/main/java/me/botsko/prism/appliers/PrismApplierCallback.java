@@ -112,5 +112,10 @@ public class PrismApplierCallback implements ApplierCallback {
 			sender.sendMessage( Prism.messenger.playerHeaderMsg( msg ) );
 			
 		}
+		
+		// Notify shared players of previews
+		for(Player sharedPlayer : result.getParameters().getSharedPlayers()){
+			sharedPlayer.sendMessage( Prism.messenger.playerHeaderMsg( "A preview is being shared with you: " +  result.getParameters().getOriginalCommand() ) );
+		}
 	}
 }

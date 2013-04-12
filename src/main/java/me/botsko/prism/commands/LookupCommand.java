@@ -14,7 +14,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class LookupCommand implements SubHandler {
 	
@@ -65,19 +65,16 @@ public class LookupCommand implements SubHandler {
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( parameters, call.getSender() );
 				String sharingWithPlayers = "";
-				for(String sharee : parameters.getSharedPlayers()){ // Probably not the right word, but whatever, it's just a variable.
-					sharingWithPlayers += sharee + ", ";
+				for(Player shareWith : parameters.getSharedPlayers()){
+					sharingWithPlayers += shareWith.getName() + ", ";
 				}
 				sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
 				
-				parameters.addSharedPlayer(call.getSender().getName());
+//				parameters.addSharedPlayer(call.getSender());
 				
-				for(String playerName : parameters.getSharedPlayers()){
+				for(Player player : parameters.getSharedPlayers()){
 					
-					boolean isSender = playerName.equals(call.getSender().getName());
-					
-					CommandSender player = playerName.equalsIgnoreCase("CONSOLE") ? plugin.getServer().getConsoleSender() : plugin.getServer().getPlayer(playerName);
-					if(player == null) continue;
+					boolean isSender = player.getName().equals(call.getSender().getName());
 					
 					if(!isSender){
 						player.sendMessage(Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName() + ChatColor.GOLD + " shared these Prism lookup logs with you:" ));

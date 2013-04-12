@@ -8,6 +8,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 /**
@@ -52,7 +53,7 @@ public class QueryParameters implements Cloneable {
 	protected HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
 	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
 	protected ArrayList<Flag> flags = new ArrayList<Flag>();
-	protected ArrayList<String> shared_players = new ArrayList<String>();
+	protected ArrayList<Player> shared_players = new ArrayList<Player>();
 	
 	/**
 	 * Pagination
@@ -542,7 +543,7 @@ public class QueryParameters implements Cloneable {
 	 * Get the players that you're sharing your lookup with.
 	 * @return
 	 */
-	public ArrayList<String> getSharedPlayers(){
+	public ArrayList<Player> getSharedPlayers(){
 		return shared_players;
 	}
 	
@@ -551,7 +552,7 @@ public class QueryParameters implements Cloneable {
 	 * Set the players you're sharing the lookup with.
 	 * @param players 
 	 */
-	public void addSharedPlayer(String player){
+	public void addSharedPlayer(Player player){
 		this.shared_players.add(player);
 	}
 	

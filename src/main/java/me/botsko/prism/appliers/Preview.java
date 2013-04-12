@@ -142,8 +142,15 @@ public class Preview implements Previewable {
 	public void cancel_preview(){
 		if( player == null ) return;
 		if(!blockStateChanges.isEmpty()){
+			
+			// pull all players that are part of this preview
+			ArrayList<Player> previewPlayers = parameters.getSharedPlayers();
+			previewPlayers.add(player);
+			
 			for(BlockStateChange u : blockStateChanges){
-				player.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
+				for(Player sharedPlayer : previewPlayers){
+					sharedPlayer.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
+				}
 			}
 		}
 		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Preview canceled." + ChatColor.GRAY + " Please come again!" ) );
@@ -437,7 +444,7 @@ public class Preview implements Previewable {
 			changes_applied_count = 0;
 		}
 		
-		ApplierResult results = new ApplierResult( is_preview, changes_applied_count, skipped_block_count, changes_planned_count, blockStateChanges, processType, entities_moved );
+		ApplierResult results = new ApplierResult( is_preview, changes_applied_count, skipped_block_count, changes_planned_count, blockStateChanges, parameters, entities_moved );
 		
 		if(callback != null){
 			callback.handle(sender, results);

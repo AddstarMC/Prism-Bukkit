@@ -486,7 +486,11 @@ public class BlockAction extends GenericAction {
 			
 			// Preview it
 			player.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
-			
+
+			// Send preview to shared players
+			for(Player sharedPlayer : parameters.getSharedPlayers()){
+				sharedPlayer.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+			}
 		}
 		
 		return new ChangeResult( ChangeResultType.APPLIED, stateChange );
@@ -526,6 +530,10 @@ public class BlockAction extends GenericAction {
 				// Preview it
 				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
 				
+				// Send preview to shared players
+				for(Player sharedPlayer : parameters.getSharedPlayers()){
+					sharedPlayer.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+				}
 			}
 			return new ChangeResult( ChangeResultType.APPLIED, stateChange );
 		}
