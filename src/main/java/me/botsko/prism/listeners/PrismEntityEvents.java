@@ -18,6 +18,7 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.minecart.PoweredMinecart;
@@ -270,7 +271,7 @@ public class PrismEntityEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onHangingBreakEvent(final HangingBreakEvent event) {
+	public void onHangingBreakEvent(final HangingBreakEvent event){
 		
 		// Ignore other causes. Entity cause already handled.
 		if( !event.getCause().equals(RemoveCause.PHYSICS) ){
@@ -284,9 +285,20 @@ public class PrismEntityEvents implements Listener {
 		// Check for planned hanging item breaks
 		String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":" + e.getLocation().getBlockZ();
 		if(plugin.preplannedBlockFalls.containsKey(coord_key)){
+			
 			String player = plugin.preplannedBlockFalls.get(coord_key);
+			
+			// Track the hanging item break
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("hangingitem-break", e, player) );
 			plugin.preplannedBlockFalls.remove(coord_key);
+
+			if( !Prism.getIgnore().event("item-remove",event.getEntity().getWorld()) ) return;
+			
+			// If an item frame, track it's contents
+			if( e instanceof ItemFrame ){
+				ItemFrame frame = (ItemFrame) e;
+				Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", frame.getItem(), frame.getItem().getAmount(), -1, null, e.getLocation(), player) );
+			}
 		}
 	}
 	
@@ -297,6 +309,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
+		
 		if( !Prism.getIgnore().event("hangingitem-break",event.getEntity().getWorld()) ) return;
 		String breaking_name = "";
 		Entity e = event.getRemover();
@@ -307,6 +320,14 @@ public class PrismEntityEvents implements Listener {
 			breaking_name = e.getType().getName();
 		}
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("hangingitem-break", event.getEntity(), breaking_name) );
+		
+		if( !Prism.getIgnore().event("item-remove",event.getEntity().getWorld()) ) return;
+		
+		// If an item frame, track it's contents
+		if( event.getEntity() instanceof ItemFrame ){
+			ItemFrame frame = (ItemFrame) event.getEntity();
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", frame.getItem(), frame.getItem().getAmount(), -1, null, e.getLocation(), breaking_name) );
+		}
 	}
 	
 	
