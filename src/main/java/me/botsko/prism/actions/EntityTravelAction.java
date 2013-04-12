@@ -105,7 +105,8 @@ public class EntityTravelAction extends GenericAction {
 	 */
 	public String getNiceName(){
 		if(actionData != null){
-			return "using " + actionData.cause.replace("_", " ") + " to " + actionData.to_x + " " + actionData.to_y + " " + actionData.to_z;
+			String cause = ( actionData.cause == null ? "unknown" : actionData.cause.replace("_", " ") );
+			return "using " + cause + " to " + actionData.to_x + " " + actionData.to_y + " " + actionData.to_z;
 		}
 		return "teleported somewhere";
 	}
