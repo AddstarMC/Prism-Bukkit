@@ -12,6 +12,7 @@ import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.ItemUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
@@ -25,9 +26,11 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -465,24 +468,39 @@ public class ItemStackAction extends GenericAction {
 		if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
 			
 			Block block = getWorld().getBlockAt( getLoc() );
-			InventoryHolder container = null;
-			if(block.getType().equals(Material.CHEST)){
-				container = (Chest) block.getState();
+			Inventory inventory = null;
+			
+			// Item drop/pickup from player inventories
+			if( getType().getName().equals("item-drop") || getType().getName().equals("item-pickup") ){
+				
+				// Is player online?
+				String playerName = getPlayerName();
+				Player onlinePlayer = Bukkit.getServer().getPlayer( playerName );
+				if( onlinePlayer != null ){
+					inventory = onlinePlayer.getInventory();
+				} else {
+					// Skip if the player isn't online
+					return new ChangeResult( ChangeResultType.SKIPPED, null );
+				}
+			}
+			// Item Insert/Remove from containers
+			else if(block.getType().equals(Material.CHEST)){
+				inventory = ((Chest) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.DISPENSER) ){
-				container = (Dispenser) block.getState();
+				inventory = ((Dispenser) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.FURNACE) ){
-				container = (Furnace) block.getState();
+				inventory = ((Furnace) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.BREWING_STAND) ){
-				container = (BrewingStand) block.getState();
+				inventory = ((BrewingStand) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.DROPPER) ){
-				container = (Dropper) block.getState();
+				inventory = ((Dropper) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.HOPPER) ){
-				container = (Hopper) block.getState();
+				inventory = ((Hopper) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.JUKEBOX) ){
 				Jukebox jukebox = (Jukebox) block.getState();
@@ -490,14 +508,15 @@ public class ItemStackAction extends GenericAction {
 				jukebox.update();
 			}
 			
-			if(container != null){
-				
-				Inventory inv = container.getInventory();
-				
-				// Rolling back a:remove should place the item into the inventory
-				// Restoring a:insert should place the item into the inventory
-				if( (parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && getType().getName().equals("item-remove"))
-					|| (parameters.getProcessType().equals(PrismProcessType.RESTORE) && getType().getName().equals("item-insert")) ){
+			if(inventory != null){
+
+				PrismProcessType pt = parameters.getProcessType();
+				String n = getType().getName();
+
+				// Rolling back a:remove or a:drop should place the item into the inventory
+				// Restoring a:insert or a:pickup should place the item into the inventory
+				if( ( pt.equals(PrismProcessType.ROLLBACK) && ( n.equals("item-remove") || n.equals("item-drop") ) ) ||
+					( pt.equals(PrismProcessType.RESTORE) && ( n.equals("item-insert") || n.equals("item-pickup") ) ) ){
 					
 					boolean added = false;
 					
@@ -508,57 +527,81 @@ public class ItemStackAction extends GenericAction {
 						// a slot larger than the contents size is recorded
 						// and triggers ArrayIndexOutOfBounds
 						// https://snowy-evening.com/botsko/prism/450/
-						if( getActionData().slot < inv.getSize() ){
-							ItemStack currentSlotItem = inv.getItem( getActionData().slot );
+						if( getActionData().slot < inventory.getSize() ){
+							ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
 							// Make sure nothing's there.
 							if( currentSlotItem == null ){
 								result = ChangeResultType.APPLIED;
 								added = true;
-								inv.setItem(getActionData().slot, getItem());
+								inventory.setItem(getActionData().slot, getItem());
 							}
 						}
 					}
 					// If that failed we'll attempt to put it anywhere
 					if( !added ){
-						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(container.getInventory(), getItem());
+						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory, getItem());
 						if(leftovers.size() > 0){
 							result = ChangeResultType.SKIPPED;
-//							Prism.debug("Item placement into container skipped because container was full.");
 						} else {
 							result = ChangeResultType.APPLIED;
+							added = true;
+						}
+					}
+
+					// Item was added to the inv, we need to remove the entity
+					if( added && ( n.equals("item-drop") || n.equals("item-pickup") ) ){
+						Entity[] entities = getLoc().getChunk().getEntities();
+						for(Entity entity : entities){
+							if(entity instanceof Item){
+								ItemStack stack = ((Item) entity).getItemStack();
+								if( stack.isSimilar( getItem() ) ){
+									// Remove the event's number of items from the stack
+									stack.setAmount( stack.getAmount() - getItem().getAmount() );
+									if( stack.getAmount() == 0 ){
+										entity.remove();
+									}
+									break;
+								}
+							}
 						}
 					}
 				}
 				
-				// Rolling back a:insert should remove the item from the inventory
-				// Restoring a:remove should remove the item from the inventory
-				if( (parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && getType().getName().equals("item-insert"))
-					|| (parameters.getProcessType().equals(PrismProcessType.RESTORE) && getType().getName().equals("item-remove")) ){
+				// Rolling back a:insert or a:pickup should remove the item from the inventory
+				// Restoring a:remove or a:drop should remove the item from the inventory
+				if( ( pt.equals(PrismProcessType.ROLLBACK) && ( n.equals("item-insert") || n.equals("item-pickup") ) ) ||
+					( pt.equals(PrismProcessType.RESTORE) && ( n.equals("item-remove") || n.equals("item-drop") ) ) ){
 						
 					// does inventory have item?
 					boolean removed = false;
 					
 					// We'll attempt to take it from the same slot
 					if( getActionData().slot >= 0 ){
-						ItemStack currentSlotItem = inv.getItem( getActionData().slot );
+						ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
 						// Make sure something's there.
 						if( currentSlotItem != null ){
 							currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
 							result = ChangeResultType.APPLIED;
 							removed = true;
-							inv.setItem(getActionData().slot, currentSlotItem);
+							inventory.setItem(getActionData().slot, currentSlotItem);
 						}
 					}
 					// If that failed we'll attempt to take it from anywhere
 					if( !removed ){
-						int slot = InventoryUtils.inventoryHasItem( container.getInventory(), getItem().getTypeId(), getItem().getDurability());
+						int slot = InventoryUtils.inventoryHasItem( inventory, getItem().getTypeId(), getItem().getDurability());
 						if(slot > -1){
-							container.getInventory().removeItem(getItem());
+							inventory.removeItem(getItem());
 							result = ChangeResultType.APPLIED;
+							removed = true;
 						} else {
 //							Prism.debug("Item removal from container skipped because it's not inside.");
 							result = ChangeResultType.SKIPPED;
 						}
+					}
+					
+					// If the item was removed and it's a drop type, re-drop it
+					if( removed && ( n.equals("item-drop") || n.equals("item-pickup") ) ){
+						ItemUtils.dropItem( getLoc(), getItem() );
 					}
 				}
 			}

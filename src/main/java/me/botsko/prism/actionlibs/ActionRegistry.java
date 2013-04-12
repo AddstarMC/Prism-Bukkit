@@ -179,9 +179,9 @@ public class ActionRegistry {
 		registerAction( new ActionType( "firework-launch", false, false, false, "ItemStackAction", "launched") );
 		registerAction( new ActionType( "hangingitem-break", false, true, true, "HangingItemAction", "broke") );
 		registerAction( new ActionType( "hangingitem-place", true, true, true, "HangingItemAction", "hung") );
-		registerAction( new ActionType( "item-drop", false, false, false, "ItemStackAction", "dropped") );
+		registerAction( new ActionType( "item-drop", false, true, true, "ItemStackAction", "dropped") );
 		registerAction( new ActionType( "item-insert", false, true, true, "ItemStackAction", "inserted") );
-		registerAction( new ActionType( "item-pickup", false, false, false, "ItemStackAction", "picked up") );
+		registerAction( new ActionType( "item-pickup", false, true, true, "ItemStackAction", "picked up") );
 		registerAction( new ActionType( "item-remove", false, true, true, "ItemStackAction", "removed") );
 		registerAction( new ActionType( "lava-break", false, true, true, "BlockAction", "broke") );
 		registerAction( new ActionType( "lava-bucket", true, true, true, "BlockChangeAction", "poured") );
