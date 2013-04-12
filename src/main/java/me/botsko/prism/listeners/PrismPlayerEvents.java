@@ -291,7 +291,7 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
 	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		Player player = event.getPlayer();
