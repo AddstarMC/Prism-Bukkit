@@ -59,8 +59,8 @@ public class OreMonitor {
 				/**
 				 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
 				 */
-				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-					public void run(){
+//				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+//					public void run(){
 			
 						// check if block placed
 						boolean wasplaced = false;
@@ -105,8 +105,8 @@ public class OreMonitor {
 								}
 							}
 						}
-					}
-				});
+//					}
+//				});
 			}
 		}
 	}
