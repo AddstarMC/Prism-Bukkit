@@ -169,7 +169,7 @@ public class ActionsQuery {
 			}
 			plugin.cachedQueries.put(keyName, res);
 			// We also need to share these results with the -share-with players.
-			for(Player sharedPlayer : parameters.getSharedPlayers()){
+			for(CommandSender sharedPlayer : parameters.getSharedPlayers()){
 				plugin.cachedQueries.put(sharedPlayer.getName(), res);
 			}
 		}

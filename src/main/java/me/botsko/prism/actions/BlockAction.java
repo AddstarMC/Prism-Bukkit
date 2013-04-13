@@ -19,6 +19,7 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -488,8 +489,10 @@ public class BlockAction extends GenericAction {
 			player.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
 
 			// Send preview to shared players
-			for(Player sharedPlayer : parameters.getSharedPlayers()){
-				sharedPlayer.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+			for(CommandSender sharedPlayer : parameters.getSharedPlayers()){
+				if( sharedPlayer instanceof Player ){
+					((Player)sharedPlayer).sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+				}
 			}
 		}
 		
@@ -531,8 +534,10 @@ public class BlockAction extends GenericAction {
 				player.sendBlockChange(block.getLocation(), Material.AIR, (byte)0);
 				
 				// Send preview to shared players
-				for(Player sharedPlayer : parameters.getSharedPlayers()){
-					sharedPlayer.sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+				for(CommandSender sharedPlayer : parameters.getSharedPlayers()){
+					if( sharedPlayer instanceof Player ){
+						((Player)sharedPlayer).sendBlockChange(block.getLocation(),getBlockId(),(byte)getBlockSubId());
+					}
 				}
 			}
 			return new ChangeResult( ChangeResultType.APPLIED, stateChange );

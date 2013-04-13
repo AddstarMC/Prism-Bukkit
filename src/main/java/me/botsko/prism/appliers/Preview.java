@@ -144,12 +144,13 @@ public class Preview implements Previewable {
 		if(!blockStateChanges.isEmpty()){
 			
 			// pull all players that are part of this preview
-			ArrayList<Player> previewPlayers = parameters.getSharedPlayers();
+			ArrayList<CommandSender> previewPlayers = parameters.getSharedPlayers();
 			previewPlayers.add(player);
 			
 			for(BlockStateChange u : blockStateChanges){
-				for(Player sharedPlayer : previewPlayers){
-					sharedPlayer.sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
+				for(CommandSender sharedPlayer : previewPlayers){
+					if( sharedPlayer instanceof Player )
+					((Player)sharedPlayer).sendBlockChange(u.getOriginalBlock().getLocation(), u.getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData());
 				}
 			}
 		}

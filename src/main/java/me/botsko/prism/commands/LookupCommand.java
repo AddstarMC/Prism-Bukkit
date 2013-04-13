@@ -14,7 +14,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
+import org.bukkit.command.CommandSender;
 
 public class LookupCommand implements SubHandler {
 	
@@ -65,14 +65,15 @@ public class LookupCommand implements SubHandler {
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( parameters, call.getSender() );
 				String sharingWithPlayers = "";
-				for(Player shareWith : parameters.getSharedPlayers()){
+				for(CommandSender shareWith : parameters.getSharedPlayers()){
 					sharingWithPlayers += shareWith.getName() + ", ";
 				}
 				sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
 				
-//				parameters.addSharedPlayer(call.getSender());
+				// Add current sender
+				parameters.addSharedPlayer(call.getSender());
 				
-				for(Player player : parameters.getSharedPlayers()){
+				for(CommandSender player : parameters.getSharedPlayers()){
 					
 					boolean isSender = player.getName().equals(call.getSender().getName());
 					

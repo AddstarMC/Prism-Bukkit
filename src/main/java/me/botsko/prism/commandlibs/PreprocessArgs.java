@@ -456,7 +456,7 @@ public class PreprocessArgs {
 										}
 										Player shareWith = plugin.getServer().getPlayer(sharePlayer);
 										if( shareWith != null ){
-											parameters.addSharedPlayer( shareWith );
+											parameters.addSharedPlayer( (CommandSender)shareWith );
 										} else {
 											sender.sendMessage(Prism.messenger.playerError( "Can't share with " + sharePlayer + ". Are they online?" ));
 										}
