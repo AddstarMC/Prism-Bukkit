@@ -98,6 +98,8 @@ public class PrismInventoryEvents implements Listener {
 		
 		if( !Prism.getIgnore().event("item-insert") ) return;
 		
+		if( event.getDestination() == null ) return;
+		
 		// Get container
 		InventoryHolder ih = event.getDestination().getHolder();
 		Location containerLoc = null;
