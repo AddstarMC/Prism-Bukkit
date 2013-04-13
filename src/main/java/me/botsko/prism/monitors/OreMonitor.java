@@ -56,46 +56,47 @@ public class OreMonitor {
 			
 			if(block != null && isWatched(block) && !plugin.alertedBlocks.containsKey( block.getLocation() )){
 				
-				/**
-				 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
-				 */
-//				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-//					public void run(){
-			
-						// check if block placed
-						boolean wasplaced = false;
-						
-						// Build params
-						QueryParameters params = new QueryParameters();
-						params.setWorld( player.getWorld().getName() );
-						params.addSpecificBlockLocation(block.getLocation());
-						params.addActionType("block-place");
-						
-						ActionsQuery aq = new ActionsQuery(plugin);
-						QueryResult results = aq.lookup( params, player );
-						if(!results.getActionResults().isEmpty()){
-							wasplaced = true;
-						}
-						
-						if(!wasplaced){
-							// identify all ore blocks on same Y axis in x/z direction
-							ArrayList<Block> matchingBlocks = new ArrayList<Block>();
-							ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
-							if(!foundores.isEmpty()){
-								
-								// Save the block
-								BlockState state = block.getState();
-								
-								// Set to air to get the light
-								block.setType(Material.AIR);
-								int light = block.getLightLevel();
-								light = (light > 0 ? Math.round(((light) & 0xFF) * 100) / 15 : 0);
-								
-								// Restore the block
-								block.setType( state.getType() );
-								
-								String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
-								
+				// identify all ore blocks on same Y axis in x/z direction
+				ArrayList<Block> matchingBlocks = new ArrayList<Block>();
+				ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
+				if(!foundores.isEmpty()){
+					
+					// Save the block
+					BlockState state = block.getState();
+					
+					// Set to air to get the light
+					block.setType(Material.AIR);
+					int light = block.getLightLevel();
+					light = (light > 0 ? Math.round(((light) & 0xFF) * 100) / 15 : 0);
+					
+					// Restore the block
+					block.setType( state.getType() );
+					
+					final String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
+				
+					/**
+					 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
+					 */
+					plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+						public void run(){
+				
+							// check if block placed
+							boolean wasplaced = false;
+							
+							// Build params
+							QueryParameters params = new QueryParameters();
+							params.setWorld( player.getWorld().getName() );
+							params.addSpecificBlockLocation(block.getLocation());
+							params.addActionType("block-place");
+							
+							ActionsQuery aq = new ActionsQuery(plugin);
+							QueryResult results = aq.lookup( params, player );
+							if(!results.getActionResults().isEmpty()){
+								wasplaced = true;
+							}
+							
+							if(!wasplaced){
+									
 								// Alert staff
 								plugin.alertPlayers( null, msg );
 								
@@ -105,8 +106,8 @@ public class OreMonitor {
 								}
 							}
 						}
-//					}
-//				});
+					});
+				}
 			}
 		}
 	}
