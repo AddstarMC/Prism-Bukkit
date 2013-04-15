@@ -108,29 +108,29 @@ public class ItemStackAction extends GenericAction {
 		
 		// Set additional data all items may have
 		ItemMeta meta = item.getItemMeta();
-		if(meta.getDisplayName() != null){
+		if( meta != null && meta.getDisplayName() != null){
 			actionData.name = meta.getDisplayName();
 		}
 
 		// Leather Coloring
-		if(item.getType().name().contains("LEATHER_")){
-			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+		if( meta != null && item.getType().name().contains("LEATHER_") ){
+			LeatherArmorMeta lam = (LeatherArmorMeta) meta;
 			if(lam.getColor() != null){
 				actionData.color = lam.getColor().asRGB();
 			}
 		}
 		
 		// Skull Owner
-		else if(item.getType().equals(Material.SKULL_ITEM)){
-			SkullMeta skull = (SkullMeta) item.getItemMeta();
+		else if( meta != null && item.getType().equals(Material.SKULL_ITEM) ){
+			SkullMeta skull = (SkullMeta) meta;
 			if(skull.hasOwner()){
 				actionData.owner = skull.getOwner();
 			}
 		}
 		
 		// Written books
-		if(item.getType().equals( Material.WRITTEN_BOOK )){
-	        BookMeta bookMeta = (BookMeta) item.getItemMeta();
+		if( meta != null && item.getType().equals( Material.WRITTEN_BOOK ) ){
+	        BookMeta bookMeta = (BookMeta) meta;
 			if(bookMeta != null){
 				actionData.by = bookMeta.getAuthor();
 				actionData.title = bookMeta.getTitle();
@@ -149,8 +149,8 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Book enchantments
-		else if(item.getType().equals( Material.ENCHANTED_BOOK )){
-			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
+		else if( meta != null && item.getType().equals( Material.ENCHANTED_BOOK ) ){
+			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
 			if(bookEnchantments.hasStoredEnchants()){
 				if(bookEnchantments.getStoredEnchants().size() > 0){
 					String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
@@ -165,8 +165,8 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Fireworks
-		if( block_id == 402 ){
-			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+		if( meta != null && block_id == 402 ){
+			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
 			if( fireworkMeta.hasEffect() ){
 				FireworkEffect effect = fireworkMeta.getEffect();
 				if( !effect.getColors().isEmpty() ){

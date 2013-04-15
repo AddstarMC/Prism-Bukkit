@@ -95,8 +95,16 @@ public class TeleportCommand implements SubHandler {
 			// Get stored results
 			QueryResult results = plugin.cachedQueries.get( keyName );
 			
+			
+			if( record_id > results.getActionResults().size() ){
+				call.getPlayer().sendMessage( Prism.messenger.playerError("No records exists at this index. Did you mean /pr tp id:"+record_id+" instead?" ) );
+				return;
+			}
+			
+			int key = (record_id-1);
+			
 			// Get the result index specified
-			destinationAction = results.getActionResults().get( (record_id-1) );
+			destinationAction = results.getActionResults().get( key );
 			
 			// Refresh the query time and replace
 			results.setQueryTime();

@@ -98,7 +98,7 @@ public class PageCommand implements SubHandler {
 		
 		call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
 		List<Handler> paginated = results.getPaginatedActionResults();
-		if(paginated == null){
+		if( paginated == null || paginated.size() == 0 ){
 			call.getSender().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 		}
 		
