@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,6 +50,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -78,6 +80,7 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
+	protected static HashMap<Integer,String> alertedOres = new HashMap<Integer,String>();
 
 	/**
 	 * Public
@@ -283,9 +286,14 @@ public class Prism extends JavaPlugin {
 		PrismConfig mc = new PrismConfig(this);
 		config = mc.getConfig();
 		
-		// Cache illegal entities/blocks
+		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
+		
+		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
+		for( String key : alertBlocks.getKeys(false) ){
+			alertedOres.put( Integer.parseInt(key), alertBlocks.getString(key));
+		}
 		
 		// Load language files
 		// language = new Language( mc.getLang() );
@@ -559,6 +567,14 @@ public class Prism extends JavaPlugin {
 	 */
 	public static ArrayList<String> getIllegalEntities(){
 		return illegalEntities;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public static HashMap<Integer,String> getAlertedOres(){
+		return alertedOres;
 	}
 
 	

@@ -216,14 +216,12 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
-		config.addDefault("prism.alerts.ores.coal", false);
-		config.addDefault("prism.alerts.ores.redstone", false);
-		config.addDefault("prism.alerts.ores.lapis", true);
-		config.addDefault("prism.alerts.ores.iron", true);
-		config.addDefault("prism.alerts.ores.gold", true);
-		config.addDefault("prism.alerts.ores.diamond", true);
-		config.addDefault("prism.alerts.ores.emerald", true);
-		config.addDefault("prism.alerts.ores.nether-quartz", false);
+		// Ore blocks
+		config.addDefault("prism.alerts.ores.blocks.14", "&6"); // iron
+		config.addDefault("prism.alerts.ores.blocks.15", "&7"); // gold
+		config.addDefault("prism.alerts.ores.blocks.21", "&9"); // lapis
+		config.addDefault("prism.alerts.ores.blocks.56", "&b"); // diamond
+		config.addDefault("prism.alerts.ores.blocks.129", "&a"); // emerald ore
 		
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);

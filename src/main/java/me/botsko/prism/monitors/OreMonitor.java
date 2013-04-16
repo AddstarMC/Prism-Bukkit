@@ -2,12 +2,12 @@ package me.botsko.prism.monitors;
 
 import java.util.ArrayList;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,6 +15,16 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 
 public class OreMonitor {
+	
+	/**
+	 * 
+	 */
+	private final int threshhold_max = 100;
+	
+	/**
+	 * 
+	 */
+	private int threshhold = 1;
 	
 	/**
 	 * 
@@ -52,62 +62,66 @@ public class OreMonitor {
 			return;
 		}
 
-		if( !player.getGameMode().equals(GameMode.CREATIVE) ){
+		if( player.getGameMode().equals(GameMode.CREATIVE) ){
+			return;
+		}
 			
-			if(block != null && isWatched(block) && !plugin.alertedBlocks.containsKey( block.getLocation() )){
+		if(block != null && isWatched(block) && !plugin.alertedBlocks.containsKey( block.getLocation() )){
+			
+			threshhold = 1;
+			
+			// identify all ore blocks on same Y axis in x/z direction
+			ArrayList<Block> matchingBlocks = new ArrayList<Block>();
+			ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
+			if(!foundores.isEmpty()){
 				
-				// identify all ore blocks on same Y axis in x/z direction
-				ArrayList<Block> matchingBlocks = new ArrayList<Block>();
-				ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
-				if(!foundores.isEmpty()){
-					
-					// Save the block
-					BlockState state = block.getState();
-					
-					// Set to air to get the light
-					block.setType(Material.AIR);
-					int light = block.getLightLevel();
-					light = (light > 0 ? Math.round(((light) & 0xFF) * 100) / 15 : 0);
-					
-					// Restore the block
-					block.setType( state.getType() );
-					
-					final String msg = getOreColor(block) + player.getName() + " found " + foundores.size() + " " + getOreNiceName(block) + " " + light + "% light";
+				// Save the block
+				BlockState state = block.getState();
 				
-					/**
-					 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
-					 */
-					plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-						public void run(){
+				// Set to air to get the light
+				block.setType(Material.AIR);
+				int light = block.getLightLevel();
+				light = (light > 0 ? Math.round(((light) & 0xFF) * 100) / 15 : 0);
 				
-							// check if block placed
-							boolean wasplaced = false;
-							
-							// Build params
-							QueryParameters params = new QueryParameters();
-							params.setWorld( player.getWorld().getName() );
-							params.addSpecificBlockLocation(block.getLocation());
-							params.addActionType("block-place");
-							
-							ActionsQuery aq = new ActionsQuery(plugin);
-							QueryResult results = aq.lookup( params, player );
-							if(!results.getActionResults().isEmpty()){
-								wasplaced = true;
-							}
-							
-							if(!wasplaced){
-									
-								// Alert staff
-								plugin.alertPlayers( null, msg );
+				// Restore the block
+				block.setType( state.getType() );
+				
+				String count = foundores.size() + (foundores.size() >= threshhold_max ? "+" : "" );
+				final String msg = getOreColor(block) + player.getName() + " found " + count + " " + getOreNiceName(block) + " " + light + "% light";
+			
+				/**
+				 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
+				 */
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+					public void run(){
+			
+						// check if block placed
+						boolean wasplaced = false;
+						
+						// Build params
+						QueryParameters params = new QueryParameters();
+						params.setWorld( player.getWorld().getName() );
+						params.addSpecificBlockLocation(block.getLocation());
+						params.addActionType("block-place");
+						
+						ActionsQuery aq = new ActionsQuery(plugin);
+						QueryResult results = aq.lookup( params, player );
+						if(!results.getActionResults().isEmpty()){
+							wasplaced = true;
+						}
+						
+						if(!wasplaced){
 								
-								// Log to console
-								if(plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")){
-									Prism.log( msg );
-								}
+							// Alert staff
+							plugin.alertPlayers( null, TypeUtils.colorize( msg ) );
+							
+							// Log to console
+							if(plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")){
+								Prism.log( msg );
 							}
 						}
-					});
-				}
+					}
+				});
 			}
 		}
 	}
@@ -118,26 +132,11 @@ public class OreMonitor {
 	 * @param block
 	 * @return
 	 */
-	protected ChatColor getOreColor( Block block ){
-		Material type = block.getType();
-		switch(type){
-			case DIAMOND_ORE:
-				return ChatColor.AQUA;
-			case LAPIS_ORE:
-				return ChatColor.BLUE;
-			case GOLD_ORE:
-				return ChatColor.GOLD;
-			case IRON_ORE:
-				return ChatColor.GRAY;
-			case GLOWING_REDSTONE_ORE:
-			case REDSTONE_ORE:
-				return ChatColor.RED;
-			case EMERALD_ORE:
-				return ChatColor.GREEN;
-			case QUARTZ_ORE:
-				return ChatColor.WHITE;
-			default:
-				return ChatColor.WHITE;
+	protected String getOreColor( Block block ){
+		if( isWatched( block ) ){
+			return Prism.getAlertedOres().get( block.getTypeId() );
+		} else {
+			return "&f";
 		}
 	}
 	
@@ -158,31 +157,7 @@ public class OreMonitor {
 	 * @return
 	 */
 	protected boolean isWatched( Block block ){
-		
-		Material type = block.getType();
-
-		if(type == Material.DIAMOND_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.diamond")){
-			return true;
-		}
-		if(type == Material.GOLD_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.gold")){
-			return true;
-		}
-		if(type == Material.IRON_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.iron")){
-			return true;
-		}
-		if(type == Material.LAPIS_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.lapis")){
-			return true;
-		}
-		if( (type == Material.GLOWING_REDSTONE_ORE || type == Material.REDSTONE_ORE) && plugin.getConfig().getBoolean("prism.alerts.ores.redstone")){
-			return true;
-		}
-		if(type == Material.COAL_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.coal")){
-			return true;
-		}
-		if(type == Material.EMERALD_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.emerald")){
-			return true;
-		}
-		if(type == Material.QUARTZ_ORE && plugin.getConfig().getBoolean("prism.alerts.ores.nether-quartz")){
+		if( Prism.getAlertedOres().containsKey( block.getTypeId() ) ){
 			return true;
 		}
 		return false;
@@ -196,7 +171,7 @@ public class OreMonitor {
     private ArrayList<Block> findNeighborBlocks( Material type, Block currBlock, ArrayList<Block> matchingBlocks ) {
 
         if(isWatched(currBlock)){
-        	
+
         	matchingBlocks.add(currBlock);
         	java.util.Date date = new java.util.Date();
         	plugin.alertedBlocks.put(currBlock.getLocation(), date.getTime());
@@ -207,7 +182,10 @@ public class OreMonitor {
 	        			Block newblock = currBlock.getRelative(x, y, z);
 	        			// ensure it matches the type and wasn't already found
 	        			if( newblock.getType() == type && !matchingBlocks.contains(newblock) ){
-	        				findNeighborBlocks( type, newblock, matchingBlocks );
+	        				threshhold++;
+	        	        	if( threshhold <= threshhold_max ){
+	        	        		findNeighborBlocks( type, newblock, matchingBlocks );
+	        	        	}
 	        			}
 	        		}
         		}
