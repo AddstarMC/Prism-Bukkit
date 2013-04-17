@@ -141,6 +141,16 @@ public class PrismBlockEvents implements Listener {
 			return;
 		}
 		
+		// if it's a piston, the base will break without a physics events
+		if( block.getType().equals(Material.PISTON_EXTENSION) || block.getType().equals(Material.PISTON_MOVING_PIECE) ){
+			ArrayList<Block> pistonBases = BlockUtils.findSideFaceAttachedBlocks( block );
+			if( pistonBases.size() > 0 ){
+				for( Block p : pistonBases ){
+					Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", p, playername) );
+				}
+			}
+		}
+
 		// Find a list of side-face attached blocks that we expect will detach
 		ArrayList<Block> detached_blocks = BlockUtils.findSideFaceAttachedBlocks(block);
 		if(detached_blocks.size() > 0){
