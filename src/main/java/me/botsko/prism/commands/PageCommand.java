@@ -96,19 +96,22 @@ public class PageCommand implements SubHandler {
 			return;
 		}
 		
-		call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page "+page+" of "+results.getTotal_pages()) );
+		call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page "+page+" of "+results.getTotal_pages()) );
 		List<Handler> paginated = results.getPaginatedActionResults();
 		if( paginated == null || paginated.size() == 0 ){
 			call.getSender().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 		}
 		
 		// Show it!
+		int result_count = results.getIndexOfFirstResult();
 		for(Handler a : paginated){
 			ActionMessage am = new ActionMessage(a);
 			if( results.getParameters().allowsNoRadius() || results.getParameters().hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 				am.showExtended();
 			}
+			am.setResultIndex( result_count );
 			call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+			result_count++;
 		}
 	}
 }

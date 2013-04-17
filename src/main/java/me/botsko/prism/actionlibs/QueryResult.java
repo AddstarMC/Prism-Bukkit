@@ -107,7 +107,7 @@ public class QueryResult {
 	/**
 	 * @return the total_results
 	 */
-	public int getTotal_results() {
+	public int getTotalResults() {
 		return total_results;
 	}
 
@@ -123,11 +123,21 @@ public class QueryResult {
 	/**
 	 * @return the per_page
 	 */
-	public int getPer_page() {
+	public int getPerPage() {
 		return per_page;
 	}
 
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public int getIndexOfFirstResult(){
+		int index = (page * per_page)-per_page;
+		return (index == 0 ? 1 : index);
+	}
 
+	
 	/**
 	 * @param per_page the per_page to set
 	 */

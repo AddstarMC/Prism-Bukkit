@@ -103,7 +103,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 					String blockname = plugin.getItems().getAlias(block.getTypeId(), block.getData());
 					player.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );
 					if(results.getActionResults().size() > 5){
-						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page 1 of "+results.getTotal_pages()) );
 					}
 					for(me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()){
 						ActionMessage am = new ActionMessage(a);

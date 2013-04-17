@@ -84,13 +84,13 @@ public class LookupCommand implements SubHandler {
 					}
 					
 					if(!results.getActionResults().isEmpty()){
-						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page 1 of "+results.getTotal_pages()) );
 						if(!defaultsReminder.isEmpty() && isSender){
 							player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
 						}
 						List<Handler> paginated = results.getPaginatedActionResults();
 						if(paginated != null){
-							int result_count = 1;
+							int result_count = results.getIndexOfFirstResult();
 							for(Handler a : paginated){
 								ActionMessage am = new ActionMessage(a);
 								if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){

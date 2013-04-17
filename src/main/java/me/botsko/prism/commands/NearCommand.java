@@ -73,15 +73,18 @@ public class NearCommand implements SubHandler {
 				QueryResult results = aq.lookup( parameters, call.getPlayer() );
 				if(!results.getActionResults().isEmpty()){
 					call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg("All changes within " + parameters.getRadius() + " blocks of you..." ) );
-					call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotal_results()+" results. Page 1 of "+results.getTotal_pages()) );
+					call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page 1 of "+results.getTotal_pages()) );
 					List<Handler> paginated = results.getPaginatedActionResults();
 					if(paginated != null){
+						int result_count = results.getIndexOfFirstResult();
 						for(Handler a : paginated){
 							ActionMessage am = new ActionMessage(a);
 							if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
 								am.showExtended();
 							}
+							am.setResultIndex( result_count );
 							call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+							result_count++;
 						}
 					} else {
 						call.getPlayer().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
