@@ -85,7 +85,7 @@ public class DeleteCommand implements SubHandler {
 			paramList.add( parameters );
 			
 			Prism.log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-			deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, callback ), purge_tick_delay);
+			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, callback ));
 			
 		} else {
 			call.getSender().sendMessage( Prism.messenger.playerError("You must supply at least one parameter." ));
