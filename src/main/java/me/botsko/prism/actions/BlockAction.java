@@ -509,6 +509,12 @@ public class BlockAction extends GenericAction {
 		BlockStateChange stateChange = null;
 		
 		if(!block.getType().equals(Material.AIR)){
+			
+			// Ensure it's acceptable to remove the current block
+			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !BlockUtils.areBlockIdsSameCoreItem(block.getTypeId(), getBlockId()) && !parameters.hasFlag(Flag.OVERWRITE) ){
+				return new ChangeResult( ChangeResultType.SKIPPED, null );
+			}
+
 			if(!is_preview){
 				
 				// Capture the block before we change it
