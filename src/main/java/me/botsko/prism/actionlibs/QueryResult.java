@@ -42,6 +42,11 @@ public class QueryResult {
 	 */
 	protected int page = 1;
 	
+	/**
+	 * 
+	 */
+	protected int lastTeleportIndex = 0;
+	
 	
 	/**
 	 * 
@@ -125,6 +130,22 @@ public class QueryResult {
 	 */
 	public int getPerPage() {
 		return per_page;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int getLastTeleportIndex(){
+		return lastTeleportIndex;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public int setLastTeleportIndex( int index ){
+		return lastTeleportIndex = index;
 	}
 
 	

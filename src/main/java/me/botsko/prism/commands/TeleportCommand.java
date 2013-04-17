@@ -37,6 +37,16 @@ public class TeleportCommand implements SubHandler {
 	 */
 	public void handle(CallInfo call) {
 		
+		// Is there anything even stored to paginate?
+		String keyName = "console";
+		if( call.getSender() instanceof Player ){
+			keyName = call.getSender().getName();
+		}
+		if( !plugin.cachedQueries.containsKey( keyName ) ){
+			call.getSender().sendMessage( Prism.messenger.playerError("There's no saved query to use results from. Maybe they expired? Try your lookup again.") );
+			return;
+		}
+		
 		// Parse the incoming ident
 		String ident = "";
 		if( call.getArg(1).contains("id:") ){
@@ -45,18 +55,33 @@ public class TeleportCommand implements SubHandler {
 			ident = call.getArg(1);
 		}
 		
-		
-		if(!TypeUtils.isNumeric( ident )){
-			call.getPlayer().sendMessage( Prism.messenger.playerError("You must provide a numeric result number or record ID to teleport to." ) );
-			return;
+		// Determine result index to tp to - either an id, or the next/previous id
+		int record_id = 1;
+		if( ident.equals("next") || ident.equals("prev") ){
+			// Get stored results
+			QueryResult results = plugin.cachedQueries.get( keyName );
+			record_id = results.getLastTeleportIndex();
+			record_id = (record_id == 0 ? 1 : record_id);
+			if( record_id > 0 ){
+				if( ident.equals("next") ){
+					record_id++;
+				} else {
+					if( record_id > 1 ){
+						record_id--;
+					}
+				}
+			}
+		} else {
+			if(!TypeUtils.isNumeric( ident )){
+				call.getPlayer().sendMessage( Prism.messenger.playerError("You must provide a numeric result number or record ID to teleport to." ) );
+				return;
+			}
+			record_id = Integer.parseInt( ident );
+			if(record_id <= 0){
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Result number or record ID must be greater than zero." ) );
+				return;
+			}
 		}
-			
-		int record_id = Integer.parseInt( ident );
-		if(record_id <= 0){
-			call.getPlayer().sendMessage( Prism.messenger.playerError("Result number or record ID must be greater than zero." ) );
-			return;
-		}
-		
 		
 		// If a record id provided, re-query the database
 		Handler destinationAction = null;
@@ -81,20 +106,9 @@ public class TeleportCommand implements SubHandler {
 		} 
 		// Otherwise, look for a cached query
 		else {
-			
-			// Is there anything even stored to paginate?
-			String keyName = "console";
-			if( call.getSender() instanceof Player ){
-				keyName = call.getSender().getName();
-			}
-			if( !plugin.cachedQueries.containsKey( keyName ) ){
-				call.getSender().sendMessage( Prism.messenger.playerError("There's no saved query to use results from. Maybe they expired? Try your lookup again.") );
-				return;
-			}
-			
+
 			// Get stored results
 			QueryResult results = plugin.cachedQueries.get( keyName );
-			
 			
 			if( record_id > results.getActionResults().size() ){
 				call.getPlayer().sendMessage( Prism.messenger.playerError("No records exists at this index. Did you mean /pr tp id:"+record_id+" instead?" ) );
@@ -108,6 +122,7 @@ public class TeleportCommand implements SubHandler {
 			
 			// Refresh the query time and replace
 			results.setQueryTime();
+			results.setLastTeleportIndex( record_id );
 			plugin.cachedQueries.replace( keyName, results);
 			
 		}
