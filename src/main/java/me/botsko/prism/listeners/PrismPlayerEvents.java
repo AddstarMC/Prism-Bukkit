@@ -380,6 +380,7 @@ public class PrismPlayerEvents implements Listener {
 				case RAILS:
 				case DETECTOR_RAIL:
 				case POWERED_RAIL:
+				case ACTIVATOR_RAIL:
 					coord_key = block.getX() + ":" + block.getY() + ":" + block.getZ();
 					plugin.preplannedVehiclePlacement.put(coord_key, player.getName());
 					break;
