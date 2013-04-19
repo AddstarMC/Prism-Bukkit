@@ -21,9 +21,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
@@ -494,12 +492,6 @@ public class ItemStackAction extends GenericAction {
 			}
 			else if( block.getType().equals(Material.BREWING_STAND) ){
 				inventory = ((BrewingStand) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.DROPPER) ){
-				inventory = ((Dropper) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.HOPPER) ){
-				inventory = ((Hopper) block.getState()).getInventory();
 			}
 			else if( block.getType().equals(Material.JUKEBOX) ){
 				Jukebox jukebox = (Jukebox) block.getState();

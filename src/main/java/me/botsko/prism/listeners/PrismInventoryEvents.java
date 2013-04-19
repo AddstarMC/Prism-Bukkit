@@ -9,19 +9,13 @@ import org.bukkit.block.BrewingStand;
 import org.bukkit.block.Chest;
 import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
-import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryPickupItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -70,53 +64,6 @@ public class PrismInventoryEvents implements Listener {
 	 */
 	public PrismInventoryEvents( Prism plugin ){
 		this.plugin = plugin;
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryPickupItem(final InventoryPickupItemEvent event){
-		
-		if( !Prism.getIgnore().event("item-pickup") ) return;
-		
-		// If hopper
-		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
-		
-		if( !Prism.getIgnore().event("item-insert") ) return;
-		
-		if( event.getDestination() == null ) return;
-		
-		// Get container
-		InventoryHolder ih = event.getDestination().getHolder();
-		Location containerLoc = null;
-		if(ih instanceof Chest){
-	    	Chest eventChest = (Chest) ih;
-		    containerLoc = eventChest.getLocation();
-		}
-		else if(ih instanceof DoubleChest){
-			DoubleChest eventChest = (DoubleChest) ih;
-		    containerLoc = eventChest.getLocation();
-		}
-		
-		if( containerLoc == null ) return;
-		
-		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
-		}
 	}
 	
 	
@@ -240,50 +187,6 @@ public class PrismInventoryEvents implements Listener {
 			}
 		}
 	    
-	    // Dropper
-		else if(ih instanceof Dropper){
-			Dropper dropper = (Dropper) ih;
-			containerLoc = dropper.getLocation();
-			
-			// Only a click in the dispenser can trigger a slot < 9
-			if(event.getRawSlot() <= 8){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
-	   
-	    // Hopper
-		else if(ih instanceof Hopper) {
-			Hopper hopper = (Hopper) ih;
-			containerLoc = hopper.getLocation();
-			
-			// Only a click in the hopper can trigger a slot < 5
-			if(event.getRawSlot() <= 4){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
-	    
 	    // Brewing stand
 		else if(ih instanceof BrewingStand) {
 			BrewingStand brewer = (BrewingStand) ih;
@@ -331,28 +234,6 @@ public class PrismInventoryEvents implements Listener {
 	    		recordInvAction( player, currentitem, -1, "item-insert");
 	    	}
 	    }
-	    
-	    // Hopper Minecart
-		else if(ih instanceof HopperMinecart) {
-			HopperMinecart hopper = (HopperMinecart) ih;
-			containerLoc = hopper.getLocation();
-			
-			// Only a click in the hopper can trigger a slot < 5
-			if(event.getRawSlot() <= 4){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
 	}
 	
 	

@@ -344,9 +344,6 @@ public class PrismPlayerEvents implements Listener {
 				case ENCHANTMENT_TABLE:
 				case ANVIL:
 				case BREWING_STAND:
-				case TRAPPED_CHEST:
-				case HOPPER:
-				case DROPPER:
 					if( !Prism.getIgnore().event("container-access",player) ) return;
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
 					break;

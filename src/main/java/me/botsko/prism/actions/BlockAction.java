@@ -15,7 +15,6 @@ import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
@@ -72,12 +71,6 @@ public class BlockAction extends GenericAction {
 				Sign s = (Sign) block.getState();
 				signActionData.lines = s.getLines();
 				actionData = signActionData;
-			}
-			
-			// command block
-			else if( block != null && (block.getTypeId() == 137) ){
-				CommandBlock cmdblock = (CommandBlock) block.getState();
-				data = cmdblock.getCommand();
 			}
 			
 			this.world_name = block.getWorld().getName();
@@ -412,16 +405,6 @@ public class BlockAction extends GenericAction {
 				spawner.setSpawnedType(s.getEntityType());
 				spawner.update();
 				
-			}
-			
-			
-			/**
-			 * Restoring command block
-			 */
-			if(getBlockId() == 137 ){
-				CommandBlock cmdblock = (CommandBlock) block.getState();
-				cmdblock.setCommand( data );
-				cmdblock.update();
 			}
 			
 			

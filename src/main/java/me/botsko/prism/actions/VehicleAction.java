@@ -8,12 +8,9 @@ import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.PoweredMinecart;
+import org.bukkit.entity.StorageMinecart;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.PoweredMinecart;
-import org.bukkit.entity.minecart.SpawnerMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
 
 public class VehicleAction extends GenericAction {
 	
@@ -26,15 +23,6 @@ public class VehicleAction extends GenericAction {
 		
 		if( vehicle instanceof PoweredMinecart ){
 			this.data = "powered minecart";
-		}
-		else if( vehicle instanceof HopperMinecart ){
-			this.data = "minecart hopper";
-		}
-		else if( vehicle instanceof SpawnerMinecart ){
-			this.data = "spawner minecart";
-		}
-		else if( vehicle instanceof ExplosiveMinecart ){
-			this.data = "tnt minecart";
 		}
 		else if( vehicle instanceof StorageMinecart ){
 			this.data = "storage minecart";
@@ -66,15 +54,6 @@ public class VehicleAction extends GenericAction {
 		}
 		else if( this.data.equals("storage minecart") ){
 			vehicle = getWorld().spawn( getLoc(), StorageMinecart.class );
-		}
-		else if( this.data.equals("tnt minecart") ){
-			vehicle = getWorld().spawn( getLoc(), ExplosiveMinecart.class );
-		}
-		else if( this.data.equals("spawner minecart") ){
-			vehicle = getWorld().spawn( getLoc(), SpawnerMinecart.class );
-		}
-		else if( this.data.equals("minecart hopper") ){
-			vehicle = getWorld().spawn( getLoc(), HopperMinecart.class );
 		}
 		else if( this.data.equals("minecart") ){
 			vehicle = getWorld().spawn( getLoc(), Minecart.class );
