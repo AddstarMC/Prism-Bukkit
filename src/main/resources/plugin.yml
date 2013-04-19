@@ -65,3 +65,137 @@ permissions:
         default: false
     prism.override-max-applier-radius:
         default: false
+    prism.ignore.tracking.block-break:
+        default: false
+    prism.ignore.tracking.block-burn:
+        default: false
+    prism.ignore.tracking.block-fade:
+        default: false
+    prism.ignore.tracking.block-fall:
+        default: false
+    prism.ignore.tracking.block-form:
+        default: false
+    prism.ignore.tracking.block-place:
+        default: false
+    prism.ignore.tracking.block-shift:
+        default: false
+    prism.ignore.tracking.block-spread:
+        default: false
+    prism.ignore.tracking.block-use:
+        default: false
+    prism.ignore.tracking.bucket-fill:
+        default: false
+    prism.ignore.tracking.bonemeal-use:
+        default: false
+    prism.ignore.tracking.container-access:
+        default: false
+    prism.ignore.tracking.cake-eat:
+        default: false
+    prism.ignore.tracking.craft-item:
+        default: false
+    prism.ignore.tracking.creeper-explode:
+        default: false
+    prism.ignore.tracking.crop-trample:
+        default: false
+    prism.ignore.tracking.dragon-eat:
+        default: false
+    prism.ignore.tracking.enchant-item:
+        default: false
+    prism.ignore.tracking.enderman-pickup:
+        default: false
+    prism.ignore.tracking.enderman-place:
+        default: false
+    prism.ignore.tracking.entity-dye:
+        default: false
+    prism.ignore.tracking.entity-explode:
+        default: false
+    prism.ignore.tracking.entity-follow:
+        default: false
+    prism.ignore.tracking.entity-form:
+        default: false
+    prism.ignore.tracking.entity-kill:
+        default: false
+    prism.ignore.tracking.entity-shear:
+        default: false
+    prism.ignore.tracking.entity-spawn:
+        default: false
+    prism.ignore.tracking.fireball:
+        default: false
+    prism.ignore.tracking.fire-spread:
+        default: false
+    prism.ignore.tracking.firework-launch:
+        default: false
+    prism.ignore.tracking.hangingitem-break:
+        default: false
+    prism.ignore.tracking.hangingitem-place:
+        default: false
+    prism.ignore.tracking.item-drop:
+        default: false
+    prism.ignore.tracking.item-insert:
+        default: false
+    prism.ignore.tracking.item-pickup:
+        default: false
+    prism.ignore.tracking.item-remove:
+        default: false
+    prism.ignore.tracking.lava-break:
+        default: false
+    prism.ignore.tracking.lava-bucket:
+        default: false
+    prism.ignore.tracking.lava-flow:
+        default: false
+    prism.ignore.tracking.lava-ignite:
+        default: false
+    prism.ignore.tracking.leaf-decay:
+        default: false
+    prism.ignore.tracking.lighter:
+        default: false
+    prism.ignore.tracking.lightning:
+        default: false
+    prism.ignore.tracking.mushroom-grow:
+        default: false
+    prism.ignore.tracking.player-chat:
+        default: false
+    prism.ignore.tracking.player-command:
+        default: false
+    prism.ignore.tracking.player-death:
+        default: false
+    prism.ignore.tracking.player-join:
+        default: false
+    prism.ignore.tracking.player-kill:
+        default: false
+    prism.ignore.tracking.player-quit:
+        default: false
+    prism.ignore.tracking.player-teleport:
+        default: false
+    prism.ignore.tracking.potion-splash:
+        default: false
+    prism.ignore.tracking.sheep-eat:
+        default: false
+    prism.ignore.tracking.sign-change:
+        default: false
+    prism.ignore.tracking.spawnegg-use:
+        default: false
+    prism.ignore.tracking.tnt-explode:
+        default: false
+    prism.ignore.tracking.tnt-prime:
+        default: false
+    prism.ignore.tracking.tree-grow:
+        default: false
+    prism.ignore.tracking.vehicle-break:
+        default: false
+    prism.ignore.tracking.vehicle-enter:
+        default: false
+    prism.ignore.tracking.vehicle-exit:
+        default: false
+    prism.ignore.tracking.vehicle-place:
+        default: false
+    prism.ignore.tracking.water-break:
+        default: false
+    prism.ignore.tracking.water-bucket:
+        default: false
+    prism.ignore.tracking.water-flow:
+        default: false
+    prism.ignore.tracking.world-edit:
+        default: false
+    prism.ignore.tracking.xp-pickup:
+        default: false

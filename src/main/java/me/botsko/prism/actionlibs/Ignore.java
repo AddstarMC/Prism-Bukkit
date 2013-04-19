@@ -79,12 +79,8 @@ public class Ignore {
 			return false;
 		}
 
-		// Should we ignore this player?
-		if(ignore_players != null && ignore_players.contains( player )){
-			return false;
-		}
-
-		return true;
+		return event( player );
+		
 	}
 	
 	
@@ -99,6 +95,23 @@ public class Ignore {
 			return false;
 		}
 
+		// Does the player have perms to ignore this action type?
+		if( player.hasPermission("prism.ignore.tracking."+actionTypeName) ){
+			return false;
+		}
+		
+		return event( player );
+		
+	}
+	
+	
+	/**
+	 * 
+	 * @param player
+	 * @return
+	 */
+	public boolean event( Player player ){
+		
 		// Should we ignore this player?
 		if(ignore_players != null && ignore_players.contains( player.getName() )){
 			return false;
@@ -110,6 +123,7 @@ public class Ignore {
 				return false;
 			}
 		}
+		
 		return true;
 	}
 	
