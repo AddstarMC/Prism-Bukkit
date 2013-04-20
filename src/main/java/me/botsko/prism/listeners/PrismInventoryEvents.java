@@ -80,6 +80,8 @@ public class PrismInventoryEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event){
 		
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
+		
 		if( !Prism.getIgnore().event("item-pickup") ) return;
 		
 		// If hopper
@@ -95,6 +97,8 @@ public class PrismInventoryEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
+		
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
 		
 		if( !Prism.getIgnore().event("item-insert") ) return;
 		
