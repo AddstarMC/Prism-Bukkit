@@ -52,6 +52,10 @@ public class QueryBuilder {
 	 */
 	public String buildQuery( QueryParameters parameters, boolean shouldGroup ){
 		
+		// Reset
+		columns = new ArrayList<String>();
+		conditions = new ArrayList<String>();
+		
 		String dbMode = plugin.getConfig().getString("prism.database.mode");
 		
 		

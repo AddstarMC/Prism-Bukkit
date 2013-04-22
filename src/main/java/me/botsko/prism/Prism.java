@@ -623,8 +623,7 @@ public class Prism extends JavaPlugin {
 
 					public void run() {
 						java.util.Date date = new java.util.Date();
-						for (Map.Entry<String, QueryResult> query : cachedQueries
-								.entrySet()) {
+						for (Map.Entry<String, QueryResult> query : cachedQueries.entrySet()) {
 							QueryResult result = query.getValue();
 							long diff = (date.getTime() - result.getQueryTime()) / 1000;
 							if (diff >= 120) {
@@ -718,6 +717,7 @@ public class Prism extends JavaPlugin {
 					log("Invalid parameters for database purge: " + purgeArgs);
 					continue;
 				}
+
 				if (parameters.getFoundArgs().size() > 0) {
 					parameters.setStringFromRawArgs(purgeArgs.split(" "), 0);
 					paramList.add(parameters);

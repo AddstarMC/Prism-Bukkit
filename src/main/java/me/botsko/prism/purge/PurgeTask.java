@@ -50,19 +50,18 @@ public class PurgeTask implements Runnable {
 	 * 
 	 */
 	public void run(){
+
     	if(paramList.size() > 0){
-    		
-    		boolean cycle_complete = false;
     		
 	    	ActionsQuery aq = new ActionsQuery(plugin);
 	    	// Execute in batches so we don't tie up the db with one massive query
 	    	for( QueryParameters param : paramList ){
+	    		
+	    		boolean cycle_complete = false;
 
 				cycle_rows_affected = aq.delete(param);
 				plugin.total_records_affected += cycle_rows_affected;
-				
-				
-				
+
 				// If nothing (or less than the limit) has been deleted this cycle, we need to move on
 				if( cycle_rows_affected == 0 || cycle_rows_affected < plugin.getConfig().getInt("prism.purge.records-per-batch") ){
 
@@ -71,7 +70,13 @@ public class PurgeTask implements Runnable {
 					cycle_complete = true;
 					
 				}
-				
+//				
+//				Prism.debug("------------------- " + param.getOriginalCommand());
+//				Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
+//				Prism.debug("cycle_complete: " + cycle_complete);
+//				Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
+//				Prism.debug("-------------------");
+
 				// Send cycle to callback
 				callback.cycle( param, cycle_rows_affected, plugin.total_records_affected, cycle_complete );
 				
