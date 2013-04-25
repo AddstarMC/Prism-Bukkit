@@ -711,7 +711,7 @@ public class Prism extends JavaPlugin {
 
 				// Process and validate all of the arguments
 				QueryParameters parameters = PreprocessArgs.process(prism,
-						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0);
+						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0, false);
 
 				if (parameters == null) {
 					log("Invalid parameters for database purge: " + purgeArgs);
