@@ -334,7 +334,17 @@ public class Prism extends JavaPlugin {
 			pool.setUsername(config.getString("prism.mysql.username"));
 			pool.setPassword(config.getString("prism.mysql.password"));
 		}
-
+		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase("postgresql")) {
+		    String dns = "jdbc:postgresql://"
+				+ config.getString("prism.postgresql.hostname") + ":"
+				+ config.getString("prism.postgresql.port") + "/"
+				+ config.getString("prism.postgresql.database");
+		pool = new DataSource();
+		pool.setDriverClassName("org.postgresql.Driver");
+		pool.setUrl(dns);
+		pool.setUsername(config.getString("prism.postgresql.username"));
+		pool.setPassword(config.getString("prism.postgresql.password"));
+		}
 		if (pool != null) {
 			pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
 			pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
@@ -459,6 +469,39 @@ public class Prism extends JavaPlugin {
 				st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON prism_actions (player ASC)");
 
 				query = "CREATE TABLE IF NOT EXISTS `prism_meta` (id INT PRIMARY KEY," + "k TEXT," + "v TEXT" + ")";
+				st.executeUpdate(query);
+				st.close();
+				conn.close();
+
+			} catch (SQLException e) {
+				log("Database connection error: " + e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		// POSTGRESQL
+		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase("postgresql")) {
+
+			try {
+				final Connection conn = dbc();
+				String query = "CREATE TABLE IF NOT EXISTS prism_actions ("
+						+ "id SERIAL PRIMARY KEY,"
+						+ "action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
+						+ "action_type TEXT," + "player TEXT," + "world TEXT,"
+						+ "x INT," + "y INT," + "z INT," + "block_id INT,"
+						+ "block_subid INT," + "old_block_id INT,"
+						+ "old_block_subid INT," + "data TEXT" + ")";
+				Statement st = conn.createStatement();
+				st.executeUpdate(query);
+				if (!st.executeQuery("SELECT relname FROM pg_class WHERE relname = 'prism_actions_x_idx' LIMIT 1").next()) {
+					st.executeUpdate("CREATE INDEX  prism_actions_x_idx ON prism_actions (x ASC)");
+				}
+				if (!st.executeQuery("SELECT relname FROM pg_class WHERE relname = 'prism_actions_action_type_idx' LIMIT 1").next()) {
+					st.executeUpdate("CREATE INDEX  prism_actions_action_type_idx ON prism_actions (action_type ASC)");
+				}
+				if (!st.executeQuery("SELECT relname FROM pg_class WHERE relname = 'prism_actions_player_idx' LIMIT 1").next()) {
+					st.executeUpdate("CREATE INDEX prism_actions_player_idx ON prism_actions (player ASC)");
+				}
+				query = "CREATE TABLE IF NOT EXISTS prism_meta (id SERIAL PRIMARY KEY," + "k TEXT," + "v TEXT" + ")";
 				st.executeUpdate(query);
 				st.close();
 				conn.close();

@@ -134,7 +134,7 @@ public class Settings {
 			}
 
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = ? LIMIT 0,1");
+    		s = conn.prepareStatement ("SELECT v FROM prism_meta WHERE k = ? LIMIT 1");
     		s.setString(1, finalKey);
     		rs = s.executeQuery();
 
