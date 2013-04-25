@@ -291,8 +291,10 @@ public class Prism extends JavaPlugin {
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
 		
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
-		for( String key : alertBlocks.getKeys(false) ){
-			alertedOres.put( Integer.parseInt(key), alertBlocks.getString(key));
+		if( alertBlocks != null){
+			for( String key : alertBlocks.getKeys(false) ){
+				alertedOres.put( Integer.parseInt(key), alertBlocks.getString(key));
+			}
 		}
 		
 		// Load language files

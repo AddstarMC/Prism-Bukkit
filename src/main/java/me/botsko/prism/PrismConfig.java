@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -218,11 +219,13 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		// Ore blocks
-		config.addDefault("prism.alerts.ores.blocks.14", "&6"); // iron
-		config.addDefault("prism.alerts.ores.blocks.15", "&7"); // gold
-		config.addDefault("prism.alerts.ores.blocks.21", "&9"); // lapis
-		config.addDefault("prism.alerts.ores.blocks.56", "&b"); // diamond
-		config.addDefault("prism.alerts.ores.blocks.129", "&a"); // emerald ore
+		HashMap<String,String> oreBlocks = new HashMap<String,String>();
+		oreBlocks.put("14", "&6"); // iron
+		oreBlocks.put("15", "&7"); // gold
+		oreBlocks.put("21", "&9"); // lapis
+		oreBlocks.put("56", "&b"); // diamond
+		oreBlocks.put("129", "&a"); // emerald ore
+		config.addDefault("prism.alerts.ores.blocks", oreBlocks);
 		
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
