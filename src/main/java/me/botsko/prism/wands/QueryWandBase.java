@@ -55,7 +55,7 @@ public abstract class QueryWandBase extends WandBase {
 		String[] newArgs = Arrays.copyOf(args, args.length + 1);
 		
 		newArgs[args.length] = "w:current"; // The thing needs at least one argument, and it's going to be the current world anyway.
-		QueryParameters params = PreprocessArgs.process(plugin, sender, newArgs, processType, argStart);
+		QueryParameters params = PreprocessArgs.process(plugin, sender, newArgs, processType, argStart, false);
 		if(params == null){
 			return false;
 		} else {
