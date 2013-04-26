@@ -123,7 +123,7 @@ public class QueryBuilder {
 		 */
 		int id = parameters.getId();
 		if(id > 0){
-			addCondition(tableName+".id = "+id);
+			query += "WHERE " + tableName+".id = "+id;
 		} else {
 			
 			/**
