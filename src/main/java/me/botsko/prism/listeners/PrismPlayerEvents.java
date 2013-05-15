@@ -291,7 +291,7 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(final PlayerInteractEvent event) {
 		
 		Player player = event.getPlayer();
@@ -331,7 +331,9 @@ public class PrismPlayerEvents implements Listener {
 			}
 		}
 		
-
+		
+		if( event.isCancelled() ) return;
+		
 		// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
 		if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
 
