@@ -511,7 +511,7 @@ public class PreprocessArgs {
 			}
 			
 			// Player location
-			if( player != null && !!plugin.getConfig().getBoolean("prism.queries.never-use-defaults") && parameters.getPlayerLocation() == null ){
+			if( player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") && parameters.getPlayerLocation() == null ){
 				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 			}
 			
