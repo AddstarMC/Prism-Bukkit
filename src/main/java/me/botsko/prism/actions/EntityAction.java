@@ -49,7 +49,7 @@ public class EntityAction extends GenericAction {
 		// Build an object for the specific details of this action
 		actionData = new EntityActionData();
 				
-		if(entity != null){
+		if( entity != null && entity.getType() != null && entity.getType().name() != null ){
 			this.actionData.entity_name = entity.getType().name().toLowerCase();
 			this.world_name = entity.getWorld().getName();
 			this.x = entity.getLocation().getBlockX();
