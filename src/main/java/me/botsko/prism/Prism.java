@@ -492,7 +492,7 @@ public class Prism extends JavaPlugin {
 						+ "`old_block_subid` mediumint(5) default NULL,"
 						+ "`data` varchar(255) NULL," + "PRIMARY KEY  (`id`), "
 						+ "KEY `x` (`x`), " + "KEY `block_id` (`block_id`)"
-						+ ") ENGINE=MyISAM;";
+						+ ") ENGINE=InnoDB;";
 
 				Statement st = conn.createStatement();
 				st.executeUpdate(query);
@@ -501,7 +501,7 @@ public class Prism extends JavaPlugin {
 						+ "`id` int(10) unsigned NOT NULL auto_increment,"
 						+ "`k` varchar(25) NOT NULL,"
 						+ "`v` varchar(255) NOT NULL," + "PRIMARY KEY  (`id`)"
-						+ ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+						+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 				st.executeUpdate(query);
 				st.close();
 				conn.close();
