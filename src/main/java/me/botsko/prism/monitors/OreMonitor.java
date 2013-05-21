@@ -157,7 +157,7 @@ public class OreMonitor {
 	 * @return
 	 */
 	protected boolean isWatched( Block block ){
-		if( Prism.getAlertedOres().containsKey( block.getTypeId() ) ){
+		if( Prism.getAlertedOres().containsKey( block.getTypeId() + ":" + block.getData() ) || Prism.getAlertedOres().containsKey( block.getTypeId() ) ){
 			return true;
 		}
 		return false;

@@ -80,7 +80,7 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
-	protected static HashMap<Integer,String> alertedOres = new HashMap<Integer,String>();
+	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 
 	/**
 	 * Public
@@ -293,7 +293,7 @@ public class Prism extends JavaPlugin {
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
 		if( alertBlocks != null){
 			for( String key : alertBlocks.getKeys(false) ){
-				alertedOres.put( Integer.parseInt(key), alertBlocks.getString(key));
+				alertedOres.put( key, alertBlocks.getString(key));
 			}
 		}
 		
@@ -575,7 +575,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	public static HashMap<Integer,String> getAlertedOres(){
+	public static HashMap<String,String> getAlertedOres(){
 		return alertedOres;
 	}
 
