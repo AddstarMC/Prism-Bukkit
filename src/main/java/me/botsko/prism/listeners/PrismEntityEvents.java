@@ -389,6 +389,8 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
 		
+		if( event.blockList() == null || event.blockList().isEmpty() ) return;
+		
 		String name;
 		String action = "entity-explode";
 		if(event.getEntity() != null){
@@ -407,15 +409,19 @@ public class PrismEntityEvents implements Listener {
 				name = "enderdragon";
 			} else {
 				if( !Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()) ) return;
-				name = event.getEntity().getType().getName().replace("_", " ");
-				name = name.length() > 15 ? name.substring(0, 15) : name; // I don't think this can happen, but just in case. Might look weird, but that's better than breaking stuff.
+				try {
+					name = event.getEntity().getType().getName().replace("_", " ");
+					name = name.length() > 15 ? name.substring(0, 15) : name; // I don't think this can happen, but just in case. Might look weird, but that's better than breaking stuff.
+				} catch ( NullPointerException e ){
+					name = "unknown";
+				}
 			}
 		} else {
 			if( !Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()) ) return;
 			name = "magic";
 		}
 		// Also log item-removes from chests that are blown up
-		PrismBlockEvents be = new PrismBlockEvents(plugin);		
+		PrismBlockEvents be = new PrismBlockEvents(plugin);
 		for(Block block : event.blockList()){
 			
 			// don't bother record upper doors.
