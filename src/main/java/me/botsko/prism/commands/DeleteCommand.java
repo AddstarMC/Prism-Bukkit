@@ -49,7 +49,7 @@ public class DeleteCommand implements SubHandler {
 	public void handle(final CallInfo call){
 		
 		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.DELETE, 1 );
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.DELETE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
 		if(parameters == null){
 			return;
 		}

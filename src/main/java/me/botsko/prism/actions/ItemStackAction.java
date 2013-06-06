@@ -291,7 +291,7 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Fireworks
-		if( block_id == 402 ){
+		if( block_id == 402 && actionData.effectColors != null && actionData.effectColors.length > 0 ){
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			Builder effect = FireworkEffect.builder();
 			if( actionData.effectColors != null ){

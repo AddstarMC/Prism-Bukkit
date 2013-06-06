@@ -100,6 +100,7 @@ public class PageCommand implements SubHandler {
 		List<Handler> paginated = results.getPaginatedActionResults();
 		if( paginated == null || paginated.size() == 0 ){
 			call.getSender().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+			return;
 		}
 		
 		// Show it!

@@ -80,7 +80,7 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
-	protected static HashMap<Integer,String> alertedOres = new HashMap<Integer,String>();
+	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 
 	/**
 	 * Public
@@ -291,8 +291,10 @@ public class Prism extends JavaPlugin {
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
 		
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
-		for( String key : alertBlocks.getKeys(false) ){
-			alertedOres.put( Integer.parseInt(key), alertBlocks.getString(key));
+		if( alertBlocks != null){
+			for( String key : alertBlocks.getKeys(false) ){
+				alertedOres.put( key, alertBlocks.getString(key));
+			}
 		}
 		
 		// Load language files
@@ -616,7 +618,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	public static HashMap<Integer,String> getAlertedOres(){
+	public static HashMap<String,String> getAlertedOres(){
 		return alertedOres;
 	}
 
@@ -754,7 +756,7 @@ public class Prism extends JavaPlugin {
 
 				// Process and validate all of the arguments
 				QueryParameters parameters = PreprocessArgs.process(prism,
-						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0);
+						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0, false);
 
 				if (parameters == null) {
 					log("Invalid parameters for database purge: " + purgeArgs);

@@ -65,6 +65,10 @@ public class ViewCommand implements SubHandler {
 				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing current chunk boundaries") );
 				
 			}
+			return;
 		}
+		
+		call.getSender().sendMessage( Prism.messenger.playerError("Invalid view option. See /pr ? for assistance.") );
+		
 	}
 }

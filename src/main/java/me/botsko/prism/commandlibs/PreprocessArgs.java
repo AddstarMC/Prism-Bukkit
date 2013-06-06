@@ -47,8 +47,8 @@ public class PreprocessArgs {
 	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int startAt ){
-		
+	public static QueryParameters process( Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int startAt, boolean useDefaults ){
+
 		Player player = null;
 		if(sender != null && sender instanceof Player){
 			player = (Player) sender;
@@ -246,6 +246,10 @@ public class PreprocessArgs {
 							parameters.setRadius( radius );
 							if(coordsLoc != null){
 								parameters.setMinMaxVectorsFromPlayerLocation(coordsLoc); // We need to set this *after* the radius has been set or it won't work.
+							} else {
+								if( player != null ){
+									parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
+								}
 							}
 						}
 					} else {
@@ -480,7 +484,7 @@ public class PreprocessArgs {
 			/**
 			 * Enforce defaults, unless we're doing a delete or they've been disabled in the config
 			 */
-			if( !processType.equals(PrismProcessType.DELETE) && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") ){
+			if( !processType.equals(PrismProcessType.DELETE) && useDefaults ){
 				// Radius default, apply only if player present
 				if( !foundArgs.containsKey("r") && player != null ){
 					if(parameters.allowsNoRadius()){

@@ -201,7 +201,7 @@ public class PrismBlockEvents implements Listener {
 		
 		// Change handling a bit if it's a long block
 		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
-		if( sibling != null ){
+		if( sibling != null && !block.getType().equals(Material.CHEST) ){
 			block = sibling;
 		}
 		
@@ -326,7 +326,7 @@ public class PrismBlockEvents implements Listener {
 		
 		// Change handling a bit if it's a long block
 		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
-		if( sibling != null ){
+		if( sibling != null && !block.getType().equals(Material.CHEST) ){
 			block = sibling;
 		}
 		

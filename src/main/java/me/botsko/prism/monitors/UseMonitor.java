@@ -112,7 +112,7 @@ public class UseMonitor {
 		String blockType = ""+block.getTypeId();
 		
 		// Ensure we're tracking this block
-		if(blocksToAlertOnPlace.contains( blockType )){
+		if( blocksToAlertOnPlace.contains( blockType ) || blocksToAlertOnPlace.contains( block.getTypeId() + ":" + block.getData() ) ){
 			String alias = plugin.getItems().getAlias(block.getTypeId(), block.getData());
 			incrementCount(playername, "placed "+alias);
 		}
@@ -135,7 +135,7 @@ public class UseMonitor {
 		String blockType = ""+block.getTypeId();
 		
 		// Ensure we're tracking this block
-		if(blocksToAlertOnBreak.contains( blockType )){
+		if( blocksToAlertOnBreak.contains( blockType ) || blocksToAlertOnBreak.contains( block.getTypeId() + ":" + block.getData() ) ){
 			String alias = plugin.getItems().getAlias(block.getTypeId(), block.getData());
 			incrementCount(playername, "broke "+alias);
 		}
