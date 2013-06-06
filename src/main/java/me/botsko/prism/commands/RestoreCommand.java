@@ -36,9 +36,9 @@ public class RestoreCommand implements SubHandler {
 	/**
 	 * Handle the command
 	 */
-	public void handle(CallInfo call) {
+	public void handle( final CallInfo call ){
 		
-		QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.RESTORE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.RESTORE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
 		if(parameters == null){
 			return;
 		}
@@ -56,25 +56,37 @@ public class RestoreCommand implements SubHandler {
 		}
 		
 		call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder) );
+		
+		/**
+		 * Run the query itself in an async task so the lookup query isn't done on the main thread
+		 */
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
 	
-		ActionsQuery aq = new ActionsQuery(plugin);
-		QueryResult results = aq.lookup( parameters, call.getSender() );
-		if(!results.getActionResults().isEmpty()){
-			
-			call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Restoring changes...") );
-
-			// Inform nearby players
-			if( call.getSender() instanceof Player ){
-				Player player = (Player) call.getSender();
-				plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
+				ActionsQuery aq = new ActionsQuery(plugin);
+				final QueryResult results = aq.lookup( parameters, call.getSender() );
+				if(!results.getActionResults().isEmpty()){
+					
+					call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Restoring changes...") );
+		
+					// Inform nearby players
+					if( call.getSender() instanceof Player ){
+						Player player = (Player) call.getSender();
+						plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
+					}
+					
+					// Perform restore on the main thread
+					plugin.getServer().getScheduler().runTask(plugin, new Runnable(){
+						public void run(){
+							Restore rs = new Restore( plugin, call.getSender(), results.getActionResults(), parameters, new PrismApplierCallback() );
+							rs.apply();
+						}
+					});
+					
+				} else {
+					call.getSender().sendMessage( Prism.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
+				}
 			}
-			
-			// Perform restore
-			Restore rs = new Restore( plugin, call.getSender(), results.getActionResults(), parameters, new PrismApplierCallback() );
-			rs.apply();
-			
-		} else {
-			call.getSender().sendMessage( Prism.messenger.playerError( "Nothing found to restore. Try using /prism l (args) first." ) );
-		}
+		});
 	}
 }
