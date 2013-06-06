@@ -189,15 +189,15 @@ public class PrismBlockEvents implements Listener {
 		
 		Player player = event.getPlayer();
 		Block block = event.getBlock();
-		
-		if( !Prism.getIgnore().event("block-break",player) ) return;
-		
+
 		if( block.getType().equals(Material.AIR) ) return;
 		
 		// Run ore find alerts
 		if( !player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")  ){
 			plugin.oreMonitor.processAlertsFromBlock(player, block);
 		}
+		
+		if( !Prism.getIgnore().event("block-break",player) ) return;
 		
 		// Change handling a bit if it's a long block
 		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
