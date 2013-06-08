@@ -155,7 +155,7 @@ public class QueryResult {
 	 */
 	public int getIndexOfFirstResult(){
 		int index = (page * per_page)-per_page;
-		return (index == 0 ? 1 : index);
+		return index + 1;
 	}
 
 	
