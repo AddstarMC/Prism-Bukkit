@@ -113,7 +113,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 						player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 					}
 				} else {
-					String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
+					String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().replaceAll("_", " ").toLowerCase() + (block.getType().toString().endsWith("block") ? "" : " block"));
 					player.sendMessage( Prism.messenger.playerError( "No history for this " + space_name + " found." ) );
 				}
 			}
