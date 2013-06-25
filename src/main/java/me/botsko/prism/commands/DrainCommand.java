@@ -63,7 +63,7 @@ public class DrainCommand implements SubHandler {
 		if(radius == 0) return;
 		
 		// Build seeking message
-		String msg = "Seeking "+drain_type+" within "+radius+" blocks.";
+		String msg = "Looking for "+drain_type+" within "+radius+" blocks.";
 		if(drain_type.equals("water")){
 			msg += ChatColor.GRAY + " It's just too wet.";
 		}
@@ -95,7 +95,7 @@ public class DrainCommand implements SubHandler {
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 		} else {
-			call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to drain with that radius."));
+			call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to drain within that radius."));
 		}
 	}
 	

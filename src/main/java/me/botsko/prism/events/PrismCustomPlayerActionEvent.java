@@ -17,7 +17,10 @@ public class PrismCustomPlayerActionEvent extends Event {
 
     /**
      * 
-     * @param example
+     * @param plugin
+     * @param action_type_name
+     * @param player
+     * @param message
      */
     public PrismCustomPlayerActionEvent( Plugin plugin, String action_type_name, Player player, String message ){
     	this.plugin_name = plugin.getName();

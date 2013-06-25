@@ -32,8 +32,6 @@ public class Updater {
 	
 	/**
 	 * Get the current database schema version
-	 * @param person
-	 * @param account_name
 	 */
 	protected int getClientDbSchemaVersion(){
 		String schema_ver = Settings.getSetting("schema_ver");

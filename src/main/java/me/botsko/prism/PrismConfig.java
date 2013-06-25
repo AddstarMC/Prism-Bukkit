@@ -20,8 +20,7 @@ public class PrismConfig extends ConfigBase {
 	
 
 	/**
-	 * 
-	 * @param plugin
+	 *
 	 */
 	public FileConfiguration getConfig(){
 		
