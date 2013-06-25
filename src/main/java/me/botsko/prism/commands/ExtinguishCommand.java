@@ -64,7 +64,7 @@ public class ExtinguishCommand implements SubHandler {
 			plugin.getServer().getPluginManager().callEvent(event);
 			
 		} else {
-			call.getPlayer().sendMessage(Prism.messenger.playerError("No fired found within that radius to extinguish."));
+			call.getPlayer().sendMessage(Prism.messenger.playerError("No fires found within that radius to extinguish."));
 		}
 	}
 }

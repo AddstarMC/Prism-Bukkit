@@ -48,7 +48,7 @@ public class Ignore {
 	
 	/**
 	 * 
-	 * @param a
+	 * @param actionTypeName
 	 * @return
 	 */
 	public boolean event( String actionTypeName ){
@@ -70,7 +70,9 @@ public class Ignore {
 	
 	/**
 	 * 
-	 * @param a
+	 * @param actionTypeName
+     * @param world
+     * @param player
 	 * @return
 	 */
 	public boolean event( String actionTypeName, World world, String player ){
@@ -86,7 +88,8 @@ public class Ignore {
 	
 	/**
 	 * 
-	 * @param a
+	 * @param actionTypeName
+     * @param player
 	 * @return
 	 */
 	public boolean event( String actionTypeName, Player player ){
@@ -130,7 +133,8 @@ public class Ignore {
 	
 	/**
 	 * 
-	 * @param a
+	 * @param actionTypeName
+     * @param block
 	 * @return
 	 */
 	public boolean event( String actionTypeName, Block block ){
@@ -146,7 +150,8 @@ public class Ignore {
 	
 	/**
 	 * 
-	 * @param a
+	 * @param actionTypeName
+     * @param world
 	 * @return
 	 */
 	public boolean event( String actionTypeName, World world ){

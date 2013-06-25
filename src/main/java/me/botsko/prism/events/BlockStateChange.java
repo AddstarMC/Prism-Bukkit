@@ -17,7 +17,8 @@ public class BlockStateChange {
     
     /**
      * 
-     * @param example
+     * @param originalBlock
+     * @param newBlock
      */
     public BlockStateChange( BlockState originalBlock, BlockState newBlock ) {
         this.originalBlock = originalBlock;

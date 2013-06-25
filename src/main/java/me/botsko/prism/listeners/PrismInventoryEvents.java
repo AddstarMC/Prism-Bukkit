@@ -361,11 +361,11 @@ public class PrismInventoryEvents implements Listener {
 	
 	
 	/**
-	 * 
+	 *
+     * @param player
 	 * @param item
+     * @param slot
 	 * @param actionType
-	 * @param containerLoc
-	 * @param event
 	 */
 	protected void recordInvAction( Player player, ItemStack item, int slot, String actionType ){
 		

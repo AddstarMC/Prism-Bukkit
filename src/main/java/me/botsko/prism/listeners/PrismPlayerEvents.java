@@ -83,7 +83,7 @@ public class PrismPlayerEvents implements Listener {
 		if( plugin.getConfig().getBoolean("prism.alerts.illegal-commands.enabled") ){
 			if( illegalCommands.contains( primaryCmd) ){
 				String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: " + cmd;
-				player.sendMessage( Prism.messenger.playerError("Sorry, this command has disabled from in-game use.") );
+				player.sendMessage( Prism.messenger.playerError("Sorry, this command is not available in-game.") );
 	        	plugin.alertPlayers( null, msg );
 	        	event.setCancelled(true);
 	        	// Log to console
@@ -477,7 +477,6 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param block
 	 * @param inhand
-	 * @param clickedFace
 	 * @param player
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, String player ){

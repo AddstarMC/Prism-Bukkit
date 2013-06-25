@@ -37,7 +37,6 @@ public class ActionFactory {
 	/**
 	 * GenericAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, String player ){
@@ -66,7 +65,6 @@ public class ActionFactory {
 	/**
 	 * BlockChangeAction | WorldeditAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid, String player ){
@@ -85,7 +83,6 @@ public class ActionFactory {
 	/**
 	 * BlockShiftAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Block from, Location to, String player ){
@@ -101,7 +98,6 @@ public class ActionFactory {
 	/**
 	 * EntityAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create(String action_type, Entity entity, String player ){
@@ -119,8 +115,6 @@ public class ActionFactory {
 	/**
 	 * EntityTravelAction
 	 * @param action_type
-	 * @param block
-	 * @param player
 	 */
 	public static Handler create( String action_type, Entity entity, Location from, Location to, TeleportCause cause ){
 		EntityTravelAction a = new EntityTravelAction();
@@ -135,7 +129,6 @@ public class ActionFactory {
 	/**
 	 * GrowAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, BlockState blockstate, String player ){
@@ -150,7 +143,6 @@ public class ActionFactory {
 	/**
 	 * HangingItemAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Hanging hanging, String player ){
@@ -165,7 +157,6 @@ public class ActionFactory {
 	/**
 	 * ItemStackAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, ItemStack item, Map<Enchantment,Integer> enchantments, Location loc, String player ){
@@ -184,7 +175,6 @@ public class ActionFactory {
 	/**
 	 * PlayerAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Player player, String additionalInfo ){
@@ -200,7 +190,6 @@ public class ActionFactory {
 	/**
 	 * PlayerDeathAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Player player, String cause, String attacker ){
@@ -217,7 +206,6 @@ public class ActionFactory {
 	/**
 	 * PrismProcessActionData
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, PrismProcessType processType, Player player, String parameters ){
@@ -233,7 +221,6 @@ public class ActionFactory {
 	/**
 	 * PrismRollbackAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, BlockState oldblock, BlockState newBlock, String player, int parent_id ){
@@ -280,7 +267,6 @@ public class ActionFactory {
 	/**
 	 * VehicleAction
 	 * @param action_type
-	 * @param block
 	 * @param player
 	 */
 	public static Handler create( String action_type, Vehicle vehicle, String player ){

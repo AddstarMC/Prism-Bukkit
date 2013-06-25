@@ -74,8 +74,7 @@ public class Messenger {
 
 	
 	/**
-	 * 
-	 * @param player_name
+	 *
 	 * @param cmd
 	 * @param help
 	 */

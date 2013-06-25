@@ -33,7 +33,9 @@ public class PrismBlocksDrainEvent extends Event {
     
     /**
      * 
-     * @param example
+     * @param blockStateChanges
+     * @param onBehalfOf
+     * @param radius
      */
     public PrismBlocksDrainEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius ) {
         this.blockStateChanges = blockStateChanges;

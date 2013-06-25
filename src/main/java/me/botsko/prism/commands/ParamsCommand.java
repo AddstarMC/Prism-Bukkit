@@ -20,14 +20,14 @@ public class ParamsCommand implements SubHandler {
 	
 	/**
 	 * Display param help
-	 * @param player
+	 * @param sender
 	 */
 	private void help( CommandSender sender ) {
 		
 		sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Parameters Help ---" ) );
 		
 		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE + " i.e. 20, or 100. Defaults to default-radius defined in config.") );
-		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "r:global" + ChatColor.WHITE + " Force an everywhere search, for lookups only (unless config'd for rollbacks).") );
+		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "r:global" + ChatColor.WHITE + " Force a worldwide search, for lookups only (unless configured for rollbacks).") );
 		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "r:<player|x,y,z>:[radius]" + ChatColor.WHITE + " Base the radius around another place, like r:viveleroi:20 or r:20,35,10:5 (x,y,z)") );
 		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "r:we" + ChatColor.WHITE + " Use a WorldEdit selection.") );
 		

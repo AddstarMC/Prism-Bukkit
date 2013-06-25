@@ -40,9 +40,8 @@ public class EntityAction extends GenericAction {
 
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param entity
+     * @param dyeUsed
 	 */
 	public void setEntity( Entity entity, String dyeUsed ){
 		

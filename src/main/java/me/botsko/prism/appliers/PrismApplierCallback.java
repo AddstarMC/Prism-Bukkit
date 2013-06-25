@@ -102,7 +102,7 @@ public class PrismApplierCallback implements ApplierCallback {
 		if(result.getProcessType().equals(PrismProcessType.UNDO)){
 				
 			// Build the results message
-			String msg = result.getChangesApplied() + " things neverminded.";
+			String msg = result.getChangesApplied() + " changes undone.";
 			if(result.getChangesSkipped() > 0){
 				msg += " " + result.getChangesSkipped() + " skipped.";
 			}

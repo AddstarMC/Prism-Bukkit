@@ -126,8 +126,7 @@ public class ActionMessage {
 	
 	
 	/**
-	 * 
-	 * @param type
+	 *
 	 * @return
 	 */
 	protected String getPosNegPrefix(){

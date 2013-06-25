@@ -139,7 +139,7 @@ public class SetmyCommand implements SubHandler {
 						if( item_name != null ){
 							
 							if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){
-								call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry but you may not use " + item_name + " for a wand.") );
+								call.getPlayer().sendMessage( Prism.messenger.playerError("Sorry, but you may not use " + item_name + " for a wand.") );
 								return;
 							}
 							

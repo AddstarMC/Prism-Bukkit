@@ -133,8 +133,7 @@ public class ActionRecorder implements Runnable {
 	
 	
 	/**
-	 * 
-	 * @param entities
+	 *
 	 * @throws SQLException
 	 */
 	public void insertActionsIntoDatabase() {

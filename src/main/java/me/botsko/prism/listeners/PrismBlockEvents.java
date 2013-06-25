@@ -115,7 +115,7 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param playername
 	 * @param block
 	 */
 	protected void logBlockRelationshipsForBlock( String playername, Block block ){

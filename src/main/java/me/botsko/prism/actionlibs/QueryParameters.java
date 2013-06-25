@@ -112,7 +112,7 @@ public class QueryParameters implements Cloneable {
 	
 	
 	/**
-	 * @param block the block to set
+	 * @param id the block to set
 	 */
 	public void addBlockFilter( int id, byte data ) {
 		this.block_filters.put(id,data);
@@ -291,7 +291,7 @@ public class QueryParameters implements Cloneable {
 	
 	
 	/**
-	 * @param world the world to set
+	 * @param keyword the world to set
 	 */
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
@@ -436,8 +436,7 @@ public class QueryParameters implements Cloneable {
 	
 	
 	/**
-	 * 
-	 * @param id
+	 *
 	 */
 	public int getParentId(){
 		return parent_id;
@@ -550,7 +549,7 @@ public class QueryParameters implements Cloneable {
 	
 	/**
 	 * Set the players you're sharing the lookup with.
-	 * @param players 
+	 * @param sender
 	 */
 	public void addSharedPlayer(CommandSender sender){
 		this.shared_players.add(sender);
@@ -569,7 +568,7 @@ public class QueryParameters implements Cloneable {
 
 	/**
 	 * Ignore the time.
-	 * @param b 
+	 * @param ignore
 	 */
 	public void setIgnoreTime(boolean ignore) {
 		this.ignoreTime = ignore;

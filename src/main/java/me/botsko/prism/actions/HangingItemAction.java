@@ -27,9 +27,7 @@ public class HangingItemAction extends GenericAction {
 
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param hanging
 	 */
 	public void setHanging( Hanging hanging ){
 		
