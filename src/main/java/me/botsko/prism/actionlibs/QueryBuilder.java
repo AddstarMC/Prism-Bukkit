@@ -46,8 +46,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param plugin
 	 * @param parameters
+	 * @param shouldGroup
 	 * @return
 	 */
 	public String buildQuery( QueryParameters parameters, boolean shouldGroup ){
@@ -409,8 +409,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param arg_values
-	 * @param player_name
+	 * @param minLoc
+     * @param maxLoc
 	 * @return
 	 */
 	protected void buildRadiusCondition( Vector minLoc, Vector maxLoc ){

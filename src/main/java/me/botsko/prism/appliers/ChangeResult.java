@@ -18,7 +18,6 @@ public class ChangeResult {
 	/**
 	 * 
 	 * @param changeResultType
-	 * @param blockStateChange
 	 */
 	public ChangeResult( ChangeResultType changeResultType ){
 		this(changeResultType, null);

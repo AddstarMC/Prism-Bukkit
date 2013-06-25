@@ -33,7 +33,9 @@ public class PrismBlocksExtinguishEvent extends Event {
     
     /**
      * 
-     * @param example
+     * @param blockStateChanges
+     * @param onBehalfOf
+     * @param radius
      */
     public PrismBlocksExtinguishEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius ) {
         this.blockStateChanges = blockStateChanges;
