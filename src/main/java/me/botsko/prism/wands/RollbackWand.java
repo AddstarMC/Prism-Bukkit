@@ -89,7 +89,7 @@ public class RollbackWand extends QueryWandBase implements Wand{
 			Rollback rb = new Rollback( plugin, player, results.getActionResults(), params, new PrismApplierCallback() );
 			rb.apply();
 		} else {
-			String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
+            String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().replaceAll("_", " ").toLowerCase() + (block.getType().toString().endsWith("block") ? "" : " block"));
 			player.sendMessage( Prism.messenger.playerError( "Nothing to rollback for this " + space_name + " found." ) );
 		}
 	}
