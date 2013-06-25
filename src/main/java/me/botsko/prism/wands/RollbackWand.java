@@ -66,7 +66,7 @@ public class RollbackWand extends QueryWandBase implements Wand{
 			params = parameters.clone();
 		} catch (CloneNotSupportedException ex) {
 			params = new QueryParameters();
-			player.sendMessage(Prism.messenger.playerError("Error retreiving parameters. Checking with default parameters."));
+			player.sendMessage(Prism.messenger.playerError("Error retrieving parameters. Checking with default parameters."));
 		}
 		params.setWorld( player.getWorld().getName() );
 		params.setSpecificBlockLocation( block.getLocation());
