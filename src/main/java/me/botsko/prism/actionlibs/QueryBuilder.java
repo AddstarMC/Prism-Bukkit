@@ -270,7 +270,16 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
+					
 					query += " GROUP BY "+tableName+".action_type, "+tableName+".player, "+tableName+".block_id, "+tableName+".data";
+					
+					if( dbMode.equalsIgnoreCase("sqlite") ){
+						query += ", date("+tableName+".action_time)";
+					}
+					else if( dbMode.equalsIgnoreCase("mysql") ){
+						query += ", DATE_FORMAT("+tableName+".action_time, '%c/%e/%y')";
+					}
+					
 				}
 			
 				/**
