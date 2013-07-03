@@ -90,7 +90,7 @@ public class PreviewCommand implements SubHandler {
 				parameters.setStringFromRawArgs( call.getArgs(), 1 );
 				
 				if(parameters.getActionTypes().containsKey("world-edit")){
-					call.getPlayer().sendMessage( Prism.messenger.playerError("Prism does not yet support previews for world edit rollbacks/restores.") );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Prism does not support previews for WorldEdit rollbacks/restores yet.") );
 					return;
 				}
 				

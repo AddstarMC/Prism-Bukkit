@@ -40,8 +40,11 @@ public class PrismBlocksRollbackEvent extends Event {
  
     
     /**
-     * 
-     * @param example
+     *
+     * @param blockStateChanges
+     * @param onBehalfOf
+     * @param parameters
+     * @param result
      */
     public PrismBlocksRollbackEvent( ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, QueryParameters parameters, ApplierResult result ) {
         this.blockStateChanges = blockStateChanges;

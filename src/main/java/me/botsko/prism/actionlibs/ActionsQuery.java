@@ -184,8 +184,7 @@ public class ActionsQuery {
 	
 	/**
 	 * 
-	 * @param person
-	 * @param account_name
+	 * @param playername
 	 */
 	public int getUsersLastPrismProcessId( String playername ){
 		int id = 0;
@@ -217,8 +216,7 @@ public class ActionsQuery {
 	
 	/**
 	 * 
-	 * @param person
-	 * @param account_name
+	 * @param id
 	 */
 	public PrismProcessAction getPrismProcessRecord( int id ){
 		PrismProcessAction process = null;

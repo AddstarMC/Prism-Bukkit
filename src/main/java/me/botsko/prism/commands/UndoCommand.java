@@ -50,7 +50,7 @@ public class UndoCommand implements SubHandler {
 			if(TypeUtils.isNumeric(call.getArg(1))){
 				record_id = Integer.parseInt(call.getArg(1));
 				if(record_id <= 0){
-					call.getPlayer().sendMessage( Prism.messenger.playerError("Record id must be greater than zero." ) );
+					call.getPlayer().sendMessage( Prism.messenger.playerError("Record ID must be greater than zero." ) );
 					return;
 				}
 			} else {
@@ -61,7 +61,7 @@ public class UndoCommand implements SubHandler {
 			
 			// Invalid id
 			if(record_id == 0){
-				call.getPlayer().sendMessage( Prism.messenger.playerError("Either you have no last process or an invalid id." ) );
+				call.getPlayer().sendMessage( Prism.messenger.playerError("Either you have no last process or an invalid ID." ) );
 				return;
 			}
 			

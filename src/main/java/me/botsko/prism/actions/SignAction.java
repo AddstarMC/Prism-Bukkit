@@ -33,9 +33,8 @@ public class SignAction extends GenericAction {
 	
 	/**
 	 * 
-	 * @param action_type
 	 * @param block
-	 * @param player
+	 * @param lines
 	 */
 	public void setBlock( Block block, String[] lines ){
 		

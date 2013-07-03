@@ -703,7 +703,7 @@ public class Prism extends JavaPlugin {
 	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords() {
 
-		List<String> purgeRules = (List<String>) getConfig().getList("prism.db-records-purge-rules");
+		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
 
 		if (!purgeRules.isEmpty()) {
 
@@ -762,8 +762,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgMissingArguments() {
@@ -772,8 +771,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidArguments() {
@@ -782,8 +780,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
@@ -792,8 +789,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgNoPermission() {
@@ -833,7 +829,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param messages
 	 */
 	public static void logSection(String[] messages) {
 		if (messages.length > 0) {
@@ -859,7 +855,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param loc
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());

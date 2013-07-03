@@ -14,8 +14,8 @@ public final class SubCommand {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
+	 * @param commandAliases
+	 * @param permissionNodes
 	 */
 	public SubCommand( String[] commandAliases, String[] permissionNodes ){
 		this.commandAliases = commandAliases;
@@ -25,8 +25,8 @@ public final class SubCommand {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
+	 * @param commandAliases
+	 * @param permissionNodes
 	 * @param handler
 	 */
 	public SubCommand( String[] commandAliases, String[] permissionNodes, SubHandler handler ){
@@ -121,7 +121,7 @@ public final class SubCommand {
 	
 	/**
 	 * 
-	 * @param node
+	 * @param permissionNodes
 	 */
 	public void setPermNodes( String[] permissionNodes ){
 		this.permissionNodes = permissionNodes;

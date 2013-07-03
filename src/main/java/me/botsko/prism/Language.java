@@ -15,7 +15,7 @@ public class Language {
 	
 	/**
 	 * 
-	 * @param plugin
+	 * @param lang
 	 */
 	public Language( FileConfiguration lang ) {
 		this.lang = lang;
