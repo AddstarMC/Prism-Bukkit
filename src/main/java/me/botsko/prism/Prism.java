@@ -700,7 +700,6 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords() {
 
 		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
