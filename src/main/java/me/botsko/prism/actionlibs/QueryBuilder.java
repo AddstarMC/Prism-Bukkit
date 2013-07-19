@@ -97,7 +97,10 @@ public class QueryBuilder {
 				columns.add("DATE_FORMAT("+tableName+".action_time, '%c/%e/%y') AS display_date");
 				columns.add("DATE_FORMAT("+tableName+".action_time, '%l:%i:%s%p') AS display_time");
 			}
-			
+			else if( dbMode.equalsIgnoreCase("postgresql") ){
+				columns.add("TO_CHAR("+tableName+".action_time, 'FMMM/FMDD/YYYY') AS display_date");
+				columns.add("TO_CHAR("+tableName+".action_time, 'FMHH12:MI:SSam') AS display_time");
+			}
 			if( shouldGroup ){
 				columns.add("COUNT(*) counted");
 			}
@@ -270,16 +273,14 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
-					
 					query += " GROUP BY "+tableName+".action_type, "+tableName+".player, "+tableName+".block_id, "+tableName+".data";
-					
-					if( dbMode.equalsIgnoreCase("sqlite") ){
+					if ( dbMode.equals("postgresql")) {
+						query += ", to_char("+tableName+".action_time, dd/mm/yy)";
+					} else if (dbMode.equalsIgnoreCase("sqlite")) {
 						query += ", date("+tableName+".action_time)";
-					}
-					else if( dbMode.equalsIgnoreCase("mysql") ){
+					} else if (dbMode.equalsIgnoreCase("mysql")) {
 						query += ", DATE_FORMAT("+tableName+".action_time, '%c/%e/%y')";
 					}
-					
 				}
 			
 				/**

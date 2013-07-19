@@ -50,6 +50,13 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
+		// PostgreSQL
+		config.addDefault("prism.postgresql.hostname", "127.0.0.1");
+		config.addDefault("prism.postgresql.username", "prism");
+		config.addDefault("prism.postgresql.password", "");
+		config.addDefault("prism.postgresql.database", "minecraft");
+		config.addDefault("prism.postgresql.port", "5432");
+		
 		// Sqlite
 		config.addDefault("prism.sqlite.enable-delete-limit", false);
 		
@@ -241,7 +248,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.uses.log-to-console", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
-		
+
 		List<String> monitorItems = new ArrayList<String>();
 		monitorItems.add("7");
 		monitorItems.add("29");
