@@ -46,8 +46,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param plugin
 	 * @param parameters
+	 * @param shouldGroup
 	 * @return
 	 */
 	public String buildQuery( QueryParameters parameters, boolean shouldGroup ){
@@ -275,7 +275,11 @@ public class QueryBuilder {
 				if( shouldGroup ){
 					query += " GROUP BY "+tableName+".action_type, "+tableName+".player, "+tableName+".block_id, "+tableName+".data";
 					if ( dbMode.equals("postgresql")) {
-						query += ", "+tableName+".id";
+						query += ", to_char("+tableName+".action_time, dd/mm/yy)";
+					} else if (dbMode.equalsIgnoreCase("sqlite")) {
+						query += ", date("+tableName+".action_time)";
+					} else if (dbMode.equalsIgnoreCase("mysql")) {
+						query += ", DATE_FORMAT("+tableName+".action_time, '%c/%e/%y')";
 					}
 				}
 			
@@ -415,8 +419,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param arg_values
-	 * @param player_name
+	 * @param minLoc
+     * @param maxLoc
 	 * @return
 	 */
 	protected void buildRadiusCondition( Vector minLoc, Vector maxLoc ){

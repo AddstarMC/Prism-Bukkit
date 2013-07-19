@@ -22,10 +22,7 @@ public class EntityTravelAction extends GenericAction {
 
 
 	/**
-	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 *
 	 */
 	public EntityTravelAction( ){
 		actionData = new EntityTravelActionData();

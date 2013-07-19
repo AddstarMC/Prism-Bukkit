@@ -19,9 +19,8 @@ public class PrismProcessAction extends GenericAction {
 	
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param processType
+     * @param parameters
 	 */
 	public void setProcessData( PrismProcessType processType, String parameters ){
 		

@@ -330,7 +330,7 @@ public class PreprocessArgs {
 							parameters.setAllowNoRadius(true);
 							
 						} else {
-							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for a assitance.") );
+							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.") );
 							return null;
 						}
 					}
@@ -477,7 +477,7 @@ public class PreprocessArgs {
 			
 			// Validate any required args are set
 			if(foundArgs.isEmpty()){
-				respond( sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for a assitance.") );
+				respond( sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance.") );
 				return null;
 			}
 			
@@ -558,7 +558,7 @@ public class PreprocessArgs {
 						else if(tfFormat.equals("s")){
 							cal.add(Calendar.SECOND, -1 * tfValue);
 						} else {
-							respond( sender, Prism.messenger.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for a help.") );
+							respond( sender, Prism.messenger.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for help.") );
 							return null;
 						}
 					}
@@ -569,7 +569,7 @@ public class PreprocessArgs {
 		}
 		
 		if(dateFrom == null){
-			respond( sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			respond( sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for help.") );
 		}
 
 		return dateFrom;

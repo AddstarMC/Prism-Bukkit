@@ -535,7 +535,7 @@ public class Prism extends JavaPlugin {
 						+ "`old_block_subid` mediumint(5) default NULL,"
 						+ "`data` varchar(255) NULL," + "PRIMARY KEY  (`id`), "
 						+ "KEY `x` (`x`), " + "KEY `block_id` (`block_id`)"
-						+ ") ENGINE=MyISAM;";
+						+ ") ENGINE=InnoDB;";
 
 				Statement st = conn.createStatement();
 				st.executeUpdate(query);
@@ -544,7 +544,7 @@ public class Prism extends JavaPlugin {
 						+ "`id` int(10) unsigned NOT NULL auto_increment,"
 						+ "`k` varchar(25) NOT NULL,"
 						+ "`v` varchar(255) NOT NULL," + "PRIMARY KEY  (`id`)"
-						+ ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+						+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 				st.executeUpdate(query);
 				st.close();
 				conn.close();
@@ -743,10 +743,9 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords() {
 
-		List<String> purgeRules = (List<String>) getConfig().getList("prism.db-records-purge-rules");
+		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
 
 		if (!purgeRules.isEmpty()) {
 
@@ -805,8 +804,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgMissingArguments() {
@@ -815,8 +813,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidArguments() {
@@ -825,8 +822,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
@@ -835,8 +831,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgNoPermission() {
@@ -876,7 +871,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param messages
 	 */
 	public static void logSection(String[] messages) {
 		if (messages.length > 0) {
@@ -902,7 +897,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param loc
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());

@@ -207,15 +207,14 @@ public interface Handler {
 	
 	
 	/**
-	 * 
-	 * @param pl
+	 *
 	 */
 	public abstract boolean isCanceled();
 	
 	
 	/**
 	 * 
-	 * @param pl
+	 * @param cancel
 	 */
 	public abstract void setCanceled( boolean cancel );
 	

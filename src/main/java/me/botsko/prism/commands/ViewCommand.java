@@ -50,7 +50,7 @@ public class ViewCommand implements SubHandler {
 				ChunkUtils.resetPreviewBoundaryBlocks( call.getPlayer(), blocks );
 				
 				// Close
-				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Reset your current view") );
+				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Reset your current view.") );
 				plugin.playerActiveViews.remove(playerName);
 				
 			} else {
@@ -62,13 +62,13 @@ public class ViewCommand implements SubHandler {
 				ChunkUtils.setPreviewBoundaryBlocks( call.getPlayer(), blocks, Material.GLOWSTONE );
 				plugin.playerActiveViews.put(playerName, blocks);
 				
-				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing current chunk boundaries") );
+				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Showing current chunk boundaries.") );
 				
 			}
 			return;
 		}
 		
-		call.getSender().sendMessage( Prism.messenger.playerError("Invalid view option. See /pr ? for assistance.") );
+		call.getSender().sendMessage( Prism.messenger.playerError("Invalid view option. Use /prism ? for help.") );
 		
 	}
 }

@@ -24,8 +24,7 @@ public class PreviewSession {
 	/**
 	 * 
 	 * @param player
-	 * @param undo
-	 * @param args
+	 * @param previewer
 	 */
 	public PreviewSession( Player player, Previewable previewer ){
 		this.player = player;

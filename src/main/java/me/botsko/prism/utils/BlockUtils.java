@@ -52,7 +52,7 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
 	
 	/**
 	 * 
-	 * @param mat
+	 * @param materials
 	 * @param loc
 	 * @param radius
 	 */
