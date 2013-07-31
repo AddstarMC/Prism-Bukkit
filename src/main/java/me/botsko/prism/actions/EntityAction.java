@@ -290,7 +290,7 @@ public class EntityAction extends GenericAction {
 	 * @return
 	 */
 	public Horse.Color getHorseColor(){
-		if( !this.actionData.hColor.isEmpty() ){
+		if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ){
 			return Horse.Color.valueOf( this.actionData.hColor );
 		}
 		return null;
