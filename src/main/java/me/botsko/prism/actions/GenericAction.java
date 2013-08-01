@@ -1,6 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -53,7 +52,7 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected String action_time;
+	protected String epoch;
 	
 	/**
 	 * 
@@ -159,16 +158,8 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#getActionTime()
 	 */
-	public String getActionTime() {
-		return action_time;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see me.botsko.prism.actions.Handler#setActionTime(java.lang.String)
-	 */
-	public void setActionTime(String action_time) {
-		this.action_time = action_time;
+	public String getUnixEpoch() {
+		return epoch;
 	}
 
 	
@@ -183,8 +174,18 @@ public class GenericAction implements Handler {
 	/* (non-Javadoc)
 	 * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
 	 */
-	public void setDisplayDate(String display_date) {
-		this.display_date = display_date;
+	public void setUnixEpoch( String epoch ) {
+		
+		this.epoch = epoch;
+		
+		Date action_time = new Date(Long.parseLong(epoch) * 1000);
+		
+		SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
+		this.display_date = date.format(action_time);
+		
+		SimpleDateFormat time = new SimpleDateFormat("h:m:sa");
+		this.display_time = time.format(action_time);
+
 	}
 
 	
@@ -193,14 +194,6 @@ public class GenericAction implements Handler {
 	 */
 	public String getDisplayTime() {
 		return display_time;
-	}
-
-	
-	/* (non-Javadoc)
-	 * @see me.botsko.prism.actions.Handler#setDisplayTime(java.lang.String)
-	 */
-	public void setDisplayTime(String display_time) {
-		this.display_time = display_time;
 	}
 	
 	
@@ -211,44 +204,39 @@ public class GenericAction implements Handler {
 		
 		String time_ago = "";
 		
-		try {
-			
-			Date start = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(this.action_time);
-			Date end = new Date();
-			
-			long diffInSeconds = (end.getTime() - start.getTime()) / 1000;
+		Date start = new Date(Long.parseLong(this.epoch) * 1000);
+		Date end = new Date();
+		
+		long diffInSeconds = (end.getTime() - start.getTime()) / 1000;
 
-		    long diff[] = new long[] { 0, 0, 0, 0 };
-		    /* sec */	diff[3] = (diffInSeconds >= 60 ? diffInSeconds % 60 : diffInSeconds);
-		    /* min */	diff[2] = (diffInSeconds = (diffInSeconds / 60)) >= 60 ? diffInSeconds % 60 : diffInSeconds;
-		    /* hours */	diff[1] = (diffInSeconds = (diffInSeconds / 60)) >= 24 ? diffInSeconds % 24 : diffInSeconds;
-		    /* days */	diff[0] = (diffInSeconds = (diffInSeconds / 24));
+	    long diff[] = new long[] { 0, 0, 0, 0 };
+	    /* sec */	diff[3] = (diffInSeconds >= 60 ? diffInSeconds % 60 : diffInSeconds);
+	    /* min */	diff[2] = (diffInSeconds = (diffInSeconds / 60)) >= 60 ? diffInSeconds % 60 : diffInSeconds;
+	    /* hours */	diff[1] = (diffInSeconds = (diffInSeconds / 60)) >= 24 ? diffInSeconds % 24 : diffInSeconds;
+	    /* days */	diff[0] = (diffInSeconds = (diffInSeconds / 24));
 
-		    // Only show days if more than 1
-		    if(diff[0] >= 1){
-		    	time_ago += diff[0] + "d";
-		    }
-		    // Only show hours if > 1
-		    if(diff[1] >= 1){
-		    	time_ago += diff[1] + "h";
-		    }
-		    // Only show minutes if > 1 and less than 60
-		    if(diff[2] > 1 && diff[2] < 60){
-		    	time_ago += diff[2] + "m";
-		    }
-		    if(!time_ago.isEmpty()){
-		    	time_ago += " ago";
-		    }
+	    // Only show days if more than 1
+	    if(diff[0] >= 1){
+	    	time_ago += diff[0] + "d";
+	    }
+	    // Only show hours if > 1
+	    if(diff[1] >= 1){
+	    	time_ago += diff[1] + "h";
+	    }
+	    // Only show minutes if > 1 and less than 60
+	    if(diff[2] > 1 && diff[2] < 60){
+	    	time_ago += diff[2] + "m";
+	    }
+	    if(!time_ago.isEmpty()){
+	    	time_ago += " ago";
+	    }
+	    
+	    if( diff[0] == 0 && diff[1] == 0 && diff[2] <= 1){
+	    	time_ago = "just now";
+	    }
 		    
-		    if( diff[0] == 0 && diff[1] == 0 && diff[2] <= 1){
-		    	time_ago = "just now";
-		    }
-			
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return "";
-		}
 		return time_ago;
+		
 	}
 
 	

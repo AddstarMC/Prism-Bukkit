@@ -118,14 +118,12 @@ public class ActionsQuery {
 	    			baseHandler.setPlugin( plugin );
 	    			baseHandler.setType( actionType );
 	    			baseHandler.setId( rs.getInt(1) );
-	    			baseHandler.setActionTime( rs.getString(2) );
+	    			baseHandler.setUnixEpoch( rs.getString(2) );
 	    			baseHandler.setPlayerName( rs.getString(4) );
 	    			baseHandler.setWorldName( rs.getString(5) );
 	    			baseHandler.setX( rs.getInt(6) );
 	    			baseHandler.setY( rs.getInt(7) );
 	    			baseHandler.setZ( rs.getInt(8) );
-	    			baseHandler.setDisplayDate( rs.getString(14) );
-	    			baseHandler.setDisplayTime( rs.getString(15) );
 					baseHandler.setBlockId( rs.getInt(9) );
 					baseHandler.setBlockSubId( rs.getInt(10) );
 					baseHandler.setOldBlockId( rs.getInt(11) );
@@ -136,7 +134,7 @@ public class ActionsQuery {
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
     				if( shouldGroup ){
-    					aggregated = rs.getInt(16);
+    					aggregated = rs.getInt(14);
     				}
     				baseHandler.setAggregateCount(aggregated);
     				
@@ -192,9 +190,12 @@ public class ActionsQuery {
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
+			
+			int action_id = Prism.prismActions.get("prism-process");
             
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND player = ? ORDER BY id DESC LIMIT 0,1");
+    		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 0,1");
+    		s.setInt(1, action_id);
     		s.setString(1, playername);
     		s.executeQuery();
     		rs = s.getResultSet();
@@ -224,10 +225,13 @@ public class ActionsQuery {
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
+			
+			int action_id = Prism.prismActions.get("prism-process");
             
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_type = 'prism-process' AND id = ?");
-    		s.setInt(1, id);
+    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_id = ? AND id = ?");
+    		s.setInt(1, action_id);
+    		s.setInt(2, id);
     		s.executeQuery();
     		rs = s.getResultSet();
 
@@ -235,8 +239,8 @@ public class ActionsQuery {
     			process = new PrismProcessAction();
     			// Set all shared values
     			process.setId( rs.getInt("id") );
-    			process.setType( Prism.getActionRegistry().getAction( rs.getString("action_type") ) );
-    			process.setActionTime( rs.getString("action_time") );
+    			process.setType( Prism.getActionRegistry().getAction( rs.getString("action") ) );
+    			process.setUnixEpoch( rs.getString("epoch") );
     			process.setWorldName( rs.getString("world") );
     			process.setPlayerName( rs.getString("player") );
     			process.setX( rs.getInt("x") );
