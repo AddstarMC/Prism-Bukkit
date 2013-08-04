@@ -27,6 +27,8 @@ permissions:
         default: op
     prism.lookup:
         default: op
+    prism.lookup.paginate:
+        default: true
     prism.extinguish:
         default: op
     prism.drain:
