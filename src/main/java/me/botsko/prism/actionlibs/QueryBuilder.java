@@ -430,9 +430,9 @@ public class QueryBuilder {
 		String where = "";
 		if(dateFrom != null){
 			if(equation == null){
-				addCondition( tableNameData+".epoch >= '" + dateFrom + "'" );
+				addCondition( tableNameData+".epoch >= " + (dateFrom/1000) + "" );
 			} else {
-				addCondition( tableNameData+".epoch "+equation+" '" + dateFrom + "'" );
+				addCondition( tableNameData+".epoch "+equation+" '" + (dateFrom/1000) + "'" );
 			}
 		}
 		return where;
