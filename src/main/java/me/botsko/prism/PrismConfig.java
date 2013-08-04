@@ -105,7 +105,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.purge.records-per-batch", 5000);
 		
 		// Appliers
-		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
+		config.addDefault("prism.appliers.allow-rollback-items-removed-from-container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
