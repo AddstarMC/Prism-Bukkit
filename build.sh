@@ -65,18 +65,7 @@ fi
 rm versions.txt
 
 # Send a notification to IRC.
-{
-echo -e "NICK Refract\n"
-echo -e "USER Refract Refract Refract :Refract\n"
-cat pass.txt
-echo
-sleep 1
-echo -e PRIVMSG \#Prism :A new Prism build, Prism-$name, was just pushed to the dev builds list!
-echo -e PRIVMSG \#Prism :You can download this build at http://botsko.s3.amazonaws.com/Prism/Prism-$name.jar or view all of the dev builds at http://discover-prism.com/dev/builds/
-sleep 1
-echo -e "QUIT"
-echo
-} | telnet nasonfish.com 8080 > /dev/null
-echo "Successfully sent notification to IRC."
+pass=`cat pass.txt`
+curl -Gd "build=$name&pass=$pass" "http://stuff.nasonfish.com/prism/build.php"
 
 echo "BUILD COMPLETE"
