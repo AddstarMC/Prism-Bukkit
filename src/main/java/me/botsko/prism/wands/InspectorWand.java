@@ -79,11 +79,13 @@ public class InspectorWand extends QueryWandBase implements Wand {
 				}
 				
 				// Ignoring any actions via config?
-				@SuppressWarnings("unchecked")
-				ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
-				if( ignoreActions != null && !ignoreActions.isEmpty() ){
-					for(String ignore : ignoreActions){
-						params.addActionType(ignore, MatchRule.EXCLUDE);
+				if( params.getActionTypes().size() == 0 ){
+					@SuppressWarnings("unchecked")
+					ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
+					if( ignoreActions != null && !ignoreActions.isEmpty() ){
+						for(String ignore : ignoreActions){
+							params.addActionType(ignore, MatchRule.EXCLUDE);
+						}
 					}
 				}
 				boolean timeDefault = false;
