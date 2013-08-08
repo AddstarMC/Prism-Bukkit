@@ -208,11 +208,13 @@ public class ActionRecorder implements Runnable {
 		        	int world_id = 0;
 		        	if( Prism.prismWorlds.containsKey(a.getWorldName()) ){
 		        		world_id = Prism.prismWorlds.get(a.getWorldName());
+//		        		Prism.debug("World id from cache: " + world_id);
 		        	}
 		        	
 		        	int action_id = 0;
 		        	if( Prism.prismActions.containsKey(a.getType().getName()) ){
 		        		action_id = Prism.prismActions.get(a.getType().getName());
+//		        		Prism.debug("Action id from cache: " + action_id);
 		        	}
 		        	
 		        	int player_id = getPlayerPrimaryKey( a.getPlayerName() );
@@ -226,7 +228,7 @@ public class ActionRecorder implements Runnable {
 		        	actionsRecorded++;
 		        	if( a == null || a.isCanceled() ) continue;
 		        	s.setLong(1, System.currentTimeMillis() / 1000L);
-			        s.setInt(2,world_id);
+			        s.setInt(2,action_id);
 			        s.setInt(3,player_id);
 			        s.setInt(4,world_id);
 			        s.setInt(5,a.getBlockId());

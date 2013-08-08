@@ -533,6 +533,7 @@ public class Prism extends JavaPlugin {
     		rs = s.executeQuery();
 
     		while(rs.next()){
+    			debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
     			prismActions.put( rs.getString(2), rs.getInt(1) );
     		}
     		
