@@ -656,8 +656,8 @@ public class Prism extends JavaPlugin {
 	 */
 	public void cachePlayerPrimaryKey( final String playerName ){
 		
-		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-			public void run(){
+//		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+//			public void run(){
 
 				Connection conn = null;
 				PreparedStatement s = null;
@@ -682,8 +682,8 @@ public class Prism extends JavaPlugin {
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
 		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
 		        }
-			}
-		});
+//			}
+//		});
 	}
 	
 	
