@@ -160,7 +160,7 @@ public class ActionRecorder implements Runnable {
     	if( Prism.prismPlayers.containsKey(playerName) ){
     		player_id = Prism.prismPlayers.get(playerName);
     	} else {
-    		Prism.cachePlayerPrimaryKey(playerName);
+    		plugin.cachePlayerPrimaryKey(playerName);
     		player_id = Prism.prismPlayers.get(playerName);
     	}
     	return player_id;

@@ -272,7 +272,7 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
-					query += " GROUP BY "+tableNameData+".action_id, "+tableNameData+".player_id, "+tableNameData+".block_id, "+tableNameData+".data";
+					query += " GROUP BY "+tableNameData+".action_id, "+tableNameData+".player_id, "+tableNameData+".block_id, "+tableNameData+".data, DATE(FROM_UNIXTIME("+tableNameData+".epoch))";
 				}
 			
 				/**
@@ -291,7 +291,7 @@ public class QueryBuilder {
 					}
 				}
 			} else {
-//				// Only limit delete records if using mysql or sqlite has delete limits enabled
+				// @todo disabled because it won't work with delete/joins/using
 //				int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
 //				if( perBatch < 100){
 //					perBatch = 100;

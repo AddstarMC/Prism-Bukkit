@@ -16,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import me.botsko.elixr.MaterialAliases;
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -157,16 +158,6 @@ public class Prism extends JavaPlugin {
 		if (getConfig().getBoolean("prism.allow-metrics")) {
 			try {
 				Metrics metrics = new Metrics(this);
-
-				// See who's using mysql vs sqlite
-				Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
-				databaseGraph.addPlotter(new Metrics.Plotter(prism.getConfig().getString("prism.database.mode")) {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-
 				metrics.start();
 			} catch (IOException e) {
 				log("MCStats submission failed.");
@@ -211,6 +202,7 @@ public class Prism extends JavaPlugin {
 			// Cache world IDs
 			cacheWorldPrimaryKeys();
 			cacheActionPrimaryKeys();
+			cacheOnlinePlayerPrimaryKeys();
 
 			// Apply any updates
 			Updater up = new Updater(this);
@@ -613,36 +605,84 @@ public class Prism extends JavaPlugin {
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
+
+	
+	/**
+	 * 
+	 */
+	public void cacheOnlinePlayerPrimaryKeys(){
+
+		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+			public void run(){
+				
+				String[] playerNames;
+				playerNames = new String[ getServer().getOnlinePlayers().length ];
+				int i = 0;
+				for( Player pl : getServer().getOnlinePlayers() ){
+					playerNames[i] = pl.getName();
+					i++;
+				}
+
+
+				Connection conn = null;
+				PreparedStatement s = null;
+				ResultSet rs = null;
+				try {
+		
+					conn = dbc();
+		    		s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN ('?')" );
+		    		s.setString(1, TypeUtils.join(playerNames, "','"));
+		    		rs = s.executeQuery();
+		
+		    		while( rs.next() ){
+		    			debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+		    			prismPlayers.put( rs.getString(2), rs.getInt(1) );
+		    		}
+				} catch (SQLException e) {
+		//        	handleDatabaseException( e );
+		        } finally {
+		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
+			}
+		});
+	}
 	
 	
 	/**
 	 * 
 	 */
-	public static void cachePlayerPrimaryKey( String playerName ){
+	public void cachePlayerPrimaryKey( final String playerName ){
+		
+		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+			public void run(){
 
-		Connection conn = null;
-		PreparedStatement s = null;
-		ResultSet rs = null;
-		try {
-
-			conn = dbc();
-    		s = conn.prepareStatement( "SELECT player_id FROM prism_players WHERE player = ?" );
-    		s.setString(1, playerName);
-    		rs = s.executeQuery();
-
-    		if( rs.next() ){
-    			debug("Loaded player " + playerName + ", id: " + rs.getInt(1) + " into the cache.");
-    			prismPlayers.put( playerName, rs.getInt(1) );
-    		} else {
-    			addPlayerName(playerName);
-    		}
-		} catch (SQLException e) {
-//        	handleDatabaseException( e );
-        } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        }
+				Connection conn = null;
+				PreparedStatement s = null;
+				ResultSet rs = null;
+				try {
+		
+					conn = dbc();
+		    		s = conn.prepareStatement( "SELECT player_id FROM prism_players WHERE player = ?" );
+		    		s.setString(1, playerName);
+		    		rs = s.executeQuery();
+		
+		    		if( rs.next() ){
+		    			debug("Loaded player " + playerName + ", id: " + rs.getInt(1) + " into the cache.");
+		    			prismPlayers.put( playerName, rs.getInt(1) );
+		    		} else {
+		    			addPlayerName(playerName);
+		    		}
+				} catch (SQLException e) {
+		//        	handleDatabaseException( e );
+		        } finally {
+		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
+			}
+		});
 	}
 	
 	
