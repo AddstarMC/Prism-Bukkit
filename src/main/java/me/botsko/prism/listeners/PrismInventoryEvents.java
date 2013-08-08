@@ -12,6 +12,7 @@ import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Dropper;
 import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.minecart.HopperMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
@@ -148,6 +149,8 @@ public class PrismInventoryEvents implements Listener {
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
 	    
+//	    Prism.debug("--- Inv: " + (inv == null ? "null" : inv.toString()));
+//	    Prism.debug("--- InvHold: " + (ih == null ? "null" : ih.toString()));
 //	    Prism.debug("Raw slot: " + event.getRawSlot());
 //	    Prism.debug("Slot: " + event.getSlot());
 //	    Prism.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
@@ -357,6 +360,27 @@ public class PrismInventoryEvents implements Listener {
 				}
 			}
 		}
+	    
+	    // Horse inventories
+ 		else if(ih instanceof Horse){
+ 			Horse horse = (Horse) ih;
+ 			containerLoc = horse.getLocation();
+ 			
+ 			if(event.getRawSlot() <= 16){
+ 				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+ 					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+ 			    }
+ 			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+ 			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+ 			    }
+ 			} else {
+ 				// Otherwise the player has to be clicking in their inventory. We'd record the insert
+ 				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
+ 				if( event.isShiftClick() ){
+ 		    		recordInvAction( player, currentitem, -1, "item-insert");
+ 				}
+ 			}
+ 		}
 	}
 	
 	
