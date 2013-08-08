@@ -155,9 +155,8 @@ public class QueryBuilder {
 				}
 			}
 			
-			// @todo convert this to primary keys
 			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
-				addCondition( "a.action NOT LIKE '%prism%'" );
+				addCondition( tableNameData + ".action_id NOT IN (69, 70, 71, 72)" );
 			}
 			
 			/**
