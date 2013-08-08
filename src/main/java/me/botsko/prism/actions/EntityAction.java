@@ -412,7 +412,6 @@ public class EntityAction extends GenericAction {
 			if( entity instanceof Horse ){
 				
 				Horse h = (Horse) entity;
-				this.actionData.var = h.getVariant().toString();
 				
 				if( getVariant() != null ){
 					h.setVariant( getVariant() );

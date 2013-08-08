@@ -18,6 +18,7 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
@@ -74,6 +75,19 @@ public class PrismEntityEvents implements Listener {
 		// Mob Death
 		if(!(entity instanceof Player)){
 			if(entity.getLastDamageCause() instanceof EntityDamageByEntityEvent){
+				
+				if( entity instanceof Horse ){
+					Horse horse = (Horse) entity;
+					if( horse.isCarryingChest() ){;
+						// Log item drops
+				        if( Prism.getIgnore().event("item-drop",entity.getWorld()) ){
+					        for( ItemStack i : horse.getInventory().getContents() ){
+					        	if( i == null ) continue;
+					        	Prism.actionsRecorder.addToQueue( ActionFactory.create("item-drop", i, i.getAmount(), -1, null, entity.getLocation(), "horse") );
+					        }
+				        }
+					}
+				}
 				
 				// Mob killed by player
 				EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity.getLastDamageCause();
