@@ -143,6 +143,16 @@ public class EntityAction extends GenericAction {
 				if( hi.getArmor() != null ){
 					this.actionData.armor = ""+hi.getArmor().getTypeId();
 				}
+				
+				// Owner
+	            if(h.isTamed()){
+	                if(h.getOwner() instanceof Player){
+	                	this.actionData.taming_owner = ((Player)h.getOwner()).getName();
+	                }
+	                if(h.getOwner() instanceof OfflinePlayer){
+	                	this.actionData.taming_owner = ((OfflinePlayer)h.getOwner()).getName();
+	                }
+	            }
 			}
 		}
 	}
@@ -434,11 +444,22 @@ public class EntityAction extends GenericAction {
 				h.getInventory().setSaddle( getSaddle() );
 				h.getInventory().setArmor( getArmor() );
 				
-
+				// Owner
+	            String tamingOwner = getTamingOwner();
+	            if(tamingOwner != null){
+		            Player owner = plugin.getServer().getPlayer( tamingOwner );
+		            if(owner == null){
+			            OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+			            if(offlinePlayer.hasPlayedBefore()){
+			            	owner = offlinePlayer.getPlayer();
+			            }
+		            }
+		            if(owner != null) h.setOwner(owner);
+	            }
 			}
-			
-			
+
 			return new ChangeResult( ChangeResultType.APPLIED, null );
+			
 		}
 		return new ChangeResult( ChangeResultType.PLANNED, null );
 	}
