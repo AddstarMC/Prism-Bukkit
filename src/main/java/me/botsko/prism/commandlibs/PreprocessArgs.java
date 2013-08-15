@@ -379,7 +379,7 @@ public class PreprocessArgs {
 								if(ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])){
 									parameters.addBlockFilter( Integer.parseInt( ids[0] ), Byte.parseByte( ids[1] ) );
 								} else {
-									respond( sender, Prism.messenger.playerError("Invalid block filter '"+val+"'. Use /prism ? [command] for help.") );
+									respond( sender, Prism.messenger.playerError("Invalid block name '"+val+"'.") );
 									return null;
 								}
 							} else {
@@ -403,6 +403,9 @@ public class PreprocessArgs {
 												}
 											}
 										}
+									} else {
+										respond( sender, Prism.messenger.playerError("Invalid block name '"+b+"'.") );
+										return null;
 									}
 								}
 							}
