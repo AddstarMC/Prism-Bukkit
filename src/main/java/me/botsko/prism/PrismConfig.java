@@ -151,8 +151,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.entity-follow", true);
 		config.addDefault("prism.tracking.entity-form", true);
 		config.addDefault("prism.tracking.entity-kill", true);
+		config.addDefault("prism.tracking.entity-leash", true);
 		config.addDefault("prism.tracking.entity-shear", true);
 		config.addDefault("prism.tracking.entity-spawn", true);
+		config.addDefault("prism.tracking.entity-unleash", true);
 		config.addDefault("prism.tracking.fireball", true);
 		config.addDefault("prism.tracking.fire-spread", false);
 		config.addDefault("prism.tracking.firework-launch", true);

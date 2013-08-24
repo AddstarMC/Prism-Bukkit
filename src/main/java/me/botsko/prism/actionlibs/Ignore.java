@@ -61,6 +61,7 @@ public class Ignore {
 		
 		// Should we ignore this action type?
 		if( (TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + actionTypeName )) ){
+			Prism.debug("Ignoring action type " + actionTypeName);
 			return false;
 		}
 
@@ -100,6 +101,7 @@ public class Ignore {
 
 		// Does the player have perms to ignore this action type?
 		if( player.hasPermission("prism.ignore.tracking."+actionTypeName) ){
+			Prism.debug("Player has permission node to ignore " + actionTypeName);
 			return false;
 		}
 		
@@ -117,12 +119,14 @@ public class Ignore {
 		
 		// Should we ignore this player?
 		if(ignore_players != null && ignore_players.contains( player.getName() )){
+			Prism.debug("Player is being ignored, per config: " + player.getName());
 			return false;
 		}
 		
 		// Should we ignore this player for being in creative?
 		if( ignore_creative ){
 			if( player.getGameMode().equals(GameMode.CREATIVE) ){
+				Prism.debug("Player is in creative mode, creative mode ignored: " + player.getName());
 				return false;
 			}
 		}
@@ -158,6 +162,7 @@ public class Ignore {
 		
 		// Should we ignore this world?
 		if(ignore_worlds != null && ignore_worlds.contains( world.getName() )){
+			Prism.debug("World is being ignored, per config: " + world.getName());
 			return false;
 		}
 		
