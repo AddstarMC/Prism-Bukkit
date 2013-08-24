@@ -6,8 +6,6 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.Chest;
-import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -96,12 +94,8 @@ public class PrismInventoryEvents implements Listener {
 		// Get container
 		InventoryHolder ih = event.getDestination().getHolder();
 		Location containerLoc = null;
-		if(ih instanceof Chest){
-	    	Chest eventChest = (Chest) ih;
-		    containerLoc = eventChest.getLocation();
-		}
-		else if(ih instanceof DoubleChest){
-			DoubleChest eventChest = (DoubleChest) ih;
+		if(ih instanceof BlockState){
+			BlockState eventChest = (BlockState) ih;
 		    containerLoc = eventChest.getLocation();
 		}
 		
