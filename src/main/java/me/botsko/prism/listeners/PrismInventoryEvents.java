@@ -5,16 +5,11 @@ import me.botsko.prism.actionlibs.ActionFactory;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.BrewingStand;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
 import org.bukkit.block.DoubleChest;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.HopperMinecart;
-import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -22,7 +17,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,11 +41,6 @@ public class PrismInventoryEvents implements Listener {
 	 * 
 	 */
 	private Location containerLoc;
-	
-	/**
-	 * 
-	 */
-	private InventoryHolder ih;
 	
 	/**
 	 * 
@@ -128,235 +117,53 @@ public class PrismInventoryEvents implements Listener {
 	 * Handle inventory transfers
 	 * @param event
 	 */
-	@EventHandler(priority = EventPriority.NORMAL)
+	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
 	public void onInventoryClick(final InventoryClickEvent event) {
-		
-		// Someone cancelled this before we did 
-		if ( event.isCancelled() ) {
-			return;
-		}
-		
 		
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
 				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
 		
 		// Store some info
-		Inventory inv = event.getInventory();
 		player = (Player) event.getWhoClicked();
 		this.event = event;
-	    ih = inv.getHolder();
 	    currentitem = event.getCurrentItem();
 	    cursoritem = event.getCursor();
+
+	    // Get location
+	    if( event.getInventory().getHolder() instanceof BlockState ){
+	    	BlockState b = (BlockState) event.getInventory().getHolder();
+	    	containerLoc = b.getLocation();
+	    }
+	    else if( event.getInventory().getHolder() instanceof Entity ){
+	    	Entity e = (Entity) event.getInventory().getHolder();
+	    	containerLoc = e.getLocation();
+	    }
 	    
 //	    Prism.debug("Raw slot: " + event.getRawSlot());
 //	    Prism.debug("Slot: " + event.getSlot());
+//	    Prism.debug("Def. Size " + event.getView().getType().getDefaultSize());
 //	    Prism.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
 //	    Prism.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 	    
-
-	    // Chest
-	    // If the slot type is <= 35 and rawslot >= 36, it means we're shift+clicking an item into
-	    // the chest.
-	    if(ih instanceof Chest) {
-	    	Chest eventChest = (Chest) ih;
-		    containerLoc = eventChest.getLocation();
-	    	if( event.getSlot() == event.getRawSlot() ){
-	    		
-	    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
-	    		// and remove for the current.
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-	    			recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-	    		}
-	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-	    		return;
-	    	}
-	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		recordInvAction( player, currentitem, -1, "item-insert");
-	    	}
-	    }
-	    
-	    // Double chest
-	    else if(ih instanceof DoubleChest) {
-	    	DoubleChest eventChest = (DoubleChest) ih;
-	    	containerLoc = eventChest.getLocation();
-	    	if( event.getSlot() == event.getRawSlot() ){
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-	    		}
-	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			    return;
-	    	}
-	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		recordInvAction( player, currentitem, -1, "item-insert");
-	    	}
-	    }
-	    
-	    // Furnace
-	    else if(ih instanceof Furnace) {
-	    	if(event.getSlot() == event.getRawSlot()){
-		    	Furnace furnace = (Furnace) ih;
-		    	containerLoc = furnace.getLocation();
-		    	if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-		    		recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			    return;
-	    	}
-	    	if( event.isShiftClick() ){
-	    		recordInvAction( player, currentitem, -1, "item-insert");
-	    	}
-	    }
-	    
-		// Dispenser
-	    // Took a bit of effort to figure.
-	    // http://forums.bukkit.org/threads/excluding-player-inventory-clicks-when-using-dispenser.120495/
-		else if(ih instanceof Dispenser) {
-			Dispenser dispenser = (Dispenser) ih;
-			containerLoc = dispenser.getLocation();
-			
-			// Only a click in the dispenser can trigger a slot < 9
-			if(event.getRawSlot() <= 8){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
-	    
-	    // Dropper
-		else if(ih instanceof Dropper){
-			Dropper dropper = (Dropper) ih;
-			containerLoc = dropper.getLocation();
-			
-			// Only a click in the dispenser can trigger a slot < 9
-			if(event.getRawSlot() <= 8){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
-	   
-	    // Hopper
-		else if(ih instanceof Hopper) {
-			Hopper hopper = (Hopper) ih;
-			containerLoc = hopper.getLocation();
-			
-			// Only a click in the hopper can trigger a slot < 5
-			if(event.getRawSlot() <= 4){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
-	    
-	    // Brewing stand
-		else if(ih instanceof BrewingStand) {
-			BrewingStand brewer = (BrewingStand) ih;
-			containerLoc = brewer.getLocation();
-			if( event.getSlot() == event.getRawSlot() ){
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-	    		}
-	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			    return;
-	    	}
-			if( event.isShiftClick() ){
-	    		recordInvAction( player, currentitem, -1, "item-insert");
-	    	}
-		}
-	    
-	    // Storage Minecart
-	    // If the slot type is <= 35 and rawslot >= 36, it means we're shift+clicking an item into
-	    // the chest.
-		else if(ih instanceof StorageMinecart) {
-			StorageMinecart eventChest = (StorageMinecart) ih;
-		    containerLoc = eventChest.getLocation();
-	    	if( event.getSlot() == event.getRawSlot() ){
-	    		
-	    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
-	    		// and remove for the current.
-	    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-	    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-	    			recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-	    		}
-	    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-	    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-	    		return;
-	    	}
-	    	if( event.isShiftClick() && event.getSlot() <= 35 && event.getRawSlot() >= 36 && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-	    		recordInvAction( player, currentitem, -1, "item-insert");
-	    	}
-	    }
-	    
-	    // Hopper Minecart
-		else if(ih instanceof HopperMinecart) {
-			HopperMinecart hopper = (HopperMinecart) ih;
-			containerLoc = hopper.getLocation();
-			
-			// Only a click in the hopper can trigger a slot < 5
-			if(event.getRawSlot() <= 4){
-				if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-					recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-			    }
-			    if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-			    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
-			    }
-			} else {
-				// Otherwise the player has to be clicking in their inventory. We'd record the insert
-				// if they manually drag the item in, but we have to watch for sneaky shift+clicks.
-				if( event.isShiftClick() ){
-		    		recordInvAction( player, currentitem, -1, "item-insert");
-				}
-			}
-		}
+    	if( event.getSlot() == event.getRawSlot() && event.getRawSlot() <= event.getView().getType().getDefaultSize() ){
+    		
+    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
+    		// and remove for the current.
+    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+    			recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+    		}
+    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+		    	recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+		    }
+    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+		    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+		    }
+    		return;
+    	}
+    	if( event.isShiftClick() && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
+    		recordInvAction( player, currentitem, -1, "item-insert");
+    	}
 	}
 	
 	
