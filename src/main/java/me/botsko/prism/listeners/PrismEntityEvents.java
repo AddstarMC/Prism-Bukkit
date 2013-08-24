@@ -246,11 +246,8 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerEntityLeash(final PlayerLeashEntityEvent event){
-		Prism.debug("HERE");
 		if( !Prism.getIgnore().event("entity-leash", event.getPlayer() ) ) return;
-		Prism.debug("HERE2");
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-leash", event.getEntity(), event.getPlayer().getName()) );
-		Prism.debug("HERE3");
 	}
 	
 	
