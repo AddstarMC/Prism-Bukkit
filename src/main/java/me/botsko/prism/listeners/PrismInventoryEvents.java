@@ -1,5 +1,8 @@
 package me.botsko.prism.listeners;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 
@@ -20,6 +23,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -122,6 +126,34 @@ public class PrismInventoryEvents implements Listener {
 		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
 		}
+	}
+	
+	
+	/**
+	 * Handle inventory transfers
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onInventoryDrag(final InventoryDragEvent event) {
+		
+		// Someone cancelled this before we did 
+		if ( event.isCancelled() ) {
+			return;
+		}
+		
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
+				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
+		
+		// Store some info
+		Inventory inv = event.getInventory();
+		player = (Player) event.getWhoClicked();
+	    ih = inv.getHolder();
+	    
+	    Map<Integer,ItemStack> newItems = event.getNewItems();
+	    for (Entry<Integer, ItemStack> entry : newItems.entrySet()) {
+	    	recordInvAction( player, entry.getValue(), entry.getKey(), "item-insert");
+	    }
 	}
 	
 	
