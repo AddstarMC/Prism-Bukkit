@@ -69,7 +69,7 @@ public class PrismBlockEvents implements Listener {
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player_name) );
 			return;
 		}
-		if( block instanceof InventoryHolder ){
+		if( block.getState() instanceof InventoryHolder ){
 			InventoryHolder container = (InventoryHolder) block.getState();
 			int slot = 0;
 			for( ItemStack i : container.getInventory().getContents()){
