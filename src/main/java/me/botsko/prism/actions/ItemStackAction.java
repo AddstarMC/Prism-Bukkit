@@ -475,6 +475,7 @@ public class ItemStackAction extends GenericAction {
 					inventory = onlinePlayer.getInventory();
 				} else {
 					// Skip if the player isn't online
+					Prism.debug("Skipping inventory process because player is offline");
 					return new ChangeResult( ChangeResultType.SKIPPED, null );
 				}
 			} else {
@@ -576,7 +577,7 @@ public class ItemStackAction extends GenericAction {
 							result = ChangeResultType.APPLIED;
 							removed = true;
 						} else {
-//							Prism.debug("Item removal from container skipped because it's not inside.");
+							Prism.debug("Item removal from container skipped because it's not currently inside.");
 							result = ChangeResultType.SKIPPED;
 						}
 					}

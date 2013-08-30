@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.botsko</groupId>
   <artifactId>prism</artifactId>
-  <version>nightly-SNAPSHOT</version>
+  <version>1.6.5-16-g0c76b3f-SNAPSHOT</version>
   <name>prism</name>
   	<dependencies>
   		<dependency>

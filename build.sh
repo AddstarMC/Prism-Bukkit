@@ -68,4 +68,17 @@ rm versions.txt
 pass=`cat pass.txt`
 curl -Gd "build=$name&pass=$pass" "http://stuff.nasonfish.com/prism/build.php"
 
+# Deploy to maven
+
+echo "Setting Version: $nameNoV"
+cp pom.xml ../pom-old.xml
+mv pom.xml pom-edit.xml
+
+# add in revision
+sed -e "s/nightly/$nameNoV/g" pom-edit.xml > pom.xml
+rm pom-edit.xml
+
+# Build maven
+mvn deploy
+
 echo "BUILD COMPLETE"
