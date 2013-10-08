@@ -9,12 +9,11 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
 public interface Handler {
-	
+
 	/**
-	 * 
 	 * @param pl
 	 */
-	public abstract void setPlugin( Plugin pl );
+	public abstract void setPlugin(Plugin pl);
 
 	/**
 	 * @return the id
@@ -22,7 +21,8 @@ public interface Handler {
 	public abstract int getId();
 
 	/**
-	 * @param id the id to set
+	 * @param id
+	 *            the id to set
 	 */
 	public abstract void setId(int id);
 
@@ -32,7 +32,8 @@ public interface Handler {
 	public abstract String getActionTime();
 
 	/**
-	 * @param action_time the action_time to set
+	 * @param action_time
+	 *            the action_time to set
 	 */
 	public abstract void setActionTime(String action_time);
 
@@ -42,7 +43,8 @@ public interface Handler {
 	public abstract String getDisplayDate();
 
 	/**
-	 * @param display_date the display_date to set
+	 * @param display_date
+	 *            the display_date to set
 	 */
 	public abstract void setDisplayDate(String display_date);
 
@@ -52,12 +54,12 @@ public interface Handler {
 	public abstract String getDisplayTime();
 
 	/**
-	 * @param display_time the display_time to set
+	 * @param display_time
+	 *            the display_time to set
 	 */
 	public abstract void setDisplayTime(String display_time);
 
 	/**
-	 * 
 	 * @return
 	 */
 	public abstract String getTimeSince();
@@ -68,7 +70,6 @@ public interface Handler {
 	public abstract ActionType getType();
 
 	/**
-	 * 
 	 * @param type
 	 */
 	public abstract void setType(ActionType type);
@@ -79,7 +80,8 @@ public interface Handler {
 	public abstract String getWorldName();
 
 	/**
-	 * @param world_name the world_name to set
+	 * @param world_name
+	 *            the world_name to set
 	 */
 	public abstract void setWorldName(String world_name);
 
@@ -89,7 +91,8 @@ public interface Handler {
 	public abstract String getPlayerName();
 
 	/**
-	 * @param player_name the player_name to set
+	 * @param player_name
+	 *            the player_name to set
 	 */
 	public abstract void setPlayerName(String player_name);
 
@@ -99,7 +102,8 @@ public interface Handler {
 	public abstract double getX();
 
 	/**
-	 * @param x the x to set
+	 * @param x
+	 *            the x to set
 	 */
 	public abstract void setX(double x);
 
@@ -109,7 +113,8 @@ public interface Handler {
 	public abstract double getY();
 
 	/**
-	 * @param y the y to set
+	 * @param y
+	 *            the y to set
 	 */
 	public abstract void setY(double y);
 
@@ -119,18 +124,17 @@ public interface Handler {
 	public abstract double getZ();
 
 	/**
-	 * @param z the z to set
+	 * @param z
+	 *            the z to set
 	 */
 	public abstract void setZ(double z);
 
 	/**
-	 * 
 	 * @param id
 	 */
 	public abstract void setBlockId(int id);
 
 	/**
-	 * 
 	 * @param id
 	 */
 	public abstract void setBlockSubId(int id);
@@ -146,13 +150,11 @@ public interface Handler {
 	public abstract int getBlockSubId();
 
 	/**
-	 * 
 	 * @param id
 	 */
 	public abstract void setOldBlockId(int id);
 
 	/**
-	 * 
 	 * @param id
 	 */
 	public abstract void setOldBlockSubId(int id);
@@ -173,24 +175,22 @@ public interface Handler {
 	public abstract String getData();
 
 	/**
-	 * @param data the data to set
+	 * @param data
+	 *            the data to set
 	 */
 	public abstract void setData(String data);
 
 	/**
-	 * 
 	 * @param m
 	 */
 	public abstract void setMaterialAliases(MaterialAliases m);
 
 	/**
-	 * 
 	 * @param aggregateCount
 	 */
 	public abstract void setAggregateCount(int aggregateCount);
 
 	/**
-	 * 
 	 * @return
 	 */
 	public abstract int getAggregateCount();
@@ -199,61 +199,52 @@ public interface Handler {
 	 * 
 	 */
 	public abstract String getNiceName();
-	
+
 	/**
 	 * 
 	 */
 	public abstract void save();
-	
-	
+
 	/**
 	 *
 	 */
 	public abstract boolean isCanceled();
-	
-	
+
 	/**
-	 * 
 	 * @param cancel
 	 */
-	public abstract void setCanceled( boolean cancel );
-	
-	
+	public abstract void setCanceled(boolean cancel);
+
 	/**
-	 * 
 	 * @param player
 	 * @param parameters
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyRollback(  Player player, QueryParameters parameters, boolean is_preview );
-	
+	public abstract ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview);
+
 	/**
-	 * 
 	 * @param player
 	 * @param parameters
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyRestore(  Player player, QueryParameters parameters, boolean is_preview );
-	
+	public abstract ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview);
+
 	/**
-	 * 
 	 * @param player
 	 * @param parameters
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyUndo(  Player player, QueryParameters parameters, boolean is_preview );
-	
-	
+	public abstract ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview);
+
 	/**
-	 * 
 	 * @param player
 	 * @param parameters
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyDeferred(  Player player, QueryParameters parameters, boolean is_preview );
+	public abstract ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
 
 }

@@ -80,7 +80,7 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
-	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
+	protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
 
 	/**
 	 * Public
@@ -107,7 +107,6 @@ public class Prism extends JavaPlugin {
 	 * We store a basic index of blocks we anticipate will fall, so that when
 	 * they do fall we can attribute them to the player who broke the original
 	 * block.
-	 * 
 	 * Once the block fall is registered, it's removed from here, so data should
 	 * not remain here long.
 	 */
@@ -120,7 +119,6 @@ public class Prism extends JavaPlugin {
 	 */
 	public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
 
-	
 	/**
 	 * Enables the plugin and activates our player listeners
 	 */
@@ -159,7 +157,8 @@ public class Prism extends JavaPlugin {
 				});
 
 				metrics.start();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log("MCStats submission failed.");
 			}
 		}
@@ -181,7 +180,8 @@ public class Prism extends JavaPlugin {
 					st = test_conn.createStatement();
 					st.executeUpdate("PRAGMA journal_mode = WAL;");
 					st.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 					handleDatabaseException(e);
 				}
 			}
@@ -189,7 +189,8 @@ public class Prism extends JavaPlugin {
 		if (test_conn != null) {
 			try {
 				test_conn.close();
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				handleDatabaseException(e);
 			}
 		}
@@ -259,25 +260,20 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static String getPrismName() {
 		return plugin_name;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public String getPrismVersion() {
 		return this.plugin_version;
 	}
 
-	
 	/**
 	 * Load configuration and language files
 	 */
@@ -285,27 +281,25 @@ public class Prism extends JavaPlugin {
 	public void loadConfig() {
 		PrismConfig mc = new PrismConfig(this);
 		config = mc.getConfig();
-		
+
 		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
-		
+
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
-		if( alertBlocks != null){
-			for( String key : alertBlocks.getKeys(false) ){
-				alertedOres.put( key, alertBlocks.getString(key));
+		if (alertBlocks != null) {
+			for (String key : alertBlocks.getKeys(false)) {
+				alertedOres.put(key, alertBlocks.getString(key));
 			}
 		}
-		
+
 		// Load language files
 		// language = new Language( mc.getLang() );
 		// Load items db
 		items = new MaterialAliases();
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public DataSource initDbPool() {
@@ -319,8 +313,9 @@ public class Prism extends JavaPlugin {
 				pool = new DataSource();
 				pool.setDriverClassName("org.sqlite.JDBC");
 				pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
-			} catch (ClassNotFoundException e) {
-				log("Error: SQLite database connection was not established. "+ e.getMessage());
+			}
+			catch (ClassNotFoundException e) {
+				log("Error: SQLite database connection was not established. " + e.getMessage());
 			}
 		}
 
@@ -354,7 +349,6 @@ public class Prism extends JavaPlugin {
 		return pool;
 	}
 
-	
 	/**
 	 * Attempt to rebuild the pool, useful for reloads and failed database
 	 * connections being restored
@@ -367,18 +361,14 @@ public class Prism extends JavaPlugin {
 		pool = initDbPool();
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static DataSource getPool() {
 		return Prism.pool;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 * @throws SQLException
 	 */
@@ -386,7 +376,8 @@ public class Prism extends JavaPlugin {
 		Connection con = null;
 		try {
 			con = pool.getConnection();
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
 			if (!e.getMessage().contains("Pool empty")) {
 				e.printStackTrace();
@@ -395,37 +386,36 @@ public class Prism extends JavaPlugin {
 		return con;
 	}
 
-	
 	/**
 	 * Attempt to reconnect to the database
+	 * 
 	 * @return
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	protected boolean attemptToRescueConnection( SQLException e ) throws SQLException{
-		if( e.getMessage().contains("connection closed") ){
+	protected boolean attemptToRescueConnection(SQLException e) throws SQLException {
+		if (e.getMessage().contains("connection closed")) {
 			rebuildPool();
-			if( pool != null ){
+			if (pool != null) {
 				Connection conn = dbc();
-				if( conn != null && !conn.isClosed() ){
+				if (conn != null && !conn.isClosed()) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	public void handleDatabaseException(SQLException e) {
 		// Attempt to rescue
 		try {
-			if( attemptToRescueConnection( e ) ){
+			if (attemptToRescueConnection(e)) {
 				return;
 			}
-		} catch (SQLException e1){
 		}
+		catch (SQLException e1) {}
 		log("Database connection error: " + e.getMessage());
 		if (e.getMessage().contains("marked as crashed")) {
 			String[] msg = new String[2];
@@ -435,8 +425,7 @@ public class Prism extends JavaPlugin {
 		}
 		e.printStackTrace();
 	}
-	
-	
+
 	/**
 	 * 
 	 */
@@ -465,7 +454,8 @@ public class Prism extends JavaPlugin {
 				st.close();
 				conn.close();
 
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				log("Database connection error: " + e.getMessage());
 				e.printStackTrace();
 			}
@@ -505,23 +495,21 @@ public class Prism extends JavaPlugin {
 				st.executeUpdate(query);
 				st.close();
 				conn.close();
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				log("Database connection error: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public Language getLang() {
 		return this.language;
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -545,77 +533,62 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public boolean dependencyEnabled(String pluginName) {
 		return enabledPlugins.contains(pluginName);
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public static ArrayList<Integer> getIllegalBlocks(){
+	public static ArrayList<Integer> getIllegalBlocks() {
 		return illegalBlocks;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public static ArrayList<String> getIllegalEntities(){
+	public static ArrayList<String> getIllegalEntities() {
 		return illegalEntities;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public static HashMap<String,String> getAlertedOres(){
+	public static HashMap<String, String> getAlertedOres() {
 		return alertedOres;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public MaterialAliases getItems() {
 		return this.items;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static ActionRegistry getActionRegistry() {
 		return actionRegistry;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static HandlerRegistry<?> getHandlerRegistry() {
 		return handlerRegistry;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static Ignore getIgnore() {
 		return ignore;
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -635,7 +608,6 @@ public class Prism extends JavaPlugin {
 					}
 				}, 2400L, 2400L);
 	}
-	
 
 	/**
 	 * 
@@ -663,7 +635,6 @@ public class Prism extends JavaPlugin {
 				}, 1200L, 1200L);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -684,7 +655,6 @@ public class Prism extends JavaPlugin {
 				}, 1200L, 1200L);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -693,10 +663,9 @@ public class Prism extends JavaPlugin {
 		if (recorder_tick_delay < 1) {
 			recorder_tick_delay = 3;
 		}
-		getServer().getScheduler().runTaskTimerAsynchronously(this,new ActionRecorder(prism), recorder_tick_delay,recorder_tick_delay);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new ActionRecorder(prism), recorder_tick_delay, recorder_tick_delay);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -738,15 +707,13 @@ public class Prism extends JavaPlugin {
 				 * when each purge cycle has completed and records remain
 				 */
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,new LogPurgeCallback()),purge_tick_delay);
+				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new PurgeTask(this, paramList, purge_tick_delay, new LogPurgeCallback()), purge_tick_delay);
 
 			}
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @param msg
 	 */
 	public void alertPlayers(Player player, String msg) {
@@ -759,45 +726,35 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgMissingArguments() {
 		return messenger.playerError("Missing arguments. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgInvalidArguments() {
 		return messenger.playerError("Invalid arguments. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
 		return messenger.playerError("Prism doesn't have that command. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgNoPermission() {
 		return messenger.playerError("You don't have permission to perform this action.");
 	}
-	
 
 	/**
-	 * 
 	 * @param player
 	 * @param msg
 	 */
@@ -815,19 +772,15 @@ public class Prism extends JavaPlugin {
 			}
 		}
 	}
-	
 
 	/**
-	 * 
 	 * @param message
 	 */
 	public static void log(String message) {
 		log.info("[" + getPrismName() + "]: " + message);
 	}
-	
 
 	/**
-	 * 
 	 * @param messages
 	 */
 	public static void logSection(String[] messages) {
@@ -840,9 +793,7 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @param message
 	 */
 	public static void debug(String message) {
@@ -850,16 +801,13 @@ public class Prism extends JavaPlugin {
 			log.info("[" + plugin_name + "]: " + message);
 		}
 	}
-	
 
 	/**
-	 * 
 	 * @param loc
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 	}
-	
 
 	/**
 	 * Disable the plugin
@@ -867,7 +815,6 @@ public class Prism extends JavaPlugin {
 	public void disablePlugin() {
 		this.setEnabled(false);
 	}
-	
 
 	/**
 	 * Shutdown

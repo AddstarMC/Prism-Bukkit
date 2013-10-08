@@ -8,41 +8,34 @@ public class TimeTaken {
 	/**
 	 * 
 	 */
-	protected TreeMap<Long,String> eventsTimed = new TreeMap<Long,String>();
-	
-	
+	protected TreeMap<Long, String> eventsTimed = new TreeMap<Long, String>();
+
 	/**
-	 * 
 	 * @return
 	 */
-	protected long getTimestamp(){
+	protected long getTimestamp() {
 		Calendar lCDateTime = Calendar.getInstance();
 		return lCDateTime.getTimeInMillis();
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param eventname
 	 */
-	public void recordTimedEvent( String eventname ){
+	public void recordTimedEvent(String eventname) {
 		eventsTimed.put(getTimestamp(), eventname);
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public void resetEventList(){
+	public void resetEventList() {
 		eventsTimed.clear();
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public TreeMap<Long,String> getEventsTimedList(){
+	public TreeMap<Long, String> getEventsTimedList() {
 		return eventsTimed;
 	}
 }

@@ -2,19 +2,16 @@ package me.botsko.prism.actions;
 
 import org.bukkit.block.BlockState;
 
-
 public class PrismRollbackAction extends BlockChangeAction {
-	
-	
+
 	/**
-	 * 
 	 * @param oldblock
-     * @param newBlock
-     * @param parent_id
+	 * @param newBlock
+	 * @param parent_id
 	 */
-	public void setBlockChange(  BlockState oldblock, BlockState newBlock, int parent_id ){
-		this.data = ""+parent_id;
-		if(oldblock != null){
+	public void setBlockChange(BlockState oldblock, BlockState newBlock, int parent_id) {
+		this.data = "" + parent_id;
+		if (oldblock != null) {
 			this.old_block_id = oldblock.getTypeId();
 			this.old_block_subid = oldblock.getRawData();
 			this.block_id = oldblock.getTypeId();
@@ -22,11 +19,10 @@ public class PrismRollbackAction extends BlockChangeAction {
 		}
 	}
 
-	
 	/**
 	 * @return the parent_id
 	 */
 	public int getParentId() {
-		return Integer.parseInt( this.data );
+		return Integer.parseInt(this.data);
 	}
 }
