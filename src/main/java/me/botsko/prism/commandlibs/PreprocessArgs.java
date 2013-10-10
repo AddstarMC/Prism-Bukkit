@@ -26,364 +26,361 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class PreprocessArgs {
-	
-	
+
 	/**
-	 * 
 	 * @param sender
 	 * @param msg
 	 */
-	protected static void respond( CommandSender sender, String msg ){
-		if(sender != null){
+	protected static void respond(CommandSender sender, String msg) {
+		if (sender != null) {
 			sender.sendMessage(msg);
 		} else {
-//			System.out.print(msg); // @todo let this output to console, is useful for db purge debugging
+			// System.out.print(msg); // @todo let this output to console, is useful for db purge debugging
 		}
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param args
 	 */
-	public static QueryParameters process( Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int startAt, boolean useDefaults ){
+	public static QueryParameters process(Prism plugin, CommandSender sender, String[] args, PrismProcessType processType, int startAt, boolean useDefaults) {
 
 		Player player = null;
-		if(sender != null && sender instanceof Player){
+		if (sender != null && sender instanceof Player) {
 			player = (Player) sender;
 		}
-		
+
 		QueryParameters parameters = new QueryParameters();
-		ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
-		if(processType.equals(PrismProcessType.LOOKUP)){
-			parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
-			parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
+		ConcurrentHashMap<String, String> foundArgs = new ConcurrentHashMap<String, String>();
+		if (processType.equals(PrismProcessType.LOOKUP)) {
+			parameters.setLimit(plugin.getConfig().getInt("prism.queries.lookup-max-results"));
+			parameters.setPerPage(plugin.getConfig().getInt("prism.queries.default-results-per-page"));
 		}
 		parameters.setProcessType(processType);
-		
-		if(args != null){
+
+		if (args != null) {
 
 			// Iterate over arguments
-			for (int i = startAt; i < args.length; i++){
+			for (int i = startAt; i < args.length; i++) {
 
 				String arg = args[i];
-				if (arg.isEmpty()) continue;
-				
+				if (arg.isEmpty())
+					continue;
+
 				// disabling because the alt player syntax won't work
-//				// Verify they're formatting like a:[val] or like -arg
-//				if(!(arg.contains(":") || arg.contains("-"))){
-//					respond( sender, Prism.messenger.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
-//					return null;
-//				}
-//				if (!(arg.contains(":") || arg.substring(0,1).equals("-"))){
-//					respond( sender, Prism.messenger.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
-//					return null;
-//				}
-				
+				// // Verify they're formatting like a:[val] or like -arg
+				// if(!(arg.contains(":") || arg.contains("-"))){
+				// respond( sender, Prism.messenger.playerError("Missing or invalid parameter value for '"+arg+"'. Use /prism ? for help.") );
+				// return null;
+				// }
+				// if (!(arg.contains(":") || arg.substring(0,1).equals("-"))){
+				// respond( sender, Prism.messenger.playerError("Misplaced colon for '"+arg+"'. Use /prism ? for help.") );
+				// return null;
+				// }
+
 				// Split parameter and values
 				String[] argEntry = arg.toLowerCase().split(":");
 				String arg_type = argEntry[0];
 				String val = arg.contains(":") ? arg.replace(argEntry[0] + ":", "") : argEntry[0];
-				
+
 				// Verify we have an arg we can match
-				String[] possibleArgs = {"a","r","t","p","w","b","e","k","before","since","id","-"};
-				if(!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")){
-					
+				String[] possibleArgs = { "a", "r", "t", "p", "w", "b", "e", "k", "before", "since", "id", "-" };
+				if (!Arrays.asList(possibleArgs).contains(arg_type) && !arg_type.startsWith("-")) {
+
 					// We support an alternate player syntax so that people can use the tab-complete
 					// feature of minecraft. Using p: prevents it.
 					Player autoFillPlayer = plugin.getServer().getPlayer(arg_type);
-					if( autoFillPlayer != null ){
+					if (autoFillPlayer != null) {
 						MatchRule match = MatchRule.INCLUDE;
-						if(arg_type.startsWith("!")){
+						if (arg_type.startsWith("!")) {
 							match = MatchRule.EXCLUDE;
 						}
-						parameters.addPlayerName( arg_type.replace("!", ""), match );
+						parameters.addPlayerName(arg_type.replace("!", ""), match);
 					} else {
-						respond( sender, Prism.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
+						respond(sender, Prism.messenger.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
 						return null;
 					}
 				}
-				
+
 				// Verify no empty val
-				if(val.isEmpty()){
-					respond( sender, Prism.messenger.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
+				if (val.isEmpty()) {
+					respond(sender, Prism.messenger.playerError("Can't use empty values for '" + arg + "'. Use /prism ? for help."));
 					return null;
 				}
-				
+
 				// Officially certify we found a valid argument and value!
-				if(Arrays.asList(possibleArgs).contains(arg_type)){
+				if (Arrays.asList(possibleArgs).contains(arg_type)) {
 					foundArgs.put(arg_type, val);
 					parameters.setFoundArgs(foundArgs);
 				}
-				
+
 				// Action
-				if(arg_type.equals("a")){
+				if (arg_type.equals("a")) {
 					String[] actions = val.split(",");
-					if(actions.length > 0){
-						for(String action : actions){
+					if (actions.length > 0) {
+						for (String action : actions) {
 							// Find all actions that match the action provided - whether the full name or
 							// short name.
-							ArrayList<ActionType> actionTypes = Prism.getActionRegistry().getActionsByShortname( action.replace("!", "") );
-							if(!actionTypes.isEmpty()){
-								for(ActionType actionType : actionTypes){
-									
+							ArrayList<ActionType> actionTypes = Prism.getActionRegistry().getActionsByShortname(action.replace("!", ""));
+							if (!actionTypes.isEmpty()) {
+								for (ActionType actionType : actionTypes) {
+
 									// Ensure the action allows this process type
-									if( (processType.equals(PrismProcessType.ROLLBACK) && !actionType.canRollback()) || (processType.equals(PrismProcessType.RESTORE) && !actionType.canRestore()) ){
+									if ((processType.equals(PrismProcessType.ROLLBACK) && !actionType.canRollback()) || (processType.equals(PrismProcessType.RESTORE) && !actionType.canRestore())) {
 										// @todo this is important information but is too spammy with a:place, because vehicle-place doesn't support a rollback etc
-//										respond( sender, Prism.messenger.playerError("Ingoring action '"+actionType.getName()+"' because it doesn't support rollbacks.") );
+										// respond( sender, Prism.messenger.playerError("Ingoring action '"+actionType.getName()+"' because it doesn't support rollbacks.") );
 										continue;
 									}
-									
+
 									// Check match type
 									MatchRule match = MatchRule.INCLUDE;
-									if(action.startsWith("!")){
+									if (action.startsWith("!")) {
 										match = MatchRule.EXCLUDE;
 									}
-									parameters.addActionType( actionType.getName(), match );
+									parameters.addActionType(actionType.getName(), match);
 								}
 							} else {
-								respond( sender, Prism.messenger.playerError("Ignoring action '"+action.replace("!", "")+"' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) +"'? Type '/prism params' for help.") );
+								respond(sender, Prism.messenger.playerError("Ignoring action '" + action.replace("!", "") + "' because it's unrecognized. Did you mean '" + LevenshteinDistance.getClosestAction(action) + "'? Type '/prism params' for help."));
 							}
 						}
 						// If none were valid, we end here.
-						if(parameters.getActionTypes().size() == 0){
+						if (parameters.getActionTypes().size() == 0) {
 							return null;
 						}
 					}
 				}
-				
+
 				// Player
-				if(arg_type.equals("p")){
+				if (arg_type.equals("p")) {
 					String[] playerNames = val.split(",");
-					if(playerNames.length > 0){
-						for(String playerName : playerNames){
+					if (playerNames.length > 0) {
+						for (String playerName : playerNames) {
 							MatchRule match = MatchRule.INCLUDE;
-							if(playerName.startsWith("!")){
+							if (playerName.startsWith("!")) {
 								match = MatchRule.EXCLUDE;
 								playerName = playerName.replace("!", "");
 							}
-							else if(playerName.startsWith("~")){
+							else if (playerName.startsWith("~")) {
 								match = MatchRule.PARTIAL;
 								playerName = playerName.replace("~", "");
 							}
-							parameters.addPlayerName( playerName, match );
+							parameters.addPlayerName(playerName, match);
 						}
 					}
 				}
-				
+
 				// World
-				if(arg_type.equals("w")){
-					if(val.equalsIgnoreCase("current")){
-						if(player != null){
+				if (arg_type.equals("w")) {
+					if (val.equalsIgnoreCase("current")) {
+						if (player != null) {
 							val = player.getWorld().getName();
 						} else {
-							sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+							sender.sendMessage(Prism.messenger.playerError("Can't use the current world since you're not a player. Using default world."));
 							val = plugin.getServer().getWorlds().get(0).getName();
 						}
 					}
-					parameters.setWorld( val );
+					parameters.setWorld(val);
 				}
-				
+
 				// Radius
-				if(arg_type.equals("r")){
-					if(TypeUtils.isNumeric(val) || (val.contains(":") && val.split(":").length >= 1 && TypeUtils.isNumeric(val.split(":")[1]))){
+				if (arg_type.equals("r")) {
+					if (TypeUtils.isNumeric(val) || (val.contains(":") && val.split(":").length >= 1 && TypeUtils.isNumeric(val.split(":")[1]))) {
 						int radius;
 						Location coordsLoc = null;
-						if(val.contains(":")){
+						if (val.contains(":")) {
 							radius = Integer.parseInt(val.split(":")[1]);
 							String radiusLocOrPlayer = val.split(":")[0];
-							if(radiusLocOrPlayer.contains(",")){ // Cooridinates; x,y,z
+							if (radiusLocOrPlayer.contains(",")) { // Cooridinates; x,y,z
 								String[] coordinates = radiusLocOrPlayer.split(",");
-								if(coordinates.length != 3){
-									respond( sender, Prism.messenger.playerError("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?") );
+								if (coordinates.length != 3) {
+									respond(sender, Prism.messenger.playerError("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?"));
 									return null;
 								}
-								for(String s : coordinates){
-									if(!TypeUtils.isNumeric(s)){
-										respond( sender, Prism.messenger.playerError("The coordinate '" + s + "' is not a number.") );
+								for (String s : coordinates) {
+									if (!TypeUtils.isNumeric(s)) {
+										respond(sender, Prism.messenger.playerError("The coordinate '" + s + "' is not a number."));
 										return null;
 									}
 								}
 								coordsLoc = (new Location(
-										player != null ? player.getWorld() : 
-										(parameters.getWorld() != null ? plugin.getServer().getWorld(parameters.getWorld()) : 
-										plugin.getServer().getWorlds().get(0)), 
-										Integer.parseInt(coordinates[0]), 
-										Integer.parseInt(coordinates[1]), 
+										player != null ? player.getWorld() :
+												(parameters.getWorld() != null ? plugin.getServer().getWorld(parameters.getWorld()) :
+														plugin.getServer().getWorlds().get(0)),
+										Integer.parseInt(coordinates[0]),
+										Integer.parseInt(coordinates[1]),
 										Integer.parseInt(coordinates[2])));
-								
+
 							}
-							else if(plugin.getServer().getPlayer(radiusLocOrPlayer) != null){
+							else if (plugin.getServer().getPlayer(radiusLocOrPlayer) != null) {
 								player = plugin.getServer().getPlayer(radiusLocOrPlayer);
 							} else {
-								respond( sender, Prism.messenger.playerError("Couldn't find the player named '" + radiusLocOrPlayer + "'. Perhaps they are not online or you misspelled their name?") );
+								respond(sender, Prism.messenger.playerError("Couldn't find the player named '" + radiusLocOrPlayer + "'. Perhaps they are not online or you misspelled their name?"));
 								return null;
 							}
 						} else {
 							radius = Integer.parseInt(val);
 						}
-						if(radius <= 0){
-							respond( sender, Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
+						if (radius <= 0) {
+							respond(sender, Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help."));
 							return null;
 						}
 						// Does the radius exceed the configured max?
-						if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-lookup-radius") ){
+						if (parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-lookup-radius")) {
 							// If player does not have permission to override the max
-							if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+							if (player != null && !player.hasPermission("prism.override-max-lookup-radius")) {
 								radius = plugin.getConfig().getInt("prism.queries.max-lookup-radius");
-								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
+								respond(sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
 							}
 						}
-						if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-applier-radius") ){
+						if (!parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-applier-radius")) {
 							// If player does not have permission to override the max
-							if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+							if (player != null && !player.hasPermission("prism.override-max-applier-radius")) {
 								radius = plugin.getConfig().getInt("prism.queries.max-applier-radius");
-								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
+								respond(sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
 							}
 						}
-						if(radius > 0){
-							parameters.setRadius( radius );
-							if(coordsLoc != null){
+						if (radius > 0) {
+							parameters.setRadius(radius);
+							if (coordsLoc != null) {
 								parameters.setMinMaxVectorsFromPlayerLocation(coordsLoc); // We need to set this *after* the radius has been set or it won't work.
 							} else {
-								if( player != null ){
-									parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
+								if (player != null) {
+									parameters.setMinMaxVectorsFromPlayerLocation(player.getLocation());
 								}
 							}
 						}
 					} else {
-						
+
 						// User wants an area inside of a worldedit selection
-						if(val.equals("we")){
-							
+						if (val.equals("we")) {
+
 							if (plugin.plugin_worldEdit == null) {
-								respond( sender, Prism.messenger.playerError("This feature is disabled because Prism couldn't find WorldEdit.") );
+								respond(sender, Prism.messenger.playerError("This feature is disabled because Prism couldn't find WorldEdit."));
 								return null;
 							} else {
-							
+
 								// Load a selection from world edit as our area.
-								if(player != null){
+								if (player != null) {
 									parameters = WorldEditBridge.getSelectedArea(plugin, player, parameters);
 								}
 							}
 						}
-						
+
 						// Confine to the chunk
-						else if(val.equals("c") || val.equals("chunk")){
-								
-							if( player == null ){
-								respond( sender, Prism.messenger.playerError("Chunks cannot be used as a radius without a player.") );
+						else if (val.equals("c") || val.equals("chunk")) {
+
+							if (player == null) {
+								respond(sender, Prism.messenger.playerError("Chunks cannot be used as a radius without a player."));
 								return null;
 							}
 
 							Chunk ch = player.getLocation().getChunk();
 							parameters.setWorld(ch.getWorld().getName());
-							parameters.setMinLocation( ChunkUtils.getChunkMinVector( ch ) );
-							parameters.setMaxLocation( ChunkUtils.getChunkMaxVector( ch ) );
-							
+							parameters.setMinLocation(ChunkUtils.getChunkMinVector(ch));
+							parameters.setMaxLocation(ChunkUtils.getChunkMaxVector(ch));
+
 						}
-						
+
 						// User wants no radius, but contained within the current world
-						else if(val.equals("world")){
+						else if (val.equals("world")) {
 							// Do they have permission to override the global lookup radius
-							if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
-								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+							if (parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius")) {
+								respond(sender, Prism.messenger.playerError("You do not have permission to override the max radius."));
 								return null;
 							}
 							// Do they have permission to override the global applier radius
-							if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
-								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+							if (!parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius")) {
+								respond(sender, Prism.messenger.playerError("You do not have permission to override the max radius."));
 								return null;
 							}
 							// Use the world defined in the w: param
-							if( parameters.getWorld() != null ){
+							if (parameters.getWorld() != null) {
 								val = parameters.getWorld();
 							}
 							// Use the current world
-							else if(player != null){
+							else if (player != null) {
 								val = player.getWorld().getName();
-							} 
+							}
 							// Use the default world
 							else {
-								sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+								sender.sendMessage(Prism.messenger.playerError("Can't use the current world since you're not a player. Using default world."));
 								val = plugin.getServer().getWorlds().get(0).getName();
 							}
-							parameters.setWorld( val );
+							parameters.setWorld(val);
 							parameters.setAllowNoRadius(true);
 						}
-						
+
 						// User has asked for a global radius
-						else if(val.equals("global")){
+						else if (val.equals("global")) {
 							// Do they have permission to override the global lookup radius
-							if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
-								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+							if (parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius")) {
+								respond(sender, Prism.messenger.playerError("You do not have permission to override the max radius."));
 								return null;
 							}
 							// Do they have permission to override the global applier radius
-							if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
-								respond( sender, Prism.messenger.playerError("You do not have permission to override the max radius.") );
+							if (!parameters.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius")) {
+								respond(sender, Prism.messenger.playerError("You do not have permission to override the max radius."));
 								return null;
 							}
 							// Either they have permission or player is null
 							parameters.setWorld(null);
 							parameters.setAllowNoRadius(true);
-							
+
 						} else {
-							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.") );
+							respond(sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance."));
 							return null;
 						}
 					}
 				}
-				
+
 				// Entity
-				if(arg_type.equals("e")){
+				if (arg_type.equals("e")) {
 					String[] entityNames = val.split(",");
-					if(entityNames.length > 0){
-						for(String entityName : entityNames){
+					if (entityNames.length > 0) {
+						for (String entityName : entityNames) {
 							MatchRule match = MatchRule.INCLUDE;
-							if(entityName.startsWith("!")){
+							if (entityName.startsWith("!")) {
 								match = MatchRule.EXCLUDE;
 							}
-							parameters.addEntity( entityName.replace("!", ""), match );
+							parameters.addEntity(entityName.replace("!", ""), match);
 						}
 					}
 				}
-				
+
 				// Block
-				if(arg_type.equals("b")){
-					
+				if (arg_type.equals("b")) {
+
 					String[] blocks = val.split(",");
-					
-					if(blocks.length > 0){
-						for(String b : blocks){
-					
+
+					if (blocks.length > 0) {
+						for (String b : blocks) {
+
 							// if user provided id:subid
-							if(b.contains(":") && b.length() >= 3){
+							if (b.contains(":") && b.length() >= 3) {
 								String[] ids = b.split(":");
-								if(ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])){
-									parameters.addBlockFilter( Integer.parseInt( ids[0] ), Byte.parseByte( ids[1] ) );
+								if (ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])) {
+									parameters.addBlockFilter(Integer.parseInt(ids[0]), Byte.parseByte(ids[1]));
 								} else {
-									respond( sender, Prism.messenger.playerError("Invalid block filter '"+val+"'. Use /prism ? [command] for help.") );
+									respond(sender, Prism.messenger.playerError("Invalid block filter '" + val + "'. Use /prism ? [command] for help."));
 									return null;
 								}
 							} else {
-								
+
 								// It's id without a subid
-								if(TypeUtils.isNumeric(b)){
-									parameters.addBlockFilter( Integer.parseInt(b), (byte)0 );
+								if (TypeUtils.isNumeric(b)) {
+									parameters.addBlockFilter(Integer.parseInt(b), (byte) 0);
 								} else {
-									
+
 									// Lookup the item name, get the ids
 									MaterialAliases items = plugin.getItems();
-									ArrayList<int[]> itemIds = items.getIdsByAlias( b );
-									if(itemIds.size() > 0){
-										for(int[] ids : itemIds){
-											if(ids.length == 2){
+									ArrayList<int[]> itemIds = items.getIdsByAlias(b);
+									if (itemIds.size() > 0) {
+										for (int[] ids : itemIds) {
+											if (ids.length == 2) {
 												// If we really care about the sub id because it's a whole different item
-												if(ItemUtils.dataValueUsedForSubitems(ids[0])){
-													parameters.addBlockFilter( ids[0], (byte) ids[1] );
+												if (ItemUtils.dataValueUsedForSubitems(ids[0])) {
+													parameters.addBlockFilter(ids[0], (byte) ids[1]);
 												} else {
-													parameters.addBlockFilter( ids[0], (byte)0 );
+													parameters.addBlockFilter(ids[0], (byte) 0);
 												}
 											}
 										}
@@ -393,171 +390,170 @@ public class PreprocessArgs {
 						}
 					}
 				}
-				
+
 				// Time
-				if(arg_type.equals("before")){
-					Long date = translateTimeStringToDate(plugin,sender,val);
-					if(date != null){
-						parameters.setBeforeTime( date );
+				if (arg_type.equals("before")) {
+					Long date = translateTimeStringToDate(plugin, sender, val);
+					if (date != null) {
+						parameters.setBeforeTime(date);
 					} else {
 						return null;
 					}
 				}
-				if( arg_type.equals("since") || arg_type.equals("t") ){
-					if(val.equalsIgnoreCase("none")){
+				if (arg_type.equals("since") || arg_type.equals("t")) {
+					if (val.equalsIgnoreCase("none")) {
 						parameters.setIgnoreTime(true);
 					} else {
-						Long date = translateTimeStringToDate(plugin,sender,val);
-						if(date != null){
-							parameters.setSinceTime( date );
+						Long date = translateTimeStringToDate(plugin, sender, val);
+						if (date != null) {
+							parameters.setSinceTime(date);
 						} else {
 							return null;
 						}
 					}
 				}
-				
+
 				// Keyword
-				if(arg_type.equals("k")){
-					parameters.setKeyword( val );
+				if (arg_type.equals("k")) {
+					parameters.setKeyword(val);
 				}
-				
+
 				// ID
-				if(arg_type.equals("id")){
-					
-					if(TypeUtils.isNumeric( val )){
-						
+				if (arg_type.equals("id")) {
+
+					if (TypeUtils.isNumeric(val)) {
+
 					} else {
-						respond( sender, Prism.messenger.playerError("ID must be a number. Use /prism ? for help.") );
+						respond(sender, Prism.messenger.playerError("ID must be a number. Use /prism ? for help."));
 						return null;
 					}
-					parameters.setId( Integer.parseInt(val) );
+					parameters.setId(Integer.parseInt(val));
 				}
-				
+
 				// Special Flags
-				if(arg_type.startsWith("-")){
+				if (arg_type.startsWith("-")) {
 					try {
 						String[] flagComponents = val.substring(1).split("=");
-						Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
-						if(!(parameters.hasFlag(flag))){
-								
+						Flag flag = Flag.valueOf(flagComponents[0].replace("-", "_").toUpperCase());
+						if (!(parameters.hasFlag(flag))) {
+
 							parameters.addFlag(flag);
-							
+
 							// Flag has a value
-							if( flagComponents.length > 1 ){
-								if(flag.equals(Flag.PER_PAGE)){
-									if(TypeUtils.isNumeric(flagComponents[1])){
-										parameters.setPerPage( Integer.parseInt(flagComponents[1]) );
+							if (flagComponents.length > 1) {
+								if (flag.equals(Flag.PER_PAGE)) {
+									if (TypeUtils.isNumeric(flagComponents[1])) {
+										parameters.setPerPage(Integer.parseInt(flagComponents[1]));
 									} else {
-										respond( sender, Prism.messenger.playerError("Per-page flag value must be a number. Use /prism ? for help.") );
+										respond(sender, Prism.messenger.playerError("Per-page flag value must be a number. Use /prism ? for help."));
 										return null;
 									}
-								} else if (flag.equals(Flag.SHARE)){
-									for(String sharePlayer : flagComponents[1].split(",")){
-										if(sharePlayer.equals(sender.getName())){
-											respond( sender, Prism.messenger.playerError("You can't share lookup results with yourself!") );
+								} else if (flag.equals(Flag.SHARE)) {
+									for (String sharePlayer : flagComponents[1].split(",")) {
+										if (sharePlayer.equals(sender.getName())) {
+											respond(sender, Prism.messenger.playerError("You can't share lookup results with yourself!"));
 											return null;
 										}
 										Player shareWith = plugin.getServer().getPlayer(sharePlayer);
-										if( shareWith != null ){
-											parameters.addSharedPlayer( (CommandSender)shareWith );
+										if (shareWith != null) {
+											parameters.addSharedPlayer((CommandSender) shareWith);
 										} else {
-											sender.sendMessage(Prism.messenger.playerError( "Can't share with " + sharePlayer + ". Are they online?" ));
+											sender.sendMessage(Prism.messenger.playerError("Can't share with " + sharePlayer + ". Are they online?"));
 										}
 									}
 								}
 							}
 						}
-					} catch(IllegalArgumentException ex){
-						respond( sender, Prism.messenger.playerError("Unrecognized flag '"+val+"'. Use /prism ? [command] for help.") );
+					}
+					catch (IllegalArgumentException ex) {
+						respond(sender, Prism.messenger.playerError("Unrecognized flag '" + val + "'. Use /prism ? [command] for help."));
 						return null;
 					}
 				}
 			}
-			
+
 			// Validate any required args are set
-			if(foundArgs.isEmpty()){
-				respond( sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance.") );
+			if (foundArgs.isEmpty()) {
+				respond(sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance."));
 				return null;
 			}
-			
+
 			/**
 			 * Enforce defaults, unless we're doing a delete or they've been disabled in the config
 			 */
-			if( !processType.equals(PrismProcessType.DELETE) && useDefaults ){
+			if (!processType.equals(PrismProcessType.DELETE) && useDefaults) {
 				// Radius default, apply only if player present
-				if( !foundArgs.containsKey("r") && player != null ){
-					if(parameters.allowsNoRadius()){
+				if (!foundArgs.containsKey("r") && player != null) {
+					if (parameters.allowsNoRadius()) {
 						// We'll allow no radius.
 					} else {
-						parameters.setRadius( plugin.getConfig().getInt("prism.queries.default-radius") );
-						parameters.addDefaultUsed( "r:" + parameters.getRadius() );
+						parameters.setRadius(plugin.getConfig().getInt("prism.queries.default-radius"));
+						parameters.addDefaultUsed("r:" + parameters.getRadius());
 					}
 				}
 				// World default
-				if( player != null && !foundArgs.containsKey("w") && !parameters.allowsNoRadius()){
-					parameters.setWorld( player.getWorld().getName() );
+				if (player != null && !foundArgs.containsKey("w") && !parameters.allowsNoRadius()) {
+					parameters.setWorld(player.getWorld().getName());
 				}
 				// Time default
-				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){
-					Long date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.queries.default-time-since"));
-					if(date == 0){
+				if (!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")) {
+					Long date = translateTimeStringToDate(plugin, sender, plugin.getConfig().getString("prism.queries.default-time-since"));
+					if (date == 0) {
 						Prism.log("Error - date range configuration for prism.time-since is not valid");
-						date = translateTimeStringToDate(plugin,sender,"3d");
+						date = translateTimeStringToDate(plugin, sender, "3d");
 					}
 					parameters.setSinceTime(date);
-					parameters.addDefaultUsed( "t:" + plugin.getConfig().getString("prism.queries.default-time-since") );
+					parameters.addDefaultUsed("t:" + plugin.getConfig().getString("prism.queries.default-time-since"));
 				}
 			}
-			
+
 			// Player location
-			if( player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") && parameters.getPlayerLocation() == null ){
-				parameters.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
+			if (player != null && !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") && parameters.getPlayerLocation() == null) {
+				parameters.setMinMaxVectorsFromPlayerLocation(player.getLocation());
 			}
-			
+
 		}
 		return parameters;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public static Long translateTimeStringToDate( Prism plugin, CommandSender sender, String arg_value ){
-		
+	public static Long translateTimeStringToDate(Prism plugin, CommandSender sender, String arg_value) {
+
 		Long dateFrom = 0L;
 
 		Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
 		Calendar cal = Calendar.getInstance();
 
-		String[] matches = TypeUtils.preg_match_all( p, arg_value );
-		if(matches.length > 0){
-			for(String match : matches){
-	
-				Matcher m = p.matcher( match );
-				if(m.matches()){
-					
-					if( m.groupCount() == 2 ){
-						
-						int tfValue = Integer.parseInt( m.group(1) );
+		String[] matches = TypeUtils.preg_match_all(p, arg_value);
+		if (matches.length > 0) {
+			for (String match : matches) {
+
+				Matcher m = p.matcher(match);
+				if (m.matches()) {
+
+					if (m.groupCount() == 2) {
+
+						int tfValue = Integer.parseInt(m.group(1));
 						String tfFormat = m.group(2);
 
-						if(tfFormat.equals("w")){
+						if (tfFormat.equals("w")) {
 							cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
 						}
-						else if(tfFormat.equals("d")){
+						else if (tfFormat.equals("d")) {
 							cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
 						}
-						else if(tfFormat.equals("h")){
+						else if (tfFormat.equals("h")) {
 							cal.add(Calendar.HOUR, -1 * tfValue);
 						}
-						else if(tfFormat.equals("m")){
+						else if (tfFormat.equals("m")) {
 							cal.add(Calendar.MINUTE, -1 * tfValue);
 						}
-						else if(tfFormat.equals("s")){
+						else if (tfFormat.equals("s")) {
 							cal.add(Calendar.SECOND, -1 * tfValue);
 						} else {
-							respond( sender, Prism.messenger.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for help.") );
+							respond(sender, Prism.messenger.playerError("Invalid timeframe values for " + tfFormat + ". Use /prism ? for help."));
 							return null;
 						}
 					}
@@ -565,12 +561,12 @@ public class PreprocessArgs {
 			}
 			dateFrom = cal.getTime().getTime();
 		}
-		
-		if(dateFrom == null){
-			respond( sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for help.") );
+
+		if (dateFrom == null) {
+			respond(sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for help."));
 		}
 
 		return dateFrom;
-		
+
 	}
 }

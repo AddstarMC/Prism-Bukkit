@@ -17,100 +17,96 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 public class LookupCommand implements SubHandler {
-	
+
 	/**
 	 * 
 	 */
 	private Prism plugin;
-	
-	
+
 	/**
-	 * 
 	 * @param plugin
-	 * @return 
+	 * @return
 	 */
 	public LookupCommand(Prism plugin) {
 		this.plugin = plugin;
 	}
-	
-	
+
 	/**
 	 * Handle the command
 	 */
-	public void handle( final CallInfo call) {
-		
+	public void handle(final CallInfo call) {
+
 		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
-		if(parameters == null){
+		final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+		if (parameters == null) {
 			return;
 		}
-		
-		
+
 		/**
 		 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
 		 */
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
-			public void run(){
-				
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+			public void run() {
+
 				// determine if defaults were used
 				ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
 				String defaultsReminder = "";
-				if(!defaultsUsed.isEmpty()){
+				if (!defaultsUsed.isEmpty()) {
 					defaultsReminder += "Using defaults:";
-					for(String d : defaultsUsed){
+					for (String d : defaultsUsed) {
 						defaultsReminder += " " + d;
 					}
 				}
-				
+
 				ActionsQuery aq = new ActionsQuery(plugin);
-				QueryResult results = aq.lookup( parameters, call.getSender() );
+				QueryResult results = aq.lookup(parameters, call.getSender());
 				String sharingWithPlayers = "";
-				for(CommandSender shareWith : parameters.getSharedPlayers()){
+				for (CommandSender shareWith : parameters.getSharedPlayers()) {
 					sharingWithPlayers += shareWith.getName() + ", ";
 				}
 				sharingWithPlayers = sharingWithPlayers.substring(0, sharingWithPlayers.isEmpty() ? 0 : sharingWithPlayers.length() - 2);
-				
+
 				// Add current sender
 				parameters.addSharedPlayer(call.getSender());
-				
-				for(CommandSender player : parameters.getSharedPlayers()){
-					
+
+				for (CommandSender player : parameters.getSharedPlayers()) {
+
 					boolean isSender = player.getName().equals(call.getSender().getName());
-					
-					if(!isSender){
-						player.sendMessage(Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName() + ChatColor.GOLD + " shared these Prism lookup logs with you:" ));
-					} else if(!sharingWithPlayers.isEmpty()){
+
+					if (!isSender) {
+						player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName() + ChatColor.GOLD + " shared these Prism lookup logs with you:"));
+					} else if (!sharingWithPlayers.isEmpty()) {
 						player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "Sharing results with players: " + ChatColor.YELLOW + "" + ChatColor.ITALIC + sharingWithPlayers));
 					}
-					
-					if(!results.getActionResults().isEmpty()){
-						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page 1 of "+results.getTotal_pages()) );
-						if(!defaultsReminder.isEmpty() && isSender){
-							player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+
+					if (!results.getActionResults().isEmpty()) {
+						player.sendMessage(Prism.messenger.playerHeaderMsg("Showing " + results.getTotalResults() + " results. Page 1 of " + results.getTotal_pages()));
+						if (!defaultsReminder.isEmpty() && isSender) {
+							player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(defaultsReminder));
 						}
 						List<Handler> paginated = results.getPaginatedActionResults();
-						if(paginated != null){
+						if (paginated != null) {
 							int result_count = results.getIndexOfFirstResult();
-							for(Handler a : paginated){
+							for (Handler a : paginated) {
 								ActionMessage am = new ActionMessage(a);
-								if( parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended") ){
+								if (parameters.allowsNoRadius() || parameters.hasFlag(Flag.EXTENDED) || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
 									am.showExtended();
 								}
-								am.setResultIndex( result_count );
-								player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+								am.setResultIndex(result_count);
+								player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
 								result_count++;
 							}
 						} else {
-							player.sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+							player.sendMessage(Prism.messenger.playerError("Pagination can't find anything. Do you have the right page number?"));
 						}
 					} else {
-						if(!defaultsReminder.isEmpty()){
-							if(isSender){
-								player.sendMessage( Prism.messenger.playerSubduedHeaderMsg(defaultsReminder) );
+						if (!defaultsReminder.isEmpty()) {
+							if (isSender) {
+								player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(defaultsReminder));
 							}
 						}
-						if(isSender){
-							player.sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are." ) );
+						if (isSender) {
+							player.sendMessage(Prism.messenger.playerError("Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are."));
 						}
 					}
 				}

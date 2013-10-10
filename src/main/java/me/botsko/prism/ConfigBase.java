@@ -11,121 +11,115 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 public class ConfigBase {
-	
+
 	/**
 	 * 
 	 */
 	protected Plugin plugin;
-	
+
 	/**
 	 * 
 	 */
 	protected FileConfiguration config;
-	
-	
+
 	/**
-	 * 
 	 * @param plugin
 	 */
-	public ConfigBase( Plugin plugin ) {
+	public ConfigBase(Plugin plugin) {
 		this.plugin = plugin;
 	}
-	
-	
+
 	/**
 	 *
 	 */
-	public FileConfiguration getConfig(){
+	public FileConfiguration getConfig() {
 		config = plugin.getConfig();
 		return config;
 	}
-	
-	
+
 	/**
 	 * Loads language configuration
+	 * 
 	 * @return
 	 */
-	public FileConfiguration getLang( String lang_string ){
+	public FileConfiguration getLang(String lang_string) {
 
 		String lang_file = lang_string;
-		if(lang_file == null){
+		if (lang_file == null) {
 			lang_file = "en-us";
 		}
-		
+
 		// Read the base config
-		FileConfiguration config = loadConfig( "languages/", lang_file );
+		FileConfiguration config = loadConfig("languages/", lang_file);
 		return config;
-		
+
 	}
-	
-	
+
 	/**
 	 * Returns base directory for config
+	 * 
 	 * @return
 	 */
-	protected File getDirectory(){
-		File dir = new File(plugin.getDataFolder()+"");
+	protected File getDirectory() {
+		File dir = new File(plugin.getDataFolder() + "");
 		return dir;
 	}
-	
-	
+
 	/**
 	 * Returns chosen filename with directory
+	 * 
 	 * @return
 	 */
-	protected File getFilename( String filename ){
+	protected File getFilename(String filename) {
 		File file = new File(getDirectory(), filename + ".yml");
 		return file;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param default_folder
-     * @param filename
+	 * @param filename
 	 * @return
 	 */
-	protected FileConfiguration loadConfig( String default_folder, String filename ){
-		File file = getFilename( filename );
-		if(file.exists()){
+	protected FileConfiguration loadConfig(String default_folder, String filename) {
+		File file = getFilename(filename);
+		if (file.exists()) {
 			return YamlConfiguration.loadConfiguration(file);
 		} else {
 			// Look for defaults in the jar
-		    InputStream defConfigStream = plugin.getResource(default_folder+filename+".yml");
-		    if (defConfigStream != null){
-		        return YamlConfiguration.loadConfiguration(defConfigStream);
-		    }
-		    return null;
+			InputStream defConfigStream = plugin.getResource(default_folder + filename + ".yml");
+			if (defConfigStream != null) {
+				return YamlConfiguration.loadConfiguration(defConfigStream);
+			}
+			return null;
 		}
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param config
 	 */
-	protected void saveConfig( String filename, FileConfiguration config ){
-		File file = getFilename( filename );
+	protected void saveConfig(String filename, FileConfiguration config) {
+		File file = getFilename(filename);
 		try {
 			config.save(file);
-		} catch (IOException e) {
-//			Prism.log("Could not save the configuration file to "+file);
+		}
+		catch (IOException e) {
+			// Prism.log("Could not save the configuration file to "+file);
 			// Throw exception
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	protected void write( String filename, FileConfiguration config ){
+	protected void write(String filename, FileConfiguration config) {
 		try {
-			BufferedWriter bw = new BufferedWriter( new FileWriter( getFilename( filename ), true ) );
-			saveConfig( filename, config );
+			BufferedWriter bw = new BufferedWriter(new FileWriter(getFilename(filename), true));
+			saveConfig(filename, config);
 			bw.flush();
 			bw.close();
-		} catch (IOException e){
+		}
+		catch (IOException e) {
 
-        }
+		}
 	}
 }

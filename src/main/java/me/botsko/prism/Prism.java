@@ -83,7 +83,7 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
-	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
+	protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
 
 	/**
 	 * Public
@@ -105,19 +105,18 @@ public class Prism extends JavaPlugin {
 	public QueueStats queueStats;
 	public BukkitTask deleteTask;
 	public int total_records_affected = 0;
-	
+
 	/**
 	 * DB Foreign key caches
 	 */
-	public static HashMap<String,Integer> prismWorlds = new HashMap<String,Integer>();
-	public static HashMap<String,Integer> prismPlayers = new HashMap<String,Integer>();
-	public static HashMap<String,Integer> prismActions = new HashMap<String,Integer>();
+	public static HashMap<String, Integer> prismWorlds = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> prismPlayers = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
 
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so that when
 	 * they do fall we can attribute them to the player who broke the original
 	 * block.
-	 * 
 	 * Once the block fall is registered, it's removed from here, so data should
 	 * not remain here long.
 	 */
@@ -130,7 +129,6 @@ public class Prism extends JavaPlugin {
 	 */
 	public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
 
-	
 	/**
 	 * Enables the plugin and activates our player listeners
 	 */
@@ -159,7 +157,8 @@ public class Prism extends JavaPlugin {
 			try {
 				Metrics metrics = new Metrics(this);
 				metrics.start();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				log("MCStats submission failed.");
 			}
 		}
@@ -181,7 +180,8 @@ public class Prism extends JavaPlugin {
 					st = test_conn.createStatement();
 					st.executeUpdate("PRAGMA journal_mode = WAL;");
 					st.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 					handleDatabaseException(e);
 				}
 			}
@@ -189,7 +189,8 @@ public class Prism extends JavaPlugin {
 		if (test_conn != null) {
 			try {
 				test_conn.close();
-			} catch (SQLException e) {
+			}
+			catch (SQLException e) {
 				handleDatabaseException(e);
 			}
 		}
@@ -198,7 +199,7 @@ public class Prism extends JavaPlugin {
 
 			// Setup databases
 			setupDatabase();
-			
+
 			// Cache world IDs
 			cacheWorldPrimaryKeys();
 			cacheActionPrimaryKeys();
@@ -264,25 +265,20 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static String getPrismName() {
 		return plugin_name;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public String getPrismVersion() {
 		return this.plugin_version;
 	}
 
-	
 	/**
 	 * Load configuration and language files
 	 */
@@ -290,27 +286,25 @@ public class Prism extends JavaPlugin {
 	public void loadConfig() {
 		PrismConfig mc = new PrismConfig(this);
 		config = mc.getConfig();
-		
+
 		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
-		
+
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
-		if( alertBlocks != null){
-			for( String key : alertBlocks.getKeys(false) ){
-				alertedOres.put( key, alertBlocks.getString(key));
+		if (alertBlocks != null) {
+			for (String key : alertBlocks.getKeys(false)) {
+				alertedOres.put(key, alertBlocks.getString(key));
 			}
 		}
-		
+
 		// Load language files
 		// language = new Language( mc.getLang() );
 		// Load items db
 		items = new MaterialAliases();
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public DataSource initDbPool() {
@@ -324,8 +318,9 @@ public class Prism extends JavaPlugin {
 				pool = new DataSource();
 				pool.setDriverClassName("org.sqlite.JDBC");
 				pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
-			} catch (ClassNotFoundException e) {
-				log("Error: SQLite database connection was not established. "+ e.getMessage());
+			}
+			catch (ClassNotFoundException e) {
+				log("Error: SQLite database connection was not established. " + e.getMessage());
 			}
 		}
 
@@ -359,7 +354,6 @@ public class Prism extends JavaPlugin {
 		return pool;
 	}
 
-	
 	/**
 	 * Attempt to rebuild the pool, useful for reloads and failed database
 	 * connections being restored
@@ -372,18 +366,14 @@ public class Prism extends JavaPlugin {
 		pool = initDbPool();
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static DataSource getPool() {
 		return Prism.pool;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 * @throws SQLException
 	 */
@@ -391,7 +381,8 @@ public class Prism extends JavaPlugin {
 		Connection con = null;
 		try {
 			con = pool.getConnection();
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			System.out.print("Database connection failed. " + e.getMessage());
 			if (!e.getMessage().contains("Pool empty")) {
 				e.printStackTrace();
@@ -400,37 +391,36 @@ public class Prism extends JavaPlugin {
 		return con;
 	}
 
-	
 	/**
 	 * Attempt to reconnect to the database
+	 * 
 	 * @return
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
-	protected boolean attemptToRescueConnection( SQLException e ) throws SQLException{
-		if( e.getMessage().contains("connection closed") ){
+	protected boolean attemptToRescueConnection(SQLException e) throws SQLException {
+		if (e.getMessage().contains("connection closed")) {
 			rebuildPool();
-			if( pool != null ){
+			if (pool != null) {
 				Connection conn = dbc();
-				if( conn != null && !conn.isClosed() ){
+				if (conn != null && !conn.isClosed()) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	public void handleDatabaseException(SQLException e) {
 		// Attempt to rescue
 		try {
-			if( attemptToRescueConnection( e ) ){
+			if (attemptToRescueConnection(e)) {
 				return;
 			}
-		} catch (SQLException e1){
 		}
+		catch (SQLException e1) {}
 		log("Database connection error: " + e.getMessage());
 		if (e.getMessage().contains("marked as crashed")) {
 			String[] msg = new String[2];
@@ -440,8 +430,7 @@ public class Prism extends JavaPlugin {
 		}
 		e.printStackTrace();
 	}
-	
-	
+
 	/**
 	 * 
 	 */
@@ -451,7 +440,7 @@ public class Prism extends JavaPlugin {
 			final Connection conn = dbc();
 			if (conn == null)
 				return;
-			
+
 			// actions
 			String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
 					"`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
@@ -481,7 +470,7 @@ public class Prism extends JavaPlugin {
 					"KEY `block_id` (`block_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
-			
+
 			// meta
 			query = "CREATE TABLE IF NOT EXISTS `prism_meta` (" +
 					"`id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
@@ -490,7 +479,7 @@ public class Prism extends JavaPlugin {
 					"PRIMARY KEY (`id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
-			
+
 			// players
 			query = "CREATE TABLE IF NOT EXISTS `prism_players` (" +
 					"`player_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
@@ -499,7 +488,7 @@ public class Prism extends JavaPlugin {
 					"KEY (`player`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
-			
+
 			// worlds
 			query = "CREATE TABLE IF NOT EXISTS `prism_worlds` (" +
 					"`world_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
@@ -507,26 +496,26 @@ public class Prism extends JavaPlugin {
 					"PRIMARY KEY (`world_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
-			
+
 			// actions
 			query = "INSERT INTO `prism_actions` VALUES (1, 'block-break'),(2, 'block-burn'),(3, 'block-fade'),(4, 'block-fall'),(5, 'block-form'),(6, 'block-place'),(7, 'block-shift'),(8, 'block-spread'),(9, 'block-use'),(10, 'bucket-fill'),(11, 'bonemeal-use'),(12, 'container-access'),(13, 'cake-eat'),(14, 'craft-item'),(15, 'creeper-explode'),(16, 'crop-trample'),(17, 'dragon-eat'),(18, 'enchant-item'),(19, 'enderman-pickup'),(20, 'enderman-place'),(21, 'entity-break'),(22, 'entity-dye'),(23, 'entity-explode'),(24, 'entity-follow'),(25, 'entity-form'),(26, 'entity-kill'),(27, 'entity-shear'),(28, 'entity-spawn'),(29, 'fireball'),(30, 'fire-spread'),(31, 'firework-launch'),(32, 'hangingitem-break'),(33, 'hangingitem-place'),(34, 'item-drop'),(35, 'item-insert'),(36, 'item-pickup'),(37, 'item-remove'),(38, 'lava-break'),(39, 'lava-bucket'),(40, 'lava-flow'),(41, 'lava-ignite'),(42, 'leaf-decay'),(43, 'lighter'),(44, 'lightning'),(45, 'mushroom-grow'),(46, 'player-chat'),(47, 'player-command'),(48, 'player-death'),(49, 'player-join'),(50, 'player-kill'),(51, 'player-quit'),(52, 'player-teleport'),(53, 'potion-splash'),(54, 'sheep-eat'),(55, 'sign-change'),(56, 'spawnegg-use'),(57, 'tnt-explode'),(58, 'tnt-prime'),(59, 'tree-grow'),(60, 'vehicle-break'),(61, 'vehicle-enter'),(62, 'vehicle-exit'),(63, 'vehicle-place'),(64, 'water-break'),(65, 'water-bucket'),(66, 'water-flow'),(67, 'world-edit'),(68, 'xp-pickup'),(69, 'prism-drain'),(70, 'prism-extinguish'),(71, 'prism-process'),(72, 'prism-rollback');";
 			st.executeUpdate(query);
-			
+
 			// close
 			st.close();
 			conn.close();
-			
-		} catch (SQLException e) {
+
+		}
+		catch (SQLException e) {
 			log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	protected void cacheActionPrimaryKeys(){
+	protected void cacheActionPrimaryKeys() {
 
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -534,205 +523,280 @@ public class Prism extends JavaPlugin {
 		try {
 
 			conn = dbc();
-    		s = conn.prepareStatement( "SELECT action_id, action FROM prism_actions" );
-    		rs = s.executeQuery();
+			s = conn.prepareStatement("SELECT action_id, action FROM prism_actions");
+			rs = s.executeQuery();
 
-    		while(rs.next()){
-    			debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
-    			prismActions.put( rs.getString(2), rs.getInt(1) );
-    		}
-    		
-    		debug("Loaded " + prismActions.size() + " actions into the cache.");
-    		
-		} catch (SQLException e) {
-        	handleDatabaseException( e );
-        } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        }
+			while (rs.next()) {
+				debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+				prismActions.put(rs.getString(2), rs.getInt(1));
+			}
+
+			debug("Loaded " + prismActions.size() + " actions into the cache.");
+
+		}
+		catch (SQLException e) {
+			handleDatabaseException(e);
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (SQLException e) {}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (SQLException e) {}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {}
+		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	protected void cacheWorldPrimaryKeys(){
-		
+	protected void cacheWorldPrimaryKeys() {
+
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
 
 			conn = dbc();
-    		s = conn.prepareStatement( "SELECT world_id, world FROM prism_worlds" );
-    		rs = s.executeQuery();
+			s = conn.prepareStatement("SELECT world_id, world FROM prism_worlds");
+			rs = s.executeQuery();
 
-    		while(rs.next()){
-    			prismWorlds.put( rs.getString(2), rs.getInt(1) );
-    		}
-    		debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
-		} catch (SQLException e) {
-        	handleDatabaseException( e );
-        } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        }
+			while (rs.next()) {
+				prismWorlds.put(rs.getString(2), rs.getInt(1));
+			}
+			debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
+		}
+		catch (SQLException e) {
+			handleDatabaseException(e);
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (SQLException e) {}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (SQLException e) {}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {}
+		}
 	}
-	
-	
+
 	/**
 	 * Saves a world name to the database, and adds the id to the cache hashmap
 	 */
-	public static void addWorldName( String worldName ){
-		
+	public static void addWorldName(String worldName) {
+
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
 
 			conn = dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_worlds (world) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
-            s.setString(1, worldName);
-            s.executeUpdate();
-            
-            rs = s.getGeneratedKeys();
-            if (rs.next()) {
-                prismWorlds.put( worldName, rs.getInt(1) );
-            } else {
-            	throw new SQLException("Insert statement failed - no generated key obtained.");
-            }
-		} catch (SQLException e) {
-        	
-        } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        }
+			s = conn.prepareStatement("INSERT INTO prism_worlds (world) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+			s.setString(1, worldName);
+			s.executeUpdate();
+
+			rs = s.getGeneratedKeys();
+			if (rs.next()) {
+				prismWorlds.put(worldName, rs.getInt(1));
+			} else {
+				throw new SQLException("Insert statement failed - no generated key obtained.");
+			}
+		}
+		catch (SQLException e) {
+
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (SQLException e) {}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (SQLException e) {}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {}
+		}
 	}
 
-	
 	/**
 	 * 
 	 */
-	public void cacheOnlinePlayerPrimaryKeys(){
+	public void cacheOnlinePlayerPrimaryKeys() {
 
-		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-			public void run(){
-				
+		getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
+			public void run() {
+
 				String[] playerNames;
-				playerNames = new String[ getServer().getOnlinePlayers().length ];
+				playerNames = new String[getServer().getOnlinePlayers().length];
 				int i = 0;
-				for( Player pl : getServer().getOnlinePlayers() ){
+				for (Player pl : getServer().getOnlinePlayers()) {
 					playerNames[i] = pl.getName();
 					i++;
 				}
 
-
 				Connection conn = null;
 				PreparedStatement s = null;
 				ResultSet rs = null;
 				try {
-		
+
 					conn = dbc();
-		    		s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN ('?')" );
-		    		s.setString(1, TypeUtils.join(playerNames, "','"));
-		    		rs = s.executeQuery();
-		
-		    		while( rs.next() ){
-		    			debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
-		    			prismPlayers.put( rs.getString(2), rs.getInt(1) );
-		    		}
-				} catch (SQLException e) {
-		//        	handleDatabaseException( e );
-		        } finally {
-		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-		        	if(s != null) try { s.close(); } catch (SQLException e) {}
-		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-		        }
+					s = conn.prepareStatement("SELECT player_id, player FROM prism_players WHERE player IN ('?')");
+					s.setString(1, TypeUtils.join(playerNames, "','"));
+					rs = s.executeQuery();
+
+					while (rs.next()) {
+						debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+						prismPlayers.put(rs.getString(2), rs.getInt(1));
+					}
+				}
+				catch (SQLException e) {
+					// handleDatabaseException( e );
+				}
+				finally {
+					if (rs != null)
+						try {
+							rs.close();
+						}
+						catch (SQLException e) {}
+					if (s != null)
+						try {
+							s.close();
+						}
+						catch (SQLException e) {}
+					if (conn != null)
+						try {
+							conn.close();
+						}
+						catch (SQLException e) {}
+				}
 			}
 		});
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public void cachePlayerPrimaryKey( final String playerName ){
-		
-//		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
-//			public void run(){
+	public void cachePlayerPrimaryKey(final String playerName) {
 
-				Connection conn = null;
-				PreparedStatement s = null;
-				ResultSet rs = null;
-				try {
-		
-					conn = dbc();
-		    		s = conn.prepareStatement( "SELECT player_id FROM prism_players WHERE player = ?" );
-		    		s.setString(1, playerName);
-		    		rs = s.executeQuery();
-		
-		    		if( rs.next() ){
-		    			debug("Loaded player " + playerName + ", id: " + rs.getInt(1) + " into the cache.");
-		    			prismPlayers.put( playerName, rs.getInt(1) );
-		    		} else {
-		    			addPlayerName(playerName);
-		    		}
-				} catch (SQLException e) {
-		//        	handleDatabaseException( e );
-		        } finally {
-		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-		        	if(s != null) try { s.close(); } catch (SQLException e) {}
-		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-		        }
-//			}
-//		});
-	}
-	
-	
-	/**
-	 * Saves a player name to the database, and adds the id to the cache hashmap
-	 */
-	public static void addPlayerName( String playerName ){
-		
+		// getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+		// public void run(){
+
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
 
 			conn = dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_players (player) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
-            s.setString(1, playerName);
-            s.executeUpdate();
-            
-            rs = s.getGeneratedKeys();
-            if (rs.next()) {
-            	debug("Saved and loaded player " + playerName + " into the cache.");
-            	prismPlayers.put( playerName, rs.getInt(1) );
-            } else {
-                throw new SQLException("Insert statement failed - no generated key obtained.");
-            }
-		} catch (SQLException e) {
-        	
-        } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        }
+			s = conn.prepareStatement("SELECT player_id FROM prism_players WHERE player = ?");
+			s.setString(1, playerName);
+			rs = s.executeQuery();
+
+			if (rs.next()) {
+				debug("Loaded player " + playerName + ", id: " + rs.getInt(1) + " into the cache.");
+				prismPlayers.put(playerName, rs.getInt(1));
+			} else {
+				addPlayerName(playerName);
+			}
+		}
+		catch (SQLException e) {
+			// handleDatabaseException( e );
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (SQLException e) {}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (SQLException e) {}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {}
+		}
+		// }
+		// });
 	}
 
-	
 	/**
-	 * 
+	 * Saves a player name to the database, and adds the id to the cache hashmap
+	 */
+	public static void addPlayerName(String playerName) {
+
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = dbc();
+			s = conn.prepareStatement("INSERT INTO prism_players (player) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+			s.setString(1, playerName);
+			s.executeUpdate();
+
+			rs = s.getGeneratedKeys();
+			if (rs.next()) {
+				debug("Saved and loaded player " + playerName + " into the cache.");
+				prismPlayers.put(playerName, rs.getInt(1));
+			} else {
+				throw new SQLException("Insert statement failed - no generated key obtained.");
+			}
+		}
+		catch (SQLException e) {
+
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (SQLException e) {}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (SQLException e) {}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {}
+		}
+	}
+
+	/**
 	 * @return
 	 */
 	public Language getLang() {
 		return this.language;
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -756,77 +820,62 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public boolean dependencyEnabled(String pluginName) {
 		return enabledPlugins.contains(pluginName);
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public static ArrayList<Integer> getIllegalBlocks(){
+	public static ArrayList<Integer> getIllegalBlocks() {
 		return illegalBlocks;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public static ArrayList<String> getIllegalEntities(){
+	public static ArrayList<String> getIllegalEntities() {
 		return illegalEntities;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public static HashMap<String,String> getAlertedOres(){
+	public static HashMap<String, String> getAlertedOres() {
 		return alertedOres;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public MaterialAliases getItems() {
 		return this.items;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static ActionRegistry getActionRegistry() {
 		return actionRegistry;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static HandlerRegistry<?> getHandlerRegistry() {
 		return handlerRegistry;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public static Ignore getIgnore() {
 		return ignore;
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -846,7 +895,6 @@ public class Prism extends JavaPlugin {
 					}
 				}, 2400L, 2400L);
 	}
-	
 
 	/**
 	 * 
@@ -874,7 +922,6 @@ public class Prism extends JavaPlugin {
 				}, 1200L, 1200L);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -895,7 +942,6 @@ public class Prism extends JavaPlugin {
 				}, 1200L, 1200L);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -904,10 +950,9 @@ public class Prism extends JavaPlugin {
 		if (recorder_tick_delay < 1) {
 			recorder_tick_delay = 3;
 		}
-		getServer().getScheduler().runTaskTimerAsynchronously(this,new ActionRecorder(prism), recorder_tick_delay,recorder_tick_delay);
+		getServer().getScheduler().runTaskTimerAsynchronously(this, new ActionRecorder(prism), recorder_tick_delay, recorder_tick_delay);
 	}
 
-	
 	/**
 	 * 
 	 */
@@ -949,15 +994,13 @@ public class Prism extends JavaPlugin {
 				 * when each purge cycle has completed and records remain
 				 */
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,new LogPurgeCallback()),purge_tick_delay);
+				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new PurgeTask(this, paramList, purge_tick_delay, new LogPurgeCallback()), purge_tick_delay);
 
 			}
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @param msg
 	 */
 	public void alertPlayers(Player player, String msg) {
@@ -970,45 +1013,35 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgMissingArguments() {
 		return messenger.playerError("Missing arguments. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgInvalidArguments() {
 		return messenger.playerError("Invalid arguments. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
 		return messenger.playerError("Prism doesn't have that command. Check /prism ? for help.");
 	}
 
-	
 	/**
-	 *
 	 * @return
 	 */
 	public String msgNoPermission() {
 		return messenger.playerError("You don't have permission to perform this action.");
 	}
-	
 
 	/**
-	 * 
 	 * @param player
 	 * @param msg
 	 */
@@ -1026,19 +1059,15 @@ public class Prism extends JavaPlugin {
 			}
 		}
 	}
-	
 
 	/**
-	 * 
 	 * @param message
 	 */
 	public static void log(String message) {
 		log.info("[" + getPrismName() + "]: " + message);
 	}
-	
 
 	/**
-	 * 
 	 * @param messages
 	 */
 	public static void logSection(String[] messages) {
@@ -1051,9 +1080,7 @@ public class Prism extends JavaPlugin {
 		}
 	}
 
-	
 	/**
-	 * 
 	 * @param message
 	 */
 	public static void debug(String message) {
@@ -1061,16 +1088,13 @@ public class Prism extends JavaPlugin {
 			log.info("[" + plugin_name + "]: " + message);
 		}
 	}
-	
 
 	/**
-	 * 
 	 * @param loc
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());
 	}
-	
 
 	/**
 	 * Disable the plugin
@@ -1078,7 +1102,6 @@ public class Prism extends JavaPlugin {
 	public void disablePlugin() {
 		this.setEnabled(false);
 	}
-	
 
 	/**
 	 * Shutdown

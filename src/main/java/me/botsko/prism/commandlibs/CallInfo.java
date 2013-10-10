@@ -4,25 +4,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class CallInfo {
-	
+
 	/**
 	 * 
 	 */
 	private CommandSender sender;
-	
+
 	/**
 	 * 
 	 */
 	private Player player;
-	
+
 	/**
 	 * 
 	 */
 	private String[] args;
 
-	
 	/**
-	 * 
 	 * @param sender
 	 * @param player
 	 * @param args
@@ -33,40 +31,32 @@ public class CallInfo {
 		this.args = args;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public Player getPlayer() {
 		return player;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
 	public CommandSender getSender() {
 		return sender;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param n
 	 * @return
 	 */
 	public String getArg(int n) {
 		return this.args[n];
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
 	public String[] getArgs() {
-	    return this.args;
+		return this.args;
 	}
 }

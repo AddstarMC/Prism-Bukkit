@@ -5,42 +5,38 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 public class QueueStats {
-	
+
 	/**
 	 * 
 	 */
-	protected ConcurrentSkipListMap<Long,Integer> perRunRecordingCounts = new ConcurrentSkipListMap<Long,Integer>();
-	
-	
+	protected ConcurrentSkipListMap<Long, Integer> perRunRecordingCounts = new ConcurrentSkipListMap<Long, Integer>();
+
 	/**
-	 * 
 	 * @param count
 	 */
-	public void addRunCount( int count ){
-		
-		Date date= new Date();
+	public void addRunCount(int count) {
+
+		Date date = new Date();
 		long currentTime = date.getTime();
 
 		// Delete any that are older than a few minutes, so we don't spam the screen
 		// unless we only have a few already
-		if(perRunRecordingCounts.size() > 5){
+		if (perRunRecordingCounts.size() > 5) {
 			int i = 0;
 			for (Entry<Long, Integer> entry : perRunRecordingCounts.descendingMap().entrySet()) {
-			    if (i++ > 5) {
-			    	perRunRecordingCounts.remove(entry.getKey());
-			    }
+				if (i++ > 5) {
+					perRunRecordingCounts.remove(entry.getKey());
+				}
 			}
 		}
 		perRunRecordingCounts.put(currentTime, count);
-		
+
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public ConcurrentSkipListMap<Long, Integer> getRecentRunCounts(){
+	public ConcurrentSkipListMap<Long, Integer> getRecentRunCounts() {
 		return perRunRecordingCounts;
 	}
 }

@@ -9,32 +9,29 @@ import org.bukkit.plugin.Plugin;
 
 public class PrismConfig extends ConfigBase {
 
-	
 	/**
-	 * 
 	 * @param plugin
 	 */
 	public PrismConfig(Plugin plugin) {
 		super(plugin);
 	}
-	
 
 	/**
 	 *
 	 */
-	public FileConfiguration getConfig(){
-		
+	public FileConfiguration getConfig() {
+
 		config = plugin.getConfig();
-		
+
 		// set defaults
 		config.addDefault("prism.debug", false);
-//		config.addDefault("prism.language", "en-us");
-		
+		// config.addDefault("prism.language", "en-us");
+
 		config.addDefault("prism.notify-newer-versions", true);
 		config.addDefault("prism.allow-metrics", true);
-			
+
 		// Database
-//		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
+		// config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 		config.addDefault("prism.database.max-pool-connections", 20);
 		config.addDefault("prism.database.pool-initial-size", 10);
 		config.addDefault("prism.database.max-idle-connections", 10);
@@ -49,7 +46,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.password", "");
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
-		
+
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
 		config.addDefault("prism.wands.default-item-mode-id", "280:0");
@@ -62,7 +59,7 @@ public class PrismConfig extends ConfigBase {
 		ignoreActionsForInspect.add("player-join");
 		ignoreActionsForInspect.add("player-quit");
 		config.addDefault("prism.wands.inspect.ignore-actions", ignoreActionsForInspect);
-		
+
 		// Queries
 		config.addDefault("prism.queries.default-radius", 5);
 		config.addDefault("prism.queries.default-time-since", "3d");
@@ -72,27 +69,27 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.queries.lookup-max-results", 1000);
 		config.addDefault("prism.queries.default-results-per-page", 5);
 		config.addDefault("prism.queries.lookup-auto-group", true);
-		
+
 		// Messenger
 		config.addDefault("prism.messenger.always-show-extended", false);
-		
+
 		// Near
 		config.addDefault("prism.near.default-radius", 5);
 		config.addDefault("prism.near.max-results", 100);
-		
+
 		// Drain
 		config.addDefault("prism.drain.max-radius", 10);
 		config.addDefault("prism.drain.default-radius", 5);
-		
+
 		// Ex
 		config.addDefault("prism.ex.max-radius", 100);
 		config.addDefault("prism.ex.default-radius", 10);
-		
+
 		// Ignore
 		config.addDefault("prism.ignore.players-in-creative", false);
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
-		
+
 		// Purge
 		List<String> purgeRules = new ArrayList<String>();
 		purgeRules.add("before:8w");
@@ -100,19 +97,19 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
 		config.addDefault("prism.purge.batch-tick-delay", 60);
 		config.addDefault("prism.purge.records-per-batch", 5000);
-		
+
 		// Appliers
 		config.addDefault("prism.appliers.allow_rollback_items_removed_from_container", true);
 		config.addDefault("prism.appliers.notify-nearby.enabled", true);
 		config.addDefault("prism.appliers.notify-nearby.additional-radius", 20);
 		config.addDefault("prism.appliers.remove-fire-on-burn-rollback", true);
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
-		
+
 		// Illegal Entity Rollbacks
 		List<String> illegalEntities = new ArrayList<String>();
 		illegalEntities.add("creeper");
 		config.addDefault("prism.appliers.never-spawn-entity", illegalEntities);
-		
+
 		// Illegal Block Rollbacks
 		List<Integer> illegalBlocks = new ArrayList<Integer>();
 		illegalBlocks.add(10);
@@ -120,7 +117,7 @@ public class PrismConfig extends ConfigBase {
 		illegalBlocks.add(46);
 		illegalBlocks.add(51);
 		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
-		
+
 		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
@@ -190,39 +187,39 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.tracking.water-flow", false);
 		config.addDefault("prism.tracking.world-edit", false);
 		config.addDefault("prism.tracking.xp-pickup", false);
-		
-		// Tracker configs
-			config.addDefault("prism.track-player-ip-on-join", false);
-			config.addDefault("prism.track-hopper-item-events", false);
 
-			List<String> doNotTrackCommand = new ArrayList<String>();
-			doNotTrackCommand.add("vanish");
-			doNotTrackCommand.add("v");
-			doNotTrackCommand.add("login");
-			doNotTrackCommand.add("changepassword");
-			doNotTrackCommand.add("register");
-			doNotTrackCommand.add("unregister");
-			config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
-			
-			config.addDefault("prism.tracking.api.enabled", true);
-			List<String> allowedApiPlugins = new ArrayList<String>();
-			allowedApiPlugins.add("DarkMythos");
-			allowedApiPlugins.add("PrismApiDemo");
-			config.addDefault("prism.tracking.api.allowed-plugins", allowedApiPlugins);
-		
+		// Tracker configs
+		config.addDefault("prism.track-player-ip-on-join", false);
+		config.addDefault("prism.track-hopper-item-events", false);
+
+		List<String> doNotTrackCommand = new ArrayList<String>();
+		doNotTrackCommand.add("vanish");
+		doNotTrackCommand.add("v");
+		doNotTrackCommand.add("login");
+		doNotTrackCommand.add("changepassword");
+		doNotTrackCommand.add("register");
+		doNotTrackCommand.add("unregister");
+		config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
+
+		config.addDefault("prism.tracking.api.enabled", true);
+		List<String> allowedApiPlugins = new ArrayList<String>();
+		allowedApiPlugins.add("DarkMythos");
+		allowedApiPlugins.add("PrismApiDemo");
+		config.addDefault("prism.tracking.api.allowed-plugins", allowedApiPlugins);
+
 		// Ore Alerts
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		// Ore blocks
-		HashMap<String,String> oreBlocks = new HashMap<String,String>();
+		HashMap<String, String> oreBlocks = new HashMap<String, String>();
 		oreBlocks.put("14", "&6"); // iron
 		oreBlocks.put("15", "&7"); // gold
 		oreBlocks.put("21", "&9"); // lapis
 		oreBlocks.put("56", "&b"); // diamond
 		oreBlocks.put("129", "&a"); // emerald ore
 		config.addDefault("prism.alerts.ores.blocks", oreBlocks);
-		
+
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
 		config.addDefault("prism.alerts.illegal-commands.log-to-console", true);
@@ -232,13 +229,13 @@ public class PrismConfig extends ConfigBase {
 		illegal_commands.add("stop");
 		illegal_commands.add("reload");
 		config.addDefault("prism.alerts.illegal-commands.commands", illegal_commands);
-		
+
 		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
 		config.addDefault("prism.alerts.uses.log-to-console", true);
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
-		
+
 		List<String> monitorItems = new ArrayList<String>();
 		monitorItems.add("7");
 		monitorItems.add("29");
@@ -246,23 +243,23 @@ public class PrismConfig extends ConfigBase {
 		monitorItems.add("10");
 		monitorItems.add("11");
 		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
-		
+
 		monitorItems = new ArrayList<String>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
-		
+
 		// Misc Alerts
 		config.addDefault("prism.alerts.vanilla-xray.enabled", true);
-		
+
 		// Internal
 		config.addDefault("prism.queue-empty-tick-delay", 3);
-		
+
 		// Copy defaults
 		config.options().copyDefaults(true);
-		
+
 		// save the defaults/config
 		plugin.saveConfig();
-		
+
 		return config;
-		
+
 	}
 }

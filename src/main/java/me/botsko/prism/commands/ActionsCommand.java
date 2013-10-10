@@ -14,53 +14,55 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 
 public class ActionsCommand implements SubHandler {
-	
-	
+
 	/**
 	 * Handle the command
 	 */
 	public void handle(CallInfo call) {
 		help(call.getSender());
 	}
-	
-	
+
 	/**
 	 * Display param help
+	 * 
 	 * @param sender
 	 */
-	private void help( CommandSender sender ) {
-		
-		sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Actions List ---" ) );
+	private void help(CommandSender sender) {
+
+		sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Actions List ---"));
 
 		// Build short list
 		ArrayList<String> shortNames = new ArrayList<String>();
-		HashMap<String,ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
-		for (Entry<String,ActionType> entry : actions.entrySet()){
-			if(entry.getKey().contains("prism")) continue;
-			if(shortNames.contains( entry.getValue().getShortName() )) continue;
-			shortNames.add( entry.getValue().getShortName() );
+		HashMap<String, ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
+		for (Entry<String, ActionType> entry : actions.entrySet()) {
+			if (entry.getKey().contains("prism"))
+				continue;
+			if (shortNames.contains(entry.getValue().getShortName()))
+				continue;
+			shortNames.add(entry.getValue().getShortName());
 		}
 		// Sort alphabetically
 		Collections.sort(shortNames);
-		
+
 		// Build display of shortname list
 		String actionList = "";
 		int i = 1;
-		for(String shortName : shortNames){
+		for (String shortName : shortNames) {
 			actionList += shortName + (i < shortNames.size() ? ", " : "");
 			i++;
 		}
-		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actionList) );
-		
+		sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actionList));
+
 		// Build display of full actions
 		actionList = "";
 		i = 1;
-		for (Entry<String,ActionType> entry : actions.entrySet()){
-			if(entry.getKey().contains("prism")) continue;
+		for (Entry<String, ActionType> entry : actions.entrySet()) {
+			if (entry.getKey().contains("prism"))
+				continue;
 			actionList += entry.getKey() + (i < actions.size() ? ", " : "");
 			i++;
 		}
-		sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actionList) );
-		
+		sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " " + actionList));
+
 	}
 }
