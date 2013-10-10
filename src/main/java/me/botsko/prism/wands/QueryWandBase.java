@@ -7,56 +7,55 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import org.bukkit.entity.Player;
 
-
 /**
- * A base class for Wands that use 
- * {@link me.botsko.prism.actionlibs.QueryParameters} and show results.
+ * A base class for Wands that use {@link me.botsko.prism.actionlibs.QueryParameters} and show results.
  * This will allow users to specify parameters when creating the wand
  * and have them saved in the Wand for every time they use it until
  * it is disabled.
  */
 public abstract class QueryWandBase extends WandBase {
-	
+
 	/**
 	 * The parameters that are specified. Whenever we do a search
 	 * we can clone this and then add the extra stuff. (Location, etc)
 	 */
 	protected QueryParameters parameters;
-	
+
 	/**
 	 * Keep an instance of {@link me.botsko.prism.Prism Prism} to use.
 	 */
 	protected Prism plugin;
-	
-	
+
 	/**
-	 * When we initialize the class, make the {@link #parameters}
-	 * equal to a fresh QueryParameters.
+	 * When we initialize the class, make the {@link #parameters} equal to a fresh QueryParameters.
 	 */
-	public QueryWandBase(Prism plugin){
+	public QueryWandBase(Prism plugin) {
 		parameters = new QueryParameters();
 		this.plugin = plugin;
 	}
-	
-	
+
 	/**
 	 * Set the field {@link #parameters} with the parameters here.
 	 * This will be using the stuff in <code>/prism params</code>
-	 * @param sender The sender of the command.
-	 * @param args The arguments from <code>/prism params</code>.
-	 * @param argStart What argument to start on.
+	 * 
+	 * @param sender
+	 *            The sender of the command.
+	 * @param args
+	 *            The arguments from <code>/prism params</code>.
+	 * @param argStart
+	 *            What argument to start on.
 	 */
-	public boolean setParameters(Player sender, String[] args, int argStart){
-		PrismProcessType processType = this instanceof RollbackWand ? PrismProcessType.ROLLBACK 
-				: this instanceof RestoreWand ? PrismProcessType.RESTORE 
-				: this instanceof InspectorWand ? PrismProcessType.LOOKUP 
-				: PrismProcessType.LOOKUP;
-		
+	public boolean setParameters(Player sender, String[] args, int argStart) {
+		PrismProcessType processType = this instanceof RollbackWand ? PrismProcessType.ROLLBACK
+				: this instanceof RestoreWand ? PrismProcessType.RESTORE
+						: this instanceof InspectorWand ? PrismProcessType.LOOKUP
+								: PrismProcessType.LOOKUP;
+
 		String[] newArgs = Arrays.copyOf(args, args.length + 1);
-		
+
 		newArgs[args.length] = "w:current"; // The thing needs at least one argument, and it's going to be the current world anyway.
 		QueryParameters params = PreprocessArgs.process(plugin, sender, newArgs, processType, argStart, false);
-		if(params == null){
+		if (params == null) {
 			return false;
 		} else {
 			params.resetMinMaxVectors();
@@ -64,13 +63,13 @@ public abstract class QueryWandBase extends WandBase {
 			return true;
 		}
 	}
-	
-	
+
 	/**
 	 * Get the {@link #parameters} set from {@link #setParameters}.
+	 * 
 	 * @return The wand's {@link me.botsko.prism.actionlibs.QueryParameters}.
 	 */
-	public QueryParameters getParameters(){
+	public QueryParameters getParameters() {
 		return parameters;
 	}
 }
