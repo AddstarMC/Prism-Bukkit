@@ -38,7 +38,7 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemStackAction extends GenericAction {
-	
+
 	public class ItemStackActionData {
 		public int amt;
 		public String name;
@@ -53,92 +53,90 @@ public class ItemStackAction extends GenericAction {
 		public boolean hasFlicker;
 		public boolean hasTrail;
 	}
-	
+
 	/**
 	 * 
 	 */
 	protected ItemStack item;
-	
+
 	/**
 	 * 
 	 */
 	protected ItemStackActionData actionData;
-	
+
 	/**
 	 * We store the enchantments here because an event like item enchant
 	 * doesn't give us the item with the enchantments already on it.
 	 */
-	protected Map<Enchantment,Integer> enchantments;
-	
-	
+	protected Map<Enchantment, Integer> enchantments;
+
 	/**
-	 * 
 	 * @param action_type
 	 * @param block
 	 * @param player
 	 */
-	public void setItem( ItemStack item, int quantity, int slot, Map<Enchantment,Integer> enchantments ){
-		
+	public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
+
 		actionData = new ItemStackActionData();
-		
-		if(enchantments != null){
+
+		if (enchantments != null) {
 			this.enchantments = enchantments;
 		}
-		
-		if( item == null || item.getAmount() <= 0 ){
+
+		if (item == null || item.getAmount() <= 0) {
 			this.setCanceled(true);
 			return;
 		}
-			
+
 		this.item = item;
-		if(enchantments == null){
+		if (enchantments == null) {
 			this.enchantments = item.getEnchantments();
 		}
-		
+
 		// Set basics
 		this.block_id = item.getTypeId();
 		this.block_subid = item.getDurability();
 		actionData.amt = quantity;
-		if(slot >= 0){
+		if (slot >= 0) {
 			actionData.slot = slot;
 		}
-		
+
 		// Set additional data all items may have
 		ItemMeta meta = item.getItemMeta();
-		if( meta != null && meta.getDisplayName() != null){
+		if (meta != null && meta.getDisplayName() != null) {
 			actionData.name = meta.getDisplayName();
 		}
 
 		// Leather Coloring
-		if( meta != null && item.getType().name().contains("LEATHER_") ){
+		if (meta != null && item.getType().name().contains("LEATHER_")) {
 			LeatherArmorMeta lam = (LeatherArmorMeta) meta;
-			if(lam.getColor() != null){
+			if (lam.getColor() != null) {
 				actionData.color = lam.getColor().asRGB();
 			}
 		}
-		
+
 		// Skull Owner
-		else if( meta != null && item.getType().equals(Material.SKULL_ITEM) ){
+		else if (meta != null && item.getType().equals(Material.SKULL_ITEM)) {
 			SkullMeta skull = (SkullMeta) meta;
-			if(skull.hasOwner()){
+			if (skull.hasOwner()) {
 				actionData.owner = skull.getOwner();
 			}
 		}
-		
+
 		// Written books
-		if( meta != null && item.getType().equals( Material.WRITTEN_BOOK ) ){
-	        BookMeta bookMeta = (BookMeta) meta;
-			if(bookMeta != null){
+		if (meta != null && item.getType().equals(Material.WRITTEN_BOOK)) {
+			BookMeta bookMeta = (BookMeta) meta;
+			if (bookMeta != null) {
 				actionData.by = bookMeta.getAuthor();
 				actionData.title = bookMeta.getTitle();
 			}
 		}
-		
+
 		// Enchantments
-		if(!this.enchantments.isEmpty()){
+		if (!this.enchantments.isEmpty()) {
 			String[] enchs = new String[this.enchantments.size()];
 			int i = 0;
-			for(Entry<Enchantment, Integer> ench : this.enchantments.entrySet()){
+			for (Entry<Enchantment, Integer> ench : this.enchantments.entrySet()) {
 				enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
 				i++;
 			}
@@ -146,13 +144,13 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Book enchantments
-		else if( meta != null && item.getType().equals( Material.ENCHANTED_BOOK ) ){
+		else if (meta != null && item.getType().equals(Material.ENCHANTED_BOOK)) {
 			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
-			if(bookEnchantments.hasStoredEnchants()){
-				if(bookEnchantments.getStoredEnchants().size() > 0){
+			if (bookEnchantments.hasStoredEnchants()) {
+				if (bookEnchantments.getStoredEnchants().size() > 0) {
 					String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
 					int i = 0;
-					for(Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet()){
+					for (Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet()) {
 						enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
 						i++;
 					}
@@ -160,48 +158,46 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
-		
+
 		// Fireworks
-		if( meta != null && block_id == 402 ){
+		if (meta != null && block_id == 402) {
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-			if( fireworkMeta.hasEffect() ){
+			if (fireworkMeta.hasEffect()) {
 				FireworkEffect effect = fireworkMeta.getEffect();
-				if( !effect.getColors().isEmpty() ){
-					int[] effectColors = new int[ effect.getColors().size() ];
+				if (!effect.getColors().isEmpty()) {
+					int[] effectColors = new int[effect.getColors().size()];
 					int i = 0;
-					for (Color effectColor : effect.getColors()){
+					for (Color effectColor : effect.getColors()) {
 						effectColors[i] = effectColor.asRGB();
 						i++;
 					}
 					actionData.effectColors = effectColors;
 				}
-				if( !effect.getFadeColors().isEmpty() ){
-					int[] fadeColors = new int[ effect.getColors().size() ];
+				if (!effect.getFadeColors().isEmpty()) {
+					int[] fadeColors = new int[effect.getColors().size()];
 					int i = 0;
-				    for (Color fadeColor : effect.getFadeColors()){
-				    	fadeColors[i] = fadeColor.asRGB();
-				    }
-				    actionData.fadeColors = fadeColors;
+					for (Color fadeColor : effect.getFadeColors()) {
+						fadeColors[i] = fadeColor.asRGB();
+					}
+					actionData.fadeColors = fadeColors;
 				}
-				if(effect.hasFlicker()){
+				if (effect.hasFlicker()) {
 					actionData.hasFlicker = true;
 				}
-				if(effect.hasTrail()){
+				if (effect.hasTrail()) {
 					actionData.hasTrail = true;
 				}
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public void setData( String data ){
+	public void setData(String data) {
 		this.data = data;
 		setItemStackFromData();
 	}
-	
 
 	/**
 	 * Prism began tracking very little data about an item stack and we felt
@@ -210,233 +206,221 @@ public class ItemStackAction extends GenericAction {
 	 * data that won't work with the new object, so we must keep around the
 	 * old parsing methods.
 	 */
-	protected void setItemStackFromData(){
-		if(item == null && data != null){
+	protected void setItemStackFromData() {
+		if (item == null && data != null) {
 			setItemStackFromNewDataFormat();
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public void save(){
+	public void save() {
 		data = gson.toJson(actionData);
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	protected void setItemStackFromNewDataFormat(){
-		
+	protected void setItemStackFromNewDataFormat() {
+
 		actionData = gson.fromJson(data, ItemStackActionData.class);
 
-		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
-		
+		item = new ItemStack(this.block_id, actionData.amt, (short) this.block_subid);
+
 		// Restore enchantment
-		if(actionData.enchs != null && actionData.enchs.length > 0){
-			for( String ench : actionData.enchs){
+		if (actionData.enchs != null && actionData.enchs.length > 0) {
+			for (String ench : actionData.enchs) {
 				String[] enchArgs = ench.split(":");
 				Enchantment enchantment = Enchantment.getById(Integer.parseInt(enchArgs[0]));
 				// Restore book enchantment
-				if(item.getType().equals(Material.ENCHANTED_BOOK)){
+				if (item.getType().equals(Material.ENCHANTED_BOOK)) {
 					EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
 					bookEnchantments.addStoredEnchant(enchantment, Integer.parseInt(enchArgs[1]), false);
 					item.setItemMeta(bookEnchantments);
-				} 
+				}
 				// Restore item enchantment
 				else {
 					item.addUnsafeEnchantment(enchantment, Integer.parseInt(enchArgs[1]));
 				}
 			}
 		}
-		
+
 		// Leather color
-		if( item.getType().name().contains("LEATHER_") && actionData.color > 0 ){
+		if (item.getType().name().contains("LEATHER_") && actionData.color > 0) {
 			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-			lam.setColor(Color.fromRGB( actionData.color ));
+			lam.setColor(Color.fromRGB(actionData.color));
 			item.setItemMeta(lam);
 		}
 		// Skulls
-		else if( item.getType().equals(Material.SKULL_ITEM) && actionData.owner != null ){
+		else if (item.getType().equals(Material.SKULL_ITEM) && actionData.owner != null) {
 			SkullMeta meta = (SkullMeta) item.getItemMeta();
-			meta.setOwner( actionData.owner );
+			meta.setOwner(actionData.owner);
 			item.setItemMeta(meta);
 		}
 		// Written books
-		else if(item.getType().equals( Material.WRITTEN_BOOK )){
-	        BookMeta bookMeta = (BookMeta) item.getItemMeta();
-			if(actionData.by != null && !actionData.by.isEmpty()){
-				bookMeta.setAuthor( actionData.by );
-				bookMeta.setTitle( actionData.title );
+		else if (item.getType().equals(Material.WRITTEN_BOOK)) {
+			BookMeta bookMeta = (BookMeta) item.getItemMeta();
+			if (actionData.by != null && !actionData.by.isEmpty()) {
+				bookMeta.setAuthor(actionData.by);
+				bookMeta.setTitle(actionData.title);
 			}
 			item.setItemMeta(bookMeta);
 		}
-		
+
 		// Fireworks
-		if( block_id == 402 && actionData.effectColors != null && actionData.effectColors.length > 0 ){
+		if (block_id == 402 && actionData.effectColors != null && actionData.effectColors.length > 0) {
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			Builder effect = FireworkEffect.builder();
-			if( actionData.effectColors != null ){
-				for(int i = 0; i < actionData.effectColors.length; i++ ){
-					effect.withColor( Color.fromRGB( actionData.effectColors[i] ) );
+			if (actionData.effectColors != null) {
+				for (int i = 0; i < actionData.effectColors.length; i++) {
+					effect.withColor(Color.fromRGB(actionData.effectColors[i]));
 				}
 				fireworkMeta.setEffect(effect.build());
 			}
-			if( actionData.fadeColors != null ){
-				for(int i = 0; i < actionData.fadeColors.length; i++ ){
-					effect.withFade( Color.fromRGB( actionData.fadeColors[i] ) );
+			if (actionData.fadeColors != null) {
+				for (int i = 0; i < actionData.fadeColors.length; i++) {
+					effect.withFade(Color.fromRGB(actionData.fadeColors[i]));
 				}
 				fireworkMeta.setEffect(effect.build());
 			}
-			if(actionData.hasFlicker){
+			if (actionData.hasFlicker) {
 				effect.flicker(true);
 			}
-			if(actionData.hasTrail){
+			if (actionData.hasTrail) {
 				effect.trail(true);
 			}
 			fireworkMeta.setEffect(effect.build());
 			item.setItemMeta(fireworkMeta);
 		}
-		
+
 		// Item display names
-		if( actionData.name != null ){
+		if (actionData.name != null) {
 			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName( actionData.name );
+			meta.setDisplayName(actionData.name);
 			item.setItemMeta(meta);
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 */
-	public ItemStackActionData getActionData(){
+	public ItemStackActionData getActionData() {
 		return this.actionData;
 	}
 
-	
 	/**
-	 * 
 	 * @return
 	 */
-	public ItemStack getItem(){
+	public ItemStack getItem() {
 		return item;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	public String getNiceName(){
+	public String getNiceName() {
 		String name = "";
-		if(item != null){
+		if (item != null) {
 			String fullItemName = ItemUtils.getItemFullNiceName(item, this.materialAliases);
 			name = actionData.amt + " " + fullItemName;
 		}
 		return name;
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	public ChangeResult applyRollback( Player player, QueryParameters parameters, boolean is_preview ){
-		return placeItems( player, parameters, is_preview );
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
+		return placeItems(player, parameters, is_preview);
 	}
-	
-	
+
 	/**
 	 * 
 	 */
 	@Override
-	public ChangeResult applyRestore( Player player, QueryParameters parameters, boolean is_preview ){
-		return placeItems( player, parameters, is_preview );
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
+		return placeItems(player, parameters, is_preview);
 	}
-	
-	
-	
+
 	/**
-	 * 
 	 * @return
 	 */
-	protected ChangeResult placeItems( Player player, QueryParameters parameters, boolean is_preview ){
-		
+	protected ChangeResult placeItems(Player player, QueryParameters parameters, boolean is_preview) {
+
 		ChangeResultType result = null;
-		
-		if( is_preview ){
-			return new ChangeResult( ChangeResultType.PLANNED, null );
+
+		if (is_preview) {
+			return new ChangeResult(ChangeResultType.PLANNED, null);
 		}
-		
-		if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
-			
-			Block block = getWorld().getBlockAt( getLoc() );
+
+		if (plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container")) {
+
+			Block block = getWorld().getBlockAt(getLoc());
 			Inventory inventory = null;
-			
+
 			// Item drop/pickup from player inventories
-			if( getType().getName().equals("item-drop") || getType().getName().equals("item-pickup") ){
-				
+			if (getType().getName().equals("item-drop") || getType().getName().equals("item-pickup")) {
+
 				// Is player online?
 				String playerName = getPlayerName();
-				Player onlinePlayer = Bukkit.getServer().getPlayer( playerName );
-				if( onlinePlayer != null ){
+				Player onlinePlayer = Bukkit.getServer().getPlayer(playerName);
+				if (onlinePlayer != null) {
 					inventory = onlinePlayer.getInventory();
 				} else {
 					// Skip if the player isn't online
-					return new ChangeResult( ChangeResultType.SKIPPED, null );
+					return new ChangeResult(ChangeResultType.SKIPPED, null);
 				}
 			}
 			// Item Insert/Remove from containers
-			else if(block.getType().equals(Material.CHEST)){
+			else if (block.getType().equals(Material.CHEST)) {
 				inventory = ((Chest) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.DISPENSER) ){
+			else if (block.getType().equals(Material.DISPENSER)) {
 				inventory = ((Dispenser) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.FURNACE) ){
+			else if (block.getType().equals(Material.FURNACE)) {
 				inventory = ((Furnace) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.BREWING_STAND) ){
+			else if (block.getType().equals(Material.BREWING_STAND)) {
 				inventory = ((BrewingStand) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.DROPPER) ){
+			else if (block.getType().equals(Material.DROPPER)) {
 				inventory = ((Dropper) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.HOPPER) ){
+			else if (block.getType().equals(Material.HOPPER)) {
 				inventory = ((Hopper) block.getState()).getInventory();
 			}
-			else if( block.getType().equals(Material.JUKEBOX) ){
+			else if (block.getType().equals(Material.JUKEBOX)) {
 				Jukebox jukebox = (Jukebox) block.getState();
-				jukebox.setPlaying( item.getType() );
+				jukebox.setPlaying(item.getType());
 				jukebox.update();
 			}
-			
-			if(inventory != null){
+
+			if (inventory != null) {
 
 				PrismProcessType pt = parameters.getProcessType();
 				String n = getType().getName();
 
 				// Rolling back a:remove or a:drop should place the item into the inventory
 				// Restoring a:insert or a:pickup should place the item into the inventory
-				if( ( pt.equals(PrismProcessType.ROLLBACK) && ( n.equals("item-remove") || n.equals("item-drop") ) ) ||
-					( pt.equals(PrismProcessType.RESTORE) && ( n.equals("item-insert") || n.equals("item-pickup") ) ) ){
-					
+				if ((pt.equals(PrismProcessType.ROLLBACK) && (n.equals("item-remove") || n.equals("item-drop"))) ||
+						(pt.equals(PrismProcessType.RESTORE) && (n.equals("item-insert") || n.equals("item-pickup")))) {
+
 					boolean added = false;
-					
+
 					// We'll attempt to put it back in the same slot
-					if( getActionData().slot >= 0 ){
+					if (getActionData().slot >= 0) {
 						// Ensure slot exists in this inventory
 						// I'm not sure why this happens but sometimes
 						// a slot larger than the contents size is recorded
 						// and triggers ArrayIndexOutOfBounds
 						// https://snowy-evening.com/botsko/prism/450/
-						if( getActionData().slot < inventory.getSize() ){
-							ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+						if (getActionData().slot < inventory.getSize()) {
+							ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
 							// Make sure nothing's there.
-							if( currentSlotItem == null ){
+							if (currentSlotItem == null) {
 								result = ChangeResultType.APPLIED;
 								added = true;
 								inventory.setItem(getActionData().slot, getItem());
@@ -444,9 +428,9 @@ public class ItemStackAction extends GenericAction {
 						}
 					}
 					// If that failed we'll attempt to put it anywhere
-					if( !added ){
-						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory, getItem());
-						if(leftovers.size() > 0){
+					if (!added) {
+						HashMap<Integer, ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory, getItem());
+						if (leftovers.size() > 0) {
 							result = ChangeResultType.SKIPPED;
 						} else {
 							result = ChangeResultType.APPLIED;
@@ -455,15 +439,15 @@ public class ItemStackAction extends GenericAction {
 					}
 
 					// Item was added to the inv, we need to remove the entity
-					if( added && ( n.equals("item-drop") || n.equals("item-pickup") ) ){
+					if (added && (n.equals("item-drop") || n.equals("item-pickup"))) {
 						Entity[] entities = getLoc().getChunk().getEntities();
-						for(Entity entity : entities){
-							if(entity instanceof Item){
+						for (Entity entity : entities) {
+							if (entity instanceof Item) {
 								ItemStack stack = ((Item) entity).getItemStack();
-								if( stack.isSimilar( getItem() ) ){
+								if (stack.isSimilar(getItem())) {
 									// Remove the event's number of items from the stack
-									stack.setAmount( stack.getAmount() - getItem().getAmount() );
-									if( stack.getAmount() == 0 ){
+									stack.setAmount(stack.getAmount() - getItem().getAmount());
+									if (stack.getAmount() == 0) {
 										entity.remove();
 									}
 									break;
@@ -472,46 +456,46 @@ public class ItemStackAction extends GenericAction {
 						}
 					}
 				}
-				
+
 				// Rolling back a:insert or a:pickup should remove the item from the inventory
 				// Restoring a:remove or a:drop should remove the item from the inventory
-				if( ( pt.equals(PrismProcessType.ROLLBACK) && ( n.equals("item-insert") || n.equals("item-pickup") ) ) ||
-					( pt.equals(PrismProcessType.RESTORE) && ( n.equals("item-remove") || n.equals("item-drop") ) ) ){
-						
+				if ((pt.equals(PrismProcessType.ROLLBACK) && (n.equals("item-insert") || n.equals("item-pickup"))) ||
+						(pt.equals(PrismProcessType.RESTORE) && (n.equals("item-remove") || n.equals("item-drop")))) {
+
 					// does inventory have item?
 					boolean removed = false;
-					
+
 					// We'll attempt to take it from the same slot
-					if( getActionData().slot >= 0 ){
-						ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+					if (getActionData().slot >= 0) {
+						ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
 						// Make sure something's there.
-						if( currentSlotItem != null ){
-							currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
+						if (currentSlotItem != null) {
+							currentSlotItem.setAmount(currentSlotItem.getAmount() - getItem().getAmount());
 							result = ChangeResultType.APPLIED;
 							removed = true;
 							inventory.setItem(getActionData().slot, currentSlotItem);
 						}
 					}
 					// If that failed we'll attempt to take it from anywhere
-					if( !removed ){
-						int slot = InventoryUtils.inventoryHasItem( inventory, getItem().getTypeId(), getItem().getDurability());
-						if(slot > -1){
+					if (!removed) {
+						int slot = InventoryUtils.inventoryHasItem(inventory, getItem().getTypeId(), getItem().getDurability());
+						if (slot > -1) {
 							inventory.removeItem(getItem());
 							result = ChangeResultType.APPLIED;
 							removed = true;
 						} else {
-//							Prism.debug("Item removal from container skipped because it's not inside.");
+							// Prism.debug("Item removal from container skipped because it's not inside.");
 							result = ChangeResultType.SKIPPED;
 						}
 					}
-					
+
 					// If the item was removed and it's a drop type, re-drop it
-					if( removed && ( n.equals("item-drop") || n.equals("item-pickup") ) ){
-						ItemUtils.dropItem( getLoc(), getItem() );
+					if (removed && (n.equals("item-drop") || n.equals("item-pickup"))) {
+						ItemUtils.dropItem(getLoc(), getItem());
 					}
 				}
 			}
 		}
-		return new ChangeResult( result, null );
+		return new ChangeResult(result, null);
 	}
 }

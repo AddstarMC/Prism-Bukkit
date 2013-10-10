@@ -11,157 +11,143 @@ import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 
 public class Ignore {
-	
+
 	/**
 	 * 
 	 */
 	private Prism plugin;
-	
+
 	/**
 	 * 
 	 */
 	private final List<String> ignore_players;
-	
+
 	/**
 	 * 
 	 */
 	private final List<String> ignore_worlds;
-	
+
 	/**
 	 * 
 	 */
 	private final boolean ignore_creative;
-	
-	
+
 	/**
-	 * 
 	 * @param plugin
 	 */
 	@SuppressWarnings("unchecked")
-	public Ignore( Prism plugin ){
+	public Ignore(Prism plugin) {
 		this.plugin = plugin;
-		ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
-		ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
-		ignore_creative = plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" );
+		ignore_players = (List<String>) plugin.getConfig().getList("prism.ignore.players");
+		ignore_worlds = (List<String>) plugin.getConfig().getList("prism.ignore.worlds");
+		ignore_creative = plugin.getConfig().getBoolean("prism.ignore.players-in-creative");
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param actionTypeName
 	 * @return
 	 */
-	public boolean event( String actionTypeName ){
+	public boolean event(String actionTypeName) {
 
 		// Always track Prism actions - it's mainly internal
 		// use anyway.
-		if(actionTypeName.contains("prism")){
+		if (actionTypeName.contains("prism")) {
 			return true;
 		}
-		
+
 		// Should we ignore this action type?
-		if( (TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + actionTypeName )) ){
+		if ((TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean("prism.tracking." + actionTypeName))) {
 			return false;
 		}
 
 		return true;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param actionTypeName
-     * @param world
-     * @param player
+	 * @param world
+	 * @param player
 	 * @return
 	 */
-	public boolean event( String actionTypeName, World world, String player ){
-		
-		if( !event( actionTypeName, world ) ){
+	public boolean event(String actionTypeName, World world, String player) {
+
+		if (!event(actionTypeName, world)) {
 			return false;
 		}
 
-		return event( player );
-		
+		return event(player);
+
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param actionTypeName
-     * @param player
+	 * @param player
 	 * @return
 	 */
-	public boolean event( String actionTypeName, Player player ){
-		
-		if( !event( actionTypeName, player.getWorld() ) ){
+	public boolean event(String actionTypeName, Player player) {
+
+		if (!event(actionTypeName, player.getWorld())) {
 			return false;
 		}
 
 		// Does the player have perms to ignore this action type?
-		if( player.hasPermission("prism.ignore.tracking."+actionTypeName) ){
+		if (player.hasPermission("prism.ignore.tracking." + actionTypeName)) {
 			return false;
 		}
-		
-		return event( player );
-		
+
+		return event(player);
+
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param player
 	 * @return
 	 */
-	public boolean event( Player player ){
-		
+	public boolean event(Player player) {
+
 		// Should we ignore this player?
-		if(ignore_players != null && ignore_players.contains( player.getName() )){
+		if (ignore_players != null && ignore_players.contains(player.getName())) {
 			return false;
 		}
-		
+
 		// Should we ignore this player for being in creative?
-		if( ignore_creative ){
-			if( player.getGameMode().equals(GameMode.CREATIVE) ){
+		if (ignore_creative) {
+			if (player.getGameMode().equals(GameMode.CREATIVE)) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param actionTypeName
-     * @param block
+	 * @param block
 	 * @return
 	 */
-	public boolean event( String actionTypeName, Block block ){
-		
-		if( !event( actionTypeName, block.getWorld() ) ){
+	public boolean event(String actionTypeName, Block block) {
+
+		if (!event(actionTypeName, block.getWorld())) {
 			return false;
 		}
-		
+
 		return true;
-		
+
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param actionTypeName
-     * @param world
+	 * @param world
 	 * @return
 	 */
-	public boolean event( String actionTypeName, World world ){
-		
+	public boolean event(String actionTypeName, World world) {
+
 		// Should we ignore this world?
-		if(ignore_worlds != null && ignore_worlds.contains( world.getName() )){
+		if (ignore_worlds != null && ignore_worlds.contains(world.getName())) {
 			return false;
 		}
-		
-		return event( actionTypeName );
-		
+
+		return event(actionTypeName);
+
 	}
 }

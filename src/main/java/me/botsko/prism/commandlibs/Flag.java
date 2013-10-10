@@ -11,31 +11,31 @@ public enum Flag {
 	NO_GROUP("Disables grouping of related actions."),
 	OVERWRITE("Forces rb/rs to not skip blocks if something unexpected is at location."),
 	SHARE("-share=player1[,player2...]", "Share a lookup result with another player.");
-	
+
 	private String description;
 	private String usage;
-	
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return description;
 	}
-	
-	public String getUsage(){
-		if(usage.isEmpty()){
+
+	public String getUsage() {
+		if (usage.isEmpty()) {
 			usage = "-" + this.name().toLowerCase();
 		}
 		return usage;
 	}
-	
+
 	/**
-	 * Defaults {@link #usage} to -(flagname) 
-	 * @param description 
+	 * Defaults {@link #usage} to -(flagname)
+	 * 
+	 * @param description
 	 */
-	private Flag(String description){
+	private Flag(String description) {
 		this("", description); // We can't use this.name() in a constructor so we defer it to the getUsage.
-	} 
-	
-	private Flag(String usage, String description){
+	}
+
+	private Flag(String usage, String description) {
 		this.usage = usage;
 		this.description = description;
 	}

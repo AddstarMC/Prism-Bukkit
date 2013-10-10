@@ -1,6 +1,5 @@
 package me.botsko.prism.appliers;
 
-
 import org.bukkit.entity.Player;
 
 public class PreviewSession {
@@ -9,30 +8,27 @@ public class PreviewSession {
 	 * 
 	 */
 	protected final Player player;
-	
+
 	/**
 	 * 
 	 */
 	protected final Previewable previewer;
-	
+
 	/**
 	 * 
 	 */
 	protected final long queryTime;
-	
-	
+
 	/**
-	 * 
 	 * @param player
 	 * @param previewer
 	 */
-	public PreviewSession( Player player, Previewable previewer ){
+	public PreviewSession(Player player, Previewable previewer) {
 		this.player = player;
 		this.previewer = previewer;
 		java.util.Date date = new java.util.Date();
 		this.queryTime = date.getTime();
 	}
-
 
 	/**
 	 * @return the player
@@ -41,14 +37,12 @@ public class PreviewSession {
 		return player;
 	}
 
-
 	/**
 	 * @return the previewer
 	 */
 	public Previewable getPreviewer() {
 		return previewer;
 	}
-
 
 	/**
 	 * @return the queryTime

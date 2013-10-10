@@ -13,50 +13,46 @@ import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 public class PrismWorldEvents implements Listener {
-	
-	
+
 	/**
-	 * 
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onStructureGrow(final StructureGrowEvent event) {
 		String type = "tree-grow";
-		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
-		if( !Prism.getIgnore().event(type,event.getWorld()) ) return;
+		if (event.getSpecies().name().toLowerCase().contains("mushroom"))
+			type = "mushroom-grow";
+		if (!Prism.getIgnore().event(type, event.getWorld()))
+			return;
 		for (BlockState block : event.getBlocks()) {
-			if(BlockUtils.isGrowableStructure( block.getType() )){
+			if (BlockUtils.isGrowableStructure(block.getType())) {
 				String player = "Environment";
-				if (event.getPlayer() != null){
+				if (event.getPlayer() != null) {
 					player = event.getPlayer().getName();
 				}
-				Prism.actionsRecorder.addToQueue( ActionFactory.create(type, block, player) );
+				Prism.actionsRecorder.addToQueue(ActionFactory.create(type, block, player));
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onWorldLoad(final WorldLoadEvent event){
-		
+	public void onWorldLoad(final WorldLoadEvent event) {
+
 		String worldName = event.getWorld().getName();
-		
-		if( !Prism.prismWorlds.containsKey( worldName ) ){
-			Prism.addWorldName( worldName );
+
+		if (!Prism.prismWorlds.containsKey(worldName)) {
+			Prism.addWorldName(worldName);
 		}
 	}
-	
-	
+
 	/**
-	 * 
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onWorldUnload(final WorldUnloadEvent event){
-		Prism.prismWorlds.remove( event.getWorld().getName() );
+	public void onWorldUnload(final WorldUnloadEvent event) {
+		Prism.prismWorlds.remove(event.getWorld().getName());
 	}
 }
