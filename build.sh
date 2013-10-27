@@ -22,7 +22,7 @@ name=""
 if [ "$1" == "master" ]; then
 	name=$gitvers
 else
-	name="$gitvers-$1"
+	name="$gitvers"
 fi
 
 nameNoV=`echo $name | cut -c 2-`
