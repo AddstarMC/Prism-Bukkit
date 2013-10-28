@@ -45,7 +45,7 @@ rm src/main/resources/plugin.yml
 mv /tmp/plugin-old.yml src/main/resources/plugin.yml
 
 # correct jar name
-mv target/prism-nightly-SNAPSHOT.jar target/Prism-$name.jar
+mv target/prism-1.6.6-SNAPSHOT.jar target/Prism-$name.jar
 
 # send file to amazon bucket
 s3cmd put --acl-public target/Prism-$name.jar s3://botsko/Prism/Prism-$name.jar
