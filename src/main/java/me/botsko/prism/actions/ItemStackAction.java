@@ -460,7 +460,7 @@ public class ItemStackAction extends GenericAction {
 			return new ChangeResult( ChangeResultType.PLANNED, null );
 		}
 		
-		if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
+		if( plugin.getConfig().getBoolean("prism.appliers.allow-rollback-items-removed-from-container") ){
 			
 			Block block = getWorld().getBlockAt( getLoc() );
 			Inventory inventory = null;

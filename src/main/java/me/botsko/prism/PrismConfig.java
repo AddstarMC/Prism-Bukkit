@@ -29,8 +29,7 @@ public class PrismConfig extends ConfigBase {
 		// set defaults
 		config.addDefault("prism.debug", false);
 //		config.addDefault("prism.language", "en-us");
-		
-		config.addDefault("prism.notify-newer-versions", true);
+
 		config.addDefault("prism.allow-metrics", true);
 			
 		// Database
