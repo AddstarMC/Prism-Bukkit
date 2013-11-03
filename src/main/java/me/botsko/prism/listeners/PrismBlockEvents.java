@@ -12,12 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
 import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -67,29 +61,7 @@ public class PrismBlockEvents implements Listener {
 	 * @param block
 	 */
 	public void logItemRemoveFromDestroyedContainer( String player_name, Block block ){
-		InventoryHolder container = null;
-		if(block.getType().equals(Material.CHEST)){
-			container = (Chest) block.getState();
-		}
-		else if(block.getType().equals(Material.TRAPPED_CHEST)){
-			container = (Chest) block.getState();
-		}
-		else if( block.getType().equals(Material.DISPENSER) ){
-			container = (Dispenser) block.getState();
-		}
-		else if( block.getType().equals(Material.FURNACE) ){
-			container = (Furnace) block.getState();
-		}
-		else if( block.getType().equals(Material.BREWING_STAND) ){
-			container = (BrewingStand) block.getState();
-		}
-		else if( block.getType().equals(Material.HOPPER) ){
-			container = (Hopper) block.getState();
-		}
-		else if( block.getType().equals(Material.DROPPER) ){
-			container = (Dropper) block.getState();
-		}
-		else if(block.getType().equals(Material.JUKEBOX)){
+		if(block.getType().equals(Material.JUKEBOX)){
 			Jukebox jukebox = (Jukebox) block.getState();
 			Material playing = jukebox.getPlaying();
 			if( playing == null || playing.equals(Material.AIR) ) return;
@@ -97,12 +69,13 @@ public class PrismBlockEvents implements Listener {
 			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player_name) );
 			return;
 		}
-		if(container != null){
+		if( block.getState() instanceof InventoryHolder ){
+			InventoryHolder container = (InventoryHolder) block.getState();
 			int slot = 0;
 			for( ItemStack i : container.getInventory().getContents()){
 				// when double chests are broken, they record *all* contents
 				// even though only half of the chest breaks.
-				if( slot > 26 ) break;
+				if( block.getType().equals(Material.CHEST) && slot > 26 ) break;
 				// record item
 				if(i != null){
 					Prism.actionsRecorder.addToQueue( ActionFactory.create("item-remove", i, i.getAmount(), slot, null, block.getLocation(), player_name) );

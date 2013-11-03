@@ -88,6 +88,10 @@ public class ActionMessage {
 			}
 		}
 		
+		if(showExtended){
+			line1 += " " + a.getBlockId() + ":" + a.getBlockSubId();
+		}
+		
 		// Aggregate count
 		if( a.getAggregateCount() > 1 ){
 			line1 += ChatColor.GREEN + " x"+a.getAggregateCount();

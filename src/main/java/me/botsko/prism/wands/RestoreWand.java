@@ -85,7 +85,7 @@ public class RestoreWand extends QueryWandBase implements Wand {
 			Restore rb = new Restore( plugin, player, results.getActionResults(), params, new PrismApplierCallback() );
 			rb.apply();
 		} else {
-            String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().replaceAll("_", " ").toLowerCase() + (block.getType().toString().endsWith("block") ? "" : " block"));
+            String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().replaceAll("_", " ").toLowerCase() + (block.getType().toString().endsWith("BLOCK") ? "" : " block"));
 			player.sendMessage( Prism.messenger.playerError( "Nothing to restore for this " + space_name + " found." ) );
 		}
 	}

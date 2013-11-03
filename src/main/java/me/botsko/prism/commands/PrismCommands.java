@@ -51,7 +51,7 @@ public class PrismCommands extends Executor {
 		/**
 		 * /prism page [page] 
 		 */
-		addSub( new String[]{"page","pg"}, "prism.lookup")
+		addSub( new String[]{"page","pg"}, new String[]{"prism.lookup.paginate","prism.lookup"})
 		.allowConsole()
 		.setMinArgs(1)
 		.setHandler(new PageCommand(prism));

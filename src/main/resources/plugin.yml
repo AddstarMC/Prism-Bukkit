@@ -27,6 +27,8 @@ permissions:
         default: op
     prism.lookup:
         default: op
+    prism.lookup.paginate:
+        default: true
     prism.extinguish:
         default: op
     prism.drain:
@@ -115,9 +117,13 @@ permissions:
         default: false
     prism.ignore.tracking.entity-kill:
         default: false
+    prism.ignore.tracking.entity-leash:
+        default: false
     prism.ignore.tracking.entity-shear:
         default: false
     prism.ignore.tracking.entity-spawn:
+        default: false
+    prism.ignore.tracking.entity-unleash:
         default: false
     prism.ignore.tracking.fireball:
         default: false

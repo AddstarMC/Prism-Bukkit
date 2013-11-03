@@ -145,13 +145,6 @@ public class Prism extends JavaPlugin {
 
 		log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 
-		if (getConfig().getBoolean("prism.notify-newer-versions")) {
-			String notice = UpdateNotification.checkForNewerBuild(plugin_version);
-			if (notice != null) {
-				log(notice);
-			}
-		}
-
 		// Load configuration, or install if new
 		loadConfig();
 

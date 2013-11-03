@@ -172,8 +172,10 @@ public class ActionRegistry {
 		registerAction( new ActionType( "entity-follow", false, false, false, "EntityAction", "lured") );
 		registerAction( new ActionType( "entity-form", true, true, true, "BlockChangeAction", "formed") );
 		registerAction( new ActionType( "entity-kill", false, true, false, "EntityAction", "killed") );
+		registerAction( new ActionType( "entity-leash", true, false, false, "EntityAction", "leashed") );
 		registerAction( new ActionType( "entity-shear", false, false, false, "EntityAction", "sheared") );
 		registerAction( new ActionType( "entity-spawn", false, false, false, "EntityAction", "spawned") );
+		registerAction( new ActionType( "entity-unleash", false, false, false, "EntityAction", "unleashed") );
 		registerAction( new ActionType( "fireball", false, false, false, null, "ignited") );
 		registerAction( new ActionType( "fire-spread", true, true, true, "BlockChangeAction", "spread") );
 		registerAction( new ActionType( "firework-launch", false, false, false, "ItemStackAction", "launched") );

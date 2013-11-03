@@ -142,13 +142,13 @@ public class QueryBuilder {
 			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
 			
 			// Make sure none of the prism process types are requested
-			boolean containtsPrismProcessType = false;
+			boolean containsPrismProcessType = false;
 			boolean hasPositiveMatchRule = false;
 			if( !action_types.isEmpty() ){
 				addCondition( buildMultipleConditions( action_types, "a.action", null ) );
 				for (Entry<String,MatchRule> entry : action_types.entrySet()){
 					if(entry.getKey().contains("prism")){
-						containtsPrismProcessType = true;
+						containsPrismProcessType = true;
 						break;
 					}
 					if(entry.getValue().equals(MatchRule.INCLUDE)){
@@ -157,7 +157,8 @@ public class QueryBuilder {
 				}
 			}
 			
-			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
+
+			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
 				addCondition( tableNameData + ".action_id NOT IN (69, 70, 71, 72)" );
 			}
 			

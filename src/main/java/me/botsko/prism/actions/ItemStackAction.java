@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import me.botsko.elixr.InventoryUtils;
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -17,18 +18,13 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BrewingStand;
-import org.bukkit.block.Chest;
-import org.bukkit.block.Dispenser;
-import org.bukkit.block.Dropper;
-import org.bukkit.block.Furnace;
-import org.bukkit.block.Hopper;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
@@ -371,7 +367,7 @@ public class ItemStackAction extends GenericAction {
 			return new ChangeResult( ChangeResultType.PLANNED, null );
 		}
 		
-		if( plugin.getConfig().getBoolean("prism.appliers.allow_rollback_items_removed_from_container") ){
+		if( plugin.getConfig().getBoolean("prism.appliers.allow-rollback-items-removed-from-container") ){
 			
 			Block block = getWorld().getBlockAt( getLoc() );
 			Inventory inventory = null;
@@ -386,32 +382,19 @@ public class ItemStackAction extends GenericAction {
 					inventory = onlinePlayer.getInventory();
 				} else {
 					// Skip if the player isn't online
+					Prism.debug("Skipping inventory process because player is offline");
 					return new ChangeResult( ChangeResultType.SKIPPED, null );
 				}
-			}
-			// Item Insert/Remove from containers
-			else if(block.getType().equals(Material.CHEST)){
-				inventory = ((Chest) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.DISPENSER) ){
-				inventory = ((Dispenser) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.FURNACE) ){
-				inventory = ((Furnace) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.BREWING_STAND) ){
-				inventory = ((BrewingStand) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.DROPPER) ){
-				inventory = ((Dropper) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.HOPPER) ){
-				inventory = ((Hopper) block.getState()).getInventory();
-			}
-			else if( block.getType().equals(Material.JUKEBOX) ){
-				Jukebox jukebox = (Jukebox) block.getState();
-				jukebox.setPlaying( item.getType() );
-				jukebox.update();
+			} else {
+				if( block.getType().equals(Material.JUKEBOX) ){
+					Jukebox jukebox = (Jukebox) block.getState();
+					jukebox.setPlaying( item.getType() );
+					jukebox.update();
+				}
+				else if( block.getState() instanceof InventoryHolder ){
+					InventoryHolder ih = (InventoryHolder) block.getState();
+					inventory = ih.getInventory();
+				}
 			}
 			
 			if(inventory != null){
@@ -447,6 +430,7 @@ public class ItemStackAction extends GenericAction {
 					if( !added ){
 						HashMap<Integer,ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory, getItem());
 						if(leftovers.size() > 0){
+							Prism.debug("Skipping adding items because there are leftovers");
 							result = ChangeResultType.SKIPPED;
 						} else {
 							result = ChangeResultType.APPLIED;
@@ -500,7 +484,7 @@ public class ItemStackAction extends GenericAction {
 							result = ChangeResultType.APPLIED;
 							removed = true;
 						} else {
-//							Prism.debug("Item removal from container skipped because it's not inside.");
+							Prism.debug("Item removal from container skipped because it's not currently inside.");
 							result = ChangeResultType.SKIPPED;
 						}
 					}
