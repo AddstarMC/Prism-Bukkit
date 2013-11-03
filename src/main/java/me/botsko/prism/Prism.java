@@ -475,11 +475,19 @@ public class Prism extends JavaPlugin {
 					"`block_subid` mediumint(5) DEFAULT NULL," +
 					"`old_block_id` mediumint(5) DEFAULT NULL," +
 					"`old_block_subid` mediumint(5) DEFAULT NULL," +
-					"`data` varchar(255) DEFAULT NULL," +
 					"PRIMARY KEY (`id`)," +
 					"KEY `x` (`x`)," +
 					"KEY `block_id` (`block_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			st.executeUpdate(query);
+			
+			// extra data
+			query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
+					+ "`extra_id` int(10) unsigned NOT NULL,"
+					+ "`data_id` int(10) unsigned NOT NULL,"
+					+ "`data` mediumtext NOT NULL,"
+					+ "PRIMARY KEY (`extra_id`)"
+					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
 			
 			// meta

@@ -119,7 +119,7 @@ public class ActionRecorder implements Runnable {
         		// @todo do something, error here
         	}
 			
-	        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 	        s.setLong(1, System.currentTimeMillis() / 1000L);
 	        s.setInt(2,world_id);
 	        s.setInt(3,player_id);
@@ -131,8 +131,14 @@ public class ActionRecorder implements Runnable {
 	        s.setInt(9,(int)a.getX());
 	        s.setInt(10,(int)a.getY());
 	        s.setInt(11,(int)a.getZ());
-	        s.setString(12,a.getData());
 	        s.executeUpdate();
+	        
+	        // Add insert query for extra data if needed
+			if( a.getData() != null && !a.getData().isEmpty() ){
+				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?)");
+				s.setString(1, a.getData());
+				s.executeUpdate();
+			}
 	        
 	        generatedKeys = s.getGeneratedKeys();
 	        if(generatedKeys.next()){
@@ -199,7 +205,7 @@ public class ActionRecorder implements Runnable {
 					return;
 				}
 		        conn.setAutoCommit(false);
-		        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+		        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 		        int i = 0;
 		        while (!queue.isEmpty()){
 		        	
@@ -238,16 +244,22 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(9,(int)a.getX());
 			        s.setInt(10,(int)a.getY());
 			        s.setInt(11,(int)a.getZ());
-			        s.setString(12,a.getData());
 		            s.addBatch();
+		            
+		            // Add insert query for extra data if needed
+					if( a.getData() != null && !a.getData().isEmpty() ){
+						s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?)");
+						s.setString(1, a.getData());
+						s.addBatch();
+					}
+		            
+		            
 		            if ((i + 1) % perBatch == 0) {
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
 		                s.executeBatch(); // Execute every x items.
 		            }
 		            i++;
 		        }
-		        
-//		        Prism.debug("Recorder: Queue emptied into single batch. Size: " + i);
 		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);
