@@ -43,6 +43,7 @@ public class ItemStackAction extends GenericAction {
 		public String[] enchs;
 		public String by;
 		public String title;
+		public String[] content;
 		public int slot = -1;
 		public int[] effectColors;
 		public int[] fadeColors;
@@ -127,6 +128,7 @@ public class ItemStackAction extends GenericAction {
 			if(bookMeta != null){
 				actionData.by = bookMeta.getAuthor();
 				actionData.title = bookMeta.getTitle();
+				actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
 			}
 		}
 		
@@ -266,6 +268,7 @@ public class ItemStackAction extends GenericAction {
 			if(actionData.by != null && !actionData.by.isEmpty()){
 				bookMeta.setAuthor( actionData.by );
 				bookMeta.setTitle( actionData.title );
+				bookMeta.setPages( actionData.content );
 			}
 			item.setItemMeta(bookMeta);
 		}
