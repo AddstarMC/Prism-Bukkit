@@ -33,6 +33,7 @@ public class QueryBuilder {
 	 * 
 	 */
 	private String tableNameData = "prism_data";
+	private String tableNameDataExtra = "prism_data_extra";
 	
 	
 	/**
@@ -113,9 +114,10 @@ public class QueryBuilder {
 		/**
 		 * Joins
 		 */
-		query += "INNER JOIN prism_players p ON p.player_id = prism_data.player_id ";
-		query += "INNER JOIN prism_actions a ON a.action_id = prism_data.action_id ";
-		query += "INNER JOIN prism_worlds w ON w.world_id = prism_data.world_id ";
+		query += "INNER JOIN prism_players p ON p.player_id = "+tableNameData+".player_id ";
+		query += "INNER JOIN prism_actions a ON a.action_id = "+tableNameData+".action_id ";
+		query += "INNER JOIN prism_worlds w ON w.world_id = "+tableNameData+".world_id ";
+		query += "INNER JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
 		
 		/**
 		 * ID
@@ -198,7 +200,7 @@ public class QueryBuilder {
 			 */
 			HashMap<String,MatchRule> entityNames = parameters.getEntities();
 			if( entityNames.size() > 0 ){
-				addCondition( buildMultipleConditions( entityNames, tableNameData+".data", "entity_name\":\"%s" ) );
+				addCondition( buildMultipleConditions( entityNames, "ex.data", "entity_name\":\"%s" ) );
 			}
 			
 			/**
@@ -218,7 +220,7 @@ public class QueryBuilder {
 			 */
 			String keyword = parameters.getKeyword();
 			if(keyword != null){
-				addCondition( tableNameData+".data LIKE '%"+keyword+"%'" );
+				addCondition( "ex.data LIKE '%"+keyword+"%'" );
 			}
 			
 			/**
@@ -241,7 +243,7 @@ public class QueryBuilder {
 			 * Parent process id
 			 */
 			if(parameters.getParentId() > 0){
-				addCondition( String.format("data = %d", parameters.getParentId()) );
+				addCondition( String.format("ex.data = %d", parameters.getParentId()) );
 			}
 			
 			
@@ -271,7 +273,7 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
-					query += " GROUP BY "+tableNameData+".action_id, "+tableNameData+".player_id, "+tableNameData+".block_id, "+tableNameData+".data, DATE(FROM_UNIXTIME("+tableNameData+".epoch))";
+					query += " GROUP BY "+tableNameData+".action_id, "+tableNameData+".player_id, "+tableNameData+".block_id, ex.data, DATE(FROM_UNIXTIME("+tableNameData+".epoch))";
 				}
 			
 				/**

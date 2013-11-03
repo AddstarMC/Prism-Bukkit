@@ -253,7 +253,6 @@ public class ActionRecorder implements Runnable {
 						s.addBatch();
 					}
 		            
-		            
 		            if ((i + 1) % perBatch == 0) {
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
 		                s.executeBatch(); // Execute every x items.
