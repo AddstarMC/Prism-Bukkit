@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
@@ -33,6 +34,11 @@ public class ActionRecorder implements Runnable {
 	 * Track the timestamp at which we last paused
 	 */
 	private long lastPauseTime = 0;
+	
+	/**
+	 * 
+	 */
+	private ArrayList<String> extraDataQueue = new ArrayList<String>();
 
 	
 	/**
@@ -205,7 +211,7 @@ public class ActionRecorder implements Runnable {
 					return;
 				}
 		        conn.setAutoCommit(false);
-		        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+		        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		        int i = 0;
 		        while (!queue.isEmpty()){
 		        	
@@ -246,16 +252,14 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
 		            
-		            // Add insert query for extra data if needed
-					if( a.getData() != null && !a.getData().isEmpty() ){
-						s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?)");
-						s.setString(1, a.getData());
-						s.addBatch();
-					}
-		            
+		            extraDataQueue.add( a.getData() );
+
 		            if ((i + 1) % perBatch == 0) {
+		            	
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
 		                s.executeBatch(); // Execute every x items.
+		                insertExtraData( s.getGeneratedKeys() );
+		                
 		            }
 		            i++;
 		        }
@@ -264,6 +268,7 @@ public class ActionRecorder implements Runnable {
 		        plugin.queueStats.addRunCount(actionsRecorded);
 		        
 		        s.executeBatch();
+		        insertExtraData( s.getGeneratedKeys() );
 		        conn.commit();
 
 	    	}
@@ -273,6 +278,46 @@ public class ActionRecorder implements Runnable {
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 * @param keys
+	 */
+	protected void insertExtraData( ResultSet keys ){
+
+		PreparedStatement s = null;
+	    Connection conn = null;
+
+	    try {
+		    conn = Prism.dbc();
+		    conn.setAutoCommit(false);
+	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
+	        int i = 0;
+			while(keys.next()){
+				
+				String data = extraDataQueue.get(i);
+				
+				if( data != null && !data.isEmpty() ){
+					s.setInt(1, keys.getInt(1));
+					s.setString(2, data);
+					s.addBatch();
+				}
+				
+				i++;
+				
+			}
+			s.executeBatch();
+			conn.commit();
+	    } catch (SQLException e){
+	    	e.printStackTrace();
+	    	plugin.handleDatabaseException( e );
+        } finally {
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	extraDataQueue.clear();
         }
 	}
 

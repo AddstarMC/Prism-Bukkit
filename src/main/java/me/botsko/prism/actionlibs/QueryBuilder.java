@@ -117,7 +117,7 @@ public class QueryBuilder {
 		query += "INNER JOIN prism_players p ON p.player_id = "+tableNameData+".player_id ";
 		query += "INNER JOIN prism_actions a ON a.action_id = "+tableNameData+".action_id ";
 		query += "INNER JOIN prism_worlds w ON w.world_id = "+tableNameData+".world_id ";
-		query += "INNER JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
+		query += "LEFT JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
 		
 		/**
 		 * ID
