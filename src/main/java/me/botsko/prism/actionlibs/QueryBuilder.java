@@ -232,7 +232,7 @@ public class QueryBuilder {
 				String coordCond = "(";
 				int l = 0;
 				for( Location loc : locations ){
-					coordCond += (l > 0 ? " OR" : "" ) + " (prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ() + ")";
+					coordCond += (l > 0 ? " OR" : "" ) + " ("+tableNameData+".x = " +(int)loc.getBlockX()+ " AND "+tableNameData+".y = " +(int)loc.getBlockY()+ " AND "+tableNameData+".z = " +(int)loc.getBlockZ() + ")";
 					l++;
 				}
 				coordCond += ")";

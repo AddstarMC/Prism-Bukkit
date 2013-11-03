@@ -428,7 +428,7 @@ public class Prism extends JavaPlugin {
 		if (e.getMessage().contains("marked as crashed")) {
 			String[] msg = new String[2];
 			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
+			msg[1] = "Try running `CHECK TABLE prism_data` and then `REPAIR TABLE prism_data`.";
 			logSection(msg);
 		}
 		e.printStackTrace();
