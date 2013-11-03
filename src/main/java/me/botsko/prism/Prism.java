@@ -167,17 +167,6 @@ public class Prism extends JavaPlugin {
 			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
 			logSection(dbDisabled);
 			disablePlugin();
-		} else {
-			if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
-				Statement st;
-				try {
-					st = test_conn.createStatement();
-					st.executeUpdate("PRAGMA journal_mode = WAL;");
-					st.close();
-				} catch (SQLException e) {
-					handleDatabaseException(e);
-				}
-			}
 		}
 		if (test_conn != null) {
 			try {
@@ -310,44 +299,24 @@ public class Prism extends JavaPlugin {
 
 		DataSource pool = null;
 
-		// SQLITE
-		if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
-			try {
-				Class.forName("org.sqlite.JDBC");
-				pool = new DataSource();
-				pool.setDriverClassName("org.sqlite.JDBC");
-				pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
-			} catch (ClassNotFoundException e) {
-				log("Error: SQLite database connection was not established. "+ e.getMessage());
-			}
-		}
-
-		// MYSQL
-		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql")) {
-			String dns = "jdbc:mysql://"
-					+ config.getString("prism.mysql.hostname") + ":"
-					+ config.getString("prism.mysql.port") + "/"
-					+ config.getString("prism.mysql.database");
-			pool = new DataSource();
-			pool.setDriverClassName("com.mysql.jdbc.Driver");
-			pool.setUrl(dns);
-			pool.setUsername(config.getString("prism.mysql.username"));
-			pool.setPassword(config.getString("prism.mysql.password"));
-		}
-
-		if (pool != null) {
-			pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
-			pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
-			pool.setMaxIdle(config.getInt("prism.database.max-idle-connections"));
-			pool.setMaxWait(config.getInt("prism.database.max-wait"));
-			pool.setRemoveAbandoned(true);
-			pool.setRemoveAbandonedTimeout(60);
-			pool.setTestOnBorrow(true);
-			pool.setValidationQuery("/* ping */SELECT 1");
-			pool.setValidationInterval(30000);
-		} else {
-			log("Error: Database connection was not established. Please check your configuration file.");
-		}
+		String dns = "jdbc:mysql://"
+				+ config.getString("prism.mysql.hostname") + ":"
+				+ config.getString("prism.mysql.port") + "/"
+				+ config.getString("prism.mysql.database");
+		pool = new DataSource();
+		pool.setDriverClassName("com.mysql.jdbc.Driver");
+		pool.setUrl(dns);
+		pool.setUsername(config.getString("prism.mysql.username"));
+		pool.setPassword(config.getString("prism.mysql.password"));
+		pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
+		pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
+		pool.setMaxIdle(config.getInt("prism.database.max-idle-connections"));
+		pool.setMaxWait(config.getInt("prism.database.max-wait"));
+		pool.setRemoveAbandoned(true);
+		pool.setRemoveAbandonedTimeout(60);
+		pool.setTestOnBorrow(true);
+		pool.setValidationQuery("/* ping */SELECT 1");
+		pool.setValidationInterval(30000);
 
 		return pool;
 	}
