@@ -184,7 +184,6 @@ public class Prism extends JavaPlugin {
 			
 			// Cache world IDs
 			cacheWorldPrimaryKeys();
-			cacheActionPrimaryKeys();
 			cacheOnlinePlayerPrimaryKeys();
 			
 			// ensure current worlds are added
@@ -453,7 +452,7 @@ public class Prism extends JavaPlugin {
 			
 			// extra data
 			query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
-					+ "`extra_id` int(10) unsigned NOT NULL,"
+					+ "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 					+ "`data_id` int(10) unsigned NOT NULL,"
 					+ "`data` mediumtext NOT NULL,"
 					+ "PRIMARY KEY (`extra_id`)"
@@ -485,10 +484,14 @@ public class Prism extends JavaPlugin {
 					"PRIMARY KEY (`world_id`)" +
 					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
-			
+
 			// actions
-			query = "INSERT INTO `prism_actions` VALUES (1, 'block-break'),(2, 'block-burn'),(3, 'block-fade'),(4, 'block-fall'),(5, 'block-form'),(6, 'block-place'),(7, 'block-shift'),(8, 'block-spread'),(9, 'block-use'),(10, 'bucket-fill'),(11, 'bonemeal-use'),(12, 'container-access'),(13, 'cake-eat'),(14, 'craft-item'),(15, 'creeper-explode'),(16, 'crop-trample'),(17, 'dragon-eat'),(18, 'enchant-item'),(19, 'enderman-pickup'),(20, 'enderman-place'),(21, 'entity-break'),(22, 'entity-dye'),(23, 'entity-explode'),(24, 'entity-follow'),(25, 'entity-form'),(26, 'entity-kill'),(27, 'entity-shear'),(28, 'entity-spawn'),(29, 'fireball'),(30, 'fire-spread'),(31, 'firework-launch'),(32, 'hangingitem-break'),(33, 'hangingitem-place'),(34, 'item-drop'),(35, 'item-insert'),(36, 'item-pickup'),(37, 'item-remove'),(38, 'lava-break'),(39, 'lava-bucket'),(40, 'lava-flow'),(41, 'lava-ignite'),(42, 'leaf-decay'),(43, 'lighter'),(44, 'lightning'),(45, 'mushroom-grow'),(46, 'player-chat'),(47, 'player-command'),(48, 'player-death'),(49, 'player-join'),(50, 'player-kill'),(51, 'player-quit'),(52, 'player-teleport'),(53, 'potion-splash'),(54, 'sheep-eat'),(55, 'sign-change'),(56, 'spawnegg-use'),(57, 'tnt-explode'),(58, 'tnt-prime'),(59, 'tree-grow'),(60, 'vehicle-break'),(61, 'vehicle-enter'),(62, 'vehicle-exit'),(63, 'vehicle-place'),(64, 'water-break'),(65, 'water-bucket'),(66, 'water-flow'),(67, 'world-edit'),(68, 'xp-pickup'),(69, 'prism-drain'),(70, 'prism-extinguish'),(71, 'prism-process'),(72, 'prism-rollback');";
-			st.executeUpdate(query);
+			cacheActionPrimaryKeys();
+			if( prismActions.isEmpty() ){
+				query = "INSERT INTO `prism_actions` VALUES (1, 'block-break'),(2, 'block-burn'),(3, 'block-fade'),(4, 'block-fall'),(5, 'block-form'),(6, 'block-place'),(7, 'block-shift'),(8, 'block-spread'),(9, 'block-use'),(10, 'bucket-fill'),(11, 'bonemeal-use'),(12, 'container-access'),(13, 'cake-eat'),(14, 'craft-item'),(15, 'creeper-explode'),(16, 'crop-trample'),(17, 'dragon-eat'),(18, 'enchant-item'),(19, 'enderman-pickup'),(20, 'enderman-place'),(21, 'entity-break'),(22, 'entity-dye'),(23, 'entity-explode'),(24, 'entity-follow'),(25, 'entity-form'),(26, 'entity-kill'),(27, 'entity-shear'),(28, 'entity-spawn'),(29, 'fireball'),(30, 'fire-spread'),(31, 'firework-launch'),(32, 'hangingitem-break'),(33, 'hangingitem-place'),(34, 'item-drop'),(35, 'item-insert'),(36, 'item-pickup'),(37, 'item-remove'),(38, 'lava-break'),(39, 'lava-bucket'),(40, 'lava-flow'),(41, 'lava-ignite'),(42, 'leaf-decay'),(43, 'lighter'),(44, 'lightning'),(45, 'mushroom-grow'),(46, 'player-chat'),(47, 'player-command'),(48, 'player-death'),(49, 'player-join'),(50, 'player-kill'),(51, 'player-quit'),(52, 'player-teleport'),(53, 'potion-splash'),(54, 'sheep-eat'),(55, 'sign-change'),(56, 'spawnegg-use'),(57, 'tnt-explode'),(58, 'tnt-prime'),(59, 'tree-grow'),(60, 'vehicle-break'),(61, 'vehicle-enter'),(62, 'vehicle-exit'),(63, 'vehicle-place'),(64, 'water-break'),(65, 'water-bucket'),(66, 'water-flow'),(67, 'world-edit'),(68, 'xp-pickup'),(69, 'prism-drain'),(70, 'prism-extinguish'),(71, 'prism-process'),(72, 'prism-rollback');";
+				st.executeUpdate(query);
+				cacheActionPrimaryKeys();
+			}
 
 			// close
 			st.close();
