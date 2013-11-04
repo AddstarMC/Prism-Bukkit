@@ -117,6 +117,11 @@ public class Ignore {
 	 */
 	public boolean event( Player player ){
 		
+		if( player == null || player.getName() == null ){
+			Prism.debug("Player is being ignored, name is null");
+			return false;
+		}
+		
 		// Should we ignore this player?
 		if(ignore_players != null && ignore_players.contains( player.getName() )){
 			Prism.debug("Player is being ignored, per config: " + player.getName());
