@@ -79,6 +79,10 @@ public class Prism extends JavaPlugin {
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
+	// MCPC+ start
+	protected static ArrayList<Integer> illegalBreakBlocks;
+	protected static ArrayList<Integer> illegalPhysicsBlocks;
+	// MCPC+ end
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 
@@ -281,6 +285,10 @@ public class Prism extends JavaPlugin {
 		
 		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
+		// MCPC+ start
+		illegalPhysicsBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockphysics-ids");
+		illegalBreakBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockbreak-ids");
+		// MCPC+ end
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
 		
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
@@ -446,7 +454,7 @@ public class Prism extends JavaPlugin {
 						+ "action_type TEXT," + "player TEXT," + "world TEXT,"
 						+ "x INT," + "y INT," + "z INT," + "block_id INT,"
 						+ "block_subid INT," + "old_block_id INT,"
-						+ "old_block_subid INT," + "data TEXT" + ")";
+						+ "old_block_subid INT," + "data TEXT," + "te_data TEXT" + ")"; // MCPC+ - create table with extra column for TE data
 				Statement st = conn.createStatement();
 				st.executeUpdate(query);
 				st.executeUpdate("CREATE INDEX IF NOT EXISTS x ON prism_actions (x ASC)");
@@ -483,7 +491,7 @@ public class Prism extends JavaPlugin {
 						+ "`block_subid` mediumint(5) default NULL,"
 						+ "`old_block_id` mediumint(5) default NULL,"
 						+ "`old_block_subid` mediumint(5) default NULL,"
-						+ "`data` varchar(255) NULL," + "PRIMARY KEY  (`id`), "
+						+ "`data` varchar(255) NULL," + "`te_data` TEXT NULL," + "PRIMARY KEY  (`id`), " // MCPC+ - create table with extra column for TE data
 						+ "KEY `x` (`x`), " + "KEY `block_id` (`block_id`)"
 						+ ") ENGINE=InnoDB;";
 
@@ -555,7 +563,24 @@ public class Prism extends JavaPlugin {
 	public static ArrayList<Integer> getIllegalBlocks(){
 		return illegalBlocks;
 	}
-	
+
+	// MCPC+ start
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalPhysicsBlocks(){
+		return illegalPhysicsBlocks;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalBreakBlocks(){
+		return illegalBreakBlocks;
+	}
+	// MCPC+ end
 	
 	/**
 	 * 

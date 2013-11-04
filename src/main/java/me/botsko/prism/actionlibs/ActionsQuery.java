@@ -131,6 +131,7 @@ public class ActionsQuery {
 					baseHandler.setOldBlockId( rs.getInt(11) );
 					baseHandler.setOldBlockSubId( rs.getInt(12) );
 					baseHandler.setData( rs.getString(13) );
+					baseHandler.setTileEntityData(rs.getString(14)); // MCPC+ - set te data
     				baseHandler.setMaterialAliases( plugin.getItems() );
     				
     				// Set aggregate counts if a lookup
@@ -243,6 +244,7 @@ public class ActionsQuery {
     			process.setY( rs.getInt("y") );
     			process.setZ( rs.getInt("z") );
     			process.setData( rs.getString("data") );
+    			process.setTileEntityData(rs.getString("te_data")); // MCPC+ - set te data
 			}
             
         } catch (SQLException e) {
