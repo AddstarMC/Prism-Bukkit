@@ -86,6 +86,7 @@ public class QueryBuilder {
 			columns.add("old_block_id");
 			columns.add("old_block_subid");
 			columns.add("data");
+			columns.add("te_data"); // MCPC+ - add column for TileEntity data
 			
 			if( shouldGroup ){
 				columns.add("COUNT(*) counted");

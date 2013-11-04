@@ -38,7 +38,7 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	private ArrayList<String> extraDataQueue = new ArrayList<String>();
+	private ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 
 	
 	/**
@@ -141,8 +141,9 @@ public class ActionRecorder implements Runnable {
 	        
 	        // Add insert query for extra data if needed
 			if( a.getData() != null && !a.getData().isEmpty() ){
-				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?)");
+				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?,?)");
 				s.setString(1, a.getData());
+				s.setString(2, a.getTileEntityData()); // MCPC+ - grab te data
 				s.executeUpdate();
 			}
 	        
@@ -252,7 +253,7 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
 		            
-		            extraDataQueue.add( a.getData() );
+		            extraDataQueue.add( a );
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
@@ -294,15 +295,16 @@ public class ActionRecorder implements Runnable {
 	    try {
 		    conn = Prism.dbc();
 		    conn.setAutoCommit(false);
-	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
+	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?,?)");
 	        int i = 0;
 			while(keys.next()){
 				
-				String data = extraDataQueue.get(i);
+				Handler a = extraDataQueue.get(i);
 				
-				if( data != null && !data.isEmpty() ){
+				if( a.getData() != null && !a.getData().isEmpty() ){
 					s.setInt(1, keys.getInt(1));
-					s.setString(2, data);
+					s.setString(2, a.getData());
+					s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
 					s.addBatch();
 				}
 				

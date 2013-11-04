@@ -348,7 +348,8 @@ public class PrismPlayerEvents implements Listener {
 
 			String coord_key = null;
 			switch (block.getType()){
-				case FURNACE:
+				// MCPC+ start - removed hardcoded check
+				/*case FURNACE:
 				case DISPENSER:
 				case CHEST:
 				case ENDER_CHEST:
@@ -357,10 +358,8 @@ public class PrismPlayerEvents implements Listener {
 				case BREWING_STAND:
 				case TRAPPED_CHEST:
 				case HOPPER:
-				case DROPPER:
-					if( !Prism.getIgnore().event("container-access",player) ) return;
-					Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
-					break;
+				case DROPPER:*/
+				// MCPC+ end
 				case JUKEBOX:
 					recordDiscInsert( block, player );
 					break;
@@ -402,6 +401,10 @@ public class PrismPlayerEvents implements Listener {
 					}
 					break;
 				default:
+					// MCPC+ start - handle container access
+					if( !Prism.getIgnore().event("container-access",player) ) return;
+						Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
+					// MCPC+ end
 					break;
 			}
 			

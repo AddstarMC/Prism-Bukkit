@@ -83,6 +83,10 @@ public class Prism extends JavaPlugin {
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
+	// MCPC+ start
+	protected static ArrayList<Integer> illegalBreakBlocks;
+	protected static ArrayList<Integer> illegalPhysicsBlocks;
+	// MCPC+ end
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 
@@ -282,6 +286,10 @@ public class Prism extends JavaPlugin {
 		
 		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
+		// MCPC+ start
+		illegalPhysicsBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockphysics-ids");
+		illegalBreakBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockbreak-ids");
+		// MCPC+ end
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
 		
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
@@ -455,6 +463,7 @@ public class Prism extends JavaPlugin {
 					+ "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 					+ "`data_id` int(10) unsigned NOT NULL,"
 					+ "`data` mediumtext NOT NULL,"
+					+ "`te_data` text NOT NULL,"
 					+ "PRIMARY KEY (`extra_id`)"
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 			st.executeUpdate(query);
@@ -513,7 +522,6 @@ public class Prism extends JavaPlugin {
 		PreparedStatement s = null;
 		ResultSet rs = null;
 		try {
-
 			conn = dbc();
     		s = conn.prepareStatement( "SELECT action_id, action FROM prism_actions" );
     		rs = s.executeQuery();
@@ -754,7 +762,24 @@ public class Prism extends JavaPlugin {
 	public static ArrayList<Integer> getIllegalBlocks(){
 		return illegalBlocks;
 	}
-	
+
+	// MCPC+ start
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalPhysicsBlocks(){
+		return illegalPhysicsBlocks;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalBreakBlocks(){
+		return illegalBreakBlocks;
+	}
+	// MCPC+ end
 	
 	/**
 	 * 
