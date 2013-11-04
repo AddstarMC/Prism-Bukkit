@@ -227,18 +227,33 @@ public class PreprocessArgs {
 							respond( sender, Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
 							return null;
 						}
+						
+						// Safety checks for max lookup radius
+						int max_lookup_radius = plugin.getConfig().getInt("prism.queries.max-lookup-radius");
+						if( max_lookup_radius <= 0 ){
+							max_lookup_radius = 5;
+							Prism.log("Max lookup radius may not be lower than one. Using safe value of five.");
+						}
+						
+						// Safety checks for max applier radius
+						int max_applier_radius = plugin.getConfig().getInt("prism.queries.max-applier-radius");
+						if( max_applier_radius <= 0 ){
+							max_applier_radius = 5;
+							Prism.log("Max applier radius may not be lower than one. Using safe value of five.");
+						}
+						
 						// Does the radius exceed the configured max?
-						if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-lookup-radius") ){
+						if( parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > max_lookup_radius ){
 							// If player does not have permission to override the max
 							if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
-								radius = plugin.getConfig().getInt("prism.queries.max-lookup-radius");
+								radius = max_lookup_radius;
 								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
 							}
 						}
-						if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > plugin.getConfig().getInt("prism.queries.max-applier-radius") ){
+						if( !parameters.getProcessType().equals(PrismProcessType.LOOKUP) && radius > max_applier_radius ){
 							// If player does not have permission to override the max
 							if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
-								radius = plugin.getConfig().getInt("prism.queries.max-applier-radius");
+								radius = max_applier_radius;
 								respond( sender, Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config.") );
 							}
 						}
@@ -330,7 +345,7 @@ public class PreprocessArgs {
 							parameters.setAllowNoRadius(true);
 							
 						} else {
-							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for a assitance.") );
+							respond( sender, Prism.messenger.playerError("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.") );
 							return null;
 						}
 					}
@@ -364,7 +379,7 @@ public class PreprocessArgs {
 								if(ids.length == 2 && TypeUtils.isNumeric(ids[0]) && TypeUtils.isNumeric(ids[1])){
 									parameters.addBlockFilter( Integer.parseInt( ids[0] ), Byte.parseByte( ids[1] ) );
 								} else {
-									respond( sender, Prism.messenger.playerError("Invalid block filter '"+val+"'. Use /prism ? [command] for help.") );
+									respond( sender, Prism.messenger.playerError("Invalid block name '"+val+"'.") );
 									return null;
 								}
 							} else {
@@ -388,6 +403,9 @@ public class PreprocessArgs {
 												}
 											}
 										}
+									} else {
+										respond( sender, Prism.messenger.playerError("Invalid block name '"+b+"'.") );
+										return null;
 									}
 								}
 							}
@@ -477,7 +495,7 @@ public class PreprocessArgs {
 			
 			// Validate any required args are set
 			if(foundArgs.isEmpty()){
-				respond( sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for a assitance.") );
+				respond( sender, Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance.") );
 				return null;
 			}
 			
@@ -558,7 +576,7 @@ public class PreprocessArgs {
 						else if(tfFormat.equals("s")){
 							cal.add(Calendar.SECOND, -1 * tfValue);
 						} else {
-							respond( sender, Prism.messenger.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for a help.") );
+							respond( sender, Prism.messenger.playerError("Invalid timeframe values for "+tfFormat+". Use /prism ? for help.") );
 							return null;
 						}
 					}
@@ -569,7 +587,7 @@ public class PreprocessArgs {
 		}
 		
 		if(dateFrom == null){
-			respond( sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for a help.") );
+			respond( sender, Prism.messenger.playerError("Invalid timeframe values. Use /prism ? for help.") );
 		}
 
 		return dateFrom;

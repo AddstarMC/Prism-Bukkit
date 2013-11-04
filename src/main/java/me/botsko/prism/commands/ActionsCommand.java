@@ -26,7 +26,7 @@ public class ActionsCommand implements SubHandler {
 	
 	/**
 	 * Display param help
-	 * @param player
+	 * @param sender
 	 */
 	private void help( CommandSender sender ) {
 		

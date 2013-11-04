@@ -83,7 +83,7 @@ public class PrismPlayerEvents implements Listener {
 		if( plugin.getConfig().getBoolean("prism.alerts.illegal-commands.enabled") ){
 			if( illegalCommands.contains( primaryCmd) ){
 				String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: " + cmd;
-				player.sendMessage( Prism.messenger.playerError("Sorry, this command has disabled from in-game use.") );
+				player.sendMessage( Prism.messenger.playerError("Sorry, this command is not available in-game.") );
 	        	plugin.alertPlayers( null, msg );
 	        	event.setCancelled(true);
 	        	// Log to console
@@ -339,7 +339,8 @@ public class PrismPlayerEvents implements Listener {
 
 			String coord_key = null;
 			switch (block.getType()){
-				case FURNACE:
+				// MCPC+ start - removed hardcoded check
+				/*case FURNACE:
 				case DISPENSER:
 				case CHEST:
 				case ENDER_CHEST:
@@ -348,10 +349,8 @@ public class PrismPlayerEvents implements Listener {
 				case BREWING_STAND:
 				case TRAPPED_CHEST:
 				case HOPPER:
-				case DROPPER:
-					if( !Prism.getIgnore().event("container-access",player) ) return;
-					Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
-					break;
+				case DROPPER:*/
+				// MCPC+ end
 				case JUKEBOX:
 					recordDiscInsert( block, player );
 					break;
@@ -393,6 +392,10 @@ public class PrismPlayerEvents implements Listener {
 					}
 					break;
 				default:
+					// MCPC+ start - handle container access
+					if( !Prism.getIgnore().event("container-access",player) ) return;
+						Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
+					// MCPC+ end
 					break;
 			}
 			
@@ -477,7 +480,6 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param block
 	 * @param inhand
-	 * @param clickedFace
 	 * @param player
 	 */
 	protected void recordMonsterEggUse( Block block, ItemStack inhand, String player ){

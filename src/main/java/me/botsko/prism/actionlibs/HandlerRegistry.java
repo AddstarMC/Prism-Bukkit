@@ -43,8 +43,7 @@ public class HandlerRegistry<H> {
 	
 	/**
 	 * Register a new action type for event recording, lookups, etc.
-	 * @param <H>
-	 * @param actionType
+	 * @param handlerClass
 	 */
 	protected void registerHandler( Class<? extends Handler> handlerClass ){
 		String[] names = handlerClass.getName().split("\\.");
@@ -56,7 +55,8 @@ public class HandlerRegistry<H> {
 	
 	/**
 	 * Register a new action type for event recording, lookups, etc.
-	 * @param actionType
+	 * @param apiPlugin
+	 * @param handlerClass
 	 * @throws InvalidActionException 
 	 */
 	public void registerCustomHandler( Plugin apiPlugin, Class<? extends Handler> handlerClass ) throws InvalidActionException{

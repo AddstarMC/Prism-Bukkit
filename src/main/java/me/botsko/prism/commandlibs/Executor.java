@@ -37,7 +37,9 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param prism
+	 * @param plugin
+	 * @param mode
+	 * @param perm_base
 	 */
 	public Executor( Plugin plugin, String mode, String perm_base ) {
 		this.mode = (mode == null ? "command" : mode);
@@ -113,8 +115,8 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
+	 * @param commandAliases
+	 * @param permissionNodes
 	 * @param handler
 	 * @return
 	 */
@@ -129,8 +131,8 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
+	 * @param commandAliases
+	 * @param permissionNodes
 	 * @return
 	 */
 	protected SubCommand addSub( String[] commandAliases, String[] permissionNodes ) {
@@ -140,9 +142,8 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
-	 * @param handler
+	 * @param commandAliases
+	 * @param permissionNode
 	 * @return
 	 */
 	protected SubCommand addSub( String[] commandAliases, String permissionNode ) {
@@ -152,9 +153,8 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
-	 * @param handler
+	 * @param commandAlias
+	 * @param permissionNodes
 	 * @return
 	 */
 	protected SubCommand addSub( String commandAlias, String[] permissionNodes ) {
@@ -164,9 +164,8 @@ public class Executor implements CommandExecutor {
 	
 	/**
 	 * 
-	 * @param name
-	 * @param permission
-	 * @param handler
+	 * @param commandAlias
+	 * @param permissionNode
 	 * @return
 	 */
 	protected SubCommand addSub( String commandAlias, String permissionNode ) {

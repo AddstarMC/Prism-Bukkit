@@ -8,9 +8,9 @@ public class PrismRollbackAction extends BlockChangeAction {
 	
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param oldblock
+	 * @param newBlock
+	 * @param parent_id
 	 */
 	public void setBlockChange(  BlockState oldblock, BlockState newBlock, int parent_id ){
 		this.data = ""+parent_id;

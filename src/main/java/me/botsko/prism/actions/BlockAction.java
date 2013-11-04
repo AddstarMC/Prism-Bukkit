@@ -22,6 +22,18 @@ import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+// MCPC+ start
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import net.minecraft.server.v1_5_R3.MinecraftServer;
+import net.minecraft.server.v1_5_R3.NBTCompressedStreamTools;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_5_R3.Packet53BlockChange;
+import net.minecraft.server.v1_5_R3.TileEntity;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+// MCPC+ end
 
 public class BlockAction extends GenericAction {
 	
@@ -116,8 +128,14 @@ public class BlockAction extends GenericAction {
 			}
 		}
 	}
-	
-	
+
+	// MCPC+ start - add method to set TileEntity data
+	@Override
+	public void setTileEntityData(String data) {
+		this.te_data = data;
+	}
+	// MCPC+ end
+
 	/**
 	 * 
 	 */
@@ -326,8 +344,8 @@ public class BlockAction extends GenericAction {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 		if( !getType().requiresHandler("BlockChangeAction") && !getType().requiresHandler("PrismRollbackAction") ){
-			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) ){
-//				System.out.print("Block skipped due to being unaccaptable for block place.");
+			// MCPC+ - ensure microblocks force overwrite for proper restoration
+			if( !BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE) && plugin.getConfig().getInt("prism.appliers.forgemultipart.block-id") != block.getTypeId() && plugin.getConfig().getInt("prism.appliers.immibismicro.block-id") != block.getTypeId()){
 				return new ChangeResult( ChangeResultType.SKIPPED, null );
 			}
 		}
@@ -378,8 +396,52 @@ public class BlockAction extends GenericAction {
 			// Set the material
 			block.setTypeId(getBlockId() );
 			block.setData( (byte)getBlockSubId() );
-			
-			
+			// MCPC+ start - Get the current TileEntity NBT then compress it for storage in DB
+			TileEntity tileentity = ((CraftWorld)block.getWorld()).getTileEntityAt(block.getX(), block.getY(), block.getZ());
+			if (getTileEntityData() != null && !getTileEntityData().equals(""))// && !((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ())))
+			{
+				NBTTagCompound c = null;
+				String saved_te_data = StringEscapeUtils.unescapeJava(getTileEntityData());
+				try {
+					c = NBTCompressedStreamTools.a(saved_te_data.getBytes("ISO-8859-1"));
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				if (c != null)
+				{
+					if (plugin.getConfig().getBoolean("prism.appliers.forgemultipart.enabled") && plugin.getConfig().getInt("prism.appliers.forgemultipart.block-id") == block.getTypeId())
+					{
+						try {
+							Class<?> clz = Class.forName("codechicken.multipart.TileMultipart");
+							Object obj = clz.newInstance();
+							Method  method = clz.getDeclaredMethod ("createFromNBT", NBTTagCompound.class);
+							Object returnedObj = method.invoke (obj, c);
+							TileEntity te = (TileEntity)returnedObj;
+							((CraftWorld)block.getWorld()).getHandle().setTileEntity(block.getX(), block.getY(), block.getZ(), te);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						} catch (NoSuchMethodException e) {
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							e.printStackTrace();
+						} catch (InstantiationException e) {
+							e.printStackTrace();
+						}
+					}
+					else 
+					{
+						tileentity = TileEntity.c(c);
+						((CraftWorld)block.getWorld()).getHandle().setTileEntity(block.getX(), block.getY(), block.getZ(), tileentity);
+					}
+				}
+			}
+			// MCPC+ end
 			/**
 			 * Skulls
 			 */

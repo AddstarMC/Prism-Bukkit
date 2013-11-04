@@ -33,8 +33,7 @@ public class ConfigBase {
 	
 	
 	/**
-	 * 
-	 * @param plugin
+	 *
 	 */
 	public FileConfiguration getConfig(){
 		config = plugin.getConfig();
@@ -82,7 +81,8 @@ public class ConfigBase {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param default_folder
+	 * @param filename
 	 * @return
 	 */
 	protected FileConfiguration loadConfig( String default_folder, String filename ){

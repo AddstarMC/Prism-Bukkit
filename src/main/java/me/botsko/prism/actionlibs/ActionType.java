@@ -26,7 +26,8 @@ public class ActionType {
 	
 	/**
 	 * 
-	 * @param actionTypeName
+	 * @param name
+	 * @param doesCreateBlock
 	 * @param canRollback
 	 * @param canRestore
 	 * @param niceDescription

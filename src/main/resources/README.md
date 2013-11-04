@@ -5,7 +5,7 @@ Prism is open source and we're accepting pull requests via GitHub. If you'd like
 - We accept work via GitHub pull requests. 
 - We'll try to review your PR as soon as possible.
 - Please try to keep your code clean, and try to follow the formatting Prism uses already.
-- Every pull request **must** refer to a ticket in our bug tracker. Snony supports bug mentions in commit messages like "bug 25" or "bugs 25, 26" and a wide variety of other formats.
+- Every pull request **must** refer to a ticket in our bug tracker. Snowy supports bug mentions in commit messages like "bug 25" or "bugs 25, 26" and a wide variety of other formats.
 - If your PR would fully resolve a ticket, please use "bug 25:resolved" (with the proper bug number of course).
 - We strongly recommend you hang out with us in IRC (irc.esper.net - #prism). Viveleroi and nasonfish are in there quite often, as well as other dev build testers from DHMC.
 
@@ -29,6 +29,6 @@ A day before New Years I began an experiment for such a plugin - testing the wat
 
 Our road to 1.0 was extremely successful and by 1.1 we're already running on 300+ servers a day. I have yet to hear anyone who's tried it do anything other than praise it or say it won't work for their needs. 
 
-Prism shows so much potential, it makes sense to open source it. Despite releasing a lot of work as open source in the past, I've been hesitant to open Prism for a number of likely warrant-less personal concerns. However, I recognize that Prism needs the benefit of contributions from our rapdily growing community.
+Prism shows so much potential, it makes sense to open source it. Despite releasing a lot of work as open source in the past, I've been hesitant to open Prism for a number of likely warrant-less personal concerns. However, I recognize that Prism needs the benefit of contributions from our rapidly growing community.
 
 If you're interested in contributing to Prism, please read the following. THANK YOU!

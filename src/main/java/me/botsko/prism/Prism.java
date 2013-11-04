@@ -79,6 +79,10 @@ public class Prism extends JavaPlugin {
 	private static HandlerRegistry<?> handlerRegistry;
 	private static Ignore ignore;
 	protected static ArrayList<Integer> illegalBlocks;
+	// MCPC+ start
+	protected static ArrayList<Integer> illegalBreakBlocks;
+	protected static ArrayList<Integer> illegalPhysicsBlocks;
+	// MCPC+ end
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 
@@ -288,6 +292,10 @@ public class Prism extends JavaPlugin {
 		
 		// Cache config arrays we check constantly
 		illegalBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.never-place-block");
+		// MCPC+ start
+		illegalPhysicsBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockphysics-ids");
+		illegalBreakBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockbreak-ids");
+		// MCPC+ end
 		illegalEntities = (ArrayList<String>) getConfig().getList("prism.appliers.never-spawn-entity");
 		
 		ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
@@ -453,7 +461,7 @@ public class Prism extends JavaPlugin {
 						+ "action_type TEXT," + "player TEXT," + "world TEXT,"
 						+ "x INT," + "y INT," + "z INT," + "block_id INT,"
 						+ "block_subid INT," + "old_block_id INT,"
-						+ "old_block_subid INT," + "data TEXT" + ")";
+						+ "old_block_subid INT," + "data TEXT," + "te_data TEXT" + ")"; // MCPC+ - create table with extra column for TE data
 				Statement st = conn.createStatement();
 				st.executeUpdate(query);
 				st.executeUpdate("CREATE INDEX IF NOT EXISTS x ON prism_actions (x ASC)");
@@ -490,9 +498,9 @@ public class Prism extends JavaPlugin {
 						+ "`block_subid` mediumint(5) default NULL,"
 						+ "`old_block_id` mediumint(5) default NULL,"
 						+ "`old_block_subid` mediumint(5) default NULL,"
-						+ "`data` varchar(255) NULL," + "PRIMARY KEY  (`id`), "
+						+ "`data` varchar(255) NULL," + "`te_data` TEXT NULL," + "PRIMARY KEY  (`id`), " // MCPC+ - create table with extra column for TE data
 						+ "KEY `x` (`x`), " + "KEY `block_id` (`block_id`)"
-						+ ") ENGINE=MyISAM;";
+						+ ") ENGINE=InnoDB;";
 
 				Statement st = conn.createStatement();
 				st.executeUpdate(query);
@@ -501,7 +509,7 @@ public class Prism extends JavaPlugin {
 						+ "`id` int(10) unsigned NOT NULL auto_increment,"
 						+ "`k` varchar(25) NOT NULL,"
 						+ "`v` varchar(255) NOT NULL," + "PRIMARY KEY  (`id`)"
-						+ ") ENGINE=MyISAM DEFAULT CHARSET=latin1;";
+						+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 				st.executeUpdate(query);
 				st.close();
 				conn.close();
@@ -562,7 +570,24 @@ public class Prism extends JavaPlugin {
 	public static ArrayList<Integer> getIllegalBlocks(){
 		return illegalBlocks;
 	}
-	
+
+	// MCPC+ start
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalPhysicsBlocks(){
+		return illegalPhysicsBlocks;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public static ArrayList<Integer> getIllegalBreakBlocks(){
+		return illegalBreakBlocks;
+	}
+	// MCPC+ end
 	
 	/**
 	 * 
@@ -700,10 +725,9 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
 	public void discardExpiredDbRecords() {
 
-		List<String> purgeRules = (List<String>) getConfig().getList("prism.db-records-purge-rules");
+		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
 
 		if (!purgeRules.isEmpty()) {
 
@@ -762,8 +786,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgMissingArguments() {
@@ -772,8 +795,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidArguments() {
@@ -782,8 +804,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
@@ -792,8 +813,7 @@ public class Prism extends JavaPlugin {
 
 	
 	/**
-	 * 
-	 * @param msg
+	 *
 	 * @return
 	 */
 	public String msgNoPermission() {
@@ -833,7 +853,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param messages
 	 */
 	public static void logSection(String[] messages) {
 		if (messages.length > 0) {
@@ -859,7 +879,7 @@ public class Prism extends JavaPlugin {
 
 	/**
 	 * 
-	 * @param message
+	 * @param loc
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ());

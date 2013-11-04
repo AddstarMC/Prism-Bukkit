@@ -19,9 +19,7 @@ public class BlockShiftAction extends GenericAction {
 	
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param from
 	 */
 	public void setBlock( Block from ){
 		

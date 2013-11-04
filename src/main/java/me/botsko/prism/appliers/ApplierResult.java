@@ -50,7 +50,10 @@ public class ApplierResult {
 	 * 
 	 * @param changes_applied
 	 * @param changes_skipped
-	 * @param messages
+	 * @param changes_planned
+	 * @param blockStateChanges
+	 * @param params
+	 * @param entities_moved
 	 */
 	public ApplierResult( boolean is_preview, int changes_applied, int changes_skipped, int changes_planned, ArrayList<BlockStateChange> blockStateChanges, QueryParameters params, HashMap<Entity,Integer> entities_moved ){
 		this.changes_applied = changes_applied;

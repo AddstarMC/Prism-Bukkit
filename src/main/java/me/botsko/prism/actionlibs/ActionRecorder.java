@@ -102,7 +102,7 @@ public class ActionRecorder implements Runnable {
 				Prism.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
-	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+	        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data,te_data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS); // MCPC+ - extra column for TileEntity Data
 	        s.setString(1,a.getType().getName());
 	        s.setString(2,a.getPlayerName());
 	        s.setString(3,a.getWorldName());
@@ -114,6 +114,7 @@ public class ActionRecorder implements Runnable {
 	        s.setInt(9,(int)a.getY());
 	        s.setInt(10,(int)a.getZ());
 	        s.setString(11,a.getData());
+	        s.setString(12, a.getTileEntityData()); // MCPC+ - grab te data
 	        s.executeUpdate();
 	        
 	        generatedKeys = s.getGeneratedKeys();
@@ -133,8 +134,7 @@ public class ActionRecorder implements Runnable {
 	
 	
 	/**
-	 * 
-	 * @param entities
+	 *
 	 * @throws SQLException
 	 */
 	public void insertActionsIntoDatabase() {
@@ -167,7 +167,7 @@ public class ActionRecorder implements Runnable {
 					return;
 				}
 		        conn.setAutoCommit(false);
-		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+		        s = conn.prepareStatement("INSERT INTO prism_actions (action_type,player,world,block_id,block_subid,old_block_id,old_block_subid,x,y,z,data,te_data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"); // MCPC+ - extra column for TileEntity data
 		        int i = 0;
 		        while (!queue.isEmpty()){
 		        	actionsRecorded++;
@@ -184,6 +184,7 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(9,(int)a.getY());
 			        s.setInt(10,(int)a.getZ());
 			        s.setString(11,a.getData());
+			        s.setString(12, a.getTileEntityData()); // MCPC+ - grab te data
 		            s.addBatch();
 		            if ((i + 1) % perBatch == 0) {
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());

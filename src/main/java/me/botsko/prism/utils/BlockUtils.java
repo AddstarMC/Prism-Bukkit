@@ -10,6 +10,14 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+// MCPC+ start
+import java.io.UnsupportedEncodingException;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+import net.minecraft.server.v1_5_R3.NBTCompressedStreamTools;
+import net.minecraft.server.v1_5_R3.NBTTagCompound;
+import net.minecraft.server.v1_5_R3.TileEntity;
+// MCPC+ end
 
 public class BlockUtils extends me.botsko.elixr.BlockUtils {
     
@@ -52,7 +60,7 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
 	
 	/**
 	 * 
-	 * @param mat
+	 * @param materials
 	 * @param loc
 	 * @param radius
 	 */
@@ -124,4 +132,24 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
 		Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
+
+	// MCPC+ start - used to compress TileEntity NBT for small footprint in DB
+	public static String compressTileEntityData(Block block) {
+		net.minecraft.server.v1_5_R3.TileEntity tileentity = ((CraftWorld)block.getWorld()).getHandle().getTileEntity(block.getX(), block.getY(), block.getZ());
+		if (tileentity != null && !((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()))
+		{
+			NBTTagCompound c = new NBTTagCompound();
+			tileentity.b(c);
+			byte[] bytes = NBTCompressedStreamTools.a(c);
+			String te_data = null;
+			try {
+				te_data = StringEscapeUtils.escapeJava(new String(bytes, "ISO-8859-1"));
+				return te_data;
+			} catch (UnsupportedEncodingException e) {
+				// e.printStackTrace();
+			}
+			}
+		return null;
+	}
+	// MCPC+ end
 }

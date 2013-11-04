@@ -46,8 +46,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param plugin
 	 * @param parameters
+	 * @param shouldGroup
 	 * @return
 	 */
 	public String buildQuery( QueryParameters parameters, boolean shouldGroup ){
@@ -88,6 +88,7 @@ public class QueryBuilder {
 			columns.add("old_block_id");
 			columns.add("old_block_subid");
 			columns.add("data");
+			columns.add("te_data"); // MCPC+ - add column for TileEntity data
 			
 			if( dbMode.equalsIgnoreCase("sqlite") ){
 				columns.add("date("+tableName+".action_time) AS display_date");
@@ -139,13 +140,13 @@ public class QueryBuilder {
 			HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
 			
 			// Make sure none of the prism process types are requested
-			boolean containtsPrismProcessType = false;
+			boolean containsPrismProcessType = false;
 			boolean hasPositiveMatchRule = false;
 			if( !action_types.isEmpty() ){
 				addCondition( buildMultipleConditions( action_types, tableName+".action_type", null ) );
 				for (Entry<String,MatchRule> entry : action_types.entrySet()){
 					if(entry.getKey().contains("prism")){
-						containtsPrismProcessType = true;
+						containsPrismProcessType = true;
 						break;
 					}
 					if(entry.getValue().equals(MatchRule.INCLUDE)){
@@ -154,7 +155,7 @@ public class QueryBuilder {
 				}
 			}
 			
-			if( !containtsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
+			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
 				addCondition( tableName+".action_type NOT LIKE '%prism%'" );
 			}
 			
@@ -270,7 +271,16 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
+					
 					query += " GROUP BY "+tableName+".action_type, "+tableName+".player, "+tableName+".block_id, "+tableName+".data";
+					
+					if( dbMode.equalsIgnoreCase("sqlite") ){
+						query += ", date("+tableName+".action_time)";
+					}
+					else if( dbMode.equalsIgnoreCase("mysql") ){
+						query += ", DATE_FORMAT("+tableName+".action_time, '%c/%e/%y')";
+					}
+					
 				}
 			
 				/**
@@ -409,8 +419,8 @@ public class QueryBuilder {
 	
 	/**
 	 * 
-	 * @param arg_values
-	 * @param player_name
+	 * @param minLoc
+	 * @param maxLoc
 	 * @return
 	 */
 	protected void buildRadiusCondition( Vector minLoc, Vector maxLoc ){

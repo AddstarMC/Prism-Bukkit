@@ -35,6 +35,10 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Sign;
+// MCPC+ start
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld;
+import net.minecraft.server.v1_5_R3.TileEntity;
+// MCPC+ end
 
 public class PrismBlockEvents implements Listener {
 	
@@ -88,7 +92,7 @@ public class PrismBlockEvents implements Listener {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param playername
 	 * @param block
 	 */
 	protected void logBlockRelationshipsForBlock( String playername, Block block ){
@@ -169,8 +173,8 @@ public class PrismBlockEvents implements Listener {
 		if( !player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")  ){
 			plugin.oreMonitor.processAlertsFromBlock(player, block);
 		}
-		
-		if( !Prism.getIgnore().event("block-break",player) ) return;
+		// MCPC+ - ignore banned break id's
+		if( !Prism.getIgnore().event("block-break",player) || Prism.getIllegalBreakBlocks().contains( block.getTypeId())) return;
 		
 		// Change handling a bit if it's a long block
 		Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
@@ -181,9 +185,17 @@ public class PrismBlockEvents implements Listener {
 		// log items removed from container
 		// note: done before the container so a "rewind" for rollback will work properly
 		logItemRemoveFromDestroyedContainer( player.getName(), block );
-		
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", block, player.getName()) );
-	
+		// MCPC+ start - compress TileEntity data and queue for insert into db
+		String te_data = BlockUtils.compressTileEntityData(event.getBlock());
+		if (te_data != null)
+		{
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", block, player.getName(), te_data) );
+		}
+		else
+		{
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", block, player.getName()));
+		}
+		// MCPC+ end
 		// check for block relationships
 		logBlockRelationshipsForBlock( player.getName(), block );
 		
@@ -330,8 +342,8 @@ public class PrismBlockEvents implements Listener {
 				}
 			}
 		}
-		
-		if( !Prism.getIgnore().event("block-break", event.getBlock()) ) return;
+		// MCPC+ - ignore banned break id's
+		if( !Prism.getIgnore().event("block-break", event.getBlock()) || !Prism.getIllegalBreakBlocks().contains( event.getBlock().getTypeId())) return;
 		
 		// If it's an attachable item, we need to look for detachment
 		// at the sides.
@@ -366,6 +378,21 @@ public class PrismBlockEvents implements Listener {
 					plugin.preplannedBlockFalls.remove(coord_key);
 				}
 			}
+			// MCPC+ start - temporary workaround for lack of break events in Forge
+			Block block = event.getBlock();
+			if (!((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()) && !Prism.getIllegalPhysicsBlocks().contains( block.getTypeId()))
+			{
+				net.minecraft.server.v1_5_R3.TileEntity tileentity = ((CraftWorld)block.getWorld()).getHandle().getTileEntity(block.getX(), block.getY(), block.getZ());
+				String te_data = BlockUtils.compressTileEntityData(event.getBlock());
+				if (te_data != null)
+				{
+					Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", block, "", te_data) );
+				}
+				else { 
+					Prism.actionsRecorder.addToQueue( ActionFactory.create("block-break", block, ""));
+				}
+			}
+			// MCPC+ end
 		}
 	}
 	

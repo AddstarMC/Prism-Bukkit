@@ -67,7 +67,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 					params = parameters.clone();
 				} catch (CloneNotSupportedException ex) {
 					params = new QueryParameters();
-					player.sendMessage(Prism.messenger.playerError("Error retreiving parameters. Checking with default parameters."));
+					player.sendMessage(Prism.messenger.playerError("Error retrieving parameters. Checking with default parameters."));
 				}
 				params.setWorld( player.getWorld().getName() );
 				params.setSpecificBlockLocation(loc);
@@ -79,11 +79,13 @@ public class InspectorWand extends QueryWandBase implements Wand {
 				}
 				
 				// Ignoring any actions via config?
-				@SuppressWarnings("unchecked")
-				ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
-				if( ignoreActions != null && !ignoreActions.isEmpty() ){
-					for(String ignore : ignoreActions){
-						params.addActionType(ignore, MatchRule.EXCLUDE);
+				if( params.getActionTypes().size() == 0 ){
+					@SuppressWarnings("unchecked")
+					ArrayList<String> ignoreActions = (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
+					if( ignoreActions != null && !ignoreActions.isEmpty() ){
+						for(String ignore : ignoreActions){
+							params.addActionType(ignore, MatchRule.EXCLUDE);
+						}
 					}
 				}
 				boolean timeDefault = false;
@@ -113,7 +115,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 						player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 					}
 				} else {
-					String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().toLowerCase() + " block");
+					String space_name = (block.getType().equals(Material.AIR) ? "space" : block.getType().toString().replaceAll("_", " ").toLowerCase() + (block.getType().toString().endsWith("BLOCK") ? "" : " block"));
 					player.sendMessage( Prism.messenger.playerError( "No history for this " + space_name + " found." ) );
 				}
 			}
