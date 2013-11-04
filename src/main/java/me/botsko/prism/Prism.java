@@ -462,7 +462,7 @@ public class Prism extends JavaPlugin {
 			query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
 					+ "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 					+ "`data_id` int(10) unsigned NOT NULL,"
-					+ "`data` mediumtext NOT NULL,"
+					+ "`data` text NOT NULL,"
 					+ "`te_data` text NOT NULL,"
 					+ "PRIMARY KEY (`extra_id`)"
 					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
