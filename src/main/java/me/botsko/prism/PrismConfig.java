@@ -123,19 +123,6 @@ public class PrismConfig extends ConfigBase {
 		illegalBlocks.add(51);
 		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
 		
-		// MCPC+ start - add extra appliers for mod support
-		// Illegal BlockPhysics Rollbacks
-		List<Integer> ignorePhysicBlocks = new ArrayList<Integer>();
-		config.addDefault("prism.appliers.ignore-event-blockphysics-ids", ignorePhysicBlocks);
-		// Illegal BlockBreak Rollbacks
-		List<Integer> ignoreBreakBlocks = new ArrayList<Integer>();
-		config.addDefault("prism.appliers.ignore-event-blockbreak-ids", ignoreBreakBlocks);
-		// ForgeMultiPart suppport
-		config.addDefault("prism.appliers.forgemultipart.enabled", false);
-		config.addDefault("prism.appliers.forgemultipart.block-id", 1286);
-		// Immibis MicroBlock suppport
-		config.addDefault("prism.appliers.immibismicro.block-id", 1439);
-		// MCPC+ end
 		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
@@ -210,7 +197,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Tracker configs
 			config.addDefault("prism.track-player-ip-on-join", false);
-			config.addDefault("prism.track-item-events", false); // MCPC+ - renamed to represent other modded inventory containers
+			config.addDefault("prism.track-hopper-item-events", false);
 
 			List<String> doNotTrackCommand = new ArrayList<String>();
 			doNotTrackCommand.add("vanish");

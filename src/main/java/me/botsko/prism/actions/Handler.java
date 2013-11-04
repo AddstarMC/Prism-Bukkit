@@ -172,18 +172,6 @@ public interface Handler {
 	 */
 	public abstract String getData();
 
-	// MCPC+ start
-	/**
-	 * @return the data
-	 */
-	public abstract String getTileEntityData();
-
-	/**
-	 * @param data the data to set
-	 */
-	public abstract void setTileEntityData(String data);
-	// MCPC+ end
-
 	/**
 	 * @param data the data to set
 	 */

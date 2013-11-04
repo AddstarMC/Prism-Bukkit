@@ -88,7 +88,6 @@ public class QueryBuilder {
 			columns.add("old_block_id");
 			columns.add("old_block_subid");
 			columns.add("data");
-			columns.add("te_data"); // MCPC+ - add column for TileEntity data
 			
 			if( dbMode.equalsIgnoreCase("sqlite") ){
 				columns.add("date("+tableName+".action_time) AS display_date");
