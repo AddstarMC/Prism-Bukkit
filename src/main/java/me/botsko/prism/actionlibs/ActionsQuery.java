@@ -135,7 +135,7 @@ public class ActionsQuery {
     				// Set aggregate counts if a lookup
     				int aggregated = 0;
     				if( shouldGroup ){
-    					aggregated = rs.getInt(14);
+    					aggregated = rs.getInt(15);
     				}
     				baseHandler.setAggregateCount(aggregated);
     				

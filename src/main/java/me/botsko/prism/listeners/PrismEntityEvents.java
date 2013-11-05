@@ -18,7 +18,6 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Horse;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
@@ -36,8 +35,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
-import org.bukkit.event.entity.EntityUnleashEvent;
-import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
@@ -45,7 +42,6 @@ import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
-import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
@@ -78,19 +74,6 @@ public class PrismEntityEvents implements Listener {
 		// Mob Death
 		if(!(entity instanceof Player)){
 			if(entity.getLastDamageCause() instanceof EntityDamageByEntityEvent){
-				
-				if( entity instanceof Horse ){
-					Horse horse = (Horse) entity;
-					if( horse.isCarryingChest() ){;
-						// Log item drops
-				        if( Prism.getIgnore().event("item-drop",entity.getWorld()) ){
-					        for( ItemStack i : horse.getInventory().getContents() ){
-					        	if( i == null ) continue;
-					        	Prism.actionsRecorder.addToQueue( ActionFactory.create("item-drop", i, i.getAmount(), -1, null, entity.getLocation(), "horse") );
-					        }
-				        }
-					}
-				}
 				
 				// Mob killed by player
 				EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity.getLastDamageCause();
@@ -237,39 +220,6 @@ public class PrismEntityEvents implements Listener {
 	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
 		if( !Prism.getIgnore().event("entity-break",event.getEntity().getWorld()) ) return;
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-break", event.getBlock(), event.getEntityType().getName()) );
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerEntityLeash(final PlayerLeashEntityEvent event){
-		if( !Prism.getIgnore().event("entity-leash", event.getPlayer() ) ) return;
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-leash", event.getEntity(), event.getPlayer().getName()) );
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerEntityUnleash(final PlayerUnleashEntityEvent event){
-		if( !Prism.getIgnore().event("entity-unleash", event.getPlayer() ) ) return;
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-unleash", event.getEntity(), event.getPlayer().getName()) );
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onEntityUnleash(final EntityUnleashEvent event){
-		if( !Prism.getIgnore().event("entity-unleash" ) ) return;
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("entity-unleash", event.getEntity(), event.getReason().toString().toLowerCase()) );
 	}
 	
 	
