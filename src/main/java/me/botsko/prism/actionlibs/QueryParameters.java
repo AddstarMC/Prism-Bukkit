@@ -39,8 +39,8 @@ public class QueryParameters implements Cloneable {
 	protected Location player_location;
 	protected int radius;
 	protected ArrayList<Location> specific_block_locations = new ArrayList<Location>();
-	protected String since_time;
-	protected String before_time;
+	protected Long since_time;
+	protected Long before_time;
 	protected String world;
 	protected String keyword;
 	protected boolean ignoreTime;
@@ -349,7 +349,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the time
 	 */
-	public String getBeforeTime() {
+	public Long getBeforeTime() {
 		return before_time;
 	}
 	
@@ -357,15 +357,15 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param time the time to set
 	 */
-	public void setBeforeTime(String time) {
-		this.before_time = time;
+	public void setBeforeTime( Long epoch ) {
+		this.before_time = epoch;
 	}
 	
 	
 	/**
 	 * @return the time
 	 */
-	public String getSinceTime() {
+	public Long getSinceTime() {
 		return since_time;
 	}
 	
@@ -373,8 +373,8 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param time the time to set
 	 */
-	public void setSinceTime(String time) {
-		this.since_time = time;
+	public void setSinceTime(Long epoch) {
+		this.since_time = epoch;
 	}
 
 

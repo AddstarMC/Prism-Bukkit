@@ -61,7 +61,7 @@ public class Ignore {
 		
 		// Should we ignore this action type?
 		if( (TypeUtils.subStrOccurences(actionTypeName, "-") == 1 && !plugin.getConfig().getBoolean( "prism.tracking." + actionTypeName )) ){
-			Prism.debug("Ignoring action type " + actionTypeName);
+//			Prism.debug("Ignoring action type " + actionTypeName);
 			return false;
 		}
 
@@ -116,6 +116,11 @@ public class Ignore {
 	 * @return
 	 */
 	public boolean event( Player player ){
+		
+		if( player == null || player.getName() == null ){
+			Prism.debug("Player is being ignored, name is null");
+			return false;
+		}
 		
 		// Should we ignore this player?
 		if(ignore_players != null && ignore_players.contains( player.getName() )){

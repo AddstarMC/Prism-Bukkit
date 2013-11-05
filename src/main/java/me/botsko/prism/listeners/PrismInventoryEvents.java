@@ -34,26 +34,6 @@ public class PrismInventoryEvents implements Listener {
 	 */
 	private InventoryClickEvent event;
 	
-	/**
-	 * 
-	 */
-	private Player player;
-	
-	/**
-	 * 
-	 */
-	private Location containerLoc;
-	
-	/**
-	 * 
-	 */
-	private ItemStack currentitem;
-	
-	/**
-	 * 
-	 */
-	private ItemStack cursoritem;
-	
 	
 	/**
 	 * 
@@ -123,16 +103,23 @@ public class PrismInventoryEvents implements Listener {
 			return;
 		}
 		
-		
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
 				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
 		
+		// Get container
+		InventoryHolder ih = event.getInventory().getHolder();
+		Location containerLoc = null;
+		if(ih instanceof BlockState){
+			BlockState eventChest = (BlockState) ih;
+		    containerLoc = eventChest.getLocation();
+		}
+		
 		// Store some info
-		player = (Player) event.getWhoClicked();
+		Player player = (Player) event.getWhoClicked();
 	    
 	    Map<Integer,ItemStack> newItems = event.getNewItems();
 	    for (Entry<Integer, ItemStack> entry : newItems.entrySet()) {
-	    	recordInvAction( player, entry.getValue(), entry.getKey(), "item-insert");
+	    	recordInvAction( player, containerLoc, entry.getValue(), entry.getKey(), "item-insert");
 	    }
 	}
 	
@@ -147,11 +134,13 @@ public class PrismInventoryEvents implements Listener {
 		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
 				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
 		
+		Location containerLoc = null;
+		
 		// Store some info
-		player = (Player) event.getWhoClicked();
+		Player player = (Player) event.getWhoClicked();
 		this.event = event;
-	    currentitem = event.getCurrentItem();
-	    cursoritem = event.getCursor();
+		ItemStack currentitem = event.getCurrentItem();
+		ItemStack cursoritem = event.getCursor();
 
 	    // Get location
 	    if( event.getInventory().getHolder() instanceof BlockState ){
@@ -176,19 +165,19 @@ public class PrismInventoryEvents implements Listener {
     		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
     		// and remove for the current.
     		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-    			recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
-    			recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+    			recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), "item-remove");
+    			recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), "item-insert");
     		}
     		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-		    	recordInvAction( player, currentitem, event.getRawSlot(), "item-remove");
+		    	recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), "item-remove");
 		    }
     		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-		    	recordInvAction( player, cursoritem, event.getRawSlot(), "item-insert");
+		    	recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), "item-insert");
 		    }
     		return;
     	}
     	if( event.isShiftClick() && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-    		recordInvAction( player, currentitem, -1, "item-insert");
+    		recordInvAction( player, containerLoc, currentitem, -1, "item-insert");
     	}
 	}
 	
@@ -200,7 +189,7 @@ public class PrismInventoryEvents implements Listener {
      * @param slot
 	 * @param actionType
 	 */
-	protected void recordInvAction( Player player, ItemStack item, int slot, String actionType ){
+	protected void recordInvAction( Player player, Location containerLoc, ItemStack item, int slot, String actionType ){
 		
 		if( !Prism.getIgnore().event(actionType,player) ) return;
 		

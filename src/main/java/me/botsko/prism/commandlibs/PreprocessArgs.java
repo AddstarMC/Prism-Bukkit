@@ -1,6 +1,5 @@
 package me.botsko.prism.commandlibs;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -415,7 +414,7 @@ public class PreprocessArgs {
 				
 				// Time
 				if(arg_type.equals("before")){
-					String date = translateTimeStringToDate(plugin,sender,val);
+					Long date = translateTimeStringToDate(plugin,sender,val);
 					if(date != null){
 						parameters.setBeforeTime( date );
 					} else {
@@ -426,7 +425,7 @@ public class PreprocessArgs {
 					if(val.equalsIgnoreCase("none")){
 						parameters.setIgnoreTime(true);
 					} else {
-						String date = translateTimeStringToDate(plugin,sender,val);
+						Long date = translateTimeStringToDate(plugin,sender,val);
 						if(date != null){
 							parameters.setSinceTime( date );
 						} else {
@@ -518,8 +517,8 @@ public class PreprocessArgs {
 				}
 				// Time default
 				if(!foundArgs.containsKey("t") && !foundArgs.containsKey("before") && !foundArgs.containsKey("since")){
-					String date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.queries.default-time-since"));
-					if(date == null){
+					Long date = translateTimeStringToDate(plugin,sender,plugin.getConfig().getString("prism.queries.default-time-since"));
+					if(date == 0){
 						Prism.log("Error - date range configuration for prism.time-since is not valid");
 						date = translateTimeStringToDate(plugin,sender,"3d");
 					}
@@ -542,9 +541,9 @@ public class PreprocessArgs {
 	 * 
 	 * @return
 	 */
-	public static String translateTimeStringToDate( Prism plugin, CommandSender sender, String arg_value ){
+	public static Long translateTimeStringToDate( Prism plugin, CommandSender sender, String arg_value ){
 		
-		String dateFrom = null;
+		Long dateFrom = 0L;
 
 		Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
 		Calendar cal = Calendar.getInstance();
@@ -582,8 +581,7 @@ public class PreprocessArgs {
 					}
 				}
 			}
-			SimpleDateFormat form = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			dateFrom = form.format(cal.getTime());
+			dateFrom = cal.getTime().getTime();
 		}
 		
 		if(dateFrom == null){

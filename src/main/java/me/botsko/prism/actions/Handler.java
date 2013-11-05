@@ -29,22 +29,12 @@ public interface Handler {
 	/**
 	 * @return the action_time
 	 */
-	public abstract String getActionTime();
-
-	/**
-	 * @param action_time the action_time to set
-	 */
-	public abstract void setActionTime(String action_time);
+	public abstract String getUnixEpoch();
 
 	/**
 	 * @return the display_date
 	 */
 	public abstract String getDisplayDate();
-
-	/**
-	 * @param display_date the display_date to set
-	 */
-	public abstract void setDisplayDate(String display_date);
 
 	/**
 	 * @return the display_time
@@ -54,7 +44,7 @@ public interface Handler {
 	/**
 	 * @param display_time the display_time to set
 	 */
-	public abstract void setDisplayTime(String display_time);
+	public abstract void setUnixEpoch(String epoch);
 
 	/**
 	 * 
