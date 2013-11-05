@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import me.botsko.elixr.InventoryUtils;
-import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -37,8 +36,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 public class ItemStackAction extends GenericAction {
 	
 	public class ItemStackActionData {
-		public int block_id; // only for pre-1.5 compat
-		public int block_subid; // only for pre-1.5 compat
 		public int amt;
 		public String name;
 		public int color;
@@ -46,6 +43,7 @@ public class ItemStackAction extends GenericAction {
 		public String[] enchs;
 		public String by;
 		public String title;
+		public String[] content;
 		public int slot = -1;
 		public int[] effectColors;
 		public int[] fadeColors;
@@ -130,6 +128,7 @@ public class ItemStackAction extends GenericAction {
 			if(bookMeta != null){
 				actionData.by = bookMeta.getAuthor();
 				actionData.title = bookMeta.getTitle();
+				actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
 			}
 		}
 		
@@ -211,16 +210,7 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setItemStackFromData(){
 		if(item == null && data != null){
-			
-			// New format?
-			if(data.startsWith("{")){
-				setItemStackFromNewDataFormat();
-			} 
-			
-			// Old format!
-			else {
-				setItemStackFromOldDataFormat();
-			}
+			setItemStackFromNewDataFormat();
 		}
 	}
 	
@@ -239,10 +229,6 @@ public class ItemStackAction extends GenericAction {
 	protected void setItemStackFromNewDataFormat(){
 		
 		actionData = gson.fromJson(data, ItemStackActionData.class);
-		if( actionData.block_id > 0 ){
-			this.block_id = actionData.block_id;
-			this.block_subid = actionData.block_subid;
-		}
 
 		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
 		
@@ -282,6 +268,7 @@ public class ItemStackAction extends GenericAction {
 			if(actionData.by != null && !actionData.by.isEmpty()){
 				bookMeta.setAuthor( actionData.by );
 				bookMeta.setTitle( actionData.title );
+				bookMeta.setPages( actionData.content );
 			}
 			item.setItemMeta(bookMeta);
 		}
@@ -317,83 +304,6 @@ public class ItemStackAction extends GenericAction {
 			ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName( actionData.name );
 			item.setItemMeta(meta);
-		}
-	}
-		
-		
-	/**
-	 * This parsing method is only for item records from prior to 1.2.
-	 * @deprecated
-	 */
-	protected void setItemStackFromOldDataFormat(){
-		
-		actionData = new ItemStackActionData();
-		
-		String[] blockArr = data.split(":");
-		if (!TypeUtils.isNumeric(blockArr[0])) return;
-		
-		if (blockArr.length >= 3){
-			
-			// Parse item/sub/quant
-			this.block_id = Integer.parseInt(blockArr[0]);
-			this.block_subid = Integer.parseInt(blockArr[1]);
-			actionData.amt = Integer.parseInt(blockArr[2]);
-			
-			item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);
-			
-			// Restore enchantments
-			for(int i = 3; i < blockArr.length; i++){
-				if(blockArr[i].contains("~")){
-					if(blockArr[i].contains("color~")){
-						String rgb = blockArr[i].replace("color~", "");
-						if (!TypeUtils.isNumeric(rgb)) return;
-						int color = Integer.parseInt(rgb);
-						LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-						lam.setColor(Color.fromRGB(color));
-						item.setItemMeta(lam);
-					} 
-					else if(blockArr[i].contains("skullowner~")){
-						String owner = blockArr[i].replace("skullowner~", "");
-						SkullMeta meta = (SkullMeta) item.getItemMeta();
-						meta.setOwner(owner);
-						item.setItemMeta(meta);
-					}
-					else if(blockArr[i].contains("name~")){
-						String name = blockArr[i].replace("name~", "");
-						ItemMeta meta = item.getItemMeta();
-						meta.setDisplayName(name);
-						item.setItemMeta(meta);
-					}
-				} else {
-					if(blockArr[i].contains(";")){
-						if(item.getType().name().contains("LEATHER_")){
-							LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-							lam.setColor(Color.fromRGB(Integer.parseInt(blockArr[i].replaceAll(";", ""))));
-							item.setItemMeta(lam);
-						}
-						else if(item.getType().equals(Material.SKULL_ITEM)){
-							SkullMeta meta = (SkullMeta) item.getItemMeta();
-							meta.setOwner(blockArr[i].replaceAll(";", ""));
-							item.setItemMeta(meta);
-						}
-						continue;
-					}
-					String[] enchArgs = blockArr[i].split(",");
-					Enchantment enchantment = Enchantment.getById(Integer.parseInt(enchArgs[0]));
-					
-					// Restore book enchantments
-					if(item.getType().equals(Material.ENCHANTED_BOOK)){
-						EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
-						bookEnchantments.addStoredEnchant(enchantment, Integer.parseInt(enchArgs[1]), false);
-						item.setItemMeta(bookEnchantments);
-					} else {
-					
-						// Restore item enchants
-						item.addUnsafeEnchantment(enchantment, Integer.parseInt(enchArgs[1]));
-						
-					}
-				}
-			}
 		}
 	}
 	

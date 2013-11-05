@@ -113,6 +113,11 @@ public class PrismPlayerEvents implements Listener {
 	public void onPlayerJoin(final PlayerJoinEvent event){
 
 		Player player = event.getPlayer();
+		
+		// Lookup player for cache reasons
+		plugin.cachePlayerPrimaryKey( player.getName() );
+		
+		// Track the join event
 		if( !Prism.getIgnore().event("player-join",player) ) return;
 		
 		String ip = null;
@@ -131,6 +136,10 @@ public class PrismPlayerEvents implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerQuit(final PlayerQuitEvent event){
 		
+		// Remove from primary key cache
+		Prism.prismPlayers.remove( event.getPlayer().getName() );
+		
+		// Track player quit
 		if( !Prism.getIgnore().event("player-quit",event.getPlayer()) ) return;
 		
 		Prism.actionsRecorder.addToQueue( ActionFactory.create("player-quit", event.getPlayer(), null) );

@@ -32,7 +32,8 @@ public class QueryBuilder {
 	/**
 	 * 
 	 */
-	private String tableName = "prism_actions";
+	private String tableNameData = "prism_data";
+	private String tableNameDataExtra = "prism_data_extra";
 	
 	
 	/**
@@ -56,9 +57,6 @@ public class QueryBuilder {
 		columns = new ArrayList<String>();
 		conditions = new ArrayList<String>();
 		
-		String dbMode = plugin.getConfig().getString("prism.database.mode");
-		
-		
 		/**
 		 * Query prefix and columns
 		 */
@@ -68,8 +66,8 @@ public class QueryBuilder {
 			query += "SELECT ";
 			
 			columns.add("id");
-			columns.add("action_time");
-			columns.add("action_type");
+			columns.add("epoch");
+			columns.add("action");
 			columns.add("player");
 			columns.add("world");
 			
@@ -89,15 +87,6 @@ public class QueryBuilder {
 			columns.add("old_block_subid");
 			columns.add("data");
 			
-			if( dbMode.equalsIgnoreCase("sqlite") ){
-				columns.add("date("+tableName+".action_time) AS display_date");
-				columns.add("time("+tableName+".action_time) AS display_time");
-			}
-			else if( dbMode.equalsIgnoreCase("mysql") ){
-				columns.add("DATE_FORMAT("+tableName+".action_time, '%c/%e/%y') AS display_date");
-				columns.add("DATE_FORMAT("+tableName+".action_time, '%l:%i:%s%p') AS display_time");
-			}
-			
 			if( shouldGroup ){
 				columns.add("COUNT(*) counted");
 			}
@@ -114,7 +103,21 @@ public class QueryBuilder {
 		/**
 		 * From
 		 */
-		query += " FROM "+tableName+" ";
+		query += " FROM "+tableNameData+" ";
+		
+		// Add using to properly support the joins
+		if( parameters.getProcessType().equals(PrismProcessType.DELETE) ){
+			query += " USING "+tableNameData+" ";
+		}
+		
+		
+		/**
+		 * Joins
+		 */
+		query += "INNER JOIN prism_players p ON p.player_id = "+tableNameData+".player_id ";
+		query += "INNER JOIN prism_actions a ON a.action_id = "+tableNameData+".action_id ";
+		query += "INNER JOIN prism_worlds w ON w.world_id = "+tableNameData+".world_id ";
+		query += "LEFT JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
 		
 		/**
 		 * ID
@@ -123,14 +126,14 @@ public class QueryBuilder {
 		 */
 		int id = parameters.getId();
 		if(id > 0){
-			query += "WHERE " + tableName+".id = "+id;
+			query += "WHERE " + tableNameData+".id = "+id;
 		} else {
 			
 			/**
 			 * World
 			 */
 			if( !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getWorld() != null ){
-				addCondition( String.format(tableName+".world = '%s'", parameters.getWorld()) );
+				addCondition( String.format( "w.world = '%s'", parameters.getWorld()) );
 			}
 
 			/**
@@ -142,7 +145,7 @@ public class QueryBuilder {
 			boolean containsPrismProcessType = false;
 			boolean hasPositiveMatchRule = false;
 			if( !action_types.isEmpty() ){
-				addCondition( buildMultipleConditions( action_types, tableName+".action_type", null ) );
+				addCondition( buildMultipleConditions( action_types, "a.action", null ) );
 				for (Entry<String,MatchRule> entry : action_types.entrySet()){
 					if(entry.getKey().contains("prism")){
 						containsPrismProcessType = true;
@@ -154,15 +157,16 @@ public class QueryBuilder {
 				}
 			}
 			
+
 			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
-				addCondition( tableName+".action_type NOT LIKE '%prism%'" );
+				addCondition( tableNameData + ".action_id NOT IN (69, 70, 71, 72)" );
 			}
 			
 			/**
 			 * Players
 			 */
 			HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
-			addCondition( buildMultipleConditions( playerNames, tableName+".player", null ) );
+			addCondition( buildMultipleConditions( playerNames, "p.player", null ) );
 			
 			/**
 			 * Radius
@@ -183,9 +187,9 @@ public class QueryBuilder {
 				int i = 0;
 				for (Entry<Integer,Byte> entry : blockfilters.entrySet()){
 					if( entry.getValue() == 0 ){
-						blockArr[i] = tableName+".block_id = " + entry.getKey();
+						blockArr[i] = tableNameData+".block_id = " + entry.getKey();
 					} else {
-						blockArr[i] = tableName+".block_id = " + entry.getKey() + " AND "+tableName+".block_subid = " +  entry.getValue();
+						blockArr[i] = tableNameData+".block_id = " + entry.getKey() + " AND "+tableNameData+".block_subid = " +  entry.getValue();
 					}
 					i++;
 				}
@@ -197,18 +201,18 @@ public class QueryBuilder {
 			 */
 			HashMap<String,MatchRule> entityNames = parameters.getEntities();
 			if( entityNames.size() > 0 ){
-				addCondition( buildMultipleConditions( entityNames, tableName+".data", "entity_name\":\"%s" ) );
+				addCondition( buildMultipleConditions( entityNames, "ex.data", "entity_name\":\"%s" ) );
 			}
 			
 			/**
 			 * Timeframe
 			 */
-			String time = parameters.getBeforeTime();
-			if(time != null){
+			Long time = parameters.getBeforeTime();
+			if( time != null && time != 0 ){
 				addCondition( buildTimeCondition(time,"<=") );
 			}
 			time = parameters.getSinceTime();
-			if(time != null){
+			if( time != null && time != 0 ){
 				addCondition( buildTimeCondition(time,null) );
 			}
 			
@@ -217,7 +221,7 @@ public class QueryBuilder {
 			 */
 			String keyword = parameters.getKeyword();
 			if(keyword != null){
-				addCondition( tableName+".data LIKE '%"+keyword+"%'" );
+				addCondition( "ex.data LIKE '%"+keyword+"%'" );
 			}
 			
 			/**
@@ -228,7 +232,7 @@ public class QueryBuilder {
 				String coordCond = "(";
 				int l = 0;
 				for( Location loc : locations ){
-					coordCond += (l > 0 ? " OR" : "" ) + " (prism_actions.x = " +(int)loc.getBlockX()+ " AND prism_actions.y = " +(int)loc.getBlockY()+ " AND prism_actions.z = " +(int)loc.getBlockZ() + ")";
+					coordCond += (l > 0 ? " OR" : "" ) + " ("+tableNameData+".x = " +(int)loc.getBlockX()+ " AND "+tableNameData+".y = " +(int)loc.getBlockY()+ " AND "+tableNameData+".z = " +(int)loc.getBlockZ() + ")";
 					l++;
 				}
 				coordCond += ")";
@@ -240,7 +244,7 @@ public class QueryBuilder {
 			 * Parent process id
 			 */
 			if(parameters.getParentId() > 0){
-				addCondition( String.format("data = %d", parameters.getParentId()) );
+				addCondition( String.format("ex.data = %d", parameters.getParentId()) );
 			}
 			
 			
@@ -270,23 +274,14 @@ public class QueryBuilder {
 				// If lookup, determine if we need to group
 				// Do it! Or not...
 				if( shouldGroup ){
-					
-					query += " GROUP BY "+tableName+".action_type, "+tableName+".player, "+tableName+".block_id, "+tableName+".data";
-					
-					if( dbMode.equalsIgnoreCase("sqlite") ){
-						query += ", date("+tableName+".action_time)";
-					}
-					else if( dbMode.equalsIgnoreCase("mysql") ){
-						query += ", DATE_FORMAT("+tableName+".action_time, '%c/%e/%y')";
-					}
-					
+					query += " GROUP BY "+tableNameData+".action_id, "+tableNameData+".player_id, "+tableNameData+".block_id, ex.data, DATE(FROM_UNIXTIME("+tableNameData+".epoch))";
 				}
 			
 				/**
 				 * Order by
 				 */
 				String sort_dir = parameters.getSortDirection();
-				query += " ORDER BY "+tableName+".action_time "+sort_dir+", x ASC, z ASC, y ASC, id "+sort_dir;
+				query += " ORDER BY "+tableNameData+".epoch "+sort_dir+", x ASC, z ASC, y ASC, id "+sort_dir;
 				
 				/**
 				 * LIMIT
@@ -298,14 +293,12 @@ public class QueryBuilder {
 					}
 				}
 			} else {
-				// Only limit delete records if using mysql or sqlite has delete limits enabled
-				if( dbMode.equals("mysql") || plugin.getConfig().getBoolean("prism.sqlite.enable-delete-limit") ){
-					int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
-					if( perBatch < 100){
-						perBatch = 100;
-					}
-					query += " LIMIT " + perBatch;
-				}
+				// @todo disabled because it won't work with delete/joins/using
+//				int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
+//				if( perBatch < 100){
+//					perBatch = 100;
+//				}
+//				query += " LIMIT " + perBatch;
 			}
 		}
 		
@@ -424,9 +417,9 @@ public class QueryBuilder {
 	 */
 	protected void buildRadiusCondition( Vector minLoc, Vector maxLoc ){
 		if(minLoc != null && maxLoc != null ){
-			addCondition( "("+tableName+".x BETWEEN " + minLoc.getBlockX() + " AND " + maxLoc.getBlockX() + ")" );
-			addCondition( "("+tableName+".y BETWEEN " + minLoc.getBlockY() + " AND " + maxLoc.getBlockY() + ")" );
-			addCondition( "("+tableName+".z BETWEEN " + minLoc.getBlockZ() + " AND " + maxLoc.getBlockZ() + ")" );
+			addCondition( "("+tableNameData+".x BETWEEN " + minLoc.getBlockX() + " AND " + maxLoc.getBlockX() + ")" );
+			addCondition( "("+tableNameData+".y BETWEEN " + minLoc.getBlockY() + " AND " + maxLoc.getBlockY() + ")" );
+			addCondition( "("+tableNameData+".z BETWEEN " + minLoc.getBlockZ() + " AND " + maxLoc.getBlockZ() + ")" );
 		}
 	}
 	
@@ -435,13 +428,13 @@ public class QueryBuilder {
 	 * 
 	 * @return
 	 */
-	protected String buildTimeCondition( String dateFrom, String equation ){
+	protected String buildTimeCondition( Long dateFrom, String equation ){
 		String where = "";
 		if(dateFrom != null){
 			if(equation == null){
-				addCondition( tableName+".action_time >= '" + dateFrom + "'" );
+				addCondition( tableNameData+".epoch >= " + (dateFrom/1000) + "" );
 			} else {
-				addCondition( tableName+".action_time "+equation+" '" + dateFrom + "'" );
+				addCondition( tableNameData+".epoch "+equation+" '" + (dateFrom/1000) + "'" );
 			}
 		}
 		return where;

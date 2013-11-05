@@ -33,7 +33,6 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.allow-metrics", true);
 			
 		// Database
-		config.addDefault("prism.database.mode", "mysql"); // sqlite or mysql
 		config.addDefault("prism.database.max-pool-connections", 20);
 		config.addDefault("prism.database.pool-initial-size", 10);
 		config.addDefault("prism.database.max-idle-connections", 10);
@@ -48,9 +47,6 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.password", "");
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
-		
-		// Sqlite
-		config.addDefault("prism.sqlite.enable-delete-limit", false);
 		
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
