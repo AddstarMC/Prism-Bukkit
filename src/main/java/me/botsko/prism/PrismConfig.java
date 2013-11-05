@@ -210,7 +210,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Tracker configs
 			config.addDefault("prism.track-player-ip-on-join", false);
-			config.addDefault("prism.track-item-events", false); // MCPC+ - renamed to represent other modded inventory containers
+			config.addDefault("prism.track-hopper-item-events", false);
 
 			List<String> doNotTrackCommand = new ArrayList<String>();
 			doNotTrackCommand.add("vanish");
