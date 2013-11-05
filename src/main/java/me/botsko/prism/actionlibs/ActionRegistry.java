@@ -1,8 +1,8 @@
 package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.bukkit.plugin.Plugin;
 
@@ -16,7 +16,7 @@ public class ActionRegistry {
 	/**
 	 * 
 	 */
-	private HashMap<String,ActionType> registeredActions = new HashMap<String,ActionType>();
+	private TreeMap<String,ActionType> registeredActions = new TreeMap<String,ActionType>();
 	
 	
 	/**
@@ -55,6 +55,9 @@ public class ActionRegistry {
 			throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.");
 		}
 		
+		// Register custom action type with the db
+        Prism.addActionName(actionType.getName());
+		
 		registeredActions.put(actionType.getName(), actionType);
 		
 	}
@@ -64,7 +67,7 @@ public class ActionRegistry {
 	 * 
 	 * @return
 	 */
-	public HashMap<String,ActionType> getRegisteredAction(){
+	public TreeMap<String,ActionType> getRegisteredAction(){
 		return registeredActions;
 	}
 	
