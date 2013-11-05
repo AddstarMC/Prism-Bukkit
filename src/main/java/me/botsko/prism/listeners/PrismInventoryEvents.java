@@ -67,12 +67,14 @@ public class PrismInventoryEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.track-item-events") ) return; // MCPC+ - renamed to represent more containers with inventory
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
 		
 		if( !Prism.getIgnore().event("item-pickup") ) return;
 		
-		// MCPC+ - removed hardcoded hopper check and added call for inventory holder name
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), event.getInventory().getName()));
+		// If hopper
+		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
+		}
 	}
 	
 	
@@ -83,7 +85,7 @@ public class PrismInventoryEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.track-item-events") ) return; // MCPC+ - renamed to represent more containers with inventory
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
 		
 		if( !Prism.getIgnore().event("item-insert") ) return;
 		
@@ -99,8 +101,35 @@ public class PrismInventoryEvents implements Listener {
 		
 		if( containerLoc == null ) return;
 		
-		// MCPC+ - removed hardcoded hopper check and added call for inventory holder name
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, event.getDestination().getName()) );
+		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
+		}
+	}
+	
+	
+	/**
+	 * Handle inventory transfers
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onInventoryDrag(final InventoryDragEvent event) {
+		
+		// Someone cancelled this before we did 
+		if ( event.isCancelled() ) {
+			return;
+		}
+		
+		
+		if( !plugin.getConfig().getBoolean("prism.tracking.item-insert")
+				&& !plugin.getConfig().getBoolean("prism.tracking.item-remove")) return;
+		
+		// Store some info
+		player = (Player) event.getWhoClicked();
+	    
+	    Map<Integer,ItemStack> newItems = event.getNewItems();
+	    for (Entry<Integer, ItemStack> entry : newItems.entrySet()) {
+	    	recordInvAction( player, entry.getValue(), entry.getKey(), "item-insert");
+	    }
 	}
 	
 	
