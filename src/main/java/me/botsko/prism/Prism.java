@@ -422,32 +422,35 @@ public class Prism extends JavaPlugin {
 				return;
 			
 			// actions
-			String query = "CREATE TABLE IF NOT EXISTS `prism_actions` (" +
-					"`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
-					"`action` varchar(25) NOT NULL," +
-					"PRIMARY KEY (`action_id`)" +
-					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			String query = "CREATE TABLE IF NOT EXISTS `prism_actions` ("
+					+ "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+					+ "`action` varchar(25) NOT NULL,"
+					+ "PRIMARY KEY (`action_id`),"
+					+ "KEY `action` (`action`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			Statement st = conn.createStatement();
 			st.executeUpdate(query);
 
 			// data
-			query = "CREATE TABLE IF NOT EXISTS `prism_data` (" +
-					"`id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-					"`epoch` int(11) unsigned NOT NULL," +
-					"`action_id` int(11) unsigned NOT NULL," +
-					"`player_id` int(11) unsigned NOT NULL," +
-					"`world_id` int(11) unsigned NOT NULL," +
-					"`x` int(11) NOT NULL," +
-					"`y` int(11) NOT NULL," +
-					"`z` int(11) NOT NULL," +
-					"`block_id` mediumint(5) DEFAULT NULL," +
-					"`block_subid` mediumint(5) DEFAULT NULL," +
-					"`old_block_id` mediumint(5) DEFAULT NULL," +
-					"`old_block_subid` mediumint(5) DEFAULT NULL," +
-					"PRIMARY KEY (`id`)," +
-					"KEY `x` (`x`)," +
-					"KEY `block_id` (`block_id`)" +
-					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			query = "CREATE TABLE IF NOT EXISTS `prism_data` ("
+					+ "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+					+ "`epoch` int(10) unsigned NOT NULL,"
+					+ "`action_id` int(10) unsigned NOT NULL,"
+					+ "`player_id` int(10) unsigned NOT NULL,"
+					+ "`world_id` int(10) unsigned NOT NULL,"
+					+ "`x` int(11) NOT NULL,"
+					+ "`y` int(11) NOT NULL,"
+					+ "`z` int(11) NOT NULL,"
+					+ "`block_id` mediumint(5) DEFAULT NULL,"
+					+ "`block_subid` mediumint(5) DEFAULT NULL,"
+					+ "`old_block_id` mediumint(5) DEFAULT NULL,"
+					+ "`old_block_subid` mediumint(5) DEFAULT NULL,"
+					+ "PRIMARY KEY (`id`),"
+					+ "KEY `x` (`x`),"
+					+ "KEY `block_id` (`block_id`),"
+					+ "KEY `action_id` (`action_id`),"
+					+ "KEY `player_id` (`player_id`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
 			
 			// extra data
@@ -455,34 +458,37 @@ public class Prism extends JavaPlugin {
 					+ "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
 					+ "`data_id` int(10) unsigned NOT NULL,"
 					+ "`data` text NOT NULL,"
-					+ "PRIMARY KEY (`extra_id`)"
-					+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+					+ "`te_data` text NOT NULL,"
+					+ "PRIMARY KEY (`extra_id`),"
+					+ "KEY `data_id` (`data_id`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
 			
 			// meta
-			query = "CREATE TABLE IF NOT EXISTS `prism_meta` (" +
-					"`id` int(10) unsigned NOT NULL AUTO_INCREMENT," +
-					"`k` varchar(25) NOT NULL," +
-					"`v` varchar(255) NOT NULL," +
-					"PRIMARY KEY (`id`)" +
-					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			query = "CREATE TABLE IF NOT EXISTS `prism_meta` ("
+					+ "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+					+ "`k` varchar(25) NOT NULL,"
+					+ "`v` varchar(255) NOT NULL,"
+					+ "PRIMARY KEY (`id`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
 			
 			// players
-			query = "CREATE TABLE IF NOT EXISTS `prism_players` (" +
-					"`player_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-					"`player` varchar(16) NOT NULL," +
-					"PRIMARY KEY (`player_id`)," +
-					"KEY (`player`)" +
-					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			query = "CREATE TABLE IF NOT EXISTS `prism_players` ("
+					+ "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+					+ "`player` varchar(255) NOT NULL,"
+					+ "PRIMARY KEY (`player_id`),"
+					+ "KEY `player` (`player`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
 			
 			// worlds
-			query = "CREATE TABLE IF NOT EXISTS `prism_worlds` (" +
-					"`world_id` int(11) unsigned NOT NULL AUTO_INCREMENT," +
-					"`world` varchar(255) NOT NULL," +
-					"PRIMARY KEY (`world_id`)" +
-					") ENGINE=InnoDB  DEFAULT CHARSET=latin1;";
+			query = "CREATE TABLE IF NOT EXISTS `prism_worlds` ("
+					+ "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+					+ "`world` varchar(255) NOT NULL,"
+					+ "PRIMARY KEY (`world_id`),"
+					+ "KEY `world` (`world`)"
+					+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
 
 			// actions
