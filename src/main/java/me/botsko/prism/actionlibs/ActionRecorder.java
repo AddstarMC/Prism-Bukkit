@@ -295,7 +295,7 @@ public class ActionRecorder implements Runnable {
 	    try {
 		    conn = Prism.dbc();
 		    conn.setAutoCommit(false);
-	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?,?)");
+	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data,te_data) VALUES (?,?,?)");
 	        int i = 0;
 			while(keys.next()){
 				
