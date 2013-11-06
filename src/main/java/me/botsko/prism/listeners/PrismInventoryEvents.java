@@ -9,6 +9,7 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -50,12 +52,14 @@ public class PrismInventoryEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryPickupItem(final InventoryPickupItemEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.track-item-events") ) return; // MCPC+ - renamed to represent more containers with inventory
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
 		
 		if( !Prism.getIgnore().event("item-pickup") ) return;
 		
-		// MCPC+ - removed hardcoded hopper check and added call for inventory holder name
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), event.getInventory().getName()));
+		// If hopper
+		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
+		}
 	}
 	
 	
@@ -66,7 +70,7 @@ public class PrismInventoryEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
 		
-		if( !plugin.getConfig().getBoolean("prism.track-item-events") ) return; // MCPC+ - renamed to represent more containers with inventory
+		if( !plugin.getConfig().getBoolean("prism.track-hopper-item-events") ) return;
 		
 		if( !Prism.getIgnore().event("item-insert") ) return;
 		
@@ -82,8 +86,9 @@ public class PrismInventoryEvents implements Listener {
 		
 		if( containerLoc == null ) return;
 		
-		// MCPC+ - removed hardcoded hopper check and added call for inventory holder name
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, event.getDestination().getName()) );
+		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
+			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
+		}
 	}
 	
 	
@@ -147,6 +152,10 @@ public class PrismInventoryEvents implements Listener {
 	    	Entity e = (Entity) event.getInventory().getHolder();
 	    	containerLoc = e.getLocation();
 	    }
+	    else if( event.getInventory().getHolder() instanceof DoubleChest ){
+	    	DoubleChest chest = (DoubleChest) event.getInventory().getHolder();
+	    	containerLoc = chest.getLocation();
+	    }
 	    
 //	    Prism.debug("--- Inv: " + (inv == null ? "null" : inv.toString()));
 //	    Prism.debug("--- InvHold: " + (ih == null ? "null" : ih.toString()));
@@ -156,7 +165,7 @@ public class PrismInventoryEvents implements Listener {
 //	    Prism.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
 //	    Prism.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 	    
-    	if( event.getSlot() == event.getRawSlot() && event.getRawSlot() <= event.getView().getType().getDefaultSize() ){
+    	if( event.getSlot() == event.getRawSlot()) {  // && event.getRawSlot() <= event.getView().getType().getDefaultSize() ){ // MCPC+ - temporarily disabled due to some containers not having correct size on bukkit side
     		
     		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
     		// and remove for the current.
