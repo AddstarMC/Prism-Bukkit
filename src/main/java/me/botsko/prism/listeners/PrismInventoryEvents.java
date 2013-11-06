@@ -162,24 +162,25 @@ public class PrismInventoryEvents implements Listener {
 //	    Prism.debug("Cursor Item: " + (cursoritem != null ? cursoritem.getTypeId() : "null"));
 //	    Prism.debug("Current Item: " + (currentitem != null ? currentitem.getTypeId() : "null"));
 
-		if( event.getSlot() == event.getRawSlot()) { //&& event.getRawSlot() <= event.getView().getType().getDefaultSize() ){
-			// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
-			// and remove for the current.
-			if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-				recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), event.isRightClick(), "item-remove");
-				recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), event.isRightClick(), "item-insert");
-			}
-			else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
-				recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), event.isRightClick(), "item-remove");
-			}
-			else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
-				recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), event.isRightClick(), "item-insert");
-			}
-			return;
-		}
-		if( event.isShiftClick() && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
-			recordInvAction( player, containerLoc, currentitem, -1, event.isRightClick(), "item-insert");
-		}
+    	if( event.getSlot() == event.getRawSlot()) {  // && event.getRawSlot() <= event.getView().getType().getDefaultSize() ){ // MCPC+ - temporarily disabled due to some containers not having correct size on bukkit side
+    		
+    		// If BOTH items are not air then you've swapped an item. We need to record an insert for the cursor item and
+    		// and remove for the current.
+    		if( currentitem != null && !currentitem.getType().equals(Material.AIR) && cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+    			recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), event.isRightClick(), "item-remove");
+    			recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), event.isRightClick(), "item-insert");
+    		}
+    		else if( currentitem != null && !currentitem.getType().equals(Material.AIR) ){
+		    	recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), event.isRightClick(), "item-remove");
+		    }
+    		else if( cursoritem != null && !cursoritem.getType().equals(Material.AIR) ){
+		    	recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), event.isRightClick(), "item-insert");
+		    }
+    		return;
+    	}
+    	if( event.isShiftClick() && cursoritem != null && cursoritem.getType().equals(Material.AIR) ){
+    		recordInvAction( player, containerLoc, currentitem, -1, event.isRightClick(), "item-insert");
+    	}
 	}
 
     /**
