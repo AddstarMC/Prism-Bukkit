@@ -29,8 +29,6 @@ import java.lang.reflect.Method;
 import net.minecraft.server.v1_6_R3.MinecraftServer;
 import net.minecraft.server.v1_6_R3.NBTCompressedStreamTools;
 import net.minecraft.server.v1_6_R3.NBTTagCompound;
-import net.minecraft.server.v1_6_R3.Packet53BlockChange;
-import net.minecraft.server.v1_6_R3.TileEntity;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 // MCPC+ end
