@@ -69,7 +69,7 @@ public class ActionRecorder implements Runnable {
 		// prepare to save to the db
 		a.save();
 		
-		if(a.getData() != null && a.getData().length() > 255){
+		if(a.getData() != null && a.getData().length() > 65535){
 			Prism.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData());
 			return;
 		}
