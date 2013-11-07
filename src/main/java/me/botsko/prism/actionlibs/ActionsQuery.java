@@ -16,6 +16,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.database.mysql.DeleteQueryBuilder;
+import me.botsko.prism.database.mysql.SelectQueryBuilder;
 
 public class ActionsQuery {
 	
@@ -27,7 +29,7 @@ public class ActionsQuery {
 	/**
 	 * 
 	 */
-	private QueryBuilder qb;
+	private SelectQueryBuilder qb;
 	
 	/**
 	 * 
@@ -42,7 +44,7 @@ public class ActionsQuery {
 	 */
 	public ActionsQuery(Prism plugin) {
 		this.plugin = plugin;
-		this.qb = new QueryBuilder(plugin);
+		this.qb = new SelectQueryBuilder(plugin);
 	}
 	
 	
@@ -85,7 +87,7 @@ public class ActionsQuery {
 		List<Handler> actions = new ArrayList<Handler>();
 		
 		// Build conditions based off final args
-		String query = qb.buildQuery(parameters, shouldGroup);
+		String query = qb.getQuery(parameters, shouldGroup);
 		
 		if(query != null){
 			Connection conn = null;
@@ -267,12 +269,13 @@ public class ActionsQuery {
 	 * @return
 	 */
 	public int delete( QueryParameters parameters ){
-		int total_rows_affected = 0, cycle_rows_affected;
+		int total_rows_affected = 0, cycle_rows_affected = 0;
 		Connection conn = null;
 		Statement s = null;
 		try {
+			DeleteQueryBuilder dqb = new DeleteQueryBuilder(plugin);
 			// Build conditions based off final args
-			String query = qb.buildQuery(parameters, shouldGroup);
+			String query = dqb.getQuery(parameters, shouldGroup);
 			conn = Prism.dbc();
 			s = conn.createStatement();
 			cycle_rows_affected = s.executeUpdate (query);
