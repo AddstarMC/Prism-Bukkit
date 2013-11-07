@@ -196,7 +196,7 @@ public class ActionsQuery {
 			conn = Prism.dbc();
     		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 0,1");
     		s.setInt(1, action_id);
-    		s.setString(1, playername);
+    		s.setString(2, playername);
     		s.executeQuery();
     		rs = s.getResultSet();
 
