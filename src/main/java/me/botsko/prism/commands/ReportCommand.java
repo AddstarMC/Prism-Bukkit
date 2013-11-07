@@ -66,6 +66,9 @@ public class ReportCommand implements SubHandler {
 				blockSumReports( call.getSender(), call.getArg(3) );
 			}
 			
+			if( call.getArg(2).equals("actions") ){
+				actionTypeCountReport( call.getSender(), call.getArg(3) );
+			}
 		}
 	}
 	
@@ -159,6 +162,68 @@ public class ReportCommand implements SubHandler {
 		    		}
 		        } catch (SQLException e) {
 		        	//
+		        	e.printStackTrace();
+		        } finally {
+		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
+			}
+		});
+	}
+	
+	
+	/**
+	 * 
+	 * @param sender
+	 */
+	protected void actionTypeCountReport( final CommandSender sender, final String playerName ){
+
+		final String sql = "SELECT COUNT(*), a.action "
+				+ "FROM prism_data d "
+				+ "INNER JOIN prism_actions a ON a.action_id = d.action_id "
+				+ "INNER JOIN prism_players p ON p.player_id = d.player_id "
+				+ "WHERE player = ? "
+				+ "GROUP BY a.action_id "
+				+ "ORDER BY COUNT(*) DESC;";
+		
+		final int colTextLen = 16;
+		final int colIntLen = 12;
+		
+		/**
+		 * Run the lookup itself in an async task so the lookup query isn't done on the main thread
+		 */
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+			public void run(){
+				
+				sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg("Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "...") );
+
+				Connection conn = null;
+				PreparedStatement s = null;
+				ResultSet rs = null;
+				try {
+
+					conn = Prism.dbc();
+		    		s = conn.prepareStatement(sql);
+		    		s.setString(1, playerName);
+		    		s.executeQuery();
+		    		rs = s.getResultSet();
+		    		
+//		    		sender.sendMessage( Prism.messenger.playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName) );
+					sender.sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Action", colTextLen ) + TypeUtils.padStringRight( "Count", colIntLen ) ) );
+
+		    		while(rs.next()){
+		    			
+		    			String action = rs.getString(2);
+		    			int count = rs.getInt(1);
+		    			
+		    			String colAlias = TypeUtils.padStringRight( action, colTextLen );
+		    			String colPlaced = TypeUtils.padStringRight( ""+count, colIntLen );
+		    			
+		    			sender.sendMessage( Prism.messenger.playerMsg( ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced ) );
+		    			
+		    		}
+		        } catch (SQLException e) {
 		        	e.printStackTrace();
 		        } finally {
 		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
