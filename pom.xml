@@ -43,10 +43,6 @@
 			<id>dhmc-repo</id>
 			<url>http://dhmc.us:8081/nexus/content/repositories/snapshots</url>
 		</repository>
-		    <repository>
-                <id>repobo-snap</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
-        </repository>
 		<repository>
 			<id>repobo-snap</id>
 			<url>http://repo.bukkit.org/content/groups/public</url>
