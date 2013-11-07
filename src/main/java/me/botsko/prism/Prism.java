@@ -2,6 +2,8 @@ package me.botsko.prism;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
 import me.botsko.elixr.MaterialAliases;
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.ActionRecorder;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -48,6 +51,7 @@ import me.botsko.prism.wands.Wand;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -106,6 +110,13 @@ public class Prism extends JavaPlugin {
 	public QueueStats queueStats;
 	public BukkitTask deleteTask;
 	public int total_records_affected = 0;
+	
+	/**
+	 * DB Foreign key caches
+	 */
+	public static HashMap<String,Integer> prismWorlds = new HashMap<String,Integer>();
+	public static HashMap<String,Integer> prismPlayers = new HashMap<String,Integer>();
+	public static HashMap<String,Integer> prismActions = new HashMap<String,Integer>();
 
 	/**
 	 * We store a basic index of blocks we anticipate will fall, so that when
@@ -145,16 +156,6 @@ public class Prism extends JavaPlugin {
 		if (getConfig().getBoolean("prism.allow-metrics")) {
 			try {
 				Metrics metrics = new Metrics(this);
-
-				// See who's using mysql vs sqlite
-				Metrics.Graph databaseGraph = metrics.createGraph("Database Engine");
-				databaseGraph.addPlotter(new Metrics.Plotter(prism.getConfig().getString("prism.database.mode")) {
-					@Override
-					public int getValue() {
-						return 1;
-					}
-				});
-
 				metrics.start();
 			} catch (IOException e) {
 				log("MCStats submission failed.");
@@ -171,17 +172,6 @@ public class Prism extends JavaPlugin {
 			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
 			logSection(dbDisabled);
 			disablePlugin();
-		} else {
-			if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
-				Statement st;
-				try {
-					st = test_conn.createStatement();
-					st.executeUpdate("PRAGMA journal_mode = WAL;");
-					st.close();
-				} catch (SQLException e) {
-					handleDatabaseException(e);
-				}
-			}
 		}
 		if (test_conn != null) {
 			try {
@@ -192,9 +182,24 @@ public class Prism extends JavaPlugin {
 		}
 
 		if (isEnabled()) {
+			
+			// Info needed for setup, init these here
+			handlerRegistry = new HandlerRegistry();
+			actionRegistry = new ActionRegistry();
 
 			// Setup databases
 			setupDatabase();
+			
+			// Cache world IDs
+			cacheWorldPrimaryKeys();
+			cacheOnlinePlayerPrimaryKeys();
+			
+			// ensure current worlds are added
+			for( World w : getServer().getWorlds() ){
+				if( !Prism.prismWorlds.containsKey( w.getName() ) ){
+					Prism.addWorldName( w.getName() );
+				}
+			}
 
 			// Apply any updates
 			Updater up = new Updater(this);
@@ -202,8 +207,6 @@ public class Prism extends JavaPlugin {
 
 			eventTimer = new TimeTaken();
 			queueStats = new QueueStats();
-			handlerRegistry = new HandlerRegistry();
-			actionRegistry = new ActionRegistry();
 			ignore = new Ignore(this);
 
 			// Plugins we use
@@ -313,44 +316,24 @@ public class Prism extends JavaPlugin {
 
 		DataSource pool = null;
 
-		// SQLITE
-		if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
-			try {
-				Class.forName("org.sqlite.JDBC");
-				pool = new DataSource();
-				pool.setDriverClassName("org.sqlite.JDBC");
-				pool.setUrl("jdbc:sqlite:plugins/Prism/Prism.db");
-			} catch (ClassNotFoundException e) {
-				log("Error: SQLite database connection was not established. "+ e.getMessage());
-			}
-		}
-
-		// MYSQL
-		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase("mysql")) {
-			String dns = "jdbc:mysql://"
-					+ config.getString("prism.mysql.hostname") + ":"
-					+ config.getString("prism.mysql.port") + "/"
-					+ config.getString("prism.mysql.database");
-			pool = new DataSource();
-			pool.setDriverClassName("com.mysql.jdbc.Driver");
-			pool.setUrl(dns);
-			pool.setUsername(config.getString("prism.mysql.username"));
-			pool.setPassword(config.getString("prism.mysql.password"));
-		}
-
-		if (pool != null) {
-			pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
-			pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
-			pool.setMaxIdle(config.getInt("prism.database.max-idle-connections"));
-			pool.setMaxWait(config.getInt("prism.database.max-wait"));
-			pool.setRemoveAbandoned(true);
-			pool.setRemoveAbandonedTimeout(60);
-			pool.setTestOnBorrow(true);
-			pool.setValidationQuery("/* ping */SELECT 1");
-			pool.setValidationInterval(30000);
-		} else {
-			log("Error: Database connection was not established. Please check your configuration file.");
-		}
+		String dns = "jdbc:mysql://"
+				+ config.getString("prism.mysql.hostname") + ":"
+				+ config.getString("prism.mysql.port") + "/"
+				+ config.getString("prism.mysql.database");
+		pool = new DataSource();
+		pool.setDriverClassName("com.mysql.jdbc.Driver");
+		pool.setUrl(dns);
+		pool.setUsername(config.getString("prism.mysql.username"));
+		pool.setPassword(config.getString("prism.mysql.password"));
+		pool.setInitialSize(config.getInt("prism.database.pool-initial-size"));
+		pool.setMaxActive(config.getInt("prism.database.max-pool-connections"));
+		pool.setMaxIdle(config.getInt("prism.database.max-idle-connections"));
+		pool.setMaxWait(config.getInt("prism.database.max-wait"));
+		pool.setRemoveAbandoned(true);
+		pool.setRemoveAbandonedTimeout(60);
+		pool.setTestOnBorrow(true);
+		pool.setValidationQuery("/* ping */SELECT 1");
+		pool.setValidationInterval(30000);
 
 		return pool;
 	}
@@ -431,7 +414,7 @@ public class Prism extends JavaPlugin {
 		if (e.getMessage().contains("marked as crashed")) {
 			String[] msg = new String[2];
 			msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-			msg[1] = "Try running `CHECK TABLE prism_actions` and then `REPAIR TABLE prism_actions`.";
+			msg[1] = "Try running `CHECK TABLE prism_data` and then `REPAIR TABLE prism_data`.";
 			logSection(msg);
 		}
 		e.printStackTrace();
@@ -439,78 +422,335 @@ public class Prism extends JavaPlugin {
 	
 	
 	/**
+     * 
+     */
+    protected void setupDatabase() {
+        Connection conn = null;
+        Statement st = null;
+        try {
+            conn = dbc();
+            if (conn == null)
+                return;
+            
+            // actions
+            String query = "CREATE TABLE IF NOT EXISTS `prism_actions` ("
+                    + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`action` varchar(25) NOT NULL,"
+                    + "PRIMARY KEY (`action_id`),"
+                    + "KEY `action` (`action`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st = conn.createStatement();
+            st.executeUpdate(query);
+
+            // data
+            query = "CREATE TABLE IF NOT EXISTS `prism_data` ("
+                    + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`epoch` int(10) unsigned NOT NULL,"
+                    + "`action_id` int(10) unsigned NOT NULL,"
+                    + "`player_id` int(10) unsigned NOT NULL,"
+                    + "`world_id` int(10) unsigned NOT NULL,"
+                    + "`x` int(11) NOT NULL,"
+                    + "`y` int(11) NOT NULL,"
+                    + "`z` int(11) NOT NULL,"
+                    + "`block_id` mediumint(5) DEFAULT NULL,"
+                    + "`block_subid` mediumint(5) DEFAULT NULL,"
+                    + "`old_block_id` mediumint(5) DEFAULT NULL,"
+                    + "`old_block_subid` mediumint(5) DEFAULT NULL,"
+                    + "PRIMARY KEY (`id`),"
+                    + "KEY `x` (`x`),"
+                    + "KEY `block_id` (`block_id`),"
+                    + "KEY `action_id` (`action_id`),"
+                    + "KEY `player_id` (`player_id`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+            
+            // extra data
+            query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
+                    + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`data_id` int(10) unsigned NOT NULL,"
+                    + "`data` text NULL,"
+                    + "`te_data` text NULL,"
+                    + "PRIMARY KEY (`extra_id`),"
+                    + "KEY `data_id` (`data_id`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+            
+            // meta
+            query = "CREATE TABLE IF NOT EXISTS `prism_meta` ("
+                    + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`k` varchar(25) NOT NULL,"
+                    + "`v` varchar(255) NOT NULL,"
+                    + "PRIMARY KEY (`id`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+            
+            // players
+            query = "CREATE TABLE IF NOT EXISTS `prism_players` ("
+                    + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`player` varchar(255) NOT NULL,"
+                    + "PRIMARY KEY (`player_id`),"
+                    + "KEY `player` (`player`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+            
+            // worlds
+            query = "CREATE TABLE IF NOT EXISTS `prism_worlds` ("
+                    + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                    + "`world` varchar(255) NOT NULL,"
+                    + "PRIMARY KEY (`world_id`),"
+                    + "KEY `world` (`world`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // actions
+            cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to populate db
+            if( prismActions.isEmpty() ){
+                String[] actions = actionRegistry.listAll();
+                for( String a : actions ){
+                    addActionName(a);
+                }
+                cacheActionPrimaryKeys();
+            }
+        } catch (SQLException e) {
+            log("Database connection error: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if(st != null) try { st.close(); } catch (SQLException e) {}
+            if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+    }
+	
+	
+	/**
 	 * 
 	 */
-	protected void setupDatabase() {
+	protected void cacheActionPrimaryKeys(){
 
-		// SQLITE
-		if (getConfig().getString("prism.database.mode").equalsIgnoreCase("sqlite")) {
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			conn = dbc();
+    		s = conn.prepareStatement( "SELECT action_id, action FROM prism_actions" );
+    		rs = s.executeQuery();
 
-			try {
-				final Connection conn = dbc();
-				String query = "CREATE TABLE IF NOT EXISTS `prism_actions` ("
-						+ "id INT PRIMARY KEY,"
-						+ "action_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,"
-						+ "action_type TEXT," + "player TEXT," + "world TEXT,"
-						+ "x INT," + "y INT," + "z INT," + "block_id INT,"
-						+ "block_subid INT," + "old_block_id INT,"
-						+ "old_block_subid INT," + "data TEXT," + "te_data TEXT" + ")"; // MCPC+ - create table with extra column for TE data
-				Statement st = conn.createStatement();
-				st.executeUpdate(query);
-				st.executeUpdate("CREATE INDEX IF NOT EXISTS x ON prism_actions (x ASC)");
-				st.executeUpdate("CREATE INDEX IF NOT EXISTS action_type ON prism_actions (action_type ASC)");
-				st.executeUpdate("CREATE INDEX IF NOT EXISTS player ON prism_actions (player ASC)");
+    		while(rs.next()){
+    			debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+    			prismActions.put( rs.getString(2), rs.getInt(1) );
+    		}
+    		
+    		debug("Loaded " + prismActions.size() + " actions into the cache.");
+    		
+		} catch (SQLException e) {
+        	handleDatabaseException( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * Saves an action name to the database, and adds the id to the cache hashmap
+	 */
+	public static void addActionName( String actionName ){
+		
+		if( prismActions.containsKey(actionName) ) return;
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
 
-				query = "CREATE TABLE IF NOT EXISTS `prism_meta` (id INT PRIMARY KEY," + "k TEXT," + "v TEXT" + ")";
-				st.executeUpdate(query);
-				st.close();
-				conn.close();
+			conn = dbc();
+            s = conn.prepareStatement( "INSERT INTO prism_actions (action) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
+            s.setString(1, actionName);
+            s.executeUpdate();
+            
+            rs = s.getGeneratedKeys();
+            if (rs.next()) {
+            	prismActions.put( actionName, rs.getInt(1) );
+            } else {
+            	throw new SQLException("Insert statement failed - no generated key obtained.");
+            }
+		} catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void cacheWorldPrimaryKeys(){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
 
-			} catch (SQLException e) {
-				log("Database connection error: " + e.getMessage());
-				e.printStackTrace();
+			conn = dbc();
+    		s = conn.prepareStatement( "SELECT world_id, world FROM prism_worlds" );
+    		rs = s.executeQuery();
+
+    		while(rs.next()){
+    			prismWorlds.put( rs.getString(2), rs.getInt(1) );
+    		}
+    		debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
+		} catch (SQLException e) {
+        	handleDatabaseException( e );
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+	
+	
+	/**
+	 * Saves a world name to the database, and adds the id to the cache hashmap
+	 */
+	public static void addWorldName( String worldName ){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+
+			conn = dbc();
+            s = conn.prepareStatement( "INSERT INTO prism_worlds (world) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
+            s.setString(1, worldName);
+            s.executeUpdate();
+            
+            rs = s.getGeneratedKeys();
+            if (rs.next()) {
+                prismWorlds.put( worldName, rs.getInt(1) );
+            } else {
+            	throw new SQLException("Insert statement failed - no generated key obtained.");
+            }
+		} catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+	}
+
+	
+	/**
+	 * 
+	 */
+	public void cacheOnlinePlayerPrimaryKeys(){
+
+		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+			public void run(){
+				
+				String[] playerNames;
+				playerNames = new String[ getServer().getOnlinePlayers().length ];
+				int i = 0;
+				for( Player pl : getServer().getOnlinePlayers() ){
+					playerNames[i] = pl.getName();
+					i++;
+				}
+
+
+				Connection conn = null;
+				PreparedStatement s = null;
+				ResultSet rs = null;
+				try {
+		
+					conn = dbc();
+		    		s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN ('?')" );
+		    		s.setString(1, TypeUtils.join(playerNames, "','"));
+		    		rs = s.executeQuery();
+		
+		    		while( rs.next() ){
+		    			debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+		    			prismPlayers.put( rs.getString(2), rs.getInt(1) );
+		    		}
+				} catch (SQLException e) {
+		//        	handleDatabaseException( e );
+		        } finally {
+		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
 			}
-		}
+		});
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void cachePlayerPrimaryKey( final String playerName ){
+		
+//		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
+//			public void run(){
 
-		// MYSQL
-		else if (getConfig().getString("prism.database.mode").equalsIgnoreCase(
-				"mysql")) {
-			try {
-				final Connection conn = dbc();
-				if (conn == null)
-					return;
-				String query = "CREATE TABLE IF NOT EXISTS `prism_actions` ("
-						+ "`id` int(11) unsigned NOT NULL auto_increment,"
-						+ "`action_time` timestamp NOT NULL default CURRENT_TIMESTAMP,"
-						+ "`action_type` varchar(20) NOT NULL,"
-						+ "`player` varchar(16) NOT NULL,"
-						+ "`world` varchar(255) NOT NULL,"
-						+ "`x` int(11) NOT NULL," + "`y` smallint(5) NOT NULL,"
-						+ "`z` int(11) NOT NULL,"
-						+ "`block_id` mediumint(5) default NULL,"
-						+ "`block_subid` mediumint(5) default NULL,"
-						+ "`old_block_id` mediumint(5) default NULL,"
-						+ "`old_block_subid` mediumint(5) default NULL,"
-						+ "`data` varchar(255) NULL," + "`te_data` TEXT NULL," + "PRIMARY KEY  (`id`), " // MCPC+ - create table with extra column for TE data
-						+ "KEY `x` (`x`), " + "KEY `block_id` (`block_id`)"
-						+ ") ENGINE=InnoDB;";
+				Connection conn = null;
+				PreparedStatement s = null;
+				ResultSet rs = null;
+				try {
+		
+					conn = dbc();
+		    		s = conn.prepareStatement( "SELECT player_id FROM prism_players WHERE player = ?" );
+		    		s.setString(1, playerName);
+		    		rs = s.executeQuery();
+		
+		    		if( rs.next() ){
+		    			debug("Loaded player " + playerName + ", id: " + rs.getInt(1) + " into the cache.");
+		    			prismPlayers.put( playerName, rs.getInt(1) );
+		    		} else {
+		    			addPlayerName(playerName);
+		    		}
+				} catch (SQLException e) {
+		//        	handleDatabaseException( e );
+		        } finally {
+		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+		        	if(s != null) try { s.close(); } catch (SQLException e) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        }
+//			}
+//		});
+	}
+	
+	
+	/**
+	 * Saves a player name to the database, and adds the id to the cache hashmap
+	 */
+	public static void addPlayerName( String playerName ){
+		
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
 
-				Statement st = conn.createStatement();
-				st.executeUpdate(query);
-
-				query = "CREATE TABLE IF NOT EXISTS `prism_meta` ("
-						+ "`id` int(10) unsigned NOT NULL auto_increment,"
-						+ "`k` varchar(25) NOT NULL,"
-						+ "`v` varchar(255) NOT NULL," + "PRIMARY KEY  (`id`)"
-						+ ") ENGINE=InnoDB DEFAULT CHARSET=latin1;";
-				st.executeUpdate(query);
-				st.close();
-				conn.close();
-			} catch (SQLException e) {
-				log("Database connection error: " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
+			conn = dbc();
+            s = conn.prepareStatement( "INSERT INTO prism_players (player) VALUES (?)" , Statement.RETURN_GENERATED_KEYS);
+            s.setString(1, playerName);
+            s.executeUpdate();
+            
+            rs = s.getGeneratedKeys();
+            if (rs.next()) {
+            	debug("Saved and loaded player " + playerName + " into the cache.");
+            	prismPlayers.put( playerName, rs.getInt(1) );
+            } else {
+                throw new SQLException("Insert statement failed - no generated key obtained.");
+            }
+		} catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
 	}
 
 	

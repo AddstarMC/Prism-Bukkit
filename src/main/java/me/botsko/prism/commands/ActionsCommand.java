@@ -2,8 +2,8 @@ package me.botsko.prism.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -34,7 +34,7 @@ public class ActionsCommand implements SubHandler {
 
 		// Build short list
 		ArrayList<String> shortNames = new ArrayList<String>();
-		HashMap<String,ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
+		TreeMap<String,ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
 		for (Entry<String,ActionType> entry : actions.entrySet()){
 			if(entry.getKey().contains("prism")) continue;
 			if(shortNames.contains( entry.getValue().getShortName() )) continue;
