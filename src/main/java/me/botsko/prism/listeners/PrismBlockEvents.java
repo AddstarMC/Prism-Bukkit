@@ -35,13 +35,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Sign;
-// MCPC+ start
-import java.io.UnsupportedEncodingException;
-import net.minecraft.server.v1_6_R3.NBTCompressedStreamTools;
-import net.minecraft.server.v1_6_R3.NBTTagCompound;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
-// MCPC+ end
+import org.bukkit.craftbukkit.v1_6_R3.CraftWorld; // MCPC+
 
 public class PrismBlockEvents implements Listener {
 	
@@ -385,7 +379,6 @@ public class PrismBlockEvents implements Listener {
 			Block block = event.getBlock();
 			if (!((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()) && !Prism.getIllegalPhysicsBlocks().contains( block.getTypeId()))
 			{
-				net.minecraft.server.v1_6_R3.TileEntity tileentity = ((CraftWorld)block.getWorld()).getHandle().getTileEntity(block.getX(), block.getY(), block.getZ());
 				String te_data = BlockUtils.compressTileEntityData(event.getBlock());
 				if (te_data != null)
 				{
