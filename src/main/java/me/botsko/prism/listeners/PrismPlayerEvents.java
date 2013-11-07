@@ -401,10 +401,6 @@ public class PrismPlayerEvents implements Listener {
 					}
 					break;
 				default:
-					// MCPC+ start - handle container access
-					if( !Prism.getIgnore().event("container-access",player) ) return;
-						Prism.actionsRecorder.addToQueue( ActionFactory.create("container-access", block, player.getName()) );
-					// MCPC+ end
 					break;
 			}
 			
