@@ -161,7 +161,8 @@ public class ActionRegistry {
 		registerAction( new ActionType( "bonemeal-use", false, false, false, "UseAction", "used") );
 		registerAction( new ActionType( "bucket-fill", false, false, false, "PlayerAction", "filled") );
 		registerAction( new ActionType( "cake-eat", false, false, false, "UseAction", "ate") );
-		registerAction( new ActionType( "container-access", false, false, false, "BlockAction", "accessed") );
+		registerAction( new ActionType( "container-open", false, false, false, "BlockAction", "opened") );
+		registerAction( new ActionType( "container-close", false, false, false, "BlockAction", "closed") );
 		registerAction( new ActionType( "craft-item", false, false, false, "ItemStackAction", "crafted") );
 		registerAction( new ActionType( "creeper-explode", false, true, true, "BlockAction", "blew up") );
 		registerAction( new ActionType( "crop-trample", false, true, true, "BlockAction", "trampled") );
