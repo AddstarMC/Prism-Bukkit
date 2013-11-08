@@ -102,6 +102,7 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>2.1</version>
 				<configuration>
+					<minimizeJar>true</minimizeJar>
 					<artifactSet>
                     <includes>
 						<include>org.apache.tomcat:com.springsource.org.apache.tomcat.jdbc</include>
