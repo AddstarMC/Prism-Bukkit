@@ -301,7 +301,7 @@ public class ActionRecorder implements Runnable {
 				
 				Handler a = extraDataQueue.get(i);
 				
-				if( a.getData() != null && !a.getData().isEmpty() ){
+				if( (a.getData() != null && !a.getData().isEmpty()) || a.getTileEntityData() != null){ // MCPC+ - add check for TE data
 					s.setInt(1, keys.getInt(1));
 					s.setString(2, a.getData());
 					s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
