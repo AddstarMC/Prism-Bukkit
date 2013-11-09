@@ -181,7 +181,7 @@ public class PrismBlockEvents implements Listener {
 		
 		// log items removed from container
 		// note: done before the container so a "rewind" for rollback will work properly
-		logItemRemoveFromDestroyedContainer( player.getName(), block );
+		//logItemRemoveFromDestroyedContainer( player.getName(), block ); // MCPC+ - not needed since we record TE NBT which includes all inventory
 		// MCPC+ start - compress TileEntity data and queue for insert into db
 		String te_data = BlockUtils.compressTileEntityData(event.getBlock());
 		if (te_data != null)
