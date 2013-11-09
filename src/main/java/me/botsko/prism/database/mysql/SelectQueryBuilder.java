@@ -57,6 +57,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		columns.add("old_block_id");
 		columns.add("old_block_subid");
 		columns.add("data");
+		columns.add("te_data"); // MCPC+
 		
 		if( shouldGroup ){
 			columns.add("COUNT(*) counted");
