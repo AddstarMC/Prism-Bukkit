@@ -450,6 +450,8 @@ public class Prism extends JavaPlugin {
                     + "`old_block_subid` mediumint(5) DEFAULT NULL,"
                     + "PRIMARY KEY (`id`),"
                     + "KEY `x` (`x`),"
+                    + "KEY `z` (`z`),"
+                    + "KEY `world_id` (`world_id`),"
                     + "KEY `block_id` (`block_id`),"
                     + "KEY `action_id` (`action_id`),"
                     + "KEY `player_id` (`player_id`)"
