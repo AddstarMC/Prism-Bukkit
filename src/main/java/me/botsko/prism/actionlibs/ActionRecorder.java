@@ -253,7 +253,7 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
 		            
-		            if( a.getData() != null && !a.getData().isEmpty() ){
+		            if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){
 //		            	Prism.debug("Writing extra data for: " + a.getType().getName() + " " + a.getData());
 		            	extraDataQueue.add( a );
 		            }
@@ -311,12 +311,10 @@ public class ActionRecorder implements Runnable {
 
 				Handler a = extraDataQueue.get(i);
 				
-				if( (a.getData() != null && !a.getData().isEmpty()) || a.getTileEntityData() != null){ // MCPC+ - add check for TE data
-					s.setInt(1, keys.getInt(1));
-					s.setString(2, a.getData());
-					s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
-					s.addBatch();
-				}
+				s.setInt(1, keys.getInt(1));
+				s.setString(2, a.getData());
+				s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
+				s.addBatch();
 				
 				i++;
 				
