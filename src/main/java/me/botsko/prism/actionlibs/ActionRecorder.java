@@ -140,7 +140,7 @@ public class ActionRecorder implements Runnable {
 	        s.executeUpdate();
 	        
 	        // Add insert query for extra data if needed
-			if( a.getData() != null && !a.getData().isEmpty() ){
+			if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){
 				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?,?)");
 				s.setString(1, a.getData());
 				s.setString(2, a.getTileEntityData()); // MCPC+ - grab te data
@@ -252,11 +252,8 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(10,(int)a.getY());
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
-		            
-		            if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){
-//		            	Prism.debug("Writing extra data for: " + a.getType().getName() + " " + a.getData());
-		            	extraDataQueue.add( a );
-		            }
+
+		            extraDataQueue.add( a );
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
@@ -304,17 +301,19 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 				
-				if( i >= extraDataQueue.size() ){
-					Prism.log("Please report to prism developers: Extra data error. Please tell us about /pr l id:" + keys.getInt(1) + ".");
-					continue;
-				}
+//				if( i >= extraDataQueue.size() ){
+//					Prism.log("Please report to prism devs: Extra data error. Please tell us about /pr l id:" + keys.getInt(1) + ". i: " + i + " s: " + extraDataQueue.size() );
+//					continue;
+//				}
 
 				Handler a = extraDataQueue.get(i);
 				
-				s.setInt(1, keys.getInt(1));
-				s.setString(2, a.getData());
-				s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
-				s.addBatch();
+				if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){  // MCPC+ - check te data
+					s.setInt(1, keys.getInt(1));
+					s.setString(2, a.getData());
+					s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
+					s.addBatch();
+				}
 				
 				i++;
 				

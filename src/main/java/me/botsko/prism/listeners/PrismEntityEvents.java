@@ -437,12 +437,24 @@ public class PrismEntityEvents implements Listener {
 				block = sibling;
 			}
 			
-			// Log items from chests
-			be.logItemRemoveFromDestroyedContainer(name, block);
-			// Record blocks explode
-			Prism.actionsRecorder.addToQueue( ActionFactory.create(action, block, name) );
+			// log items removed from container
+			// note: done before the container so a "rewind" for rollback will work properly
+			//logItemRemoveFromDestroyedContainer( name, block ); // MCPC+ - not needed since we record TE NBT which includes all inventory
+			// MCPC+ start - compress TileEntity data and queue for insert into db
+			String te_data = BlockUtils.compressTileEntityData(block);
+			if (te_data != null)
+			{
+				Prism.actionsRecorder.addToQueue( ActionFactory.create(action, block, name, te_data) );
+			}
+			else
+			{
+				Prism.actionsRecorder.addToQueue( ActionFactory.create(action, block, name));
+			}
+			// MCPC+ end
+			
 			// look for relationships
 			be.logBlockRelationshipsForBlock( name, block );
+			
 		}
 	}
 }

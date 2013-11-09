@@ -250,7 +250,6 @@ public class ActionsQuery {
     			process.setY( rs.getInt("y") );
     			process.setZ( rs.getInt("z") );
     			process.setData( rs.getString("data") );
-    			process.setTileEntityData(rs.getString("te_data")); // MCPC+ - set te data
 			}
             
         } catch (SQLException e) {
