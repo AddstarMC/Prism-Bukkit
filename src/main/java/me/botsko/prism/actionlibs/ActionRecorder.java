@@ -252,16 +252,8 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(10,(int)a.getY());
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
-<<<<<<< HEAD
 
 		            extraDataQueue.add( a );
-=======
-		            
-		            if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){
-//		            	Prism.debug("Writing extra data for: " + a.getType().getName() + " " + a.getData());
-		            	extraDataQueue.add( a );
-		            }
->>>>>>> b8ea96a... Removing duplicate null checks
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
@@ -316,10 +308,12 @@ public class ActionRecorder implements Runnable {
 
 				Handler a = extraDataQueue.get(i);
 				
-				s.setInt(1, keys.getInt(1));
-				s.setString(2, a.getData());
-				s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
-				s.addBatch();
+				if( (a.getData() != null && !a.getData().isEmpty()) || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ){  // MCPC+ - check te data
+					s.setInt(1, keys.getInt(1));
+					s.setString(2, a.getData());
+					s.setString(3, a.getTileEntityData()); // MCPC+ - grab te data
+					s.addBatch();
+				}
 				
 				i++;
 				
