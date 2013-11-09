@@ -38,7 +38,7 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 */
-	private ArrayList<String> extraDataQueue = new ArrayList<String>();
+	private ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 
 	
 	/**
@@ -252,7 +252,9 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
 		            
-		            extraDataQueue.add( a.getData() );
+		            if( a.getData() != null && !a.getData().isEmpty() ){
+		            	extraDataQueue.add( a );
+		            }
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
@@ -298,11 +300,16 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 				
-				String data = extraDataQueue.get(i);
+				if( i >= extraDataQueue.size() ){
+					Prism.log("Failed recording extra data: data_id: " + keys.getInt(1));
+					continue;
+				}
 				
-				if( data != null && !data.isEmpty() ){
+				Handler a = extraDataQueue.get(i);
+				
+				if( a.getData() != null && !a.getData().isEmpty() ){
 					s.setInt(1, keys.getInt(1));
-					s.setString(2, data);
+					s.setString(2, a.getData());
 					s.addBatch();
 				}
 				
