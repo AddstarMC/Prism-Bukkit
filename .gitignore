@@ -1,3 +1,5 @@
+deploy.sh
+jooq_codegen
 pass.txt
 dev.sh
 dependency-reduced-pom.xml
