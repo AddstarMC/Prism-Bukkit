@@ -197,7 +197,7 @@ public class ActionsQuery {
 			int action_id = Prism.prismActions.get("prism-process");
             
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 0,1");
+    		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1");
     		s.setInt(1, action_id);
     		s.setString(1, playername);
     		s.executeQuery();
@@ -229,12 +229,17 @@ public class ActionsQuery {
 		ResultSet rs = null;
 		try {
 			
-			int action_id = Prism.prismActions.get("prism-process");
-            
+			String sql = "SELECT id, action, epoch, world, player, x, y, z, data FROM prism_data d";
+					// Joins
+			sql += " INNER JOIN prism_players p ON p.player_id = d.player_id ";
+			sql += " INNER JOIN prism_actions a ON a.action_id = d.action_id ";
+			sql += " INNER JOIN prism_worlds w ON w.world_id = d.world_id ";
+			sql += " LEFT JOIN prism_data_extra ex ON ex.data_id = d.id ";
+			sql += " WHERE d.id = ?";
+			
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT * FROM prism_actions WHERE action_id = ? AND id = ?");
-    		s.setInt(1, action_id);
-    		s.setInt(2, id);
+    		s = conn.prepareStatement (sql);
+    		s.setInt(1, id);
     		s.executeQuery();
     		rs = s.getResultSet();
 
