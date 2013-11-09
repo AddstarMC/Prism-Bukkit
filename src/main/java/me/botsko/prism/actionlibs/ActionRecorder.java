@@ -253,7 +253,9 @@ public class ActionRecorder implements Runnable {
 			        s.setInt(11,(int)a.getZ());
 		            s.addBatch();
 		            
-		            extraDataQueue.add( a );
+		            if( a.getData() != null && !a.getData().isEmpty() ){
+		            	extraDataQueue.add( a );
+		            }
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
@@ -299,6 +301,11 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 				
+				if( i >= extraDataQueue.size() ){
+					Prism.log("Failed recording extra data: data_id: " + keys.getInt(1));
+					continue;
+				}
+
 				Handler a = extraDataQueue.get(i);
 				
 				if( (a.getData() != null && !a.getData().isEmpty()) || a.getTileEntityData() != null){ // MCPC+ - add check for TE data
