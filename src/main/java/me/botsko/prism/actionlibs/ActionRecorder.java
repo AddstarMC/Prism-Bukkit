@@ -253,6 +253,7 @@ public class ActionRecorder implements Runnable {
 		            s.addBatch();
 		            
 		            if( a.getData() != null && !a.getData().isEmpty() ){
+//		            	Prism.debug("Writing extra data for: " + a.getType().getName() + " " + a.getData());
 		            	extraDataQueue.add( a );
 		            }
 
@@ -289,6 +290,8 @@ public class ActionRecorder implements Runnable {
 	 * @param keys
 	 */
 	protected void insertExtraData( ResultSet keys ){
+		
+		if( extraDataQueue.isEmpty() ) return;
 
 		PreparedStatement s = null;
 	    Connection conn = null;
