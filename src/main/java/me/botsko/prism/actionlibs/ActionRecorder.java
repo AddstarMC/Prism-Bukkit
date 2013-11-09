@@ -302,7 +302,7 @@ public class ActionRecorder implements Runnable {
 			while(keys.next()){
 				
 				if( i >= extraDataQueue.size() ){
-					Prism.log("Failed recording extra data: data_id: " + keys.getInt(1));
+					Prism.log("Please report to prism developers: Extra data error. Please tell us about /pr l id:" + keys.getInt(1) + ".");
 					continue;
 				}
 
