@@ -151,6 +151,7 @@ public class ActionRegistry {
 		
 		registerAction( new ActionType( "block-break", false, true, true, "BlockAction", "broke") );
 		registerAction( new ActionType( "block-burn", false, true, true, "BlockAction", "burned") );
+		registerAction( new ActionType( "block-dispense", false, false, false, "ItemStackAction", "dispensed") );
 		registerAction( new ActionType( "block-fade", false, true, true, "BlockChangeAction", "faded") );
 		registerAction( new ActionType( "block-fall", false, true, true, "BlockAction", "fell") );
 		registerAction( new ActionType( "block-form", false, true, true, "BlockChangeAction", "formed") );

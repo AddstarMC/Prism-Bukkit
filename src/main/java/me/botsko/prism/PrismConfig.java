@@ -135,6 +135,7 @@ public class PrismConfig extends ConfigBase {
 		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);
+		config.addDefault("prism.tracking.block-dispense", true);
 		config.addDefault("prism.tracking.block-fade", true);
 		config.addDefault("prism.tracking.block-fall", true);
 		config.addDefault("prism.tracking.block-form", true);

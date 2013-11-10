@@ -20,6 +20,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -31,6 +32,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
@@ -444,6 +446,17 @@ public class PrismBlockEvents implements Listener {
 			Prism.actionsRecorder.addToQueue( ActionFactory.create(cause, event.getBlock(), (player == null ? "Environment" : player.getName())) );
 	
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onBlockDispense(final BlockDispenseEvent event) {
+		if( !Prism.getIgnore().event("block-dispense") ) return;
+		Prism.actionsRecorder.addToQueue( ActionFactory.create("block-dispense", event.getItem(), event.getItem().getAmount(), -1, null, event.getBlock().getLocation(), "dispenser") );
 	}
 	
 	
