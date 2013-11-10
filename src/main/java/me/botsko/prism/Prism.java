@@ -498,12 +498,9 @@ public class Prism extends JavaPlugin {
 
             // actions
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to populate db
-            if( prismActions.size() != actionRegistry.listAll().length ){
-                String[] actions = actionRegistry.listAll();
-                for( String a : actions ){
-                    addActionName(a);
-                }
-                cacheActionPrimaryKeys();
+            String[] actions = actionRegistry.listAll();
+            for( String a : actions ){
+                addActionName(a);
             }
         } catch (SQLException e) {
             log("Database connection error: " + e.getMessage());

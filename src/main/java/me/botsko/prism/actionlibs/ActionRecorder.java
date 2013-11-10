@@ -139,17 +139,18 @@ public class ActionRecorder implements Runnable {
 	        s.setInt(11,(int)a.getZ());
 	        s.executeUpdate();
 	        
-	        // Add insert query for extra data if needed
-			if( a.getData() != null && !a.getData().isEmpty() ){
-				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (LAST_INSERT_ID(),?)");
-				s.setString(1, a.getData());
-				s.executeUpdate();
-			}
-	        
 	        generatedKeys = s.getGeneratedKeys();
 	        if(generatedKeys.next()){
 	        	id = generatedKeys.getInt(1);
 	        }
+	        
+	        // Add insert query for extra data if needed
+			if( a.getData() != null && !a.getData().isEmpty() ){
+				s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
+				s.setInt(1, id);
+				s.setString(2, a.getData());
+				s.executeUpdate();
+			}
 	        
         } catch (SQLException e) {
         	plugin.handleDatabaseException( e );
