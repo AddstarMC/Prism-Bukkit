@@ -1,12 +1,13 @@
 package me.botsko.prism.appliers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.elixr.EntityUtils;
 import me.botsko.prism.Prism;
@@ -82,9 +83,16 @@ public class Preview implements Previewable {
 	protected int changes_planned_count;
 	
 	/**
+	 * Keep a count of changes read from the queue. We don't actually remove
+	 * the changes from the queue if this is a preview, so we need to know when
+	 * we've reached the end.
+	 */
+	protected int blockChangesRead = 0;
+	
+	/**
 	 * 
 	 */
-	protected final LinkedBlockingQueue<Handler> worldChangeQueue = new LinkedBlockingQueue<Handler>();
+	protected final List<Handler> worldChangeQueue = Collections.synchronizedList(new LinkedList<Handler>()); 
 	
 	/**
 	 * 
@@ -222,6 +230,9 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	public void processWorldChanges(){
+		
+		blockChangesRead = 0;
+		
 		worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			
 		    public void run(){
@@ -236,8 +247,12 @@ public class Preview implements Previewable {
 				}
 		    	
 		    	int iterationCount = 0;
-				for (Iterator<Handler> iterator = worldChangeQueue.iterator(); iterator.hasNext(); ) {
+				for (Iterator<Handler> iterator = worldChangeQueue.listIterator(blockChangesRead); iterator.hasNext(); ) {
 					Handler a = iterator.next();
+					
+					// Only iterate the queue using a diff offset when previewing, actual rollbacks
+					// will remove from the queue and we'd begin at zero again
+					if(is_preview) blockChangesRead++;
 		    		
 		    		// We only want to process a set number of block changes per 
 		    		// schedule. Breaking here will leave the rest in the queue.
@@ -249,14 +264,14 @@ public class Preview implements Previewable {
 					// No sense in trying to rollback
 					// when the type doesn't support it.
 					if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
-						worldChangeQueue.remove(a);
+						iterator.remove();
 						continue;
 					}
 					
 					// No sense in trying to restore
 					// when the type doesn't support it.
 					if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
-						worldChangeQueue.remove(a);
+						iterator.remove();
 						continue;
 					}
 						
@@ -280,19 +295,19 @@ public class Preview implements Previewable {
 						
 						// No action, continue
 						if( result == null ){
-							worldChangeQueue.remove(a);
+							iterator.remove();
 							continue;
 						}
 						// Skip actions that have not returned any results
 						if( result.getType() == null ){
 							skipped_block_count++;
-							worldChangeQueue.remove(a);
+							iterator.remove();
 							continue;
 						}
 						// Skipping
 						else if(result.getType().equals(ChangeResultType.SKIPPED)){
 							skipped_block_count++;
-							worldChangeQueue.remove(a);
+							iterator.remove();
 							continue;
 						}
 						// Skipping, but change planned
@@ -307,7 +322,7 @@ public class Preview implements Previewable {
 						}
 						// Unless a preview, remove from queue
 						if(!is_preview){
-							worldChangeQueue.remove(a);
+							iterator.remove();
 						}
 					} catch ( Exception e ){
 						
@@ -323,14 +338,13 @@ public class Preview implements Previewable {
 						
 						// Count as skipped, remove from queue
 						skipped_block_count++;
-						worldChangeQueue.remove(a);
+						iterator.remove();
 						
 					}
 				}
-	    		
 				
 	    		// The task for this action is done being used
-	    		if(worldChangeQueue.isEmpty() || is_preview){
+	    		if(worldChangeQueue.isEmpty() || blockChangesRead == worldChangeQueue.size()){
 	    			plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
 	    			if( is_preview ){
 	    				postProcessPreview();
