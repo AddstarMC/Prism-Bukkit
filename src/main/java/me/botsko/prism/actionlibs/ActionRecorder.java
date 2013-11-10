@@ -217,6 +217,11 @@ public class ActionRecorder implements Runnable {
 		        	
 		        	Handler a = queue.poll();
 		        	
+		        	if( a == null ){
+		        		Prism.log("Action to be recorded was null.");
+		        		continue;
+		        	}
+		        	
 		        	int world_id = 0;
 		        	if( Prism.prismWorlds.containsKey(a.getWorldName()) ){
 		        		world_id = Prism.prismWorlds.get(a.getWorldName());
@@ -300,10 +305,10 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 
-//				if( i >= extraDataQueue.size() ){
+				if( i >= extraDataQueue.size() ){
 //					Prism.log("Please report to prism devs: Extra data error. Please tell us about /pr l id:" + keys.getInt(1) + ". i: " + i + " s: " + extraDataQueue.size() );
-//					continue;
-//				}
+					continue;
+				}
 
 				Handler a = extraDataQueue.get(i);
 				
