@@ -233,7 +233,7 @@ public class ActionRecorder implements Runnable {
 		        	
 		        	if( world_id == 0 || action_id == 0 || player_id == 0 ){
 		        		// @todo do something, error here
-		        		Prism.log("Cache data was empty. Please report to developer: world_id:"+world_id+" action_id:"+action_id+" player_id:"+player_id);
+		        		Prism.log("Cache data was empty. Please report to developer: world_id:"+world_id+"/"+a.getWorldName()+" action_id:"+action_id+"/"+a.getType().getName()+" player_id:"+player_id+"/"+a.getPlayerName());
 		        		continue;
 		        	}
 		        	

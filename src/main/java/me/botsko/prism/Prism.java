@@ -498,7 +498,7 @@ public class Prism extends JavaPlugin {
 
             // actions
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to populate db
-            if( prismActions.isEmpty() ){
+            if( prismActions.size() != actionRegistry.listAll().length ){
                 String[] actions = actionRegistry.listAll();
                 for( String a : actions ){
                     addActionName(a);
@@ -565,6 +565,7 @@ public class Prism extends JavaPlugin {
             
             rs = s.getGeneratedKeys();
             if (rs.next()) {
+            	Prism.log("Registering new action type to the database/cache: " +actionName+ " " + rs.getInt(1) );
             	prismActions.put( actionName, rs.getInt(1) );
             } else {
             	throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -624,6 +625,7 @@ public class Prism extends JavaPlugin {
             
             rs = s.getGeneratedKeys();
             if (rs.next()) {
+            	Prism.log("Registering new world to the database/cache: " +worldName+ " " + rs.getInt(1) );
                 prismWorlds.put( worldName, rs.getInt(1) );
             } else {
             	throw new SQLException("Insert statement failed - no generated key obtained.");
