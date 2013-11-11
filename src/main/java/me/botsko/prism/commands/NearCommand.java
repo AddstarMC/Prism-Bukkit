@@ -86,6 +86,10 @@ public class NearCommand implements SubHandler {
 							call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
 							result_count++;
 						}
+						
+						// Flush timed data
+						plugin.eventTimer.printTimeRecord();
+						
 					} else {
 						call.getPlayer().sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
 					}

@@ -205,7 +205,7 @@ public class Prism extends JavaPlugin {
 			Updater up = new Updater(this);
 			up.apply_updates();
 
-			eventTimer = new TimeTaken();
+			eventTimer = new TimeTaken(this);
 			queueStats = new QueueStats();
 			ignore = new Ignore(this);
 
