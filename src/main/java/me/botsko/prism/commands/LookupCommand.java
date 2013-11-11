@@ -114,6 +114,10 @@ public class LookupCommand implements SubHandler {
 						}
 					}
 				}
+				
+				// Flush timed data
+				plugin.eventTimer.printTimeRecord();
+				
 			}
 		});
 	}
