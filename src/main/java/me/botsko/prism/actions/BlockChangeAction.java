@@ -39,34 +39,6 @@ public class BlockChangeAction extends BlockAction {
 		public int newBlock_id;
 		public byte newBlock_subid;
 	}
-	
-	
-	/**
-	 * 
-	 */
-	@Override
-	public void setData( String data ){
-		this.data = data;
-		if(data != null && data.contains("{")){
-			if(type.getName().equals("world-edit")){
-				// No longer used except for pre-1.5 data formats
-				actionData = gson.fromJson(data, WorldEditActionData.class);
-				WorldEditActionData weData = (WorldEditActionData) actionData;
-				this.block_id = weData.newBlock_id;
-				this.block_subid = weData.newBlock_subid;
-				this.old_block_id = weData.originalBlock_id;
-				this.old_block_subid = weData.originalBlock_subid;
-			} else {
-				// No longer used except for pre-1.5 data formats
-				actionData = gson.fromJson(data, BlockChangeActionData.class);
-				BlockChangeActionData chgData = (BlockChangeActionData) actionData;
-				this.block_id = chgData.block_id;
-				this.block_subid = chgData.block_subid;
-				this.old_block_id = chgData.old_id;
-				this.old_block_subid = chgData.old_subid;
-			}
-		}
-	}
 
 	
 	/**
