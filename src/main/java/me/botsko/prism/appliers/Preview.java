@@ -245,7 +245,12 @@ public class Preview implements Previewable {
 				}
 		    	
 		    	int iterationCount = 0;
-				for (Iterator<Handler> iterator = worldChangeQueue.listIterator(blockChangesRead); iterator.hasNext(); ) {
+		    	int currentQueueOffset = blockChangesRead;
+		    	if( currentQueueOffset > worldChangeQueue.size() ){
+		    		Prism.log("Prism applier tried to read from invalid index " + currentQueueOffset + " - world change queue size was " + worldChangeQueue.size());
+		    		return;
+		    	}
+				for (Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset); iterator.hasNext(); ) {
 					Handler a = iterator.next();
 					
 					// Only iterate the queue using a diff offset when previewing, actual rollbacks
