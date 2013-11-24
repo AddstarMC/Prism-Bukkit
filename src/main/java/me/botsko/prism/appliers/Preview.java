@@ -246,108 +246,106 @@ public class Preview implements Previewable {
 		    	
 		    	int iterationCount = 0;
 		    	int currentQueueOffset = blockChangesRead;
-		    	if( currentQueueOffset > worldChangeQueue.size() ){
-		    		Prism.log("Prism applier tried to read from invalid index " + currentQueueOffset + " - world change queue size was " + worldChangeQueue.size());
-		    		return;
+		    	if( currentQueueOffset < worldChangeQueue.size() ){
+					for (Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset); iterator.hasNext(); ) {
+						Handler a = iterator.next();
+						
+						// Only iterate the queue using a diff offset when previewing, actual rollbacks
+						// will remove from the queue and we'd begin at zero again
+						if(is_preview) blockChangesRead++;
+			    		
+			    		// We only want to process a set number of block changes per 
+			    		// schedule. Breaking here will leave the rest in the queue.
+			    		iterationCount++;
+			    		if(iterationCount >= 1000){
+			    			break;
+			    		}
+						
+						// No sense in trying to rollback
+						// when the type doesn't support it.
+						if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
+							iterator.remove();
+							continue;
+						}
+						
+						// No sense in trying to restore
+						// when the type doesn't support it.
+						if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
+							iterator.remove();
+							continue;
+						}
+							
+	
+						/**
+						 * Reverse or restore block changes by allowing the handler
+						 * to decide what needs to happen.
+						 */
+						ChangeResult result = null;
+						
+						try {
+							if(processType.equals(PrismProcessType.ROLLBACK)){
+								result = a.applyRollback( player, parameters, is_preview );
+							}
+							if(processType.equals(PrismProcessType.RESTORE)){
+								result = a.applyRestore( player, parameters, is_preview );
+							}
+							if(processType.equals(PrismProcessType.UNDO)){
+								result = a.applyUndo( player, parameters, is_preview );
+							}
+							
+							// No action, continue
+							if( result == null ){
+								iterator.remove();
+								continue;
+							}
+							// Skip actions that have not returned any results
+							if( result.getType() == null ){
+								skipped_block_count++;
+								iterator.remove();
+								continue;
+							}
+							// Skipping
+							else if(result.getType().equals(ChangeResultType.SKIPPED)){
+								skipped_block_count++;
+								iterator.remove();
+								continue;
+							}
+							// Skipping, but change planned
+							else if(result.getType().equals(ChangeResultType.PLANNED)){
+								changes_planned_count++;
+								continue;
+							}
+							// Change applied
+							else {
+								blockStateChanges.add( result.getBlockStateChange() );
+								changes_applied_count++;
+							}
+							// Unless a preview, remove from queue
+							if(!is_preview){
+								iterator.remove();
+							}
+						} catch ( Exception e ){
+							
+							// Something caused an exception. We *have* to catch this
+							// so we can remove the item from the queue, otherwise
+							// the cycle will just spin in eternity and all
+							// damnation, normally killing their server through
+							// log files in the GB.
+							
+							// Log the error so they have something to report
+							Prism.log("Applier error: " + e.getMessage());
+							e.printStackTrace();
+							
+							// Count as skipped, remove from queue
+							skipped_block_count++;
+							iterator.remove();
+							
+						}
+					}
 		    	}
-				for (Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset); iterator.hasNext(); ) {
-					Handler a = iterator.next();
-					
-					// Only iterate the queue using a diff offset when previewing, actual rollbacks
-					// will remove from the queue and we'd begin at zero again
-					if(is_preview) blockChangesRead++;
-		    		
-		    		// We only want to process a set number of block changes per 
-		    		// schedule. Breaking here will leave the rest in the queue.
-		    		iterationCount++;
-		    		if(iterationCount >= 1000){
-		    			break;
-		    		}
-					
-					// No sense in trying to rollback
-					// when the type doesn't support it.
-					if( processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()){
-						iterator.remove();
-						continue;
-					}
-					
-					// No sense in trying to restore
-					// when the type doesn't support it.
-					if( processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()){
-						iterator.remove();
-						continue;
-					}
-						
-
-					/**
-					 * Reverse or restore block changes by allowing the handler
-					 * to decide what needs to happen.
-					 */
-					ChangeResult result = null;
-					
-					try {
-						if(processType.equals(PrismProcessType.ROLLBACK)){
-							result = a.applyRollback( player, parameters, is_preview );
-						}
-						if(processType.equals(PrismProcessType.RESTORE)){
-							result = a.applyRestore( player, parameters, is_preview );
-						}
-						if(processType.equals(PrismProcessType.UNDO)){
-							result = a.applyUndo( player, parameters, is_preview );
-						}
-						
-						// No action, continue
-						if( result == null ){
-							iterator.remove();
-							continue;
-						}
-						// Skip actions that have not returned any results
-						if( result.getType() == null ){
-							skipped_block_count++;
-							iterator.remove();
-							continue;
-						}
-						// Skipping
-						else if(result.getType().equals(ChangeResultType.SKIPPED)){
-							skipped_block_count++;
-							iterator.remove();
-							continue;
-						}
-						// Skipping, but change planned
-						else if(result.getType().equals(ChangeResultType.PLANNED)){
-							changes_planned_count++;
-							continue;
-						}
-						// Change applied
-						else {
-							blockStateChanges.add( result.getBlockStateChange() );
-							changes_applied_count++;
-						}
-						// Unless a preview, remove from queue
-						if(!is_preview){
-							iterator.remove();
-						}
-					} catch ( Exception e ){
-						
-						// Something caused an exception. We *have* to catch this
-						// so we can remove the item from the queue, otherwise
-						// the cycle will just spin in eternity and all
-						// damnation, normally killing their server through
-						// log files in the GB.
-						
-						// Log the error so they have something to report
-						Prism.log("Applier error: " + e.getMessage());
-						e.printStackTrace();
-						
-						// Count as skipped, remove from queue
-						skipped_block_count++;
-						iterator.remove();
-						
-					}
-				}
 				
 	    		// The task for this action is done being used
-	    		if(worldChangeQueue.isEmpty() || blockChangesRead == worldChangeQueue.size()){
+	    		if(worldChangeQueue.isEmpty() || blockChangesRead >= worldChangeQueue.size()){
 	    			plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
 	    			if( is_preview ){
 	    				postProcessPreview();
