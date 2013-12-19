@@ -62,7 +62,7 @@ public class SignAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		if(data != null){
+		if( data != null && !this.data.isEmpty() ){
 			actionData = gson.fromJson(data, SignChangeActionData.class);
 		}
 	}

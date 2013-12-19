@@ -228,6 +228,8 @@ public class ItemStackAction extends GenericAction {
 	 */
 	protected void setItemStackFromNewDataFormat(){
 		
+		if( data == null || !data.startsWith("{") ) return;
+		
 		actionData = gson.fromJson(data, ItemStackActionData.class);
 
 		item = new ItemStack(this.block_id,actionData.amt,(short)this.block_subid);

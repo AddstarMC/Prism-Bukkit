@@ -49,7 +49,7 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public void setData( String data ){
 		this.data = data;
-		if(data != null){
+		if( data != null && data.startsWith("{") ){
 			actionData = gson.fromJson(data, HangingItemActionData.class);
 		}
 	}
