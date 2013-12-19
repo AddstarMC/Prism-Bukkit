@@ -104,7 +104,7 @@ public class BlockAction extends GenericAction {
 	@Override
 	public void setData( String data ){
 		this.data = data;
-		if(data != null){
+		if( data != null && data.startsWith("{") ){
 			if( block_id == 144 || block_id == 397 ){
 				actionData = gson.fromJson(data, SkullActionData.class);
 			}
