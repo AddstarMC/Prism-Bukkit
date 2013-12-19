@@ -471,6 +471,10 @@ public class BlockAction extends GenericAction {
 			else if( m.equals(Material.BED_BLOCK) ){
 				BlockUtils.properlySetBed( block,getBlockId(),(byte)getBlockSubId());
 			}
+			// Or double plants
+			else if( m.equals(Material.DOUBLE_PLANT) ){
+				BlockUtils.properlySetDoublePlant( block,getBlockId(),(byte)getBlockSubId());
+			}
 		} else {
 			
 			// Otherwise, save the state so we can cancel if needed
