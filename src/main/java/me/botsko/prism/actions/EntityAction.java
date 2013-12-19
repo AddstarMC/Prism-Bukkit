@@ -170,7 +170,7 @@ public class EntityAction extends GenericAction {
 	 * 
 	 */
 	public void setData( String data ){
-		if(data != null){
+		if( data != null && data.startsWith("{") ){
 			actionData = gson.fromJson(data, EntityActionData.class);
 		}
 	}
