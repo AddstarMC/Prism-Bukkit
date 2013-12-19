@@ -34,11 +34,6 @@ public class ActionRecorder implements Runnable {
 	 * Track the timestamp at which we last paused
 	 */
 	private long lastPauseTime = 0;
-	
-	/**
-	 * 
-	 */
-	private ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 
 	
 	/**
@@ -198,6 +193,9 @@ public class ActionRecorder implements Runnable {
 	    	}
 	    	
 	    	if( !queue.isEmpty() ){
+	    		
+	    		// Start a clean extra data queue
+	    		ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 
 		    	conn = Prism.dbc();
 		        if(conn == null || conn.isClosed()){
@@ -240,11 +238,14 @@ public class ActionRecorder implements Runnable {
 		        	if( world_id == 0 || action_id == 0 || player_id == 0 ){
 		        		// @todo do something, error here
 		        		Prism.log("Cache data was empty. Please report to developer: world_id:"+world_id+"/"+a.getWorldName()+" action_id:"+action_id+"/"+a.getType().getName()+" player_id:"+player_id+"/"+a.getPlayerName());
+		        		Prism.log("HOWEVER, this likely means you have a broken prism database installation.");
 		        		continue;
 		        	}
 		        	
-		        	actionsRecorded++;
 		        	if( a == null || a.isCanceled() ) continue;
+		        	
+		        	actionsRecorded++;
+		        	
 		        	s.setLong(1, System.currentTimeMillis() / 1000L);
 			        s.setInt(2,action_id);
 			        s.setInt(3,player_id);
@@ -264,7 +265,7 @@ public class ActionRecorder implements Runnable {
 		            	
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
 		                s.executeBatch(); // Execute every x items.
-		                insertExtraData( s.getGeneratedKeys() );
+		                insertExtraData( extraDataQueue, s.getGeneratedKeys() );
 		                
 		            }
 		            i++;
@@ -274,7 +275,7 @@ public class ActionRecorder implements Runnable {
 		        plugin.queueStats.addRunCount(actionsRecorded);
 		        
 		        s.executeBatch();
-		        insertExtraData( s.getGeneratedKeys() );
+		        insertExtraData( extraDataQueue, s.getGeneratedKeys() );
 		        conn.commit();
 
 	    	}
@@ -291,13 +292,24 @@ public class ActionRecorder implements Runnable {
 	/**
 	 * 
 	 * @param keys
+	 * @throws SQLException 
 	 */
-	protected void insertExtraData( ResultSet keys ){
+	protected void insertExtraData( ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
 		
 		if( extraDataQueue.isEmpty() ) return;
 
 		PreparedStatement s = null;
 	    Connection conn = null;
+	    
+	    int rowcount = 0;
+	    if(keys.last()){
+	    	rowcount = keys.getRow();
+	    	keys.beforeFirst();
+	    }
+	    
+	    if( rowcount != extraDataQueue.size() ){
+	    	Prism.log("Please report to prism devs: Extra data queue did not equal keys returned. keys: " + rowcount + " extra data queue: " + extraDataQueue.size() );
+	    }
 
 	    try {
 		    conn = Prism.dbc();
@@ -306,8 +318,9 @@ public class ActionRecorder implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 
+				// @todo should not happen
 				if( i >= extraDataQueue.size() ){
-//					Prism.log("Please report to prism devs: Extra data error. Please tell us about /pr l id:" + keys.getInt(1) + ". i: " + i + " s: " + extraDataQueue.size() );
+					Prism.log( "Skipping extra data for prism_data.id " + keys.getInt(1) + " because the queue doesn't have data for it." );
 					continue;
 				}
 
@@ -330,7 +343,6 @@ public class ActionRecorder implements Runnable {
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
         	if(conn != null) try { conn.close(); } catch (SQLException e) {}
-        	extraDataQueue.clear();
         }
 	}
 
