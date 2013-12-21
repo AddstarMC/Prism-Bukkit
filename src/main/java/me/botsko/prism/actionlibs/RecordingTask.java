@@ -6,79 +6,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
 
-public class ActionRecorder implements Runnable {
+public class RecordingTask implements Runnable {
 	
 	/**
 	 * 
 	 */
 	private Prism plugin;
-	
-	/**
-	 * 
-	 */
-	private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
-	
-	/**
-	 * If the recorder skips running we need to count because
-	 * if this happens x times in a row, the recorder
-	 * will delay itself so we don't kill the server
-	 */
-	private int failedDbConnectionCount = 0;
-	
-	/**
-	 * Track the timestamp at which we last paused
-	 */
-	private long lastPauseTime = 0;
 
 	
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public ActionRecorder( Prism plugin ){
+	public RecordingTask( Prism plugin ){
 		this.plugin = plugin;
 	}
-	
-	
-	/**
-	 * 
-	 */
-	public int getQueueSize(){
-		return queue.size();
-	}
-	
-	
-	/**
-	 * 
-	 * @param a
-	 */
-	public void addToQueue( Handler a ){
-		
-		if(a == null) return;
-		
-		// prepare to save to the db
-		a.save();
-		
-		if(a.getData() != null && a.getData().length() > 65535){
-			Prism.log("Error: Data exceeds allowed length and will not be logged. Please inform Prism developers: " + a.getData().length()); // MCPC+ - just show size
-			return;
-		}
-		
-		queue.add(a);
 
-	}
-	
 	
 	/**
 	 * 
 	 */
 	public void save(){
-		if(!queue.isEmpty()){
+		if(!RecordingQueue.getQueue().isEmpty()){
 			insertActionsIntoDatabase();
 		}
 	}
@@ -88,7 +41,7 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 * @param a
 	 */
-	public int insertActionIntoDatabase( Handler a){
+	public static int insertActionIntoDatabase( Handler a){
 		int id = 0;
 		Connection conn = null;
 		PreparedStatement s = null;
@@ -149,7 +102,7 @@ public class ActionRecorder implements Runnable {
 			}
 	        
         } catch (SQLException e) {
-        	plugin.handleDatabaseException( e );
+//        	plugin.handleDatabaseException( e );
         } finally {
         	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -164,12 +117,12 @@ public class ActionRecorder implements Runnable {
 	 * @param playerName
 	 * @return
 	 */
-	protected int getPlayerPrimaryKey( String playerName ){
+	protected static int getPlayerPrimaryKey( String playerName ){
 		int player_id = 0;
     	if( Prism.prismPlayers.containsKey(playerName) ){
     		player_id = Prism.prismPlayers.get(playerName);
     	} else {
-    		plugin.cachePlayerPrimaryKey(playerName);
+    		Prism.cachePlayerPrimaryKey(playerName);
     		player_id = Prism.prismPlayers.get(playerName);
     	}
     	return player_id;
@@ -189,33 +142,36 @@ public class ActionRecorder implements Runnable {
 	    try {
 
 	    	int perBatch = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
-	    	if(perBatch < 1){
-	    		perBatch = 1000;
-	    	}
+	    	if(perBatch < 1) perBatch = 1000;
 	    	
-	    	if( !queue.isEmpty() ){
-	    		
-	    		// Start a clean extra data queue
-	    		ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
+	    	if( !RecordingQueue.getQueue().isEmpty() ){
 
+	    		ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 		    	conn = Prism.dbc();
-		        if(conn == null || conn.isClosed()){
-		        	if( failedDbConnectionCount < 1 ){
+		    	
+		    	// Handle dead connections
+		        if( conn == null || conn.isClosed() ){
+		        	if( RecordingManager.failedDbConnectionCount == 0 ){
 		        		Prism.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
 		        	}
-					failedDbConnectionCount++;
-					if( failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
-						lastPauseTime = System.currentTimeMillis();
+		        	RecordingManager.failedDbConnectionCount++;
+					if( RecordingManager.failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
+//						RecordingManager.lastPauseTime = System.currentTimeMillis();
 						Prism.log("Too many problems connecting. Let's wait for "+plugin.getConfig().getInt("prism.database.wait-on-failure-duration")+" seconds before we try again.");
+						scheduleNextRecording();
 					}
 					return;
+				} else {
+					RecordingManager.failedDbConnectionCount = 0;
 				}
+		        
+		        // Connection valid, proceed
 		        conn.setAutoCommit(false);
 		        s = conn.prepareStatement("INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 		        int i = 0;
-		        while (!queue.isEmpty()){
+		        while (!RecordingQueue.getQueue().isEmpty()){
 		        	
-		        	Handler a = queue.poll();
+		        	Handler a = RecordingQueue.getQueue().poll();
 		        	
 		        	if( a == null ){
 		        		Prism.log("Action to be recorded was null.");
@@ -225,13 +181,11 @@ public class ActionRecorder implements Runnable {
 		        	int world_id = 0;
 		        	if( Prism.prismWorlds.containsKey(a.getWorldName()) ){
 		        		world_id = Prism.prismWorlds.get(a.getWorldName());
-//		        		Prism.debug("World id from cache: " + world_id);
 		        	}
 		        	
 		        	int action_id = 0;
 		        	if( Prism.prismActions.containsKey(a.getType().getName()) ){
 		        		action_id = Prism.prismActions.get(a.getType().getName());
-//		        		Prism.debug("Action id from cache: " + action_id);
 		        	}
 		        	
 		        	int player_id = getPlayerPrimaryKey( a.getPlayerName() );
@@ -264,9 +218,9 @@ public class ActionRecorder implements Runnable {
 
 		            if ((i + 1) % perBatch == 0) {
 		            	
-		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + queue.size());
+		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + RecordingQueue.getQueue().size());
 		                s.executeBatch(); // Execute every x items.
-		                insertExtraData( extraDataQueue, s.getGeneratedKeys() );
+		                insertExtraData( conn, extraDataQueue, s.getGeneratedKeys() );
 		                
 		            }
 		            i++;
@@ -276,7 +230,7 @@ public class ActionRecorder implements Runnable {
 		        plugin.queueStats.addRunCount(actionsRecorded);
 		        
 		        s.executeBatch();
-		        insertExtraData( extraDataQueue, s.getGeneratedKeys() );
+		        insertExtraData( conn, extraDataQueue, s.getGeneratedKeys() );
 		        conn.commit();
 
 	    	}
@@ -295,12 +249,11 @@ public class ActionRecorder implements Runnable {
 	 * @param keys
 	 * @throws SQLException 
 	 */
-	protected void insertExtraData( ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
+	protected void insertExtraData( Connection conn, ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
 		
 		if( extraDataQueue.isEmpty() ) return;
 
 		PreparedStatement s = null;
-	    Connection conn = null;
 	    
 	    int rowcount = 0;
 	    if(keys.last()){
@@ -313,6 +266,7 @@ public class ActionRecorder implements Runnable {
 	    }
 
 	    try {
+
 		    conn = Prism.dbc();
 		    conn.setAutoCommit(false);
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data,te_data) VALUES (?,?,?)");
@@ -338,13 +292,13 @@ public class ActionRecorder implements Runnable {
 				
 			}
 			s.executeBatch();
-			conn.commit();
+
 	    } catch (SQLException e){
 	    	e.printStackTrace();
 	    	plugin.handleDatabaseException( e );
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	// conn close handled by parent method
         }
 	}
 
@@ -353,19 +307,38 @@ public class ActionRecorder implements Runnable {
 	 * 
 	 */
 	public void run(){
-		long currentTime = System.currentTimeMillis();
-		long diff = currentTime - lastPauseTime;
-		if( lastPauseTime > 0 ){
-			// see if we need to wait
-			if( diff < (plugin.getConfig().getInt("prism.database.wait-on-failure-duration")*1000) ){
-				return;
-			} else {
-				plugin.rebuildPool();
-				// Otherwise, reset the pause
-				lastPauseTime = 0;
-				failedDbConnectionCount = 0;
-			}
+		if( RecordingManager.failedDbConnectionCount > 5 ){
+			plugin.rebuildPool(); //force rebuild pool after several failures
 		}
 		save();
+		scheduleNextRecording();
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	protected int getTickDelayForNextBatch(){
+		
+		// If we have too many rejected connections, increase the schedule
+		if( RecordingManager.failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
+			return RecordingManager.failedDbConnectionCount * 20;
+		}
+		
+		int recorder_tick_delay = plugin.getConfig().getInt("prism.queue-empty-tick-delay");
+		if (recorder_tick_delay < 1) {
+			recorder_tick_delay = 3;
+		}
+		return recorder_tick_delay;
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected void scheduleNextRecording(){
+//		Prism.debug("Scheduling next recording task in " + getTickDelayForNextBatch() + " ticks.");
+		plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new RecordingTask(plugin), getTickDelayForNextBatch());
 	}
 }
