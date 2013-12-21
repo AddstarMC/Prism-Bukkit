@@ -254,15 +254,15 @@ public class RecordingTask implements Runnable {
 
 		PreparedStatement s = null;
 	    
-	    int rowcount = 0;
-	    if(keys.last()){
-	    	rowcount = keys.getRow();
-	    	keys.beforeFirst();
-	    }
-	    
-	    if( rowcount != extraDataQueue.size() ){
-	    	Prism.log("Please report to prism devs: Extra data queue did not equal keys returned. keys: " + rowcount + " extra data queue: " + extraDataQueue.size() );
-	    }
+//	    int rowcount = 0;
+//	    if(keys.last()){
+//	    	rowcount = keys.getRow();
+//	    	keys.beforeFirst();
+//	    }
+//	    
+//	    if( rowcount != extraDataQueue.size() ){
+//	    	Prism.log("Please report to prism devs: Extra data queue did not equal keys returned. keys: " + rowcount + " extra data queue: " + extraDataQueue.size() );
+//	    }
 
 	    try {
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
