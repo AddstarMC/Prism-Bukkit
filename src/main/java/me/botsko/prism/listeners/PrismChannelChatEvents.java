@@ -2,6 +2,7 @@ package me.botsko.prism.listeners;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,6 +21,6 @@ public class PrismChannelChatEvents implements Listener {
 	public void onChannelChat(final ChannelChatEvent event){
 		if( !Prism.getIgnore().event("player-chat", event.getSender().getPlayer()) ) return;
 		String msg = "["+event.getChannel().getNick().toLowerCase() + "] " + event.getMessage();
-		Prism.actionsRecorder.addToQueue( ActionFactory.create("player-chat", event.getSender().getPlayer(), msg) );
+		RecordingQueue.addToQueue( ActionFactory.create("player-chat", event.getSender().getPlayer(), msg) );
 	}
 }

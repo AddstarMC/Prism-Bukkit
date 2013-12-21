@@ -38,7 +38,6 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.database.max-idle-connections", 10);
 		config.addDefault("prism.database.max-wait", 30000);
 		config.addDefault("prism.database.max-failures-before-wait", 5);
-		config.addDefault("prism.database.wait-on-failure-duration", 5);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
 
 		// Mysql

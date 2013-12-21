@@ -2,8 +2,9 @@ package me.botsko.prism.listeners.self;
 
 import java.util.ArrayList;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
@@ -30,7 +31,7 @@ public class PrismMiscEvents implements Listener {
 			
 			// Create an entry for the rollback as a whole
 			Handler primaryAction = ActionFactory.create("prism-process", PrismProcessType.DRAIN, event.onBehalfOf(), ""+event.getRadius() );
-			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
+			int id = RecordingTask.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;
 			}
@@ -40,10 +41,10 @@ public class PrismMiscEvents implements Listener {
 				BlockState newBlock = stateChange.getNewBlock();
 
 				// Build the action
-				Prism.actionsRecorder.addToQueue( ActionFactory.create("prism-drain", orig, newBlock, event.onBehalfOf().getName(), id) );
+				RecordingQueue.addToQueue( ActionFactory.create("prism-drain", orig, newBlock, event.onBehalfOf().getName(), id) );
 				
 			}
-			Prism.actionsRecorder.save();
+//			ActionQueue.save();
 		}
 	}
 	
@@ -61,7 +62,7 @@ public class PrismMiscEvents implements Listener {
 			
 			// Create an entry for the rollback as a whole
 			Handler primaryAction = ActionFactory.create("prism-process", PrismProcessType.EXTINGUISH, event.onBehalfOf(), ""+event.getRadius() );
-			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
+			int id = RecordingTask.insertActionIntoDatabase( primaryAction );
 			if(id == 0){
 				return;
 			}
@@ -71,10 +72,10 @@ public class PrismMiscEvents implements Listener {
 				BlockState newBlock = stateChange.getNewBlock();
 
 				// Build the action
-				Prism.actionsRecorder.addToQueue( ActionFactory.create("prism-extinguish", orig, newBlock, event.onBehalfOf().getName(), id) );
+				RecordingQueue.addToQueue( ActionFactory.create("prism-extinguish", orig, newBlock, event.onBehalfOf().getName(), id) );
 				
 			}
-			Prism.actionsRecorder.save();
+//			ActionQueue.save();
 		}
 	}
 }

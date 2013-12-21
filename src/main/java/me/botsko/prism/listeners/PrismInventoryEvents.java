@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -58,7 +59,7 @@ public class PrismInventoryEvents implements Listener {
 		
 		// If hopper
 		if( event.getInventory().getType().equals(InventoryType.HOPPER) ){
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
+			RecordingQueue.addToQueue( ActionFactory.create("item-pickup", event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
 		}
 	}
 	
@@ -87,7 +88,7 @@ public class PrismInventoryEvents implements Listener {
 		if( containerLoc == null ) return;
 		
 		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
-			Prism.actionsRecorder.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
+			RecordingQueue.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
 		}
 	}
 	
@@ -218,7 +219,7 @@ public class PrismInventoryEvents implements Listener {
 	    
 	    // Record it!
 	    if(actionType != null && containerLoc != null && item != null && item.getTypeId() != 0 && officialQuantity > 0){
-		    Prism.actionsRecorder.addToQueue( ActionFactory.create(actionType, item, officialQuantity, slot, null, containerLoc, player.getName()) );
+		    RecordingQueue.addToQueue( ActionFactory.create(actionType, item, officialQuantity, slot, null, containerLoc, player.getName()) );
 	    }
 	}
 }
