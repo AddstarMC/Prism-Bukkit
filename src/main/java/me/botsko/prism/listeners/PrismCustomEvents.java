@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.events.PrismCustomPlayerActionEvent;
 
 import org.bukkit.event.EventHandler;
@@ -36,7 +37,7 @@ public class PrismCustomEvents implements Listener {
     public void onCustomPlayerAction(final PrismCustomPlayerActionEvent event){
 		ArrayList<String> allowedPlugins = (ArrayList<String>) plugin.getConfig().getList("prism.tracking.api.allowed-plugins");
 		if( allowedPlugins.contains( event.getPluginName() ) ){
-			Prism.actionsRecorder.addToQueue( ActionFactory.create( event.getActionTypeName(), event.getPlayer(), event.getMessage()) );
+			RecordingQueue.addToQueue( ActionFactory.create( event.getActionTypeName(), event.getPlayer(), event.getMessage()) );
 		}
 	}
 }

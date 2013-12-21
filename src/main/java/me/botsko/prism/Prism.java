@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.actionlibs.ActionRecorder;
+import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.HandlerRegistry;
@@ -97,7 +97,6 @@ public class Prism extends JavaPlugin {
 	public static Messenger messenger;
 	public static FileConfiguration config;
 	public WorldEditPlugin plugin_worldEdit = null;
-	public static ActionRecorder actionsRecorder;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
 	public UseMonitor useMonitor;
@@ -109,6 +108,7 @@ public class Prism extends JavaPlugin {
 	public TimeTaken eventTimer;
 	public QueueStats queueStats;
 	public BukkitTask deleteTask;
+	public BukkitTask recordingTask;
 	public int total_records_affected = 0;
 	
 	/**
@@ -240,7 +240,6 @@ public class Prism extends JavaPlugin {
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
-			actionsRecorder = new ActionRecorder(this);
 			actionsQuery = new ActionsQuery(this);
 			oreMonitor = new OreMonitor(this);
 			useMonitor = new UseMonitor(this);
@@ -690,7 +689,7 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	public void cachePlayerPrimaryKey( final String playerName ){
+	public static void cachePlayerPrimaryKey( final String playerName ){
 		
 //		getServer().getScheduler().runTaskAsynchronously(this, new Runnable(){
 //			public void run(){
@@ -952,7 +951,8 @@ public class Prism extends JavaPlugin {
 		if (recorder_tick_delay < 1) {
 			recorder_tick_delay = 3;
 		}
-		getServer().getScheduler().runTaskTimerAsynchronously(this,new ActionRecorder(prism), recorder_tick_delay,recorder_tick_delay);
+		// we schedule it once, it will reschedule itself
+		recordingTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new RecordingTask(prism), recorder_tick_delay);
 	}
 
 	

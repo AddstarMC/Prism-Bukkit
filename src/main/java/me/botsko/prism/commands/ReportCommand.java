@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 
@@ -54,7 +55,7 @@ public class ReportCommand implements SubHandler {
 		
 		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Current Stats") );
 		
-		sender.sendMessage( Prism.messenger.playerMsg( "Actions in save queue: " + ChatColor.WHITE + Prism.actionsRecorder.getQueueSize() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Actions in save queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize() ) );
 		
 		ConcurrentSkipListMap<Long,Integer> runs = plugin.queueStats.getRecentRunCounts();
 		if(runs.size() > 0){

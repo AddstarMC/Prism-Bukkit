@@ -20,7 +20,7 @@ public class PrismRollbackEvents implements Listener {
 //			
 //			// Create an entry for the rollback as a whole
 //			Handler primaryAction = ActionFactory.create("prism-process", PrismProcessType.ROLLBACK, event.onBehalfOf(), event.getCommandParams() );
-//			int id = Prism.actionsRecorder.insertActionIntoDatabase( primaryAction );
+//			int id = ActionQueue.insertActionIntoDatabase( primaryAction );
 //			if(id == 0){
 //				return;
 //			}
@@ -36,9 +36,9 @@ public class PrismRollbackEvents implements Listener {
 //				action.setY(orig.getY());
 //				action.setZ(orig.getZ());
 //
-//				Prism.actionsRecorder.addToQueue( action );
+//				ActionQueue.addToQueue( action );
 //			}
-//			Prism.actionsRecorder.save();
+//			ActionQueue.save();
 //		}
 	}
 }
