@@ -472,13 +472,18 @@ public class ItemStackAction extends GenericAction {
 					
 					// We'll attempt to take it from the same slot
 					if( getActionData().slot >= 0 ){
-						ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
-						// Make sure something's there.
-						if( currentSlotItem != null ){
-							currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
-							result = ChangeResultType.APPLIED;
-							removed = true;
-							inventory.setItem(getActionData().slot, currentSlotItem);
+						
+						if( getActionData().slot > inventory.getContents().length ){
+							inventory.addItem( getItem() );
+						} else {
+							ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+							// Make sure something's there.
+							if( currentSlotItem != null ){
+								currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
+								result = ChangeResultType.APPLIED;
+								removed = true;
+								inventory.setItem(getActionData().slot, currentSlotItem);
+							}
 						}
 					}
 					// If that failed we'll attempt to take it from anywhere
