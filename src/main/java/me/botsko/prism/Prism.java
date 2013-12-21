@@ -616,6 +616,8 @@ public class Prism extends JavaPlugin {
 	 */
 	public static void addWorldName( String worldName ){
 		
+		if( prismWorlds.containsKey(worldName) ) return;
+		
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
