@@ -116,7 +116,7 @@ public class PrismPlayerEvents implements Listener {
 		Player player = event.getPlayer();
 		
 		// Lookup player for cache reasons
-		plugin.cachePlayerPrimaryKey( player.getName() );
+		Prism.cachePlayerPrimaryKey( player.getName() );
 		
 		// Track the join event
 		if( !Prism.getIgnore().event("player-join",player) ) return;
