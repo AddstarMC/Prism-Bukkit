@@ -52,6 +52,7 @@ public class HelpCommand implements SubHandler {
 		sender.sendMessage( Prism.messenger.playerHelp("setmy wand item (item id)", "Set your personal wand item/block id:subid."));
 		sender.sendMessage( Prism.messenger.playerHelp("resetmy (wand)", "Reset your custom wand settings to server defaults."));
 		sender.sendMessage( Prism.messenger.playerHelp("(rp|report) queue", "Display statistics on current queues."));
+		sender.sendMessage( Prism.messenger.playerHelp("(rp|report) sum (blocks|actions) (player)", "Display summary reports for a player"));
 		sender.sendMessage( Prism.messenger.playerHelp("about", "Show Prism credits."));
 		sender.sendMessage( Prism.messenger.playerHelp("reload", "Reload config/language files."));
 		
