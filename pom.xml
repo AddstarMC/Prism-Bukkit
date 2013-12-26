@@ -8,7 +8,7 @@
   		<dependency>
 			<groupId>me.botsko</groupId>
 			<artifactId>elixr</artifactId>
-			<version>1.0-dev-42-gb67a2ea-SNAPSHOT</version>
+			<version>1.0-dev-43-gdb35f73-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bukkit</groupId>
