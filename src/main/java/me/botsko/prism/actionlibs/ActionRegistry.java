@@ -91,7 +91,7 @@ public class ActionRegistry {
 		ArrayList<ActionType> actions = new ArrayList<ActionType>();
 		for (Entry<String,ActionType> entry : registeredActions.entrySet()){
 			// Match either the name or the short name
-			if( entry.getValue().getShortName().equals(name) || entry.getValue().getName().equals(name) ){
+			if( entry.getValue().getFamilyName().equals(name) || entry.getValue().getShortName().equals(name) || entry.getValue().getName().equals(name) ){
 				actions.add(entry.getValue());
 			}
 		}
