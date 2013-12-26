@@ -106,6 +106,19 @@ public class ActionType {
 	 * 
 	 * @return
 	 */
+	public String getFamilyName(){
+		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");;
+		if(_tmp.length == 2){
+			return _tmp[0];
+		}
+		return name;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getShortName(){
 		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");;
 		if(_tmp.length == 2){
