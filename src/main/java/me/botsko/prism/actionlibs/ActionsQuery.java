@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.libs.com.google.gson.JsonSyntaxException;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
@@ -112,37 +113,47 @@ public class ActionsQuery {
 	    			
 	    			if(actionType == null) continue;
 	    			
-	    			Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
-	   
 //	    			Prism.debug("Important: Action type '" + rs.getString(3) + "' has no official handling class, will be shown as generic." );
 
-    				// Set all shared values
-	    			baseHandler.setPlugin( plugin );
-	    			baseHandler.setType( actionType );
-	    			baseHandler.setId( rs.getInt(1) );
-	    			baseHandler.setUnixEpoch( rs.getString(2) );
-	    			baseHandler.setPlayerName( rs.getString(4) );
-	    			baseHandler.setWorldName( rs.getString(5) );
-	    			baseHandler.setX( rs.getInt(6) );
-	    			baseHandler.setY( rs.getInt(7) );
-	    			baseHandler.setZ( rs.getInt(8) );
-					baseHandler.setBlockId( rs.getInt(9) );
-					baseHandler.setBlockSubId( rs.getInt(10) );
-					baseHandler.setOldBlockId( rs.getInt(11) );
-					baseHandler.setOldBlockSubId( rs.getInt(12) );
-					baseHandler.setData( rs.getString(13) );
-					baseHandler.setTileEntityData(rs.getString(14)); // MCPC+ - set te data
-    				baseHandler.setMaterialAliases( plugin.getItems() );
-    				
-    				// Set aggregate counts if a lookup
-    				int aggregated = 0;
-    				if( shouldGroup ){
-    					aggregated = rs.getInt(15);
-    				}
-    				baseHandler.setAggregateCount(aggregated);
-    				
-    				actions.add(baseHandler);
-	    			
+	    			try {
+	    				
+	    				Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
+
+	    				// Set all shared values
+		    			baseHandler.setPlugin( plugin );
+		    			baseHandler.setType( actionType );
+		    			baseHandler.setId( rs.getInt(1) );
+		    			baseHandler.setUnixEpoch( rs.getString(2) );
+		    			baseHandler.setPlayerName( rs.getString(4) );
+		    			baseHandler.setWorldName( rs.getString(5) );
+		    			baseHandler.setX( rs.getInt(6) );
+		    			baseHandler.setY( rs.getInt(7) );
+		    			baseHandler.setZ( rs.getInt(8) );
+						baseHandler.setBlockId( rs.getInt(9) );
+						baseHandler.setBlockSubId( rs.getInt(10) );
+						baseHandler.setOldBlockId( rs.getInt(11) );
+						baseHandler.setOldBlockSubId( rs.getInt(12) );
+						baseHandler.setData( rs.getString(13) );
+						baseHandler.setTileEntityData(rs.getString(14)); // MCPC+ - set te data
+	    				baseHandler.setMaterialAliases( plugin.getItems() );
+	    				
+	    				// Set aggregate counts if a lookup
+	    				int aggregated = 0;
+	    				if( shouldGroup ){
+	    					aggregated = rs.getInt(15);
+	    				}
+	    				baseHandler.setAggregateCount(aggregated);
+	    				
+	    				actions.add(baseHandler);
+	    				
+	    			} catch (JsonSyntaxException e) {
+	    	        	Prism.log("Ingoring extra data for prism_data #" + rs.getInt(1) + " because it appears corrupt or invalid." );
+	    	        	continue;
+	    	        } catch (Exception e) {
+	    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
+	    	        	Prism.log( e.getMessage() );
+	    	        	continue;
+	    	        }
 	    		}
 	            
 	        } catch (SQLException e) {
