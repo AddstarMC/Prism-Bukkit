@@ -462,7 +462,7 @@ public class Prism extends JavaPlugin {
             // extra prism data table (check if it exists first, so we can avoid re-adding foreign key stuff)
             DatabaseMetaData metadata = conn.getMetaData();
             ResultSet resultSet;
-            resultSet = metadata.getTables(null, null, "tablename", null);
+            resultSet = metadata.getTables(null, null, "prism_data_extra", null);
             if(!resultSet.next()){
             	
             	// extra data
