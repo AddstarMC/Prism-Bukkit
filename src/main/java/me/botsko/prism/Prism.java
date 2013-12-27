@@ -2,6 +2,7 @@ package me.botsko.prism;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -466,17 +467,28 @@ public class Prism extends JavaPlugin {
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
             
-            // extra data
-            query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
-                    + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
-                    + "`data_id` int(10) unsigned NOT NULL,"
-                    + "`data` text NULL,"
-                    + "`te_data` text NULL,"
-                    + "PRIMARY KEY (`extra_id`),"
-                    + "KEY `data_id` (`data_id`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-            
+            // extra prism data table (check if it exists first, so we can avoid re-adding foreign key stuff)
+            DatabaseMetaData metadata = conn.getMetaData();
+            ResultSet resultSet;
+            resultSet = metadata.getTables(null, null, "prism_data_extra", null);
+            if(!resultSet.next()){
+            	
+            	// extra data
+                query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
+                        + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` int(10) unsigned NOT NULL,"
+                        + "`data` text NULL,"
+                        + "`te_data` text NULL,"
+                        + "PRIMARY KEY (`extra_id`),"
+                        + "KEY `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+                st.executeUpdate(query);
+            	
+	            // add extra data delete cascade
+	            query = "ALTER TABLE `prism_data_extra` ADD CONSTRAINT `prism_data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `prism_data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+	            st.executeUpdate(query);
+        	}
+
             // meta
             query = "CREATE TABLE IF NOT EXISTS `prism_meta` ("
                     + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
