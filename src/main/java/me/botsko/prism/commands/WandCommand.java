@@ -50,13 +50,13 @@ public class WandCommand implements SubHandler {
 		}
 		
 		Wand oldwand = null;
-		if(plugin.playersWithActiveTools.containsKey(call.getPlayer().getName())){
+		if(Prism.playersWithActiveTools.containsKey(call.getPlayer().getName())){
 			// Pull the wand in use
-			oldwand = plugin.playersWithActiveTools.get(call.getPlayer().getName());
+			oldwand = Prism.playersWithActiveTools.get(call.getPlayer().getName());
 		}
 		
 		// Always remove the old one
-		plugin.playersWithActiveTools.remove(call.getPlayer().getName());
+		Prism.playersWithActiveTools.remove(call.getPlayer().getName());
 		
 		
 		// Determine default mode
@@ -236,7 +236,7 @@ public class WandCommand implements SubHandler {
 			}
 			
 			// Store
-			plugin.playersWithActiveTools.put(call.getPlayer().getName(), wand);
+			Prism.playersWithActiveTools.put(call.getPlayer().getName(), wand);
 		} else {
 			if(oldwand != null){
 				oldwand.disable( call.getPlayer() );

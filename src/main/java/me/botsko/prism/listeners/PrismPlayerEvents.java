@@ -146,8 +146,8 @@ public class PrismPlayerEvents implements Listener {
 		RecordingQueue.addToQueue( ActionFactory.create("player-quit", event.getPlayer(), null) );
 
 		// Remove any active wands for this player
-		if(plugin.playersWithActiveTools.containsKey(event.getPlayer().getName())){
-			plugin.playersWithActiveTools.remove(event.getPlayer().getName());
+		if(Prism.playersWithActiveTools.containsKey(event.getPlayer().getName())){
+			Prism.playersWithActiveTools.remove(event.getPlayer().getName());
 		}
 		// Remove any active previews for this player, even though they would expire
 		// naturally.
@@ -308,9 +308,9 @@ public class PrismPlayerEvents implements Listener {
 		Block block = event.getClickedBlock();
 
 		// Are they using a wand (or do we always allow it)
-		if( plugin.playersWithActiveTools.containsKey(player.getName()) ){
+		if( Prism.playersWithActiveTools.containsKey(player.getName()) ){
 			
-			Wand wand = plugin.playersWithActiveTools.get(player.getName());
+			Wand wand = Prism.playersWithActiveTools.get(player.getName());
 			
 			// The wand will tell us what to use.
 			int item_id = wand.getItemId();
@@ -323,13 +323,13 @@ public class PrismPlayerEvents implements Listener {
 				
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
-					wand.playerLeftClick( player, block );
+					wand.playerLeftClick( player, block.getLocation() );
 				}
 				// Right click is for relative block on blockface
 				// except block placements - those will be handled by the blockplace.
 				if ( event.getAction() == Action.RIGHT_CLICK_BLOCK) {
 					block = block.getRelative(event.getBlockFace());
-					wand.playerRightClick( player, block );
+					wand.playerRightClick( player, block.getLocation() );
 				}
 				
 				if((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)){
@@ -558,10 +558,10 @@ public class PrismPlayerEvents implements Listener {
 		Entity entity = event.getRightClicked();
 
 		// Are they using a wand?
-		if(plugin.playersWithActiveTools.containsKey(player.getName())){
+		if(Prism.playersWithActiveTools.containsKey(player.getName())){
 
 			// Pull the wand in use
-			Wand wand = plugin.playersWithActiveTools.get(player.getName());
+			Wand wand = Prism.playersWithActiveTools.get(player.getName());
 			if( wand != null && wand instanceof ProfileWand ){
 				
 				wand.playerRightClick( player, entity );

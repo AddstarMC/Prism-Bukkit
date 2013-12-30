@@ -1,6 +1,6 @@
 package me.botsko.prism.wands;
 
-import org.bukkit.block.Block;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -11,13 +11,13 @@ public interface Wand {
 	/**
 	 * 
 	 */
-	public void playerLeftClick( Player player, Block block );
+	public void playerLeftClick( Player player, Location loc );
 	
 	
 	/**
 	 * 
 	 */
-	public void playerRightClick( Player player, Block block );
+	public void playerRightClick( Player player, Location loc );
 
 
 	/**

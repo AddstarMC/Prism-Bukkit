@@ -195,9 +195,9 @@ public class Preview implements Previewable {
 			if(!is_preview && player != null ){
 				
 				Wand oldwand = null;
-				if(plugin.playersWithActiveTools.containsKey(player.getName())){
+				if(Prism.playersWithActiveTools.containsKey(player.getName())){
 					// Pull the wand in use
-					oldwand = plugin.playersWithActiveTools.get(player.getName());
+					oldwand = Prism.playersWithActiveTools.get(player.getName());
 				}
 				
 				boolean show_nearby = true;

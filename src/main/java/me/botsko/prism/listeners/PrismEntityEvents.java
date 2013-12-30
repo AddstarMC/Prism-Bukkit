@@ -7,6 +7,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.WandUtils;
+import me.botsko.prism.wands.Wand;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,6 +80,12 @@ public class PrismEntityEvents implements Listener {
 		
 		Entity entity = event.getEntity();
 		Player player = (Player) event.getDamager();
+		
+		// Cancel the event if a wand is in use
+		if( WandUtils.playerUsesWandOnClick( player, entity.getLocation() ) ){
+			event.setCancelled(true);
+			return;
+		}
 		
 		if( entity instanceof ItemFrame ){
 			ItemFrame frame = (ItemFrame) event.getEntity();
@@ -239,6 +247,13 @@ public class PrismEntityEvents implements Listener {
 		Player p = event.getPlayer();
 		Entity e = event.getRightClicked();
 		
+		// @todo right clicks should technically follow blockface
+		// Cancel the event if a wand is in use
+		if( WandUtils.playerUsesWandOnClick( p, e.getLocation() ) ){
+			event.setCancelled(true);
+			return;
+		}
+		
 		if( e instanceof ItemFrame ){
 			
 			ItemFrame frame = (ItemFrame) e;
@@ -350,6 +365,11 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
+		// Cancel the event if a wand is in use
+		if( WandUtils.playerUsesWandOnClick( event.getPlayer(), event.getEntity().getLocation() ) ){
+			event.setCancelled(true);
+			return;
+		}
 		if( !Prism.getIgnore().event("hangingitem-place",event.getPlayer()) ) return;
 		RecordingQueue.addToQueue( ActionFactory.create("hangingitem-place", event.getEntity(), event.getPlayer().getName()) );
 	}
