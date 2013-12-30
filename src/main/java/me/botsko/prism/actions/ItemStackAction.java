@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,6 +44,7 @@ public class ItemStackAction extends GenericAction {
 		public String[] enchs;
 		public String by;
 		public String title;
+		public String[] lore;
 		public String[] content;
 		public int slot = -1;
 		public int[] effectColors;
@@ -131,6 +133,9 @@ public class ItemStackAction extends GenericAction {
 				actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
 			}
 		}
+		
+		// Lore
+		actionData.lore = (String[]) item.getItemMeta().getLore().toArray(new String[0]);
 		
 		// Enchantments
 		if(!this.enchantments.isEmpty()){
@@ -302,11 +307,12 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Item display names
+		ItemMeta meta = item.getItemMeta();
 		if( actionData.name != null ){
-			ItemMeta meta = item.getItemMeta();
 			meta.setDisplayName( actionData.name );
-			item.setItemMeta(meta);
 		}
+		meta.setLore( Arrays.asList(actionData.lore) );
+		item.setItemMeta(meta);
 	}
 	
 	
