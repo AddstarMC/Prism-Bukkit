@@ -65,6 +65,30 @@ public class PrismEntityEvents implements Listener {
 	public PrismEntityEvents( Prism plugin ){
 		this.plugin = plugin;
 	}
+	
+	
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityDamageEvent( final EntityDamageByEntityEvent event ){
+
+		if( !(event.getDamager() instanceof Player) ) return;
+		
+		Entity entity = event.getEntity();
+		Player player = (Player) event.getDamager();
+		
+		if( entity instanceof ItemFrame ){
+			ItemFrame frame = (ItemFrame) event.getEntity();
+			// Frame is empty but an item is held
+			if( !frame.getItem().getType().equals(Material.AIR) ){
+				if( Prism.getIgnore().event("item-remove",player) ){
+					RecordingQueue.addToQueue( ActionFactory.create("item-remove", frame.getItem(), 1, 0, null, entity.getLocation(), player.getName()) );
+				}
+			}
+		}
+	}
 
 	
 	/**
@@ -214,6 +238,26 @@ public class PrismEntityEvents implements Listener {
 		
 		Player p = event.getPlayer();
 		Entity e = event.getRightClicked();
+		
+		
+		// 
+		if( e instanceof ItemFrame ){
+			
+			ItemFrame frame = (ItemFrame) e;
+			
+			// If held item doesn't equal existing item frame object type
+			if( !frame.getItem().getType().equals(Material.AIR) ){
+				// item would rotate
+			}
+			
+			// Frame is empty but an item is held
+			if( frame.getItem().getType().equals(Material.AIR) && p.getItemInHand() != null ){
+				if( Prism.getIgnore().event("item-insert",p) ){
+					RecordingQueue.addToQueue( ActionFactory.create("item-insert", p.getItemInHand(), 1, 0, null, e.getLocation(), p.getName()) );
+				}
+			}
+		}
+		
 		
 		// if they're holding coal (or charcoal, a subitem) and they click a powered minecart
 		if( p.getItemInHand().getType().equals(Material.COAL) && e instanceof PoweredMinecart ){
