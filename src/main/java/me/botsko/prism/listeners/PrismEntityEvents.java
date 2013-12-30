@@ -323,6 +323,7 @@ public class PrismEntityEvents implements Listener {
 		if( !Prism.getIgnore().event("hangingitem-place",event.getPlayer()) ) return;
 		RecordingQueue.addToQueue( ActionFactory.create("hangingitem-place", event.getEntity(), event.getPlayer().getName()) );
 	}
+
 	
 	
 	/**
@@ -372,17 +373,24 @@ public class PrismEntityEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
+	public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event){
+		
+		Entity entity = event.getEntity();
+		Entity remover = event.getRemover();
+		Player player = null;
+		if( remover instanceof Player ) player = (Player) remover;
+		
+		// Cancel the event if a wand is in use
+		if( player != null && WandUtils.playerUsesWandOnClick( player, event.getEntity().getLocation() ) ){
+			event.setCancelled(true);
+			return;
+		}
 		
 		if( !Prism.getIgnore().event("hangingitem-break",event.getEntity().getWorld()) ) return;
-		String breaking_name = "";
-		Entity e = event.getRemover();
-		if(e instanceof Player){
-			Player player = (Player)e;
-			breaking_name = player.getName();
-		} else {
-			breaking_name = e.getType().getName();
-		}
+		
+		String breaking_name = remover.getType().getName();
+		if( player != null ) breaking_name = player.getName();
+		
 		RecordingQueue.addToQueue( ActionFactory.create("hangingitem-break", event.getEntity(), breaking_name) );
 		
 		if( !Prism.getIgnore().event("item-remove",event.getEntity().getWorld()) ) return;
@@ -391,7 +399,7 @@ public class PrismEntityEvents implements Listener {
 		if( event.getEntity() instanceof ItemFrame ){
 			ItemFrame frame = (ItemFrame) event.getEntity();
 			if( frame.getItem() != null ){
-				RecordingQueue.addToQueue( ActionFactory.create("item-remove", frame.getItem(), frame.getItem().getAmount(), -1, null, e.getLocation(), breaking_name) );
+				RecordingQueue.addToQueue( ActionFactory.create("item-remove", frame.getItem(), frame.getItem().getAmount(), -1, null, entity.getLocation(), breaking_name) );
 			}
 		}
 	}
