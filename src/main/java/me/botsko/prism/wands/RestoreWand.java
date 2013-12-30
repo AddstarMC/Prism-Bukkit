@@ -1,5 +1,6 @@
 package me.botsko.prism.wands;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -29,9 +30,9 @@ public class RestoreWand extends QueryWandBase implements Wand {
 	/**
 	 * 
 	 */
-	public void playerLeftClick(Player player, Block block) {
-		if(block != null){
-			restore( player, block );
+	public void playerLeftClick( Player player, Location loc ){
+		if(loc != null){
+			restore( player, loc );
 		}
 	}
 
@@ -39,9 +40,9 @@ public class RestoreWand extends QueryWandBase implements Wand {
 	/**
 	 * 
 	 */
-	public void playerRightClick(Player player, Block block) {
-		if(block != null){
-			restore( player, block );
+	public void playerRightClick( Player player, Location loc ){
+		if(loc != null){
+			restore( player, loc );
 		}
 	}
 	
@@ -51,7 +52,9 @@ public class RestoreWand extends QueryWandBase implements Wand {
 	 * @param player
 	 * @param block
 	 */
-	protected void restore( Player player, Block block ){
+	protected void restore( Player player, Location loc ){
+		
+		Block block = loc.getBlock();
 		
 		plugin.eventTimer.recordTimedEvent("rollback wand used");
 
