@@ -239,15 +239,13 @@ public class PrismEntityEvents implements Listener {
 		Player p = event.getPlayer();
 		Entity e = event.getRightClicked();
 		
-		
-		// 
 		if( e instanceof ItemFrame ){
 			
 			ItemFrame frame = (ItemFrame) e;
 			
 			// If held item doesn't equal existing item frame object type
 			if( !frame.getItem().getType().equals(Material.AIR) ){
-				// item would rotate
+				RecordingQueue.addToQueue( ActionFactory.create("item-rotate", event.getPlayer(), frame.getRotation().name().toLowerCase()) );
 			}
 			
 			// Frame is empty but an item is held
@@ -257,7 +255,6 @@ public class PrismEntityEvents implements Listener {
 				}
 			}
 		}
-		
 		
 		// if they're holding coal (or charcoal, a subitem) and they click a powered minecart
 		if( p.getItemInHand().getType().equals(Material.COAL) && e instanceof PoweredMinecart ){

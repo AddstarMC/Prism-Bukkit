@@ -145,6 +145,8 @@ permissions:
         default: false
     prism.ignore.tracking.item-remove:
         default: false
+    prism.ignore.tracking.item-rotate:
+        default: false
     prism.ignore.tracking.lava-break:
         default: false
     prism.ignore.tracking.lava-bucket:
