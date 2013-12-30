@@ -27,9 +27,9 @@ public class ProfileWand extends WandBase implements Wand {
 	/**
 	 * 
 	 */
-	public void playerLeftClick(Player player, Block block) {
-		if(block != null){
-			showBlockProfile(player, block, block.getLocation());
+	public void playerLeftClick( Player player, Location loc ){
+		if(loc != null){
+			showLocationProfile(player, loc);
 		}
 	}
 
@@ -37,9 +37,9 @@ public class ProfileWand extends WandBase implements Wand {
 	/**
 	 * 
 	 */
-	public void playerRightClick(Player player, Block block) {
-		if(block != null){
-			showBlockProfile(player, block, block.getLocation());
+	public void playerRightClick( Player player, Location loc ) {
+		if(loc != null){
+			showLocationProfile(player, loc);
 		}
 	}
 	
@@ -50,9 +50,11 @@ public class ProfileWand extends WandBase implements Wand {
 	 * @param block
 	 * @param loc
 	 */
-	protected void showBlockProfile( Player player, Block block, Location loc ){
+	protected void showLocationProfile( Player player, Location loc ){
 		
-		player.sendMessage( Prism.messenger.playerHeaderMsg("Block Profile") );
+		Block block = loc.getBlock();
+		
+		player.sendMessage( Prism.messenger.playerHeaderMsg("Location Profile") );
 		
 		player.sendMessage( Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase() ) );
 		player.sendMessage( Prism.messenger.playerMsg("Alias: " + plugin.getItems().getAlias(block.getTypeId(), block.getData()) ) );

@@ -33,16 +33,16 @@ public class InspectorWand extends QueryWandBase implements Wand {
 	/**
 	 * 
 	 */
-	public void playerLeftClick(Player player, Block block) {
-		showBlockHistory(player, block, block.getLocation());
+	public void playerLeftClick( Player player, Location loc ) {
+		showLocationHistory(player, loc);
 	}
 
 	
 	/**
 	 * 
 	 */
-	public void playerRightClick(Player player, Block block) {
-		showBlockHistory(player, block, block.getLocation());
+	public void playerRightClick( Player player, Location loc ) {
+		showLocationHistory(player, loc);
 	}
 	
 	
@@ -52,7 +52,9 @@ public class InspectorWand extends QueryWandBase implements Wand {
 	 * @param block
 	 * @param loc
 	 */
-	protected void showBlockHistory( final Player player, final Block block, final Location loc ){
+	protected void showLocationHistory( final Player player, final Location loc ){
+		
+		final Block block = loc.getBlock();
 
 		/**
 		 * Run the lookup itself in an async task so the lookup query isn't done on the main thread

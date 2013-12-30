@@ -64,10 +64,10 @@ public class SetmyCommand implements SubHandler {
 			}
 			
 			// Disable any current wand
-			if(plugin.playersWithActiveTools.containsKey(call.getPlayer().getName())){
-				Wand oldwand = plugin.playersWithActiveTools.get(call.getPlayer().getName());
+			if(Prism.playersWithActiveTools.containsKey(call.getPlayer().getName())){
+				Wand oldwand = Prism.playersWithActiveTools.get(call.getPlayer().getName());
 				oldwand.disable( call.getPlayer() );
-				plugin.playersWithActiveTools.remove(call.getPlayer().getName());
+				Prism.playersWithActiveTools.remove(call.getPlayer().getName());
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Current wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			}
 			
