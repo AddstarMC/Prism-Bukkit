@@ -89,7 +89,9 @@ permissions:
         default: false
     prism.ignore.tracking.bonemeal-use:
         default: false
-    prism.ignore.tracking.container-access:
+    prism.ignore.tracking.container-open:
+        default: false
+    prism.ignore.tracking.container-close:
         default: false
     prism.ignore.tracking.cake-eat:
         default: false
@@ -142,6 +144,8 @@ permissions:
     prism.ignore.tracking.item-pickup:
         default: false
     prism.ignore.tracking.item-remove:
+        default: false
+    prism.ignore.tracking.item-rotate:
         default: false
     prism.ignore.tracking.lava-break:
         default: false
