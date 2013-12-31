@@ -251,7 +251,7 @@ public class RecordingTask implements Runnable {
 	 */
 	protected void insertExtraData( Connection conn, ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
 		
-		if( extraDataQueue.isEmpty() ) return;
+		if( extraDataQueue.isEmpty() || conn == null || conn.isClosed() ) return;
 
 		PreparedStatement s = null;
 	    
@@ -266,9 +266,6 @@ public class RecordingTask implements Runnable {
 //	    }
 
 	    try {
-
-		    conn = Prism.dbc();
-		    conn.setAutoCommit(false);
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data,te_data) VALUES (?,?,?)");
 	        int i = 0;
 			while(keys.next()){
