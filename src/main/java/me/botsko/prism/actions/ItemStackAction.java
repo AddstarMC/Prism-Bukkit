@@ -309,7 +309,9 @@ public class ItemStackAction extends GenericAction {
 		if( actionData.name != null ){
 			meta.setDisplayName( actionData.name );
 		}
-		meta.setLore( Arrays.asList(actionData.lore) );
+		if( actionData.lore != null ){
+			meta.setLore( Arrays.asList(actionData.lore) );
+		}
 		item.setItemMeta(meta);
 	}
 	
