@@ -135,7 +135,9 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Lore
-		actionData.lore = (String[]) item.getItemMeta().getLore().toArray(new String[0]);
+		if( meta != null ){
+			actionData.lore = (String[]) meta.getLore().toArray(new String[0]);
+		}
 		
 		// Enchantments
 		if(!this.enchantments.isEmpty()){
@@ -311,7 +313,9 @@ public class ItemStackAction extends GenericAction {
 		if( actionData.name != null ){
 			meta.setDisplayName( actionData.name );
 		}
-		meta.setLore( Arrays.asList(actionData.lore) );
+		if( actionData.lore != null ){
+			meta.setLore( Arrays.asList(actionData.lore) );
+		}
 		item.setItemMeta(meta);
 	}
 	
