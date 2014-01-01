@@ -135,7 +135,7 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Lore
-		if( meta != null ){
+		if( meta != null && meta.getLore() != null ){
 			actionData.lore = (String[]) meta.getLore().toArray(new String[0]);
 		}
 		
