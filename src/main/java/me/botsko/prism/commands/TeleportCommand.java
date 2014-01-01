@@ -42,7 +42,7 @@ public class TeleportCommand implements SubHandler {
 		if( call.getSender() instanceof Player ){
 			keyName = call.getSender().getName();
 		}
-		if( !plugin.cachedQueries.containsKey( keyName ) ){
+		if( !plugin.cachedQueries.containsKey( keyName ) && !call.getArg(1).contains("id:") ){
 			call.getSender().sendMessage( Prism.messenger.playerError("There's no saved query to use results from. Maybe they expired? Try your lookup again.") );
 			return;
 		}
