@@ -135,7 +135,9 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Lore
-		actionData.lore = (String[]) item.getItemMeta().getLore().toArray(new String[0]);
+		if( meta != null && meta.getLore() != null ){
+			actionData.lore = (String[]) meta.getLore().toArray(new String[0]);
+		}
 		
 		// Enchantments
 		if(!this.enchantments.isEmpty()){
