@@ -100,7 +100,7 @@ public class Ignore {
 		}
 
 		// Does the player have perms to ignore this action type?
-		if( player.hasPermission("prism.ignore.tracking."+actionTypeName) ){
+		if( plugin.getConfig().getBoolean("prism.ignore.enable-perm-nodes") && player.hasPermission("prism.ignore.tracking."+actionTypeName) ){
 			Prism.debug("Player has permission node to ignore " + actionTypeName);
 			return false;
 		}
