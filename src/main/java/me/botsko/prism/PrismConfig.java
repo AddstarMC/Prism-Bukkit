@@ -86,6 +86,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.ex.default-radius", 10);
 		
 		// Ignore
+		config.addDefault("prism.ignore.enable-perm-nodes", false);
 		config.addDefault("prism.ignore.players-in-creative", false);
 		config.addDefault("prism.ignore.players", new ArrayList<String>());
 		config.addDefault("prism.ignore.worlds", new ArrayList<String>());
