@@ -26,7 +26,7 @@ public class RadiusParameter implements PrismParameterHandler {
 		if( sender instanceof Player ){
 			player = (Player)sender;
 		}
-		
+
 		FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 		
 		if(TypeUtils.isNumeric(input) || (input.contains(":") && input.split(":").length >= 1 && TypeUtils.isNumeric(input.split(":")[1]))){
@@ -35,7 +35,7 @@ public class RadiusParameter implements PrismParameterHandler {
 			if(input.contains(":")){
 				radius = Integer.parseInt(input.split(":")[1]);
 				String radiusLocOrPlayer = input.split(":")[0];
-				if(radiusLocOrPlayer.contains(",")){ // Cooridinates; x,y,z
+				if( radiusLocOrPlayer.contains(",") && player != null ){ // Cooridinates; x,y,z
 					String[] coordinates = radiusLocOrPlayer.split(",");
 					if(coordinates.length != 3){
 						throw new IllegalArgumentException("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?");
@@ -54,6 +54,7 @@ public class RadiusParameter implements PrismParameterHandler {
 							Integer.parseInt(coordinates[2])));
 					
 				}
+				// Try to find an online player
 				else if(Bukkit.getServer().getPlayer(radiusLocOrPlayer) != null){
 					player = Bukkit.getServer().getPlayer(radiusLocOrPlayer);
 				} else {
@@ -64,6 +65,11 @@ public class RadiusParameter implements PrismParameterHandler {
 			}
 			if(radius <= 0){
 				throw new IllegalArgumentException("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.");
+			}
+			
+			// If neither sender or a named player found, die here
+			if( player == null ){
+				throw new IllegalArgumentException("The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
 			}
 			
 			// Safety checks for max lookup radius
@@ -107,6 +113,11 @@ public class RadiusParameter implements PrismParameterHandler {
 			}
 		} else {
 			
+			// If neither sender or a named player found, die here
+			if( player == null ){
+				throw new IllegalArgumentException("The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
+			}
+			
 			// User wants an area inside of a worldedit selection
 			if(input.equals("we")){
 				
@@ -124,10 +135,6 @@ public class RadiusParameter implements PrismParameterHandler {
 			
 			// Confine to the chunk
 			else if(input.equals("c") || input.equals("chunk")){
-					
-				if( player == null ){
-					throw new IllegalArgumentException("Chunks cannot be used as a radius without a player.");
-				}
 
 				Chunk ch = player.getLocation().getChunk();
 				query.setWorld(ch.getWorld().getName());
@@ -156,7 +163,7 @@ public class RadiusParameter implements PrismParameterHandler {
 				} 
 				// Use the default world
 				else {
-					sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+//					sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
 					input = Bukkit.getServer().getWorlds().get(0).getName();
 				}
 				query.setWorld( input );
