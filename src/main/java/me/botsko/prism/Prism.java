@@ -45,6 +45,18 @@ import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
+import me.botsko.prism.parameters.ActionParameter;
+import me.botsko.prism.parameters.BeforeParameter;
+import me.botsko.prism.parameters.BlockParameter;
+import me.botsko.prism.parameters.EntityParameter;
+import me.botsko.prism.parameters.FlagParameter;
+import me.botsko.prism.parameters.IdParameter;
+import me.botsko.prism.parameters.KeywordParameter;
+import me.botsko.prism.parameters.PlayerParameter;
+import me.botsko.prism.parameters.PrismParameterHandler;
+import me.botsko.prism.parameters.RadiusParameter;
+import me.botsko.prism.parameters.SinceParameter;
+import me.botsko.prism.parameters.WorldParameter;
 import me.botsko.prism.purge.LogPurgeCallback;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.wands.Wand;
@@ -76,7 +88,7 @@ public class Prism extends JavaPlugin {
 	 */
 	private static String plugin_name;
 	private String plugin_version;
-	private MaterialAliases items;
+	private static MaterialAliases items;
 	private Language language;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> enabledPlugins = new ArrayList<String>();
@@ -86,6 +98,7 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
+	private static HashMap<String,PrismParameterHandler> paramHandlers = new HashMap<String,PrismParameterHandler>();
 
 	/**
 	 * Public
@@ -93,7 +106,7 @@ public class Prism extends JavaPlugin {
 	public Prism prism;
 	public static Messenger messenger;
 	public static FileConfiguration config;
-	public WorldEditPlugin plugin_worldEdit = null;
+	public static WorldEditPlugin plugin_worldEdit = null;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
 	public UseMonitor useMonitor;
@@ -234,6 +247,20 @@ public class Prism extends JavaPlugin {
 			// Add commands
 			getCommand("prism").setExecutor((CommandExecutor) new PrismCommands(this));
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
+			
+			// Register official parameters
+			registerParameter("a", new ActionParameter());
+			registerParameter("before", new BeforeParameter());
+			registerParameter("b", new BlockParameter());
+			registerParameter("e", new EntityParameter());
+			registerParameter("-", new FlagParameter());
+			registerParameter("id", new IdParameter());
+			registerParameter("k", new KeywordParameter());
+			registerParameter("p", new PlayerParameter());
+			registerParameter("r", new RadiusParameter());
+			registerParameter("since", new SinceParameter());
+			registerParameter("t", new SinceParameter());
+			registerParameter("w", new WorldParameter());
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
@@ -833,8 +860,8 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public MaterialAliases getItems() {
-		return this.items;
+	public static MaterialAliases getItems() {
+		return items;
 	}
 
 	
@@ -862,6 +889,31 @@ public class Prism extends JavaPlugin {
 	 */
 	public static Ignore getIgnore() {
 		return ignore;
+	}
+	
+	
+	/**
+	 * Registers a parameter and a handler. Example:
+	 * 
+	 * pr l a:block-break. The "a" is an action, and the action handler
+	 * will process what "block-break" refers to.
+	 * @param param
+	 * @param handler
+	 */
+	public static void registerParameter( String param, PrismParameterHandler handler ){
+		if( param.isEmpty() ){
+			throw new IllegalArgumentException("Parameter may not be empty");
+		}
+		paramHandlers.put(param, handler);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static HashMap<String,PrismParameterHandler> getParameters(){
+		return paramHandlers;
 	}
 
 	
