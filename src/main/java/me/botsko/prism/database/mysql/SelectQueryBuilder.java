@@ -112,7 +112,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
 	protected void worldCondition(){
 		// World conditions
-		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getWorld() != null ){
+		if( parameters.getWorld() != null ){
 			addCondition( String.format( "w.world = '%s'", parameters.getWorld()) );
 		}
 	}

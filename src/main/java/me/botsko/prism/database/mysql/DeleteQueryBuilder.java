@@ -53,6 +53,16 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 	/**
 	 * 
 	 */
+	protected void worldCondition(){
+		if( parameters.getWorld() != null ){
+			addCondition( "world_id IN ( SELECT world_id FROM prism_worlds WHERE world = '"+parameters.getWorld()+"')" );
+		}
+	}
+	
+	
+	/**
+	 * 
+	 */
 	@Override
 	protected String group(){
 		return "";
