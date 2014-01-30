@@ -1,5 +1,7 @@
 package me.botsko.prism.parameters;
 
+import java.util.regex.Matcher;
+
 import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -11,8 +13,8 @@ public class BeforeParameter implements PrismParameterHandler {
 	/**
 	 * 
 	 */
-	public void process( QueryParameters query, String input, CommandSender sender ){
-		Long date = DateUtil.translateTimeStringToDate(input);
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+		Long date = DateUtil.translateTimeStringToDate(input.group(2));
 		if(date != null){
 			query.setBeforeTime( date );
 		} else {

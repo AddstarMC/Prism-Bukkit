@@ -1,5 +1,7 @@
 package me.botsko.prism.parameters;
 
+import java.util.regex.Matcher;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,9 +14,9 @@ public class FlagParameter implements PrismParameterHandler {
 	
 	
 	
-	public void process( QueryParameters query, String input, CommandSender sender ){
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
 		
-		String[] flagComponents = input.substring(1).split("=");
+		String[] flagComponents = input.group(2).split("=");
 		Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
 		if(!(query.hasFlag(flag))){
 				

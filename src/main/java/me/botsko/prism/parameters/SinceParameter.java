@@ -1,5 +1,7 @@
 package me.botsko.prism.parameters;
 
+import java.util.regex.Matcher;
+
 import org.bukkit.command.CommandSender;
 
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -11,11 +13,11 @@ public class SinceParameter implements PrismParameterHandler {
 	/**
 	 * 
 	 */
-	public void process( QueryParameters query, String input, CommandSender sender ){
-		if(input.equalsIgnoreCase("none")){
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+		if(input.group(2).equalsIgnoreCase("none")){
 			query.setIgnoreTime(true);
 		} else {
-			Long date = DateUtil.translateTimeStringToDate(input);
+			Long date = DateUtil.translateTimeStringToDate(input.group(2));
 			if(date != null){
 				query.setSinceTime( date );
 			} else {

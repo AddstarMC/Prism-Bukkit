@@ -2,10 +2,11 @@ package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.parameters.PrismParameterHandler;
 
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Internal use
 	 */
-	protected ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
+	protected HashMap<PrismParameterHandler,Matcher> foundArgs = new HashMap<PrismParameterHandler,Matcher>();
 	protected PrismProcessType processType = PrismProcessType.LOOKUP;
 	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 	protected String original_command;
@@ -413,7 +414,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the foundArgs
 	 */
-	public ConcurrentHashMap<String, String> getFoundArgs() {
+	public HashMap<PrismParameterHandler, Matcher> getFoundArgs() {
 		return foundArgs;
 	}
 
@@ -421,7 +422,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param foundArgs the foundArgs to set
 	 */
-	public void setFoundArgs(ConcurrentHashMap<String, String> foundArgs) {
+	public void setFoundArgs(HashMap<PrismParameterHandler, Matcher> foundArgs) {
 		this.foundArgs = foundArgs;
 	}
 

@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
 import org.bukkit.command.CommandSender;
 
@@ -16,8 +17,8 @@ public class BlockParameter implements PrismParameterHandler {
 	/**
 	 * 
 	 */
-	public void process( QueryParameters query, String input, CommandSender sender ){
-		String[] blocks = input.split(",");
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+		String[] blocks = input.group(2).split(",");
 		
 		if(blocks.length > 0){
 			for(String b : blocks){
