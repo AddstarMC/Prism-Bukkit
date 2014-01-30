@@ -99,7 +99,7 @@ public class ActionMessage {
 		
 		// Time since
 		if(!a.getTimeSince().isEmpty()){
-			line1 += ChatColor.WHITE + " " + a.getTimeSince();
+			line1 += ChatColor.WHITE + a.getTimeSince();
 		}
 		
 		// Action type reminder
