@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.ArrayList;
+import java.util.regex.Matcher;
 
 import org.bukkit.command.CommandSender;
 
@@ -14,10 +15,12 @@ import me.botsko.prism.utils.LevenshteinDistance;
 public class ActionParameter implements PrismParameterHandler {
 	
 	
-	
-	public void process( QueryParameters query, String input, CommandSender sender ){
+	/**
+	 * 
+	 */
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
 		
-		String[] actions = input.split(",");
+		String[] actions = input.group(2).split(",");
 		if(actions.length > 0){
 			for(String action : actions){
 				// Find all actions that match the action provided - whether the full name or

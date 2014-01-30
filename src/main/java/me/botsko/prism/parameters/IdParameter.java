@@ -1,5 +1,7 @@
 package me.botsko.prism.parameters;
 
+import java.util.regex.Matcher;
+
 import org.bukkit.command.CommandSender;
 
 import me.botsko.elixr.TypeUtils;
@@ -12,11 +14,11 @@ public class IdParameter implements PrismParameterHandler {
 	/**
 	 * 
 	 */
-	public void process( QueryParameters query, String input, CommandSender sender ){
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
 		
-		if( !TypeUtils.isNumeric( input ) ){
+		if( !TypeUtils.isNumeric( input.group(2) ) ){
 			throw new IllegalArgumentException(Prism.messenger.playerError("ID must be a number. Use /prism ? for help.") );
 		}
-		query.setId( Integer.parseInt(input) );
+		query.setId( Integer.parseInt(input.group(2)) );
 	}
 }
