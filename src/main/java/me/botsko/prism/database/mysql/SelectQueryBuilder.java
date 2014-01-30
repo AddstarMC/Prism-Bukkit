@@ -112,7 +112,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
 	protected void worldCondition(){
 		// World conditions
-		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getWorld() != null ){
+		if( parameters.getWorld() != null ){
 			addCondition( String.format( "w.world = '%s'", parameters.getWorld()) );
 		}
 	}
@@ -160,10 +160,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 * 
 	 */
 	protected void radiusCondition(){
-		// Radius from loc
-		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ){
-			buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
-		}
+		buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
 	}
 	
 	

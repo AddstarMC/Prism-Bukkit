@@ -1,0 +1,176 @@
+package me.botsko.prism.parameters;
+
+import java.util.regex.Matcher;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+
+import me.botsko.elixr.ChunkUtils;
+import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.bridge.WorldEditBridge;
+import me.botsko.prism.utils.MiscUtils;
+
+public class RadiusParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
+	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+		
+		Player player = null;
+		if( sender instanceof Player ){
+			player = (Player)sender;
+		}
+		
+		String inputValue = input.group(2);
+
+		FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
+		
+		if(TypeUtils.isNumeric(inputValue) || (inputValue.contains(":") && inputValue.split(":").length >= 1 && TypeUtils.isNumeric(inputValue.split(":")[1]))){
+			int radius, desiredRadius;
+			Location coordsLoc = null;
+			if(inputValue.contains(":")){
+				desiredRadius = Integer.parseInt(inputValue.split(":")[1]);
+				String radiusLocOrPlayer = inputValue.split(":")[0];
+				if( radiusLocOrPlayer.contains(",") && player != null ){ // Cooridinates; x,y,z
+					String[] coordinates = radiusLocOrPlayer.split(",");
+					if(coordinates.length != 3){
+						throw new IllegalArgumentException("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?");
+					}
+					for(String s : coordinates){
+						if(!TypeUtils.isNumeric(s)){
+							throw new IllegalArgumentException("The coordinate '" + s + "' is not a number.");
+						}
+					}
+					coordsLoc = (new Location(
+							player != null ? player.getWorld() : 
+							(query.getWorld() != null ? Bukkit.getServer().getWorld(query.getWorld()) : 
+							Bukkit.getServer().getWorlds().get(0)), 
+							Integer.parseInt(coordinates[0]), 
+							Integer.parseInt(coordinates[1]), 
+							Integer.parseInt(coordinates[2])));
+					
+				}
+				// Try to find an online player
+				else if(Bukkit.getServer().getPlayer(radiusLocOrPlayer) != null){
+					player = Bukkit.getServer().getPlayer(radiusLocOrPlayer);
+				} else {
+					throw new IllegalArgumentException("Couldn't find the player named '" + radiusLocOrPlayer + "'. Perhaps they are not online or you misspelled their name?");
+				}
+			} else {
+				desiredRadius = Integer.parseInt(inputValue);
+			}
+			if(desiredRadius <= 0){
+				throw new IllegalArgumentException("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.");
+			}
+			
+			// If neither sender or a named player found, die here
+			if( player == null ){
+				throw new IllegalArgumentException("The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
+			}
+			
+			// Clamp radius based on perms, configs
+			radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
+			if( desiredRadius != radius ){
+				if( sender != null ) sender.sendMessage( Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
+			}
+			
+			if(radius > 0){
+				query.setRadius( radius );
+				if(coordsLoc != null){
+					query.setMinMaxVectorsFromPlayerLocation(coordsLoc); // We need to set this *after* the radius has been set or it won't work.
+				} else {
+					if( player != null ){
+						query.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
+					}
+				}
+			}
+		} else {
+			
+			// If neither sender or a named player found, die here
+			if( player == null ){
+				throw new IllegalArgumentException("The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
+			}
+			
+			// User wants an area inside of a worldedit selection
+			if(inputValue.equals("we")){
+				
+				if (Prism.plugin_worldEdit == null) {
+					throw new IllegalArgumentException("This feature is disabled because Prism couldn't find WorldEdit.");
+				} else {
+				
+					// Load a selection from world edit as our area.
+					if(player != null){
+						Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
+						if( !WorldEditBridge.getSelectedArea(prism, player, query) ){
+							throw new IllegalArgumentException("Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
+						}
+					}
+				}
+			}
+			
+			// Confine to the chunk
+			else if(inputValue.equals("c") || inputValue.equals("chunk")){
+
+				Chunk ch = player.getLocation().getChunk();
+				query.setWorld(ch.getWorld().getName());
+				query.setMinLocation( ChunkUtils.getChunkMinVector( ch ) );
+				query.setMaxLocation( ChunkUtils.getChunkMaxVector( ch ) );
+				
+			}
+			
+			// User wants no radius, but contained within the current world
+			else if(inputValue.equals("world")){
+				// Do they have permission to override the global lookup radius
+				if( query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+					throw new IllegalArgumentException("You do not have permission to override the max radius.");
+				}
+				// Do they have permission to override the global applier radius
+				if( !query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+					throw new IllegalArgumentException("You do not have permission to override the max radius.");
+				}
+				// Use the world defined in the w: param
+				if( query.getWorld() != null ){
+					inputValue = query.getWorld();
+				}
+				// Use the current world
+				else if(player != null){
+					inputValue = player.getWorld().getName();
+				} 
+				// Use the default world
+				else {
+//					sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
+					inputValue = Bukkit.getServer().getWorlds().get(0).getName();
+				}
+				query.setWorld( inputValue );
+				query.setAllowNoRadius(true);
+			}
+			
+			// User has asked for a global radius
+			else if(inputValue.equals("global")){
+				// Do they have permission to override the global lookup radius
+				if( query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+					throw new IllegalArgumentException("You do not have permission to override the max radius.");
+				}
+				// Do they have permission to override the global applier radius
+				if( !query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+					throw new IllegalArgumentException("You do not have permission to override the max radius.");
+				}
+				// Either they have permission or player is null
+				query.setWorld(null);
+				query.setAllowNoRadius(true);
+				
+			} else {
+				throw new IllegalArgumentException("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.");
+			}
+		}
+	}
+}

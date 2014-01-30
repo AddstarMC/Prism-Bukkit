@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
@@ -45,6 +46,18 @@ import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
+import me.botsko.prism.parameters.ActionParameter;
+import me.botsko.prism.parameters.BeforeParameter;
+import me.botsko.prism.parameters.BlockParameter;
+import me.botsko.prism.parameters.EntityParameter;
+import me.botsko.prism.parameters.FlagParameter;
+import me.botsko.prism.parameters.IdParameter;
+import me.botsko.prism.parameters.KeywordParameter;
+import me.botsko.prism.parameters.PlayerParameter;
+import me.botsko.prism.parameters.PrismParameterHandler;
+import me.botsko.prism.parameters.RadiusParameter;
+import me.botsko.prism.parameters.SinceParameter;
+import me.botsko.prism.parameters.WorldParameter;
 import me.botsko.prism.purge.LogPurgeCallback;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.wands.Wand;
@@ -76,7 +89,7 @@ public class Prism extends JavaPlugin {
 	 */
 	private static String plugin_name;
 	private String plugin_version;
-	private MaterialAliases items;
+	private static MaterialAliases items;
 	private Language language;
 	private static Logger log = Logger.getLogger("Minecraft");
 	private ArrayList<String> enabledPlugins = new ArrayList<String>();
@@ -86,6 +99,7 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
+	private static HashMap<Pattern,PrismParameterHandler> paramHandlers = new HashMap<Pattern,PrismParameterHandler>();
 
 	/**
 	 * Public
@@ -93,7 +107,7 @@ public class Prism extends JavaPlugin {
 	public Prism prism;
 	public static Messenger messenger;
 	public static FileConfiguration config;
-	public WorldEditPlugin plugin_worldEdit = null;
+	public static WorldEditPlugin plugin_worldEdit = null;
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
 	public UseMonitor useMonitor;
@@ -234,6 +248,19 @@ public class Prism extends JavaPlugin {
 			// Add commands
 			getCommand("prism").setExecutor((CommandExecutor) new PrismCommands(this));
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
+			
+			// Register official parameters
+			registerParameter( Pattern.compile("(a):([\\w-]+)"), 		new ActionParameter() );
+			registerParameter( Pattern.compile("(before):([\\w]+)"), 	new BeforeParameter() );
+			registerParameter( Pattern.compile("(b):([\\w:]+)"), 		new BlockParameter() );
+			registerParameter( Pattern.compile("(e):([~|!]?[\\w]+)"), 	new EntityParameter() );
+			registerParameter( Pattern.compile("(-)([^\\s]+)"),		 	new FlagParameter() );
+			registerParameter( Pattern.compile("(id):([\\d]+)"), 		new IdParameter());
+			registerParameter( Pattern.compile("(k):([^\\s]+)"), 		new KeywordParameter());
+			registerParameter( Pattern.compile("(p):([~|!]?[\\w]+)"), 	new PlayerParameter());
+			registerParameter( Pattern.compile("(r):([\\w,:]+)"), 		new RadiusParameter());
+			registerParameter( Pattern.compile("(since|t):([\\w]+)"), 	new SinceParameter());
+			registerParameter( Pattern.compile("(w):([^\\s]+)"), 		new WorldParameter());
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
@@ -833,8 +860,8 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public MaterialAliases getItems() {
-		return this.items;
+	public static MaterialAliases getItems() {
+		return items;
 	}
 
 	
@@ -862,6 +889,28 @@ public class Prism extends JavaPlugin {
 	 */
 	public static Ignore getIgnore() {
 		return ignore;
+	}
+	
+	
+	/**
+	 * Registers a parameter and a handler. Example:
+	 * 
+	 * pr l a:block-break. The "a" is an action, and the action handler
+	 * will process what "block-break" refers to.
+	 * @param param
+	 * @param handler
+	 */
+	public static void registerParameter( Pattern param, PrismParameterHandler handler ){
+		paramHandlers.put(param, handler);
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static HashMap<Pattern,PrismParameterHandler> getParameters(){
+		return paramHandlers;
 	}
 
 	
