@@ -99,6 +99,19 @@ public class ActionsQuery {
 				plugin.eventTimer.recordTimedEvent("query started");
 				
 				conn = Prism.dbc();
+				
+				// Handle dead connections
+		        if( conn == null || conn.isClosed() ){
+		        	if( RecordingManager.failedDbConnectionCount == 0 ){
+		        		Prism.log("Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+		        	}
+		        	RecordingManager.failedDbConnectionCount++;
+					sender.sendMessage( Prism.messenger.playerError("Database connection was closed, please wait and try again.") );
+					return new QueryResult( actions, parameters );
+				} else {
+					RecordingManager.failedDbConnectionCount = 0;
+				}
+
 	    		s = conn.prepareStatement(query);
 	    		rs = s.executeQuery();
 	    		
