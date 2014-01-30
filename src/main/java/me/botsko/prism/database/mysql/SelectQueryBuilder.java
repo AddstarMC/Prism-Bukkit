@@ -160,10 +160,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 * 
 	 */
 	protected void radiusCondition(){
-		// Radius from loc
-		if( !parameters.getProcessType().equals(PrismProcessType.DELETE) || (parameters.getProcessType().equals(PrismProcessType.DELETE) && parameters.getFoundArgs().containsKey("r") ) ){
-			buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
-		}
+		buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
 	}
 	
 	
