@@ -9,9 +9,4 @@ public class RecordingManager {
 	 */
 	public static int failedDbConnectionCount = 0;
 	
-//	/**
-//	 * Track the timestamp at which we last paused
-//	 */
-//	public static long lastPauseTime = 0;
-
 }

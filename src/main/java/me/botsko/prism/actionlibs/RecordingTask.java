@@ -171,6 +171,11 @@ public class RecordingTask implements Runnable {
 		        int i = 0;
 		        while (!RecordingQueue.getQueue().isEmpty()){
 		        	
+		        	if( conn == null || conn.isClosed() ){
+		        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert query.");
+		        		break;
+		        	}
+		        	
 		        	Handler a = RecordingQueue.getQueue().poll();
 		        	
 		        	if( a == null ){
