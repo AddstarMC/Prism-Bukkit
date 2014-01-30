@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
@@ -98,7 +99,7 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
-	private static HashMap<String,PrismParameterHandler> paramHandlers = new HashMap<String,PrismParameterHandler>();
+	private static HashMap<Pattern,PrismParameterHandler> paramHandlers = new HashMap<Pattern,PrismParameterHandler>();
 
 	/**
 	 * Public
@@ -249,18 +250,17 @@ public class Prism extends JavaPlugin {
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
 			
 			// Register official parameters
-			registerParameter("a", new ActionParameter());
-			registerParameter("before", new BeforeParameter());
-			registerParameter("b", new BlockParameter());
-			registerParameter("e", new EntityParameter());
-			registerParameter("-", new FlagParameter());
-			registerParameter("id", new IdParameter());
-			registerParameter("k", new KeywordParameter());
-			registerParameter("p", new PlayerParameter());
-			registerParameter("r", new RadiusParameter());
-			registerParameter("since", new SinceParameter());
-			registerParameter("t", new SinceParameter());
-			registerParameter("w", new WorldParameter());
+			registerParameter( Pattern.compile("(a):([\\w-]+)"), 		new ActionParameter() );
+			registerParameter( Pattern.compile("(before):([\\w-]+)"), 	new BeforeParameter() );
+			registerParameter( Pattern.compile("(b):([\\w-]+)"), 		new BlockParameter() );
+			registerParameter( Pattern.compile("(e):([\\w-]+)"), 		new EntityParameter() );
+			registerParameter( Pattern.compile("(-)([\\w-]+)"),		 	new FlagParameter() );
+			registerParameter( Pattern.compile("(id):([0-9]+)"), 		new IdParameter());
+			registerParameter( Pattern.compile("(k):([\\w-]+)"), 		new KeywordParameter());
+			registerParameter( Pattern.compile("(p):([\\w-]+)"), 		new PlayerParameter());
+			registerParameter( Pattern.compile("(r):([\\w-]+)"), 		new RadiusParameter());
+			registerParameter( Pattern.compile("(since|t):([\\w-]+)"), 	new SinceParameter());
+			registerParameter( Pattern.compile("(w):([\\w-]+)"), 		new WorldParameter());
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
@@ -900,10 +900,7 @@ public class Prism extends JavaPlugin {
 	 * @param param
 	 * @param handler
 	 */
-	public static void registerParameter( String param, PrismParameterHandler handler ){
-		if( param.isEmpty() ){
-			throw new IllegalArgumentException("Parameter may not be empty");
-		}
+	public static void registerParameter( Pattern param, PrismParameterHandler handler ){
 		paramHandlers.put(param, handler);
 	}
 	
@@ -912,7 +909,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public static HashMap<String,PrismParameterHandler> getParameters(){
+	public static HashMap<Pattern,PrismParameterHandler> getParameters(){
 		return paramHandlers;
 	}
 

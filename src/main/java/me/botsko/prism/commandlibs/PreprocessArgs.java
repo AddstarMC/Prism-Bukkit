@@ -2,7 +2,8 @@ package me.botsko.prism.commandlibs;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -30,7 +31,6 @@ public class PreprocessArgs {
 		
 		// Define pagination/process type
 		QueryParameters parameters = new QueryParameters();
-		ConcurrentHashMap<String,String> foundArgs = new ConcurrentHashMap<String,String>();
 		if(processType.equals(PrismProcessType.LOOKUP)){
 			parameters.setLimit( plugin.getConfig().getInt("prism.queries.lookup-max-results") );
 			parameters.setPerPage( plugin.getConfig().getInt("prism.queries.default-results-per-page") );
@@ -38,50 +38,67 @@ public class PreprocessArgs {
 		parameters.setProcessType(processType);
 		
 		// Load registered parameters
-		HashMap<String,PrismParameterHandler> registeredParams = Prism.getParameters();
+		HashMap<Pattern,PrismParameterHandler> registeredParams = Prism.getParameters();
+		
+		// List all valid handlers
+		HashMap<PrismParameterHandler,Matcher> foundArgs = new HashMap<PrismParameterHandler,Matcher>();
 		
 		if(args != null){
 			for (int i = startAt; i < args.length; i++){
 
 				String arg = args[i];
 				if (arg.isEmpty()) continue;
-
-				// Split parameter and values
-				String[] argEntry = arg.toLowerCase().split(":");
-				String arg_type = argEntry[0];
-				String val = arg.contains(":") ? arg.replace(argEntry[0] + ":", "") : argEntry[0];
 				
-				// If the value doesn't match a parameter, see if it's a player
-				// allows tab-complete player syntax
-				if( !registeredParams.containsKey(arg_type) ){
-					
-					// We support an alternate player syntax so that people can use the tab-complete
-					// feature of minecraft. Using p: prevents it.
-					Player autoFillPlayer = plugin.getServer().getPlayer(arg_type);
-					if( autoFillPlayer != null ){
-						MatchRule match = MatchRule.INCLUDE;
-						if(arg_type.startsWith("!")){
-							match = MatchRule.EXCLUDE;
+				boolean handlerFound = false;
+				
+				// Iterate registered params, check for match
+				for( Entry<Pattern,PrismParameterHandler> entry : registeredParams.entrySet() ){
+					Matcher m = entry.getKey().matcher(arg);
+					if( m.matches() ){
+						
+						Prism.debug("Parameter regex "+entry.getKey().pattern()+" has " + m.groupCount() + " matches:" );
+						for( int z = 0; z < m.groupCount()+1; z++ ){
+							Prism.debug("match " + z + ": " + m.group(z));
 						}
-						parameters.addPlayerName( arg_type.replace("!", ""), match );
+
+						if( m.groupCount() < 2 ){
+							if( sender != null ) sender.sendMessage( Prism.messenger.playerError("Invalid syntax for parameter " + arg) );
+							return null;
+						}
+
+						if( m.group(2).isEmpty() ){
+							if( sender != null ) sender.sendMessage( Prism.messenger.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
+							return null;
+						}
+						
+						handlerFound = true;
+						
+						foundArgs.put( entry.getValue(), m );
+						continue;
+
 					} else {
-						if( sender != null ) sender.sendMessage( Prism.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
-						return null;
+						
+						// We support an alternate player syntax so that people can use the tab-complete
+						// feature of minecraft. Using p: prevents it.
+						Player autoFillPlayer = plugin.getServer().getPlayer(arg);
+						if( autoFillPlayer != null ){
+							MatchRule match = MatchRule.INCLUDE;
+							if(arg.startsWith("!")){
+								match = MatchRule.EXCLUDE;
+							}
+							handlerFound = true;
+							parameters.addPlayerName( arg.replace("!", ""), match );
+						}
 					}
 				}
 				
-				// Verify no empty val
-				if(val.isEmpty()){
-					if( sender != null ) sender.sendMessage( Prism.messenger.playerError("Can't use empty values for '"+arg+"'. Use /prism ? for help.") );
+				if( !handlerFound ){
+					if( sender != null ) sender.sendMessage( Prism.messenger.playerError( "Unrecognized parameter '"+arg+"'. Use /prism ? for help.") );
 					return null;
 				}
 				
-				// Officially certify we found a valid argument and value!
-				if( registeredParams.containsKey(arg_type) ){
-					foundArgs.put(arg_type, val);
-					parameters.setFoundArgs(foundArgs);
-				}
 			}
+			parameters.setFoundArgs( foundArgs );
 			
 			// Validate any required args are set
 			if( foundArgs.isEmpty() ){
@@ -92,9 +109,9 @@ public class PreprocessArgs {
 			/**
 			 * Send arguments to parameter handlers
 			 */
-			for( Entry<String,String> entry : foundArgs.entrySet() ){
+			for( Entry<PrismParameterHandler,Matcher> entry : foundArgs.entrySet() ){
 				try {
-					registeredParams.get( entry.getKey() ).process(parameters, entry.getValue(), sender);
+					entry.getKey().process( parameters, entry.getValue(), sender );
 				} catch ( IllegalArgumentException e ){
 					if( sender != null ) sender.sendMessage( Prism.messenger.playerError(e.getMessage()) );
 					return null;
