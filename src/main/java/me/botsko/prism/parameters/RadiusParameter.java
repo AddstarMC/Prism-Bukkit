@@ -13,6 +13,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
+import me.botsko.prism.utils.MiscUtils;
 
 public class RadiusParameter implements PrismParameterHandler {
 	
@@ -30,10 +31,10 @@ public class RadiusParameter implements PrismParameterHandler {
 		FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 		
 		if(TypeUtils.isNumeric(input) || (input.contains(":") && input.split(":").length >= 1 && TypeUtils.isNumeric(input.split(":")[1]))){
-			int radius;
+			int radius, desiredRadius;
 			Location coordsLoc = null;
 			if(input.contains(":")){
-				radius = Integer.parseInt(input.split(":")[1]);
+				desiredRadius = Integer.parseInt(input.split(":")[1]);
 				String radiusLocOrPlayer = input.split(":")[0];
 				if( radiusLocOrPlayer.contains(",") && player != null ){ // Cooridinates; x,y,z
 					String[] coordinates = radiusLocOrPlayer.split(",");
@@ -61,9 +62,9 @@ public class RadiusParameter implements PrismParameterHandler {
 					throw new IllegalArgumentException("Couldn't find the player named '" + radiusLocOrPlayer + "'. Perhaps they are not online or you misspelled their name?");
 				}
 			} else {
-				radius = Integer.parseInt(input);
+				desiredRadius = Integer.parseInt(input);
 			}
-			if(radius <= 0){
+			if(desiredRadius <= 0){
 				throw new IllegalArgumentException("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.");
 			}
 			
@@ -72,35 +73,12 @@ public class RadiusParameter implements PrismParameterHandler {
 				throw new IllegalArgumentException("The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
 			}
 			
-			// Safety checks for max lookup radius
-			int max_lookup_radius = config.getInt("prism.queries.max-lookup-radius");
-			if( max_lookup_radius <= 0 ){
-				max_lookup_radius = 5;
-				Prism.log("Max lookup radius may not be lower than one. Using safe inputue of five.");
+			// Clamp radius based on perms, configs
+			radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
+			if( desiredRadius != radius ){
+				if( sender != null ) sender.sendMessage( Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
 			}
 			
-			// Safety checks for max applier radius
-			int max_applier_radius = config.getInt("prism.queries.max-applier-radius");
-			if( max_applier_radius <= 0 ){
-				max_applier_radius = 5;
-				Prism.log("Max applier radius may not be lower than one. Using safe inputue of five.");
-			}
-			
-			// Does the radius exceed the configured max?
-			if( query.getProcessType().equals(PrismProcessType.LOOKUP) && radius > max_lookup_radius ){
-				// If player does not have permission to override the max
-				if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
-					radius = max_lookup_radius;
-					throw new IllegalArgumentException("Forcing radius to " + radius + " as allowed by config.");
-				}
-			}
-			if( !query.getProcessType().equals(PrismProcessType.LOOKUP) && radius > max_applier_radius ){
-				// If player does not have permission to override the max
-				if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
-					radius = max_applier_radius;
-					throw new IllegalArgumentException("Forcing radius to " + radius + " as allowed by config.");
-				}
-			}
 			if(radius > 0){
 				query.setRadius( radius );
 				if(coordsLoc != null){
@@ -128,7 +106,9 @@ public class RadiusParameter implements PrismParameterHandler {
 					// Load a selection from world edit as our area.
 					if(player != null){
 						Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
-						query = WorldEditBridge.getSelectedArea(prism, player, query);
+						if( !WorldEditBridge.getSelectedArea(prism, player, query) ){
+							throw new IllegalArgumentException("Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
+						}
 					}
 				}
 			}
