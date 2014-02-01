@@ -34,6 +34,8 @@ public class QueryParameters implements Cloneable {
 	 */
 	protected boolean allow_no_radius = false;
 	protected int id = 0;
+	protected int minId = 0;
+	protected int maxId = 0;
 	protected Vector maxLoc;
 	protected Vector minLoc;
 	protected int parent_id = 0;
@@ -77,6 +79,42 @@ public class QueryParameters implements Cloneable {
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	
+	/**
+	 * 
+	 * @param minId
+	 */
+	public void setMinPrimaryKey( int minId ){
+		this.minId = minId;
+	}
+	
+	
+	/**
+	 * 
+	 * @param minId
+	 */
+	public int getMinPrimaryKey(){
+		return this.minId;
+	}
+	
+	
+	/**
+	 * 
+	 * @param maxId
+	 */
+	public void setMaxPrimaryKey( int maxId ){
+		this.maxId = maxId;
+	}
+	
+	
+	/**
+	 * 
+	 * @param minId
+	 */
+	public int getMaxPrimaryKey(){
+		return this.maxId;
 	}
 	
 	
