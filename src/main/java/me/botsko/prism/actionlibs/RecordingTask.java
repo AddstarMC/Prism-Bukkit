@@ -273,6 +273,11 @@ public class RecordingTask implements Runnable {
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
 	        int i = 0;
 			while(keys.next()){
+				
+				if( conn == null || conn.isClosed() ){
+	        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert extra data query.");
+	        		break;
+	        	}
 
 				// @todo should not happen
 				if( i >= extraDataQueue.size() ){
