@@ -59,6 +59,7 @@ import me.botsko.prism.parameters.RadiusParameter;
 import me.botsko.prism.parameters.SinceParameter;
 import me.botsko.prism.parameters.WorldParameter;
 import me.botsko.prism.purge.LogPurgeCallback;
+import me.botsko.prism.purge.PurgeChunkingUtil;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.wands.Wand;
 
@@ -1025,6 +1026,13 @@ public class Prism extends JavaPlugin {
 			}
 
 			if (paramList.size() > 0) {
+				
+				// Identify the minimum for chunking
+				int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
+				if( minId == 0 ){
+					log("No minimum primary key could be found for purge chunking.");
+					return;
+				}
 
 				int purge_tick_delay = getConfig().getInt("prism.purge.batch-tick-delay");
 				if (purge_tick_delay < 1) {
@@ -1037,7 +1045,7 @@ public class Prism extends JavaPlugin {
 				 * when each purge cycle has completed and records remain
 				 */
 				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,new LogPurgeCallback()),purge_tick_delay);
+				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,minId,new LogPurgeCallback()),purge_tick_delay);
 
 			}
 		}

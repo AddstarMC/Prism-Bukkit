@@ -31,6 +31,11 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
+	private int minId = 0;
+	
+	/**
+	 * 
+	 */
 	private PurgeCallback callback;
 	
 	
@@ -38,10 +43,11 @@ public class PurgeTask implements Runnable {
 	 * 
 	 * @param plugin
 	 */
-	public PurgeTask( Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, PurgeCallback callback ){
+	public PurgeTask( Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, int minId, PurgeCallback callback ){
 		this.plugin = plugin;
 		this.paramList = paramList;
 		this.purge_tick_delay = purge_tick_delay;
+		this.minId = minId;
 		this.callback = callback;
 	}
 	
@@ -58,6 +64,15 @@ public class PurgeTask implements Runnable {
 	    	for( QueryParameters param : paramList ){
 	    		
 	    		boolean cycle_complete = false;
+	    		
+	    		// We're chunking by IDs instead of using LIMIT because
+	    		// that should be a lot better as far as required record lock counts
+	    		// http://mysql.rjweb.org/doc.php/deletebig
+	    		int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
+	    		if( spread <= 1 ) spread = 1000;
+	    		int newMinId = minId + spread;
+	    		param.setMinPrimaryKey(minId);
+	    		param.setMaxPrimaryKey(newMinId);
 
 				cycle_rows_affected = aq.delete(param);
 				plugin.total_records_affected += cycle_rows_affected;
@@ -82,7 +97,7 @@ public class PurgeTask implements Runnable {
 				
 				// If cycle is incomplete, reschedule it, or reset counts
 				if( !cycle_complete ){
-					plugin.deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, callback ), purge_tick_delay);
+					plugin.deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, callback ), purge_tick_delay);
 				} else {
 					plugin.total_records_affected = 0;
 				}

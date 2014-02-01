@@ -12,6 +12,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.purge.PurgeChunkingUtil;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
 
@@ -67,6 +68,14 @@ public class DeleteCommand implements SubHandler {
 
 		if(parameters.getFoundArgs().size() > 0){
 			
+			// Identify the minimum for chunking
+			int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
+			if( minId == 0 ){
+				call.getSender().sendMessage( Prism.messenger.playerError("No minimum primary key could be found for purge chunking") );
+				Prism.log("No minimum primary key could be found for purge chunking.");
+				return;
+			}
+			
 			call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder) );
 			
 			int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
@@ -85,7 +94,7 @@ public class DeleteCommand implements SubHandler {
 			paramList.add( parameters );
 			
 			Prism.log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, callback ));
+			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, minId, callback ));
 			
 		} else {
 			call.getSender().sendMessage( Prism.messenger.playerError("You must supply at least one parameter." ));

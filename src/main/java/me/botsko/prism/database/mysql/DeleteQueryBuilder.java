@@ -43,7 +43,9 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 					includeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
 				}
 			}
-			addCondition( "action_id IN (" + TypeUtils.join(includeIds, ",")+ ")" );
+			if( includeIds.size() > 0 ){
+				addCondition( "action_id IN (" + TypeUtils.join(includeIds, ",")+ ")" );
+			}
 			// Exclude IDs
 			ArrayList<String> excludeIds = new ArrayList<String>();
 			for( Entry<String,MatchRule> entry : action_types.entrySet() ){
@@ -51,7 +53,9 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 					excludeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
 				}
 			}
-			addCondition( "action_id NOT IN (" + TypeUtils.join(excludeIds, ",")+ ")" );
+			if( excludeIds.size() > 0 ){
+				addCondition( "action_id NOT IN (" + TypeUtils.join(excludeIds, ",")+ ")" );
+			}
 		}
 	}
 	
@@ -101,10 +105,6 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 	 */
 	@Override
 	protected String limit(){
-		int perBatch = plugin.getConfig().getInt("prism.purge.records-per-batch");
-		if( perBatch < 100){
-			perBatch = 100;
-		}
-		return " LIMIT " + perBatch;
+		return "";
 	}
 }
