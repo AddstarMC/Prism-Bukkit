@@ -8,7 +8,6 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.WandUtils;
-import me.botsko.prism.wands.Wand;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,6 +50,7 @@ import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.projectiles.ProjectileSource;
 
 public class PrismEntityEvents implements Listener {
 
@@ -337,12 +337,12 @@ public class PrismEntityEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPotionSplashEvent(final PotionSplashEvent event){
 
-		Entity entity = event.getPotion().getShooter();
+		ProjectileSource source = event.getPotion().getShooter();
 
 		// Ignore from non-players for the time being
-		if(!(entity instanceof Player)) return;
+		if(!(source instanceof Player)) return;
 
-		Player player = (Player) entity;
+		Player player = (Player) source;
 
 		if( !Prism.getIgnore().event("potion-splash",player ) ) return;
 
