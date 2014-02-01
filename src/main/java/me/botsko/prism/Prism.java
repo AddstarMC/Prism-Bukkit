@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -26,12 +28,9 @@ import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.actionlibs.Ignore;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
-import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.PrismBlockEvents;
@@ -60,9 +59,7 @@ import me.botsko.prism.parameters.PrismParameterHandler;
 import me.botsko.prism.parameters.RadiusParameter;
 import me.botsko.prism.parameters.SinceParameter;
 import me.botsko.prism.parameters.WorldParameter;
-import me.botsko.prism.purge.LogPurgeCallback;
-import me.botsko.prism.purge.PurgeChunkingUtil;
-import me.botsko.prism.purge.PurgeTask;
+import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.wands.Wand;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
@@ -103,6 +100,9 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 	private static HashMap<Pattern,PrismParameterHandler> paramHandlers = new HashMap<Pattern,PrismParameterHandler>();
+	private ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);;
+	private ScheduledFuture<?> scheduledPurgeExecutor;
+	private PurgeManager purgeManager;
 
 	/**
 	 * Public
@@ -121,7 +121,6 @@ public class Prism extends JavaPlugin {
 	public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<Location, Long>();
 	public TimeTaken eventTimer;
 	public QueueStats queueStats;
-	public BukkitTask deleteTask;
 	public BukkitTask recordingTask;
 	public int total_records_affected = 0;
 	
@@ -280,7 +279,7 @@ public class Prism extends JavaPlugin {
 			removeExpiredLocations();
 
 			// Delete old data based on config
-			discardExpiredDbRecords();
+			launchScheduledPurgeManager();
 
 		}
 	}
@@ -896,6 +895,15 @@ public class Prism extends JavaPlugin {
 	
 	
 	/**
+	 * 
+	 * @return
+	 */
+	public PurgeManager getPurgeManager(){
+		return purgeManager;
+	}
+	
+	
+	/**
 	 * Registers a parameter and a handler. Example:
 	 * 
 	 * pr l a:block-break. The "a" is an action, and the action handler
@@ -1002,55 +1010,11 @@ public class Prism extends JavaPlugin {
 	/**
 	 * 
 	 */
-	public void discardExpiredDbRecords() {
-
+	public void launchScheduledPurgeManager(){
 		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
-
-		if (!purgeRules.isEmpty()) {
-
-			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
-
-			for (final String purgeArgs : purgeRules) {
-
-				// Process and validate all of the arguments
-				QueryParameters parameters = PreprocessArgs.process(prism,
-						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0, false);
-
-				if (parameters == null) {
-					log("Invalid parameters for database purge: " + purgeArgs);
-					continue;
-				}
-
-				if (parameters.getFoundArgs().size() > 0) {
-					parameters.setStringFromRawArgs(purgeArgs.split(" "), 0);
-					paramList.add(parameters);
-				}
-			}
-
-			if (paramList.size() > 0) {
-				
-				// Identify the minimum for chunking
-				int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
-				if( minId == 0 ){
-					log("No minimum primary key could be found for purge chunking.");
-					return;
-				}
-
-				int purge_tick_delay = getConfig().getInt("prism.purge.batch-tick-delay");
-				if (purge_tick_delay < 1) {
-					purge_tick_delay = 20;
-				}
-
-				/**
-				 * We're going to cycle through the param rules, one rule at a
-				 * time in a single async task. This task will reschedule itself
-				 * when each purge cycle has completed and records remain
-				 */
-				log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = getServer().getScheduler().runTaskLaterAsynchronously(this,new PurgeTask(this, paramList,purge_tick_delay,minId,new LogPurgeCallback()),purge_tick_delay);
-
-			}
-		}
+		purgeManager = new PurgeManager(this,purgeRules);
+		scheduledPurgeExecutor = schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS);
+		// scheduledPurgeExecutor.cancel();
 	}
 
 	
