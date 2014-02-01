@@ -16,6 +16,11 @@ public class RecordingTask implements Runnable {
 	 * 
 	 */
 	private Prism plugin;
+	
+	/**
+	 * 
+	 */
+	private boolean autoReschedule = true;
 
 	
 	/**
@@ -26,6 +31,15 @@ public class RecordingTask implements Runnable {
 		this.plugin = plugin;
 	}
 
+	
+	/**
+	 * 
+	 * @param autoReschedule
+	 */
+	public void setAutoReschedule( boolean autoReschedule ){
+		this.autoReschedule = autoReschedule;
+	}
+	
 	
 	/**
 	 * 
@@ -348,6 +362,7 @@ public class RecordingTask implements Runnable {
 	 * 
 	 */
 	protected void scheduleNextRecording(){
+		if( !autoReschedule ) return;
 //		Prism.debug("Scheduling next recording task in " + getTickDelayForNextBatch() + " ticks.");
 		plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new RecordingTask(plugin), getTickDelayForNextBatch());
 	}

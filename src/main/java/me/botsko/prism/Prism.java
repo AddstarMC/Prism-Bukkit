@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.actionlibs.RecordingManager;
+import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -1204,7 +1206,17 @@ public class Prism extends JavaPlugin {
 	 * Shutdown
 	 */
 	@Override
-	public void onDisable() {
+	public void onDisable(){
+		
+		RecordingTask recorder = new RecordingTask(this);
+		recorder.setAutoReschedule(false);
+		
+		// Force queue to empty
+		while( !RecordingQueue.getQueue().isEmpty() ){
+			log("Forcing recorder queue to run a new batch before shutdown...");
+			recorder.run();
+			if( RecordingManager.failedDbConnectionCount > 0 ) break;
+		}
 
 		// Close pool connections when plugin disables
 		if (pool != null) {
