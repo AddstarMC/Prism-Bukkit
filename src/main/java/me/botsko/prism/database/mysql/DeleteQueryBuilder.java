@@ -1,7 +1,10 @@
 package me.botsko.prism.database.mysql;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 
@@ -33,7 +36,22 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 		// Action type
 		HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
 		if( action_types.size() > 0 ){
-			addCondition( "action_id IN ( SELECT action_id FROM prism_actions WHERE " + buildMultipleConditions( action_types, "action", null ) + ")" );
+			// Include IDs
+			ArrayList<String> includeIds = new ArrayList<String>();
+			for( Entry<String,MatchRule> entry : action_types.entrySet() ){
+				if( entry.getValue().equals(MatchRule.INCLUDE) ){
+					includeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
+				}
+			}
+			addCondition( "action_id IN (" + TypeUtils.join(includeIds, ",")+ ")" );
+			// Exclude IDs
+			ArrayList<String> excludeIds = new ArrayList<String>();
+			for( Entry<String,MatchRule> entry : action_types.entrySet() ){
+				if( entry.getValue().equals(MatchRule.EXCLUDE) ){
+					excludeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
+				}
+			}
+			addCondition( "action_id NOT IN (" + TypeUtils.join(excludeIds, ",")+ ")" );
 		}
 	}
 	
