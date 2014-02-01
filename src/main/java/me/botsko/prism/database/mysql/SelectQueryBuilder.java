@@ -94,6 +94,14 @@ public class SelectQueryBuilder extends QueryBuilder {
 			return "WHERE " + tableNameData+".id = "+id;
 		}
 		
+		// id range conditions
+		int minId = parameters.getMinPrimaryKey();
+		int maxId = parameters.getMaxPrimaryKey();
+		if( minId > 0 && maxId > 0 && minId != maxId ){
+			addCondition(tableNameData+".id >= "+minId);
+			addCondition(tableNameData+".id < "+maxId);
+		}
+		
 		worldCondition();
 		actionCondition();
 		playerCondition();
