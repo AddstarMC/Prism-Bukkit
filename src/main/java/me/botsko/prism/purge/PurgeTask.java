@@ -97,7 +97,7 @@ public class PurgeTask implements Runnable {
 				
 				// If cycle is incomplete, reschedule it, or reset counts
 				if( !cycle_complete ){
-					plugin.deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, callback ), purge_tick_delay);
+					plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, callback ), purge_tick_delay);
 				} else {
 					plugin.total_records_affected = 0;
 				}
