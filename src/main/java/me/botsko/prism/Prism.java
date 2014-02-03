@@ -256,17 +256,17 @@ public class Prism extends JavaPlugin {
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
 			
 			// Register official parameters
-			registerParameter( Pattern.compile("(a):([\\w-]+)"), 		new ActionParameter() );
-			registerParameter( Pattern.compile("(before):([\\w-]+)"), 	new BeforeParameter() );
-			registerParameter( Pattern.compile("(b):([\\w-]+)"), 		new BlockParameter() );
-			registerParameter( Pattern.compile("(e):([\\w-]+)"), 		new EntityParameter() );
-			registerParameter( Pattern.compile("(-)([\\w-]+)"),		 	new FlagParameter() );
-			registerParameter( Pattern.compile("(id):([0-9]+)"), 		new IdParameter());
-			registerParameter( Pattern.compile("(k):([\\w-]+)"), 		new KeywordParameter());
-			registerParameter( Pattern.compile("(p):([\\w-]+)"), 		new PlayerParameter());
-			registerParameter( Pattern.compile("(r):([\\w-]+)"), 		new RadiusParameter());
-			registerParameter( Pattern.compile("(since|t):([\\w-]+)"), 	new SinceParameter());
-			registerParameter( Pattern.compile("(w):([\\w-]+)"), 		new WorldParameter());
+			registerParameter( Pattern.compile("(a):([~|!]?([\\w,-]+)"), 		new ActionParameter() );
+			registerParameter( Pattern.compile("(before):([\\w]+)"), 	new BeforeParameter() );
+			registerParameter( Pattern.compile("(b):([\\w,:]+)"), 		new BlockParameter() );
+			registerParameter( Pattern.compile("(e):([~|!]?[\\w,]+)"), 	new EntityParameter() );
+			registerParameter( Pattern.compile("(-)([^\\s]+)"),		 	new FlagParameter() );
+			registerParameter( Pattern.compile("(id):([\\d,]+)"), 		new IdParameter());
+			registerParameter( Pattern.compile("(k):([^\\s]+)"), 		new KeywordParameter());
+			registerParameter( Pattern.compile("(p):([~|!]?[\\w,]+)"), 	new PlayerParameter());
+			registerParameter( Pattern.compile("(r):([\\w,:]+)"), 		new RadiusParameter());
+			registerParameter( Pattern.compile("(since|t):([\\w]+)"), 	new SinceParameter());
+			registerParameter( Pattern.compile("(w):([^\\s]+)"), 		new WorldParameter());
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
