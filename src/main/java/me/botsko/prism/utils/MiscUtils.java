@@ -36,17 +36,19 @@ public class MiscUtils {
 		}
 		
 		// Does the radius exceed the configured max?
-		if( processType.equals(PrismProcessType.LOOKUP) && radius > max_lookup_radius ){
+		if( processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_lookup_radius ){
 			// If player does not have permission to override the max
 			if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
 				return max_lookup_radius;
 			}
+			return desiredRadius;
 		}
-		if( !processType.equals(PrismProcessType.LOOKUP) && radius > max_applier_radius ){
+		if( !processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius ){
 			// If player does not have permission to override the max
 			if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
 				return max_applier_radius;
 			}
+			return desiredRadius;
 		}
 		
 		return config.getInt("prism.near.default-radius");

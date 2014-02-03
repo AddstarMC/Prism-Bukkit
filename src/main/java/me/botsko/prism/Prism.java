@@ -256,7 +256,7 @@ public class Prism extends JavaPlugin {
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
 			
 			// Register official parameters
-			registerParameter( Pattern.compile("(a):([~|!]?([\\w,-]+)"), 		new ActionParameter() );
+			registerParameter( Pattern.compile("(a):([~|!]?[\\w,-]+)"), 		new ActionParameter() );
 			registerParameter( Pattern.compile("(before):([\\w]+)"), 	new BeforeParameter() );
 			registerParameter( Pattern.compile("(b):([\\w,:]+)"), 		new BlockParameter() );
 			registerParameter( Pattern.compile("(e):([~|!]?[\\w,]+)"), 	new EntityParameter() );
