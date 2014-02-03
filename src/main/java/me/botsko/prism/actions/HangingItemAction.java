@@ -121,7 +121,7 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public ChangeResult hangItem( Player player, QueryParameters parameters, boolean is_preview ){
 		
-		BlockFace attachedFace = getDirection().getOppositeFace();
+		BlockFace attachedFace = getDirection();
 
 		Location loc = new Location( getWorld(), getX(), getY(), getZ()).getBlock().getRelative(getDirection()).getLocation();
 		
@@ -129,9 +129,6 @@ public class HangingItemAction extends GenericAction {
 		if( BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ){
 			return new ChangeResult( ChangeResultType.SKIPPED, null );
 		}
-		
-		// bug filed:
-		// https://bukkit.atlassian.net/browse/BUKKIT-3371
 		
 		try {
 			if( getHangingType().equals("item_frame") ){
