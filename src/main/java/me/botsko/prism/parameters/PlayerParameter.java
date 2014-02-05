@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.command.CommandSender;
 
@@ -8,6 +9,33 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 public class PlayerParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "Player";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(p):([~|!]?[\\w,]+)");
+	}
 	
 	
 	/**
@@ -29,5 +57,13 @@ public class PlayerParameter implements PrismParameterHandler {
 				query.addPlayerName( playerName, match );
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		return;
 	}
 }
