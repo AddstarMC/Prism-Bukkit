@@ -2,6 +2,7 @@ package me.botsko.prism.parameters;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.command.CommandSender;
 
@@ -13,6 +14,33 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
 
 public class ActionParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "Action";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(a):([~|!]?[\\w,-]+)");
+	}
 	
 	
 	/**
@@ -54,5 +82,13 @@ public class ActionParameter implements PrismParameterHandler {
 				throw new IllegalArgumentException("Action parameter value not recognized. Try /pr ? for help");
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		return;
 	}
 }

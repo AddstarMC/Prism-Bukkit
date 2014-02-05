@@ -99,7 +99,7 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<Integer> illegalBlocks;
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
-	private static HashMap<Pattern,PrismParameterHandler> paramHandlers = new HashMap<Pattern,PrismParameterHandler>();
+	private static HashMap<String,PrismParameterHandler> paramHandlers = new HashMap<String,PrismParameterHandler>();
 	private ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);;
 	private ScheduledFuture<?> scheduledPurgeExecutor;
 	private PurgeManager purgeManager;
@@ -252,17 +252,17 @@ public class Prism extends JavaPlugin {
 			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
 			
 			// Register official parameters
-			registerParameter( Pattern.compile("(a):([~|!]?[\\w,-]+)"), 		new ActionParameter() );
-			registerParameter( Pattern.compile("(before):([\\w]+)"), 	new BeforeParameter() );
-			registerParameter( Pattern.compile("(b):([\\w,:]+)"), 		new BlockParameter() );
-			registerParameter( Pattern.compile("(e):([~|!]?[\\w,]+)"), 	new EntityParameter() );
-			registerParameter( Pattern.compile("(-)([^\\s]+)"),		 	new FlagParameter() );
-			registerParameter( Pattern.compile("(id):([\\d,]+)"), 		new IdParameter());
-			registerParameter( Pattern.compile("(k):([^\\s]+)"), 		new KeywordParameter());
-			registerParameter( Pattern.compile("(p):([~|!]?[\\w,]+)"), 	new PlayerParameter());
-			registerParameter( Pattern.compile("(r):([\\w,:]+)"), 		new RadiusParameter());
-			registerParameter( Pattern.compile("(since|t):([\\w]+)"), 	new SinceParameter());
-			registerParameter( Pattern.compile("(w):([^\\s]+)"), 		new WorldParameter());
+			registerParameter( new ActionParameter() );
+			registerParameter( new BeforeParameter() );
+			registerParameter( new BlockParameter() );
+			registerParameter( new EntityParameter() );
+			registerParameter( new FlagParameter() );
+			registerParameter( new IdParameter());
+			registerParameter( new KeywordParameter());
+			registerParameter( new PlayerParameter());
+			registerParameter( new RadiusParameter());
+			registerParameter( new SinceParameter());
+			registerParameter( new WorldParameter());
 
 			// Init re-used classes
 			messenger = new Messenger(plugin_name);
@@ -908,11 +908,10 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * pr l a:block-break. The "a" is an action, and the action handler
 	 * will process what "block-break" refers to.
-	 * @param param
 	 * @param handler
 	 */
-	public static void registerParameter( Pattern param, PrismParameterHandler handler ){
-		paramHandlers.put(param, handler);
+	public static void registerParameter( PrismParameterHandler handler ){
+		paramHandlers.put(handler.getName().toLowerCase(), handler);
 	}
 	
 	
@@ -920,8 +919,17 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public static HashMap<Pattern,PrismParameterHandler> getParameters(){
+	public static HashMap<String,PrismParameterHandler> getParameters(){
 		return paramHandlers;
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public static PrismParameterHandler getParameter( String name ){
+		return paramHandlers.get(name);
 	}
 
 	

@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -11,6 +12,33 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.commandlibs.Flag;
 
 public class FlagParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "Flags";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(-)([^\\s]+)");
+	}
 	
 	
 	
@@ -45,5 +73,13 @@ public class FlagParameter implements PrismParameterHandler {
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		return;
 	}
 }
