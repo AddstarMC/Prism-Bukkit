@@ -2,6 +2,7 @@ package me.botsko.prism.parameters;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.command.CommandSender;
 
@@ -12,6 +13,33 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 public class BlockParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "Block";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(b):([\\w,:]+)");
+	}
 	
 	
 	/**
@@ -59,5 +87,13 @@ public class BlockParameter implements PrismParameterHandler {
 				}
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		return;
 	}
 }

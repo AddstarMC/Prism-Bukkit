@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
@@ -18,6 +19,33 @@ import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.MiscUtils;
 
 public class RadiusParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "Radius";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(r):([\\w,:]+)");
+	}
 	
 	
 	/**
@@ -170,6 +198,23 @@ public class RadiusParameter implements PrismParameterHandler {
 				
 			} else {
 				throw new IllegalArgumentException("Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.");
+			}
+		}
+	}
+
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
+		if( sender != null && sender instanceof Player ){
+			if(query.allowsNoRadius()){
+				// We'll allow no radius.
+			} else {
+				FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
+				query.setRadius( config.getInt("prism.queries.default-radius") );
+				query.addDefaultUsed( "r:" + query.getRadius() );
 			}
 		}
 	}

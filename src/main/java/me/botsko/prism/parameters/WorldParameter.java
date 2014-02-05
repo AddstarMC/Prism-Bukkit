@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -8,8 +9,36 @@ import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.PrismProcessType;
 
 public class WorldParameter implements PrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String getName(){
+		return "World";
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public String[] getHelp(){
+		return new String[]{};
+	}
+	
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public Pattern getArgumentPattern(){
+		return Pattern.compile("(w):([^\\s]+)");
+	}
 	
 	
 	/**
@@ -26,5 +55,16 @@ public class WorldParameter implements PrismParameterHandler {
 			}
 		}
 		query.setWorld( worldName );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void defaultTo( QueryParameters query, CommandSender sender ){
+		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
+		if( sender != null && sender instanceof Player && !query.allowsNoRadius()){
+			query.setWorld( ((Player)sender).getWorld().getName() );
+		}
 	}
 }
