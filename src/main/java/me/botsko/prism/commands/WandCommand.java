@@ -149,7 +149,7 @@ public class WandCommand implements SubHandler {
 			if( oldwand != null && oldwand instanceof ProfileWand ){
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled"+ChatColor.WHITE+".") );
 			} else {
-				wand = new ProfileWand( plugin );
+				wand = new ProfileWand();
 				call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Profile wand " + ChatColor.GREEN + "enabled"+ChatColor.WHITE+wandOn+".") );
 				enabled = true;
 			}
