@@ -43,11 +43,11 @@ public class WhatCommand extends Executor {
         		call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg("Item Profile:") );
         		
         		String line1 = ChatColor.WHITE + "Name: " + ChatColor.DARK_AQUA + item.getType().toString().toLowerCase();
-        		line1 += ChatColor.WHITE + " Prism Alias: " + ChatColor.DARK_AQUA + prism.getItems().getAlias(item.getTypeId(), item.getDurability() );
+        		line1 += ChatColor.WHITE + " Prism Alias: " + ChatColor.DARK_AQUA + Prism.getItems().getAlias(item.getTypeId(), item.getDurability() );
         		line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getTypeId()+":" + item.getDurability();
         		
         		call.getPlayer().sendMessage( Prism.messenger.playerMsg( line1 ) );
-        		call.getPlayer().sendMessage( Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA + ItemUtils.getItemFullNiceName( item, prism.getItems() ) ) );
+        		call.getPlayer().sendMessage( Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA + ItemUtils.getItemFullNiceName( item, Prism.getItems() ) ) );
         		
             }
 		});
