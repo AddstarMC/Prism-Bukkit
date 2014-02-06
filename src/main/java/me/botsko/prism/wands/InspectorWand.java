@@ -104,7 +104,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
 				ActionsQuery aq = new ActionsQuery(plugin);
 				QueryResult results = aq.lookup( params, player );
 				if(!results.getActionResults().isEmpty()){
-					String blockname = plugin.getItems().getAlias(block.getTypeId(), block.getData());
+					String blockname = Prism.getItems().getAlias(block.getTypeId(), block.getData());
 					player.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Inspecting "+blockname+" at "+loc.getBlockX()+" "+loc.getBlockY()+" "+loc.getBlockZ()+" ---" ) );
 					if(results.getActionResults().size() > 5){
 						player.sendMessage( Prism.messenger.playerHeaderMsg("Showing "+results.getTotalResults()+" results. Page 1 of "+results.getTotal_pages()) );

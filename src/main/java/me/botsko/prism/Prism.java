@@ -13,11 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
@@ -105,7 +103,7 @@ public class Prism extends JavaPlugin {
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 	private static HashMap<String,PrismParameterHandler> paramHandlers = new HashMap<String,PrismParameterHandler>();
 	private ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);;
-	private ScheduledFuture<?> scheduledPurgeExecutor;
+//	private ScheduledFuture<?> scheduledPurgeExecutor;
 	private PurgeManager purgeManager;
 
 	/**
@@ -1045,7 +1043,8 @@ public class Prism extends JavaPlugin {
 	public void launchScheduledPurgeManager(){
 		List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
 		purgeManager = new PurgeManager(this,purgeRules);
-		scheduledPurgeExecutor = schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS);
+		// scheduledPurgeExecutor = 
+		schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS);
 		// scheduledPurgeExecutor.cancel();
 	}
 

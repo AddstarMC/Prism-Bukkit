@@ -148,7 +148,7 @@ public class ActionsQuery {
 						baseHandler.setOldBlockSubId( rs.getInt(12) );
 						baseHandler.setData( rs.getString(13) );
 						baseHandler.setTileEntityData(rs.getString(14)); // MCPC+ - set te data
-	    				baseHandler.setMaterialAliases( plugin.getItems() );
+	    				baseHandler.setMaterialAliases( Prism.getItems() );
 	    				
 	    				// Set aggregate counts if a lookup
 	    				int aggregated = 0;
