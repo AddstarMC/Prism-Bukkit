@@ -111,7 +111,7 @@ public class SetmyCommand implements SubHandler {
 					
 					// If non-numeric, check for name
 					if( !TypeUtils.isNumeric( setWandItem ) ){
-						ArrayList<int[]> itemIds = plugin.getItems().getIdsByAlias( setWandItem );
+						ArrayList<int[]> itemIds = Prism.getItems().getIdsByAlias( setWandItem );
 						if(itemIds.size() > 0){
 							int[] ids = itemIds.get(0);
 							setWandItem = ids[0]+":"+ids[1];
@@ -135,7 +135,7 @@ public class SetmyCommand implements SubHandler {
 						item_subid = Byte.parseByte(itemIds[1]);
 					}
 					if( item_id > -1 ){
-						String item_name = plugin.getItems().getAlias(item_id, item_subid);
+						String item_name = Prism.getItems().getAlias(item_id, item_subid);
 						if( item_name != null ){
 							
 							if( !ItemUtils.isAcceptableWand( item_id, item_subid ) ){

@@ -149,7 +149,7 @@ public class ReportCommand implements SubHandler {
 
 		    		while(rs.next()){
 		    			
-		    			String alias = plugin.getItems().getAlias(rs.getInt(1), 0);
+		    			String alias = Prism.getItems().getAlias(rs.getInt(1), 0);
 	
 		    			int placed = rs.getInt(2);
 		    			int broken = rs.getInt(3);

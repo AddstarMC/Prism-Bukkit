@@ -147,7 +147,7 @@ public class ActionsQuery {
 						baseHandler.setOldBlockId( rs.getInt(11) );
 						baseHandler.setOldBlockSubId( rs.getInt(12) );
 						baseHandler.setData( rs.getString(13) );
-	    				baseHandler.setMaterialAliases( plugin.getItems() );
+	    				baseHandler.setMaterialAliases( Prism.getItems() );
 	    				
 	    				// Set aggregate counts if a lookup
 	    				int aggregated = 0;

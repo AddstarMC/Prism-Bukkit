@@ -18,9 +18,7 @@ public class MiscUtils {
 	 * @return
 	 */
 	public static int clampRadius( Player player, int desiredRadius, PrismProcessType processType, FileConfiguration config ){
-		
-		int radius = 0;
-		
+
 		// Safety checks for max lookup radius
 		int max_lookup_radius = config.getInt("prism.queries.max-lookup-radius");
 		if( max_lookup_radius <= 0 ){
@@ -54,5 +52,4 @@ public class MiscUtils {
 		return config.getInt("prism.near.default-radius");
 		
 	}
-
 }

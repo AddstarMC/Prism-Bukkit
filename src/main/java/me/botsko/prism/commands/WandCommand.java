@@ -102,7 +102,7 @@ public class WandCommand implements SubHandler {
 		String item_name = "";
 		String parameters = "";
 		if( item_id != 0 ){
-			item_name = plugin.getItems().getAlias(item_id, item_subid);
+			item_name = Prism.getItems().getAlias(item_id, item_subid);
 			wandOn += " on a " + item_name;
 		}
 		
