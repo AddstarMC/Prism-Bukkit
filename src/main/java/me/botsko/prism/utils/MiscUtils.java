@@ -18,6 +18,11 @@ public class MiscUtils {
 	 * @return
 	 */
 	public static int clampRadius( Player player, int desiredRadius, PrismProcessType processType, FileConfiguration config ){
+		
+		
+		if( desiredRadius <= 0 ){
+			return config.getInt("prism.near.default-radius");
+		}
 
 		// Safety checks for max lookup radius
 		int max_lookup_radius = config.getInt("prism.queries.max-lookup-radius");
@@ -39,17 +44,19 @@ public class MiscUtils {
 			if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
 				return max_lookup_radius;
 			}
+			// Otherwise non-player
 			return desiredRadius;
 		}
-		if( !processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius ){
+		else if( !processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius ){
 			// If player does not have permission to override the max
 			if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
 				return max_applier_radius;
 			}
+			// Otherwise non-player
+			return desiredRadius;
+		} else {
+			// Otherwuse, the radius is valid and is not exceeding max
 			return desiredRadius;
 		}
-		
-		return config.getInt("prism.near.default-radius");
-		
 	}
 }
