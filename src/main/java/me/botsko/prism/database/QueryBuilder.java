@@ -1,6 +1,7 @@
 package me.botsko.prism.database;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -11,8 +12,8 @@ abstract public class QueryBuilder {
 	 * 
 	 */
 	protected Prism plugin;
-	protected ArrayList<String> columns = new ArrayList<String>();
-	protected ArrayList<String> conditions = new ArrayList<String>();
+	protected List<String> columns = new ArrayList<String>();
+	protected List<String> conditions = new ArrayList<String>();
 	
 	protected String tableNameData = "prism_data";
 	protected String tableNameDataExtra = "prism_data_extra";
