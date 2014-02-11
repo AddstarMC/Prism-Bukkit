@@ -125,13 +125,11 @@ public class ItemStackAction extends GenericAction {
 		}
 		
 		// Written books
-		if( meta != null && item.getType().equals( Material.WRITTEN_BOOK ) ){
+		if( meta != null && meta instanceof BookMeta ){
 	        BookMeta bookMeta = (BookMeta) meta;
-			if(bookMeta != null){
-				actionData.by = bookMeta.getAuthor();
-				actionData.title = bookMeta.getTitle();
-				actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
-			}
+			actionData.by = bookMeta.getAuthor();
+			actionData.title = bookMeta.getTitle();
+			actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
 		}
 		
 		// Lore
@@ -258,7 +256,7 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
-		
+
 		// Leather color
 		if( item.getType().name().contains("LEATHER_") && actionData.color > 0 ){
 			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
@@ -272,13 +270,11 @@ public class ItemStackAction extends GenericAction {
 			item.setItemMeta(meta);
 		}
 		// Written books
-		else if(item.getType().equals( Material.WRITTEN_BOOK )){
+		else if( item.getItemMeta() instanceof BookMeta ){
 	        BookMeta bookMeta = (BookMeta) item.getItemMeta();
-			if(actionData.by != null && !actionData.by.isEmpty()){
-				bookMeta.setAuthor( actionData.by );
-				bookMeta.setTitle( actionData.title );
-				bookMeta.setPages( actionData.content );
-			}
+			bookMeta.setAuthor( actionData.by );
+			bookMeta.setTitle( actionData.title );
+			bookMeta.setPages( actionData.content );
 			item.setItemMeta(bookMeta);
 		}
 		
