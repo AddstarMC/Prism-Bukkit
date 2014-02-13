@@ -159,10 +159,15 @@ public class ActionsQuery {
 	    				actions.add(baseHandler);
 	    				
 	    			} catch (JsonSyntaxException e) {
-	    	        	Prism.log("Ingoring extra data for prism_data #" + rs.getInt(1) + " because it appears corrupt or invalid." );
+	    				if( !rs.isClosed() ){
+		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
+	    	        	}
+	    	        	Prism.log( e.getMessage() );
 	    	        	continue;
 	    	        } catch (Exception e) {
-	    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
+	    	        	if( !rs.isClosed() ){
+		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
+	    	        	}
 	    	        	Prism.log( e.getMessage() );
 	    	        	continue;
 	    	        }
