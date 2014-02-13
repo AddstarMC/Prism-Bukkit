@@ -119,9 +119,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 * 
 	 */
 	protected void worldCondition(){
-		// World conditions
 		if( parameters.getWorld() != null ){
-			addCondition( String.format( "w.world = '%s'", parameters.getWorld()) );
+			addCondition( String.format( "world_id = ( SELECT w.world_id FROM prism_worlds w WHERE w.world = '%s')", parameters.getWorld()) );
 		}
 	}
 	
