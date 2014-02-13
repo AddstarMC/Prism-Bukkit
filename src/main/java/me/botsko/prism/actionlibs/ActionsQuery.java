@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.com.google.gson.JsonSyntaxException;
@@ -131,6 +132,15 @@ public class ActionsQuery {
 	    			try {
 	    				
 	    				Handler baseHandler = Prism.getHandlerRegistry().getHandler( actionType.getHandler() );
+	    				
+	    				// Convert world ID to name
+	    				// Performance-wise this is typically a lot faster than table joins
+	    				String worldName = "";
+	    				for( Entry<String,Integer> entry : Prism.prismWorlds.entrySet() ){
+	    					if( entry.getValue() == rs.getInt(5) ){
+	    						worldName = entry.getKey();
+	    					}
+	    				}
 	    			
 	    				// Set all shared values
 		    			baseHandler.setPlugin( plugin );
@@ -138,7 +148,7 @@ public class ActionsQuery {
 		    			baseHandler.setId( rs.getInt(1) );
 		    			baseHandler.setUnixEpoch( rs.getString(2) );
 		    			baseHandler.setPlayerName( rs.getString(4) );
-		    			baseHandler.setWorldName( rs.getString(5) );
+		    			baseHandler.setWorldName( worldName );
 		    			baseHandler.setX( rs.getInt(6) );
 		    			baseHandler.setY( rs.getInt(7) );
 		    			baseHandler.setZ( rs.getInt(8) );

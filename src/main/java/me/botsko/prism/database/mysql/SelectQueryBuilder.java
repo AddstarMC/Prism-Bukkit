@@ -40,7 +40,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		columns.add("epoch");
 		columns.add("action");
 		columns.add("player");
-		columns.add("world");
+		columns.add("world_id");
 		
 		if( shouldGroup ){
 			columns.add("AVG(x)");
@@ -73,7 +73,6 @@ public class SelectQueryBuilder extends QueryBuilder {
 		// Joins
 		query += "INNER JOIN prism_players p ON p.player_id = "+tableNameData+".player_id ";
 		query += "INNER JOIN prism_actions a ON a.action_id = "+tableNameData+".action_id ";
-		query += "INNER JOIN prism_worlds w ON w.world_id = "+tableNameData+".world_id ";
 		query += "LEFT JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
 		
 		return query;
