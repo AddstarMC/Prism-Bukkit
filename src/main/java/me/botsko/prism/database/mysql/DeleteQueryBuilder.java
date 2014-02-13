@@ -77,7 +77,7 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 	 */
 	protected void worldCondition(){
 		if( parameters.getWorld() != null ){
-			addCondition( "world_id IN ( SELECT world_id FROM prism_worlds WHERE world = '"+parameters.getWorld()+"')" );
+			addCondition( String.format( "world_id = ( SELECT w.world_id FROM prism_worlds w WHERE w.world = '%s')", parameters.getWorld()) );
 		}
 	}
 	
