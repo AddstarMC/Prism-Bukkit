@@ -44,7 +44,7 @@ public class RadiusParameter implements PrismParameterHandler {
 	 * @return
 	 */
 	public Pattern getArgumentPattern(){
-		return Pattern.compile("(r):([\\w,:]+)");
+		return Pattern.compile("(r):([\\w,:-]+)");
 	}
 	
 	
