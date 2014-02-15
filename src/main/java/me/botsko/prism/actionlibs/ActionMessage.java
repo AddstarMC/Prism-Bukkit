@@ -76,7 +76,7 @@ public class ActionMessage {
 		// Description of event
 		line1 += " " + ChatColor.WHITE + a.getType().getNiceDescription();
 		if(a.getType().getHandler() != null){
-			line1 += " " + highlight + a.getNiceName();
+			if( !a.getNiceName().isEmpty() ) line1 += " " + highlight + a.getNiceName();
 		} else {
 			// We should really improve this, but this saves me from having to make
 			// a custom handler.
