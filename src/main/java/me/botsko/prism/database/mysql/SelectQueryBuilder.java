@@ -106,6 +106,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		playerCondition();
 		radiusCondition();
 		blockCondition();
+		entityCondition();
 		timeCondition();
 		keywordCondition();
 		coordinateCondition();
