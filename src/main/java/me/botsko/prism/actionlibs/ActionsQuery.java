@@ -122,8 +122,22 @@ public class ActionsQuery {
 	    			
 	    			if( rs.getString(3) == null ) continue;
 	    			
+	    			// Convert action ID to name
+    				// Performance-wise this is a lot faster than table joins
+	    			// and the cache data should always be available
+    				String actionName = "";
+    				for( Entry<String,Integer> entry : Prism.prismActions.entrySet() ){
+    					if( entry.getValue() == rs.getInt(3) ){
+    						actionName = entry.getKey();
+    					}
+    				}
+    				if( actionName.isEmpty() ){
+    					Prism.log("Record contains action ID that doesn't exist in cache: " + rs.getInt(3));
+    					continue;
+    				}
+	    			
 	    			// Get the action handler
-	    			ActionType actionType = Prism.getActionRegistry().getAction(rs.getString(3));
+	    			ActionType actionType = Prism.getActionRegistry().getAction(actionName);
 	    			
 	    			if(actionType == null) continue;
 	    			
