@@ -76,6 +76,13 @@ public class DeleteCommand implements SubHandler {
 				return;
 			}
 			
+			// Identify the max id for chunking
+			int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
+			if( maxId == 0 ){
+				Prism.log("No maximum primary key could be found for purge chunking.");
+				return;
+			}
+			
 			call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder) );
 			
 			int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
@@ -94,7 +101,7 @@ public class DeleteCommand implements SubHandler {
 			paramList.add( parameters );
 			
 			Prism.log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, minId, callback ));
+			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, minId, maxId, callback ));
 			
 		} else {
 			call.getSender().sendMessage( Prism.messenger.playerError("You must supply at least one parameter." ));
