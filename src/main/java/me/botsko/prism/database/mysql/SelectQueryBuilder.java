@@ -38,7 +38,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		
 		columns.add("id");
 		columns.add("epoch");
-		columns.add("action");
+		columns.add("action_id");
 		columns.add("player");
 		columns.add("world_id");
 		
@@ -73,7 +73,6 @@ public class SelectQueryBuilder extends QueryBuilder {
 		
 		// Joins
 		query += "INNER JOIN prism_players p ON p.player_id = "+tableNameData+".player_id ";
-		query += "INNER JOIN prism_actions a ON a.action_id = "+tableNameData+".action_id ";
 		query += "LEFT JOIN "+tableNameDataExtra+" ex ON ex.data_id = "+tableNameData+".id ";
 		
 		return query;
@@ -132,24 +131,37 @@ public class SelectQueryBuilder extends QueryBuilder {
 	protected void actionCondition(){
 		// Action type
 		HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
-		// Make sure none of the prism process types are requested
 		boolean containsPrismProcessType = false;
 		boolean hasPositiveMatchRule = false;
-		if( !action_types.isEmpty() ){
-			addCondition( buildMultipleConditions( action_types, "a.action", null ) );
-			for (Entry<String,MatchRule> entry : action_types.entrySet()){
+		if( action_types.size() > 0 ){
+			
+			ArrayList<String> includeIds = new ArrayList<String>();
+			ArrayList<String> excludeIds = new ArrayList<String>();
+			for( Entry<String,MatchRule> entry : action_types.entrySet() ){
 				if(entry.getKey().contains("prism")){
 					containsPrismProcessType = true;
-					break;
 				}
-				if(entry.getValue().equals(MatchRule.INCLUDE)){
+				if( entry.getValue().equals(MatchRule.INCLUDE) ){
 					hasPositiveMatchRule = true;
+					includeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
+				}
+				if( entry.getValue().equals(MatchRule.EXCLUDE) ){
+					excludeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
 				}
 			}
-		}
-		// exclude internal stuff
-		if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
-			addCondition( "a.action NOT LIKE '%prism%'" );
+			// Include IDs
+			if( includeIds.size() > 0 ){
+				addCondition( "action_id IN (" + TypeUtils.join(includeIds, ",")+ ")" );
+			}
+			// Exclude IDs
+			if( excludeIds.size() > 0 ){
+				addCondition( "action_id NOT IN (" + TypeUtils.join(excludeIds, ",")+ ")" );
+			}
+		} else {
+			// exclude internal stuff
+			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
+				addCondition( "a.action NOT LIKE '%prism%'" );
+			}
 		}
 	}
 	
