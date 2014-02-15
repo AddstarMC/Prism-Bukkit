@@ -39,5 +39,35 @@ public class PurgeChunkingUtil {
         }
 		return id;
 	}
+	
+	
+	/**
+	 * 
+	 * @param playername
+	 */
+	public static int getMaximumPrimaryKey(){
+		int id = 0;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
+			
+			conn = Prism.dbc();
+    		s = conn.prepareStatement("SELECT id FROM prism_data ORDER BY id DESC LIMIT 1;");
+    		s.executeQuery();
+    		rs = s.getResultSet();
 
+    		if(rs.first()){
+    			id = rs.getInt(1);
+			}
+            
+        } catch (SQLException e) {
+        	
+        } finally {
+        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
+		return id;
+	}
 }
