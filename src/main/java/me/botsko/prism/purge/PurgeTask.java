@@ -36,6 +36,11 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
+	private int maxId = 0;
+	
+	/**
+	 * 
+	 */
 	private PurgeCallback callback;
 	
 	
@@ -43,11 +48,12 @@ public class PurgeTask implements Runnable {
 	 * 
 	 * @param plugin
 	 */
-	public PurgeTask( Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, int minId, PurgeCallback callback ){
+	public PurgeTask( Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, int minId, int maxId, PurgeCallback callback ){
 		this.plugin = plugin;
 		this.paramList = paramList;
 		this.purge_tick_delay = purge_tick_delay;
 		this.minId = minId;
+		this.maxId = maxId;
 		this.callback = callback;
 	}
 	
@@ -69,7 +75,7 @@ public class PurgeTask implements Runnable {
 	    		// that should be a lot better as far as required record lock counts
 	    		// http://mysql.rjweb.org/doc.php/deletebig
 	    		int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
-	    		if( spread <= 1 ) spread = 1000;
+	    		if( spread <= 1 ) spread = 10000;
 	    		int newMinId = minId + spread;
 	    		param.setMinPrimaryKey(minId);
 	    		param.setMaxPrimaryKey(newMinId);
@@ -78,26 +84,28 @@ public class PurgeTask implements Runnable {
 				plugin.total_records_affected += cycle_rows_affected;
 
 				// If nothing (or less than the limit) has been deleted this cycle, we need to move on
-				if( cycle_rows_affected == 0 || cycle_rows_affected < plugin.getConfig().getInt("prism.purge.records-per-batch") ){
+				if( newMinId > maxId ){
 
 					// Remove rule, reset affected count, mark complete
 					paramList.remove( param );
 					cycle_complete = true;
 					
 				}
-//				
-//				Prism.debug("------------------- " + param.getOriginalCommand());
-//				Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
-//				Prism.debug("cycle_complete: " + cycle_complete);
-//				Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
-//				Prism.debug("-------------------");
+				
+				Prism.debug("------------------- " + param.getOriginalCommand());
+				Prism.debug("newMinId: " + newMinId);
+				Prism.debug("maxId: " + maxId);
+				Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
+				Prism.debug("cycle_complete: " + cycle_complete);
+				Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
+				Prism.debug("-------------------");
 
 				// Send cycle to callback
 				callback.cycle( param, cycle_rows_affected, plugin.total_records_affected, cycle_complete );
 				
 				// If cycle is incomplete, reschedule it, or reset counts
 				if( !cycle_complete ){
-					plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, callback ), purge_tick_delay);
+					plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, maxId, callback ), purge_tick_delay);
 				} else {
 					plugin.total_records_affected = 0;
 				}

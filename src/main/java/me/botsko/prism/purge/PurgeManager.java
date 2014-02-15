@@ -64,6 +64,13 @@ final public class PurgeManager implements Runnable {
 					Prism.log("No minimum primary key could be found for purge chunking.");
 					return;
 				}
+				
+				// Identify the max id for chunking
+				int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
+				if( maxId == 0 ){
+					Prism.log("No maximum primary key could be found for purge chunking.");
+					return;
+				}
 
 				int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
 				if (purge_tick_delay < 1) {
@@ -76,7 +83,7 @@ final public class PurgeManager implements Runnable {
 				 * when each purge cycle has completed and records remain
 				 */
 				Prism.log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new PurgeTask(plugin, paramList,purge_tick_delay,minId,new LogPurgeCallback()),purge_tick_delay);
+				deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new PurgeTask(plugin, paramList,purge_tick_delay,minId,maxId,new LogPurgeCallback()),purge_tick_delay);
 
 			}
 		} else {
