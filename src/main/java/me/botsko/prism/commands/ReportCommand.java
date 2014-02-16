@@ -13,6 +13,7 @@ import org.bukkit.command.CommandSender;
 
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -50,6 +51,11 @@ public class ReportCommand implements SubHandler {
 			queueReport( call.getSender() );
 		}
 		
+		// /prism report db
+		if(call.getArg(1).equals("db")){
+			databaseReport( call.getSender() );
+		}
+		
 		// /prism report queue
 		if(call.getArg(1).equals("sum")){
 			
@@ -82,7 +88,7 @@ public class ReportCommand implements SubHandler {
 		
 		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Current Stats") );
 		
-		sender.sendMessage( Prism.messenger.playerMsg( "Actions in save queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Actions in queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize() ) );
 		
 		ConcurrentSkipListMap<Long,Integer> runs = plugin.queueStats.getRecentRunCounts();
 		if(runs.size() > 0){
@@ -92,6 +98,45 @@ public class ReportCommand implements SubHandler {
 			    sender.sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + time + " " + ChatColor.WHITE + entry.getValue() ) );
 			}
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param sender
+	 */
+	protected void databaseReport( CommandSender sender ){
+		
+		sender.sendMessage( Prism.messenger.playerHeaderMsg( "Database Connection State") );
+		
+		sender.sendMessage( Prism.messenger.playerMsg( "Active Failure Count: " + ChatColor.WHITE + RecordingManager.failedDbConnectionCount ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Actions in queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Pool active: " + ChatColor.WHITE + Prism.getPool().getActive() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Pool idle: " + ChatColor.WHITE + Prism.getPool().getIdle() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Pool active count: " + ChatColor.WHITE + Prism.getPool().getNumActive() ) );
+		sender.sendMessage( Prism.messenger.playerMsg( "Pool idle count: " + ChatColor.WHITE + Prism.getPool().getNumIdle() ) );
+		
+		sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg( "Attempting to check connection readiness...") );
+		
+		Connection conn = null;
+		try {
+			
+			conn = Prism.dbc();
+			if( conn == null ){
+				sender.sendMessage( Prism.messenger.playerError( "Pool returned NULL instead of a valid connection.") );
+			}
+			else if( conn.isClosed() ){
+				sender.sendMessage( Prism.messenger.playerError( "Pool returned an already closed connection.") );
+			}
+			else if( conn.isValid(5) ){
+				sender.sendMessage( Prism.messenger.playerSuccess( "Pool returned valid connection!") );
+			}
+		} catch (SQLException e){
+			sender.sendMessage( Prism.messenger.playerError( "Error: " + e.getMessage()) );
+	    	e.printStackTrace();
+        } finally {
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        }
 	}
 	
 	
