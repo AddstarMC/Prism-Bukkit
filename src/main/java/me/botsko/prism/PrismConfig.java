@@ -132,6 +132,10 @@ public class PrismConfig extends ConfigBase {
 		// Immibis MicroBlock suppport
 		config.addDefault("prism.appliers.immibismicro.block-id", 1439);
 		// MCPC+ end
+		
+		// Force prevent some listeners from registering if people don't want the tps hits
+		config.addDefault("prism.bukkit.listeners.blockphysicsevent", true);
+		
 		// Tracking
 		config.addDefault("prism.tracking.block-break", true);
 		config.addDefault("prism.tracking.block-burn", true);

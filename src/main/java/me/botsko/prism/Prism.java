@@ -32,6 +32,7 @@ import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismBlockPhysicsEvent;
 import me.botsko.prism.listeners.PrismChannelChatEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
@@ -234,6 +235,13 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
 			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
 			getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
+			
+			if( getConfig().getBoolean("prism.bukkit.listeners.blockphysicsevent") ){
+				getServer().getPluginManager().registerEvents(new PrismBlockPhysicsEvent(this), this);
+			} else {
+				log("You've configured prism to never listen to the BlockPhysicsEvent.");
+				log("Prism will not be able to track block-fall, and block detachments, i.e. torches and signs.");
+			}
 
 			if (getConfig().getBoolean("prism.tracking.api.enabled")) {
 				getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
