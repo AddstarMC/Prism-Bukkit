@@ -94,4 +94,17 @@ public class Messenger {
 		}
 		return "";
 	}
+	
+	
+	/**
+	 * 
+	 * @param msg
+	 * @return
+	 */
+	public String playerSuccess(String msg){
+		if(msg != null){
+			return ChatColor.LIGHT_PURPLE + plugin_name+" // " + ChatColor.GREEN + msg;
+		}
+		return "";
+	}
 }
