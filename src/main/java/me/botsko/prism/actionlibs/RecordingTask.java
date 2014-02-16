@@ -283,6 +283,12 @@ public class RecordingTask implements Runnable {
 //	    if( rowcount != extraDataQueue.size() ){
 //	    	Prism.log("Please report to prism devs: Extra data queue did not equal keys returned. keys: " + rowcount + " extra data queue: " + extraDataQueue.size() );
 //	    }
+		
+		if( conn == null || conn.isClosed() ){
+    		Prism.log("Prism database error. Skipping extra data queue insertion.");
+    		// @todo empty? extraDataQueue
+    		return;
+    	}
 
 	    try {
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data,te_data) VALUES (?,?,?)");
@@ -291,6 +297,7 @@ public class RecordingTask implements Runnable {
 				
 				if( conn == null || conn.isClosed() ){
 	        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert extra data query.");
+	        		// @todo empty? extraDataQueue
 	        		break;
 	        	}
 
