@@ -49,6 +49,17 @@ public class DeleteCommand implements SubHandler {
 	 */
 	public void handle(final CallInfo call){
 		
+		// Allow for canceling tasks
+		if( call.getArgs().length > 1  && call.getArg(1).equals("cancel") ){
+			if( plugin.getPurgeManager().deleteTask != null ){
+				plugin.getPurgeManager().deleteTask.cancel();
+				call.getSender().sendMessage( Prism.messenger.playerMsg("Current purge tasks have been canceled.") );
+			} else {
+				call.getSender().sendMessage( Prism.messenger.playerError("No purge task is currently running.") );
+			}
+			return;
+		}
+		
 		// Process and validate all of the arguments
 		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.DELETE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
 		if(parameters == null){
@@ -72,14 +83,13 @@ public class DeleteCommand implements SubHandler {
 			int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
 			if( minId == 0 ){
 				call.getSender().sendMessage( Prism.messenger.playerError("No minimum primary key could be found for purge chunking") );
-				Prism.log("No minimum primary key could be found for purge chunking.");
 				return;
 			}
 			
 			// Identify the max id for chunking
 			int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
 			if( maxId == 0 ){
-				Prism.log("No maximum primary key could be found for purge chunking.");
+				call.getSender().sendMessage( Prism.messenger.playerError("No maximum primary key could be found for purge chunking") );
 				return;
 			}
 			
