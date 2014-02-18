@@ -2,6 +2,7 @@ package me.botsko.prism.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -13,6 +14,8 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.MiscUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -102,6 +105,13 @@ public class LookupCommand implements SubHandler {
 							}
 						} else {
 							player.sendMessage( Prism.messenger.playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+						}
+						if(parameters.hasFlag(Flag.PASTE)){
+							String paste = "";
+							for(Handler a : results.getActionResults()){
+								paste += new ActionMessage(a).getRawMessage() + "\r\n";
+							}
+							player.sendMessage( Prism.messenger.playerMsg(MiscUtils.paste_results(plugin, paste)) );
 						}
 					} else {
 						if(!defaultsReminder.isEmpty()){
