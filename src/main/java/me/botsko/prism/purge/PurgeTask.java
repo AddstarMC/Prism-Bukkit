@@ -70,7 +70,7 @@ public class PurgeTask implements Runnable {
 	    	for( QueryParameters param : paramList ){
 	    		
 	    		boolean cycle_complete = false;
-	    		
+
 	    		// We're chunking by IDs instead of using LIMIT because
 	    		// that should be a lot better as far as required record lock counts
 	    		// http://mysql.rjweb.org/doc.php/deletebig
