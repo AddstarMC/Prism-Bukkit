@@ -47,6 +47,45 @@ public class ActionMessage {
 		this.index = index;
 	}
 	
+	/**
+	 * Here, we don't use formatting or anything,
+	 * we just use a regular message raw.
+	 * 
+	 * This will automatically show extended
+	 * information, as this can be
+	 * passed to a pastebin service.
+	 * 
+	 * @return
+	 */
+	public String getRawMessage(){
+		StringBuilder msg = new StringBuilder();
+		msg.append((a.getType().doesCreateBlock() || a.getType().getName().equals("item-insert") 
+				|| a.getType().getName().equals("sign-change")) ? "+" : "-");
+		msg.append(" #" + a.getId());
+		msg.append(" " + a.getPlayerName());
+		msg.append(" " + a.getType().getName());
+		msg.append(" " + a.getBlockId() + ":" + a.getBlockSubId());
+		if(a.getType().getHandler() != null){
+			if( !a.getNiceName().isEmpty() ) msg.append( " (" + a.getNiceName() + ")");
+		} else {
+			// We should really improve this, but this saves me from having to make
+			// a custom handler.
+			if(a.getType().getName().equals("lava-bucket")){
+				msg.append(" (lava)");
+			} 
+			else if (a.getType().getName().equals("water-bucket")){
+				msg.append(" (water)");
+			}
+		}
+		if( a.getAggregateCount() > 1 ){
+			msg.append(" x" + a.getAggregateCount());
+		}
+		msg.append(" " + a.getDisplayDate());
+		msg.append(" " + a.getDisplayTime().toLowerCase());
+		msg.append(" - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ());
+		return msg.toString();
+	}
+	
 	
 	/**
 	 * 

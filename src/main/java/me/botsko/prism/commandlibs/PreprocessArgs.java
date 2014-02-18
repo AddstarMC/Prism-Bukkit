@@ -8,6 +8,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.parameters.FlagParameter;
 import me.botsko.prism.parameters.PrismParameterHandler;
 
 import org.bukkit.command.CommandSender;
@@ -75,8 +76,11 @@ public class PreprocessArgs {
 						}
 						
 						handlerFound = true;
-						
-						foundArgs.put( entry.getValue().getName().toLowerCase(), m );
+						if(entry.getValue() instanceof FlagParameter){
+							foundArgs.put(entry.getValue().getName().toLowerCase() + "/" + m.group(2).toLowerCase(), m);
+						} else {
+							foundArgs.put( entry.getValue().getName().toLowerCase(), m );
+						}
 						continue;
 
 					} else {
@@ -125,7 +129,7 @@ public class PreprocessArgs {
 			 */
 			for( Entry<String,Matcher> entry : foundArgs.entrySet() ){
 				try {
-					PrismParameterHandler handler = registeredParams.get(entry.getKey());
+					PrismParameterHandler handler = registeredParams.get(entry.getKey().replaceFirst("\\/.*", ""));
 					handler.process( parameters, entry.getValue(), sender );
 				} catch ( IllegalArgumentException e ){
 					if( sender != null ) sender.sendMessage( Prism.messenger.playerError(e.getMessage()) );
