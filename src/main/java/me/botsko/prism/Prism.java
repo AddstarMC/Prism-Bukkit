@@ -406,7 +406,7 @@ public class Prism extends JavaPlugin {
 		try {
 			con = pool.getConnection();
 		} catch (SQLException e) {
-			System.out.print("Database connection failed. " + e.getMessage());
+			log("Database connection failed. " + e.getMessage());
 			if (!e.getMessage().contains("Pool empty")) {
 				e.printStackTrace();
 			}

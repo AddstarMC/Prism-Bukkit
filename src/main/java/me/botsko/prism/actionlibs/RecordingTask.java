@@ -159,6 +159,8 @@ public class RecordingTask implements Runnable {
 	    	if(perBatch < 1) perBatch = 1000;
 	    	
 	    	if( !RecordingQueue.getQueue().isEmpty() ){
+	    		
+	    		Prism.debug("Beginning batch insert from queue. " + System.currentTimeMillis());
 
 	    		ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
 		    	conn = Prism.dbc();
@@ -170,10 +172,10 @@ public class RecordingTask implements Runnable {
 		        	}
 		        	RecordingManager.failedDbConnectionCount++;
 					if( RecordingManager.failedDbConnectionCount > plugin.getConfig().getInt("prism.database.max-failures-before-wait") ){
-//						RecordingManager.lastPauseTime = System.currentTimeMillis();
-						Prism.log("Too many problems connecting. Let's wait for "+plugin.getConfig().getInt("prism.database.wait-on-failure-duration")+" seconds before we try again.");
+						Prism.log("Too many problems connecting. Giving up for a bit.");
 						scheduleNextRecording();
 					}
+					Prism.debug("Database connection still missing, incrementing count.");
 					return;
 				} else {
 					RecordingManager.failedDbConnectionCount = 0;
@@ -186,7 +188,7 @@ public class RecordingTask implements Runnable {
 		        while (!RecordingQueue.getQueue().isEmpty()){
 		        	
 		        	if( conn == null || conn.isClosed() ){
-		        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert query.");
+		        		Prism.log("Prism database error. We have to bail in the middle of building primary bulk insert query.");
 		        		break;
 		        	}
 		        	
@@ -243,12 +245,16 @@ public class RecordingTask implements Runnable {
 		            i++;
 		        }
 		        
+		        Prism.debug("Bulk wrote " + i + " inserts.");
+		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);
 		        
 		        s.executeBatch();
 		        insertExtraData( conn, extraDataQueue, s.getGeneratedKeys() );
 		        conn.commit();
+		        
+		        Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
 
 	    	}
 	    } catch (SQLException e){
