@@ -290,7 +290,6 @@ public class RecordingTask implements Runnable {
 		
 		if( conn == null || conn.isClosed() ){
     		Prism.log("Prism database error. Skipping extra data queue insertion.");
-    		// @todo empty? extraDataQueue
     		return;
     	}
 
@@ -301,7 +300,6 @@ public class RecordingTask implements Runnable {
 				
 				if( conn == null || conn.isClosed() ){
 	        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert extra data query.");
-	        		// @todo empty? extraDataQueue
 	        		break;
 	        	}
 
