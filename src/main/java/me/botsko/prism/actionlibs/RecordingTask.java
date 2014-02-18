@@ -235,12 +235,10 @@ public class RecordingTask implements Runnable {
 
 		            extraDataQueue.add( a );
 
-		            if ((i + 1) % perBatch == 0) {
-		            	
+		            // Break out of the loop and just commit what we have
+		            if ( i >= perBatch) {
 		            	Prism.debug("Recorder: Batch max exceeded, running insert. Queue remaining: " + RecordingQueue.getQueue().size());
-		                s.executeBatch(); // Execute every x items.
-		                insertExtraData( conn, extraDataQueue, s.getGeneratedKeys() );
-		                
+		                break;
 		            }
 		            i++;
 		        }
