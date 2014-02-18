@@ -250,16 +250,20 @@ public class ActionsQuery {
 			int action_id = Prism.prismActions.get("prism-process");
             
 			conn = Prism.dbc();
-    		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1");
-    		s.setInt(1, action_id);
-    		s.setString(1, playername);
-    		s.executeQuery();
-    		rs = s.getResultSet();
-
-    		if(rs.first()){
-    			id = rs.getInt("id");
+			
+			if( conn != null && !conn.isClosed() ){
+	    		s = conn.prepareStatement ("SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1");
+	    		s.setInt(1, action_id);
+	    		s.setString(2, playername);
+	    		s.executeQuery();
+	    		rs = s.getResultSet();
+	
+	    		if(rs.first()){
+	    			id = rs.getInt("id");
+				}
+			} else {
+				Prism.log("Prism database error. getUsersLastPrismProcessId cannot continue.");
 			}
-            
         } catch (SQLException e) {
         	plugin.handleDatabaseException( e );
         } finally {
@@ -291,25 +295,29 @@ public class ActionsQuery {
 			sql += " WHERE d.id = ?";
 			
 			conn = Prism.dbc();
-    		s = conn.prepareStatement (sql);
-    		s.setInt(1, id);
-    		s.executeQuery();
-    		rs = s.getResultSet();
-
-    		if(rs.first()){
-    			process = new PrismProcessAction();
-    			// Set all shared values
-    			process.setId( rs.getInt("id") );
-    			process.setType( Prism.getActionRegistry().getAction( rs.getString("action") ) );
-    			process.setUnixEpoch( rs.getString("epoch") );
-    			process.setWorldName( rs.getString("world") );
-    			process.setPlayerName( rs.getString("player") );
-    			process.setX( rs.getInt("x") );
-    			process.setY( rs.getInt("y") );
-    			process.setZ( rs.getInt("z") );
-    			process.setData( rs.getString("data") );
+			
+			if( conn != null && !conn.isClosed() ){
+	    		s = conn.prepareStatement (sql);
+	    		s.setInt(1, id);
+	    		s.executeQuery();
+	    		rs = s.getResultSet();
+	
+	    		if(rs.first()){
+	    			process = new PrismProcessAction();
+	    			// Set all shared values
+	    			process.setId( rs.getInt("id") );
+	    			process.setType( Prism.getActionRegistry().getAction( rs.getString("action") ) );
+	    			process.setUnixEpoch( rs.getString("epoch") );
+	    			process.setWorldName( rs.getString("world") );
+	    			process.setPlayerName( rs.getString("player") );
+	    			process.setX( rs.getInt("x") );
+	    			process.setY( rs.getInt("y") );
+	    			process.setZ( rs.getInt("z") );
+	    			process.setData( rs.getString("data") );
+				}
+			} else {
+				Prism.log("Prism database error. getPrismProcessRecord cannot continue.");
 			}
-            
         } catch (SQLException e) {
         	plugin.handleDatabaseException( e );
         } finally {
@@ -334,9 +342,13 @@ public class ActionsQuery {
 			// Build conditions based off final args
 			String query = dqb.getQuery(parameters, shouldGroup);
 			conn = Prism.dbc();
-			s = conn.createStatement();
-			cycle_rows_affected = s.executeUpdate (query);
-			total_rows_affected += cycle_rows_affected;
+			if( conn != null && !conn.isClosed() ){
+				s = conn.createStatement();
+				cycle_rows_affected = s.executeUpdate (query);
+				total_rows_affected += cycle_rows_affected;
+			} else {
+				Prism.log("Prism database error. Purge cannot continue.");
+			}
 		} catch (SQLException e) {
 			plugin.handleDatabaseException( e );
 		} finally {
