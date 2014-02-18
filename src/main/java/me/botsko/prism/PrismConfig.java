@@ -47,9 +47,9 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.mysql.database", "minecraft");
 		config.addDefault("prism.mysql.port", "3306");
 		
-		// pste.me sharing.
-		config.addDefault("prism.paste.username", "Username on http://pste.me/");
-		config.addDefault("prism.paste.api_key", "");
+//		// pste.me sharing.
+//		config.addDefault("prism.paste.username", "Username on http://pste.me/");
+//		config.addDefault("prism.paste.api_key", "");
 		
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item, or block
