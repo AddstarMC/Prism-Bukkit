@@ -37,6 +37,7 @@ import me.botsko.prism.listeners.PrismChannelChatEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
+import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
 import me.botsko.prism.listeners.PrismPlayerEvents;
 import me.botsko.prism.listeners.PrismVehicleEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
@@ -236,11 +237,17 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
 			getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 			
+			// BlockPhysics
 			if( getConfig().getBoolean("prism.bukkit.listeners.blockphysicsevent") ){
 				getServer().getPluginManager().registerEvents(new PrismBlockPhysicsEvent(this), this);
 			} else {
 				log("You've configured prism to never listen to the BlockPhysicsEvent.");
 				log("Prism will not be able to track block-fall, and block detachments, i.e. torches and signs.");
+			}
+			
+			// InventoryMoveItem
+			if( getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert") ){
+				getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
 			}
 
 			if (getConfig().getBoolean("prism.tracking.api.enabled")) {
