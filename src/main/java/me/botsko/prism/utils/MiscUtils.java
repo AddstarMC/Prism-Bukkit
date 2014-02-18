@@ -15,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.entity.Player;
-import org.json.simple.JSONObject;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -32,7 +31,6 @@ public class MiscUtils {
 	 * @return
 	 */
 	public static int clampRadius( Player player, int desiredRadius, PrismProcessType processType, FileConfiguration config ){
-		
 		
 		if( desiredRadius <= 0 ){
 			return config.getInt("prism.near.default-radius");
@@ -74,11 +72,17 @@ public class MiscUtils {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @param prism
+	 * @param results
+	 * @return
+	 */
 	public static String paste_results(Prism prism, String results){
 		
 		if(prism.getConfig().get("prism.paste.api_key").equals("")){
-			return ChatColor.LIGHT_PURPLE + "Prism // " + ChatColor.RED
-					+ "Sending information to a pastebin is not configured yet.";
+			return Prism.messenger.playerError("Sending information to a pastebin is not configured yet.");
 		}
 		try {
 			String params = "paste=" + URLEncoder.encode(results, "UTF-8");
@@ -103,16 +107,19 @@ public class MiscUtils {
 			String json = rd.readLine();  // one line
 			Gson gson = new Gson();
 			PasteResponse response = gson.fromJson(json, PasteResponse.class);
-			return ChatColor.LIGHT_PURPLE + "Prism // " + ChatColor.GREEN
-					+ "Successfully pasted results: http://pste.me/" + response.slug + "/";
+			return Prism.messenger.playerSuccess("Successfully pasted results: http://pste.me/" + response.slug + "/");
 		} catch (IOException up) {
 			Prism.debug(up.toString());
-			return ChatColor.LIGHT_PURPLE + "Prism // " + ChatColor.RED 
-					+ "Unable to paste results to pste.me (" + ChatColor.YELLOW 
-					+ up.getMessage() + ChatColor.RED + ").";
+			return Prism.messenger.playerError("Unable to paste results to pste.me (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * @author botskonet
+	 *
+	 */
 	public static class PasteResponse{
 		public String slug = "";
 	}

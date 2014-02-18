@@ -111,7 +111,7 @@ public class LookupCommand implements SubHandler {
 							for(Handler a : results.getActionResults()){
 								paste += new ActionMessage(a).getRawMessage() + "\r\n";
 							}
-							player.sendMessage( Prism.messenger.playerMsg(MiscUtils.paste_results(plugin, paste)) );
+							player.sendMessage( MiscUtils.paste_results(plugin, paste) );
 						}
 					} else {
 						if(!defaultsReminder.isEmpty()){
