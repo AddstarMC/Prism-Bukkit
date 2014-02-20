@@ -84,7 +84,7 @@ public class EntityAction extends GenericAction {
 			}
 			
 			// Get current sheep color
-			if( entity.getType().equals(EntityType.SHEEP)){
+			if( entity instanceof Sheep ){
 				Sheep sheep = ((Sheep) entity);
 				this.actionData.color = sheep.getColor().name().toLowerCase();
 			}
