@@ -244,16 +244,20 @@ public class RecordingTask implements Runnable {
 		            i++;
 		        }
 		        
-		        Prism.debug("Bulk wrote " + i + " inserts.");
+		        s.executeBatch();
+		        
+		        if( conn == null || conn.isClosed() ){
+	        		Prism.log("Prism database error. We have to bail in the middle of building primary bulk insert query.");
+	        	} else {
+			        conn.commit();
+			        Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
+	        	}
 		        
 		        // Save the current count to the queue for short historical data
 		        plugin.queueStats.addRunCount(actionsRecorded);
 		        
-		        s.executeBatch();
-		        insertExtraData( conn, extraDataQueue, s.getGeneratedKeys() );
-		        conn.commit();
-		        
-		        Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
+		        // Insert extra data
+		        insertExtraData( extraDataQueue, s.getGeneratedKeys() );
 
 	    	}
 	    } catch (SQLException e){
@@ -271,21 +275,14 @@ public class RecordingTask implements Runnable {
 	 * @param keys
 	 * @throws SQLException 
 	 */
-	protected void insertExtraData( Connection conn, ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
+	protected void insertExtraData( ArrayList<Handler> extraDataQueue, ResultSet keys ) throws SQLException{
 		
 		if( extraDataQueue.isEmpty() ) return;
 
 		PreparedStatement s = null;
+		Connection conn = null;
 	    
-//	    int rowcount = 0;
-//	    if(keys.last()){
-//	    	rowcount = keys.getRow();
-//	    	keys.beforeFirst();
-//	    }
-//	    
-//	    if( rowcount != extraDataQueue.size() ){
-//	    	Prism.log("Please report to prism devs: Extra data queue did not equal keys returned. keys: " + rowcount + " extra data queue: " + extraDataQueue.size() );
-//	    }
+		conn = Prism.dbc();
 		
 		if( conn == null || conn.isClosed() ){
     		Prism.log("Prism database error. Skipping extra data queue insertion.");
@@ -293,6 +290,7 @@ public class RecordingTask implements Runnable {
     	}
 
 	    try {
+	    	conn.setAutoCommit(false);
 	        s = conn.prepareStatement("INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)");
 	        int i = 0;
 			while(keys.next()){
@@ -320,13 +318,19 @@ public class RecordingTask implements Runnable {
 				
 			}
 			s.executeBatch();
+			
+			if( conn == null || conn.isClosed() ){
+        		Prism.log("Prism database error. We have to bail in the middle of building extra data bulk insert query.");
+        	} else {
+		        conn.commit();
+        	}
 
 	    } catch (SQLException e){
 	    	e.printStackTrace();
 	    	plugin.handleDatabaseException( e );
         } finally {
         	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	// conn close handled by parent method
+        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }
 	}
 
