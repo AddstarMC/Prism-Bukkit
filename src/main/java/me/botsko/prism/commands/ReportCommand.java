@@ -1,8 +1,6 @@
 package me.botsko.prism.commands;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
@@ -11,7 +9,6 @@ import java.util.concurrent.ConcurrentSkipListMap;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -67,14 +64,6 @@ public class ReportCommand implements SubHandler {
 			if( call.getArgs().length < 4 ){
 				call.getSender().sendMessage( Prism.messenger.playerError( "Please provide a player name. Use /prism ? for help." ) );
 				return;
-			}
-			
-			if( call.getArg(2).equals("blocks") ){
-				blockSumReports( call.getSender(), call.getArg(3) );
-			}
-			
-			if( call.getArg(2).equals("actions") ){
-				actionTypeCountReport( call.getSender(), call.getArg(3) );
 			}
 		}
 	}
