@@ -8,12 +8,12 @@ import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_6_R3.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.material.Attachable;
+import org.bukkit.craftbukkit.v1_5_R3.CraftWorld; // MCPC+
 
 public class PrismBlockPhysicsEvent implements Listener {
 
