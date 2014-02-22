@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
 
 public class PrismWorldEvents implements Listener {
 	
@@ -49,15 +48,5 @@ public class PrismWorldEvents implements Listener {
 		if( !Prism.prismWorlds.containsKey( worldName ) ){
 			Prism.addWorldName( worldName );
 		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onWorldUnload(final WorldUnloadEvent event){
-		Prism.prismWorlds.remove( event.getWorld().getName() );
 	}
 }
