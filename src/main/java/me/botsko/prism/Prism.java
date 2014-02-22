@@ -479,7 +479,7 @@ public class Prism extends JavaPlugin {
                     + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`action` varchar(25) NOT NULL,"
                     + "PRIMARY KEY (`action_id`),"
-                    + "KEY `action` (`action`)"
+                    + "UNIQUE KEY `action` (`action`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st = conn.createStatement();
             st.executeUpdate(query);
@@ -540,7 +540,7 @@ public class Prism extends JavaPlugin {
                     + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`player` varchar(255) NOT NULL,"
                     + "PRIMARY KEY (`player_id`),"
-                    + "KEY `player` (`player`)"
+                    + "UNIQUE KEY `player` (`player`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
             
@@ -549,7 +549,7 @@ public class Prism extends JavaPlugin {
                     + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`world` varchar(255) NOT NULL,"
                     + "PRIMARY KEY (`world_id`),"
-                    + "KEY `world` (`world`)"
+                    + "UNIQUE KEY `world` (`world`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
 
