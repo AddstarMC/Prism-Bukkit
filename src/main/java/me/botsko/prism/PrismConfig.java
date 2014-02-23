@@ -239,6 +239,7 @@ public class PrismConfig extends ConfigBase {
 		
 		// Ore Alerts
 		config.addDefault("prism.alerts.alert-staff-to-applied-process", true);
+		config.addDefault("prism.alerts.alert-player-about-self", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		// Ore blocks
