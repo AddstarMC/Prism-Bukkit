@@ -2,8 +2,10 @@ package me.botsko.prism.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -14,6 +16,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
+
+import com.helion3.pste.api.Results;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -116,12 +120,16 @@ public class MiscUtils {
 			wr.writeBytes( j.toJSONString() );
 			wr.flush();
 			wr.close();
+			
+			// Read response
 			InputStream is = connection.getInputStream();
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-			String json = rd.readLine();  // one line
+			String json = readAll(rd);
+			
 			Gson gson = new Gson();
-			PasteResponse response = gson.fromJson(json, PasteResponse.class);
-			return Prism.messenger.playerSuccess("Successfully pasted results: " + prismWebUrl + "#/" + response.slug);
+			Results response = gson.fromJson(json, Results.class);
+			return Prism.messenger.playerSuccess("Successfully pasted results: " + prismWebUrl + "#/" + response.getResults().getSlug());
+			
 		} catch (Exception up){
 			Prism.debug(up.toString());
 			return Prism.messenger.playerError("Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
@@ -131,10 +139,17 @@ public class MiscUtils {
 	
 	/**
 	 * 
-	 * @author botskonet
-	 *
+	 * @param rd
+	 * @return
+	 * @throws IOException
 	 */
-	public static class PasteResponse{
-		public String slug = "";
+	private static String readAll(Reader rd) throws IOException {
+	    StringBuilder sb = new StringBuilder();
+	    int cp;
+	    while ((cp = rd.read()) != -1) {
+	      sb.append((char) cp);
+	    }
+	    return sb.toString();
 	}
+
 }
