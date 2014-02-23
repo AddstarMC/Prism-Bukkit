@@ -17,11 +17,6 @@ public class RecordingTask implements Runnable {
 	 */
 	private Prism plugin;
 	
-	/**
-	 * 
-	 */
-	private boolean autoReschedule = true;
-
 	
 	/**
 	 * 
@@ -29,15 +24,6 @@ public class RecordingTask implements Runnable {
 	 */
 	public RecordingTask( Prism plugin ){
 		this.plugin = plugin;
-	}
-	
-	
-	/**
-	 * 
-	 * @param autoReschedule
-	 */
-	public void setAutoReschedule( boolean autoReschedule ){
-		this.autoReschedule = autoReschedule;
 	}
 	
 	
@@ -370,8 +356,10 @@ public class RecordingTask implements Runnable {
 	 * 
 	 */
 	protected void scheduleNextRecording(){
-		if( !autoReschedule ) return;
-//		Prism.debug("Scheduling next recording task in " + getTickDelayForNextBatch() + " ticks.");
+		if( !plugin.isEnabled() ){
+			Prism.log("Can't schedule new recording tasks as plugin is now disabled. If you're shutting down the server, ignore me.");
+			return;
+		}
 		plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new RecordingTask(plugin), getTickDelayForNextBatch());
 	}
 }

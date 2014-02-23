@@ -103,6 +103,11 @@ public class PurgeTask implements Runnable {
 		// Send cycle to callback
 		callback.cycle( param, cycle_rows_affected, plugin.total_records_affected, cycle_complete );
 		
+		if( !plugin.isEnabled() ){
+			Prism.log("Can't schedule new purge tasks as plugin is now disabled. If you're shutting down the server, ignore me.");
+			return;
+		}
+		
 		// If cycle is incomplete, reschedule it, or reset counts
 		if( !cycle_complete ){
 			plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, new PurgeTask( plugin, paramList, purge_tick_delay, newMinId, maxId, callback ), purge_tick_delay);
