@@ -19,8 +19,7 @@ import java.util.logging.Logger;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.actionlibs.RecordingManager;
-import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actionlibs.QueueDrain;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -1189,14 +1188,9 @@ public class Prism extends JavaPlugin {
 	@Override
 	public void onDisable(){
 		
-		RecordingTask recorder = new RecordingTask(this);
-		recorder.setAutoReschedule(false);
-		
-		// Force queue to empty
-		while( !RecordingQueue.getQueue().isEmpty() ){
-			log("Forcing recorder queue to run a new batch before shutdown...");
-			recorder.run();
-			if( RecordingManager.failedDbConnectionCount > 0 ) break;
+		if( getConfig().getBoolean("prism.database.force-write-queue-on-shutdown") ){
+			QueueDrain drainer = new QueueDrain(this);
+			drainer.forceDrainQueue();
 		}
 
 		// Close pool connections when plugin disables

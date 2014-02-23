@@ -39,6 +39,9 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.database.max-wait", 30000);
 		config.addDefault("prism.database.max-failures-before-wait", 5);
 		config.addDefault("prism.database.actions-per-insert-batch", 1000);
+		
+		// queue
+		config.addDefault("prism.database.force-write-queue-on-shutdown", true);
 
 		// Mysql
 		config.addDefault("prism.mysql.hostname", "127.0.0.1");
