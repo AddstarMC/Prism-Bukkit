@@ -2,12 +2,10 @@ package me.botsko.prism.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -15,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
 import org.bukkit.entity.Player;
+import org.json.simple.JSONObject;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -79,27 +78,42 @@ public class MiscUtils {
 	 * @param results
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public static String paste_results(Prism prism, String results){
 		
-		if(prism.getConfig().get("prism.paste.api_key").equals("")){
-			return Prism.messenger.playerError("Sending information to a pastebin is not configured yet.");
+		String prismApiUrl = "http://dev.pste.me/api/v1/";
+		String prismWebUrl = "http://dev.pste.me/";
+		
+		if( !prism.getConfig().getBoolean("prism.paste.enable") ){
+			return Prism.messenger.playerError("PSTE.me paste bin support is currently disabled by config.");
 		}
+		
+		String apiUsername = prism.getConfig().getString("prism.paste.username");
+		String apiKey = prism.getConfig().getString("prism.paste.api-key");
+		
+		if( !apiKey.matches("[0-9a-z]+") ){
+			return Prism.messenger.playerError("Invalid API key.");
+		}
+
 		try {
-			String params = "paste=" + URLEncoder.encode(results, "UTF-8");
-			URL url = new URL("http://pste.me/api/v1/paste/"); // http://pste.me/md/api/
+			
+			JSONObject j = new JSONObject();
+			j.put("paste", results);
+			String jsonPayload = j.toJSONString();
+			
+			URL url = new URL( prismApiUrl+"/paste/" );
+			
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
-			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-			connection.setRequestProperty("Content-Length", Integer.toString(params.getBytes().length));
+			connection.setRequestProperty("Content-Length", Integer.toString(jsonPayload.getBytes().length));
 			connection.setRequestProperty("Content-Language", "en-US");
 			connection.setRequestProperty("Authorization", "Basic " + 
-						DatatypeConverter.printBase64Binary((prism.getConfig().get("prism.paste.username") + ":" 
-						+ prism.getConfig().get("prism.paste.api_key")).getBytes())); // prism.paste. "username"/"api_key"
+					DatatypeConverter.printBase64Binary((apiUsername + ":" + apiKey).getBytes()));
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(params);
+			wr.writeBytes( j.toJSONString() );
 			wr.flush();
 			wr.close();
 			InputStream is = connection.getInputStream();
@@ -107,10 +121,10 @@ public class MiscUtils {
 			String json = rd.readLine();  // one line
 			Gson gson = new Gson();
 			PasteResponse response = gson.fromJson(json, PasteResponse.class);
-			return Prism.messenger.playerSuccess("Successfully pasted results: http://pste.me/" + response.slug + "/");
-		} catch (IOException up) {
+			return Prism.messenger.playerSuccess("Successfully pasted results: " + prismWebUrl + "#/" + response.slug);
+		} catch (Exception up){
 			Prism.debug(up.toString());
-			return Prism.messenger.playerError("Unable to paste results to pste.me (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
+			return Prism.messenger.playerError("Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
 		}
 	}
 	
