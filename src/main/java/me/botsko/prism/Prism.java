@@ -1040,7 +1040,7 @@ public class Prism extends JavaPlugin {
 	 */
 	public void alertPlayers(Player player, String msg) {
 		for (Player p : getServer().getOnlinePlayers()) {
-			if (!p.equals(player)) {
+			if ( !p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self") ) {
 				if (p.hasPermission("prism.alerts")) {
 					p.sendMessage(messenger.playerMsg(ChatColor.RED + "[!] " + msg));
 				}
