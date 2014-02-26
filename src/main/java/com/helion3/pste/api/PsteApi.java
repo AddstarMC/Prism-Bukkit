@@ -24,7 +24,7 @@ public class PsteApi {
 	
 	private final String apiUsername;
 	private final String apiKey;
-	private final String apiUrl = "http://beta.pste.me/api/v1/";
+	private final String apiUrl = "https://pste.me/api/v1/";
 
 	
 	/**

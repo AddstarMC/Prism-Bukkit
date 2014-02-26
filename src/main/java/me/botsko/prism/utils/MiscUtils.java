@@ -73,7 +73,7 @@ public class MiscUtils {
 	 */
 	public static String paste_results(Prism prism, String results){
 		
-		String prismWebUrl = "http://beta.pste.me/";
+		String prismWebUrl = "https://pste.me/";
 
 		if( !prism.getConfig().getBoolean("prism.paste.enable") ){
 			return Prism.messenger.playerError("PSTE.me paste bin support is currently disabled by config.");
