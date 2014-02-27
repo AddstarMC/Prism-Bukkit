@@ -1,55 +1,43 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.commandlibs.Flag;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.commandlibs.Flag;
+import java.util.regex.Pattern;
 
 public class FlagParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Flags";
+	@Override
+	public String getName() {
+		return "Flag";
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
+
+	@Override
+	public String[] getHelp() {
+		return new String[0];
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(-)([^\\s]+)");
+
+	@Override
+	public boolean applicable(QueryParameters query, String parameter, CommandSender sender) {
+		return Pattern.compile("(-)([^\\s]+)").matcher(parameter).matches();
 	}
-	
-	
-	
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		
-		String[] flagComponents = input.group(2).split("=");
-		Flag flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
+
+	@Override
+	public void process(QueryParameters query, String parameter, CommandSender sender) {
+		String[] flagComponents = parameter.substring(1).split("=");
+		Flag flag;
+		try {
+			flag = Flag.valueOf( flagComponents[0].replace("-", "_").toUpperCase() );
+		} catch (IllegalArgumentException ex) {
+			throw new IllegalArgumentException("Flag -" + flagComponents[0] + " not found", ex);
+		}
 		if(!(query.hasFlag(flag))){
-				
+
 			query.addFlag(flag);
-			
+
 			// Flag has a value
 			if( flagComponents.length > 1 ){
 				if(flag.equals(Flag.PER_PAGE)){
@@ -74,12 +62,9 @@ public class FlagParameter implements PrismParameterHandler {
 			}
 		}
 	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
+
+	@Override
+	public void defaultTo(QueryParameters query, CommandSender sender) {
+
 	}
 }

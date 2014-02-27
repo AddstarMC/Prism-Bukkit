@@ -1,15 +1,5 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-
 import me.botsko.elixr.ChunkUtils;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
@@ -17,48 +7,28 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
 import me.botsko.prism.utils.MiscUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 
-public class RadiusParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Radius";
+import java.util.regex.Pattern;
+
+public class RadiusParameter extends SimplePrismParameterHandler {
+	public RadiusParameter() {
+		super("Radius", Pattern.compile("[\\w,:-]+"), "r");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(r):([\\w,:-]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		
 		Player player = null;
 		if( sender instanceof Player ){
 			player = (Player)sender;
 		}
 		
-		String inputValue = input.group(2);
+		String inputValue = input;
 
 		FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 		
@@ -79,9 +49,9 @@ public class RadiusParameter implements PrismParameterHandler {
 						}
 					}
 					coordsLoc = (new Location(
-							player != null ? player.getWorld() : 
-							(query.getWorld() != null ? Bukkit.getServer().getWorld(query.getWorld()) : 
-							Bukkit.getServer().getWorlds().get(0)), 
+							player != null ? player.getWorld() :
+							(query.getWorld() != null ? Bukkit.getServer().getWorld(query.getWorld()) :
+							Bukkit.getServer().getWorlds().get(0)),
 							Integer.parseInt(coordinates[0]), 
 							Integer.parseInt(coordinates[1]), 
 							Integer.parseInt(coordinates[2])));
