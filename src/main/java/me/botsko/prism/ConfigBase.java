@@ -15,7 +15,7 @@ public class ConfigBase {
 	/**
 	 * 
 	 */
-	protected Plugin plugin;
+	protected final Plugin plugin;
 	
 	/**
 	 * 
@@ -53,8 +53,7 @@ public class ConfigBase {
 		}
 		
 		// Read the base config
-		FileConfiguration config = loadConfig( "languages/", lang_file );
-		return config;
+		return loadConfig( "languages/", lang_file );
 		
 	}
 	
@@ -64,8 +63,7 @@ public class ConfigBase {
 	 * @return
 	 */
 	protected File getDirectory(){
-		File dir = new File(plugin.getDataFolder()+"");
-		return dir;
+		return new File(plugin.getDataFolder()+"");
 	}
 	
 	
@@ -74,8 +72,7 @@ public class ConfigBase {
 	 * @return
 	 */
 	protected File getFilename( String filename ){
-		File file = new File(getDirectory(), filename + ".yml");
-		return file;
+		return new File(getDirectory(), filename + ".yml");
 	}
 	
 	
@@ -124,7 +121,7 @@ public class ConfigBase {
 			saveConfig( filename, config );
 			bw.flush();
 			bw.close();
-		} catch (IOException e){
+		} catch (IOException ignored){
 
         }
 	}

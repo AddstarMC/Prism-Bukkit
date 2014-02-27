@@ -57,7 +57,7 @@ public class PrismEntityEvents implements Listener {
 	/**
 	 *
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 
 	/**
@@ -114,7 +114,7 @@ public class PrismEntityEvents implements Listener {
 
 				if( entity instanceof Horse ){
 					Horse horse = (Horse) entity;
-					if( horse.isCarryingChest() ){;
+					if( horse.isCarryingChest() ){
 						// Log item drops
 				        if( Prism.getIgnore().event("item-drop",entity.getWorld()) ){
 					        for( ItemStack i : horse.getInventory().getContents() ){
@@ -131,9 +131,8 @@ public class PrismEntityEvents implements Listener {
 					Player player = (Player) entityDamageByEntityEvent.getDamager();
 					if( !Prism.getIgnore().event("player-kill", player) ) return;
 					RecordingQueue.addToQueue( ActionFactory.create("player-kill", entity, player.getName()) );
-					return;
 
-				}
+                }
 				// Mob shot by an arrow from a player
 				else if(entityDamageByEntityEvent.getDamager() instanceof Arrow){
 					Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
@@ -142,9 +141,8 @@ public class PrismEntityEvents implements Listener {
 						Player player = (Player) arrow.getShooter();
 						if( !Prism.getIgnore().event("player-kill", player) ) return;
 						RecordingQueue.addToQueue( ActionFactory.create("player-kill", entity, player.getName()) );
-						return;
 
-					}
+                    }
 				} else {
 					// Mob died by another mob
 					Entity damager = entityDamageByEntityEvent.getDamager();
@@ -178,7 +176,7 @@ public class PrismEntityEvents implements Listener {
 	        if( Prism.getIgnore().event("player-death",p) ){
 		        String cause = DeathUtils.getCauseNiceName( p );
 		        String attacker = DeathUtils.getAttackerName( p );
-		        if(attacker == "pvpwolf"){
+		        if(attacker.equals("pvpwolf")){
 	            	String owner = DeathUtils.getTameWolfOwner(event);
 	            	attacker = owner+"'s wolf";
 	            }
@@ -498,7 +496,7 @@ public class PrismEntityEvents implements Listener {
 		Location loc = block.getLocation();
 		BlockState newState = event.getNewState();
 		String entity = event.getEntity().getType().name().toLowerCase();
-		RecordingQueue.addToQueue( ActionFactory.create("entity-form", loc, block.getTypeId(), (byte)block.getData(), newState.getTypeId(), (byte)newState.getRawData(), entity) );
+		RecordingQueue.addToQueue( ActionFactory.create("entity-form", loc, block.getTypeId(), block.getData(), newState.getTypeId(), newState.getRawData(), entity) );
 	}
 
 

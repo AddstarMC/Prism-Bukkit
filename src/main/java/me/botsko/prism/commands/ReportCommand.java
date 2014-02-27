@@ -25,7 +25,7 @@ public class ReportCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**
@@ -152,7 +152,7 @@ public class ReportCommand implements SubHandler {
 			sender.sendMessage( Prism.messenger.playerError( "Error: " + e.getMessage()) );
 	    	e.printStackTrace();
         } finally {
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 	}
 	
@@ -227,9 +227,9 @@ public class ReportCommand implements SubHandler {
 		        	//
 		        	e.printStackTrace();
 		        } finally {
-		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-		        	if(s != null) try { s.close(); } catch (SQLException e) {}
-		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+		        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
 		        }
 			}
 		});
@@ -289,9 +289,9 @@ public class ReportCommand implements SubHandler {
 		        } catch (SQLException e) {
 		        	e.printStackTrace();
 		        } finally {
-		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-		        	if(s != null) try { s.close(); } catch (SQLException e) {}
-		        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+		        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+		        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
 		        }
 			}
 		});

@@ -8,17 +8,17 @@ public class CallInfo {
 	/**
 	 * 
 	 */
-	private CommandSender sender;
+	private final CommandSender sender;
 	
 	/**
 	 * 
 	 */
-	private Player player;
+	private final Player player;
 	
 	/**
 	 * 
 	 */
-	private String[] args;
+	private final String[] args;
 
 	
 	/**

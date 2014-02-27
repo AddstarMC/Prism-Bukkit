@@ -261,7 +261,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 			String coordCond = "(";
 			int l = 0;
 			for( Location loc : locations ){
-				coordCond += (l > 0 ? " OR" : "" ) + " ("+tableNameData+".x = " +(int)loc.getBlockX()+ " AND "+tableNameData+".y = " +(int)loc.getBlockY()+ " AND "+tableNameData+".z = " +(int)loc.getBlockZ() + ")";
+				coordCond += (l > 0 ? " OR" : "" ) + " ("+tableNameData+".x = " + loc.getBlockX() + " AND "+tableNameData+".y = " + loc.getBlockY() + " AND "+tableNameData+".z = " + loc.getBlockZ() + ")";
 				l++;
 			}
 			coordCond += ")";

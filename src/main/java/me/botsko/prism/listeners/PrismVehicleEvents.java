@@ -21,7 +21,7 @@ public class PrismVehicleEvents implements Listener {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 	
 	/**

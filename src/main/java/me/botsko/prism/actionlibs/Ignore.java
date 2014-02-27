@@ -15,7 +15,7 @@ public class Ignore {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 
@@ -77,13 +77,9 @@ public class Ignore {
 	 * @return
 	 */
 	public boolean event( String actionTypeName, World world, String player ){
-		
-		if( !event( actionTypeName, world ) ){
-			return false;
-		}
 
-		return event( player );
-		
+		return event(actionTypeName, world) && event(player);
+
 	}
 	
 	
@@ -147,14 +143,10 @@ public class Ignore {
 	 * @return
 	 */
 	public boolean event( String actionTypeName, Block block ){
-		
-		if( !event( actionTypeName, block.getWorld() ) ){
-			return false;
-		}
-		
-		return true;
-		
-	}
+
+        return event(actionTypeName, block.getWorld());
+
+    }
 	
 	
 	/**

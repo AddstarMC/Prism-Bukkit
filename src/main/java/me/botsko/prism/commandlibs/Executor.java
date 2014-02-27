@@ -13,7 +13,7 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	public Plugin plugin;
+	public final Plugin plugin;
 	
 	/**
 	 * Setting the executor to command mode
@@ -32,7 +32,7 @@ public class Executor implements CommandExecutor {
 	/**
 	 * 
 	 */
-	public java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
+	public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
 
 	
 	/**
@@ -60,7 +60,7 @@ public class Executor implements CommandExecutor {
 
 
 		// Find command
-		String subcommandName = defaultSubcommand;
+		String subcommandName;
 		if(mode.equals("subcommand") && args.length > 0){
 			subcommandName = args[0].toLowerCase();
 		} else {

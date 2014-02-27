@@ -28,7 +28,7 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected Prism plugin;
+	protected final Prism plugin;
 	
 	/**
 	 * 
@@ -58,12 +58,12 @@ public class Preview implements Previewable {
 	/**
 	 * 
 	 */
-	protected HashMap<Entity,Integer> entities_moved = new HashMap<Entity,Integer>();
+	protected final HashMap<Entity,Integer> entities_moved = new HashMap<Entity,Integer>();
 	
 	/**
 	 * 
 	 */
-	protected ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+	protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 	
 	/**
 	 * 
@@ -426,7 +426,7 @@ public class Preview implements Previewable {
 	protected void moveEntitiesToSafety(){
 		if( parameters.getWorld() != null && player != null ){
 			List<Entity> entities = player.getNearbyEntities(parameters.getRadius(), parameters.getRadius(), parameters.getRadius());
-			entities.add((Entity)player);
+			entities.add(player);
 			for(Entity entity : entities){
 				if(entity instanceof LivingEntity){
 					int add = 0;

@@ -7,12 +7,12 @@ public class BlockStateChange {
 	/**
      * 
      */
-    private BlockState originalBlock;
+    private final BlockState originalBlock;
     
     /**
      * 
      */
-    private BlockState newBlock;
+    private final BlockState newBlock;
     
     
     /**

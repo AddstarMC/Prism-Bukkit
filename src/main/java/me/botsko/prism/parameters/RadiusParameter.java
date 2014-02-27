@@ -38,7 +38,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 			if(inputValue.contains(":")){
 				desiredRadius = Integer.parseInt(inputValue.split(":")[1]);
 				String radiusLocOrPlayer = inputValue.split(":")[0];
-				if( radiusLocOrPlayer.contains(",") && player != null ){ // Cooridinates; x,y,z
+				if( radiusLocOrPlayer.contains(",") && player != null ){ // Coordinates; x,y,z
 					String[] coordinates = radiusLocOrPlayer.split(",");
 					if(coordinates.length != 3){
 						throw new IllegalArgumentException("Couldn't parse the coordinates '" + radiusLocOrPlayer + "'. Perhaps you have more than two commas?");
@@ -49,9 +49,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 						}
 					}
 					coordsLoc = (new Location(
-							player != null ? player.getWorld() :
-							(query.getWorld() != null ? Bukkit.getServer().getWorld(query.getWorld()) :
-							Bukkit.getServer().getWorlds().get(0)),
+							player.getWorld(),
 							Integer.parseInt(coordinates[0]), 
 							Integer.parseInt(coordinates[1]), 
 							Integer.parseInt(coordinates[2])));
@@ -86,9 +84,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 				if(coordsLoc != null){
 					query.setMinMaxVectorsFromPlayerLocation(coordsLoc); // We need to set this *after* the radius has been set or it won't work.
 				} else {
-					if( player != null ){
-						query.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
-					}
+					query.setMinMaxVectorsFromPlayerLocation( player.getLocation() );
 				}
 			}
 		} else {
@@ -106,11 +102,9 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 				} else {
 				
 					// Load a selection from world edit as our area.
-					if(player != null){
-						Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
-						if( !WorldEditBridge.getSelectedArea(prism, player, query) ){
-							throw new IllegalArgumentException("Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
-						}
+					Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
+					if( !WorldEditBridge.getSelectedArea(prism, player, query) ){
+						throw new IllegalArgumentException("Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
 					}
 				}
 			}
@@ -128,11 +122,11 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 			// User wants no radius, but contained within the current world
 			else if(inputValue.equals("world")){
 				// Do they have permission to override the global lookup radius
-				if( query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+				if(query.getProcessType().equals(PrismProcessType.LOOKUP) && !player.hasPermission("prism.override-max-lookup-radius")){
 					throw new IllegalArgumentException("You do not have permission to override the max radius.");
 				}
 				// Do they have permission to override the global applier radius
-				if( !query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+				if(!query.getProcessType().equals(PrismProcessType.LOOKUP) && !player.hasPermission("prism.override-max-applier-radius")){
 					throw new IllegalArgumentException("You do not have permission to override the max radius.");
 				}
 				// Use the world defined in the w: param
@@ -140,13 +134,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 					inputValue = query.getWorld();
 				}
 				// Use the current world
-				else if(player != null){
-					inputValue = player.getWorld().getName();
-				} 
-				// Use the default world
 				else {
-//					sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
-					inputValue = Bukkit.getServer().getWorlds().get(0).getName();
+					inputValue = player.getWorld().getName();
 				}
 				query.setWorld( inputValue );
 				query.setAllowNoRadius(true);
@@ -155,11 +144,11 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 			// User has asked for a global radius
 			else if(inputValue.equals("global")){
 				// Do they have permission to override the global lookup radius
-				if( query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
+				if(query.getProcessType().equals(PrismProcessType.LOOKUP) && !player.hasPermission("prism.override-max-lookup-radius")){
 					throw new IllegalArgumentException("You do not have permission to override the max radius.");
 				}
 				// Do they have permission to override the global applier radius
-				if( !query.getProcessType().equals(PrismProcessType.LOOKUP) && player != null && !player.hasPermission("prism.override-max-applier-radius") ){
+				if(!query.getProcessType().equals(PrismProcessType.LOOKUP) && !player.hasPermission("prism.override-max-applier-radius")){
 					throw new IllegalArgumentException("You do not have permission to override the max radius.");
 				}
 				// Either they have permission or player is null

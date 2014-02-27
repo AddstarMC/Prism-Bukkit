@@ -36,7 +36,7 @@ public class PrismBlockEditSessionFactory extends EditSessionFactory {
 			// Check to see if the world edit version is compatible
 			Class.forName("com.sk89q.worldedit.EditSessionFactory").getDeclaredMethod("getEditSession", LocalWorld.class, int.class, BlockBag.class, LocalPlayer.class);
 			WorldEdit.getInstance().setEditSessionFactory(new PrismBlockEditSessionFactory());
-		} catch (Throwable t) {
+		} catch (Throwable ignored) {
 		
 		}
 	}

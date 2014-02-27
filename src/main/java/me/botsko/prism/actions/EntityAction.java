@@ -107,10 +107,10 @@ public class EntityAction extends GenericAction {
 	            // Owner
 	            if(wolf.isTamed()){
 	                if(wolf.getOwner() instanceof Player){
-	                	this.actionData.taming_owner = ((Player)wolf.getOwner()).getName();
+	                	this.actionData.taming_owner = wolf.getOwner().getName();
 	                }
 	                if(wolf.getOwner() instanceof OfflinePlayer){
-	                	this.actionData.taming_owner = ((OfflinePlayer)wolf.getOwner()).getName();
+	                	this.actionData.taming_owner = wolf.getOwner().getName();
 	                }
 	            }
 	            
@@ -147,10 +147,10 @@ public class EntityAction extends GenericAction {
 				// Owner
 	            if(h.isTamed()){
 	                if(h.getOwner() instanceof Player){
-	                	this.actionData.taming_owner = ((Player)h.getOwner()).getName();
+	                	this.actionData.taming_owner = h.getOwner().getName();
 	                }
 	                if(h.getOwner() instanceof OfflinePlayer){
-	                	this.actionData.taming_owner = ((OfflinePlayer)h.getOwner()).getName();
+	                	this.actionData.taming_owner = h.getOwner().getName();
 	                }
 	            }
 			}
@@ -263,9 +263,9 @@ public class EntityAction extends GenericAction {
 		if(actionData.color != null && !actionData.color.isEmpty()){
 			name += actionData.color + " ";
 		}
-		if(actionData.isAdult && !actionData.isAdult){
-			name += "baby ";
-		}
+//		if(actionData.isAdult){
+//			name += "baby ";
+//		}
 		if(this.actionData.profession != null){
 			name += this.actionData.profession + " ";
 		}
