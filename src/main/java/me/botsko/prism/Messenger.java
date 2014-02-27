@@ -7,7 +7,7 @@ public class Messenger {
 	/**
 	 * 
 	 */
-	protected String plugin_name;
+	protected final String plugin_name;
 	
 	
 	/**

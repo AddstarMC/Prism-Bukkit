@@ -129,12 +129,12 @@ public class ItemStackAction extends GenericAction {
 	        BookMeta bookMeta = (BookMeta) meta;
 			actionData.by = bookMeta.getAuthor();
 			actionData.title = bookMeta.getTitle();
-			actionData.content = (String[]) bookMeta.getPages().toArray(new String[0]);
+			actionData.content = bookMeta.getPages().toArray(new String[0]);
 		}
 		
 		// Lore
 		if( meta != null && meta.getLore() != null ){
-			actionData.lore = (String[]) meta.getLore().toArray(new String[0]);
+			actionData.lore = meta.getLore().toArray(new String[0]);
 		}
 		
 		// Enchantments

@@ -27,10 +27,8 @@ public class WhatCommand extends Executor {
 	 * 
 	 */
 	private void setupCommands() {
-		
-		final Prism prism = (Prism) plugin;
-		
-		
+
+
 		/**
 		 * /prism about
 		 */

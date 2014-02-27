@@ -19,7 +19,7 @@ public class TeleportCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**
@@ -48,15 +48,13 @@ public class TeleportCommand implements SubHandler {
 		}
 		
 		// Parse the incoming ident
-		String ident = "";
-		if( call.getArg(1).contains("id:") ){
-			ident = call.getArg(1).replace("id:", "");
-		} else {
-			ident = call.getArg(1);
+		String ident = call.getArg(1);
+		if( ident.contains("id:") ){
+			ident = ident.replace("id:", "");
 		}
 		
 		// Determine result index to tp to - either an id, or the next/previous id
-		int record_id = 1;
+		int record_id;
 		if( ident.equals("next") || ident.equals("prev") ){
 			// Get stored results
 			QueryResult results = plugin.cachedQueries.get( keyName );
@@ -84,7 +82,7 @@ public class TeleportCommand implements SubHandler {
 		}
 		
 		// If a record id provided, re-query the database
-		Handler destinationAction = null;
+		Handler destinationAction;
 		if( call.getArg(1).contains("id:") ){
 				
 			// Build params

@@ -7,7 +7,7 @@ public class QueueDrain {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 	/**
 	 * 

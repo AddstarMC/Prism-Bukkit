@@ -22,7 +22,7 @@ public class ReportCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**
@@ -141,7 +141,7 @@ public class ReportCommand implements SubHandler {
 			sender.sendMessage( Prism.messenger.playerError( "Error: " + e.getMessage()) );
 	    	e.printStackTrace();
         } finally {
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 	}
 }

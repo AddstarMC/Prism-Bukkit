@@ -26,7 +26,7 @@ public class WorldEditBridge {
 	 */
 	public static boolean getSelectedArea(Prism plugin, Player player, QueryParameters parameters ){
 		// Get selected area
-		Region region = null;
+		Region region;
 		try {
 			LocalPlayer lp = new BukkitPlayer(Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit().getServer(), player);
 			LocalWorld lw = lp.getWorld();

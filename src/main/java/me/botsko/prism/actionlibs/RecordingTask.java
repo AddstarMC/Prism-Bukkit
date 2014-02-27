@@ -15,7 +15,7 @@ public class RecordingTask implements Runnable {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**
@@ -104,9 +104,9 @@ public class RecordingTask implements Runnable {
         } catch (SQLException e) {
 //        	plugin.handleDatabaseException( e );
         } finally {
-        	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(generatedKeys != null) try { generatedKeys.close(); } catch (SQLException ignored) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return id;
 	}
@@ -118,14 +118,12 @@ public class RecordingTask implements Runnable {
 	 * @return
 	 */
 	protected static int getPlayerPrimaryKey( String playerName ){
-		int player_id = 0;
     	if( Prism.prismPlayers.containsKey(playerName) ){
-    		player_id = Prism.prismPlayers.get(playerName);
+    		return Prism.prismPlayers.get(playerName);
     	} else {
     		Prism.cachePlayerPrimaryKey(playerName);
-    		player_id = Prism.prismPlayers.get(playerName);
+    		return Prism.prismPlayers.get(playerName);
     	}
-    	return player_id;
 	}
 	
 	
@@ -173,7 +171,7 @@ public class RecordingTask implements Runnable {
 		        int i = 0;
 		        while (!RecordingQueue.getQueue().isEmpty()){
 		        	
-		        	if( conn == null || conn.isClosed() ){
+		        	if(conn.isClosed()){
 		        		Prism.log("Prism database error. We have to bail in the middle of building primary bulk insert query.");
 		        		break;
 		        	}
@@ -204,7 +202,7 @@ public class RecordingTask implements Runnable {
 		        		continue;
 		        	}
 		        	
-		        	if( a == null || a.isCanceled() ) continue;
+		        	if(a.isCanceled()) continue;
 		        	
 		        	actionsRecorded++;
 		        	
@@ -233,7 +231,7 @@ public class RecordingTask implements Runnable {
 		        
 		        s.executeBatch();
 		        
-		        if( conn == null || conn.isClosed() ){
+		        if(conn.isClosed()){
 	        		Prism.log("Prism database error. We have to bail in the middle of building primary bulk insert query.");
 	        	} else {
 			        conn.commit();
@@ -251,8 +249,8 @@ public class RecordingTask implements Runnable {
 	    	e.printStackTrace();
 	    	plugin.handleDatabaseException( e );
         } finally {
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 	}
 	
@@ -267,9 +265,7 @@ public class RecordingTask implements Runnable {
 		if( extraDataQueue.isEmpty() ) return;
 
 		PreparedStatement s = null;
-		Connection conn = null;
-	    
-		conn = Prism.dbc();
+		Connection conn = Prism.dbc();
 		
 		if( conn == null || conn.isClosed() ){
     		Prism.log("Prism database error. Skipping extra data queue insertion.");
@@ -284,7 +280,7 @@ public class RecordingTask implements Runnable {
 	        int i = 0;
 			while(keys.next()){
 				
-				if( conn == null || conn.isClosed() ){
+				if(conn.isClosed()){
 	        		Prism.log("Prism database error. We have to bail in the middle of building bulk insert extra data query.");
 	        		break;
 	        	}
@@ -309,7 +305,7 @@ public class RecordingTask implements Runnable {
 			}
 			s.executeBatch();
 			
-			if( conn == null || conn.isClosed() ){
+			if(conn.isClosed()){
         		Prism.log("Prism database error. We have to bail in the middle of building extra data bulk insert query.");
         	} else {
 		        conn.commit();
@@ -319,8 +315,8 @@ public class RecordingTask implements Runnable {
 	    	e.printStackTrace();
 	    	plugin.handleDatabaseException( e );
         } finally {
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+			try { conn.close(); } catch (SQLException ignored) {}
         }
 	}
 

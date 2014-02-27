@@ -26,7 +26,7 @@ public abstract class QueryWandBase extends WandBase {
 	/**
 	 * Keep an instance of {@link me.botsko.prism.Prism Prism} to use.
 	 */
-	protected Prism plugin;
+	protected final Prism plugin;
 	
 	
 	/**

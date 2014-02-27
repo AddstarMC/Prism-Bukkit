@@ -5,12 +5,12 @@ public class ActionType {
 	/**
 	 * Define associated values
 	 */
-	private boolean doesCreateBlock;
-	private boolean canRollback;
-	private boolean canRestore;
-	private String handler;
-	private String niceDescription;
-	private String name;
+	private final boolean doesCreateBlock;
+	private final boolean canRollback;
+	private final boolean canRestore;
+	private final String handler;
+	private final String niceDescription;
+	private final String name;
 	
 	
 	/**
@@ -107,7 +107,7 @@ public class ActionType {
 	 * @return
 	 */
 	public String getFamilyName(){
-		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");;
+		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");
 		if(_tmp.length == 2){
 			return _tmp[0];
 		}
@@ -120,7 +120,7 @@ public class ActionType {
 	 * @return
 	 */
 	public String getShortName(){
-		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");;
+		String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");
 		if(_tmp.length == 2){
 			return _tmp[1];
 		}

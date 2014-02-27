@@ -89,12 +89,7 @@ public class HangingItemAction extends GenericAction {
 	 * @return
 	 */
 	public String getNiceName(){
-		String name = "hangingitem";
-		name = data.toLowerCase();
-		if(this.actionData.type != null){
-			name = this.actionData.type;
-		}
-		return name;
+		return this.actionData.type != null ? this.actionData.type : data.toLowerCase();
 	}
 	
 	

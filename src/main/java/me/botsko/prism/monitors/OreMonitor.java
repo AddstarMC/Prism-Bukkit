@@ -19,17 +19,17 @@ public class OreMonitor {
 	/**
 	 * 
 	 */
-	private final int threshhold_max = 100;
+	private final int threshold_max = 100;
 	
 	/**
 	 * 
 	 */
-	private int threshhold = 1;
+	private int threshold = 1;
 	
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 
@@ -68,7 +68,7 @@ public class OreMonitor {
 			
 		if(block != null && isWatched(block) && !plugin.alertedBlocks.containsKey( block.getLocation() )){
 			
-			threshhold = 1;
+			threshold = 1;
 			
 			// identify all ore blocks on same Y axis in x/z direction
 			ArrayList<Block> matchingBlocks = new ArrayList<Block>();
@@ -86,7 +86,7 @@ public class OreMonitor {
 				// Restore the block
 				block.setType( state.getType() );
 				
-				String count = foundores.size() + (foundores.size() >= threshhold_max ? "+" : "" );
+				String count = foundores.size() + (foundores.size() >= threshold_max ? "+" : "" );
 				final String msg = getOreColor(block) + player.getName() + " found " + count + " " + getOreNiceName(block) + " " + light + "% light";
 			
 				/**
@@ -157,11 +157,8 @@ public class OreMonitor {
 	 * @return
 	 */
 	protected boolean isWatched( Block block ){
-		if( Prism.getAlertedOres().containsKey( block.getTypeId() + ":" + block.getData() ) || Prism.getAlertedOres().containsKey( ""+block.getTypeId() ) ){
-			return true;
-		}
-		return false;
-	}
+        return Prism.getAlertedOres().containsKey(block.getTypeId() + ":" + block.getData()) || Prism.getAlertedOres().containsKey("" + block.getTypeId());
+    }
 	
 	
 	/**
@@ -182,8 +179,8 @@ public class OreMonitor {
 	        			Block newblock = currBlock.getRelative(x, y, z);
 	        			// ensure it matches the type and wasn't already found
 	        			if( newblock.getType() == type && !matchingBlocks.contains(newblock) ){
-	        				threshhold++;
-	        	        	if( threshhold <= threshhold_max ){
+	        				threshold++;
+	        	        	if( threshold <= threshold_max){
 	        	        		findNeighborBlocks( type, newblock, matchingBlocks );
 	        	        	}
 	        			}

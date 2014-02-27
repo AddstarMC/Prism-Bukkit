@@ -9,7 +9,7 @@ public class QueueStats {
 	/**
 	 * 
 	 */
-	protected ConcurrentSkipListMap<Long,Integer> perRunRecordingCounts = new ConcurrentSkipListMap<Long,Integer>();
+	protected final ConcurrentSkipListMap<Long,Integer> perRunRecordingCounts = new ConcurrentSkipListMap<Long,Integer>();
 	
 	
 	/**

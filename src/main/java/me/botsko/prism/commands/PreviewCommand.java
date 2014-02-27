@@ -21,7 +21,7 @@ public class PreviewCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**

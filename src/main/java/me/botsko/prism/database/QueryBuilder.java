@@ -10,12 +10,12 @@ abstract public class QueryBuilder {
 	/**
 	 * 
 	 */
-	protected Prism plugin;
+	protected final Prism plugin;
 	protected ArrayList<String> columns = new ArrayList<String>();
 	protected ArrayList<String> conditions = new ArrayList<String>();
-	
-	protected String tableNameData = "prism_data";
-	protected String tableNameDataExtra = "prism_data_extra";
+
+	protected final String tableNameData = "prism_data";
+	protected final String tableNameDataExtra = "prism_data_extra";
 	
 	protected QueryParameters parameters;
 	protected boolean shouldGroup;

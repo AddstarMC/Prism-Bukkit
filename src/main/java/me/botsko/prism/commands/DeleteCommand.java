@@ -22,7 +22,7 @@ public class DeleteCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 

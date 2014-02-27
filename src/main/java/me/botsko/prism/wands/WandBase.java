@@ -131,7 +131,7 @@ public abstract class WandBase {
 	public void disable( Player player ){
 		PlayerInventory inv = player.getInventory();
 		if( itemWasGiven() ){
-			int itemSlot = -1;
+			int itemSlot;
 			// Likely is what they're holding
 			if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ){
 				itemSlot = inv.getHeldItemSlot();
