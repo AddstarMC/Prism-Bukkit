@@ -14,7 +14,7 @@ public class UseMonitor {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 

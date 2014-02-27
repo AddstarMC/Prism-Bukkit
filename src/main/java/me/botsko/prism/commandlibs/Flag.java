@@ -13,7 +13,7 @@ public enum Flag {
 	SHARE("-share=player1[,player2...]", "Share a lookup result with another player."),
 	PASTE("Share your results with a pastebin service and return the link");
 	
-	private String description;
+	private final String description;
 	private String usage;
 	
 	

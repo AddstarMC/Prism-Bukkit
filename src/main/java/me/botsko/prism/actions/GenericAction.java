@@ -32,7 +32,7 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+	protected final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 	
 	/**
 	 * 

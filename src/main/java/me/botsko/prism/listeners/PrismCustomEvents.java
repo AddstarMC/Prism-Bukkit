@@ -16,7 +16,7 @@ public class PrismCustomEvents implements Listener {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 	
 	/**

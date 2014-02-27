@@ -19,7 +19,7 @@ public class PageCommand implements SubHandler {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	
 	/**
@@ -56,7 +56,7 @@ public class PageCommand implements SubHandler {
 		}
 		
 		// Determine page number
-		int page = 1;
+		int page;
 		if( TypeUtils.isNumeric( call.getArg(1) ) ){
 			page = Integer.parseInt(call.getArg(1));
 		} else {

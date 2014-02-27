@@ -20,7 +20,7 @@ public class PrismBlockPhysicsEvent implements Listener {
 	/**
 	 *
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 
 	/**

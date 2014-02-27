@@ -13,7 +13,7 @@ public class Updater {
 	/**
 	 * 
 	 */
-	protected Prism plugin;
+	protected final Prism plugin;
 
 	
 	/**

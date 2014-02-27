@@ -8,7 +8,7 @@ import me.botsko.prism.Prism;
 
 public class TimeTaken {
 	
-	protected Prism plugin;
+	protected final Prism plugin;
 	
 	
 	/**
@@ -23,7 +23,7 @@ public class TimeTaken {
 	/**
 	 * 
 	 */
-	protected TreeMap<Long,String> eventsTimed = new TreeMap<Long,String>();
+	protected final TreeMap<Long,String> eventsTimed = new TreeMap<Long,String>();
 	
 	
 	/**

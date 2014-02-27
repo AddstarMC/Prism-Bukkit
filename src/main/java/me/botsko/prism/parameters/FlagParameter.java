@@ -53,7 +53,7 @@ public class FlagParameter implements PrismParameterHandler {
 						}
 						Player shareWith = Bukkit.getServer().getPlayer(sharePlayer);
 						if( shareWith != null ){
-							query.addSharedPlayer( (CommandSender)shareWith );
+							query.addSharedPlayer(shareWith);
 						} else {
 							throw new IllegalArgumentException( "Can't share with " + sharePlayer + ". Are they online?" );
 						}

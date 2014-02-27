@@ -43,7 +43,7 @@ public class PrismBlockEvents implements Listener {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 	
 	/**

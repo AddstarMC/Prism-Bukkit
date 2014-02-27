@@ -11,12 +11,12 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 
 	 */
-	private CopyOnWriteArrayList<QueryParameters> paramList;
+	private final CopyOnWriteArrayList<QueryParameters> paramList;
 	
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
-	private int purge_tick_delay;
+	private final int purge_tick_delay;
 	
 	/**
 	 * 
@@ -41,7 +41,7 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
-	private PurgeCallback callback;
+	private final PurgeCallback callback;
 	
 	
 	/**

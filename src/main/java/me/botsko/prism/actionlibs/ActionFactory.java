@@ -140,6 +140,7 @@ public class ActionFactory {
 		a.setActionType(action_type);
 		a.setLoc(from);
 		a.setToLocation(to);
+		a.setCause(cause);
 		return a;
 	}
 	

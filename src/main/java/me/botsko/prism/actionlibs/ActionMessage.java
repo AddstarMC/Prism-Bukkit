@@ -9,7 +9,7 @@ public class ActionMessage {
 	/**
 	 * 
 	 */
-	protected Handler a;
+	protected final Handler a;
 	
 	/**
 	 * 

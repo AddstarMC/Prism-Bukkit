@@ -26,12 +26,12 @@ public class ActionsQuery {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 
 	 */
-	private SelectQueryBuilder qb;
+	private final SelectQueryBuilder qb;
 	
 	/**
 	 * 
@@ -188,22 +188,20 @@ public class ActionsQuery {
 		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
 	    	        	}
 	    	        	Prism.log( e.getMessage() );
-	    	        	continue;
-	    	        } catch (Exception e) {
+                    } catch (Exception e) {
 	    	        	if( !rs.isClosed() ){
 		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
 	    	        	}
 	    	        	Prism.log( e.getMessage() );
-	    	        	continue;
-	    	        }
+                    }
 	    		}
 	            
 	        } catch (SQLException e) {
 	        	plugin.handleDatabaseException( e );
 	        } finally {
-	        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-	        	if(s != null) try { s.close(); } catch (SQLException e) {}
-	        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+	        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+	        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+	        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
 	        }
 		}
 		
@@ -267,9 +265,9 @@ public class ActionsQuery {
         } catch (SQLException e) {
         	plugin.handleDatabaseException( e );
         } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return id;
 	}
@@ -321,9 +319,9 @@ public class ActionsQuery {
         } catch (SQLException e) {
         	plugin.handleDatabaseException( e );
         } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return process;
 	}
@@ -334,7 +332,7 @@ public class ActionsQuery {
 	 * @return
 	 */
 	public int delete( QueryParameters parameters ){
-		int total_rows_affected = 0, cycle_rows_affected = 0;
+		int total_rows_affected = 0, cycle_rows_affected;
 		Connection conn = null;
 		Statement s = null;
 		try {
@@ -352,8 +350,8 @@ public class ActionsQuery {
 		} catch (SQLException e) {
 			plugin.handleDatabaseException( e );
 		} finally {
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return total_rows_affected;
 	}
