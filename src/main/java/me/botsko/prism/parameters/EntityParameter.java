@@ -1,48 +1,18 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.command.CommandSender;
-
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
+import org.bukkit.command.CommandSender;
 
-public class EntityParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Entity";
+import java.util.regex.Pattern;
+
+public class EntityParameter extends SimplePrismParameterHandler {
+	public EntityParameter() {
+		super("Entity", Pattern.compile("[~|!]?[\\w,]+"), "e");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(e):([~|!]?[\\w,]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		String[] entityNames = input.group(2).split(",");
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		String[] entityNames = input.split(",");
 		if(entityNames.length > 0){
 			for(String entityName : entityNames){
 				MatchRule match = MatchRule.INCLUDE;
@@ -52,13 +22,5 @@ public class EntityParameter implements PrismParameterHandler {
 				query.addEntity( entityName.replace("!", ""), match );
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
 	}
 }

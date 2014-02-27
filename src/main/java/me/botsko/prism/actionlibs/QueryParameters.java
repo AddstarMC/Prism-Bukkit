@@ -2,6 +2,8 @@ package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 
 import me.botsko.prism.appliers.PrismProcessType;
@@ -23,7 +25,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Internal use
 	 */
-	protected HashMap<String,Matcher> foundArgs = new HashMap<String,Matcher>();
+	protected Set<String> foundArgs = new HashSet<String>();
 	protected PrismProcessType processType = PrismProcessType.LOOKUP;
 	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
 	protected String original_command;
@@ -451,7 +453,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the foundArgs
 	 */
-	public HashMap<String, Matcher> getFoundArgs() {
+	public Set<String> getFoundArgs() {
 		return foundArgs;
 	}
 
@@ -459,7 +461,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param foundArgs the foundArgs to set
 	 */
-	public void setFoundArgs(HashMap<String, Matcher> foundArgs) {
+	public void setFoundArgs(Set<String> foundArgs) {
 		this.foundArgs = foundArgs;
 	}
 
