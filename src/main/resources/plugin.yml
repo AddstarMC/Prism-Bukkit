@@ -45,6 +45,8 @@ permissions:
         default: op
     prism.reload:
         default: op
+    prism.recorder:
+        default: op
     prism.delete:
         default: op
     prism.alerts:
