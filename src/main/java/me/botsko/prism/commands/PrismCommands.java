@@ -131,6 +131,13 @@ public class PrismCommands extends Executor {
 		.setHandler(new DeleteCommand(prism));
 		
 		/**
+		 * /prism recorder
+		 */
+		addSub("recorder", "prism.recorder")
+		.allowConsole()
+		.setHandler(new RecorderCommand(prism));
+		
+		/**
 		 * /prism undo
 		 */
 		addSub("undo", "prism.rollback")
