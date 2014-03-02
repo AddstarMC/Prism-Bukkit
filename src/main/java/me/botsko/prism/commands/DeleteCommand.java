@@ -8,6 +8,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
@@ -56,6 +57,19 @@ public class DeleteCommand implements SubHandler {
 				call.getSender().sendMessage( Prism.messenger.playerMsg("Current purge tasks have been canceled.") );
 			} else {
 				call.getSender().sendMessage( Prism.messenger.playerError("No purge task is currently running.") );
+			}
+			return;
+		}
+		
+		
+		// Allow for wiping live queue
+		if( call.getArgs().length > 1  && call.getArg(1).equals("queue") ){
+			if( RecordingQueue.getQueue().size() > 0 ){
+				Prism.log("User " + call.getSender().getName() + " wiped the live queue before it could be written to the database. " + RecordingQueue.getQueue().size() + " events lost.");
+				RecordingQueue.getQueue().clear();
+				call.getSender().sendMessage( Prism.messenger.playerSuccess("Unwritten data in queue cleared.") );
+			} else {
+				call.getSender().sendMessage( Prism.messenger.playerError("Event queue is empty, nothing to wipe.") );
 			}
 			return;
 		}
