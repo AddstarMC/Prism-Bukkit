@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueueDrain;
+import me.botsko.prism.actionlibs.InternalAffairs;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -103,7 +104,8 @@ public class Prism extends JavaPlugin {
 	protected static ArrayList<String> illegalEntities;
 	protected static HashMap<String,String> alertedOres = new HashMap<String,String>();
 	private static HashMap<String,PrismParameterHandler> paramHandlers = new HashMap<String,PrismParameterHandler>();
-	private ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);;
+	private ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
+	private ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
 //	private ScheduledFuture<?> scheduledPurgeExecutor;
 	private PurgeManager purgeManager;
 
@@ -296,6 +298,9 @@ public class Prism extends JavaPlugin {
 
 			// Delete old data based on config
 			launchScheduledPurgeManager();
+			
+			// Keep watch on db connections, other sanity
+			launchInternalAffairs();
 
 		}
 	}
@@ -1055,6 +1060,15 @@ public class Prism extends JavaPlugin {
 		// scheduledPurgeExecutor = 
 		schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS);
 		// scheduledPurgeExecutor.cancel();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	public void launchInternalAffairs(){
+		InternalAffairs recordingMonitor = new InternalAffairs(this);
+		recordingMonitorTask.scheduleAtFixedRate( recordingMonitor, 0, 5, TimeUnit.MINUTES);
 	}
 
 	
