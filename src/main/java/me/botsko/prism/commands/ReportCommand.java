@@ -8,8 +8,10 @@ import java.text.SimpleDateFormat;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
@@ -115,6 +117,21 @@ public class ReportCommand implements SubHandler {
 		sender.sendMessage( Prism.messenger.playerMsg( "Pool idle: " + ChatColor.WHITE + Prism.getPool().getIdle() ) );
 		sender.sendMessage( Prism.messenger.playerMsg( "Pool active count: " + ChatColor.WHITE + Prism.getPool().getNumActive() ) );
 		sender.sendMessage( Prism.messenger.playerMsg( "Pool idle count: " + ChatColor.WHITE + Prism.getPool().getNumIdle() ) );
+		
+		boolean recorderActive = false;
+		if( plugin.recordingTask != null ){
+			int taskId = plugin.recordingTask.getTaskId();
+			BukkitScheduler scheduler = Bukkit.getScheduler();
+			if( scheduler.isCurrentlyRunning(taskId) || scheduler.isQueued(taskId) ){
+				recorderActive = true;
+			}
+		}
+		
+		if( recorderActive ){
+			sender.sendMessage( Prism.messenger.playerSuccess( "Recorder is currently queued or running!") );
+		} else {
+			sender.sendMessage( Prism.messenger.playerError( "Recorder stopped running! DB conn problems? Try /pr recorder start") );
+		}
 		
 		sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg( "Attempting to check connection readiness...") );
 		
