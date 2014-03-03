@@ -106,7 +106,6 @@ public class DrainCommand implements SubHandler {
 	 * @return
 	 */
 	protected int validateRadius( CallInfo call, String radius_arg ){
-		int radius = plugin.getConfig().getInt("prism.drain.default-radius");
 		if(TypeUtils.isNumeric(radius_arg)){
 			int _tmp_radius = Integer.parseInt(radius_arg);
 			if(_tmp_radius > 0){
@@ -114,7 +113,7 @@ public class DrainCommand implements SubHandler {
 					call.getPlayer().sendMessage( Prism.messenger.playerError("Radius exceeds max set in config.") );
 					return 0;
 				} else {
-					radius = _tmp_radius;
+					return _tmp_radius;
 				}
 			} else {
 				call.getPlayer().sendMessage( Prism.messenger.playerError("Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help.") );
@@ -124,6 +123,5 @@ public class DrainCommand implements SubHandler {
 			call.getPlayer().sendMessage( Prism.messenger.playerError("Radius must be a number. Or leave it off to use the default. Use /prism ? for help.") );
 			return 0;
 		}
-		return radius;
 	}
 }

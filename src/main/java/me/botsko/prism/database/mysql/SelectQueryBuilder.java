@@ -131,8 +131,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		// Action type
 		HashMap<String,MatchRule> action_types = parameters.getActionTypeNames();
 		boolean containsPrismProcessType = false;
-		boolean hasPositiveMatchRule = false;
-		
+
 		// Build IDs for prism process actions
 		ArrayList<String> prismActionIds = new ArrayList<String>();
 		for( Entry<String,Integer> entry : Prism.prismActions.entrySet() ){
@@ -149,7 +148,6 @@ public class SelectQueryBuilder extends QueryBuilder {
 			ArrayList<String> excludeIds = new ArrayList<String>();
 			for( Entry<String,MatchRule> entry : action_types.entrySet() ){
 				if( entry.getValue().equals(MatchRule.INCLUDE) ){
-					hasPositiveMatchRule = true;
 					includeIds.add( ""+Prism.prismActions.get(entry.getKey()) );
 				}
 				if( entry.getValue().equals(MatchRule.EXCLUDE) ){
@@ -166,7 +164,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 			}
 		} else {
 			// exclude internal stuff
-			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) && !hasPositiveMatchRule ){
+			if( !containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE) ){
 				addCondition( "action_id NOT IN (" + TypeUtils.join(prismActionIds, ",")+ ")" );
 			}
 		}
