@@ -28,8 +28,6 @@ public class InternalAffairs implements Runnable {
 	 */
 	public void run(){
 		
-		Prism.debug("INTERNAL AFFAIRS RUNNING");
-		
 		if( plugin.recordingTask != null ){
 		
 			int taskId = plugin.recordingTask.getTaskId();
