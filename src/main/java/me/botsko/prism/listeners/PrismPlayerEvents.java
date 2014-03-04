@@ -43,17 +43,17 @@ public class PrismPlayerEvents implements Listener {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 	
 	/**
 	 * 
 	 */
-	private List<String> illegalCommands;
+	private final List<String> illegalCommands;
 	
 	/**
 	 * 
 	 */
-	private List<String> ignoreCommands;
+	private final List<String> ignoreCommands;
 	
 	
 	/**
@@ -347,7 +347,7 @@ public class PrismPlayerEvents implements Listener {
 		// Doors, buttons, containers, etc may only be opened with a right-click as of 1.4
 		if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK){
 
-			String coord_key = null;
+			String coord_key;
 			switch (block.getType()){
 				case FURNACE:
 				case DISPENSER:

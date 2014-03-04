@@ -28,7 +28,7 @@ public class PrismInventoryEvents implements Listener {
 	/**
 	 * 
 	 */
-	private Prism plugin;
+	private final Prism plugin;
 
 	/**
 	 * 

@@ -1,54 +1,16 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
 
-import me.botsko.prism.actionlibs.QueryParameters;
+import java.util.regex.Pattern;
 
-public class KeywordParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Keyword";
+public class KeywordParameter extends SimplePrismParameterHandler {
+	public KeywordParameter() {
+		super("Keyword", Pattern.compile("[^\\s]+"), "k");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(k):([^\\s]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		query.setKeyword( input.group(2) );
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		query.setKeyword( input );
 	}
 }

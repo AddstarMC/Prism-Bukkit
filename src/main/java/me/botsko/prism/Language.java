@@ -10,7 +10,7 @@ public class Language {
 	/**
 	 * 
 	 */
-	protected FileConfiguration lang;
+	protected final FileConfiguration lang;
 	
 	
 	/**
@@ -65,7 +65,6 @@ public class Language {
 	 * @return
 	 */
 	protected String colorize(String text){
-        String colorized = text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
-        return colorized;
+		return text.replaceAll("(&([a-f0-9A-F]))", "\u00A7$2");
     }
 }

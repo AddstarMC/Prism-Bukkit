@@ -30,7 +30,7 @@ public class HandlerRegistry<H> {
 	/**
 	 * 
 	 */
-	private HashMap<String,Class<? extends Handler>> registeredHandlers = new HashMap<String,Class<? extends Handler>>();
+	private final HashMap<String,Class<? extends Handler>> registeredHandlers = new HashMap<String,Class<? extends Handler>>();
 	
 	
 	/**

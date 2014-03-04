@@ -1,53 +1,23 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import java.util.regex.Pattern;
 
-public class WorldParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "World";
+public class WorldParameter extends SimplePrismParameterHandler {
+	public WorldParameter() {
+		super("World", Pattern.compile("[^\\s]+"), "w");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(w):([^\\s]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		String worldName = input.group(2);
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		String worldName = input;
 		if(worldName.equalsIgnoreCase("current")){
-			if( sender != null && sender instanceof Player ){
+			if( sender instanceof Player ){
 				worldName = ((Player)sender).getWorld().getName();
 			} else {
 				sender.sendMessage(Prism.messenger.playerError( "Can't use the current world since you're not a player. Using default world." ));
@@ -56,14 +26,10 @@ public class WorldParameter implements PrismParameterHandler {
 		}
 		query.setWorld( worldName );
 	}
-	
-	
-	/**
-	 * 
-	 */
+
 	public void defaultTo( QueryParameters query, CommandSender sender ){
 		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
-		if( sender != null && sender instanceof Player && !query.allowsNoRadius()){
+		if( sender instanceof Player && !query.allowsNoRadius()){
 			query.setWorld( ((Player)sender).getWorld().getName() );
 		}
 	}

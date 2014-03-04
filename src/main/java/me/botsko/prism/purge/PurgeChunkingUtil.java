@@ -30,12 +30,12 @@ public class PurgeChunkingUtil {
     			id = rs.getInt(1);
 			}
             
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
         	
         } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return id;
 	}
@@ -61,12 +61,12 @@ public class PurgeChunkingUtil {
     			id = rs.getInt(1);
 			}
             
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
         	
         } finally {
-        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
-        	if(s != null) try { s.close(); } catch (SQLException e) {}
-        	if(conn != null) try { conn.close(); } catch (SQLException e) {}
+        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
+        	if(s != null) try { s.close(); } catch (SQLException ignored) {}
+        	if(conn != null) try { conn.close(); } catch (SQLException ignored) {}
         }
 		return id;
 	}

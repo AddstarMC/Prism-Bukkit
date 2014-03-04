@@ -27,6 +27,5 @@ public class Undo extends Preview {
 	 */
 	public void preview(){
 		player.sendMessage( Prism.messenger.playerError("You can't preview an undo.") );
-		return;
 	}
 }

@@ -1,15 +1,15 @@
 package me.botsko.prism.actionlibs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.regex.Matcher;
-
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
-
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Query Parameters allows you to add values with which Prism
@@ -23,9 +23,9 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Internal use
 	 */
-	protected HashMap<String,Matcher> foundArgs = new HashMap<String,Matcher>();
+	protected Set<String> foundArgs = new HashSet<String>();
 	protected PrismProcessType processType = PrismProcessType.LOOKUP;
-	protected ArrayList<String> defaultsUsed = new ArrayList<String>();
+	protected final ArrayList<String> defaultsUsed = new ArrayList<String>();
 	protected String original_command;
 	
 	/**
@@ -40,7 +40,7 @@ public class QueryParameters implements Cloneable {
 	protected int parent_id = 0;
 	protected Location player_location;
 	protected int radius;
-	protected ArrayList<Location> specific_block_locations = new ArrayList<Location>();
+	protected final ArrayList<Location> specific_block_locations = new ArrayList<Location>();
 	protected Long since_time;
 	protected Long before_time;
 	protected String world;
@@ -51,11 +51,11 @@ public class QueryParameters implements Cloneable {
 	 * Params that allow multiple values
 	 */
 	protected HashMap<String,MatchRule> actionTypeRules = new HashMap<String,MatchRule>();
-	protected HashMap<Integer,Byte> block_filters = new HashMap<Integer,Byte>();
-	protected HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
-	protected HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
-	protected ArrayList<Flag> flags = new ArrayList<Flag>();
-	protected ArrayList<CommandSender> shared_players = new ArrayList<CommandSender>();
+	protected final HashMap<Integer,Byte> block_filters = new HashMap<Integer,Byte>();
+	protected final HashMap<String,MatchRule> entity_filters = new HashMap<String,MatchRule>();
+	protected final HashMap<String,MatchRule> player_names = new HashMap<String,MatchRule>();
+	protected final ArrayList<Flag> flags = new ArrayList<Flag>();
+	protected final ArrayList<CommandSender> shared_players = new ArrayList<CommandSender>();
 	
 	/**
 	 * Pagination
@@ -451,7 +451,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the foundArgs
 	 */
-	public HashMap<String, Matcher> getFoundArgs() {
+	public Set<String> getFoundArgs() {
 		return foundArgs;
 	}
 
@@ -459,7 +459,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @param foundArgs the foundArgs to set
 	 */
-	public void setFoundArgs(HashMap<String, Matcher> foundArgs) {
+	public void setFoundArgs(Set<String> foundArgs) {
 		this.foundArgs = foundArgs;
 	}
 

@@ -1,59 +1,21 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.command.CommandSender;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
+import org.bukkit.command.CommandSender;
 
-public class IdParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "ID";
+import java.util.regex.Pattern;
+
+public class IdParameter extends SimplePrismParameterHandler {
+	public IdParameter() {
+		super("ID", Pattern.compile("[\\d,]+"));
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(id):([\\d,]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		
-		if( !TypeUtils.isNumeric( input.group(2) ) ){
+		if( !TypeUtils.isNumeric( input ) ){
 			throw new IllegalArgumentException("ID must be a number. Use /prism ? for help.");
 		}
-		query.setId( Integer.parseInt(input.group(2)) );
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
+		query.setId( Integer.parseInt(input) );
 	}
 }

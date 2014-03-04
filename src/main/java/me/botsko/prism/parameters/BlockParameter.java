@@ -1,52 +1,22 @@
 package me.botsko.prism.parameters;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.command.CommandSender;
-
 import me.botsko.elixr.ItemUtils;
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import org.bukkit.command.CommandSender;
 
-public class BlockParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Block";
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+public class BlockParameter extends SimplePrismParameterHandler {
+	public BlockParameter() {
+		super("Block", Pattern.compile("[\\w,:]+"), "b");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(b):([\\w,:]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		String[] blocks = input.group(2).split(",");
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		String[] blocks = input.split(",");
 		
 		if(blocks.length > 0){
 			for(String b : blocks){
@@ -87,13 +57,5 @@ public class BlockParameter implements PrismParameterHandler {
 				}
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
 	}
 }

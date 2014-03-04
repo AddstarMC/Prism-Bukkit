@@ -1,54 +1,24 @@
 package me.botsko.prism.parameters;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.command.CommandSender;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
+import org.bukkit.command.CommandSender;
 
-public class ActionParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Action";
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
+public class ActionParameter extends SimplePrismParameterHandler {
+	public ActionParameter() {
+		super("Action", Pattern.compile("[~|!]?[\\w,-]+"), "a");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(a):([~|!]?[\\w,-]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		
-		String[] actions = input.group(2).split(",");
+		String[] actions = input.split(",");
 		if(actions.length > 0){
 			for(String action : actions){
 				// Find all actions that match the action provided - whether the full name or
@@ -82,13 +52,5 @@ public class ActionParameter implements PrismParameterHandler {
 				throw new IllegalArgumentException("Action parameter value not recognized. Try /pr ? for help");
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
 	}
 }

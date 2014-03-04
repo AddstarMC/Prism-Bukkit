@@ -26,7 +26,6 @@ public class HandlerFactory<H> {
 	 * @throws IllegalAccessException
 	 */
 	public Handler create() throws InstantiationException, IllegalAccessException {
-		Handler handler = handlerClass.newInstance();
-        return handler;
+		return handlerClass.newInstance();
     }
 }

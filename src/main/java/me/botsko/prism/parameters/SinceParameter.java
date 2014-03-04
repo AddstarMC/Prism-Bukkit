@@ -1,55 +1,25 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.DateUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
-public class SinceParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Since";
+import java.util.regex.Pattern;
+
+public class SinceParameter extends SimplePrismParameterHandler {
+	public SinceParameter() {
+		super("Since", Pattern.compile("[\\w]+"), "t");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(since|t):([\\w]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		if(input.group(2).equalsIgnoreCase("none")){
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		if(input.equalsIgnoreCase("none")){
 			query.setIgnoreTime(true);
 		} else {
-			Long date = DateUtil.translateTimeStringToDate(input.group(2));
+			Long date = DateUtil.translateTimeStringToDate(input);
 			if(date != null){
 				query.setSinceTime( date );
 			} else {
@@ -57,16 +27,12 @@ public class SinceParameter implements PrismParameterHandler {
 			}
 		}
 	}
-	
-	
-	/**
-	 * 
-	 */
+
 	public void defaultTo( QueryParameters query, CommandSender sender ){
 		
 		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
 	
-		if( !query.getFoundArgs().containsKey("before") && !query.getFoundArgs().containsKey("since") ){
+		if( !query.getFoundArgs().contains("before") && !query.getFoundArgs().contains("since") ){
 			
 			FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 			

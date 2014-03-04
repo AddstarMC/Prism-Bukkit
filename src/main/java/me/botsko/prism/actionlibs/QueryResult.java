@@ -15,7 +15,7 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected QueryParameters parameters;
+	protected final QueryParameters parameters;
 	
 	/**
 	 * 
@@ -25,7 +25,7 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected int total_results;
+	protected final int total_results;
 	
 	/**
 	 * 

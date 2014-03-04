@@ -20,7 +20,7 @@ public class PrismBlockEditSession extends EditSession {
 	/**
 	 * 
 	 */
-	private LocalPlayer player;
+	private final LocalPlayer player;
 
 	
 	/**

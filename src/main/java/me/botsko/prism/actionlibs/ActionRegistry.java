@@ -16,7 +16,7 @@ public class ActionRegistry {
 	/**
 	 * 
 	 */
-	private TreeMap<String,ActionType> registeredActions = new TreeMap<String,ActionType>();
+	private final TreeMap<String,ActionType> registeredActions = new TreeMap<String,ActionType>();
 	
 	
 	/**

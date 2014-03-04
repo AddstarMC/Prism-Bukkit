@@ -1,48 +1,18 @@
 package me.botsko.prism.parameters;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.command.CommandSender;
-
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
+import org.bukkit.command.CommandSender;
 
-public class PlayerParameter implements PrismParameterHandler {
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String getName(){
-		return "Player";
+import java.util.regex.Pattern;
+
+public class PlayerParameter extends SimplePrismParameterHandler {
+	public PlayerParameter() {
+		super("Player", Pattern.compile("[~|!]?[\\w,]+"), "p");
 	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getHelp(){
-		return new String[]{};
-	}
-	
-	
-	/**
-	 * 
-	 * @return
-	 */
-	public Pattern getArgumentPattern(){
-		return Pattern.compile("(p):([~|!]?[\\w,]+)");
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void process( QueryParameters query, Matcher input, CommandSender sender ){
-		String[] playerNames = input.group(2).split(",");
+
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		String[] playerNames = input.split(",");
 		if(playerNames.length > 0){
 			for(String playerName : playerNames){
 				MatchRule match = MatchRule.INCLUDE;
@@ -57,13 +27,5 @@ public class PlayerParameter implements PrismParameterHandler {
 				query.addPlayerName( playerName, match );
 			}
 		}
-	}
-	
-	
-	/**
-	 * 
-	 */
-	public void defaultTo( QueryParameters query, CommandSender sender ){
-		return;
 	}
 }
