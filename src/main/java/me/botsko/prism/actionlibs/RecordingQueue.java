@@ -26,9 +26,16 @@ public class RecordingQueue {
 	 * @param a
 	 */
 	public static void addToQueue( final Handler a ){
+		
 		if(a == null) return;
+		
+		// some basic sanity checks
+		if( a.getPlayerName().trim().isEmpty() ) return;
+		
 		a.save();
+		
 		queue.add(a);
+		
 	}
 	
 	
