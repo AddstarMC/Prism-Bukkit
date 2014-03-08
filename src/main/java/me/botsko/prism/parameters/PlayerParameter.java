@@ -7,10 +7,19 @@ import org.bukkit.command.CommandSender;
 import java.util.regex.Pattern;
 
 public class PlayerParameter extends SimplePrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
 	public PlayerParameter() {
 		super("Player", Pattern.compile("[~|!]?[\\w,]+"), "p");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		String[] playerNames = input.split(",");
 		if(playerNames.length > 0){

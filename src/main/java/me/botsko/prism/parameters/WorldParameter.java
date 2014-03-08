@@ -10,10 +10,19 @@ import org.bukkit.entity.Player;
 import java.util.regex.Pattern;
 
 public class WorldParameter extends SimplePrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
 	public WorldParameter() {
 		super("World", Pattern.compile("[^\\s]+"), "w");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		String worldName = input;
 		if(worldName.equalsIgnoreCase("current")){
@@ -27,6 +36,10 @@ public class WorldParameter extends SimplePrismParameterHandler {
 		query.setWorld( worldName );
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void defaultTo( QueryParameters query, CommandSender sender ){
 		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
 		if( sender instanceof Player && !query.allowsNoRadius()){

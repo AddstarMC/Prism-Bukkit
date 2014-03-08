@@ -11,10 +11,19 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class BlockParameter extends SimplePrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
 	public BlockParameter() {
 		super("Block", Pattern.compile("[\\w,:]+"), "b");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		String[] blocks = input.split(",");
 		

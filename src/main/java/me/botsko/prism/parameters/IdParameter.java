@@ -7,10 +7,18 @@ import org.bukkit.command.CommandSender;
 import java.util.regex.Pattern;
 
 public class IdParameter extends SimplePrismParameterHandler {
+	
+	/**
+	 * 
+	 */
 	public IdParameter() {
-		super("ID", Pattern.compile("[\\d,]+"));
+		super("ID", Pattern.compile("[\\d,]+"), "id");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		
 		if( !TypeUtils.isNumeric( input ) ){
