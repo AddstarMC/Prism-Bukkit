@@ -12,10 +12,19 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class ActionParameter extends SimplePrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
 	public ActionParameter() {
 		super("Action", Pattern.compile("[~|!]?[\\w,-]+"), "a");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		
 		String[] actions = input.split(",");

@@ -7,10 +7,19 @@ import org.bukkit.command.CommandSender;
 import java.util.regex.Pattern;
 
 public class EntityParameter extends SimplePrismParameterHandler {
+	
+	
+	/**
+	 * 
+	 */
 	public EntityParameter() {
 		super("Entity", Pattern.compile("[~|!]?[\\w,]+"), "e");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		String[] entityNames = input.split(",");
 		if(entityNames.length > 0){

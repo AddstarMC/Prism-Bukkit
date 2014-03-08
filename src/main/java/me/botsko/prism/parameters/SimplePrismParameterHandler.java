@@ -9,33 +9,70 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public abstract class SimplePrismParameterHandler implements PrismParameterHandler {
+	
 	private final String name;
 	private final Pattern inputMatcher;
 	private final Set<String> aliases;
 
+	
+	/**
+	 * 
+	 * @param name
+	 * @param aliases
+	 */
 	public SimplePrismParameterHandler(String name, String... aliases) {
 		this(name, null, aliases);
 	}
 
+	
+	/**
+	 * 
+	 * @param name
+	 * @param inputMatcher
+	 * @param aliases
+	 */
 	public SimplePrismParameterHandler(String name, Pattern inputMatcher, String... aliases) {
 		this.name = name;
 		this.inputMatcher = inputMatcher;
 		// Set aliases to name + aliases
 		this.aliases = new HashSet<String>(Arrays.asList(aliases));
+		if( this.aliases.isEmpty() ){
+			this.aliases.add( this.name.toLowerCase() );
+		}
 	}
 
+	
+	/**
+	 * 
+	 */
 	@Override
 	public String getName() {
 		return name;
 	}
 
+	
+	/**
+	 * 
+	 */
 	@Override
 	public String[] getHelp() {
 		return new String[0];
 	}
 
+	
+	/**
+	 * 
+	 * @param query
+	 * @param alias
+	 * @param input
+	 * @param sender
+	 */
 	protected abstract void process(QueryParameters query, String alias, String input, CommandSender sender);
 
+	
+	/**
+	 * 
+	 */
 	@Override
 	public void process(QueryParameters query, String parameter, CommandSender sender) {
 		// Should never fail, applicable is called first
@@ -48,6 +85,10 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 		process(query, alias, input, sender);
 	}
 
+	
+	/**
+	 * 
+	 */
 	@Override
 	public boolean applicable(QueryParameters query, String parameter, CommandSender sender) {
 		String[] split = parameter.split(":", 2);
@@ -57,6 +98,10 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 		return aliases.contains(alias);
 	}
 
+	
+	/**
+	 * 
+	 */
 	@Override
 	public void defaultTo(QueryParameters query, CommandSender sender) {
 
