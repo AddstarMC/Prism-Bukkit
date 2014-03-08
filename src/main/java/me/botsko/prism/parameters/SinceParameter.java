@@ -11,10 +11,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.regex.Pattern;
 
 public class SinceParameter extends SimplePrismParameterHandler {
+	
+	/**
+	 * 
+	 */
 	public SinceParameter() {
-		super("Since", Pattern.compile("[\\w]+"), "t");
+		super("Since", Pattern.compile("[\\w]+"), "t", "since");
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		if(input.equalsIgnoreCase("none")){
 			query.setIgnoreTime(true);
@@ -28,6 +36,10 @@ public class SinceParameter extends SimplePrismParameterHandler {
 		}
 	}
 
+	
+	/**
+	 * 
+	 */
 	public void defaultTo( QueryParameters query, CommandSender sender ){
 		
 		if( query.getProcessType().equals(PrismProcessType.DELETE) ) return;
