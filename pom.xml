@@ -26,10 +26,10 @@
       <version>5.5.7-SNAPSHOT</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.tomcat</groupId>
-        <artifactId>com.springsource.org.apache.tomcat.jdbc</artifactId>
-        <version>1.0.9.3</version>
-    </dependency>
+	<groupId>org.apache.tomcat</groupId>
+		<artifactId>tomcat-jdbc</artifactId>
+		<version>7.0.52</version>
+	</dependency>
     <dependency>
        <groupId>org.dthielke</groupId>
        <artifactId>Herochat</artifactId>
@@ -48,16 +48,6 @@
     <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
-    </repository>
-    <repository>
-        <id>com.springsource.repository.bundles.release</id>
-        <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
-        <url>http://repository.springsource.com/maven/bundles/release</url>
-    </repository>
-    <repository>
-        <id>com.springsource.repository.bundles.external</id>
-        <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
-        <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
     <repository>
         <id>project.local</id>
@@ -127,8 +117,8 @@
           </filters>
           <artifactSet>
             <includes>
-            <include>org.apache.tomcat:com.springsource.org.apache.tomcat.jdbc</include>
-            <include>org.apache.juli:com.springsource.org.apache.juli.extras</include>
+            <include>org.apache.tomcat:tomcat-jdbc</include>
+            <include>org.apache.tomcat:tomcat-juli</include>
             <include>me.botsko:elixr:jar:*</include>
             </includes>
           </artifactSet>
