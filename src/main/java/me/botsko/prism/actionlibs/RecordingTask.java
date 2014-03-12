@@ -178,10 +178,8 @@ public class RecordingTask implements Runnable {
 		        	
 		        	Handler a = RecordingQueue.getQueue().poll();
 		        	
-		        	if( a == null ){
-		        		Prism.log("Action to be recorded was null.");
-		        		continue;
-		        	}
+		        	// poll() returns null if queue is empty
+		        	if( a == null ) break;
 		        	
 		        	int world_id = 0;
 		        	if( Prism.prismWorlds.containsKey(a.getWorldName()) ){
