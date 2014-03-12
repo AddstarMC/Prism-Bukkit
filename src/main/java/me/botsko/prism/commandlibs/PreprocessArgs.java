@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 public class PreprocessArgs {
 	
 	
-	
 	/**
 	 * 
 	 * @param args
@@ -59,7 +58,7 @@ public class PreprocessArgs {
 					if(entry.getValue().applicable(parameters, arg, sender)) {
 						handlerFound = true;
 						foundArgsList.add(new MatchedParam(entry.getValue(), arg));
-						foundArgsNames.add(entry.getValue().getName());
+						foundArgsNames.add(entry.getValue().getName().toLowerCase());
 					} else {
 						// We support an alternate player syntax so that people can use the tab-complete
 						// feature of minecraft. Using p: prevents it.
@@ -94,7 +93,7 @@ public class PreprocessArgs {
 			 */
 			if( useDefaults ){
 				for( Entry<String,PrismParameterHandler> entry : registeredParams.entrySet() ){
-					if( !foundArgsNames.contains(entry.getKey()) ){
+					if( !foundArgsNames.contains(entry.getKey().toLowerCase()) ){
 						entry.getValue().defaultTo(parameters, sender);
 					}
 				}
