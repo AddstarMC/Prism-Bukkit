@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,7 +23,8 @@ public class PrismWorldEvents implements Listener {
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onStructureGrow(final StructureGrowEvent event) {
 		String type = "tree-grow";
-		if (event.getSpecies().name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
+		TreeType species = event.getSpecies();
+		if ( species != null && species.name().toLowerCase().contains("mushroom")) type = "mushroom-grow";
 		if( !Prism.getIgnore().event(type,event.getWorld()) ) return;
 		for (BlockState block : event.getBlocks()) {
 			if(BlockUtils.isGrowableStructure( block.getType() )){
