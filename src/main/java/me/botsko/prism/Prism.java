@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueueDrain;
-import me.botsko.prism.actionlibs.InternalAffairs;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -727,7 +726,7 @@ public class Prism extends JavaPlugin {
 		    			prismPlayers.put( rs.getString(2), rs.getInt(1) );
 		    		}
 				} catch (SQLException e) {
-		//        	handleDatabaseException( e );
+		        	handleDatabaseException( e );
 		        } finally {
 		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
@@ -763,7 +762,7 @@ public class Prism extends JavaPlugin {
 		    			addPlayerName(playerName);
 		    		}
 				} catch (SQLException e) {
-		//        	handleDatabaseException( e );
+		        	e.printStackTrace();
 		        } finally {
 		        	if(rs != null) try { rs.close(); } catch (SQLException e) {}
 		        	if(s != null) try { s.close(); } catch (SQLException e) {}
