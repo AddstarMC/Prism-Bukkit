@@ -173,6 +173,7 @@ public class ReportCommand implements SubHandler {
 		// Process and validate all of the arguments
 		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
 		if(parameters == null){
+			call.getSender().sendMessage( Prism.messenger.playerError("You must specify parameters, at least one player.") );
 			return;
 		}
 		
@@ -239,7 +240,6 @@ public class ReportCommand implements SubHandler {
 		    			
 		    		}
 		        } catch (SQLException e) {
-		        	//
 		        	e.printStackTrace();
 		        } finally {
 		        	if(rs != null) try { rs.close(); } catch (SQLException ignored) {}
