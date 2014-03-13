@@ -175,9 +175,18 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 * 
 	 */
 	protected void playerCondition(){
-		// Player(s)
 		HashMap<String,MatchRule> playerNames = parameters.getPlayerNames();
-		addCondition( buildMultipleConditions( playerNames, "p.player", null ) );
+		if( playerNames.size() > 0 ){
+			
+			// Match the first rule, this needs to change, we can't include and exclude at the same time
+			MatchRule playerMatch = MatchRule.INCLUDE;
+			for( MatchRule match : playerNames.values() ){
+				playerMatch = match;
+				break;
+			}
+			String matchQuery = (playerMatch.equals(MatchRule.INCLUDE)?"IN":"NOT IN");
+			addCondition( tableNameData+".player_id "+matchQuery+" ( SELECT p.player_id FROM prism_players p WHERE " + buildMultipleConditions( playerNames, "p.player", null ) + ")" );
+		}
 	}
 	
 	
