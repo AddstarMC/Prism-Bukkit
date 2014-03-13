@@ -60,7 +60,6 @@ public class BlockReportQueryBuilder extends SelectQueryBuilder {
 			+ "FROM (("
 				+ "SELECT block_id, COUNT(id) AS placed, 0 AS broken "
 				+ "FROM prism_data "
-				+ "INNER JOIN prism_players p ON p.player_id = prism_data.player_id "
 				+ where() + " "
 				+ "GROUP BY block_id) ";
 		
@@ -71,7 +70,6 @@ public class BlockReportQueryBuilder extends SelectQueryBuilder {
 		sql	+= "UNION ( "
 				+ "SELECT block_id, 0 AS placed, count(id) AS broken "
 				+ "FROM prism_data "
-				+ "INNER JOIN prism_players p ON p.player_id = prism_data.player_id "
 				+ where() + " "
 				+ "GROUP BY block_id)) "
 			+ "AS PR_A "
