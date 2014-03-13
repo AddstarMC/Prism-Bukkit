@@ -55,7 +55,6 @@ public class ActionReportQueryBuilder extends SelectQueryBuilder {
 		String sql = "SELECT COUNT(*), a.action "
 		+ "FROM prism_data "
 		+ "INNER JOIN prism_actions a ON a.action_id = prism_data.action_id "
-		+ "INNER JOIN prism_players p ON p.player_id = prism_data.player_id "
 		+ where() + " "
 		+ "GROUP BY a.action_id "
 		+ "ORDER BY COUNT(*) DESC";
