@@ -724,8 +724,7 @@ public class Prism extends JavaPlugin {
 				try {
 		
 					conn = dbc();
-		    		s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN (?)" );
-		    		s.setString(1, "'"+TypeUtils.join(playerNames, "','")+"'");
+		    		s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN ('"+TypeUtils.join(playerNames, "','")+"')" );
 		    		rs = s.executeQuery();
 		
 		    		while( rs.next() ){
