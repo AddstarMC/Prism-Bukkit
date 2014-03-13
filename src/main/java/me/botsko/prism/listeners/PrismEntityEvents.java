@@ -155,6 +155,8 @@ public class PrismEntityEvents implements Listener {
 					RecordingQueue.addToQueue( ActionFactory.create("entity-kill", entity, name) );
 				}
 			} else {
+				
+				if( !Prism.getIgnore().event("entity-kill",entity.getWorld()) ) return;
 
 				String killer = "unknown";
 				EntityDamageEvent damage = entity.getLastDamageCause();
