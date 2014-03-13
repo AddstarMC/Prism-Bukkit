@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
 
@@ -15,10 +16,16 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.MatchRule;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
+import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.database.mysql.ActionReportQueryBuilder;
+import me.botsko.prism.database.mysql.BlockReportQueryBuilder;
 
 public class ReportCommand implements SubHandler {
 	
@@ -72,11 +79,11 @@ public class ReportCommand implements SubHandler {
 			}
 			
 			if( call.getArg(2).equals("blocks") ){
-				blockSumReports( call.getSender(), call.getArg(3) );
+				blockSumReports( call );
 			}
 			
 			if( call.getArg(2).equals("actions") ){
-				actionTypeCountReport( call.getSender(), call.getArg(3) );
+				actionTypeCountReport( call );
 			}
 		}
 	}
@@ -161,27 +168,37 @@ public class ReportCommand implements SubHandler {
 	 * 
 	 * @param sender
 	 */
-	protected void blockSumReports( final CommandSender sender, final String playerName ){
+	protected void blockSumReports( final CallInfo call ){
+		
+		// Process and validate all of the arguments
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
+		if(parameters == null){
+			return;
+		}
+		
+		// No actions
+		if( !parameters.getActionTypes().isEmpty() ){
+			call.getSender().sendMessage( Prism.messenger.playerError("You may not specify any action types for this report.") );
+			return;
+		}
 
-		final String sql = "SELECT block_id, SUM(placed) AS placed, SUM(broken) AS broken "
-				+ "FROM (("
-					+ "SELECT block_id, COUNT(id) AS placed, 0 AS broken "
-					+ "FROM prism_data d "
-					+ "INNER JOIN prism_players p ON p.player_id = d.player_id "
-					+ "INNER JOIN prism_actions a ON a.action_id = d.action_id "
-					+ "WHERE player = ? "
-					+ "AND action = 'block-place' "
-					+ "GROUP BY block_id) "
-				+ "UNION ( "
-					+ "SELECT block_id, 0 AS placed, count(id) AS broken "
-					+ "FROM prism_data d "
-					+ "INNER JOIN prism_players p ON p.player_id = d.player_id "
-					+ "INNER JOIN prism_actions a ON a.action_id = d.action_id "
-					+ "WHERE player = ? "
-					+ "AND action = 'block-break' "
-					+ "GROUP BY block_id)) "
-				+ "AS PR_A "
-				+ "GROUP BY block_id ORDER BY (SUM(placed) + SUM(broken)) DESC;";
+		// Verify single player name for now
+		HashMap<String,MatchRule> players = parameters.getPlayerNames();
+		if( players.size() != 1 ){
+			call.getSender().sendMessage( Prism.messenger.playerError("You must provide only a single player name.") );
+			return;
+		}
+		// Get single playername
+		String tempName = "";
+		for( String player : players.keySet() ){
+			tempName = player;
+			break;
+		}
+		final String playerName = tempName;
+		
+		
+		BlockReportQueryBuilder reportQuery = new BlockReportQueryBuilder(plugin);
+		final String sql = reportQuery.getQuery(parameters, false);
 		
 		final int colTextLen = 20;
 		final int colIntLen = 12;
@@ -192,7 +209,7 @@ public class ReportCommand implements SubHandler {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			public void run(){
 				
-				sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg("Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "...") );
+				call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "...") );
 
 				Connection conn = null;
 				PreparedStatement s = null;
@@ -201,13 +218,11 @@ public class ReportCommand implements SubHandler {
 
 					conn = Prism.dbc();
 		    		s = conn.prepareStatement(sql);
-		    		s.setString(1, playerName);
-		    		s.setString(2, playerName);
 		    		s.executeQuery();
 		    		rs = s.getResultSet();
 		    		
-		    		sender.sendMessage( Prism.messenger.playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName) );
-					sender.sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Block", colTextLen ) + TypeUtils.padStringRight( "Placed", colIntLen ) + TypeUtils.padStringRight( "Broken", colIntLen ) ) );
+		    		call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName) );
+		    		call.getSender().sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Block", colTextLen ) + TypeUtils.padStringRight( "Placed", colIntLen ) + TypeUtils.padStringRight( "Broken", colIntLen ) ) );
 
 		    		while(rs.next()){
 		    			
@@ -220,7 +235,7 @@ public class ReportCommand implements SubHandler {
 		    			String colPlaced = TypeUtils.padStringRight( ""+placed, colIntLen );
 		    			String colBroken = TypeUtils.padStringRight( ""+broken, colIntLen );
 		    			
-		    			sender.sendMessage( Prism.messenger.playerMsg( ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken ) );
+		    			call.getSender().sendMessage( Prism.messenger.playerMsg( ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken ) );
 		    			
 		    		}
 		        } catch (SQLException e) {
@@ -240,15 +255,37 @@ public class ReportCommand implements SubHandler {
 	 * 
 	 * @param sender
 	 */
-	protected void actionTypeCountReport( final CommandSender sender, final String playerName ){
+	protected void actionTypeCountReport( final CallInfo call ){
 
-		final String sql = "SELECT COUNT(*), a.action "
-				+ "FROM prism_data d "
-				+ "INNER JOIN prism_actions a ON a.action_id = d.action_id "
-				+ "INNER JOIN prism_players p ON p.player_id = d.player_id "
-				+ "WHERE player = ? "
-				+ "GROUP BY a.action_id "
-				+ "ORDER BY COUNT(*) DESC;";
+		// Process and validate all of the arguments
+		final QueryParameters parameters = PreprocessArgs.process( plugin, call.getSender(), call.getArgs(), PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults") );
+		if(parameters == null){
+			return;
+		}
+		
+		// No actions
+		if( !parameters.getActionTypes().isEmpty() ){
+			call.getSender().sendMessage( Prism.messenger.playerError("You may not specify any action types for this report.") );
+			return;
+		}
+
+		// Verify single player name for now
+		HashMap<String,MatchRule> players = parameters.getPlayerNames();
+		if( players.size() != 1 ){
+			call.getSender().sendMessage( Prism.messenger.playerError("You must provide only a single player name.") );
+			return;
+		}
+		// Get single playername
+		String tempName = "";
+		for( String player : players.keySet() ){
+			tempName = player;
+			break;
+		}
+		final String playerName = tempName;
+		
+		
+		ActionReportQueryBuilder reportQuery = new ActionReportQueryBuilder(plugin);
+		final String sql = reportQuery.getQuery(parameters, false);
 		
 		final int colTextLen = 16;
 		final int colIntLen = 12;
@@ -259,7 +296,7 @@ public class ReportCommand implements SubHandler {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable(){
 			public void run(){
 				
-				sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg("Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "...") );
+				call.getSender().sendMessage( Prism.messenger.playerSubduedHeaderMsg("Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "...") );
 
 				Connection conn = null;
 				PreparedStatement s = null;
@@ -268,12 +305,10 @@ public class ReportCommand implements SubHandler {
 
 					conn = Prism.dbc();
 		    		s = conn.prepareStatement(sql);
-		    		s.setString(1, playerName);
 		    		s.executeQuery();
 		    		rs = s.getResultSet();
 		    		
-//		    		sender.sendMessage( Prism.messenger.playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName) );
-					sender.sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Action", colTextLen ) + TypeUtils.padStringRight( "Count", colIntLen ) ) );
+		    		call.getSender().sendMessage( Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Action", colTextLen ) + TypeUtils.padStringRight( "Count", colIntLen ) ) );
 
 		    		while(rs.next()){
 		    			
@@ -283,7 +318,7 @@ public class ReportCommand implements SubHandler {
 		    			String colAlias = TypeUtils.padStringRight( action, colTextLen );
 		    			String colPlaced = TypeUtils.padStringRight( ""+count, colIntLen );
 		    			
-		    			sender.sendMessage( Prism.messenger.playerMsg( ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced ) );
+		    			call.getSender().sendMessage( Prism.messenger.playerMsg( ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced ) );
 		    			
 		    		}
 		        } catch (SQLException e) {
