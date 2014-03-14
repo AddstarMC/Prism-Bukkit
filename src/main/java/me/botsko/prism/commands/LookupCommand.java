@@ -1,8 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -15,9 +12,11 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LookupCommand implements SubHandler {
 	
@@ -131,4 +130,9 @@ public class LookupCommand implements SubHandler {
 			}
 		});
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }

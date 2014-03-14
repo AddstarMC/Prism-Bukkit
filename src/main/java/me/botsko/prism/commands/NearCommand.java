@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.List;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
@@ -12,6 +10,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+
+import java.util.List;
 
 public class NearCommand implements SubHandler {
 	
@@ -99,4 +99,9 @@ public class NearCommand implements SubHandler {
 			}
 		});
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }

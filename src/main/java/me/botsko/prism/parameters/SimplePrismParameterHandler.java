@@ -3,9 +3,7 @@ package me.botsko.prism.parameters;
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public abstract class SimplePrismParameterHandler implements PrismParameterHandler {
@@ -46,7 +44,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 	 * 
 	 */
 	@Override
-	public String getName() {
+	public final String getName() {
 		return name;
 	}
 
@@ -74,7 +72,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 	 * 
 	 */
 	@Override
-	public void process(QueryParameters query, String parameter, CommandSender sender) {
+	public final void process(QueryParameters query, String parameter, CommandSender sender) {
 		// Should never fail, applicable is called first
 		String[] split = parameter.split(":", 2);
 		String alias = split[0];
@@ -90,7 +88,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 	 * 
 	 */
 	@Override
-	public boolean applicable(QueryParameters query, String parameter, CommandSender sender) {
+	public final boolean applicable(String parameter, CommandSender sender) {
 		String[] split = parameter.split(":", 2);
 		if(split.length != 2)
 			return false;
@@ -106,4 +104,22 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 	public void defaultTo(QueryParameters query, CommandSender sender) {
 
 	}
+
+    @Override
+    public final List<String> tabComplete(String partialParameter, CommandSender sender) {
+        // Should never fail, applicable is called first
+        String[] split = partialParameter.split(":", 2);
+        String alias = split[0];
+        String input = split[1];
+        List<String> completions = tabComplete(alias, input, sender);
+        List<String> edited = new ArrayList<String>(completions.size());
+        for (String completion : completions) {
+            edited.add(alias + ":" + completion);
+        }
+        return edited;
+    }
+
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        return null;
+    }
 }

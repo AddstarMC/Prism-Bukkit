@@ -1,16 +1,15 @@
 package me.botsko.prism.commandlibs;
 
-import java.util.*;
-import java.util.Map.Entry;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.parameters.PrismParameterHandler;
-
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 public class PreprocessArgs {
 	
@@ -55,7 +54,7 @@ public class PreprocessArgs {
 				
 				// Match command argument to parameter handler
 				for( Entry<String,PrismParameterHandler> entry : registeredParams.entrySet() ){
-					if(entry.getValue().applicable(parameters, arg, sender)) {
+					if(entry.getValue().applicable(arg, sender)) {
 						handlerFound = true;
 						foundArgsList.add(new MatchedParam(entry.getValue(), arg));
 						foundArgsNames.add(entry.getValue().getName().toLowerCase());
@@ -120,8 +119,37 @@ public class PreprocessArgs {
 		return parameters;
 	}
 
-	
-	/**
+    public static List<String> complete(CommandSender sender, String[] args, int arg) {
+        // Iterate all command arguments
+        if (args == null || args.length <= arg) {
+            return null;
+        }
+
+        return complete(sender, args[arg]);
+    }
+
+    public static List<String> complete(CommandSender sender, String[] args) {
+        return complete(sender, args, args.length - 1);
+    }
+
+    public static List<String> complete(CommandSender sender, String arg) {
+        if (arg.isEmpty()) return  null;
+
+        // Load registered parameters
+        HashMap<String,PrismParameterHandler> registeredParams = Prism.getParameters();
+
+        // Match command argument to parameter handler
+        for( Entry<String,PrismParameterHandler> entry : registeredParams.entrySet() ){
+            if(entry.getValue().applicable(arg, sender)) {
+                return entry.getValue().tabComplete(arg, sender);
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
 	 * 
 	 */
 	private static class MatchedParam {

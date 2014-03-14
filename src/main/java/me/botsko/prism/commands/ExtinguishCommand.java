@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -9,6 +7,9 @@ import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksExtinguishEvent;
 import me.botsko.prism.utils.BlockUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExtinguishCommand implements SubHandler {
 	
@@ -67,4 +68,9 @@ public class ExtinguishCommand implements SubHandler {
 			call.getPlayer().sendMessage(Prism.messenger.playerError("No fires found within that radius to extinguish."));
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }

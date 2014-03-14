@@ -1,14 +1,14 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-
 import me.botsko.elixr.ChunkUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewCommand implements SubHandler {
 	
@@ -71,4 +71,9 @@ public class ViewCommand implements SubHandler {
 		call.getSender().sendMessage( Prism.messenger.playerError("Invalid view option. Use /prism ? for help.") );
 		
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }

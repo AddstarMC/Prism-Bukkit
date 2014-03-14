@@ -1,12 +1,37 @@
 package me.botsko.prism;
 
+import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import me.botsko.elixr.MaterialAliases;
+import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.actionlibs.*;
+import me.botsko.prism.appliers.PreviewSession;
+import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
+import me.botsko.prism.commands.PrismCommands;
+import me.botsko.prism.commands.WhatCommand;
+import me.botsko.prism.listeners.*;
+import me.botsko.prism.listeners.self.PrismMiscEvents;
+import me.botsko.prism.measurement.Metrics;
+import me.botsko.prism.measurement.QueueStats;
+import me.botsko.prism.measurement.TimeTaken;
+import me.botsko.prism.monitors.OreMonitor;
+import me.botsko.prism.monitors.UseMonitor;
+import me.botsko.prism.parameters.*;
+import me.botsko.prism.purge.PurgeManager;
+import me.botsko.prism.wands.Wand;
+import org.apache.tomcat.jdbc.pool.DataSource;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
+
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,65 +41,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
-
-import me.botsko.elixr.MaterialAliases;
-import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.actionlibs.QueueDrain;
-import me.botsko.prism.actionlibs.RecordingTask;
-import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import me.botsko.prism.actionlibs.HandlerRegistry;
-import me.botsko.prism.actionlibs.Ignore;
-import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
-import me.botsko.prism.commands.PrismCommands;
-import me.botsko.prism.commands.WhatCommand;
-import me.botsko.prism.listeners.PrismBlockEvents;
-import me.botsko.prism.listeners.PrismBlockPhysicsEvent;
-import me.botsko.prism.listeners.PrismChannelChatEvents;
-import me.botsko.prism.listeners.PrismCustomEvents;
-import me.botsko.prism.listeners.PrismEntityEvents;
-import me.botsko.prism.listeners.PrismInventoryEvents;
-import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
-import me.botsko.prism.listeners.PrismPlayerEvents;
-import me.botsko.prism.listeners.PrismVehicleEvents;
-import me.botsko.prism.listeners.PrismWorldEvents;
-import me.botsko.prism.listeners.self.PrismMiscEvents;
-import me.botsko.prism.measurement.Metrics;
-import me.botsko.prism.measurement.QueueStats;
-import me.botsko.prism.measurement.TimeTaken;
-import me.botsko.prism.monitors.OreMonitor;
-import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.ActionParameter;
-import me.botsko.prism.parameters.BeforeParameter;
-import me.botsko.prism.parameters.BlockParameter;
-import me.botsko.prism.parameters.EntityParameter;
-import me.botsko.prism.parameters.FlagParameter;
-import me.botsko.prism.parameters.IdParameter;
-import me.botsko.prism.parameters.KeywordParameter;
-import me.botsko.prism.parameters.PlayerParameter;
-import me.botsko.prism.parameters.PrismParameterHandler;
-import me.botsko.prism.parameters.RadiusParameter;
-import me.botsko.prism.parameters.SinceParameter;
-import me.botsko.prism.parameters.WorldParameter;
-import me.botsko.prism.purge.PurgeManager;
-import me.botsko.prism.wands.Wand;
-
-import org.apache.tomcat.jdbc.pool.DataSource;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 public class Prism extends JavaPlugin {
 
@@ -265,8 +231,9 @@ public class Prism extends JavaPlugin {
 			getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
 
 			// Add commands
-			getCommand("prism").setExecutor((CommandExecutor) new PrismCommands(this));
-			getCommand("what").setExecutor((CommandExecutor) new WhatCommand(this));
+			getCommand("prism").setExecutor(new PrismCommands(this));
+			getCommand("prism").setTabCompleter(new PrismCommands(this));
+			getCommand("what").setExecutor(new WhatCommand(this));
 			
 			// Register official parameters
 			registerParameter( new ActionParameter() );

@@ -1,9 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
-import org.bukkit.ChatColor;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -11,6 +7,10 @@ import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.Wand;
+import org.bukkit.ChatColor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SetmyCommand implements SubHandler {
 	
@@ -155,5 +155,10 @@ public class SetmyCommand implements SubHandler {
             }
         }
         call.getPlayer().sendMessage( Prism.messenger.playerError("Invalid arguments. Use /prism ? for help.") );
+    }
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
     }
 }
