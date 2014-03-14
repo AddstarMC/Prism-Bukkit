@@ -1,19 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentSkipListMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.scheduler.BukkitScheduler;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -26,6 +12,22 @@ import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.database.mysql.ActionReportQueryBuilder;
 import me.botsko.prism.database.mysql.BlockReportQueryBuilder;
+import me.botsko.prism.utils.MiscUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class ReportCommand implements SubHandler {
 	
@@ -33,15 +35,23 @@ public class ReportCommand implements SubHandler {
 	 * 
 	 */
 	private final Prism plugin;
-	
-	
-	/**
+    private final List<String> secondaries, sumTertiaries;
+
+
+    /**
 	 * 
 	 * @param plugin
 	 * @return 
 	 */
 	public ReportCommand(Prism plugin) {
 		this.plugin = plugin;
+        secondaries = new ArrayList<String>();
+        secondaries.add("queue");
+        secondaries.add("db");
+        secondaries.add("sum");
+        sumTertiaries = new ArrayList<String>();
+        sumTertiaries.add("blocks");
+        sumTertiaries.add("actions");
 	}
 	
 	
@@ -87,9 +97,23 @@ public class ReportCommand implements SubHandler {
 			}
 		}
 	}
-	
-	
-	/**
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        if(call.getArgs().length == 2) {
+            return MiscUtils.getStartingWith(call.getArg(1), secondaries);
+        }
+        if(call.getArg(1).equals("sum")) {
+            if(call.getArgs().length == 3) {
+                return MiscUtils.getStartingWith(call.getArg(2), sumTertiaries);
+            }
+            return PreprocessArgs.complete(call.getSender(), call.getArgs());
+        }
+        return null;
+    }
+
+
+    /**
 	 * 
 	 * @param sender
 	 */

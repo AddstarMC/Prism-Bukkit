@@ -1,21 +1,17 @@
 package me.botsko.prism.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-
 import me.botsko.elixr.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.ItemUtils;
-import me.botsko.prism.wands.InspectorWand;
-import me.botsko.prism.wands.ProfileWand;
-import me.botsko.prism.wands.QueryWandBase;
-import me.botsko.prism.wands.RestoreWand;
-import me.botsko.prism.wands.RollbackWand;
-import me.botsko.prism.wands.Wand;
+import me.botsko.prism.wands.*;
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+
+import java.util.List;
 
 public class WandCommand implements SubHandler {
 	
@@ -243,4 +239,9 @@ public class WandCommand implements SubHandler {
 			}
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }

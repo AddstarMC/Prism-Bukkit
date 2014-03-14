@@ -7,6 +7,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class FlagParameter implements PrismParameterHandler {
@@ -34,8 +36,8 @@ public class FlagParameter implements PrismParameterHandler {
 	 * 
 	 */
 	@Override
-	public boolean applicable(QueryParameters query, String parameter, CommandSender sender) {
-		return Pattern.compile("(-)([^\\s]+)").matcher(parameter).matches();
+	public boolean applicable(String parameter, CommandSender sender) {
+		return Pattern.compile("(-)([^\\s]+)?").matcher(parameter).matches();
 	}
 
 	
@@ -88,4 +90,47 @@ public class FlagParameter implements PrismParameterHandler {
 	public void defaultTo(QueryParameters query, CommandSender sender) {
 
 	}
+
+    @Override
+    public List<String> tabComplete(String partialParameter, CommandSender sender) {
+        String[] flagComponents = partialParameter.substring(1).split("=", 2);
+        Flag flag;
+        String name = flagComponents[0].replace("-", "_").toUpperCase();
+        try {
+            flag = Flag.valueOf(name);
+        } catch (IllegalArgumentException ex) {
+            List<String> completions = new ArrayList<String>();
+            for (Flag possibleFlag : Flag.values()) {
+                String flagName = possibleFlag.toString();
+                if(flagName.startsWith(name)) {
+                    completions.add("-" + flagName.replace('_', '-').toLowerCase());
+                }
+            }
+            return completions;
+        }
+
+        // Flag has a value
+        if (flagComponents.length <= 1) {
+            return null;
+        }
+
+        String prefix = "-" + flag.toString().replace('_', '-').toLowerCase() + "=";
+        if (flag.equals(Flag.SHARE)){
+            String value = flagComponents[1];
+            int end = value.lastIndexOf(',');
+            String partialName = value;
+            if (end != -1) {
+                partialName = value.substring(end + 1);
+                prefix = prefix + value.substring(0, end) + ",";
+            }
+            partialName = partialName.toLowerCase();
+            List<String> completions = new ArrayList<String>();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                if(player.getName().toLowerCase().startsWith(partialName))
+                    completions.add(prefix + player.getName());
+            }
+            return completions;
+        }
+        return null;
+    }
 }

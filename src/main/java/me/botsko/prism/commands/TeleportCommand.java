@@ -1,10 +1,5 @@
 package me.botsko.prism.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -13,6 +8,12 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class TeleportCommand implements SubHandler {
 	
@@ -137,4 +138,9 @@ public class TeleportCommand implements SubHandler {
 			call.getPlayer().sendMessage( Prism.messenger.playerSubduedHeaderMsg( "Teleporting... " + ChatColor.WHITE + destinationAction.getType().getName() + ChatColor.GRAY + " by " + ChatColor.WHITE + destinationAction.getPlayerName() + ChatColor.GRAY + ", " + ChatColor.WHITE + destinationAction.getTimeSince()  ) );
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }
