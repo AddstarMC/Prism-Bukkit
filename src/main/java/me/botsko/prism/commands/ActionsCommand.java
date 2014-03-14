@@ -1,17 +1,17 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class ActionsCommand implements SubHandler {
 	
@@ -22,9 +22,14 @@ public class ActionsCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		help(call.getSender());
 	}
-	
-	
-	/**
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
+
+
+    /**
 	 * Display param help
 	 * @param sender
 	 */

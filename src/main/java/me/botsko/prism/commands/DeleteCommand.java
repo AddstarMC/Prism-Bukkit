@@ -1,11 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitTask;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -16,6 +10,12 @@ import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.purge.PurgeChunkingUtil;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
+import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitTask;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DeleteCommand implements SubHandler {
 	
@@ -131,4 +131,9 @@ public class DeleteCommand implements SubHandler {
 			call.getSender().sendMessage( Prism.messenger.playerError("You must supply at least one parameter." ));
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }

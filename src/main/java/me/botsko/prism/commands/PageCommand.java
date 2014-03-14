@@ -1,10 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
@@ -13,6 +8,10 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public class PageCommand implements SubHandler {
 	
@@ -115,4 +114,9 @@ public class PageCommand implements SubHandler {
 			result_count++;
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }
