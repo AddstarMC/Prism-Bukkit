@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -12,6 +10,9 @@ import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RollbackCommand implements SubHandler {
 	
@@ -81,4 +82,9 @@ public class RollbackCommand implements SubHandler {
 			}
 		});
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }

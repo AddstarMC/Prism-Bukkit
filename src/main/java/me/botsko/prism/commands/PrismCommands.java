@@ -5,6 +5,8 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
 
+import java.util.List;
+
 public class PrismCommands extends Executor {
 
 	
@@ -188,6 +190,12 @@ public class PrismCommands extends Executor {
             	prism.reloadConfig();
 				call.getSender().sendMessage( Prism.messenger.playerHeaderMsg("Configuration reloaded successfully.") );
             }
-		});
+
+            @Override
+            public List<String> handleComplete(CallInfo call) {
+                return null;
+            }
+        });
 	}
+
 }

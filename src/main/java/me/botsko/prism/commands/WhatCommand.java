@@ -10,6 +10,8 @@ import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.ItemUtils;
 
+import java.util.List;
+
 public class WhatCommand extends Executor {
 
 	
@@ -48,6 +50,11 @@ public class WhatCommand extends Executor {
         		call.getPlayer().sendMessage( Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA + ItemUtils.getItemFullNiceName( item, Prism.getItems() ) ) );
         		
             }
-		});
+
+            @Override
+            public List<String> handleComplete(CallInfo call) {
+                return null;
+            }
+        });
 	}
 }

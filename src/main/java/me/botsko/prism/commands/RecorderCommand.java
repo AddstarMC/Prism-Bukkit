@@ -1,10 +1,11 @@
 package me.botsko.prism.commands;
 
-import java.sql.Connection;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+
+import java.sql.Connection;
+import java.util.List;
 
 public class RecorderCommand implements SubHandler {
 	
@@ -80,4 +81,9 @@ public class RecorderCommand implements SubHandler {
 			return;
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
 }

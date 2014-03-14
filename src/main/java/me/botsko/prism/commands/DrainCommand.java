@@ -1,9 +1,5 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
-import org.bukkit.ChatColor;
-
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -11,6 +7,10 @@ import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.utils.BlockUtils;
+import org.bukkit.ChatColor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrainCommand implements SubHandler {
 	
@@ -98,9 +98,14 @@ public class DrainCommand implements SubHandler {
 			call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to drain within that radius."));
 		}
 	}
-	
-	
-	/**
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
+
+
+    /**
 	 * 
 	 * @param call
 	 * @return

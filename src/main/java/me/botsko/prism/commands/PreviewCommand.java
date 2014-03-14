@@ -1,20 +1,17 @@
 package me.botsko.prism.commands;
 
-import java.util.ArrayList;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.appliers.Previewable;
-import me.botsko.prism.appliers.PrismApplierCallback;
-import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.appliers.Restore;
-import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.appliers.*;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.MiscUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PreviewCommand implements SubHandler {
 	
@@ -22,6 +19,8 @@ public class PreviewCommand implements SubHandler {
 	 * 
 	 */
 	private final Prism plugin;
+
+    private final List<String> secondaries;
 	
 	
 	/**
@@ -31,7 +30,14 @@ public class PreviewCommand implements SubHandler {
 	 */
 	public PreviewCommand(Prism plugin) {
 		this.plugin = plugin;
-	}
+        secondaries = new ArrayList<String>();
+        secondaries.add("apply");
+        secondaries.add("cancel");
+        secondaries.add("rollback");
+        secondaries.add("restore");
+        secondaries.add("rb");
+        secondaries.add("rs");
+    }
 	
 	
 	/**
@@ -143,4 +149,12 @@ public class PreviewCommand implements SubHandler {
 			
 		}
 	}
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        if(call.getArgs().length == 2) {
+            return MiscUtils.getStartingWith(call.getArg(1), secondaries);
+        }
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }

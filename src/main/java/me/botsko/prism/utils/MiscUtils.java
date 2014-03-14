@@ -1,15 +1,16 @@
 package me.botsko.prism.utils;
 
+import com.helion3.pste.api.Paste;
+import com.helion3.pste.api.PsteApi;
+import com.helion3.pste.api.Results;
+import me.botsko.prism.Prism;
+import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
-import com.helion3.pste.api.Paste;
-import com.helion3.pste.api.PsteApi;
-import com.helion3.pste.api.Results;
-
-import me.botsko.prism.Prism;
-import me.botsko.prism.appliers.PrismProcessType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MiscUtils {
 	
@@ -101,4 +102,26 @@ public class MiscUtils {
 			return Prism.messenger.playerError("Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
 		}
 	}
+
+    public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
+        List<String> result = new ArrayList<String>();
+        if(caseSensitive) {
+            for (String option : options) {
+                if(option.startsWith(start))
+                    result.add(option);
+            }
+        } else {
+            start = start.toLowerCase();
+            for (String option : options) {
+                if(option.toLowerCase().startsWith(start))
+                    result.add(option);
+            }
+        }
+
+        return result;
+    }
+
+    public static List<String> getStartingWith(String arg, Iterable<String> options) {
+        return getStartingWith(arg, options, true);
+    }
 }

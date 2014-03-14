@@ -1,12 +1,13 @@
 package me.botsko.prism.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
+import java.util.List;
 
 public class FlagsCommand implements SubHandler {
 	
@@ -17,9 +18,14 @@ public class FlagsCommand implements SubHandler {
 	public void handle(CallInfo call) {
 		help(call.getSender());
 	}
-	
-	
-	/**
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return null;
+    }
+
+
+    /**
 	 * Display param help
 	 * @param sender
 	 */
