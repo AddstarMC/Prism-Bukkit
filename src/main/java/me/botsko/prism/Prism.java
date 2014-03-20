@@ -769,7 +769,7 @@ public class Prism extends JavaPlugin {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
 		} catch (SQLException e) {
-        	
+		    e.printStackTrace();
         } finally {
         	if(rs != null) try { rs.close(); } catch (SQLException e) {}
         	if(s != null) try { s.close(); } catch (SQLException e) {}
