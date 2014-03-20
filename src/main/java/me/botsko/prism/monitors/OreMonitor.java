@@ -62,7 +62,7 @@ public class OreMonitor {
 			return;
 		}
 
-		if( player.getGameMode().equals(GameMode.CREATIVE) ){
+		if( player == null || player.getGameMode() == null || player.getGameMode().equals(GameMode.CREATIVE) ){
 			return;
 		}
 			
