@@ -118,12 +118,17 @@ public class RecordingTask implements Runnable {
 	 * @return
 	 */
 	protected static int getPlayerPrimaryKey( String playerName ){
-    	if( Prism.prismPlayers.containsKey(playerName) ){
-    		return Prism.prismPlayers.get(playerName);
-    	} else {
-    		Prism.cachePlayerPrimaryKey(playerName);
-    		return Prism.prismPlayers.get(playerName);
-    	}
+	    try {
+        	if( Prism.prismPlayers.containsKey(playerName) ){
+        		return Prism.prismPlayers.get(playerName);
+        	} else {
+        		Prism.cachePlayerPrimaryKey(playerName);
+        		return Prism.prismPlayers.get(playerName);
+        	}
+	    } catch (Exception e){
+	        e.printStackTrace();
+	        return 0;
+	    }
 	}
 	
 	
