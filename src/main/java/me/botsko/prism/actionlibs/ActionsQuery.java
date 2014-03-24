@@ -183,19 +183,13 @@ public class ActionsQuery {
 	    				
 	    				actions.add(baseHandler);
 	    				
-	    			} catch (JsonSyntaxException e) {
-	    				if( !rs.isClosed() ){
-		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
-	    	        	}
-	    	        	Prism.log( e.getMessage() );
                     } catch (Exception e) {
 	    	        	if( !rs.isClosed() ){
 		    	        	Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:" );
 	    	        	}
-	    	        	Prism.log( e.getMessage() );
+	    	        	e.printStackTrace();
                     }
 	    		}
-	            
 	        } catch (SQLException e) {
 	        	plugin.handleDatabaseException( e );
 	        } finally {
