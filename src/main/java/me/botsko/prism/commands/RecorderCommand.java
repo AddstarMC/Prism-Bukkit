@@ -7,6 +7,9 @@ import me.botsko.prism.commandlibs.SubHandler;
 import java.sql.Connection;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitScheduler;
+
 public class RecorderCommand implements SubHandler {
 	
 	/**
@@ -35,9 +38,18 @@ public class RecorderCommand implements SubHandler {
 			return;
 		}
 		
+		boolean recorderActive = false;
+        if( plugin.recordingTask != null ){
+            int taskId = plugin.recordingTask.getTaskId();
+            BukkitScheduler scheduler = Bukkit.getScheduler();
+            if( scheduler.isCurrentlyRunning(taskId) || scheduler.isQueued(taskId) ){
+                recorderActive = true;
+            }
+        }
+		
 		// Allow for canceling recorders
 		if( call.getArg(1).equals("cancel") ){
-			if( plugin.recordingTask != null ){
+			if( recorderActive ){
 				plugin.recordingTask.cancel();
 				plugin.recordingTask = null;
 				call.getSender().sendMessage( Prism.messenger.playerMsg("Current recording task has been canceled.") );
@@ -50,7 +62,7 @@ public class RecorderCommand implements SubHandler {
 		
 		// Allow for force-restarting recorders
 		if( call.getArg(1).equals("start") ){
-			if( plugin.recordingTask != null ){
+			if( recorderActive ){
 				call.getSender().sendMessage( Prism.messenger.playerError("Recording tasks are currently running. Cannot start.") );
 			} else {
 				
