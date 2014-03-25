@@ -9,241 +9,245 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
 public interface Handler {
-	
-	/**
-	 * 
-	 * @param pl
-	 */
-	public abstract void setPlugin( Plugin pl );
 
-	/**
-	 * @return the id
-	 */
-	public abstract int getId();
+    /**
+     * 
+     * @param pl
+     */
+    public abstract void setPlugin(Plugin pl);
 
-	/**
-	 * @param id the id to set
-	 */
-	public abstract void setId(int id);
+    /**
+     * @return the id
+     */
+    public abstract int getId();
 
-	/**
-	 * @return the action_time
-	 */
-	public abstract String getUnixEpoch();
+    /**
+     * @param id
+     *            the id to set
+     */
+    public abstract void setId(int id);
 
-	/**
-	 * @return the display_date
-	 */
-	public abstract String getDisplayDate();
+    /**
+     * @return the action_time
+     */
+    public abstract String getUnixEpoch();
 
-	/**
-	 * @return the display_time
-	 */
-	public abstract String getDisplayTime();
+    /**
+     * @return the display_date
+     */
+    public abstract String getDisplayDate();
 
-	/**
-	 * @param display_time the display_time to set
-	 */
-	public abstract void setUnixEpoch(String epoch);
+    /**
+     * @return the display_time
+     */
+    public abstract String getDisplayTime();
 
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract String getTimeSince();
+    /**
+     * @param display_time
+     *            the display_time to set
+     */
+    public abstract void setUnixEpoch(String epoch);
 
-	/**
-	 * @return the action_type
-	 */
-	public abstract ActionType getType();
+    /**
+     * 
+     * @return
+     */
+    public abstract String getTimeSince();
 
-	/**
-	 * 
-	 * @param type
-	 */
-	public abstract void setType(ActionType type);
+    /**
+     * @return the action_type
+     */
+    public abstract ActionType getType();
 
-	/**
-	 * @return the world_name
-	 */
-	public abstract String getWorldName();
+    /**
+     * 
+     * @param type
+     */
+    public abstract void setType(ActionType type);
 
-	/**
-	 * @param world_name the world_name to set
-	 */
-	public abstract void setWorldName(String world_name);
+    /**
+     * @return the world_name
+     */
+    public abstract String getWorldName();
 
-	/**
-	 * @return the player_name
-	 */
-	public abstract String getPlayerName();
+    /**
+     * @param world_name
+     *            the world_name to set
+     */
+    public abstract void setWorldName(String world_name);
 
-	/**
-	 * @param player_name the player_name to set
-	 */
-	public abstract void setPlayerName(String player_name);
+    /**
+     * @return the player_name
+     */
+    public abstract String getPlayerName();
 
-	/**
-	 * @return the x
-	 */
-	public abstract double getX();
+    /**
+     * @param player_name
+     *            the player_name to set
+     */
+    public abstract void setPlayerName(String player_name);
 
-	/**
-	 * @param x the x to set
-	 */
-	public abstract void setX(double x);
+    /**
+     * @return the x
+     */
+    public abstract double getX();
 
-	/**
-	 * @return the y
-	 */
-	public abstract double getY();
+    /**
+     * @param x
+     *            the x to set
+     */
+    public abstract void setX(double x);
 
-	/**
-	 * @param y the y to set
-	 */
-	public abstract void setY(double y);
+    /**
+     * @return the y
+     */
+    public abstract double getY();
 
-	/**
-	 * @return the z
-	 */
-	public abstract double getZ();
+    /**
+     * @param y
+     *            the y to set
+     */
+    public abstract void setY(double y);
 
-	/**
-	 * @param z the z to set
-	 */
-	public abstract void setZ(double z);
+    /**
+     * @return the z
+     */
+    public abstract double getZ();
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public abstract void setBlockId(int id);
+    /**
+     * @param z
+     *            the z to set
+     */
+    public abstract void setZ(double z);
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public abstract void setBlockSubId(int id);
+    /**
+     * 
+     * @param id
+     */
+    public abstract void setBlockId(int id);
 
-	/**
-	 * 
-	 */
-	public abstract int getBlockId();
+    /**
+     * 
+     * @param id
+     */
+    public abstract void setBlockSubId(int id);
 
-	/**
-	 * 
-	 */
-	public abstract int getBlockSubId();
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public abstract void setOldBlockId(int id);
-
-	/**
-	 * 
-	 * @param id
-	 */
-	public abstract void setOldBlockSubId(int id);
-
-	/**
+    /**
 	 * 
 	 */
-	public abstract int getOldBlockId();
+    public abstract int getBlockId();
 
-	/**
+    /**
 	 * 
 	 */
-	public abstract int getOldBlockSubId();
+    public abstract int getBlockSubId();
 
-	/**
-	 * @return the data
-	 */
-	public abstract String getData();
+    /**
+     * 
+     * @param id
+     */
+    public abstract void setOldBlockId(int id);
 
-	/**
-	 * @param data the data to set
-	 */
-	public abstract void setData(String data);
+    /**
+     * 
+     * @param id
+     */
+    public abstract void setOldBlockSubId(int id);
 
-	/**
-	 * 
-	 * @param m
-	 */
-	public abstract void setMaterialAliases(MaterialAliases m);
-
-	/**
-	 * 
-	 * @param aggregateCount
-	 */
-	public abstract void setAggregateCount(int aggregateCount);
-
-	/**
-	 * 
-	 * @return
-	 */
-	public abstract int getAggregateCount();
-
-	/**
+    /**
 	 * 
 	 */
-	public abstract String getNiceName();
-	
-	/**
+    public abstract int getOldBlockId();
+
+    /**
 	 * 
 	 */
-	public abstract void save();
-	
-	
-	/**
+    public abstract int getOldBlockSubId();
+
+    /**
+     * @return the data
+     */
+    public abstract String getData();
+
+    /**
+     * @param data
+     *            the data to set
+     */
+    public abstract void setData(String data);
+
+    /**
+     * 
+     * @param m
+     */
+    public abstract void setMaterialAliases(MaterialAliases m);
+
+    /**
+     * 
+     * @param aggregateCount
+     */
+    public abstract void setAggregateCount(int aggregateCount);
+
+    /**
+     * 
+     * @return
+     */
+    public abstract int getAggregateCount();
+
+    /**
+	 * 
+	 */
+    public abstract String getNiceName();
+
+    /**
+	 * 
+	 */
+    public abstract void save();
+
+    /**
 	 *
 	 */
-	public abstract boolean isCanceled();
-	
-	
-	/**
-	 * 
-	 * @param cancel
-	 */
-	public abstract void setCanceled( boolean cancel );
-	
-	
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	public abstract ChangeResult applyRollback(  Player player, QueryParameters parameters, boolean is_preview );
-	
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	public abstract ChangeResult applyRestore(  Player player, QueryParameters parameters, boolean is_preview );
-	
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	public abstract ChangeResult applyUndo(  Player player, QueryParameters parameters, boolean is_preview );
-	
-	
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	public abstract ChangeResult applyDeferred(  Player player, QueryParameters parameters, boolean is_preview );
+    public abstract boolean isCanceled();
+
+    /**
+     * 
+     * @param cancel
+     */
+    public abstract void setCanceled(boolean cancel);
+
+    /**
+     * 
+     * @param player
+     * @param parameters
+     * @param is_preview
+     * @return
+     */
+    public abstract ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview);
+
+    /**
+     * 
+     * @param player
+     * @param parameters
+     * @param is_preview
+     * @return
+     */
+    public abstract ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview);
+
+    /**
+     * 
+     * @param player
+     * @param parameters
+     * @param is_preview
+     * @return
+     */
+    public abstract ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview);
+
+    /**
+     * 
+     * @param player
+     * @param parameters
+     * @param is_preview
+     * @return
+     */
+    public abstract ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
 
 }

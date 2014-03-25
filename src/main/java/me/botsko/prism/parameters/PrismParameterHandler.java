@@ -6,21 +6,24 @@ import org.bukkit.command.CommandSender;
 import java.util.List;
 
 public interface PrismParameterHandler {
-	
-	public String getName();
 
-	public String[] getHelp();
+    public String getName();
 
-	public boolean applicable(String parameter, CommandSender sender);
+    public String[] getHelp();
 
-	public void process(QueryParameters query, String parameter, CommandSender sender);
+    public boolean applicable(String parameter, CommandSender sender);
 
-	public void defaultTo( QueryParameters query, CommandSender sender );
+    public void process(QueryParameters query, String parameter, CommandSender sender);
+
+    public void defaultTo(QueryParameters query, CommandSender sender);
 
     /**
      * Complete a param after the `:`
-     * @param partialParameter The partial parameter
-     * @param sender The sender
+     * 
+     * @param partialParameter
+     *            The partial parameter
+     * @param sender
+     *            The sender
      * @return List of strings with suggestions or null if not applicable
      */
     public List<String> tabComplete(String partialParameter, CommandSender sender);

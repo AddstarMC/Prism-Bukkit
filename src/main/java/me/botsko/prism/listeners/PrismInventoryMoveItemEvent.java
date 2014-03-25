@@ -15,30 +15,33 @@ import org.bukkit.inventory.InventoryHolder;
 
 public class PrismInventoryMoveItemEvent implements Listener {
 
-	
-	/**
-	 * 
-	 * @param event
-	 */
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onInventoryMoveItem(final InventoryMoveItemEvent event){
-		
-		if( !Prism.getIgnore().event("item-insert") ) return;
-		
-		if( event.getDestination() == null ) return;
-		
-		// Get container
-		InventoryHolder ih = event.getDestination().getHolder();
-		Location containerLoc = null;
-		if(ih instanceof BlockState){
-			BlockState eventChest = (BlockState) ih;
-		    containerLoc = eventChest.getLocation();
-		}
-		
-		if( containerLoc == null ) return;
-		
-		if( event.getSource().getType().equals(InventoryType.HOPPER) ){
-			RecordingQueue.addToQueue( ActionFactory.create("item-insert", event.getItem(), event.getItem().getAmount(), 0, null, containerLoc, "hopper") );
-		}
-	}
+    /**
+     * 
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
+
+        if( !Prism.getIgnore().event( "item-insert" ) )
+            return;
+
+        if( event.getDestination() == null )
+            return;
+
+        // Get container
+        final InventoryHolder ih = event.getDestination().getHolder();
+        Location containerLoc = null;
+        if( ih instanceof BlockState ) {
+            final BlockState eventChest = (BlockState) ih;
+            containerLoc = eventChest.getLocation();
+        }
+
+        if( containerLoc == null )
+            return;
+
+        if( event.getSource().getType().equals( InventoryType.HOPPER ) ) {
+            RecordingQueue.addToQueue( ActionFactory.create( "item-insert", event.getItem(), event.getItem()
+                    .getAmount(), 0, null, containerLoc, "hopper" ) );
+        }
+    }
 }

@@ -13,108 +13,100 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MiscUtils {
-	
-	
-	/**
-	 * Placing this here so it's easier to share the logic
-	 * @param player
-	 * @param desiredRadius
-	 * @param processType
-	 * @param config
-	 * @return
-	 */
-	public static int clampRadius( Player player, int desiredRadius, PrismProcessType processType, FileConfiguration config ){
-		
-		if( desiredRadius <= 0 ){
-			return config.getInt("prism.near.default-radius");
-		}
 
-		// Safety checks for max lookup radius
-		int max_lookup_radius = config.getInt("prism.queries.max-lookup-radius");
-		if( max_lookup_radius <= 0 ){
-			max_lookup_radius = 5;
-			Prism.log("Max lookup radius may not be lower than one. Using safe inputue of five.");
-		}
-		
-		// Safety checks for max applier radius
-		int max_applier_radius = config.getInt("prism.queries.max-applier-radius");
-		if( max_applier_radius <= 0 ){
-			max_applier_radius = 5;
-			Prism.log("Max applier radius may not be lower than one. Using safe inputue of five.");
-		}
-		
-		// Does the radius exceed the configured max?
-		if( processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_lookup_radius ){
-			// If player does not have permission to override the max
-			if ( player != null && !player.hasPermission("prism.override-max-lookup-radius") ){
-				return max_lookup_radius;
-			}
-			// Otherwise non-player
-			return desiredRadius;
-		}
-		else if( !processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius ){
-			// If player does not have permission to override the max
-			if ( player != null && !player.hasPermission("prism.override-max-applier-radius") ){
-				return max_applier_radius;
-			}
-			// Otherwise non-player
-			return desiredRadius;
-		} else {
-			// Otherwise, the radius is valid and is not exceeding max
-			return desiredRadius;
-		}
-	}
-	
-	
-	/**
-	 * 
-	 * @param prism
-	 * @param results
-	 * @return
-	 */
-	public static String paste_results(Prism prism, String results){
-		
-		String prismWebUrl = "https://pste.me/";
+    /**
+     * Placing this here so it's easier to share the logic
+     * 
+     * @param player
+     * @param desiredRadius
+     * @param processType
+     * @param config
+     * @return
+     */
+    public static int clampRadius(Player player, int desiredRadius, PrismProcessType processType,
+            FileConfiguration config) {
 
-		if( !prism.getConfig().getBoolean("prism.paste.enable") ){
-			return Prism.messenger.playerError("PSTE.me paste bin support is currently disabled by config.");
-		}
-		
-		String apiUsername = prism.getConfig().getString("prism.paste.username");
-		String apiKey = prism.getConfig().getString("prism.paste.api-key");
-		
-		if( !apiKey.matches("[0-9a-z]+") ){
-			return Prism.messenger.playerError("Invalid API key.");
-		}
-		
-		PsteApi api = new PsteApi( apiUsername, apiKey );
+        if( desiredRadius <= 0 ) { return config.getInt( "prism.near.default-radius" ); }
 
-		try {
-			
-			Paste paste = new Paste();
-			paste.setPaste(results);
-			
-			Results response = api.createPaste(paste);
-			return Prism.messenger.playerSuccess("Successfully pasted results: " + prismWebUrl + "#/" + response.getResults().getSlug());
-			
-		} catch (Exception up){
-			Prism.debug(up.toString());
-			return Prism.messenger.playerError("Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
-		}
-	}
+        // Safety checks for max lookup radius
+        int max_lookup_radius = config.getInt( "prism.queries.max-lookup-radius" );
+        if( max_lookup_radius <= 0 ) {
+            max_lookup_radius = 5;
+            Prism.log( "Max lookup radius may not be lower than one. Using safe inputue of five." );
+        }
+
+        // Safety checks for max applier radius
+        int max_applier_radius = config.getInt( "prism.queries.max-applier-radius" );
+        if( max_applier_radius <= 0 ) {
+            max_applier_radius = 5;
+            Prism.log( "Max applier radius may not be lower than one. Using safe inputue of five." );
+        }
+
+        // Does the radius exceed the configured max?
+        if( processType.equals( PrismProcessType.LOOKUP ) && desiredRadius > max_lookup_radius ) {
+            // If player does not have permission to override the max
+            if( player != null && !player.hasPermission( "prism.override-max-lookup-radius" ) ) { return max_lookup_radius; }
+            // Otherwise non-player
+            return desiredRadius;
+        } else if( !processType.equals( PrismProcessType.LOOKUP ) && desiredRadius > max_applier_radius ) {
+            // If player does not have permission to override the max
+            if( player != null && !player.hasPermission( "prism.override-max-applier-radius" ) ) { return max_applier_radius; }
+            // Otherwise non-player
+            return desiredRadius;
+        } else {
+            // Otherwise, the radius is valid and is not exceeding max
+            return desiredRadius;
+        }
+    }
+
+    /**
+     * 
+     * @param prism
+     * @param results
+     * @return
+     */
+    public static String paste_results(Prism prism, String results) {
+
+        final String prismWebUrl = "https://pste.me/";
+
+        if( !prism.getConfig().getBoolean( "prism.paste.enable" ) ) { return Prism.messenger
+                .playerError( "PSTE.me paste bin support is currently disabled by config." ); }
+
+        final String apiUsername = prism.getConfig().getString( "prism.paste.username" );
+        final String apiKey = prism.getConfig().getString( "prism.paste.api-key" );
+
+        if( !apiKey.matches( "[0-9a-z]+" ) ) { return Prism.messenger.playerError( "Invalid API key." ); }
+
+        final PsteApi api = new PsteApi( apiUsername, apiKey );
+
+        try {
+
+            final Paste paste = new Paste();
+            paste.setPaste( results );
+
+            final Results response = api.createPaste( paste );
+            return Prism.messenger.playerSuccess( "Successfully pasted results: " + prismWebUrl + "#/"
+                    + response.getResults().getSlug() );
+
+        } catch ( final Exception up ) {
+            Prism.debug( up.toString() );
+            return Prism.messenger.playerError( "Unable to paste results (" + ChatColor.YELLOW + up.getMessage()
+                    + ChatColor.RED + ")." );
+        }
+    }
 
     public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
-        List<String> result = new ArrayList<String>();
-        if(caseSensitive) {
-            for (String option : options) {
-                if(option.startsWith(start))
-                    result.add(option);
+        final List<String> result = new ArrayList<String>();
+        if( caseSensitive ) {
+            for ( final String option : options ) {
+                if( option.startsWith( start ) )
+                    result.add( option );
             }
         } else {
             start = start.toLowerCase();
-            for (String option : options) {
-                if(option.toLowerCase().startsWith(start))
-                    result.add(option);
+            for ( final String option : options ) {
+                if( option.toLowerCase().startsWith( start ) )
+                    result.add( option );
             }
         }
 
@@ -122,6 +114,6 @@ public class MiscUtils {
     }
 
     public static List<String> getStartingWith(String arg, Iterable<String> options) {
-        return getStartingWith(arg, options, true);
+        return getStartingWith( arg, options, true );
     }
 }

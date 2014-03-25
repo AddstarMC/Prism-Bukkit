@@ -12,82 +12,87 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 
 final public class PurgeManager implements Runnable {
-	
-	private final List<String> purgeRules;
-	private final Prism plugin;
-	public BukkitTask deleteTask;
-	
-	
-	/**
-	 * 
-	 * @param purgeRules
-	 */
-	public PurgeManager( Prism plugin, List<String> purgeRules ){
-		this.plugin = plugin;
-		this.purgeRules = purgeRules;
-	}
-	
-	
-	/**
+
+    private final List<String> purgeRules;
+    private final Prism plugin;
+    public BukkitTask deleteTask;
+
+    /**
+     * 
+     * @param purgeRules
+     */
+    public PurgeManager(Prism plugin, List<String> purgeRules) {
+        this.plugin = plugin;
+        this.purgeRules = purgeRules;
+    }
+
+    /**
 	 * 
 	 */
-	public void run(){
-		
-		Prism.log("Scheduled purge executor beginning new run...");
-		
-		if (!purgeRules.isEmpty()) {
+    @Override
+    public void run() {
 
-			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
+        Prism.log( "Scheduled purge executor beginning new run..." );
 
-			for (final String purgeArgs : purgeRules) {
+        if( !purgeRules.isEmpty() ) {
 
-				// Process and validate all of the arguments
-				QueryParameters parameters = PreprocessArgs.process(plugin,
-						null, purgeArgs.split(" "), PrismProcessType.DELETE, 0, false);
+            final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
 
-				if (parameters == null) {
-					Prism.log("Invalid parameters for database purge: " + purgeArgs);
-					continue;
-				}
+            for ( final String purgeArgs : purgeRules ) {
 
-				if (parameters.getFoundArgs().size() > 0) {
-					parameters.setStringFromRawArgs(purgeArgs.split(" "), 0);
-					paramList.add(parameters);
-				}
-			}
+                // Process and validate all of the arguments
+                final QueryParameters parameters = PreprocessArgs.process( plugin, null, purgeArgs.split( " " ),
+                        PrismProcessType.DELETE, 0, false );
 
-			if (paramList.size() > 0) {
-				
-				// Identify the minimum for chunking
-				int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
-				if( minId == 0 ){
-					Prism.log("No minimum primary key could be found for purge chunking.");
-					return;
-				}
-				
-				// Identify the max id for chunking
-				int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
-				if( maxId == 0 ){
-					Prism.log("No maximum primary key could be found for purge chunking.");
-					return;
-				}
+                if( parameters == null ) {
+                    Prism.log( "Invalid parameters for database purge: " + purgeArgs );
+                    continue;
+                }
 
-				int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
-				if (purge_tick_delay < 1) {
-					purge_tick_delay = 20;
-				}
+                if( parameters.getFoundArgs().size() > 0 ) {
+                    parameters.setStringFromRawArgs( purgeArgs.split( " " ), 0 );
+                    paramList.add( parameters );
+                }
+            }
 
-				/**
-				 * We're going to cycle through the param rules, one rule at a
-				 * time in a single async task. This task will reschedule itself
-				 * when each purge cycle has completed and records remain
-				 */
-				Prism.log("Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,new PurgeTask(plugin, paramList,purge_tick_delay,minId,maxId,new LogPurgeCallback()),purge_tick_delay);
+            if( paramList.size() > 0 ) {
 
-			}
-		} else {
-			Prism.log("Purge rules are empty, not purging anything.");
-		}
-	}
+                // Identify the minimum for chunking
+                final int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
+                if( minId == 0 ) {
+                    Prism.log( "No minimum primary key could be found for purge chunking." );
+                    return;
+                }
+
+                // Identify the max id for chunking
+                final int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
+                if( maxId == 0 ) {
+                    Prism.log( "No maximum primary key could be found for purge chunking." );
+                    return;
+                }
+
+                int purge_tick_delay = plugin.getConfig().getInt( "prism.purge.batch-tick-delay" );
+                if( purge_tick_delay < 1 ) {
+                    purge_tick_delay = 20;
+                }
+
+                /**
+                 * We're going to cycle through the param rules, one rule at a
+                 * time in a single async task. This task will reschedule itself
+                 * when each purge cycle has completed and records remain
+                 */
+                Prism.log( "Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db..." );
+                deleteTask = Bukkit
+                        .getServer()
+                        .getScheduler()
+                        .runTaskLaterAsynchronously(
+                                plugin,
+                                new PurgeTask( plugin, paramList, purge_tick_delay, minId, maxId,
+                                        new LogPurgeCallback() ), purge_tick_delay );
+
+            }
+        } else {
+            Prism.log( "Purge rules are empty, not purging anything." );
+        }
+    }
 }
