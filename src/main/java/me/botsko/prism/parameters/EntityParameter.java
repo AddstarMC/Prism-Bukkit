@@ -20,13 +20,13 @@ public class EntityParameter extends SimplePrismParameterHandler {
 	 */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+        MatchRule match = MatchRule.INCLUDE;
+        if( input.startsWith( "!" ) ) {
+            match = MatchRule.EXCLUDE;
+        }
         final String[] entityNames = input.split( "," );
         if( entityNames.length > 0 ) {
             for ( final String entityName : entityNames ) {
-                MatchRule match = MatchRule.INCLUDE;
-                if( entityName.startsWith( "!" ) ) {
-                    match = MatchRule.EXCLUDE;
-                }
                 query.addEntity( entityName.replace( "!", "" ), match );
             }
         }
