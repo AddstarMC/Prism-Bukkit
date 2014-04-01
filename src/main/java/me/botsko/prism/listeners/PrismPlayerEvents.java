@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.Handler;
+import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 
@@ -91,6 +92,10 @@ public class PrismPlayerEvents implements Listener {
                 if( plugin.getConfig().getBoolean( "prism.alerts.illegal-commands.log-to-console" ) ) {
                     Prism.log( msg );
                 }
+
+                // Log to commands
+                List<String> commands = plugin.getConfig().getStringList("prism.alerts.illegal-commands.log-commands");
+                MiscUtils.dispatchAlert(msg, commands);
             }
         }
 
