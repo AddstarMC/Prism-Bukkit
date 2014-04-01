@@ -24,17 +24,17 @@ public class PlayerParameter extends SimplePrismParameterHandler {
 	 */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+        MatchRule match = MatchRule.INCLUDE;
+        if( input.startsWith( "!" ) ) {
+            match = MatchRule.EXCLUDE;
+            input = input.replace( "!", "" );
+        } else if( input.startsWith( "~" ) ) {
+            match = MatchRule.PARTIAL;
+            input = input.replace( "~", "" );
+        }
         final String[] playerNames = input.split( "," );
         if( playerNames.length > 0 ) {
             for ( String playerName : playerNames ) {
-                MatchRule match = MatchRule.INCLUDE;
-                if( playerName.startsWith( "!" ) ) {
-                    match = MatchRule.EXCLUDE;
-                    playerName = playerName.replace( "!", "" );
-                } else if( playerName.startsWith( "~" ) ) {
-                    match = MatchRule.PARTIAL;
-                    playerName = playerName.replace( "~", "" );
-                }
                 query.addPlayerName( playerName, match );
             }
         }

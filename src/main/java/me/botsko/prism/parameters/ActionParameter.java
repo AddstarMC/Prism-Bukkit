@@ -25,6 +25,11 @@ public class ActionParameter extends SimplePrismParameterHandler {
 	 */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+        // Check match type
+        MatchRule match = MatchRule.INCLUDE;
+        if( input.startsWith( "!" ) ) {
+            match = MatchRule.EXCLUDE;
+        }
 
         final String[] actions = input.split( "," );
         if( actions.length > 0 ) {
@@ -50,11 +55,6 @@ public class ActionParameter extends SimplePrismParameterHandler {
                             continue;
                         }
 
-                        // Check match type
-                        MatchRule match = MatchRule.INCLUDE;
-                        if( action.startsWith( "!" ) ) {
-                            match = MatchRule.EXCLUDE;
-                        }
                         query.addActionType( actionType.getName(), match );
                     }
                 } else {
