@@ -3,8 +3,10 @@ package me.botsko.prism.utils;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
+import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -115,5 +117,16 @@ public class MiscUtils {
 
     public static List<String> getStartingWith(String arg, Iterable<String> options) {
         return getStartingWith( arg, options, true );
+    }
+
+    public static void dispatchAlert(String msg, List<String> commands) {
+        String colorized = TypeUtils.colorize(msg);
+        String stripped = ChatColor.stripColor(colorized);
+        for (String command : commands) {
+            if(command.equals("examplecommand <alert>"))
+                continue;
+            String processedCommand = command.replace("<alert>", stripped);
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand);
+        }
     }
 }

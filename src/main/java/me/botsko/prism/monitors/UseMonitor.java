@@ -1,8 +1,10 @@
 package me.botsko.prism.monitors;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -62,9 +64,15 @@ public class UseMonitor {
             msg = playername + " continues - pausing warnings.";
         }
 
-        if( count <= 5 && plugin.getConfig().getBoolean( "prism.alerts.uses.log-to-console" ) ) {
-            plugin.alertPlayers( null, msg );
-            Prism.log( msg );
+        if(count <= 5) {
+            if(plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
+                plugin.alertPlayers( null, msg );
+                Prism.log( msg );
+            }
+
+            // Log to commands
+            List<String> commands = plugin.getConfig().getStringList("prism.alerts.uses.log-commands");
+            MiscUtils.dispatchAlert(msg, commands);
         }
     }
 

@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -229,6 +230,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.alerts.alert-player-about-self", true );
         config.addDefault( "prism.alerts.ores.enabled", true );
         config.addDefault( "prism.alerts.ores.log-to-console", true );
+        config.addDefault( "prism.alerts.ores.log-commands", Arrays.asList("examplecommand <alert>") );
         // Ore blocks
         final HashMap<String, String> oreBlocks = new HashMap<String, String>();
         oreBlocks.put( "14", "&6" ); // iron
@@ -241,6 +243,7 @@ public class PrismConfig extends ConfigBase {
         // Illegal Command Alerts
         config.addDefault( "prism.alerts.illegal-commands.enabled", false );
         config.addDefault( "prism.alerts.illegal-commands.log-to-console", true );
+        config.addDefault( "prism.alerts.illegal-commands.log-commands", Arrays.asList("examplecommand <alert>") );
         final List<String> illegal_commands = new ArrayList<String>();
         illegal_commands.add( "op" );
         illegal_commands.add( "deop" );
@@ -251,6 +254,7 @@ public class PrismConfig extends ConfigBase {
         // Use Alerts
         config.addDefault( "prism.alerts.uses.enabled", true );
         config.addDefault( "prism.alerts.uses.log-to-console", true );
+        config.addDefault( "prism.alerts.uses.log-commands", Arrays.asList("examplecommand <alert>") );
         config.addDefault( "prism.alerts.uses.lighter", true );
         config.addDefault( "prism.alerts.uses.lava", true );
 

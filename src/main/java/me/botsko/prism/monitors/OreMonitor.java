@@ -1,6 +1,7 @@
 package me.botsko.prism.monitors;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
@@ -8,6 +9,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -116,6 +118,10 @@ public class OreMonitor {
                             if( plugin.getConfig().getBoolean( "prism.alerts.ores.log-to-console" ) ) {
                                 Prism.log( msg );
                             }
+
+                            // Log to commands
+                            List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
+                            MiscUtils.dispatchAlert(msg, commands);
                         }
                     }
                 } );
