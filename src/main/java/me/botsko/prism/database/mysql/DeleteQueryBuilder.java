@@ -18,7 +18,6 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
     @Override
     public String select() {
         return "DELETE FROM " + tableNameData + " USING " + tableNameData + 
-        " INNER JOIN prism_players p ON p.player_id = " + tableNameData + ".player_id" +
         " LEFT JOIN " + tableNameDataExtra + " ex ON (" + tableNameData + ".id = ex.data_id) ";
     }
 
