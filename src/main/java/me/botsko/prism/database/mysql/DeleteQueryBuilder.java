@@ -17,7 +17,8 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 	 */
     @Override
     public String select() {
-        return "DELETE FROM " + tableNameData;
+        return "DELETE FROM " + tableNameData + " USING " + tableNameData + 
+        " LEFT JOIN " + tableNameDataExtra + " ex ON (" + tableNameData + ".id = ex.data_id) ";
     }
 
     /**
