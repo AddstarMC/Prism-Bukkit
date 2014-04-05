@@ -97,7 +97,9 @@ public class EntityAction extends GenericAction {
 			// Get villager type
 			if( entity instanceof Villager ){
 				Villager v = (Villager)entity;
-				this.actionData.profession = v.getProfession().toString().toLowerCase();
+				if( v.getProfession() != null ){
+				    this.actionData.profession = v.getProfession().toString().toLowerCase();
+				}
 			}
 			
 			// Wolf details
