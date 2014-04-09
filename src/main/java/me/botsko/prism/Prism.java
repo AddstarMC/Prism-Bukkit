@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.*;
@@ -16,8 +17,11 @@ import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
 import me.botsko.prism.parameters.*;
+import me.botsko.prism.players.PlayerIdentification;
+import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.wands.Wand;
+
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -37,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -94,7 +99,7 @@ public class Prism extends JavaPlugin {
      * DB Foreign key caches
      */
     public static HashMap<String, Integer> prismWorlds = new HashMap<String, Integer>();
-    public static HashMap<String, Integer> prismPlayers = new HashMap<String, Integer>();
+    public static HashMap<UUID,PrismPlayer> prismPlayers = new HashMap<UUID,PrismPlayer>();
     public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
 
     /**
@@ -170,7 +175,7 @@ public class Prism extends JavaPlugin {
 
             // Cache world IDs
             cacheWorldPrimaryKeys();
-            cacheOnlinePlayerPrimaryKeys();
+            PlayerIdentification.cacheOnlinePlayerPrimaryKeys();
 
             // ensure current worlds are added
             for ( final World w : getServer().getWorlds() ) {
@@ -475,7 +480,9 @@ public class Prism extends JavaPlugin {
             // players
             query = "CREATE TABLE IF NOT EXISTS `prism_players` ("
                     + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
-                    + "PRIMARY KEY (`player_id`)," + "UNIQUE KEY `player` (`player`)"
+                    + "`player_uuid` binary(16) NOT NULL,"
+                    + "PRIMARY KEY (`player_id`)," + "UNIQUE KEY `player` (`player`),"
+                    + "UNIQUE KEY `player_uuid` (`player_uuid`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
 
@@ -654,142 +661,6 @@ public class Prism extends JavaPlugin {
             }
         } catch ( final SQLException e ) {
 
-        } finally {
-            if( rs != null )
-                try {
-                    rs.close();
-                } catch ( final SQLException e ) {}
-            if( s != null )
-                try {
-                    s.close();
-                } catch ( final SQLException e ) {}
-            if( conn != null )
-                try {
-                    conn.close();
-                } catch ( final SQLException e ) {}
-        }
-    }
-
-    /**
-	 * 
-	 */
-    public void cacheOnlinePlayerPrimaryKeys() {
-
-        getServer().getScheduler().runTaskAsynchronously( this, new Runnable() {
-            @Override
-            public void run() {
-
-                String[] playerNames;
-                playerNames = new String[getServer().getOnlinePlayers().length];
-                int i = 0;
-                for ( final Player pl : getServer().getOnlinePlayers() ) {
-                    playerNames[i] = pl.getName();
-                    i++;
-                }
-
-                Connection conn = null;
-                PreparedStatement s = null;
-                ResultSet rs = null;
-                try {
-
-                    conn = dbc();
-                    s = conn.prepareStatement( "SELECT player_id, player FROM prism_players WHERE player IN ('"
-                            + TypeUtils.join( playerNames, "','" ) + "')" );
-                    rs = s.executeQuery();
-
-                    while ( rs.next() ) {
-                        debug( "Loaded player " + rs.getString( 2 ) + ", id: " + rs.getInt( 1 ) + " into the cache." );
-                        prismPlayers.put( rs.getString( 2 ), rs.getInt( 1 ) );
-                    }
-                } catch ( final SQLException e ) {
-                    handleDatabaseException( e );
-                } finally {
-                    if( rs != null )
-                        try {
-                            rs.close();
-                        } catch ( final SQLException e ) {}
-                    if( s != null )
-                        try {
-                            s.close();
-                        } catch ( final SQLException e ) {}
-                    if( conn != null )
-                        try {
-                            conn.close();
-                        } catch ( final SQLException e ) {}
-                }
-            }
-        } );
-    }
-
-    /**
-	 * 
-	 */
-    public static void cachePlayerPrimaryKey(final String playerName) {
-
-        // getServer().getScheduler().runTaskAsynchronously(this, new
-        // Runnable(){
-        // public void run(){
-
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
-
-            conn = dbc();
-            s = conn.prepareStatement( "SELECT player_id FROM prism_players WHERE player = ?" );
-            s.setString( 1, playerName );
-            rs = s.executeQuery();
-
-            if( rs.next() ) {
-                debug( "Loaded player " + playerName + ", id: " + rs.getInt( 1 ) + " into the cache." );
-                prismPlayers.put( playerName, rs.getInt( 1 ) );
-            } else {
-                addPlayerName( playerName );
-            }
-        } catch ( final SQLException e ) {
-            e.printStackTrace();
-        } finally {
-            if( rs != null )
-                try {
-                    rs.close();
-                } catch ( final SQLException e ) {}
-            if( s != null )
-                try {
-                    s.close();
-                } catch ( final SQLException e ) {}
-            if( conn != null )
-                try {
-                    conn.close();
-                } catch ( final SQLException e ) {}
-        }
-        // }
-        // });
-    }
-
-    /**
-     * Saves a player name to the database, and adds the id to the cache hashmap
-     */
-    public static void addPlayerName(String playerName) {
-
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
-
-            conn = dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_players (player) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
-            s.setString( 1, playerName );
-            s.executeUpdate();
-
-            rs = s.getGeneratedKeys();
-            if( rs.next() ) {
-                debug( "Saved and loaded player " + playerName + " into the cache." );
-                prismPlayers.put( playerName, rs.getInt( 1 ) );
-            } else {
-                throw new SQLException( "Insert statement failed - no generated key obtained." );
-            }
-        } catch ( final SQLException e ) {
-            e.printStackTrace();
         } finally {
             if( rs != null )
                 try {
