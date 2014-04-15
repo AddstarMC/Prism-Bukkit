@@ -15,12 +15,12 @@ import me.botsko.prism.players.PrismPlayer;
 public class RecordingTask implements Runnable {
 
     /**
-	 * 
+	 *
 	 */
     private final Prism plugin;
 
     /**
-     * 
+     *
      * @param plugin
      */
     public RecordingTask(Prism plugin) {
@@ -28,7 +28,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 * 
+	 *
 	 */
     public void save() {
         if( !RecordingQueue.getQueue().isEmpty() ) {
@@ -37,7 +37,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-     * 
+     *
      * @param a
      */
     public static int insertActionIntoDatabase(Handler a) {
@@ -67,7 +67,7 @@ public class RecordingTask implements Runnable {
             }
 
             int player_id = 0;
-            PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayer( a.getPlayerName() );
+            PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
             if( prismPlayer != null ){
                 player_id = prismPlayer.getId();
             }
@@ -125,7 +125,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-     * 
+     *
      * @throws SQLException
      */
     public void insertActionsIntoDatabase() {
@@ -194,7 +194,7 @@ public class RecordingTask implements Runnable {
                     }
 
                     int player_id = 0;
-                    PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayer( a.getPlayerName() );
+                    PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
                     if( prismPlayer != null ){
                         player_id = prismPlayer.getId();
                     }
@@ -269,7 +269,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-     * 
+     *
      * @param keys
      * @throws SQLException
      */
@@ -338,7 +338,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 * 
+	 *
 	 */
     @Override
     public void run() {
@@ -350,7 +350,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-     * 
+     *
      * @return
      */
     protected int getTickDelayForNextBatch() {
@@ -367,7 +367,7 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 * 
+	 *
 	 */
     protected void scheduleNextRecording() {
         if( !plugin.isEnabled() ) {
