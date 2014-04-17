@@ -6,6 +6,7 @@ import me.botsko.prism.commandlibs.Flag;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -126,5 +127,17 @@ public class FlagParameter implements PrismParameterHandler {
             return completions;
         }
         return null;
+    }
+
+    @Override
+    public boolean hasPermission( String parameter, Permissible permissible ) {
+        final String[] flagComponents = parameter.substring( 1 ).split( "=" );
+        Flag flag;
+        try {
+            flag = Flag.valueOf( flagComponents[0].replace( "-", "_" ).toUpperCase() );
+        } catch ( final IllegalArgumentException ex ) {
+            return false;
+        }
+        return flag.hasPermission( permissible );
     }
 }

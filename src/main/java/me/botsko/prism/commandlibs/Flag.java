@@ -1,5 +1,7 @@
 package me.botsko.prism.commandlibs;
 
+import org.bukkit.permissions.Permissible;
+
 public enum Flag {
     DRAIN("Drain liquid along with a rollback."), DRAIN_LAVA("Drain only lava along with a rollback."), DRAIN_WATER(
             "Drain only water along with a rollback."), EXTENDED(
@@ -12,6 +14,7 @@ public enum Flag {
             "Share your results with a pastebin service and return the link");
 
     private final String description;
+    private final String permission;
     private String usage;
 
     public String getDescription() {
@@ -23,6 +26,14 @@ public enum Flag {
             usage = "-" + this.name().toLowerCase();
         }
         return usage;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public boolean hasPermission(Permissible permissible) {
+        return permissible.hasPermission(permission);
     }
 
     /**
@@ -38,5 +49,6 @@ public enum Flag {
     private Flag(String usage, String description) {
         this.usage = usage;
         this.description = description;
+        this.permission = "prism.parameters.flag." + name().toLowerCase().replace('_', '-');
     }
 }
