@@ -2,6 +2,7 @@ package me.botsko.prism.parameters;
 
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permissible;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface PrismParameterHandler {
      * @return List of strings with suggestions or null if not applicable
      */
     public List<String> tabComplete(String partialParameter, CommandSender sender);
+
+    public boolean hasPermission( String parameter, Permissible permissible );
 }

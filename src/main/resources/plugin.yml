@@ -211,3 +211,73 @@ permissions:
         default: false
     prism.ignore.tracking.xp-pickup:
         default: false
+    prism.parameters.*:
+        default: op
+        children:
+            prism.parameters.action: true
+            prism.parameters.before: true
+            prism.parameters.block: true
+            prism.parameters.entity: true
+            prism.parameters.id: true
+            prism.parameters.keyword: true
+            prism.parameters.player: true
+            prism.parameters.radius: true
+            prism.parameters.since: true
+            prism.parameters.world: true
+            prism.parameters.flag.*: true
+    prism.parameters.action:
+        default: false
+    prism.parameters.before:
+        default: false
+    prism.parameters.block:
+        default: false
+    prism.parameters.entity:
+        default: false
+    prism.parameters.id:
+        default: false
+    prism.parameters.keyword:
+        default: false
+    prism.parameters.player:
+        default: false
+    prism.parameters.radius:
+        default: false
+    prism.parameters.since:
+        default: false
+    prism.parameters.world:
+        default: false
+    prism.parameters.flag.*:
+        default: false
+        children:
+            prism.parameters.flag.drain: true
+            prism.parameters.flag.drain-lava: true
+            prism.parameters.flag.drain-water: true
+            prism.parameters.flag.extended: true
+            prism.parameters.flag.no-ext: true
+            prism.parameters.flag.no-itemclear: true
+            prism.parameters.flag.per-page: true
+            prism.parameters.flag.no-group: true
+            prism.parameters.flag.overwrite: true
+            prism.parameters.flag.share: true
+            prism.parameters.flag.paste: true
+    prism.parameters.flag.drain:
+        default: false
+    prism.parameters.flag.drain-lava:
+        default: false
+    prism.parameters.flag.drain-water:
+        default: false
+    prism.parameters.flag.extended:
+        default: false
+    prism.parameters.flag.no-ext:
+        default: false
+    prism.parameters.flag.no-itemclear:
+        default: false
+    prism.parameters.flag.per-page:
+        default: false
+    prism.parameters.flag.no-group:
+        default: false
+    prism.parameters.flag.overwrite:
+        default: false
+    prism.parameters.flag.share:
+        default: false
+    prism.parameters.flag.paste:
+        default: false

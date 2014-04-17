@@ -51,12 +51,7 @@ public abstract class QueryWandBase extends WandBase {
                 : this instanceof RestoreWand ? PrismProcessType.RESTORE
                         : this instanceof InspectorWand ? PrismProcessType.LOOKUP : PrismProcessType.LOOKUP;
 
-        final String[] newArgs = Arrays.copyOf( args, args.length + 1 );
-
-        newArgs[args.length] = "w:current"; // The thing needs at least one
-                                            // argument, and it's going to be
-                                            // the current world anyway.
-        final QueryParameters params = PreprocessArgs.process( plugin, sender, newArgs, processType, argStart, false );
+        final QueryParameters params = PreprocessArgs.process( plugin, sender, args, processType, argStart, false, true );
         if( params == null ) {
             return false;
         } else {

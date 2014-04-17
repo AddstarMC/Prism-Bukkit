@@ -2,6 +2,7 @@ package me.botsko.prism.parameters;
 
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.Permissible;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -11,6 +12,8 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     private final String name;
     private final Pattern inputMatcher;
     private final Set<String> aliases;
+
+    private String permission;
 
     /**
      * 
@@ -35,6 +38,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         if( this.aliases.isEmpty() ) {
             this.aliases.add( this.name.toLowerCase() );
         }
+        permission = "prism.parameters." + name.toLowerCase();
     }
 
     /**
@@ -51,6 +55,20 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     @Override
     public String[] getHelp() {
         return new String[0];
+    }
+
+    /**
+     * @return the permission required to use this parameter.
+     */
+    public String getPermission() {
+        return permission;
+    }
+
+    /**
+     * @param permission the permission required to use this parameter.
+     */
+    protected void setPermission(String permission) {
+        this.permission = permission;
     }
 
     /**
@@ -112,5 +130,10 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 
     protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
         return null;
+    }
+
+    @Override
+    public final boolean hasPermission(String parameter, Permissible permissible) {
+        return permissible.hasPermission(permission);
     }
 }
