@@ -15,8 +15,8 @@ abstract public class QueryBuilder {
     protected List<String> columns = new ArrayList<String>();
     protected List<String> conditions = new ArrayList<String>();
 
-    protected final String tableNameData = "prism_data";
-    protected final String tableNameDataExtra = "prism_data_extra";
+    protected final String tableNameData;
+    protected final String tableNameDataExtra;
 
     protected QueryParameters parameters;
     protected boolean shouldGroup;
@@ -27,6 +27,9 @@ abstract public class QueryBuilder {
      */
     public QueryBuilder(Prism plugin) {
         this.plugin = plugin;
+        String prefix = plugin.getConfig().getString("prism.mysql.prefix");
+        tableNameData = prefix + "data";
+        tableNameDataExtra = prefix + "data_extra";
     }
 
     /**

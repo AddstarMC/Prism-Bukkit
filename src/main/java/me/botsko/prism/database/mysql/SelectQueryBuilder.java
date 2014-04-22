@@ -15,12 +15,15 @@ import me.botsko.prism.database.QueryBuilder;
 
 public class SelectQueryBuilder extends QueryBuilder {
 
+    private final String prefix;
+
     /**
      * 
      * @param plugin
      */
     public SelectQueryBuilder(Prism plugin) {
         super( plugin );
+        prefix = Prism.config.getString("prism.mysql.prefix");
     }
 
     /**
@@ -69,7 +72,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         query += " FROM " + tableNameData + " ";
 
         // Joins
-        query += "INNER JOIN prism_players p ON p.player_id = " + tableNameData + ".player_id ";
+        query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
         query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
 
         return query;
@@ -114,7 +117,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
     protected void worldCondition() {
         if( parameters.getWorld() != null ) {
-            addCondition( String.format( "world_id = ( SELECT w.world_id FROM prism_worlds w WHERE w.world = '%s')",
+            addCondition( String.format( "world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
                     parameters.getWorld() ) );
         }
     }
@@ -181,7 +184,7 @@ public class SelectQueryBuilder extends QueryBuilder {
             }
             final String matchQuery = ( playerMatch.equals( MatchRule.INCLUDE ) ? "IN" : "NOT IN" );
             addCondition( tableNameData + ".player_id " + matchQuery
-                    + " ( SELECT p.player_id FROM prism_players p WHERE "
+                    + " ( SELECT p.player_id FROM " + prefix + "players p WHERE "
                     + buildMultipleConditions( playerNames, "p.player", null ) + ")" );
         }
     }

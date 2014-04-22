@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismConfig;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
@@ -41,6 +42,7 @@ public class RecordingTask implements Runnable {
      * @param a
      */
     public static int insertActionIntoDatabase(Handler a) {
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         int id = 0;
         Connection conn = null;
         PreparedStatement s = null;
@@ -77,7 +79,7 @@ public class RecordingTask implements Runnable {
             }
 
             s = conn.prepareStatement(
-                    "INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS );
             s.setLong( 1, System.currentTimeMillis() / 1000L );
             s.setInt( 2, world_id );
@@ -99,7 +101,7 @@ public class RecordingTask implements Runnable {
 
             // Add insert query for extra data if needed
             if( a.getData() != null && !a.getData().isEmpty() ) {
-                s = conn.prepareStatement( "INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)" );
+                s = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)" );
                 s.setInt( 1, id );
                 s.setString( 2, a.getData() );
                 s.executeUpdate();
@@ -129,6 +131,7 @@ public class RecordingTask implements Runnable {
      * @throws SQLException
      */
     public void insertActionsIntoDatabase() {
+        String prefix = plugin.getConfig().getString("prism.mysql.prefix");
 
         PreparedStatement s = null;
         Connection conn = null;
@@ -167,7 +170,7 @@ public class RecordingTask implements Runnable {
                 // Connection valid, proceed
                 conn.setAutoCommit( false );
                 s = conn.prepareStatement(
-                        "INSERT INTO prism_data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                        "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                         Statement.RETURN_GENERATED_KEYS );
                 int i = 0;
                 while ( !RecordingQueue.getQueue().isEmpty() ) {
@@ -274,6 +277,7 @@ public class RecordingTask implements Runnable {
      * @throws SQLException
      */
     protected void insertExtraData(ArrayList<Handler> extraDataQueue, ResultSet keys) throws SQLException {
+        String prefix = plugin.getConfig().getString("prism.mysql.prefix");
 
         if( extraDataQueue.isEmpty() )
             return;
@@ -288,7 +292,7 @@ public class RecordingTask implements Runnable {
 
         try {
             conn.setAutoCommit( false );
-            s = conn.prepareStatement( "INSERT INTO prism_data_extra (data_id,data) VALUES (?,?)" );
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)" );
             int i = 0;
             while ( keys.next() ) {
 
@@ -299,7 +303,7 @@ public class RecordingTask implements Runnable {
 
                 // @todo should not happen
                 if( i >= extraDataQueue.size() ) {
-                    Prism.log( "Skipping extra data for prism_data.id " + keys.getInt( 1 )
+                    Prism.log( "Skipping extra data for " + prefix + "data.id " + keys.getInt( 1 )
                             + " because the queue doesn't have data for it." );
                     continue;
                 }
