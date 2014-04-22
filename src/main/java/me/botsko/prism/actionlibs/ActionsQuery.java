@@ -242,6 +242,7 @@ public class ActionsQuery {
      * @param playername
      */
     public int getUsersLastPrismProcessId(String playername) {
+        String prefix = plugin.getConfig().getString("prism.mysql.prefix");
         int id = 0;
         Connection conn = null;
         PreparedStatement s = null;
@@ -253,7 +254,7 @@ public class ActionsQuery {
             conn = Prism.dbc();
 
             if( conn != null && !conn.isClosed() ) {
-                s = conn.prepareStatement( "SELECT id FROM prism_data JOIN prism_players p ON p.player_id = prism_data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1" );
+                s = conn.prepareStatement( "SELECT id FROM " + prefix + "data JOIN " + prefix + "players p ON p.player_id = " + prefix + "data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1" );
                 s.setInt( 1, action_id );
                 s.setString( 2, playername );
                 s.executeQuery();
@@ -289,18 +290,19 @@ public class ActionsQuery {
      * @param id
      */
     public PrismProcessAction getPrismProcessRecord(int id) {
+        String prefix = plugin.getConfig().getString("prism.mysql.prefix");
         PrismProcessAction process = null;
         Connection conn = null;
         PreparedStatement s = null;
         ResultSet rs = null;
         try {
 
-            String sql = "SELECT id, action, epoch, world, player, x, y, z, data FROM prism_data d";
+            String sql = "SELECT id, action, epoch, world, player, x, y, z, data FROM " + prefix + "data d";
             // Joins
-            sql += " INNER JOIN prism_players p ON p.player_id = d.player_id ";
-            sql += " INNER JOIN prism_actions a ON a.action_id = d.action_id ";
-            sql += " INNER JOIN prism_worlds w ON w.world_id = d.world_id ";
-            sql += " LEFT JOIN prism_data_extra ex ON ex.data_id = d.id ";
+            sql += " INNER JOIN " + prefix + "players p ON p.player_id = d.player_id ";
+            sql += " INNER JOIN " + prefix + "actions a ON a.action_id = d.action_id ";
+            sql += " INNER JOIN " + prefix + "worlds w ON w.world_id = d.world_id ";
+            sql += " LEFT JOIN " + prefix + "data_extra ex ON ex.data_id = d.id ";
             sql += " WHERE d.id = ?";
 
             conn = Prism.dbc();

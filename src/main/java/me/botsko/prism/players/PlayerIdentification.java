@@ -203,6 +203,7 @@ public class PlayerIdentification {
      * @param player
      */
     protected static PrismPlayer addPlayer( Player player ){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
 
         PrismPlayer prismPlayer = new PrismPlayer( 0, player.getUniqueId(), player.getName() );
 
@@ -212,7 +213,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_players (player,player_uuid) VALUES (?,UNHEX(?))" , Statement.RETURN_GENERATED_KEYS);
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "players (player,player_uuid) VALUES (?,UNHEX(?))" , Statement.RETURN_GENERATED_KEYS);
             s.setString(1, player.getName() );
             s.setString(2, uuidToDbString( player.getUniqueId() ) );
             s.executeUpdate();
@@ -245,6 +246,7 @@ public class PlayerIdentification {
      * @return
      */
     protected static PrismPlayer addPlayer( String playerName ){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
 
         PrismPlayer fakePlayer = new PrismPlayer( 0, UUID.randomUUID(), playerName );
 
@@ -254,7 +256,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_players (player,player_uuid) VALUES (?,UNHEX(?))" , Statement.RETURN_GENERATED_KEYS);
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "players (player,player_uuid) VALUES (?,UNHEX(?))" , Statement.RETURN_GENERATED_KEYS);
             s.setString(1, fakePlayer.getName() );
             s.setString(2, uuidToDbString( fakePlayer.getUUID() ) );
             s.executeUpdate();
@@ -283,6 +285,7 @@ public class PlayerIdentification {
      * as well.
      */
     protected static void updatePlayer( PrismPlayer prismPlayer ){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
 
         Connection conn = null;
         PreparedStatement s = null;
@@ -290,7 +293,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "UPDATE prism_players SET player = ?, player_uuid = UNHEX(?) WHERE player_id = ?");
+            s = conn.prepareStatement( "UPDATE " + prefix + "players SET player = ?, player_uuid = UNHEX(?) WHERE player_id = ?");
             s.setString(1, prismPlayer.getName() );
             s.setString(2, uuidToDbString( prismPlayer.getUUID() ) );
             s.setInt(3, prismPlayer.getId() );
@@ -310,6 +313,7 @@ public class PlayerIdentification {
      * Loads `prism_players` ID for a player into our cache.
      */
     protected static PrismPlayer lookupByName( String playerName ){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         PrismPlayer prismPlayer = null;
         Connection conn = null;
         PreparedStatement s = null;
@@ -317,7 +321,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM prism_players WHERE player = ?" );
+            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player = ?" );
             s.setString(1, playerName);
             rs = s.executeQuery();
 
@@ -339,6 +343,7 @@ public class PlayerIdentification {
      * Loads `prism_players` ID for a player into our cache.
      */
     protected static PrismPlayer lookupByUUID( UUID uuid ){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         PrismPlayer prismPlayer = null;
         Connection conn = null;
         PreparedStatement s = null;
@@ -346,7 +351,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM prism_players WHERE player_uuid = UNHEX(?)" );
+            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player_uuid = UNHEX(?)" );
             s.setString(1, uuidToDbString(uuid));
             rs = s.executeQuery();
 
@@ -368,6 +373,7 @@ public class PlayerIdentification {
      * Build-load all online players into cache
      */
     public static void cacheOnlinePlayerPrimaryKeys(){
+        String prefix = Prism.config.getString("prism.mysql.prefix");
 
         String[] playerNames;
         playerNames = new String[ Bukkit.getServer().getOnlinePlayers().length ];
@@ -383,7 +389,7 @@ public class PlayerIdentification {
         try {
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM prism_players WHERE player IN (?)" );
+            s = conn.prepareStatement( "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player IN (?)" );
             s.setString(1, "'"+TypeUtils.join(playerNames, "','")+"'");
             rs = s.executeQuery();
 

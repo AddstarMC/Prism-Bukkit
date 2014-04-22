@@ -48,6 +48,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.mysql.username", "root" );
         config.addDefault( "prism.mysql.password", "" );
         config.addDefault( "prism.mysql.database", "minecraft" );
+        config.addDefault( "prism.mysql.prefix", "prism_" );
         config.addDefault( "prism.mysql.port", "3306" );
 
         // pste.me sharing.

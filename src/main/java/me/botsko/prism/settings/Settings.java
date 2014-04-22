@@ -34,6 +34,7 @@ public class Settings {
      * @param key
      */
     public static void deleteSetting(String key, Player player) {
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         Connection conn = null;
         PreparedStatement s = null;
         try {
@@ -44,7 +45,7 @@ public class Settings {
             }
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "DELETE FROM prism_meta WHERE k = ?" );
+            s = conn.prepareStatement( "DELETE FROM " + prefix + "meta WHERE k = ?" );
             s.setString( 1, finalKey );
             s.executeUpdate();
 
@@ -79,6 +80,7 @@ public class Settings {
      * @return
      */
     public static void saveSetting(String key, String value, Player player) {
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         Connection conn = null;
         PreparedStatement s = null;
         try {
@@ -89,11 +91,11 @@ public class Settings {
             }
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "DELETE FROM prism_meta WHERE k = ?" );
+            s = conn.prepareStatement( "DELETE FROM " + prefix + "meta WHERE k = ?" );
             s.setString( 1, finalKey );
             s.executeUpdate();
 
-            s = conn.prepareStatement( "INSERT INTO prism_meta (k,v) VALUES (?,?)" );
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "meta (k,v) VALUES (?,?)" );
             s.setString( 1, finalKey );
             s.setString( 2, value );
             s.executeUpdate();
@@ -127,6 +129,7 @@ public class Settings {
      * @return
      */
     public static String getSetting(String key, Player player) {
+        String prefix = Prism.config.getString("prism.mysql.prefix");
         String value = null;
         Connection conn = null;
         PreparedStatement s = null;
@@ -139,7 +142,7 @@ public class Settings {
             }
 
             conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT v FROM prism_meta WHERE k = ? LIMIT 0,1" );
+            s = conn.prepareStatement( "SELECT v FROM " + prefix + "meta WHERE k = ? LIMIT 0,1" );
             s.setString( 1, finalKey );
             rs = s.executeQuery();
 

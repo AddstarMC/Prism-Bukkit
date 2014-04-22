@@ -406,6 +406,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
     public void handleDatabaseException(SQLException e) {
+        String prefix = config.getString("prism.mysql.prefix");
         // Attempt to rescue
         try {
             if( attemptToRescueConnection( e ) ) { return; }
@@ -414,7 +415,7 @@ public class Prism extends JavaPlugin {
         if( e.getMessage().contains( "marked as crashed" ) ) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-            msg[1] = "Try running `CHECK TABLE prism_data` and then `REPAIR TABLE prism_data`.";
+            msg[1] = "Try running `CHECK TABLE " + prefix + "data` and then `REPAIR TABLE " + prefix + "data`.";
             logSection( msg );
         }
         e.printStackTrace();
@@ -424,6 +425,7 @@ public class Prism extends JavaPlugin {
      * 
      */
     protected void setupDatabase() {
+        String prefix = config.getString("prism.mysql.prefix");
         Connection conn = null;
         Statement st = null;
         try {
@@ -432,7 +434,7 @@ public class Prism extends JavaPlugin {
                 return;
 
             // actions
-            String query = "CREATE TABLE IF NOT EXISTS `prism_actions` ("
+            String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
                     + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`action` varchar(25) NOT NULL,"
                     + "PRIMARY KEY (`action_id`)," + "UNIQUE KEY `action` (`action`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
@@ -440,7 +442,7 @@ public class Prism extends JavaPlugin {
             st.executeUpdate( query );
 
             // data
-            query = "CREATE TABLE IF NOT EXISTS `prism_data` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`epoch` int(10) unsigned NOT NULL," + "`action_id` int(10) unsigned NOT NULL,"
                     + "`player_id` int(10) unsigned NOT NULL," + "`world_id` int(10) unsigned NOT NULL,"
                     + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL," + "`z` int(11) NOT NULL,"
@@ -455,11 +457,11 @@ public class Prism extends JavaPlugin {
             // re-adding foreign key stuff)
             final DatabaseMetaData metadata = conn.getMetaData();
             ResultSet resultSet;
-            resultSet = metadata.getTables( null, null, "prism_data_extra", null );
+            resultSet = metadata.getTables( null, null, "" + prefix + "data_extra", null );
             if( !resultSet.next() ) {
 
                 // extra data
-                query = "CREATE TABLE IF NOT EXISTS `prism_data_extra` ("
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
                         + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                         + "`data_id` int(10) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
                         + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
@@ -467,18 +469,18 @@ public class Prism extends JavaPlugin {
                 st.executeUpdate( query );
 
                 // add extra data delete cascade
-                query = "ALTER TABLE `prism_data_extra` ADD CONSTRAINT `prism_data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `prism_data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
                 st.executeUpdate( query );
             }
 
             // meta
-            query = "CREATE TABLE IF NOT EXISTS `prism_meta` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`k` varchar(25) NOT NULL," + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
 
             // players
-            query = "CREATE TABLE IF NOT EXISTS `prism_players` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "players` ("
                     + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
                     + "`player_uuid` binary(16) NOT NULL,"
                     + "PRIMARY KEY (`player_id`)," + "UNIQUE KEY `player` (`player`),"
@@ -487,7 +489,7 @@ public class Prism extends JavaPlugin {
             st.executeUpdate( query );
 
             // worlds
-            query = "CREATE TABLE IF NOT EXISTS `prism_worlds` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
                     + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`world` varchar(255) NOT NULL,"
                     + "PRIMARY KEY (`world_id`)," + "UNIQUE KEY `world` (`world`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
@@ -519,6 +521,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
     protected void cacheActionPrimaryKeys() {
+        String prefix = config.getString("prism.mysql.prefix");
 
         Connection conn = null;
         PreparedStatement s = null;
@@ -526,7 +529,7 @@ public class Prism extends JavaPlugin {
         try {
 
             conn = dbc();
-            s = conn.prepareStatement( "SELECT action_id, action FROM prism_actions" );
+            s = conn.prepareStatement( "SELECT action_id, action FROM " + prefix + "actions" );
             rs = s.executeQuery();
 
             while ( rs.next() ) {
@@ -559,6 +562,7 @@ public class Prism extends JavaPlugin {
      * hashmap
      */
     public static void addActionName(String actionName) {
+        String prefix = config.getString("prism.mysql.prefix");
 
         if( prismActions.containsKey( actionName ) )
             return;
@@ -569,7 +573,7 @@ public class Prism extends JavaPlugin {
         try {
 
             conn = dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_actions (action) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "actions (action) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
             s.setString( 1, actionName );
             s.executeUpdate();
 
@@ -602,6 +606,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
     protected void cacheWorldPrimaryKeys() {
+        String prefix = config.getString("prism.mysql.prefix");
 
         Connection conn = null;
         PreparedStatement s = null;
@@ -609,7 +614,7 @@ public class Prism extends JavaPlugin {
         try {
 
             conn = dbc();
-            s = conn.prepareStatement( "SELECT world_id, world FROM prism_worlds" );
+            s = conn.prepareStatement( "SELECT world_id, world FROM " + prefix + "worlds" );
             rs = s.executeQuery();
 
             while ( rs.next() ) {
@@ -638,6 +643,7 @@ public class Prism extends JavaPlugin {
      * Saves a world name to the database, and adds the id to the cache hashmap
      */
     public static void addWorldName(String worldName) {
+        String prefix = config.getString("prism.mysql.prefix");
 
         if( prismWorlds.containsKey( worldName ) )
             return;
@@ -648,7 +654,7 @@ public class Prism extends JavaPlugin {
         try {
 
             conn = dbc();
-            s = conn.prepareStatement( "INSERT INTO prism_worlds (world) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
+            s = conn.prepareStatement( "INSERT INTO " + prefix + "worlds (world) VALUES (?)", Statement.RETURN_GENERATED_KEYS );
             s.setString( 1, worldName );
             s.executeUpdate();
 

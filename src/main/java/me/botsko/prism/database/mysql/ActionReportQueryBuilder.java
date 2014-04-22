@@ -48,9 +48,10 @@ public class ActionReportQueryBuilder extends SelectQueryBuilder {
 	 */
     @Override
     public String select() {
+        String prefix = Prism.config.getString("prism.mysql.prefix");
 
-        final String sql = "SELECT COUNT(*), a.action " + "FROM prism_data "
-                + "INNER JOIN prism_actions a ON a.action_id = prism_data.action_id " + where() + " "
+        final String sql = "SELECT COUNT(*), a.action " + "FROM " + prefix + "data "
+                + "INNER JOIN " + prefix + "actions a ON a.action_id = " + prefix + "data.action_id " + where() + " "
                 + "GROUP BY a.action_id " + "ORDER BY COUNT(*) DESC";
 
         return sql;
