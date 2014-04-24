@@ -488,6 +488,9 @@ public class PrismEntityEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
+    	
+    	if( event.getEntityType() == null || event.getEntityType().getName() == null ) return;
+    	
         final String entity = event.getEntityType().getName().toLowerCase();
 
         // Technically I think that I really should name it "entity-eat" for
