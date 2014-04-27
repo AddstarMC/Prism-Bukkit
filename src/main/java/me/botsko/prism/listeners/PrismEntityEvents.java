@@ -7,6 +7,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
 
 import org.bukkit.Location;
@@ -488,33 +489,28 @@ public class PrismEntityEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
-    	
-    	if( event.getEntityType() == null || event.getEntityType().getName() == null ) return;
-    	
-        final String entity = event.getEntityType().getName().toLowerCase();
+        final String entity = MiscUtils.getEntityName(event.getEntity());
 
         // Technically I think that I really should name it "entity-eat" for
         // better consistency and
         // in case other mobs ever are made to eat. But that's not as fun
-        if( event.getEntityType().equals( EntityType.SHEEP ) ) {
+        if( event.getBlock().getType() == Material.GRASS && event.getTo() == Material.DIRT) {
+            if( event.getEntityType() != EntityType.SHEEP )
+                return;
             if( !Prism.getIgnore().event( "sheep-eat", event.getBlock() ) )
                 return;
             RecordingQueue.addToQueue( ActionFactory.create( "sheep-eat", event.getBlock(), entity ) );
-        } else {
-
-            if( event.getEntity() instanceof Enderman ) {
-
-                if( event.getTo() == Material.AIR ) {
-                    if( !Prism.getIgnore().event( "enderman-place", event.getBlock() ) )
-                        return;
-                    RecordingQueue.addToQueue( ActionFactory.create( "enderman-place", event.getBlock(), entity ) );
-                } else {
-                    if( !Prism.getIgnore().event( "enderman-pickup", event.getBlock() ) )
-                        return;
-                    final Enderman enderman = (Enderman) event.getEntity();
-                    if( enderman.getCarriedMaterial() != null ) {
-                        RecordingQueue.addToQueue( ActionFactory.create( "enderman-pickup", event.getBlock(), entity ) );
-                    }
+        } else if (event.getEntity() instanceof Enderman) {
+            if (event.getTo() == Material.AIR) {
+                if (!Prism.getIgnore().event("enderman-place", event.getBlock()))
+                    return;
+                RecordingQueue.addToQueue(ActionFactory.create("enderman-place", event.getBlock(), entity));
+            } else {
+                if (!Prism.getIgnore().event("enderman-pickup", event.getBlock()))
+                    return;
+                final Enderman enderman = (Enderman) event.getEntity();
+                if (enderman.getCarriedMaterial() != null) {
+                    RecordingQueue.addToQueue(ActionFactory.create("enderman-pickup", event.getBlock(), entity));
                 }
             }
         }
