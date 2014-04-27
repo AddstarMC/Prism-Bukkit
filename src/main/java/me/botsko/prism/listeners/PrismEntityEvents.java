@@ -494,14 +494,16 @@ public class PrismEntityEvents implements Listener {
         // Technically I think that I really should name it "entity-eat" for
         // better consistency and
         // in case other mobs ever are made to eat. But that's not as fun
-        if( event.getBlock().getType() == Material.GRASS && event.getTo() == Material.DIRT) {
+        Material to = event.getTo();
+        Material from = event.getBlock().getType();
+        if( from == Material.GRASS && to == Material.DIRT) {
             if( event.getEntityType() != EntityType.SHEEP )
                 return;
             if( !Prism.getIgnore().event( "sheep-eat", event.getBlock() ) )
                 return;
             RecordingQueue.addToQueue( ActionFactory.create( "sheep-eat", event.getBlock(), entity ) );
-        } else if (event.getEntity() instanceof Enderman) {
-            if (event.getTo() == Material.AIR) {
+        } else if (to == Material.AIR ^ from == Material.AIR && event.getEntity() instanceof Enderman) {
+            if (to == Material.AIR) {
                 if (!Prism.getIgnore().event("enderman-place", event.getBlock()))
                     return;
                 RecordingQueue.addToQueue(ActionFactory.create("enderman-place", event.getBlock(), entity));
