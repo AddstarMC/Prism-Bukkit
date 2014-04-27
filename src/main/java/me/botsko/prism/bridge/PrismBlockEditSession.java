@@ -60,8 +60,8 @@ public class PrismBlockEditSession extends EditSession {
         if( success ) {
             final Location loc = new Location( Bukkit.getWorld( player.getWorld().getName() ), pt.getBlockX(),
                     pt.getBlockY(), pt.getBlockZ() );
-            RecordingQueue.addToQueue( ActionFactory.create( "world-edit", loc, typeBefore, dataBefore, loc.getBlock()
-                    .getTypeId(), loc.getBlock().getData(), player.getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createBlockChange("world-edit", loc, typeBefore, dataBefore, loc.getBlock()
+                    .getTypeId(), loc.getBlock().getData(), player.getName()) );
         }
         return success;
     }

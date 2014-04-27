@@ -6,16 +6,16 @@ public class GrowAction extends BlockAction {
 
     /**
      * 
-     * @param blockstate
+     * @param state
      */
-    public void setBlock(BlockState blockstate) {
-        if( blockstate != null ) {
-            this.block_id = blockstate.getTypeId();
-            this.block_subid = blockstate.getData().getData();
-            this.world_name = blockstate.getWorld().getName();
-            this.x = blockstate.getLocation().getBlockX();
-            this.y = blockstate.getLocation().getBlockY();
-            this.z = blockstate.getLocation().getBlockZ();
+    public void setBlock(BlockState state) {
+        if( state != null ) {
+            this.block_id = state.getTypeId();
+            this.block_subid = state.getData().getData();
+            this.world_name = state.getWorld().getName();
+            this.x = state.getLocation().getBlockX();
+            this.y = state.getLocation().getBlockY();
+            this.z = state.getLocation().getBlockZ();
         }
     }
 }

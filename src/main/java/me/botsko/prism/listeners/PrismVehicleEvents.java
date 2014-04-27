@@ -46,7 +46,7 @@ public class PrismVehicleEvents implements Listener {
         if( player != null ) {
             if( !Prism.getIgnore().event( "vehicle-place", loc.getWorld(), player ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "vehicle-place", vehicle, player ) );
+            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-place", vehicle, player) );
         }
     }
 
@@ -64,13 +64,13 @@ public class PrismVehicleEvents implements Listener {
             if( attacker instanceof Player ) {
                 if( !Prism.getIgnore().event( "vehicle-break", ( (Player) attacker ) ) )
                     return;
-                RecordingQueue.addToQueue( ActionFactory.create( "vehicle-break", vehicle,
-                        ( (Player) attacker ).getName() ) );
+                RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-break", vehicle,
+                        ((Player) attacker).getName()) );
             } else {
                 if( !Prism.getIgnore().event( "vehicle-break", attacker.getWorld() ) )
                     return;
-                RecordingQueue.addToQueue( ActionFactory.create( "vehicle-break", vehicle, attacker.getType().name()
-                        .toLowerCase() ) );
+                RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-break", vehicle, attacker.getType().name()
+                        .toLowerCase()) );
             }
         } else {
 
@@ -79,8 +79,8 @@ public class PrismVehicleEvents implements Listener {
             if( passenger != null && passenger instanceof Player ) {
                 if( !Prism.getIgnore().event( "vehicle-break", ( (Player) passenger ) ) )
                     return;
-                RecordingQueue.addToQueue( ActionFactory.create( "vehicle-break", vehicle,
-                        ( (Player) passenger ).getName() ) );
+                RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-break", vehicle,
+                        ((Player) passenger).getName()) );
             }
         }
     }
@@ -98,12 +98,12 @@ public class PrismVehicleEvents implements Listener {
         if( entity instanceof Player ) {
             if( !Prism.getIgnore().event( "vehicle-enter", ( (Player) entity ) ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "vehicle-enter", vehicle, ( (Player) entity ).getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-enter", vehicle, ((Player) entity).getName()) );
         } else {
             if( !Prism.getIgnore().event( "vehicle-enter", entity.getWorld() ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "vehicle-enter", vehicle, entity.getType().name()
-                    .toLowerCase() ) );
+            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-enter", vehicle, entity.getType().name()
+                    .toLowerCase()) );
         }
     }
 
@@ -120,12 +120,12 @@ public class PrismVehicleEvents implements Listener {
         if( entity instanceof Player ) {
             if( !Prism.getIgnore().event( "vehicle-enter", ( (Player) entity ) ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "vehicle-exit", vehicle, ( (Player) entity ).getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-exit", vehicle, ((Player) entity).getName()) );
         } else {
             if( !Prism.getIgnore().event( "vehicle-enter", entity.getWorld() ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "vehicle-exit", vehicle, entity.getType().name()
-                    .toLowerCase() ) );
+            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-exit", vehicle, entity.getType().name()
+                    .toLowerCase()) );
         }
     }
 }

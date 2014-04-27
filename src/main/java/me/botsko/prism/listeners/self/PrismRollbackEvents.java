@@ -19,7 +19,7 @@ public class PrismRollbackEvents implements Listener {
         // if(!blockStateChanges.isEmpty()){
         //
         // // Create an entry for the rollback as a whole
-        // Handler primaryAction = ActionFactory.create("prism-process",
+        // Handler primaryAction = ActionFactory.createBlock("prism-process",
         // PrismProcessType.ROLLBACK, event.onBehalfOf(),
         // event.getCommandParams() );
         // int id = ActionQueue.insertActionIntoDatabase( primaryAction );

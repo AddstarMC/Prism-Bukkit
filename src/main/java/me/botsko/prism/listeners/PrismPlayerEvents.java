@@ -106,7 +106,7 @@ public class PrismPlayerEvents implements Listener {
         // Ignore some commands based on config
         if( ignoreCommands.contains( primaryCmd ) ) { return; }
 
-        RecordingQueue.addToQueue( ActionFactory.create( "player-command", player, event.getMessage() ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("player-command", player, event.getMessage()) );
 
     }
 
@@ -131,7 +131,7 @@ public class PrismPlayerEvents implements Listener {
             ip = player.getAddress().getAddress().getHostAddress().toString();
         }
 
-        RecordingQueue.addToQueue( ActionFactory.create( "player-join", event.getPlayer(), ip ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("player-join", event.getPlayer(), ip) );
     }
 
     /**
@@ -148,7 +148,7 @@ public class PrismPlayerEvents implements Listener {
         if( !Prism.getIgnore().event( "player-quit", event.getPlayer() ) )
             return;
 
-        RecordingQueue.addToQueue( ActionFactory.create( "player-quit", event.getPlayer(), null ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("player-quit", event.getPlayer(), null) );
 
         // Remove any active wands for this player
         if( Prism.playersWithActiveTools.containsKey( event.getPlayer().getName() ) ) {
@@ -175,7 +175,7 @@ public class PrismPlayerEvents implements Listener {
         if( plugin.dependencyEnabled( "Herochat" ) )
             return;
 
-        RecordingQueue.addToQueue( ActionFactory.create( "player-chat", event.getPlayer(), event.getMessage() ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("player-chat", event.getPlayer(), event.getMessage()) );
     }
 
     /**
@@ -186,9 +186,9 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
         if( !Prism.getIgnore().event( "item-drop", event.getPlayer() ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.create( "item-drop", event.getItemDrop().getItemStack(), event
+        RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", event.getItemDrop().getItemStack(), event
                 .getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer()
-                .getName() ) );
+                .getName()) );
     }
 
     /**
@@ -199,8 +199,8 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
         if( !Prism.getIgnore().event( "item-pickup", event.getPlayer() ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.create( "item-pickup", event.getItem().getItemStack(), event.getItem()
-                .getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName() ) );
+        RecordingQueue.addToQueue( ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(), event.getItem()
+                .getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
     }
 
     /**
@@ -211,7 +211,7 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
         if( !Prism.getIgnore().event( "xp-pickup", event.getPlayer() ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.create( "xp-pickup", event.getPlayer(), "" + event.getAmount() ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("xp-pickup", event.getPlayer(), "" + event.getAmount()) );
     }
 
     /**
@@ -229,8 +229,8 @@ public class PrismPlayerEvents implements Listener {
 
         final Block spot = event.getBlockClicked().getRelative( event.getBlockFace() );
         final int newId = ( cause.equals( "lava-bucket" ) ? 11 : 9 );
-        RecordingQueue.addToQueue( ActionFactory.create( cause, spot.getLocation(), spot.getTypeId(), spot.getData(),
-                newId, (byte) 0, player.getName() ) );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getTypeId(), spot.getData(),
+                newId, (byte) 0, player.getName()) );
 
         if( plugin.getConfig().getBoolean( "prism.alerts.uses.lava" ) && event.getBucket() == Material.LAVA_BUCKET
                 && !player.hasPermission( "prism.alerts.use.lavabucket.ignore" )
@@ -258,7 +258,7 @@ public class PrismPlayerEvents implements Listener {
             liquid_type = "lava";
         }
 
-        final Handler pa = ActionFactory.create( "bucket-fill", player, liquid_type );
+        final Handler pa = ActionFactory.createPlayer("bucket-fill", player, liquid_type);
 
         // Override the location with the area taken
         pa.setX( spot.getX() );
@@ -280,8 +280,8 @@ public class PrismPlayerEvents implements Listener {
         final TeleportCause c = event.getCause();
         if( c.equals( TeleportCause.END_PORTAL ) || c.equals( TeleportCause.NETHER_PORTAL )
                 || c.equals( TeleportCause.ENDER_PEARL ) ) {
-            RecordingQueue.addToQueue( ActionFactory.create( "player-teleport", event.getPlayer(), event.getFrom(),
-                    event.getTo(), event.getCause() ) );
+            RecordingQueue.addToQueue( ActionFactory.createEntityTravel("player-teleport", event.getPlayer(), event.getFrom(),
+                    event.getTo(), event.getCause()) );
         }
     }
 
@@ -294,8 +294,8 @@ public class PrismPlayerEvents implements Listener {
         if( !Prism.getIgnore().event( "enchant-item", event.getEnchanter() ) )
             return;
         final Player player = event.getEnchanter();
-        RecordingQueue.addToQueue( ActionFactory.create( "enchant-item", event.getItem(), event.getEnchantsToAdd(),
-                event.getEnchantBlock().getLocation(), player.getName() ) );
+        RecordingQueue.addToQueue( ActionFactory.createItemStack("enchant-item", event.getItem(), event.getEnchantsToAdd(),
+                event.getEnchantBlock().getLocation(), player.getName()) );
     }
 
     /**
@@ -308,8 +308,8 @@ public class PrismPlayerEvents implements Listener {
         if( !Prism.getIgnore().event( "craft-item", player ) )
             return;
         final ItemStack item = event.getRecipe().getResult();
-        RecordingQueue.addToQueue( ActionFactory.create( "craft-item", item, 1, -1, null, player.getLocation(),
-                player.getName() ) );
+        RecordingQueue.addToQueue( ActionFactory.createItemStack("craft-item", item, 1, -1, null, player.getLocation(),
+                player.getName()) );
     }
 
     /**
@@ -382,7 +382,7 @@ public class PrismPlayerEvents implements Listener {
                 case DROPPER:
                     if( !Prism.getIgnore().event( "container-access", player ) )
                         return;
-                    RecordingQueue.addToQueue( ActionFactory.create( "container-access", block, player.getName() ) );
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("container-access", block, player.getName()) );
                     break;
                 case JUKEBOX:
                     recordDiscInsert( block, player );
@@ -398,7 +398,7 @@ public class PrismPlayerEvents implements Listener {
                 case WOOD_BUTTON:
                     if( !Prism.getIgnore().event( "block-use", player ) )
                         return;
-                    RecordingQueue.addToQueue( ActionFactory.create( "block-use", block, player.getName() ) );
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-use", block, player.getName()) );
                     break;
                 case LOG:
                     recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
@@ -423,7 +423,7 @@ public class PrismPlayerEvents implements Listener {
                     if( player.getItemInHand().getType().equals( Material.FLINT_AND_STEEL ) ) {
                         if( !Prism.getIgnore().event( "tnt-prime", player ) )
                             return;
-                        RecordingQueue.addToQueue( ActionFactory.create( "tnt-prime", "tnt", block, player.getName() ) );
+                        RecordingQueue.addToQueue( ActionFactory.createUse("tnt-prime", "tnt", block, player.getName()) );
                     }
                     break;
                 default:
@@ -452,7 +452,7 @@ public class PrismPlayerEvents implements Listener {
         if( block != null && event.getAction() == Action.LEFT_CLICK_BLOCK ) {
             final Block above = block.getRelative( BlockFace.UP );
             if( above.getType().equals( Material.FIRE ) ) {
-                RecordingQueue.addToQueue( ActionFactory.create( "block-break", above, player.getName() ) );
+                RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", above, player.getName()) );
             }
         }
 
@@ -464,8 +464,8 @@ public class PrismPlayerEvents implements Listener {
                                                      // soil
                 if( !Prism.getIgnore().event( "crop=trample", player ) )
                     return;
-                RecordingQueue.addToQueue( ActionFactory.create( "crop-trample", block.getRelative( BlockFace.UP ),
-                        player.getName() ) );
+                RecordingQueue.addToQueue( ActionFactory.createBlock("crop-trample", block.getRelative(BlockFace.UP),
+                        player.getName()) );
             }
         }
     }
@@ -508,7 +508,7 @@ public class PrismPlayerEvents implements Listener {
         if( inhand.getTypeId() == 351 && inhand.getDurability() == 15 ) {
             if( !Prism.getIgnore().event( "bonemeal-use", block ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.create( "bonemeal-use", "bonemeal", block, player ) );
+            RecordingQueue.addToQueue( ActionFactory.createUse("bonemeal-use", "bonemeal", block, player) );
         }
     }
 
@@ -521,7 +521,7 @@ public class PrismPlayerEvents implements Listener {
     protected void recordMonsterEggUse(Block block, ItemStack inhand, String player) {
         if( !Prism.getIgnore().event( "spawnegg-use", block ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.create( "spawnegg-use", "monster egg", block, player ) );
+        RecordingQueue.addToQueue( ActionFactory.createUse("spawnegg-use", "monster egg", block, player) );
     }
 
     /**
@@ -535,7 +535,7 @@ public class PrismPlayerEvents implements Listener {
         if( !Prism.getIgnore().event( "firework-launch", block ) )
             return;
         RecordingQueue
-                .addToQueue( ActionFactory.create( "firework-launch", inhand, null, block.getLocation(), player ) );
+                .addToQueue( ActionFactory.createItemStack("firework-launch", inhand, null, block.getLocation(), player) );
     }
 
     /**
@@ -546,7 +546,7 @@ public class PrismPlayerEvents implements Listener {
     protected void recordCakeEat(Block block, Player player) {
         if( !Prism.getIgnore().event( "cake-eat", block ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.create( "cake-eat", "cake", block, player.getName() ) );
+        RecordingQueue.addToQueue( ActionFactory.createUse("cake-eat", "cake", block, player.getName()) );
     }
 
     /**
@@ -567,14 +567,14 @@ public class PrismPlayerEvents implements Listener {
 
             // Record currently playing disc
             final ItemStack i = new ItemStack( jukebox.getPlaying(), 1 );
-            RecordingQueue.addToQueue( ActionFactory.create( "item-remove", i, i.getAmount(), 0, null,
-                    block.getLocation(), player.getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+                    block.getLocation(), player.getName()) );
 
         } else {
 
             // Record the insert
-            RecordingQueue.addToQueue( ActionFactory.create( "item-insert", player.getItemInHand(), 1, 0, null,
-                    block.getLocation(), player.getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", player.getItemInHand(), 1, 0, null,
+                    block.getLocation(), player.getName()) );
 
         }
     }

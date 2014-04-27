@@ -3,7 +3,6 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
@@ -33,7 +32,7 @@ public class PrismWorldEvents implements Listener {
                 if( event.getPlayer() != null ) {
                     player = event.getPlayer().getName();
                 }
-                RecordingQueue.addToQueue( ActionFactory.create( type, block, player ) );
+                RecordingQueue.addToQueue( ActionFactory.createGrow(type, block, player) );
             }
         }
     }

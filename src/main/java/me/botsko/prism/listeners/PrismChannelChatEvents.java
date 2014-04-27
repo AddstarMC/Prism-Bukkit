@@ -21,6 +21,6 @@ public class PrismChannelChatEvents implements Listener {
         if( !Prism.getIgnore().event( "player-chat", event.getSender().getPlayer() ) )
             return;
         final String msg = "[" + event.getChannel().getNick().toLowerCase() + "] " + event.getMessage();
-        RecordingQueue.addToQueue( ActionFactory.create( "player-chat", event.getSender().getPlayer(), msg ) );
+        RecordingQueue.addToQueue( ActionFactory.createPlayer("player-chat", event.getSender().getPlayer(), msg) );
     }
 }
