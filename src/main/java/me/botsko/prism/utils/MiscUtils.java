@@ -1,5 +1,6 @@
 package me.botsko.prism.utils;
 
+import com.google.common.base.CaseFormat;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
@@ -9,6 +10,8 @@ import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -128,5 +131,13 @@ public class MiscUtils {
             String processedCommand = command.replace("<alert>", stripped);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand);
         }
+    }
+
+    public static String getEntityName(Entity entity) {
+        if(entity == null)
+            return "unknown";
+        if(entity.getType() == EntityType.PLAYER)
+            return ((Player)entity).getName();
+        return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
     }
 }

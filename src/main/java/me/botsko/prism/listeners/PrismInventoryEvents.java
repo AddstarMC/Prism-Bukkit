@@ -53,8 +53,8 @@ public class PrismInventoryEvents implements Listener {
 
         // If hopper
         if( event.getInventory().getType().equals( InventoryType.HOPPER ) ) {
-            RecordingQueue.addToQueue( ActionFactory.create( "item-pickup", event.getItem().getItemStack(), event
-                    .getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper" ) );
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(), event
+                    .getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper") );
         }
     }
 
@@ -196,8 +196,8 @@ public class PrismInventoryEvents implements Listener {
 
         // Record it!
         if( actionType != null && containerLoc != null && item != null && item.getTypeId() != 0 && officialQuantity > 0 ) {
-            RecordingQueue.addToQueue( ActionFactory.create( actionType, item, officialQuantity, slot, null,
-                    containerLoc, player.getName() ) );
+            RecordingQueue.addToQueue( ActionFactory.createItemStack(actionType, item, officialQuantity, slot, null,
+                    containerLoc, player.getName()) );
         }
     }
 }

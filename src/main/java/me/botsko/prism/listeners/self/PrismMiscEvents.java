@@ -29,8 +29,8 @@ public class PrismMiscEvents implements Listener {
         if( !blockStateChanges.isEmpty() ) {
 
             // Create an entry for the rollback as a whole
-            final Handler primaryAction = ActionFactory.create( "prism-process", PrismProcessType.DRAIN,
-                    event.onBehalfOf(), "" + event.getRadius() );
+            final Handler primaryAction = ActionFactory.createPrismProcess("prism-process", PrismProcessType.DRAIN,
+                    event.onBehalfOf(), "" + event.getRadius());
             final int id = RecordingTask.insertActionIntoDatabase( primaryAction );
             if( id == 0 ) { return; }
             for ( final BlockStateChange stateChange : blockStateChanges ) {
@@ -39,8 +39,8 @@ public class PrismMiscEvents implements Listener {
                 final BlockState newBlock = stateChange.getNewBlock();
 
                 // Build the action
-                RecordingQueue.addToQueue( ActionFactory.create( "prism-drain", orig, newBlock, event.onBehalfOf()
-                        .getName(), id ) );
+                RecordingQueue.addToQueue( ActionFactory.createPrismRollback("prism-drain", orig, newBlock, event.onBehalfOf()
+                        .getName(), id) );
 
             }
             // ActionQueue.save();
@@ -59,8 +59,8 @@ public class PrismMiscEvents implements Listener {
         if( !blockStateChanges.isEmpty() ) {
 
             // Create an entry for the rollback as a whole
-            final Handler primaryAction = ActionFactory.create( "prism-process", PrismProcessType.EXTINGUISH,
-                    event.onBehalfOf(), "" + event.getRadius() );
+            final Handler primaryAction = ActionFactory.createPrismProcess("prism-process", PrismProcessType.EXTINGUISH,
+                    event.onBehalfOf(), "" + event.getRadius());
             final int id = RecordingTask.insertActionIntoDatabase( primaryAction );
             if( id == 0 ) { return; }
             for ( final BlockStateChange stateChange : blockStateChanges ) {
@@ -69,8 +69,8 @@ public class PrismMiscEvents implements Listener {
                 final BlockState newBlock = stateChange.getNewBlock();
 
                 // Build the action
-                RecordingQueue.addToQueue( ActionFactory.create( "prism-extinguish", orig, newBlock, event.onBehalfOf()
-                        .getName(), id ) );
+                RecordingQueue.addToQueue( ActionFactory.createPrismRollback("prism-extinguish", orig, newBlock, event.onBehalfOf()
+                        .getName(), id) );
 
             }
             // ActionQueue.save();

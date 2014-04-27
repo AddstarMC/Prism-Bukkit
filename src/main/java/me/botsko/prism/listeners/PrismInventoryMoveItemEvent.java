@@ -40,8 +40,8 @@ public class PrismInventoryMoveItemEvent implements Listener {
             return;
 
         if( event.getSource().getType().equals( InventoryType.HOPPER ) ) {
-            RecordingQueue.addToQueue( ActionFactory.create( "item-insert", event.getItem(), event.getItem()
-                    .getAmount(), 0, null, containerLoc, "hopper" ) );
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", event.getItem(), event.getItem()
+                    .getAmount(), 0, null, containerLoc, "hopper") );
         }
     }
 }

@@ -36,8 +36,8 @@ public class PrismCustomEvents implements Listener {
         final ArrayList<String> allowedPlugins = (ArrayList<String>) plugin.getConfig().getList(
                 "prism.tracking.api.allowed-plugins" );
         if( allowedPlugins.contains( event.getPluginName() ) ) {
-            RecordingQueue.addToQueue( ActionFactory.create( event.getActionTypeName(), event.getPlayer(),
-                    event.getMessage() ) );
+            RecordingQueue.addToQueue( ActionFactory.createPlayer(event.getActionTypeName(), event.getPlayer(),
+                    event.getMessage()) );
         }
     }
 }

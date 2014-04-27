@@ -31,14 +31,22 @@ public class BlockAction extends GenericAction {
     protected BlockActionData actionData;
 
     /**
-     * 
+     *
      * @param block
      */
     public void setBlock(Block block) {
         if( block != null ) {
+            setBlock(block.getState());
+        }
+    }/**
+     *
+     * @param state
+     */
+    public void setBlock(BlockState state) {
+        if( state != null ) {
 
-            block_id = BlockUtils.blockIdMustRecordAs( block.getTypeId() );
-            block_subid = block.getData();
+            block_id = BlockUtils.blockIdMustRecordAs( state.getTypeId() );
+            block_subid = state.getRawData();
 
             // Build an object for the specific details of this action
             // @todo clean this up
@@ -47,18 +55,18 @@ public class BlockAction extends GenericAction {
             }
 
             // spawner
-            if( block.getTypeId() == 52 ) {
+            if( state.getTypeId() == 52 ) {
                 final SpawnerActionData spawnerActionData = new SpawnerActionData();
-                final CreatureSpawner s = (CreatureSpawner) block.getState();
+                final CreatureSpawner s = (CreatureSpawner) state;
                 spawnerActionData.entity_type = s.getSpawnedType().name().toLowerCase();
                 spawnerActionData.delay = s.getDelay();
                 actionData = spawnerActionData;
             }
 
             // skulls
-            else if( ( block.getTypeId() == 144 || block.getTypeId() == 397 ) ) {
+            else if( ( state.getTypeId() == 144 || state.getTypeId() == 397 ) ) {
                 final SkullActionData skullActionData = new SkullActionData();
-                final Skull s = (Skull) block.getState();
+                final Skull s = (Skull) state;
                 skullActionData.rotation = s.getRotation().name().toLowerCase();
                 skullActionData.owner = s.getOwner();
                 skullActionData.skull_type = s.getSkullType().name().toLowerCase();
@@ -66,23 +74,23 @@ public class BlockAction extends GenericAction {
             }
 
             // signs
-            else if( ( block.getTypeId() == 63 || block.getTypeId() == 68 ) ) {
+            else if( ( state.getTypeId() == 63 || state.getTypeId() == 68 ) ) {
                 final SignActionData signActionData = new SignActionData();
-                final Sign s = (Sign) block.getState();
+                final Sign s = (Sign) state;
                 signActionData.lines = s.getLines();
                 actionData = signActionData;
             }
 
             // command block
-            else if( ( block.getTypeId() == 137 ) ) {
-                final CommandBlock cmdblock = (CommandBlock) block.getState();
+            else if( ( state.getTypeId() == 137 ) ) {
+                final CommandBlock cmdblock = (CommandBlock) state;
                 data = cmdblock.getCommand();
             }
 
-            this.world_name = block.getWorld().getName();
-            this.x = block.getLocation().getBlockX();
-            this.y = block.getLocation().getBlockY();
-            this.z = block.getLocation().getBlockZ();
+            this.world_name = state.getWorld().getName();
+            this.x = state.getLocation().getBlockX();
+            this.y = state.getLocation().getBlockY();
+            this.z = state.getLocation().getBlockZ();
         }
     }
 

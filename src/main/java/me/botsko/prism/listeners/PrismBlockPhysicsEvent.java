@@ -3,7 +3,6 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -47,7 +46,7 @@ public class PrismBlockPhysicsEvent implements Listener {
                 final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
                 if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
                     final String player = plugin.preplannedBlockFalls.get( coord_key );
-                    RecordingQueue.addToQueue( ActionFactory.create( "block-fall", b, player ) );
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, player) );
                     plugin.preplannedBlockFalls.remove( coord_key );
                 }
             }
@@ -72,7 +71,7 @@ public class PrismBlockPhysicsEvent implements Listener {
                     final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
                     if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
                         final String player = plugin.preplannedBlockFalls.get( coord_key );
-                        RecordingQueue.addToQueue( ActionFactory.create( "block-break", b, player ) );
+                        RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
                         plugin.preplannedBlockFalls.remove( coord_key );
                     }
                 }
@@ -87,7 +86,7 @@ public class PrismBlockPhysicsEvent implements Listener {
                 final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
                 if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
                     final String player = plugin.preplannedBlockFalls.get( coord_key );
-                    RecordingQueue.addToQueue( ActionFactory.create( "block-break", b, player ) );
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
                     plugin.preplannedBlockFalls.remove( coord_key );
                 }
             }

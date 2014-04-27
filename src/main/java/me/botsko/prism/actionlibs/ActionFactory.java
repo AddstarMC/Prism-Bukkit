@@ -39,7 +39,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, String player) {
+    public static Handler createBlock(String action_type, String player) {
         final BlockAction a = new BlockAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -48,15 +48,30 @@ public class ActionFactory {
 
     /**
      * BlockAction
-     * 
+     *
      * @param action_type
      * @param block
      * @param player
      */
-    public static Handler create(String action_type, Block block, String player) {
+    public static Handler createBlock(String action_type, Block block, String player) {
         final BlockAction a = new BlockAction();
         a.setActionType( action_type );
         a.setBlock( block );
+        a.setPlayerName( player );
+        return a;
+    }
+
+    /**
+     * BlockAction
+     *
+     * @param action_type
+     * @param state
+     * @param player
+     */
+    public static Handler createBlock(String action_type, BlockState state, String player) {
+        final BlockAction a = new BlockAction();
+        a.setActionType( action_type );
+        a.setBlock( state );
         a.setPlayerName( player );
         return a;
     }
@@ -67,8 +82,8 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid,
-            String player) {
+    public static Handler createBlockChange(String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid,
+                                            String player) {
         final BlockChangeAction a = new BlockChangeAction();
         a.setActionType( action_type );
         a.setBlockId( newId );
@@ -86,7 +101,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Block from, Location to, String player) {
+    public static Handler createBlockShift(String action_type, Block from, Location to, String player) {
         final BlockShiftAction a = new BlockShiftAction();
         a.setActionType( action_type );
         a.setBlock( from );
@@ -101,11 +116,11 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Entity entity, String player) {
-        return ActionFactory.create( action_type, entity, player, null );
+    public static Handler createEntity(String action_type, Entity entity, String player) {
+        return ActionFactory.createEntity(action_type, entity, player, null);
     }
 
-    public static Handler create(String action_type, Entity entity, String player, String dyeUsed) {
+    public static Handler createEntity(String action_type, Entity entity, String player, String dyeUsed) {
         final EntityAction a = new EntityAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -118,7 +133,7 @@ public class ActionFactory {
      * 
      * @param action_type
      */
-    public static Handler create(String action_type, Entity entity, Location from, Location to, TeleportCause cause) {
+    public static Handler createEntityTravel(String action_type, Entity entity, Location from, Location to, TeleportCause cause) {
         final EntityTravelAction a = new EntityTravelAction();
         a.setEntity( entity );
         a.setActionType( action_type );
@@ -134,7 +149,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, BlockState blockstate, String player) {
+    public static Handler createGrow(String action_type, BlockState blockstate, String player) {
         final GrowAction a = new GrowAction();
         a.setActionType( action_type );
         a.setBlock( blockstate );
@@ -148,7 +163,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Hanging hanging, String player) {
+    public static Handler createHangingItem(String action_type, Hanging hanging, String player) {
         final HangingItemAction a = new HangingItemAction();
         a.setActionType( action_type );
         a.setHanging( hanging );
@@ -162,13 +177,13 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, ItemStack item, Map<Enchantment, Integer> enchantments,
-            Location loc, String player) {
-        return ActionFactory.create( action_type, item, 1, -1, enchantments, loc, player );
+    public static Handler createItemStack(String action_type, ItemStack item, Map<Enchantment, Integer> enchantments,
+                                          Location loc, String player) {
+        return ActionFactory.createItemStack(action_type, item, 1, -1, enchantments, loc, player);
     }
 
-    public static Handler create(String action_type, ItemStack item, int quantity, int slot,
-            Map<Enchantment, Integer> enchantments, Location loc, String player) {
+    public static Handler createItemStack(String action_type, ItemStack item, int quantity, int slot,
+                                          Map<Enchantment, Integer> enchantments, Location loc, String player) {
         final ItemStackAction a = new ItemStackAction();
         a.setActionType( action_type );
         a.setLoc( loc );
@@ -183,7 +198,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Player player, String additionalInfo) {
+    public static Handler createPlayer(String action_type, Player player, String additionalInfo) {
         final PlayerAction a = new PlayerAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -198,7 +213,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Player player, String cause, String attacker) {
+    public static Handler createPlayerDeath(String action_type, Player player, String cause, String attacker) {
         final PlayerDeathAction a = new PlayerDeathAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -214,7 +229,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, PrismProcessType processType, Player player, String parameters) {
+    public static Handler createPrismProcess(String action_type, PrismProcessType processType, Player player, String parameters) {
         final PrismProcessAction a = new PrismProcessAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -229,8 +244,8 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, BlockState oldblock, BlockState newBlock, String player,
-            int parent_id) {
+    public static Handler createPrismRollback(String action_type, BlockState oldblock, BlockState newBlock, String player,
+                                              int parent_id) {
         final PrismRollbackAction a = new PrismRollbackAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -246,7 +261,7 @@ public class ActionFactory {
      * @param block
      * @param player
      */
-    public static Handler create(String action_type, Block block, String[] lines, String player) {
+    public static Handler createSign(String action_type, Block block, String[] lines, String player) {
         final SignAction a = new SignAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -261,7 +276,7 @@ public class ActionFactory {
      * @param block
      * @param player
      */
-    public static Handler create(String action_type, String item_used, Block block, String player) {
+    public static Handler createUse(String action_type, String item_used, Block block, String player) {
         final UseAction a = new UseAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
@@ -276,7 +291,7 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler create(String action_type, Vehicle vehicle, String player) {
+    public static Handler createVehicle(String action_type, Vehicle vehicle, String player) {
         final VehicleAction a = new VehicleAction();
         a.setActionType( action_type );
         a.setPlayerName( player );
