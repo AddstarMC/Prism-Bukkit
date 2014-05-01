@@ -183,6 +183,12 @@ public class SelectQueryBuilder extends QueryBuilder {
                 break;
             }
             final String matchQuery = ( playerMatch.equals( MatchRule.INCLUDE ) ? "IN" : "NOT IN" );
+            // @todo Temporary band-aid. The player list should not actually exclude anyone because
+            // we're doing it here. This is going to be rewritten soon anyway.
+            for( Entry<String,MatchRule> entry : playerNames.entrySet() ){
+                entry.setValue( MatchRule.INCLUDE );
+            }
+            // Add conditions
             addCondition( tableNameData + ".player_id " + matchQuery
                     + " ( SELECT p.player_id FROM " + prefix + "players p WHERE "
                     + buildMultipleConditions( playerNames, "p.player", null ) + ")" );
