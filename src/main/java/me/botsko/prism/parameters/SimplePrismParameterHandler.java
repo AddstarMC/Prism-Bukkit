@@ -121,6 +121,8 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         final String alias = split[0];
         final String input = split[1];
         final List<String> completions = tabComplete( alias, input, sender );
+        if(completions == null)
+            return Collections.emptyList();
         final List<String> edited = new ArrayList<String>( completions.size() );
         for ( final String completion : completions ) {
             edited.add( alias + ":" + completion );
