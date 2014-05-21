@@ -250,6 +250,14 @@ public class PrismConfig extends ConfigBase {
         illegal_commands.add( "deop" );
         illegal_commands.add( "stop" );
         illegal_commands.add( "reload" );
+        illegal_commands.add( "bukkit:op" );
+        illegal_commands.add( "bukkit:deop" );
+        illegal_commands.add( "bukkit:stop" );
+        illegal_commands.add( "bukkit:reload" );
+        illegal_commands.add( "minecraft:op" );
+        illegal_commands.add( "minecraft:deop" );
+        illegal_commands.add( "minecraft:stop" );
+        illegal_commands.add( "minecraft:reload" );
         config.addDefault( "prism.alerts.illegal-commands.commands", illegal_commands );
 
         // Use Alerts
