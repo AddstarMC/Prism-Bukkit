@@ -43,6 +43,7 @@ public class EntityAction extends GenericAction {
         public double jump;
         public String saddle;
         public String armor;
+        public double maxHealth;
     }
 
     /**
@@ -133,6 +134,7 @@ public class EntityAction extends GenericAction {
                 this.actionData.dom = h.getDomestication();
                 this.actionData.maxDom = h.getMaxDomestication();
                 this.actionData.jump = h.getJumpStrength();
+                this.actionData.maxHealth = h.getMaxHealth();
 
                 final HorseInventory hi = h.getInventory();
 
@@ -316,6 +318,14 @@ public class EntityAction extends GenericAction {
     }
 
     /**
+     *
+     * @return
+     */
+    public double getMaxHealth() {
+        return this.actionData.maxHealth;
+    }
+
+    /**
 	 * 
 	 */
     @Override
@@ -410,6 +420,7 @@ public class EntityAction extends GenericAction {
                 h.setDomestication( this.actionData.dom );
                 h.setMaxDomestication( this.actionData.maxDom );
                 h.setJumpStrength( this.actionData.jump );
+                h.setMaxHealth( this.actionData.maxHealth );
 
                 // Stuff
                 h.getInventory().setSaddle( getSaddle() );
