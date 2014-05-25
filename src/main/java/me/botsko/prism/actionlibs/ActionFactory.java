@@ -299,4 +299,109 @@ public class ActionFactory {
         a.setVehicle( vehicle );
         return a;
     }
+
+    // Backwards compat:
+
+    @Deprecated
+    public static Handler create(String action_type, String player) {
+        return createBlock(action_type, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Block block, String player) {
+        return createBlock(action_type, block, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid,
+                                 String player) {
+        return createBlockChange(action_type, loc, oldId, oldSubid, newId, newSubid, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Block from, Location to, String player) {
+        return createBlockShift(action_type, from, to, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Entity entity, String player) {
+        return createEntity( action_type, entity, player);
+    }
+
+    public static Handler create(String action_type, Entity entity, String player, String dyeUsed) {
+        return createEntity(action_type, entity, player, dyeUsed);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Entity entity, Location from, Location to, TeleportCause cause) {
+        return createEntityTravel(action_type, entity, from, to, cause);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, BlockState blockstate, String player) {
+        return createGrow(action_type, blockstate, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Hanging hanging, String player) {
+        return createHangingItem(action_type, hanging, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, ItemStack item, Map<Enchantment, Integer> enchantments,
+                                 Location loc, String player) {
+        return createItemStack(action_type, item, enchantments, loc, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, ItemStack item, int quantity, int slot,
+                                 Map<Enchantment, Integer> enchantments, Location loc, String player) {
+        return createItemStack(action_type, item, quantity, slot, enchantments, loc, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Player player, String additionalInfo) {
+        return createPlayer(action_type, player, additionalInfo);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Player player, String cause, String attacker) {
+        return createPlayerDeath(action_type, player, cause, attacker);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, PrismProcessType processType, Player player, String parameters) {
+        final PrismProcessAction a = new PrismProcessAction();
+        a.setActionType( action_type );
+        a.setPlayerName( player );
+        a.setLoc( player.getLocation() );
+        a.setProcessData( processType, parameters );
+        return a;
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, BlockState oldblock, BlockState newBlock, String player,
+                                 int parent_id) {
+        final PrismRollbackAction a = new PrismRollbackAction();
+        a.setActionType( action_type );
+        a.setPlayerName( player );
+        a.setLoc( oldblock.getLocation() );
+        a.setBlockChange( oldblock, newBlock, parent_id );
+        return a;
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Block block, String[] lines, String player) {
+        return createSign(action_type, block, lines, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, String item_used, Block block, String player) {
+        return createUse(action_type, item_used, block, player);
+    }
+
+    @Deprecated
+    public static Handler create(String action_type, Vehicle vehicle, String player) {
+        return createVehicle(action_type, vehicle, player);
+    }
 }
