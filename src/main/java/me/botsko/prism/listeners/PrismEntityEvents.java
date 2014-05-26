@@ -559,7 +559,8 @@ public class PrismEntityEvents implements Listener {
                 if( !Prism.getIgnore().event( "tnt-explode", event.getEntity().getWorld() ) )
                     return;
                 action = "tnt-explode";
-                name = "tnt";
+                Entity source = ((TNTPrimed) event.getEntity()).getSource();
+                name = followTNTTrail(source);
             } else if( event.getEntity() instanceof EnderDragon ) {
                 if( !Prism.getIgnore().event( "dragon-eat", event.getEntity().getWorld() ) )
                     return;
@@ -625,5 +626,37 @@ public class PrismEntityEvents implements Listener {
             be.logBlockRelationshipsForBlock( name, block );
 
         }
+    }
+
+    private String followTNTTrail(Entity initial){
+        String name = "tnt";
+        if (initial != null) {
+            if (initial.getType().equals(EntityType.PRIMED_TNT)) {
+                Entity source = ((TNTPrimed) initial).getSource();
+                if (source != null) {
+                    if (source.getType().equals(EntityType.PLAYER)) {
+                        Player player = (Player) source;
+                        name = player.getName();
+                    } else if (source.getType().equals(EntityType.PRIMED_TNT)) {
+                        Entity newSource = ((TNTPrimed) source).getSource();
+                        if (newSource != null) {
+                            name = followTNTTrail(newSource);
+                        }
+                    } else {
+                        name = source.getType().name();
+                    }
+                } else {
+                    name = "tnt";
+                }
+            } else {
+                if (initial.getType().equals(EntityType.PLAYER)) {
+                    Player player = (Player) initial;
+                    name = player.getName();
+                } else {
+                    name = initial.getType().name();
+                }
+            }
+        }
+        return name;
     }
 }
