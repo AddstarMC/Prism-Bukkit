@@ -226,27 +226,27 @@ permissions:
             prism.parameters.world: true
             prism.parameters.flag.*: true
     prism.parameters.action:
-        default: false
+        default: op
     prism.parameters.before:
-        default: false
+        default: op
     prism.parameters.block:
-        default: false
+        default: op
     prism.parameters.entity:
-        default: false
+        default: op
     prism.parameters.id:
-        default: false
+        default: op
     prism.parameters.keyword:
-        default: false
+        default: op
     prism.parameters.player:
-        default: false
+        default: op
     prism.parameters.radius:
-        default: false
+        default: op
     prism.parameters.since:
-        default: false
+        default: op
     prism.parameters.world:
-        default: false
+        default: op
     prism.parameters.flag.*:
-        default: false
+        default: op
         children:
             prism.parameters.flag.drain: true
             prism.parameters.flag.drain-lava: true
@@ -260,24 +260,24 @@ permissions:
             prism.parameters.flag.share: true
             prism.parameters.flag.paste: true
     prism.parameters.flag.drain:
-        default: false
+        default: op
     prism.parameters.flag.drain-lava:
-        default: false
+        default: op
     prism.parameters.flag.drain-water:
-        default: false
+        default: op
     prism.parameters.flag.extended:
-        default: false
+        default: op
     prism.parameters.flag.no-ext:
-        default: false
+        default: op
     prism.parameters.flag.no-itemclear:
-        default: false
+        default: op
     prism.parameters.flag.per-page:
-        default: false
+        default: op
     prism.parameters.flag.no-group:
-        default: false
+        default: op
     prism.parameters.flag.overwrite:
-        default: false
+        default: op
     prism.parameters.flag.share:
-        default: false
+        default: op
     prism.parameters.flag.paste:
-        default: false
+        default: op

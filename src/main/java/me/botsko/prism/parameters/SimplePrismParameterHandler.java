@@ -114,6 +114,9 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 
     }
 
+    /**
+     * 
+     */
     @Override
     public final List<String> tabComplete(String partialParameter, CommandSender sender) {
         // Should never fail, applicable is called first
@@ -130,12 +133,23 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         return edited;
     }
 
+    /**
+     * 
+     * @param alias
+     * @param partialParameter
+     * @param sender
+     * @return
+     */
     protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
         return null;
     }
 
+    /**
+     * 
+     */
     @Override
     public final boolean hasPermission(String parameter, Permissible permissible) {
+        if( permissible == null ) return true;
         return permissible.hasPermission(permission);
     }
 }

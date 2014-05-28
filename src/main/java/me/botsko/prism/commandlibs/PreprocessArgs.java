@@ -108,6 +108,17 @@ public class PreprocessArgs {
         return parameters;
     }
 
+    /**
+     * 
+     * @param plugin
+     * @param sender
+     * @param parameters
+     * @param registeredParams
+     * @param foundArgsNames
+     * @param foundArgsList
+     * @param arg
+     * @return
+     */
     private static ParseResult parseParam(Prism plugin, CommandSender sender, QueryParameters parameters, HashMap<String, PrismParameterHandler> registeredParams, Set<String> foundArgsNames, List<MatchedParam> foundArgsList, String arg) {
         ParseResult result = ParseResult.NotFound;
 
@@ -153,10 +164,19 @@ public class PreprocessArgs {
                 if (sender != null)
                     sender.sendMessage(Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
                 break;
+            default:
+                break;
         }
         return result;
     }
 
+    /**
+     * 
+     * @param sender
+     * @param args
+     * @param arg
+     * @return
+     */
     public static List<String> complete(CommandSender sender, String[] args, int arg) {
         // Iterate all command arguments
         if( args == null || args.length <= arg ) { return null; }
@@ -164,10 +184,22 @@ public class PreprocessArgs {
         return complete( sender, args[arg] );
     }
 
+    /**
+     * 
+     * @param sender
+     * @param args
+     * @return
+     */
     public static List<String> complete(CommandSender sender, String[] args) {
         return complete( sender, args, args.length - 1 );
     }
 
+    /**
+     * 
+     * @param sender
+     * @param arg
+     * @return
+     */
     public static List<String> complete(CommandSender sender, String arg) {
         if( arg.isEmpty() )
             return null;
@@ -204,6 +236,11 @@ public class PreprocessArgs {
         }
     }
 
+    /**
+     * 
+     * @author botskonet
+     *
+     */
     private enum ParseResult {
         NotFound,
         NoPermission,
