@@ -629,7 +629,6 @@ public class PrismEntityEvents implements Listener {
     }
 
     private String followTNTTrail(Entity initial) {
-        Location origin = initial.getLocation();
         int counter = 10000000;
 
         while (initial != null) {
@@ -640,7 +639,6 @@ public class PrismEntityEvents implements Listener {
                 if (counter < 0) {
                     Location last = initial.getLocation();
                     plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
-                    plugin.getLogger().warning("TnT origin was at " + origin.getX() + ", " + origin.getY() + ". " + origin.getZ() + " in world " + origin.getWorld());
                     plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". " + last.getZ() + " in world " + last.getWorld());
                     return "tnt";
                 }
