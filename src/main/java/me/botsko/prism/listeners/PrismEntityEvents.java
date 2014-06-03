@@ -559,7 +559,8 @@ public class PrismEntityEvents implements Listener {
                 if( !Prism.getIgnore().event( "tnt-explode", event.getEntity().getWorld() ) )
                     return;
                 action = "tnt-explode";
-                name = "tnt";
+                Entity source = ((TNTPrimed) event.getEntity()).getSource();
+                name = followTNTTrail(source);
             } else if( event.getEntity() instanceof EnderDragon ) {
                 if( !Prism.getIgnore().event( "dragon-eat", event.getEntity().getWorld() ) )
                     return;
@@ -625,5 +626,28 @@ public class PrismEntityEvents implements Listener {
             be.logBlockRelationshipsForBlock( name, block );
 
         }
+    }
+
+    private String followTNTTrail(Entity initial) {
+        int counter = 10000000;
+
+        while (initial != null) {
+            if (initial instanceof Player) {
+                return ((Player) initial).getName();
+            } else if (initial instanceof TNTPrimed) {
+                initial = (((TNTPrimed) initial).getSource());
+                if (counter < 0) {
+                    Location last = initial.getLocation();
+                    plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
+                    plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". " + last.getZ() + " in world " + last.getWorld());
+                    return "tnt";
+                }
+                counter--;
+            } else {
+                return initial.getType().name();
+            }
+        }
+
+        return "tnt";
     }
 }
