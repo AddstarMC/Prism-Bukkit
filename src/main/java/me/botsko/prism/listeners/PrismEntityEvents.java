@@ -628,35 +628,28 @@ public class PrismEntityEvents implements Listener {
         }
     }
 
-    private String followTNTTrail(Entity initial){
-        String name = "tnt";
-        if (initial != null) {
-            if (initial.getType().equals(EntityType.PRIMED_TNT)) {
-                Entity source = ((TNTPrimed) initial).getSource();
-                if (source != null) {
-                    if (source.getType().equals(EntityType.PLAYER)) {
-                        Player player = (Player) source;
-                        name = player.getName();
-                    } else if (source.getType().equals(EntityType.PRIMED_TNT)) {
-                        Entity newSource = ((TNTPrimed) source).getSource();
-                        if (newSource != null) {
-                            name = followTNTTrail(newSource);
-                        }
-                    } else {
-                        name = source.getType().name();
-                    }
-                } else {
-                    name = "tnt";
+    private String followTNTTrail(Entity initial) {
+        Location origin = initial.getLocation();
+        int counter = 10000000;
+
+        while (initial != null) {
+            if (initial instanceof Player) {
+                return ((Player) initial).getName();
+            } else if (initial instanceof TNTPrimed) {
+                initial = (((TNTPrimed) initial).getSource());
+                if (counter < 0) {
+                    Location last = initial.getLocation();
+                    plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
+                    plugin.getLogger().warning("TnT origin was at " + origin.getX() + ", " + origin.getY() + ". " + origin.getZ() + " in world " + origin.getWorld());
+                    plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". " + last.getZ() + " in world " + last.getWorld());
+                    return "tnt";
                 }
+                counter--;
             } else {
-                if (initial.getType().equals(EntityType.PLAYER)) {
-                    Player player = (Player) initial;
-                    name = player.getName();
-                } else {
-                    name = initial.getType().name();
-                }
+                return initial.getType().name();
             }
         }
-        return name;
+
+        return "tnt";
     }
 }
