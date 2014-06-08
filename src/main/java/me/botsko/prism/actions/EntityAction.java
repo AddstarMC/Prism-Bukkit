@@ -8,17 +8,8 @@ import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Villager;
-import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
@@ -44,6 +35,7 @@ public class EntityAction extends GenericAction {
         public String saddle;
         public String armor;
         public double maxHealth;
+        public String catType;
     }
 
     /**
@@ -122,6 +114,29 @@ public class EntityAction extends GenericAction {
                     this.actionData.sitting = true;
                 }
 
+            }
+
+            // Ocelot details
+            if( entity instanceof Ocelot ) {
+                final Ocelot ocelot = (Ocelot) entity;
+
+                // Owner
+                if( ocelot.isTamed() ) {
+                    if( ocelot.getOwner() instanceof Player ) {
+                        this.actionData.taming_owner = ocelot.getOwner().getName();
+                    }
+                    if( ocelot.getOwner() instanceof OfflinePlayer ) {
+                        this.actionData.taming_owner = ocelot.getOwner().getName();
+                    }
+                }
+
+                // Cat type
+                this.actionData.catType = ocelot.getCatType().toString().toLowerCase();
+
+                // Sitting
+                if ( ocelot.isSitting() ) {
+                    this.actionData.sitting = true;
+                }
             }
 
             // Horse details
@@ -240,6 +255,14 @@ public class EntityAction extends GenericAction {
      */
     public String getCustomName() {
         return this.actionData.custom_name;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Ocelot.Type getCatType() {
+        return Ocelot.Type.valueOf( actionData.catType.toUpperCase() );
     }
 
     /**
@@ -396,6 +419,36 @@ public class EntityAction extends GenericAction {
 
                 if( isSitting() ) {
                     wolf.setSitting( true );
+                }
+            }
+
+            // Set ocelot details
+            if( entity instanceof Ocelot ) {
+
+                // Owner
+                final Ocelot ocelot = (Ocelot) entity;
+                final String tamingOwner = getTamingOwner();
+                if( tamingOwner != null ) {
+                    Player owner = plugin.getServer().getPlayer( tamingOwner );
+                    if( owner == null ) {
+                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                        if( offlinePlayer.hasPlayedBefore() ) {
+                            owner = offlinePlayer.getPlayer();
+                        }
+                    }
+                    if( owner != null ) {
+                        ocelot.setOwner(owner);
+                    }
+                }
+
+                // Cat type
+                if( getCatType() != null ) {
+                    ocelot.setCatType( getCatType() );
+                }
+
+                // Sitting
+                if ( isSitting() ) {
+                    ocelot.setSitting( true );
                 }
             }
 
