@@ -35,7 +35,6 @@ public class EntityAction extends GenericAction {
         public String saddle;
         public String armor;
         public double maxHealth;
-        public String catType;
     }
 
     /**
@@ -131,7 +130,7 @@ public class EntityAction extends GenericAction {
                 }
 
                 // Cat type
-                this.actionData.catType = ocelot.getCatType().toString().toLowerCase();
+                this.actionData.var = ocelot.getCatType().toString().toLowerCase();
 
                 // Sitting
                 if ( ocelot.isSitting() ) {
@@ -262,7 +261,7 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public Ocelot.Type getCatType() {
-        return Ocelot.Type.valueOf( actionData.catType.toUpperCase() );
+        return Ocelot.Type.valueOf( actionData.var.toUpperCase() );
     }
 
     /**
@@ -284,7 +283,11 @@ public class EntityAction extends GenericAction {
         if( actionData.taming_owner != null ) {
             name += actionData.taming_owner + "'s ";
         }
-        name += actionData.entity_name;
+        if( (actionData.entity_name.equals("ocelot") || actionData.entity_name.equals("horse")) && actionData.var != null ) {
+            name += actionData.var.toLowerCase().replace("_", " ");
+        } else {
+            name += actionData.entity_name;
+        }
         if( this.actionData.newColor != null ) {
             name += " " + this.actionData.newColor;
         }
