@@ -10,24 +10,24 @@ import com.sk89q.worldedit.bags.BlockBag;
 public class PrismBlockEditSessionFactory extends EditSessionFactory {
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public EditSession getEditSession(LocalWorld world, int maxBlocks, LocalPlayer player) {
         return new PrismBlockEditSession( world, maxBlocks, player );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public EditSession getEditSession(LocalWorld world, int maxBlocks, BlockBag blockBag, LocalPlayer player) {
         return new PrismBlockEditSession( world, maxBlocks, blockBag, player );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public static void initialize() {
         try {
             // Check to see if the world edit version is compatible

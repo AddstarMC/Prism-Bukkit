@@ -19,28 +19,28 @@ import org.bukkit.entity.Player;
 public class OreMonitor {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final int threshold_max = 100;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private int threshold = 1;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected Player player;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected Block block;
 
     /**

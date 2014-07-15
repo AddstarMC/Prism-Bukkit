@@ -133,13 +133,13 @@ public interface Handler {
     public abstract void setBlockSubId(int id);
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract int getBlockId();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract int getBlockSubId();
 
     /**
@@ -155,19 +155,31 @@ public interface Handler {
     public abstract void setOldBlockSubId(int id);
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract int getOldBlockId();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract int getOldBlockSubId();
 
     /**
      * @return the data
      */
     public abstract String getData();
+
+    // Cauldron start
+    /**
+     * @return the data
+     */
+    public abstract String getTileEntityData();
+
+    /**
+     * @param data the data to set
+     */
+    public abstract void setTileEntityData(String data);
+    // Cauldron end
 
     /**
      * @param data
@@ -194,18 +206,18 @@ public interface Handler {
     public abstract int getAggregateCount();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract String getNiceName();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public abstract void save();
 
     /**
-	 *
-	 */
+     *
+     */
     public abstract boolean isCanceled();
 
     /**

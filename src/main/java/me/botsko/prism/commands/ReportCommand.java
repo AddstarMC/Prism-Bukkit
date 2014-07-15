@@ -32,8 +32,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class ReportCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
     private final List<String> secondaries, sumTertiaries;
 

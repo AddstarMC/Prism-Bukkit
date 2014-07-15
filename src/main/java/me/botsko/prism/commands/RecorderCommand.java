@@ -13,8 +13,8 @@ import org.bukkit.scheduler.BukkitScheduler;
 public class RecorderCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

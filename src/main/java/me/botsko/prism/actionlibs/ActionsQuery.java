@@ -23,18 +23,18 @@ import me.botsko.prism.database.mysql.SelectQueryBuilder;
 public class ActionsQuery {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final SelectQueryBuilder qb;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private boolean shouldGroup = false;
 
     /**
@@ -173,12 +173,13 @@ public class ActionsQuery {
                         baseHandler.setOldBlockId( rs.getInt( 11 ) );
                         baseHandler.setOldBlockSubId( rs.getInt( 12 ) );
                         baseHandler.setData( rs.getString( 13 ) );
+                        baseHandler.setTileEntityData(rs.getString(14)); // Cauldron - set te data
                         baseHandler.setMaterialAliases( Prism.getItems() );
 
                         // Set aggregate counts if a lookup
                         int aggregated = 0;
                         if( shouldGroup ) {
-                            aggregated = rs.getInt( 14 );
+                            aggregated = rs.getInt( 15 ); // Cauldron
                         }
                         baseHandler.setAggregateCount( aggregated );
 

@@ -19,8 +19,8 @@ import org.bukkit.event.vehicle.VehicleExitEvent;
 public class PrismVehicleEvents implements Listener {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

@@ -7,18 +7,18 @@ import org.bukkit.ChatColor;
 public class ActionMessage {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Handler a;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private boolean showExtended = false;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private int index = 0;
 
     /**
@@ -30,8 +30,8 @@ public class ActionMessage {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void showExtended() {
         showExtended = true;
     }
@@ -84,8 +84,8 @@ public class ActionMessage {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public String[] getMessage() {
 
         String[] msg = new String[1];

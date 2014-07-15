@@ -17,8 +17,8 @@ import me.botsko.prism.appliers.Rollback;
 public class RollbackWand extends QueryWandBase implements Wand {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected boolean item_given = false;
 
     /**
@@ -31,8 +31,8 @@ public class RollbackWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerLeftClick(Player player, Location loc) {
         if( loc != null ) {
@@ -41,8 +41,8 @@ public class RollbackWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Location loc) {
         if( loc != null ) {
@@ -100,22 +100,22 @@ public class RollbackWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Entity entity) {}
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setItemWasGiven(boolean given) {
         this.item_given = given;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public boolean itemWasGiven() {
         return item_given;

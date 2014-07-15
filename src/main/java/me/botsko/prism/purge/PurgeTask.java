@@ -9,38 +9,38 @@ import me.botsko.prism.actionlibs.QueryParameters;
 public class PurgeTask implements Runnable {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final CopyOnWriteArrayList<QueryParameters> paramList;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private int cycle_rows_affected = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final int purge_tick_delay;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private int minId = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private int maxId = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final PurgeCallback callback;
 
     /**
@@ -58,8 +58,8 @@ public class PurgeTask implements Runnable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void run() {
 

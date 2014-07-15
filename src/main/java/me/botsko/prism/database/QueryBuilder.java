@@ -9,8 +9,8 @@ import me.botsko.prism.actionlibs.QueryParameters;
 abstract public class QueryBuilder {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Prism plugin;
     protected List<String> columns = new ArrayList<String>();
     protected List<String> conditions = new ArrayList<String>();
@@ -60,36 +60,36 @@ abstract public class QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String select() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String where() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String group() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String order() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String limit() {
         return "";
     }

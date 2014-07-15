@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
 public class BlockParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public BlockParameter() {
         super( "Block", Pattern.compile( "[\\w,:]+" ), "b" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         final String[] blocks = input.split( "," );

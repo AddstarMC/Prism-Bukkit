@@ -14,8 +14,8 @@ import java.util.List;
 public class Executor implements CommandExecutor, TabCompleter {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public final Plugin plugin;
 
     /**
@@ -26,13 +26,13 @@ public class Executor implements CommandExecutor, TabCompleter {
     public String mode = "command";
 
     /**
-	 * 
-	 */
+     * 
+     */
     public String defaultSubcommand = "default";
 
     /**
-	 * 
-	 */
+     * 
+     */
     public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
 
     /**
@@ -47,8 +47,8 @@ public class Executor implements CommandExecutor, TabCompleter {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 

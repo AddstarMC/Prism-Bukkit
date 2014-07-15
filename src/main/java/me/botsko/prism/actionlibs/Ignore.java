@@ -13,23 +13,23 @@ import me.botsko.prism.Prism;
 public class Ignore {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final List<String> ignore_players;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final List<String> ignore_worlds;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final boolean ignore_creative;
 
     /**

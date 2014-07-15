@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
 public class EntityParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public EntityParameter() {
         super( "Entity", Pattern.compile( "[~|!]?[\\w,]+" ), "e" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         MatchRule match = MatchRule.INCLUDE;

@@ -51,12 +51,19 @@ import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
+// Cauldron start
+import me.botsko.prism.utils.BlockUtils;
+import org.bukkit.entity.Ambient;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.WaterMob;
+// Cauldron end
 
 public class PrismEntityEvents implements Listener {
 
     /**
-	 *
-	 */
+     *
+     */
     private final Prism plugin;
 
     /**
@@ -210,12 +217,45 @@ public class PrismEntityEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if( !Prism.getIgnore().event( "entity-spawn", event.getEntity().getWorld() ) )
-            return;
+        // Cauldron start - add more options for entity spawns
+        String action = "";
+        if (event.getEntity() instanceof Animals)
+        {
+            action = "entity-spawn-animals";
+            if( !Prism.getIgnore().event( action, event.getEntity().getWorld() ) )
+                return;
+        }
+        else if (event.getEntity() instanceof Monster)
+        {
+            action = "entity-spawn-monsters";
+            if( !Prism.getIgnore().event( action, event.getEntity().getWorld() ) )
+                return;
+        }
+        else if (event.getEntity() instanceof Ambient)
+        {
+            action = "entity-spawn-ambients";
+            if( !Prism.getIgnore().event( action, event.getEntity().getWorld() ) )
+                return;
+        }
+        else if (event.getEntity() instanceof WaterMob)
+        {
+            action = "entity-spawn-watermobs";
+            if( !Prism.getIgnore().event( action, event.getEntity().getWorld() ) )
+                return;
+        }
+        else
+        {
+            action = "entity-spawn-other";
+            if( !Prism.getIgnore().event( action, event.getEntity().getWorld() ) )
+                return;
+        }
+
         final String reason = event.getSpawnReason().name().toLowerCase().replace( "_", " " );
         if( reason.equals( "natural" ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-spawn", event.getEntity(), reason) );
+
+        RecordingQueue.addToQueue( ActionFactory.createEntity(action, event.getEntity(), reason) );
+        // Cauldron end
     }
 
     /**
@@ -571,25 +611,7 @@ public class PrismEntityEvents implements Listener {
                     return;
                 try {
                     name = event.getEntity().getType().getName().replace( "_", " " );
-                    name = name.length() > 15 ? name.substring( 0, 15 ) : name; // I
-                                                                                // don't
-                                                                                // think
-                                                                                // this
-                                                                                // can
-                                                                                // happen,
-                                                                                // but
-                                                                                // just
-                                                                                // in
-                                                                                // case.
-                                                                                // Might
-                                                                                // look
-                                                                                // weird,
-                                                                                // but
-                                                                                // that's
-                                                                                // better
-                                                                                // than
-                                                                                // breaking
-                                                                                // stuff.
+                    name = name.length() > 15 ? name.substring( 0, 15 ) : name; // still needed?
                 } catch ( final NullPointerException e ) {
                     name = "unknown";
                 }
@@ -620,8 +642,18 @@ public class PrismEntityEvents implements Listener {
             // log items removed from container
             // note: done before the container so a "rewind" for rollback will
             // work properly
-            be.logItemRemoveFromDestroyedContainer( name, block );
-            RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, name) );
+            //be.logItemRemoveFromDestroyedContainer( name, block ); // Cauldron - not needed since we record TE NBT which includes all inventory
+            // Cauldron start - compress TileEntity data and queue for insert into db
+            String te_data = BlockUtils.compressTileEntityData(block);
+            if (te_data != null)
+            {
+                RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, name, te_data) );
+            }
+            else
+            {
+                RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, name));
+            }
+            // Cauldron end
             // look for relationships
             be.logBlockRelationshipsForBlock( name, block );
 

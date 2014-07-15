@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 public class PrismApplierCallback implements ApplierCallback {
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void handle(CommandSender sender, ApplierResult result) {
 

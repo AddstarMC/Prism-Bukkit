@@ -13,8 +13,8 @@ import java.util.List;
 public class ViewCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

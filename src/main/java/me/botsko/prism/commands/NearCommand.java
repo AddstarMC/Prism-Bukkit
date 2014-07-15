@@ -16,8 +16,8 @@ import java.util.List;
 public class NearCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

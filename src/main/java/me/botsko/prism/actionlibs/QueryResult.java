@@ -8,43 +8,43 @@ import me.botsko.prism.actions.Handler;
 public class QueryResult {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected List<Handler> actionResults = new ArrayList<Handler>();
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final QueryParameters parameters;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected long queryTime;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final int total_results;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int per_page = 5;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int total_pages = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int page = 1;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int lastTeleportIndex = 0;
 
     /**
@@ -65,8 +65,8 @@ public class QueryResult {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void setQueryTime() {
         final java.util.Date date = new java.util.Date();
         this.queryTime = date.getTime();
@@ -125,15 +125,15 @@ public class QueryResult {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public int getLastTeleportIndex() {
         return lastTeleportIndex;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public int setLastTeleportIndex(int index) {
         return lastTeleportIndex = index;
     }

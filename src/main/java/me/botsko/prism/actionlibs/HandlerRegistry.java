@@ -28,13 +28,13 @@ import me.botsko.prism.exceptions.InvalidActionException;
 public class HandlerRegistry<H> {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final HashMap<String, Class<? extends Handler>> registeredHandlers = new HashMap<String, Class<? extends Handler>>();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public HandlerRegistry() {
         registerPrismDefaultHandlers();
     }
@@ -95,8 +95,8 @@ public class HandlerRegistry<H> {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     private void registerPrismDefaultHandlers() {
 
         registerHandler( GenericAction.class );

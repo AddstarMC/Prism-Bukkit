@@ -14,8 +14,8 @@ import java.util.List;
 public class ExtinguishCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

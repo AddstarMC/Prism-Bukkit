@@ -12,8 +12,8 @@ import java.util.List;
 public class ResetmyCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

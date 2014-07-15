@@ -22,12 +22,23 @@ import org.bukkit.block.Skull;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+// Cauldron start
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import net.minecraft.server.v1_7_R3.NBTCompressedStreamTools;
+import net.minecraft.server.v1_7_R3.NBTReadLimiter;
+import net.minecraft.server.v1_7_R3.NBTTagCompound;
+import net.minecraft.server.v1_7_R3.TileEntity;
+import net.minecraft.util.org.apache.commons.lang3.StringEscapeUtils;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+// Cauldron end
 
 public class BlockAction extends GenericAction {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected BlockActionData actionData;
 
     /**
@@ -95,8 +106,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -115,9 +126,16 @@ public class BlockAction extends GenericAction {
         }
     }
 
+    // Cauldron start - add method to set TileEntity data
+    @Override
+    public void setTileEntityData(String data) {
+        this.te_data = data;
+    }
+    // Cauldronend
+
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         // Only for the blocks we store meta data for
@@ -235,8 +253,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -248,8 +266,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -261,8 +279,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
 
@@ -276,8 +294,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -300,7 +318,11 @@ public class BlockAction extends GenericAction {
         // (essentially liquid/air).
         if( !getType().requiresHandler( "BlockChangeAction" ) && !getType().requiresHandler( "PrismRollbackAction" ) ) {
             if( !me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    && !parameters.hasFlag( Flag.OVERWRITE ) ) {
+                    && !parameters.hasFlag( Flag.OVERWRITE ) 
+                    // Cauldron start - ensure microblocks force overwrite for proper restoration
+                    && Prism.fmpBlockId != block.getTypeId() 
+                    && Prism.immibisBlockId != block.getTypeId()) {
+                    // Cauldron end
                 // System.out.print("Block skipped due to being unaccaptable for block place.");
                 return new ChangeResult( ChangeResultType.SKIPPED, null );
             }
@@ -355,7 +377,52 @@ public class BlockAction extends GenericAction {
             // Set the material
             block.setTypeId( getBlockId() );
             block.setData( (byte) getBlockSubId() );
-
+            // Cauldron start - Get the current TileEntity NBT then compress it for storage in DB
+            TileEntity tileentity = ((CraftWorld)block.getWorld()).getTileEntityAt(block.getX(), block.getY(), block.getZ());
+            if (getTileEntityData() != null && !getTileEntityData().equals(""))// && !((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ())))
+            {
+                NBTTagCompound c = null;
+                String saved_te_data = StringEscapeUtils.unescapeJava(getTileEntityData());
+                try {
+                    c = NBTCompressedStreamTools.a(saved_te_data.getBytes("ISO-8859-1"), new NBTReadLimiter(2097152L));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                if (c != null)
+                {
+                    if (plugin.getConfig().getBoolean("prism.appliers.forgemultipart.enabled") && plugin.getConfig().getInt("prism.appliers.forgemultipart.block-id") == block.getTypeId())
+                    {
+                        try {
+                            Class<?> clz = Class.forName("codechicken.multipart.TileMultipart");
+                            Object obj = clz.newInstance();
+                            Method  method = clz.getDeclaredMethod ("createFromNBT", NBTTagCompound.class);
+                            Object returnedObj = method.invoke (obj, c);
+                            TileEntity te = (TileEntity)returnedObj;
+                            ((CraftWorld)block.getWorld()).getHandle().setTileEntity(block.getX(), block.getY(), block.getZ(), te);
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (IllegalArgumentException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        } catch (SecurityException e) {
+                            e.printStackTrace();
+                        } catch (InstantiationException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else 
+                    {
+                        tileentity = TileEntity.c(c);
+                        ((CraftWorld)block.getWorld()).getHandle().setTileEntity(block.getX(), block.getY(), block.getZ(), tileentity);
+                    }
+                }
+            }
+            // Cauldron end
             /**
              * Skulls
              */
@@ -486,8 +553,8 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ChangeResult removeBlock(Player player, QueryParameters parameters, boolean is_preview, Block block) {
 
         BlockStateChange stateChange;

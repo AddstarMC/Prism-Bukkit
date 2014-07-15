@@ -16,8 +16,8 @@ import me.botsko.prism.players.PrismPlayer;
 public class RecordingTask implements Runnable {
 
     /**
-	 *
-	 */
+     *
+     */
     private final Prism plugin;
 
     /**
@@ -29,8 +29,8 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     public void save() {
         if( !RecordingQueue.getQueue().isEmpty() ) {
             insertActionsIntoDatabase();
@@ -79,7 +79,7 @@ public class RecordingTask implements Runnable {
             }
 
             s = conn.prepareStatement(
-                    "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z,te_data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", // Cauldron - add extra column for te data
                     Statement.RETURN_GENERATED_KEYS );
             s.setLong( 1, System.currentTimeMillis() / 1000L );
             s.setInt( 2, world_id );
@@ -92,6 +92,7 @@ public class RecordingTask implements Runnable {
             s.setInt( 9, (int) a.getX() );
             s.setInt( 10, (int) a.getY() );
             s.setInt( 11, (int) a.getZ() );
+            s.setString(12, a.getTileEntityData()); // Cauldron - insert te data
             s.executeUpdate();
 
             generatedKeys = s.getGeneratedKeys();
@@ -170,7 +171,7 @@ public class RecordingTask implements Runnable {
                 // Connection valid, proceed
                 conn.setAutoCommit( false );
                 s = conn.prepareStatement(
-                        "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                        "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z,te_data) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)", // Cauldron - add extra column for te data
                         Statement.RETURN_GENERATED_KEYS );
                 int i = 0;
                 while ( !RecordingQueue.getQueue().isEmpty() ) {
@@ -227,6 +228,7 @@ public class RecordingTask implements Runnable {
                     s.setInt( 9, (int) a.getX() );
                     s.setInt( 10, (int) a.getY() );
                     s.setInt( 11, (int) a.getZ() );
+                    s.setString(12, a.getTileEntityData()); // Cauldron - insert te data
                     s.addBatch();
 
                     extraDataQueue.add( a );
@@ -342,8 +344,8 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     @Override
     public void run() {
         if( RecordingManager.failedDbConnectionCount > 5 ) {
@@ -371,8 +373,8 @@ public class RecordingTask implements Runnable {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     protected void scheduleNextRecording() {
         if( !plugin.isEnabled() ) {
             Prism.log( "Can't schedule new recording tasks as plugin is now disabled. If you're shutting down the server, ignore me." );

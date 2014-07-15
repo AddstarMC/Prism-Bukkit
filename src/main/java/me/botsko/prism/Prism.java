@@ -66,6 +66,12 @@ public class Prism extends JavaPlugin {
     private static HandlerRegistry<?> handlerRegistry;
     private static Ignore ignore;
     protected static ArrayList<Integer> illegalBlocks;
+    // Cauldron start
+    protected static ArrayList<Integer> illegalBreakBlocks;
+    protected static ArrayList<Integer> illegalPhysicsBlocks;
+    public static int fmpBlockId = -1; 
+    public static int immibisBlockId = -1; 
+    // Cauldron end
     protected static ArrayList<String> illegalEntities;
     protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
     private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
@@ -219,6 +225,10 @@ public class Prism extends JavaPlugin {
                 getServer().getPluginManager().registerEvents( new PrismCustomEvents( this ), this );
             }
 
+            // Cauldron start - grab config data that we need
+            fmpBlockId = getConfig().getInt("prism.appliers.forgemultipart.block-id"); 
+            immibisBlockId = getConfig().getInt("prism.appliers.immibismicro.block-id");
+            // Cauldron end
             // Assign listeners to our own events
             // getServer().getPluginManager().registerEvents(new
             // PrismRollbackEvents(), this);
@@ -291,6 +301,10 @@ public class Prism extends JavaPlugin {
 
         // Cache config arrays we check constantly
         illegalBlocks = (ArrayList<Integer>) getConfig().getList( "prism.appliers.never-place-block" );
+        // Cauldron start
+        illegalPhysicsBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockphysics-ids");
+        illegalBreakBlocks = (ArrayList<Integer>) getConfig().getList("prism.appliers.ignore-event-blockbreak-ids");
+        // Cauldron end
         illegalEntities = (ArrayList<String>) getConfig().getList( "prism.appliers.never-spawn-entity" );
 
         final ConfigurationSection alertBlocks = getConfig().getConfigurationSection( "prism.alerts.ores.blocks" );
@@ -397,8 +411,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void handleDatabaseException(SQLException e) {
         String prefix = config.getString("prism.mysql.prefix");
         // Attempt to rescue
@@ -442,6 +456,7 @@ public class Prism extends JavaPlugin {
                     + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL," + "`z` int(11) NOT NULL,"
                     + "`block_id` mediumint(5) DEFAULT NULL," + "`block_subid` mediumint(5) DEFAULT NULL,"
                     + "`old_block_id` mediumint(5) DEFAULT NULL," + "`old_block_subid` mediumint(5) DEFAULT NULL,"
+                    + "`te_data` TEXT NULL," // Cauldron - add te data
                     + "PRIMARY KEY (`id`)," + "KEY `epoch` (`epoch`),"
                     + "KEY  `location` (`world_id`, `x`, `z`, `y`, `action_id`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
@@ -457,7 +472,7 @@ public class Prism extends JavaPlugin {
                 // extra data
                 query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
                         + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
-                        + "`data_id` int(10) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
+                        + "`data_id` int(10) unsigned NOT NULL," + "`data` text NULL,"
                         + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
                         + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
                 st.executeUpdate( query );
@@ -512,8 +527,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void cacheActionPrimaryKeys() {
         String prefix = config.getString("prism.mysql.prefix");
 
@@ -597,8 +612,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void cacheWorldPrimaryKeys() {
         String prefix = config.getString("prism.mysql.prefix");
 
@@ -686,8 +701,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void checkPluginDependancies() {
 
         // WorldEdit
@@ -717,16 +732,34 @@ public class Prism extends JavaPlugin {
         return illegalBlocks;
     }
 
+    // Cauldron start
     /**
-	 * 
-	 */
+     * 
+     * @return
+     */
+    public static ArrayList<Integer> getIllegalPhysicsBlocks(){
+        return illegalPhysicsBlocks;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public static ArrayList<Integer> getIllegalBreakBlocks(){
+        return illegalBreakBlocks;
+    }
+    // Cauldron end
+	
+    /**
+     * 
+     */
     public static ArrayList<String> getIllegalEntities() {
         return illegalEntities;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public static HashMap<String, String> getAlertedOres() {
         return alertedOres;
     }
@@ -800,8 +833,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void endExpiredQueryCaches() {
         getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() {
 
@@ -820,8 +853,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void endExpiredPreviews() {
         getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() {
 
@@ -845,8 +878,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void removeExpiredLocations() {
         getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() {
 
@@ -865,8 +898,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void actionRecorderTask() {
         int recorder_tick_delay = getConfig().getInt( "prism.queue-empty-tick-delay" );
         if( recorder_tick_delay < 1 ) {
@@ -878,8 +911,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void launchScheduledPurgeManager() {
         final List<String> purgeRules = getConfig().getStringList( "prism.db-records-purge-rules" );
         purgeManager = new PurgeManager( this, purgeRules );
@@ -889,8 +922,8 @@ public class Prism extends JavaPlugin {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void launchInternalAffairs() {
         final InternalAffairs recordingMonitor = new InternalAffairs( this );
         recordingMonitorTask.scheduleAtFixedRate( recordingMonitor, 0, 5, TimeUnit.MINUTES );

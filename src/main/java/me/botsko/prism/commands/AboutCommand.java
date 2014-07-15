@@ -10,8 +10,8 @@ import java.util.List;
 public class AboutCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

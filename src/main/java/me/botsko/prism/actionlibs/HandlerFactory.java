@@ -5,8 +5,8 @@ import me.botsko.prism.actions.Handler;
 public class HandlerFactory<H> {
 
     /**
-	 * 
-	 */
+     * 
+     */
     final Class<? extends Handler> handlerClass;
 
     /**

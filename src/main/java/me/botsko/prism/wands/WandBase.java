@@ -9,40 +9,40 @@ import me.botsko.elixr.InventoryUtils;
 public abstract class WandBase {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected boolean item_given = false;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String wand_mode;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int item_id = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected byte item_subid = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ItemStack original_item;
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void setItemWasGiven(boolean given) {
         this.item_given = given;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public boolean itemWasGiven() {
         return item_given;
     }
@@ -116,8 +116,8 @@ public abstract class WandBase {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void disable(Player player) {
         final PlayerInventory inv = player.getInventory();
         if( itemWasGiven() ) {

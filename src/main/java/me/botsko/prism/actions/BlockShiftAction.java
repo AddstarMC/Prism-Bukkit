@@ -12,8 +12,8 @@ public class BlockShiftAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected BlockShiftActionData actionData;
 
     /**
@@ -50,16 +50,16 @@ public class BlockShiftAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;

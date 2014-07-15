@@ -10,8 +10,8 @@ import org.bukkit.entity.Player;
 public class ProfileWand extends WandBase implements Wand {
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerLeftClick(Player player, Location loc) {
         if( loc != null ) {
@@ -20,8 +20,8 @@ public class ProfileWand extends WandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Location loc) {
         if( loc != null ) {
@@ -51,8 +51,8 @@ public class ProfileWand extends WandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Entity entity) {
         if( entity != null ) {

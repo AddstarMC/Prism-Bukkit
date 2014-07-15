@@ -18,8 +18,8 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 public class PrismBlockEditSession extends EditSession {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final LocalPlayer player;
 
     /**
@@ -46,8 +46,8 @@ public class PrismBlockEditSession extends EditSession {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public boolean rawSetBlock(Vector pt, BaseBlock block) {
         if( !( player.getWorld() instanceof BukkitWorld ) || !Prism.config.getBoolean( "prism.tracking.world-edit" ) ) { return super

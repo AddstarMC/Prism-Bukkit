@@ -9,15 +9,15 @@ import java.util.regex.Pattern;
 public class BeforeParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public BeforeParameter() {
         super( "Before", Pattern.compile( "[\\w]+" ), "before" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         final Long date = DateUtil.translateTimeStringToDate( input );

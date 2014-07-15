@@ -44,8 +44,8 @@ public class BlockReportQueryBuilder extends SelectQueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String select() {
         String prefix = Prism.config.getString("prism.mysql.prefix");

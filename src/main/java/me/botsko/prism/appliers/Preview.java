@@ -26,58 +26,58 @@ import org.bukkit.entity.Player;
 public class Preview implements Previewable {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final PrismProcessType processType;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final CommandSender sender;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Player player;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final QueryParameters parameters;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected boolean is_preview = false;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final HashMap<Entity, Integer> entities_moved = new HashMap<Entity, Integer>();
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int skipped_block_count;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int changes_applied_count;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int changes_planned_count;
 
     /**
@@ -88,18 +88,18 @@ public class Preview implements Previewable {
     protected int blockChangesRead = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final List<Handler> worldChangeQueue = Collections.synchronizedList( new LinkedList<Handler>() );
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int worldChangeQueueTaskId;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ApplierCallback callback;
 
     /**
@@ -140,8 +140,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void cancel_preview() {
         if( player == null )
@@ -165,8 +165,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void apply_preview() {
         if( player == null )
@@ -180,8 +180,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void preview() {}
 
@@ -228,8 +228,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void processWorldChanges() {
 
         blockChangesRead = 0;
@@ -431,8 +431,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void moveEntitiesToSafety() {
         if( parameters.getWorld() != null && player != null ) {
             final List<Entity> entities = player.getNearbyEntities( parameters.getRadius(), parameters.getRadius(),
@@ -461,8 +461,8 @@ public class Preview implements Previewable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void fireApplierCallback() {
 
         // If previewing, the applied count will never apply, we'll

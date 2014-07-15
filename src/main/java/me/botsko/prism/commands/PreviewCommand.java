@@ -16,8 +16,8 @@ import java.util.List;
 public class PreviewCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     private final List<String> secondaries;

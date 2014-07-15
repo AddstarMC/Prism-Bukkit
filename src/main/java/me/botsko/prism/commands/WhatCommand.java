@@ -23,8 +23,8 @@ public class WhatCommand extends Executor {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     private void setupCommands() {
 
         /**

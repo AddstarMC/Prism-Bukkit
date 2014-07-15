@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
 public class SinceParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public SinceParameter() {
         super( "Since", Pattern.compile( "[\\w]+" ), "t", "since" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         if( input.equalsIgnoreCase( "none" ) ) {
@@ -38,8 +38,8 @@ public class SinceParameter extends SimplePrismParameterHandler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
 

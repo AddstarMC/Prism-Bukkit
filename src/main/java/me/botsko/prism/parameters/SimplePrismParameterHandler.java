@@ -42,16 +42,16 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public final String getName() {
         return name;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String[] getHelp() {
         return new String[0];
@@ -81,8 +81,8 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     protected abstract void process(QueryParameters query, String alias, String input, CommandSender sender);
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public final void process(QueryParameters query, String parameter, CommandSender sender) {
         // Should never fail, applicable is called first
@@ -95,8 +95,8 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public final boolean applicable(String parameter, CommandSender sender) {
         final String[] split = parameter.split( ":", 2 );
@@ -107,8 +107,8 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
 

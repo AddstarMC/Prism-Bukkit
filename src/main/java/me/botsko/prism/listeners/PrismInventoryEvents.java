@@ -23,12 +23,17 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+// Cauldron start
+import org.bukkit.block.Block;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+// Cauldron end
 
 public class PrismInventoryEvents implements Listener {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
@@ -159,6 +164,58 @@ public class PrismInventoryEvents implements Listener {
             recordInvAction( player, containerLoc, currentitem, -1, "item-insert", event );
         }
     }
+
+    // Cauldron start - add open/close event listeners
+    /**
+     * Handle container access
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onInventoryOpen(final InventoryOpenEvent event) {
+
+        Location containerLoc = null;
+
+        // Store some info
+        Player player = (Player) event.getPlayer();
+
+        Block block = null;
+        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof BlockState)
+        {
+            BlockState state = (BlockState)event.getInventory().getHolder();
+            block = state.getBlock();
+            containerLoc = block.getLocation();
+        }
+        
+        // handle container access
+        if( !Prism.getIgnore().event("container-open",player) || block == null ) return;
+            RecordingQueue.addToQueue( ActionFactory.create("container-open", block, containerLoc, player != null ? player.getName() : "") );
+    }
+
+    /**
+     * Handle inventory transfers
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onInventoryClose(final InventoryCloseEvent event) {
+
+        Location containerLoc = null;
+
+        // Store some info
+        Player player = (Player) event.getPlayer();
+
+        Block block = null;
+        if (event.getInventory().getHolder() != null && event.getInventory().getHolder() instanceof BlockState)
+        {
+            BlockState state = (BlockState)event.getInventory().getHolder();
+            block = state.getBlock();
+            containerLoc = block.getLocation();
+        }
+        
+        // handle container access
+        if( !Prism.getIgnore().event("container-close",player) || block == null ) return;
+            RecordingQueue.addToQueue( ActionFactory.create("container-close", block, containerLoc, player != null ? player.getName() : "") );
+    }
+    // Cauldron end
 
     /**
      * 

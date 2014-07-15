@@ -5,13 +5,13 @@ import me.botsko.prism.events.BlockStateChange;
 public class ChangeResult {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final BlockStateChange blockStateChange;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final ChangeResultType changeResultType;
 
     /**

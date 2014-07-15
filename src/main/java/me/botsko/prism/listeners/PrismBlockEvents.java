@@ -34,12 +34,16 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
+// Cauldron start
+import me.botsko.prism.utils.BlockUtils;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+// Cauldron end
 
 public class PrismBlockEvents implements Listener {
 
     /**
-	 *
-	 */
+     *
+     */
     private final Prism plugin;
 
     /**
@@ -173,9 +177,8 @@ public class PrismBlockEvents implements Listener {
         if( !player.hasPermission( "prism.alerts.ores.ignore" ) && !player.hasPermission( "prism.alerts.ignore" ) ) {
             plugin.oreMonitor.processAlertsFromBlock( player, block );
         }
-
-        if( !Prism.getIgnore().event( "block-break", player ) )
-            return;
+        // Cauldron - ignore banned break id's
+        if( !Prism.getIgnore().event("block-break",player) || Prism.getIllegalBreakBlocks().contains( block.getTypeId())) return;
 
         // Change handling a bit if it's a long block
         final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
@@ -187,9 +190,19 @@ public class PrismBlockEvents implements Listener {
         // log items removed from container
         // note: done before the container so a "rewind" for rollback will work
         // properly
-        logItemRemoveFromDestroyedContainer( player.getName(), block );
+        //logItemRemoveFromDestroyedContainer( player.getName(), block ); // Cauldron - not needed since we record TE NBT which includes all inventory
 
-        RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName()) );
+        // Cauldron start - compress TileEntity data and queue for insert into db
+        String te_data = BlockUtils.compressTileEntityData(event.getBlock());
+        if (te_data != null)
+        {
+            RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName(), te_data) );
+        }
+        else
+        {
+            RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName()));
+        }
+        // Cauldron end
 
         // check for block relationships
         logBlockRelationshipsForBlock( player.getName(), block );

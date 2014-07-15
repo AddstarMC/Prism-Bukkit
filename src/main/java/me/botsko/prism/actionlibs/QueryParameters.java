@@ -191,8 +191,8 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void resetMinMaxVectors() {
         minLoc = null;
         maxLoc = null;
@@ -351,8 +351,8 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void resetActionTypes() {
         actionTypeRules.clear();
     }
@@ -441,8 +441,8 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     public int getParentId() {
         return parent_id;
     }
@@ -479,8 +479,8 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public int getPerPage() {
         return per_page;
     }
@@ -550,8 +550,8 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public QueryParameters clone() throws CloneNotSupportedException {
         final QueryParameters cloned = (QueryParameters) super.clone();

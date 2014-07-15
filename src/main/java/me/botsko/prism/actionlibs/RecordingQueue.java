@@ -7,13 +7,13 @@ import me.botsko.prism.actions.Handler;
 public class RecordingQueue {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
 
     /**
-	 * 
-	 */
+     * 
+     */
     public static int getQueueSize() {
         return queue.size();
     }

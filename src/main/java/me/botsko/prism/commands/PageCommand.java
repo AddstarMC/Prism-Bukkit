@@ -16,8 +16,8 @@ import java.util.List;
 public class PageCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

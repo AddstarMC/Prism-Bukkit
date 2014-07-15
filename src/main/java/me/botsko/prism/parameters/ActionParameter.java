@@ -14,15 +14,15 @@ import java.util.regex.Pattern;
 public class ActionParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public ActionParameter() {
         super( "Action", Pattern.compile( "[~|!]?[\\w,-]+" ), "a" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         // Check match type

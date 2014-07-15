@@ -61,6 +61,25 @@ public class ActionFactory {
         return a;
     }
 
+    // Cauldron start - takes an extra param for TileEntity data
+    /**
+     * BlockAction
+     *
+     * @param action_type
+     * @param block
+     * @param player
+     * @param te_data
+     */
+    public static Handler createBlock(String action_type, Block block, String player, String te_data) {
+        final BlockAction a = new BlockAction();
+        a.setActionType( action_type );
+        a.setBlock( block );
+        a.setPlayerName( player );
+        a.setTileEntityData(te_data);
+        return a;
+    }
+    // Cauldron end
+
     /**
      * BlockAction
      *

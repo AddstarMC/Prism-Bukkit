@@ -13,8 +13,8 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String select() {
         return "DELETE FROM " + tableNameData + " USING " + tableNameData + 
@@ -22,24 +22,24 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     protected String group() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     protected String order() {
         return "";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     protected String limit() {
         return "";

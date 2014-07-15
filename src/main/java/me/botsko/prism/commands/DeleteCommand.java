@@ -20,18 +20,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DeleteCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected BukkitTask deleteTask;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int total_records_affected = 0, cycle_rows_affected = 0;
 
     /**

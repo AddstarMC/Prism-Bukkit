@@ -38,8 +38,8 @@ public class EntityAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected EntityActionData actionData;
 
     /**
@@ -173,16 +173,16 @@ public class EntityAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         if( data != null && data.startsWith( "{" ) ) {
@@ -352,8 +352,8 @@ public class EntityAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 

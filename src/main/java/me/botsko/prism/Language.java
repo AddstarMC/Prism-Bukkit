@@ -8,8 +8,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class Language {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final FileConfiguration lang;
 
     /**

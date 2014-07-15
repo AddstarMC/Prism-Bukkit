@@ -8,8 +8,8 @@ import me.botsko.prism.actionlibs.QueryParameters;
 public class SenderPurgeCallback implements PurgeCallback {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private CommandSender sender;
 
     /**

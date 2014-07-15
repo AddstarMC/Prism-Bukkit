@@ -26,8 +26,8 @@ public class RestoreWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerLeftClick(Player player, Location loc) {
         if( loc != null ) {
@@ -36,8 +36,8 @@ public class RestoreWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Location loc) {
         if( loc != null ) {
@@ -96,8 +96,8 @@ public class RestoreWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Entity entity) {
         return;

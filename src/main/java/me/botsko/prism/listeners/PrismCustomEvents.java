@@ -14,8 +14,8 @@ import org.bukkit.event.Listener;
 public class PrismCustomEvents implements Listener {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

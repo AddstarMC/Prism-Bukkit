@@ -21,8 +21,8 @@ import java.util.List;
 public class LookupCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

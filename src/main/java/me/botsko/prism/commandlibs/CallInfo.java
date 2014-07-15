@@ -6,18 +6,18 @@ import org.bukkit.entity.Player;
 public class CallInfo {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final CommandSender sender;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Player player;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final String[] args;
 
     /**

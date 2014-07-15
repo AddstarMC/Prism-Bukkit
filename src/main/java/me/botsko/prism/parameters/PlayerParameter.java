@@ -13,15 +13,15 @@ import java.util.regex.Pattern;
 public class PlayerParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public PlayerParameter() {
         super( "Player", Pattern.compile( "[~|!]?[\\w,]+" ), "p" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         MatchRule match = MatchRule.INCLUDE;

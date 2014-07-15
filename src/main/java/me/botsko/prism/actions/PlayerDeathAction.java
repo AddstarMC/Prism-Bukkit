@@ -3,13 +3,13 @@ package me.botsko.prism.actions;
 public class PlayerDeathAction extends GenericAction {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String cause;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String attacker;
 
     /**
@@ -29,8 +29,8 @@ public class PlayerDeathAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -44,8 +44,8 @@ public class PlayerDeathAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         if( data == null && cause != null ) {

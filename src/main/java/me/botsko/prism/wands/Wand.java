@@ -8,13 +8,13 @@ import org.bukkit.inventory.ItemStack;
 public interface Wand {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void playerLeftClick(Player player, Location loc);
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void playerRightClick(Player player, Location loc);
 
     /**

@@ -20,8 +20,8 @@ public class HangingItemAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected HangingItemActionData actionData;
 
     /**
@@ -43,8 +43,8 @@ public class HangingItemAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -54,8 +54,8 @@ public class HangingItemAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
@@ -88,24 +88,24 @@ public class HangingItemAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         return hangItem( player, parameters, is_preview );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         return hangItem( player, parameters, is_preview );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
         final BlockFace attachedFace = getDirection();

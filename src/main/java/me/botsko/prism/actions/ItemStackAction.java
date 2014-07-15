@@ -54,13 +54,13 @@ public class ItemStackAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ItemStack item;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ItemStackActionData actionData;
 
     /**
@@ -196,8 +196,8 @@ public class ItemStackAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -218,16 +218,16 @@ public class ItemStackAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void setItemStackFromNewDataFormat() {
 
         if( data == null || !data.startsWith( "{" ) )
@@ -314,8 +314,8 @@ public class ItemStackAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public ItemStackActionData getActionData() {
         return this.actionData;
     }
@@ -343,16 +343,16 @@ public class ItemStackAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         return placeItems( player, parameters, is_preview );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         return placeItems( player, parameters, is_preview );

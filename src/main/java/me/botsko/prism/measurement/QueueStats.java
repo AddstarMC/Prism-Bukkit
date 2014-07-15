@@ -7,8 +7,8 @@ import java.util.concurrent.ConcurrentSkipListMap;
 public class QueueStats {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final ConcurrentSkipListMap<Long, Integer> perRunRecordingCounts = new ConcurrentSkipListMap<Long, Integer>();
 
     /**

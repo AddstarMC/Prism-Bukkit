@@ -15,8 +15,8 @@ import java.util.List;
 public class DrainCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

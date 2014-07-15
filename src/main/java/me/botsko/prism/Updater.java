@@ -5,13 +5,13 @@ import me.botsko.prism.settings.Settings;
 public class Updater {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final int currentDbSchemaVersion = 5;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Prism plugin;
 
     /**

@@ -18,8 +18,8 @@ import java.util.List;
 public class TeleportCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

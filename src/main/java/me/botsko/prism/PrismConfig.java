@@ -19,8 +19,8 @@ public class PrismConfig extends ConfigBase {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     @Override
     public FileConfiguration getConfig() {
 
@@ -129,6 +129,20 @@ public class PrismConfig extends ConfigBase {
         illegalBlocks.add( 51 );
         config.addDefault( "prism.appliers.never-place-block", illegalBlocks );
 
+        // Cauldron start - add extra appliers for mod support
+        // Illegal BlockPhysics Rollbacks
+        List<Integer> ignorePhysicBlocks = new ArrayList<Integer>();
+        config.addDefault("prism.appliers.ignore-event-blockphysics-ids", ignorePhysicBlocks);
+        // Illegal BlockBreak Rollbacks
+        List<Integer> ignoreBreakBlocks = new ArrayList<Integer>();
+        config.addDefault("prism.appliers.ignore-event-blockbreak-ids", ignoreBreakBlocks);
+        // ForgeMultiPart suppport
+        config.addDefault("prism.appliers.forgemultipart.enabled", false);
+        config.addDefault("prism.appliers.forgemultipart.block-id", -1);
+        // Immibis MicroBlock suppport
+        config.addDefault("prism.appliers.immibismicro.block-id", -1);
+        // Cauldron end
+
         // Force prevent some listeners from registering if people don't want
         // the tps hits
         config.addDefault( "prism.bukkit.listeners.blockphysicsevent", true );
@@ -146,7 +160,10 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.block-use", true );
         config.addDefault( "prism.tracking.bucket-fill", true );
         config.addDefault( "prism.tracking.bonemeal-use", true );
-        config.addDefault( "prism.tracking.container-access", true );
+        // Cauldron start - change accessed -> open, add close
+        config.addDefault("prism.tracking.container-open", true);
+        config.addDefault("prism.tracking.container-close", true);
+        // Cauldron end
         config.addDefault( "prism.tracking.cake-eat", true );
         config.addDefault( "prism.tracking.craft-item", false );
         config.addDefault( "prism.tracking.creeper-explode", true );
@@ -158,12 +175,18 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.entity-break", true );
         config.addDefault( "prism.tracking.entity-dye", false );
         config.addDefault( "prism.tracking.entity-explode", true );
-        config.addDefault( "prism.tracking.entity-follow", true );
-        config.addDefault( "prism.tracking.entity-form", true );
-        config.addDefault( "prism.tracking.entity-kill", true );
-        config.addDefault( "prism.tracking.entity-leash", true );
-        config.addDefault( "prism.tracking.entity-shear", true );
-        config.addDefault( "prism.tracking.entity-spawn", true );
+        // Cauldron start - disabled by default
+        config.addDefault( "prism.tracking.entity-follow", false );
+        config.addDefault( "prism.tracking.entity-form", false );
+        config.addDefault( "prism.tracking.entity-kill", false );
+        config.addDefault( "prism.tracking.entity-leash", false );
+        config.addDefault( "prism.tracking.entity-shear", false );
+        config.addDefault( "prism.tracking.entity-spawn-animals", false );
+        config.addDefault( "prism.tracking.entity-spawn-monsters", false );
+        config.addDefault( "prism.tracking.entity-spawn-ambients", false );
+        config.addDefault( "prism.tracking.entity-spawn-watermobs", false );
+        config.addDefault( "prism.tracking.entity-spawn-other", false );
+        // Cauldron end
         config.addDefault( "prism.tracking.entity-unleash", true );
         config.addDefault( "prism.tracking.fireball", true );
         config.addDefault( "prism.tracking.fire-spread", false );
@@ -179,7 +202,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.lava-bucket", true );
         config.addDefault( "prism.tracking.lava-flow", false );
         config.addDefault( "prism.tracking.lava-ignite", true );
-        config.addDefault( "prism.tracking.leaf-decay", true );
+        config.addDefault( "prism.tracking.leaf-decay", false ); // Cauldron - disable by default
         config.addDefault( "prism.tracking.lighter", true );
         config.addDefault( "prism.tracking.lightning", true );
         config.addDefault( "prism.tracking.mushroom-grow", true );
@@ -191,7 +214,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.player-quit", false );
         config.addDefault( "prism.tracking.player-teleport", false );
         config.addDefault( "prism.tracking.potion-splash", true );
-        config.addDefault( "prism.tracking.sheep-eat", true );
+        config.addDefault( "prism.tracking.sheep-eat", false ); // Cauldron - disable by default
         config.addDefault( "prism.tracking.sign-change", true );
         config.addDefault( "prism.tracking.spawnegg-use", true );
         config.addDefault( "prism.tracking.tnt-explode", true );

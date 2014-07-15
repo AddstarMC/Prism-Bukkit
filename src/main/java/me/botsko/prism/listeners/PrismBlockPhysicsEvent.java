@@ -12,12 +12,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.material.Attachable;
+// Cauldron start
+import me.botsko.prism.utils.BlockUtils;
+import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+// Cauldron end
 
 public class PrismBlockPhysicsEvent implements Listener {
 
     /**
-	 *
-	 */
+     *
+     */
     private final Prism plugin;
 
     /**
@@ -90,6 +94,21 @@ public class PrismBlockPhysicsEvent implements Listener {
                     plugin.preplannedBlockFalls.remove( coord_key );
                 }
             }
+            // Cauldron start - temporary workaround for lack of break events fired by mods
+            Block block = event.getBlock();
+            if (!((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()) && !Prism.getIllegalPhysicsBlocks().contains( block.getTypeId()))
+            {
+                String te_data = BlockUtils.compressTileEntityData(event.getBlock());
+                if (te_data != null)
+                {
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, "", te_data) );
+                }
+                else
+                {
+                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, ""));
+                }
+            }
+            // Cauldron end
         }
     }
 

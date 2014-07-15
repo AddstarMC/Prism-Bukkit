@@ -11,38 +11,38 @@ import me.botsko.prism.events.BlockStateChange;
 public class ApplierResult {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final int changes_applied;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final int changes_skipped;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final int changes_planned;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final boolean is_preview;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final HashMap<Entity, Integer> entities_moved;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final ArrayList<BlockStateChange> blockStateChanges;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final QueryParameters params;
 
     /**

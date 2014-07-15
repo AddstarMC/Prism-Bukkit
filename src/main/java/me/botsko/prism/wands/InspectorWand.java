@@ -28,16 +28,16 @@ public class InspectorWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerLeftClick(Player player, Location loc) {
         showLocationHistory( player, loc );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Location loc) {
         showLocationHistory( player, loc );
@@ -131,8 +131,8 @@ public class InspectorWand extends QueryWandBase implements Wand {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void playerRightClick(Player player, Entity entity) {
         return;

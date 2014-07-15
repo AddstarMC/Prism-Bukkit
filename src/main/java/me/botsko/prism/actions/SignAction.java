@@ -19,13 +19,13 @@ public class SignAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected Block block;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected SignChangeActionData actionData;
 
     /**
@@ -54,8 +54,8 @@ public class SignAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -65,8 +65,8 @@ public class SignAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
@@ -117,8 +117,8 @@ public class SignAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
 

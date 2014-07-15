@@ -14,23 +14,23 @@ import me.botsko.prism.Prism;
 public class UseMonitor {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final ArrayList<String> blocksToAlertOnPlace;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final ArrayList<String> blocksToAlertOnBreak;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<String, Integer>();
 
     /**

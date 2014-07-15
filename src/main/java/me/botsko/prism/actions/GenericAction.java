@@ -19,108 +19,115 @@ import org.bukkit.plugin.Plugin;
 public class GenericAction implements Handler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected Plugin plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected boolean canceled = false;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected ActionType type;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected MaterialAliases materialAliases;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int id;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String epoch;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String display_date;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String display_time;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String world_name;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String player_name;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected double x;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected double y;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected double z;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int block_id;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int block_subid;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int old_block_id;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected int old_block_subid;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected String data;
 
+     // Cauldron start
     /**
-	 * 
-	 */
+     * 
+     */
+     protected String te_data;
+     // Cauldron end
+
+    /**
+     * 
+     */
     protected int aggregateCount = 0;
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setPlugin(Plugin plugin) {
         this.plugin = plugin;
@@ -483,6 +490,22 @@ public class GenericAction implements Handler {
         return data;
     }
 
+    // Cauldron start
+    /* (non-Javadoc)
+    * @see me.botsko.prism.actions.Handler#getData()
+    */
+    public String getTileEntityData() {
+        return te_data;
+    }
+
+    /* (non-Javadoc)
+    * @see me.botsko.prism.actions.Handler#setData(java.lang.String)
+    */
+    public void setTileEntityData(String data) {
+        this.te_data = data;
+    }
+    // Cauldron end
+
     /*
      * (non-Javadoc)
      * @see me.botsko.prism.actions.Handler#setData(java.lang.String)
@@ -530,24 +553,24 @@ public class GenericAction implements Handler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public boolean isCanceled() {
         return canceled;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setCanceled(boolean cancel) {
         this.canceled = cancel;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         // data is already set - anything not encoding a json
@@ -555,32 +578,32 @@ public class GenericAction implements Handler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         return null;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         return null;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
         return null;
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
         return null;

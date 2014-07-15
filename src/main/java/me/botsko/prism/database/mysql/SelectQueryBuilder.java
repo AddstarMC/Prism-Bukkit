@@ -58,6 +58,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         columns.add( "old_block_id" );
         columns.add( "old_block_subid" );
         columns.add( "data" );
+        columns.add( "te_data"); // Cauldron - add te data column
 
         if( shouldGroup ) {
             columns.add( "COUNT(*) counted" );
@@ -113,8 +114,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void worldCondition() {
         if( parameters.getWorld() != null ) {
             addCondition( String.format( "world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
@@ -123,8 +124,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void actionCondition() {
         // Action type
         final HashMap<String, MatchRule> action_types = parameters.getActionTypeNames();
@@ -169,8 +170,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void playerCondition() {
         final HashMap<String, MatchRule> playerNames = parameters.getPlayerNames();
         if( playerNames.size() > 0 ) {
@@ -196,15 +197,15 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void radiusCondition() {
         buildRadiusCondition( parameters.getMinLocation(), parameters.getMaxLocation() );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void blockCondition() {
         // Blocks
         final HashMap<Integer, Byte> blockfilters = parameters.getBlockFilters();
@@ -225,8 +226,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void entityCondition() {
         // Entity
         final HashMap<String, MatchRule> entityNames = parameters.getEntities();
@@ -236,8 +237,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void timeCondition() {
         // Timeframe
         Long time = parameters.getBeforeTime();
@@ -251,8 +252,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void keywordCondition() {
         // Keyword(s)
         final String keyword = parameters.getKeyword();
@@ -262,8 +263,8 @@ public class SelectQueryBuilder extends QueryBuilder {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void coordinateCondition() {
         // Specific coords
         final ArrayList<Location> locations = parameters.getSpecificBlockLocations();

@@ -11,8 +11,8 @@ public class PrismProcessAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     private PrismProcessActionData actionData;
 
     /**
@@ -31,8 +31,8 @@ public class PrismProcessAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -42,8 +42,8 @@ public class PrismProcessAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );
@@ -58,8 +58,8 @@ public class PrismProcessAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String getNiceName() {
         return actionData.processType + " (" + actionData.params + ")";

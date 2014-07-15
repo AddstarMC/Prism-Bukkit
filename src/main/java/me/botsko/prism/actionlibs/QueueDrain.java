@@ -5,8 +5,8 @@ import me.botsko.prism.Prism;
 public class QueueDrain {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
@@ -18,8 +18,8 @@ public class QueueDrain {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     public void forceDrainQueue() {
 
         Prism.log( "Forcing recorder queue to run a new batch before shutdown..." );

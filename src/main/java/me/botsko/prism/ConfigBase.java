@@ -13,13 +13,13 @@ import org.bukkit.plugin.Plugin;
 public class ConfigBase {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Plugin plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected FileConfiguration config;
 
     /**
@@ -31,8 +31,8 @@ public class ConfigBase {
     }
 
     /**
-	 *
-	 */
+     *
+     */
     public FileConfiguration getConfig() {
         config = plugin.getConfig();
         return config;
@@ -106,8 +106,8 @@ public class ConfigBase {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void write(String filename, FileConfiguration config) {
         try {
             final BufferedWriter bw = new BufferedWriter( new FileWriter( getFilename( filename ), true ) );

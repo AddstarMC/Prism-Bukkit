@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
 public class RadiusParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public RadiusParameter() {
         super( "Radius", Pattern.compile( "[\\w,:-]+" ), "r" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 
@@ -184,8 +184,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
         if( query.getProcessType().equals( PrismProcessType.DELETE ) )

@@ -19,8 +19,8 @@ public class TimeTaken {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final TreeMap<Long, String> eventsTimed = new TreeMap<Long, String>();
 
     /**
@@ -43,8 +43,8 @@ public class TimeTaken {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected void resetEventList() {
         eventsTimed.clear();
     }

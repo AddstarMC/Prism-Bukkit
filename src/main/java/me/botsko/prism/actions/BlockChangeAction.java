@@ -13,8 +13,8 @@ import org.bukkit.entity.Player;
 public class BlockChangeAction extends BlockAction {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected BlockActionData actionData;
 
     /**
@@ -59,8 +59,8 @@ public class BlockChangeAction extends BlockAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -69,8 +69,8 @@ public class BlockChangeAction extends BlockAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -79,8 +79,8 @@ public class BlockChangeAction extends BlockAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -89,8 +89,8 @@ public class BlockChangeAction extends BlockAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );

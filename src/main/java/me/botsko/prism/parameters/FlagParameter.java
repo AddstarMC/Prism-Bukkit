@@ -15,32 +15,32 @@ import java.util.regex.Pattern;
 public class FlagParameter implements PrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String getName() {
         return "Flag";
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public String[] getHelp() {
         return new String[0];
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public boolean applicable(String parameter, CommandSender sender) {
         return Pattern.compile( "(-)([^\\s]+)?" ).matcher( parameter ).matches();
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String parameter, CommandSender sender) {
         final String[] flagComponents = parameter.substring( 1 ).split( "=" );
@@ -81,8 +81,8 @@ public class FlagParameter implements PrismParameterHandler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
 

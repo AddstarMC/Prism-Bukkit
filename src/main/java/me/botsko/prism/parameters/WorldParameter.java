@@ -12,15 +12,15 @@ import java.util.regex.Pattern;
 public class WorldParameter extends SimplePrismParameterHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     public WorldParameter() {
         super( "World", Pattern.compile( "[^\\s]+" ), "w" );
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
         String worldName = input;
@@ -37,8 +37,8 @@ public class WorldParameter extends SimplePrismParameterHandler {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
         if( query.getProcessType().equals( PrismProcessType.DELETE ) )

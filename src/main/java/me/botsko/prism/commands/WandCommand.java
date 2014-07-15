@@ -16,8 +16,8 @@ import java.util.List;
 public class WandCommand implements SubHandler {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**

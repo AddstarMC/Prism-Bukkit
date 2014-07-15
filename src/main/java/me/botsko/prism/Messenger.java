@@ -5,8 +5,8 @@ import org.bukkit.ChatColor;
 public class Messenger {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final String plugin_name;
 
     /**

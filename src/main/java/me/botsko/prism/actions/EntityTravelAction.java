@@ -15,13 +15,13 @@ public class EntityTravelAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected EntityTravelActionData actionData;
 
     /**
-	 *
-	 */
+     *
+     */
     public EntityTravelAction() {
         actionData = new EntityTravelActionData();
     }
@@ -63,8 +63,8 @@ public class EntityTravelAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void setData(String data) {
         this.data = data;
@@ -74,8 +74,8 @@ public class EntityTravelAction extends GenericAction {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
     @Override
     public void save() {
         data = gson.toJson( actionData );

@@ -43,18 +43,18 @@ import org.bukkit.inventory.ItemStack;
 public class PrismPlayerEvents implements Listener {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final Prism plugin;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final List<String> illegalCommands;
 
     /**
-	 * 
-	 */
+     * 
+     */
     private final List<String> ignoreCommands;
 
     /**
@@ -370,7 +370,8 @@ public class PrismPlayerEvents implements Listener {
 
             String coord_key;
             switch ( block.getType() ) {
-                case FURNACE:
+                // Cauldron start - removed hardcoded check
+                /*case FURNACE:
                 case DISPENSER:
                 case CHEST:
                 case ENDER_CHEST:
@@ -383,7 +384,8 @@ public class PrismPlayerEvents implements Listener {
                     if( !Prism.getIgnore().event( "container-access", player ) )
                         return;
                     RecordingQueue.addToQueue( ActionFactory.createBlock("container-access", block, player.getName()) );
-                    break;
+                    break;*/
+                // Cauldron end
                 case JUKEBOX:
                     recordDiscInsert( block, player );
                     break;

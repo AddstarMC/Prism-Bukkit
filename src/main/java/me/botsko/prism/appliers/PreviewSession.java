@@ -5,18 +5,18 @@ import org.bukkit.entity.Player;
 public class PreviewSession {
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Player player;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final Previewable previewer;
 
     /**
-	 * 
-	 */
+     * 
+     */
     protected final long queryTime;
 
     /**
