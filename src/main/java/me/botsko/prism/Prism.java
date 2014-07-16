@@ -456,7 +456,6 @@ public class Prism extends JavaPlugin {
                     + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL," + "`z` int(11) NOT NULL,"
                     + "`block_id` mediumint(5) DEFAULT NULL," + "`block_subid` mediumint(5) DEFAULT NULL,"
                     + "`old_block_id` mediumint(5) DEFAULT NULL," + "`old_block_subid` mediumint(5) DEFAULT NULL,"
-                    + "`te_data` TEXT NULL," // Cauldron - add te data
                     + "PRIMARY KEY (`id`)," + "KEY `epoch` (`epoch`),"
                     + "KEY  `location` (`world_id`, `x`, `z`, `y`, `action_id`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
@@ -472,7 +471,9 @@ public class Prism extends JavaPlugin {
                 // extra data
                 query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
                         + "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
-                        + "`data_id` int(10) unsigned NOT NULL," + "`data` text NULL,"
+                        + "`data_id` int(10) unsigned NOT NULL,"
+                        + "`data` text NULL,"
+                        + "`te_data` TEXT NULL," // Cauldron - add te data
                         + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
                         + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
                 st.executeUpdate( query );
