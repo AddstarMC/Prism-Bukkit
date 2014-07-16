@@ -376,7 +376,7 @@ public class PlayerIdentification {
         String prefix = Prism.config.getString("prism.mysql.prefix");
 
         String[] playerNames;
-        playerNames = new String[ Bukkit.getServer().getOnlinePlayers().length ];
+        playerNames = new String[ Bukkit.getServer().getOnlinePlayers().size() ];
         int i = 0;
         for( Player pl : Bukkit.getServer().getOnlinePlayers() ){
             playerNames[i] = pl.getName();
