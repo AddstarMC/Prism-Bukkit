@@ -14,7 +14,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.material.Attachable;
 // Cauldron start
 import me.botsko.prism.utils.BlockUtils;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 // Cauldron end
 
 public class PrismBlockPhysicsEvent implements Listener {

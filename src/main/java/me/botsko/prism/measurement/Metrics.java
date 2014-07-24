@@ -369,7 +369,7 @@ public class Metrics {
                                                                        // enabled
         final String pluginVersion = description.getVersion();
         final String serverVersion = Bukkit.getVersion();
-        final int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
+        final int playersOnline = Bukkit.getServer().getOnlinePlayers().size();
 
         // END server software specific section -- all code below does not use
         // any code outside of this class / Java
