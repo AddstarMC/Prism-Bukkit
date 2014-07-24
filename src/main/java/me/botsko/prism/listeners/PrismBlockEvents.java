@@ -36,7 +36,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Sign;
 // Cauldron start
 import me.botsko.prism.utils.BlockUtils;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 // Cauldron end
 
 public class PrismBlockEvents implements Listener {

@@ -26,12 +26,12 @@ import org.bukkit.entity.Player;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import net.minecraft.server.v1_7_R3.NBTCompressedStreamTools;
-import net.minecraft.server.v1_7_R3.NBTReadLimiter;
-import net.minecraft.server.v1_7_R3.NBTTagCompound;
-import net.minecraft.server.v1_7_R3.TileEntity;
+import net.minecraft.server.v1_7_R4.NBTCompressedStreamTools;
+import net.minecraft.server.v1_7_R4.NBTReadLimiter;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
+import net.minecraft.server.v1_7_R4.TileEntity;
 import net.minecraft.util.org.apache.commons.lang3.StringEscapeUtils;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 // Cauldron end
 
 public class BlockAction extends GenericAction {

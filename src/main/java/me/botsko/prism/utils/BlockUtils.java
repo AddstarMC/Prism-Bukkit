@@ -12,10 +12,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 // Cauldron start
 import java.io.UnsupportedEncodingException;
-import net.minecraft.server.v1_7_R3.NBTCompressedStreamTools;
-import net.minecraft.server.v1_7_R3.NBTTagCompound;
+import net.minecraft.server.v1_7_R4.NBTCompressedStreamTools;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
+import net.minecraft.server.v1_7_R4.TileEntity;
 import net.minecraft.util.org.apache.commons.lang3.StringEscapeUtils;
-import org.bukkit.craftbukkit.v1_7_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
 // Cauldron end
 
 public class BlockUtils extends me.botsko.elixr.BlockUtils {
@@ -132,7 +133,7 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
 
     // Cauldron start - used to compress TileEntity NBT for small footprint in DB
     public static String compressTileEntityData(Block block) {
-        net.minecraft.server.v1_7_R3.TileEntity tileentity = ((CraftWorld)block.getWorld()).getHandle().getTileEntity(block.getX(), block.getY(), block.getZ());
+        TileEntity tileentity = ((CraftWorld)block.getWorld()).getHandle().getTileEntity(block.getX(), block.getY(), block.getZ());
         if (tileentity != null && !((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()))
         {
             NBTTagCompound c = new NBTTagCompound();
