@@ -9,7 +9,7 @@
     <dependency>
       <groupId>me.botsko</groupId>
       <artifactId>elixr</artifactId>
-      <version>1.0-dev-51-gdf9884a-SNAPSHOT</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>

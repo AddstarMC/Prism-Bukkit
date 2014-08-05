@@ -12,11 +12,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.material.Attachable;
-// Cauldron start
 import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.craftbukkit.v1_7_R4.CraftWorld;
-// Cauldron end
 
+
+//Cauldron start - temporary workaround for lack of break events fired by mods
 public class PrismBlockPhysicsEvent implements Listener {
 
     /**
@@ -39,62 +39,15 @@ public class PrismBlockPhysicsEvent implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockPhysics(final BlockPhysicsEvent event) {
 
-        // Record that a block fell, associated with the player who broke the
-        // base block.
+        if( !Prism.getIgnore().event( "block-break", event.getBlock() ) ) return;
+        
         final Block b = event.getBlock();
-        if( me.botsko.elixr.BlockUtils.isFallingBlock( b ) ) {
-            if( !Prism.getIgnore().event( "block-fall", event.getBlock() ) )
-                return;
-            // Only record a block-fall if there's air below.
-            if( b.getRelative( BlockFace.DOWN ).getType().equals( Material.AIR ) ) {
-                final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
-                    final String player = plugin.preplannedBlockFalls.get( coord_key );
-                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, player) );
-                    plugin.preplannedBlockFalls.remove( coord_key );
-                }
-            }
-        }
-
-        if( !Prism.getIgnore().event( "block-break", event.getBlock() ) )
-            return;
 
         // If it's an attachable item, we need to look for detachment
         // at the sides.
         // http://jd.bukkit.org/doxygen/d1/d0b/interfaceorg_1_1bukkit_1_1material_1_1Attachable.html#details
-        if( b.getState().getData() instanceof Attachable ) {
-            final Attachable a = (Attachable) b.getState().getData();
-            if( a == null )
-                return;
-            if( a.getAttachedFace() == null )
-                return;
-            final Block attachedBlock = b.getRelative( a.getAttachedFace() );
-            if( attachedBlock != null ) {
-                // If it's lost an attached block
-                if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( attachedBlock.getType() ) ) {
-                    final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                    if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
-                        final String player = plugin.preplannedBlockFalls.get( coord_key );
-                        RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
-                        plugin.preplannedBlockFalls.remove( coord_key );
-                    }
-                }
-            }
-        }
-        // Otherwise we need to look for detachment at the bottom.
-        else {
+        if( !(b.getState().getData() instanceof Attachable) ) {
 
-            final Block attachedBlock = b.getRelative( BlockFace.DOWN );
-            // If it's lost a supporting block
-            if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( attachedBlock.getType() ) ) {
-                final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
-                    final String player = plugin.preplannedBlockFalls.get( coord_key );
-                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
-                    plugin.preplannedBlockFalls.remove( coord_key );
-                }
-            }
-            // Cauldron start - temporary workaround for lack of break events fired by mods
             Block block = event.getBlock();
             if (!((CraftWorld)block.getWorld()).getHandle().isEmpty(block.getX(), block.getY(), block.getZ()) && !Prism.getIllegalPhysicsBlocks().contains( block.getTypeId()))
             {
@@ -108,8 +61,7 @@ public class PrismBlockPhysicsEvent implements Listener {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, ""));
                 }
             }
-            // Cauldron end
         }
     }
-
 }
+//Cauldron end

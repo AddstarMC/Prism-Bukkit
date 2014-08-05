@@ -63,7 +63,7 @@ public class HelpCommand implements SubHandler {
                 "Reset your custom wand settings to server defaults." ) );
         sender.sendMessage( Prism.messenger.playerHelp( "(rp|report) queue", "Display statistics on current queues." ) );
         sender.sendMessage( Prism.messenger.playerHelp( "(rp|report) db", "Display basic database connection stats." ) );
-        sender.sendMessage( Prism.messenger.playerHelp( "(rp|report) sum (blocks|actions) (player)",
+        sender.sendMessage( Prism.messenger.playerHelp( "(rp|report) sum (blocks|actions) (params)",
                 "Display summary reports for a player" ) );
         sender.sendMessage( Prism.messenger.playerHelp( "about", "Show Prism credits." ) );
         sender.sendMessage( Prism.messenger.playerHelp( "recorder cancel", "Stops recorder. Use with caution." ) );
