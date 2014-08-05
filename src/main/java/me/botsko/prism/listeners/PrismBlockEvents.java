@@ -97,13 +97,11 @@ public class PrismBlockEvents implements Listener {
 
         if( block.getType().equals( Material.WOODEN_DOOR ) || block.getType().equals( Material.IRON_DOOR_BLOCK ) ) { return; }
 
-        // Find a list of all blocks above this block that we know
-        // will fall.
+        // Find a list of all blocks above this block that we know will fall.
         final ArrayList<Block> falling_blocks = me.botsko.elixr.BlockUtils.findFallingBlocksAboveBlock( block );
         if( falling_blocks.size() > 0 ) {
             for ( final Block b : falling_blocks ) {
-                final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                plugin.preplannedBlockFalls.put( coord_key, playername );
+                RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, playername) );
             }
         }
 
@@ -123,25 +121,19 @@ public class PrismBlockEvents implements Listener {
             }
         }
 
-        // Find a list of side-face attached blocks that we expect will detach
-        // note: only if blockphysics events enabled
-        if( plugin.getConfig().getBoolean( "prism.bukkit.listeners.blockphysicsevent" ) ) {
-            ArrayList<Block> detached_blocks = me.botsko.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
-            if( detached_blocks.size() > 0 ) {
-                for ( final Block b : detached_blocks ) {
-                    final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                    plugin.preplannedBlockFalls.put( coord_key, playername );
-                }
+        // Find a list of side-face attached blocks that will detach
+        ArrayList<Block> detached_blocks = me.botsko.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
+        if( detached_blocks.size() > 0 ) {
+            for ( final Block b : detached_blocks ) {
+                RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
             }
+        }
 
-            // Find a list of top-side attached blocks that we expect will
-            // detach
-            detached_blocks = me.botsko.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
-            if( detached_blocks.size() > 0 ) {
-                for ( final Block b : detached_blocks ) {
-                    final String coord_key = b.getX() + ":" + b.getY() + ":" + b.getZ();
-                    plugin.preplannedBlockFalls.put( coord_key, playername );
-                }
+        // Find a list of top-side attached blocks that will detach
+        detached_blocks = me.botsko.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
+        if( detached_blocks.size() > 0 ) {
+            for ( final Block b : detached_blocks ) {
+                RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
             }
         }
 

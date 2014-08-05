@@ -102,12 +102,9 @@ public class Prism extends JavaPlugin {
     public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
 
     /**
-     * We store a basic index of blocks we anticipate will fall, so that when
+     * We store a basic index of hanging entities we anticipate will fall, so that when
      * they do fall we can attribute them to the player who broke the original
      * block.
-     * 
-     * Once the block fall is registered, it's removed from here, so data should
-     * not remain here long.
      */
     public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<String, String>();
 
@@ -201,14 +198,6 @@ public class Prism extends JavaPlugin {
             getServer().getPluginManager().registerEvents( new PrismPlayerEvents( this ), this );
             getServer().getPluginManager().registerEvents( new PrismInventoryEvents( this ), this );
             getServer().getPluginManager().registerEvents( new PrismVehicleEvents( this ), this );
-
-            // BlockPhysics
-            if( getConfig().getBoolean( "prism.bukkit.listeners.blockphysicsevent" ) ) {
-                getServer().getPluginManager().registerEvents( new PrismBlockPhysicsEvent( this ), this );
-            } else {
-                log( "You've configured prism to never listen to the BlockPhysicsEvent." );
-                log( "Prism will not be able to track block-fall, and block detachments, i.e. torches and signs." );
-            }
 
             // InventoryMoveItem
             if( getConfig().getBoolean( "prism.track-hopper-item-events" ) && Prism.getIgnore().event( "item-insert" ) ) {

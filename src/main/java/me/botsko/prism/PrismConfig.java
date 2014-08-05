@@ -129,10 +129,6 @@ public class PrismConfig extends ConfigBase {
         illegalBlocks.add( 51 );
         config.addDefault( "prism.appliers.never-place-block", illegalBlocks );
 
-        // Force prevent some listeners from registering if people don't want
-        // the tps hits
-        config.addDefault( "prism.bukkit.listeners.blockphysicsevent", true );
-
         // Tracking
         config.addDefault( "prism.tracking.block-break", true );
         config.addDefault( "prism.tracking.block-burn", true );
