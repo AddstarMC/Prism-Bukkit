@@ -207,11 +207,11 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
     protected void blockCondition() {
         // Blocks
-        final HashMap<Integer, Byte> blockfilters = parameters.getBlockFilters();
+        final HashMap<Integer, Short> blockfilters = parameters.getBlockFilters();
         if( !blockfilters.isEmpty() ) {
             final String[] blockArr = new String[blockfilters.size()];
             int i = 0;
-            for ( final Entry<Integer, Byte> entry : blockfilters.entrySet() ) {
+            for ( final Entry<Integer, Short> entry : blockfilters.entrySet() ) {
                 if( entry.getValue() == 0 ) {
                     blockArr[i] = tableNameData + ".block_id = " + entry.getKey();
                 } else {

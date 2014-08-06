@@ -51,7 +51,7 @@ public class QueryParameters implements Cloneable {
      * Params that allow multiple values
      */
     protected HashMap<String, MatchRule> actionTypeRules = new HashMap<String, MatchRule>();
-    protected final HashMap<Integer, Byte> block_filters = new HashMap<Integer, Byte>();
+    protected final HashMap<Integer, Short> block_filters = new HashMap<Integer, Short>();
     protected final HashMap<String, MatchRule> entity_filters = new HashMap<String, MatchRule>();
     protected final HashMap<String, MatchRule> player_names = new HashMap<String, MatchRule>();
     protected final ArrayList<Flag> flags = new ArrayList<Flag>();
@@ -136,7 +136,7 @@ public class QueryParameters implements Cloneable {
     /**
      * @return the block
      */
-    public HashMap<Integer, Byte> getBlockFilters() {
+    public HashMap<Integer, Short> getBlockFilters() {
         return block_filters;
     }
 
@@ -144,7 +144,7 @@ public class QueryParameters implements Cloneable {
      * @param id
      *            the block to set
      */
-    public void addBlockFilter(int id, byte data) {
+    public void addBlockFilter(int id, short data) {
         this.block_filters.put( id, data );
     }
 
