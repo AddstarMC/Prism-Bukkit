@@ -173,15 +173,13 @@ public class ActionRegistry {
         registerAction( new ActionType( "entity-kill", false, true, false, "EntityAction", "killed" ) );
         registerAction( new ActionType( "entity-leash", true, false, false, "EntityAction", "leashed" ) );
         registerAction( new ActionType( "entity-shear", false, false, false, "EntityAction", "sheared" ) );
-        registerAction( new ActionType( "entity-spawn", false, false, false, "EntityAction", "spawned" ) );
-        // Cauldron start
+        // Cauldron start - add new entity type actions
         registerAction( new ActionType( "entity-spawn-animals", false, false, false, "EntityAction", "spawned" ) );
         registerAction( new ActionType( "entity-spawn-monsters", false, false, false, "EntityAction", "spawned" ) );
         registerAction( new ActionType( "entity-spawn-ambients", false, false, false, "EntityAction", "spawned" ) );
-        registerAction( new ActionType( "entity-spawn-monsters", false, false, false, "EntityAction", "spawned" ) );
         registerAction( new ActionType( "entity-spawn-watermobs", false, false, false, "EntityAction", "spawned" ) );
         registerAction( new ActionType( "entity-spawn-other", false, false, false, "EntityAction", "spawned" ) );
-        // End start
+        // Cauldron end
         registerAction( new ActionType( "entity-unleash", false, false, false, "EntityAction", "unleashed" ) );
         registerAction( new ActionType( "fireball", false, false, false, null, "ignited" ) );
         registerAction( new ActionType( "fire-spread", true, true, true, "BlockChangeAction", "spread" ) );
