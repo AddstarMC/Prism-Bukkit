@@ -84,13 +84,14 @@ public class UseMonitor {
     protected boolean checkFeatureShouldProceed(Player player) {
 
         // Ensure enabled
-        if( !plugin.getConfig().getBoolean( "prism.alerts.uses.enabled" ) ) { return false; }
+        if( !plugin.getConfig().getBoolean( "prism.alerts.uses.enabled" ) ) return false;
 
         // Ignore players who would see the alerts
-        if( plugin.getConfig().getBoolean( "prism.alerts.uses.ignore-staff" ) && player.hasPermission( "prism.alerts" ) ) { return false; }
+        if( plugin.getConfig().getBoolean( "prism.alerts.uses.ignore-staff" ) && player.hasPermission( "prism.alerts" ) ) return false;
 
         // Ignore certain ranks
-        if( player.hasPermission( "prism.bypass-use-alerts" ) ) { return false; }
+        if( player.hasPermission( "prism.bypass-use-alerts" ) ) return false;
+        
         return true;
     }
 
@@ -102,7 +103,7 @@ public class UseMonitor {
     public void alertOnBlockPlacement(Player player, Block block) {
 
         // Ensure enabled
-        if( !checkFeatureShouldProceed( player ) ) { return; }
+        if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
         final String blockType = "" + block.getTypeId();
@@ -123,7 +124,7 @@ public class UseMonitor {
     public void alertOnBlockBreak(Player player, Block block) {
 
         // Ensure enabled
-        if( !checkFeatureShouldProceed( player ) ) { return; }
+        if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
         final String blockType = "" + block.getTypeId();
@@ -144,7 +145,7 @@ public class UseMonitor {
     public void alertOnItemUse(Player player, String use_msg) {
 
         // Ensure enabled
-        if( !checkFeatureShouldProceed( player ) ) { return; }
+        if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
         incrementCount( playername, use_msg );
@@ -157,6 +158,8 @@ public class UseMonitor {
      * @param use_msg
      */
     public void alertOnVanillaXray(Player player, String use_msg) {
+        
+        if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
         incrementCount( playername, use_msg );
