@@ -11,7 +11,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.utils.ItemUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -22,7 +21,9 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -394,6 +395,32 @@ public class ItemStackAction extends GenericAction {
                 } else if( block.getState() instanceof InventoryHolder ) {
                     final InventoryHolder ih = (InventoryHolder) block.getState();
                     inventory = ih.getInventory();
+                } else {
+                  
+                    Entity[] foundEntities = block.getChunk().getEntities();
+                    if(foundEntities.length > 0){
+                        for(Entity e : foundEntities){
+                            if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
+                            // Some modded servers seems to list entities in the chunk
+                            // that exists in other worlds. No idea why but we can at
+                            // least check for it.
+                            // https://snowy-evening.com/botsko/prism/318/
+                            if( !block.getWorld().equals( e.getWorld() ) ) continue;
+                            // Let's limit this to only entities within 1 block of the current.
+                            Prism.debug( block.getLocation() );
+                            Prism.debug( e.getLocation() );
+                            if( block.getLocation().distance( e.getLocation() ) < 2 ){
+                                final ItemFrame frame = (ItemFrame) e;
+                                
+                                if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
+                                    frame.setItem( item );
+                                } else {
+                                    frame.setItem( null );
+                                }
+                                result = ChangeResultType.APPLIED;
+                            }
+                        }
+                    }
                 }
             }
 
