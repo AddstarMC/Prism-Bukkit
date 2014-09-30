@@ -100,11 +100,13 @@ public class RecordingTask implements Runnable {
             }
 
             // Add insert query for extra data if needed
-            if( a.getData() != null && !a.getData().isEmpty() ) {
-                s = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data,te_data) VALUES (?,?,?)" ); // Cauldron - add extra column for te data
+            // Cauldron start - add support for te data
+            if( a.getData() != null && !a.getData().isEmpty() || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ) {
+                s = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data,te_data) VALUES (?,?,?)" ); // add extra column for te data
                 s.setInt( 1, id );
                 s.setString( 2, a.getData() );
-                s.setString(3, a.getTileEntityData()); // Cauldron - insert te data
+                s.setString(3, a.getTileEntityData()); // insert te data
+            // Cauldron end
                 s.executeUpdate();
             }
 
@@ -311,10 +313,12 @@ public class RecordingTask implements Runnable {
 
                 final Handler a = extraDataQueue.get( i );
 
-                if( a.getData() != null && !a.getData().isEmpty() ) {
+               // Cauldron start - add support for te data
+                if( a.getData() != null && !a.getData().isEmpty() || (a.getTileEntityData() != null && !a.getTileEntityData().isEmpty()) ) {
                     s.setInt( 1, keys.getInt( 1 ) );
                     s.setString( 2, a.getData() );
-                    s.setString(3, a.getTileEntityData()); // Cauldron - insert te data
+                    s.setString(3, a.getTileEntityData()); // insert te data
+               // Cauldron end
                     s.addBatch();
                 }
 
