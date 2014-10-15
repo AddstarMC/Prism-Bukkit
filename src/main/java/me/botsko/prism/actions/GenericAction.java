@@ -186,7 +186,7 @@ public class GenericAction implements Handler {
         final SimpleDateFormat date = new SimpleDateFormat( "yy/MM/dd" );
         this.display_date = date.format( action_time );
 
-        final SimpleDateFormat time = new SimpleDateFormat( "h:m:sa" );
+        final SimpleDateFormat time = new SimpleDateFormat( "hh:mm:ssa" );
         this.display_time = time.format( action_time );
 
     }
