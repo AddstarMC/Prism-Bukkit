@@ -6,6 +6,7 @@ import me.botsko.elixr.DeathUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
 
@@ -604,7 +605,7 @@ public class PrismEntityEvents implements Listener {
         for ( Block block : event.blockList() ) {
 
             // don't bother record upper doors.
-            if( block.getType().equals( Material.WOODEN_DOOR ) || block.getType().equals( Material.IRON_DOOR_BLOCK ) ) {
+            if( BlockUtils.isDoor(block.getType()) ) {
                 if( block.getData() >= 4 ) {
                     continue;
                 }

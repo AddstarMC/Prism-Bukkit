@@ -6,6 +6,7 @@ import java.util.List;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -95,7 +96,7 @@ public class PrismBlockEvents implements Listener {
      */
     protected void logBlockRelationshipsForBlock(String playername, Block block) {
 
-        if( block.getType().equals( Material.WOODEN_DOOR ) || block.getType().equals( Material.IRON_DOOR_BLOCK ) ) { return; }
+        if( BlockUtils.isDoor(block.getType()) ) { return; }
 
         // Find a list of all blocks above this block that we know will fall.
         final ArrayList<Block> falling_blocks = me.botsko.elixr.BlockUtils.findFallingBlocksAboveBlock( block );

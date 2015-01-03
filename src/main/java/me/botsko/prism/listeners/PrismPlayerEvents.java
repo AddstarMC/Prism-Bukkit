@@ -391,6 +391,11 @@ public class PrismPlayerEvents implements Listener {
                     recordCakeEat( block, player );
                     break;
                 case WOODEN_DOOR:
+                case ACACIA_DOOR:
+                case BIRCH_DOOR:
+                case DARK_OAK_DOOR:
+                case JUNGLE_DOOR:
+                case SPRUCE_DOOR:
                 case TRAP_DOOR:
                 case FENCE_GATE:
                 case LEVER:

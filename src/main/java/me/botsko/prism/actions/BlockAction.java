@@ -284,12 +284,6 @@ public class BlockAction extends GenericAction {
         return placeBlock( player, parameters, is_preview, block, true );
     }
 
-    private boolean isDoor(Material m) {
-    	return (m == Material.ACACIA_DOOR || m == Material.BIRCH_DOOR || m == Material.DARK_OAK_DOOR || 
-    			m == Material.IRON_DOOR || m == Material.JUNGLE_DOOR || m == Material.SPRUCE_DOOR ||
-    			m == Material.WOOD_DOOR || m == Material.WOODEN_DOOR || m == Material.IRON_DOOR_BLOCK);
-    }
-
     /**
      * Place a block unless something other than air occupies the spot, or if we
      * detect a falling block now sits there. This resolves the issue of falling
@@ -456,7 +450,7 @@ public class BlockAction extends GenericAction {
             stateChange = new BlockStateChange( originalBlock, newBlock );
 
             // If we're rolling back a door, we need to set it properly
-            if( isDoor(m) ) {
+            if( BlockUtils.isDoor(m) ) {
                 me.botsko.elixr.BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or a bed

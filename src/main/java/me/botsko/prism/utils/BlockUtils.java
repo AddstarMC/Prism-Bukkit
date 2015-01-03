@@ -122,4 +122,10 @@ public class BlockUtils extends me.botsko.elixr.BlockUtils {
         final Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
         return removeMaterialsFromRadius( materials, loc, radius );
     }
+
+    public static boolean isDoor(Material m) {
+    	return (m == Material.ACACIA_DOOR || m == Material.BIRCH_DOOR || m == Material.DARK_OAK_DOOR ||
+    			m == Material.IRON_DOOR || m == Material.JUNGLE_DOOR || m == Material.SPRUCE_DOOR ||
+    			m == Material.WOOD_DOOR || m == Material.WOODEN_DOOR || m == Material.IRON_DOOR_BLOCK);
+    }
 }
