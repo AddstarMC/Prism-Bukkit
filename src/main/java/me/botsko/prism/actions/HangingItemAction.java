@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -34,7 +35,11 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            if (hanging.getAttachedFace() != null) {
+            	this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            } else {
+            	Prism.log("PRISM WARNING! getAttachedFace returned NULL for hanging item: " + hanging.getType() + " @ " + hanging.getLocation());
+            }
             this.world_name = hanging.getWorld().getName();
             this.x = hanging.getLocation().getBlockX();
             this.y = hanging.getLocation().getBlockY();
