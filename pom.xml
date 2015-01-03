@@ -15,14 +15,19 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>bukkit</artifactId>
-      <version>1.7.10-R0.1-SNAPSHOT</version>
+      <version>1.8-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.7.10-R0.1-SNAPSHOT</version>
+      <version>1.8-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.sk89q</groupId>
@@ -38,13 +43,58 @@
     </dependency>
   </dependencies>
   <repositories>
+    <!-- For spigot/bukkit/craftbukkit releases -->
     <repository>
-      <id>dhmc-repo</id>
-      <url>http://dhmc.us:8081/nexus/content/repositories/snapshots</url>
+      <id>spigot-releases</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/releases/</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
     </repository>
+
+    <!-- For spigot/bukkit/craftbukkit snapshots -->
+    <repository>
+      <id>spigot-snapshots</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+      <releases><enabled>false</enabled></releases>
+      <snapshots><enabled>true</enabled></snapshots>
+    </repository>
+
+    <!-- Addstar repos -->
+    <repository>
+      <id>addstar-repo</id>
+      <url>http://maven.addstar.com.au/artifactory/ext-release-local</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>addstar-snapshot-repo</id>
+      <url>http://maven.addstar.com.au/artifactory/ext-snapshot-local</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+
+    <!-- For SnakeYAML (contains many other things too) -->
+    <repository>
+      <id>Sonatype-public</id>
+      <name>SnakeYAML repository</name>
+      <url>http://oss.sonatype.org/content/groups/public/</url>
+    </repository>
+
+    <!-- Worldedit -->
     <repository>
       <id>sk89q-repo</id>
       <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+
+    <!-- Elixr stuff -->
+    <repository>
+      <id>dhmc-repo</id>
+      <url>http://dhmc.us:8081/nexus/content/repositories/snapshots</url>
     </repository>
   </repositories>
   <build>
@@ -70,8 +120,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0.2</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
           <showDeprecation>false</showDeprecation>
           <showWarnings>true</showWarnings>
         </configuration>
@@ -107,7 +157,7 @@
       </plugin>
     </plugins>
   </build>
-  <distributionManagement>
+  <!--<distributionManagement>
     <repository>
       <id>deployment</id>
       <name>Internal Releases</name>
@@ -118,5 +168,5 @@
       <name>Internal Releases</name>
       <url>http://dhmc.us:8081/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
-  </distributionManagement>
+  </distributionManagement>-->
 </project>
