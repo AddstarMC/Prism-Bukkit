@@ -35,10 +35,8 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            if (hanging.getAttachedFace() != null) {
+            if ((hanging.getFacing() != null) && (hanging.getAttachedFace() != null)) {
             	this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
-            } else {
-            	Prism.log("PRISM WARNING! getAttachedFace returned NULL for hanging item: " + hanging.getType() + " @ " + hanging.getLocation());
             }
             this.world_name = hanging.getWorld().getName();
             this.x = hanging.getLocation().getBlockX();
