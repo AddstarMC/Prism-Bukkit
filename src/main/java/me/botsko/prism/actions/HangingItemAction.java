@@ -8,6 +8,7 @@ import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
@@ -35,7 +36,7 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            if ((hanging.getFacing() != null) && (hanging.getAttachedFace() != null)) {
+            if (hanging.getType() != EntityType.LEASH_HITCH) {
             	this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
             }
             this.world_name = hanging.getWorld().getName();
