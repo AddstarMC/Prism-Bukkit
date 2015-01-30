@@ -99,7 +99,9 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.ignore.enable-perm-nodes", false );
         config.addDefault( "prism.ignore.players-in-creative", false );
         config.addDefault( "prism.ignore.players", new ArrayList<String>() );
+        config.addDefault( "prism.ignore.players_whitelist", false);
         config.addDefault( "prism.ignore.worlds", new ArrayList<String>() );
+        config.addDefault( "prism.ignore.worlds_whitelist", false);
 
         // Purge
         final List<String> purgeRules = new ArrayList<String>();
