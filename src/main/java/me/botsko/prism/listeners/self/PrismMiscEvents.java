@@ -13,6 +13,7 @@ import me.botsko.prism.events.PrismBlocksExtinguishEvent;
 
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 public class PrismMiscEvents implements Listener {
@@ -21,7 +22,7 @@ public class PrismMiscEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler
+    @EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksDrainEvent(final PrismBlocksDrainEvent event) {
 
         // Get all block changes for this event
@@ -51,7 +52,7 @@ public class PrismMiscEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler
+    @EventHandler (priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksExtinguishEvent(final PrismBlocksExtinguishEvent event) {
 
         // Get all block changes for this event
