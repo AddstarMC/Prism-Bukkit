@@ -47,7 +47,7 @@ public class WhatCommand extends Executor {
                 call.getPlayer().sendMessage( Prism.messenger.playerMsg( line1 ) );
                 call.getPlayer().sendMessage(
                         Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA
-                                + me.botsko.elixr.ItemUtils.getItemFullNiceName( item, Prism.getItems() ) ) );
+                                + me.botsko.elixr.ItemUtils.getItemFullNiceName( item ) ) );
 
             }
 

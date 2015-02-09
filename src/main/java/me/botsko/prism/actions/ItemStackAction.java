@@ -337,7 +337,7 @@ public class ItemStackAction extends GenericAction {
     public String getNiceName() {
         String name = "";
         if( item != null ) {
-            final String fullItemName = me.botsko.elixr.ItemUtils.getItemFullNiceName( item, this.materialAliases );
+            final String fullItemName = me.botsko.elixr.ItemUtils.getItemFullNiceName( item );
             name = actionData.amt + " " + fullItemName;
         }
         return name;
