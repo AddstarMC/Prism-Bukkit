@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import java.util.ArrayList;
+
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -10,8 +12,10 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -19,6 +23,8 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -38,7 +44,9 @@ public class BlockAction extends GenericAction {
         if( block != null ) {
             setBlock(block.getState());
         }
-    }/**
+    }
+
+    /**
      *
      * @param state
      */
@@ -81,6 +89,19 @@ public class BlockAction extends GenericAction {
                 actionData = signActionData;
             }
 
+            // banners
+            else if( ( state.getTypeId() == 176 || state.getTypeId() == 177 ) ) {
+            	final BannerActionData bannerActionData = new BannerActionData();
+            	final Banner s = (Banner) state;
+            	bannerActionData.patterns = new String[1+s.numberOfPatterns()*2];
+            	bannerActionData.patterns[0] = s.getBaseColor().toString();
+            	for(int i=0; i<s.numberOfPatterns(); ++i) {
+            		bannerActionData.patterns[1+2*i] = s.getPattern(i).getColor().toString();
+            		bannerActionData.patterns[2+2*i] = s.getPattern(i).getPattern().toString();
+            	}
+            	actionData = bannerActionData;
+            }
+
             // command block
             else if( ( state.getTypeId() == 137 ) ) {
                 final CommandBlock cmdblock = (CommandBlock) state;
@@ -107,6 +128,8 @@ public class BlockAction extends GenericAction {
                 actionData = gson.fromJson( data, SpawnerActionData.class );
             } else if( block_id == 63 || block_id == 68 ) {
                 actionData = gson.fromJson( data, SignActionData.class );
+            } else if( block_id == 176 || block_id == 177 ) {
+            	actionData = gson.fromJson( data, BannerActionData.class );
             } else if( block_id == 137 ) {
                 actionData = new BlockActionData();
             } else {
@@ -154,6 +177,11 @@ public class BlockAction extends GenericAction {
             if( ad.lines != null && ad.lines.length > 0 ) {
                 name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
             }
+        } else if( actionData instanceof BannerActionData ) {
+        	final BannerActionData ad = (BannerActionData) getActionData();
+        	if( ad.patterns != null && ad.patterns.length > 0 ) {
+        		name += " (" + TypeUtils.join( ad.patterns, ", " ).replace("_", " ").toLowerCase() + ")";
+        	}
         } else if( block_id == 137 ) {
             name += " (" + data + ")";
         }
@@ -168,6 +196,10 @@ public class BlockAction extends GenericAction {
      */
     public class BlockActionData {}
 
+    public class BannerActionData extends BlockActionData {
+    	public String[] patterns;
+    }
+    
     /**
      * 
      * @author botskonet
@@ -425,6 +457,41 @@ public class BlockAction extends GenericAction {
                     }
                     sign.update();
                 }
+            }
+
+            /**
+             * Banners
+             */
+            if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
+            		&& ( getBlockId() == 176 || getBlockId() == 177 ) && getActionData() instanceof BannerActionData ) {
+
+            	final BannerActionData s = (BannerActionData) getActionData();
+				if( block.getState() instanceof Banner ) {
+
+					// Set sign data
+					final Banner banner = (Banner) block.getState();
+					int i = 0;
+					if( s.patterns != null && s.patterns.length > 0 ) {
+						ArrayList <Pattern> patterns = new ArrayList<Pattern>();
+						DyeColor tmpcolor = DyeColor.BLACK;
+						PatternType tmppattern;
+						for ( final String pattern : s.patterns ) {
+							if(i == 0) {
+								banner.setBaseColor(DyeColor.valueOf(pattern));
+							}
+							else if(i % 2 == 1) {
+								tmpcolor = DyeColor.valueOf(pattern);
+							}
+							else {
+								tmppattern = PatternType.valueOf(pattern);
+								patterns.add(new Pattern(tmpcolor, tmppattern));
+							}
+							i++;
+						}
+						banner.setPatterns(patterns);
+					}
+					banner.update();
+				}
             }
 
             // If the material is a crop that needs soil, we must restore the

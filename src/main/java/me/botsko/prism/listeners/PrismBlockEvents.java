@@ -220,8 +220,18 @@ public class PrismBlockEvents implements Listener {
             return;
 
         final BlockState s = event.getBlockReplacedState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getTypeId(),
-                s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
+    	if ((block.getType() == Material.BANNER)
+    			|| (block.getType() == Material.WALL_BANNER)
+    			|| (block.getType() == Material.STANDING_BANNER)
+    			|| (block.getType() == Material.SKULL)
+    			|| (block.getType() == Material.MOB_SPAWNER) ) {
+    		// Record full item data
+	    	RecordingQueue.addToQueue( ActionFactory.createBlock("block-place", block, player.getName()) );
+    	} else {
+    		// Record partial item data
+	    	RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getTypeId(),
+	                s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
+    	}
 
         // Pass to the placement alerter
         if( !player.hasPermission( "prism.alerts.use.place.ignore" ) && !player.hasPermission( "prism.alerts.ignore" ) ) {
