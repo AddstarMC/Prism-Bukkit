@@ -99,6 +99,13 @@ public class PreprocessArgs {
             }
         }
 
+        // Enforce specifying an action
+        if (sender != null && sender.hasPermission("prism.parameters.action.required") && parameters.getActionTypes().isEmpty()) {
+            sender.sendMessage(Prism.messenger
+                    .playerError("You're missing valid actions. Use /prism ? for assistance."));
+            return null;
+        }
+
         // Player location
         if( player != null && !plugin.getConfig().getBoolean( "prism.queries.never-use-defaults" )
                 && parameters.getPlayerLocation() == null
