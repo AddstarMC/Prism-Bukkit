@@ -1,5 +1,6 @@
 package me.botsko.prism.parameters;
 
+import com.google.common.base.Joiner;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -7,7 +8,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.libs.joptsimple.internal.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
                     if ( !noPermission.isEmpty() ) {
                         String message = "Ignoring action '" + action + "' because you don't have permission for ";
                         if (noPermission.size() != 1) {
-                            message += "any of " + Strings.join(noPermission, ",") + ".";
+                            message += "any of " + Joiner.on(',').join(noPermission) + ".";
                         } else if(noPermission.get(0).equals(action)){
                             message += "it.";
                         } else {

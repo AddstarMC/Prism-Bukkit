@@ -11,8 +11,8 @@ import java.net.URL;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Handles basic PSTE.me API calls
