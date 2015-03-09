@@ -11,9 +11,9 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bags.BlockBag;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.extent.inventory.BlockBag;
 
 public class PrismBlockEditSession extends EditSession {
 

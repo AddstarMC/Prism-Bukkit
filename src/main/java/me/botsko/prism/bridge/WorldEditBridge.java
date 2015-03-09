@@ -13,6 +13,7 @@ import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.World;
 
 public class WorldEditBridge {
 
@@ -29,7 +30,7 @@ public class WorldEditBridge {
         try {
             final LocalPlayer lp = new BukkitPlayer( Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit()
                     .getServer(), player );
-            final LocalWorld lw = lp.getWorld();
+            final World lw = lp.getWorld();
             region = Prism.plugin_worldEdit.getWorldEdit().getSession( lp ).getSelection( lw );
         } catch ( final IncompleteRegionException e ) {
             return false;
