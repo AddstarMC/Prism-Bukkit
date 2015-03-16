@@ -3,14 +3,9 @@ package me.botsko.prism.actions;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.utils.BlockUtils;
-
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 
 public class HangingItemAction extends GenericAction {
 
@@ -34,7 +29,9 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            if(hanging.getAttachedFace() != null) {
+                this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            }
             this.world_name = hanging.getWorld().getName();
             this.x = hanging.getLocation().getBlockX();
             this.y = hanging.getLocation().getBlockY();
