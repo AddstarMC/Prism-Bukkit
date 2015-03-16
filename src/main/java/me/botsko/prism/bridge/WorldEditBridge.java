@@ -1,18 +1,16 @@
 package me.botsko.prism.bridge;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
-
-import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.LocalPlayer;
-import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.world.World;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.PrismProcessType;
+import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 public class WorldEditBridge {
 
@@ -29,7 +27,7 @@ public class WorldEditBridge {
         try {
             final LocalPlayer lp = new BukkitPlayer( Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit()
                     .getServer(), player );
-            final LocalWorld lw = lp.getWorld();
+            final World lw = lp.getWorld();
             region = Prism.plugin_worldEdit.getWorldEdit().getSession( lp ).getSelection( lw );
         } catch ( final IncompleteRegionException e ) {
             return false;
