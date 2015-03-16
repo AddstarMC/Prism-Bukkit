@@ -450,16 +450,16 @@ public class BlockAction extends GenericAction {
             stateChange = new BlockStateChange( originalBlock, newBlock );
 
             // If we're rolling back a door, we need to set it properly
-            if( m.equals( Material.WOODEN_DOOR ) || m.equals( Material.IRON_DOOR_BLOCK ) ) {
-                me.botsko.elixr.BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
+            if( BlockUtils.isDoor(m) ) {
+                BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
-                me.botsko.elixr.BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or double plants
             else if( m.equals( Material.DOUBLE_PLANT ) ) {
-                me.botsko.elixr.BlockUtils.properlySetDoublePlant( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetDoublePlant( block, getBlockId(), (byte) getBlockSubId() );
             }
         } else {
 
