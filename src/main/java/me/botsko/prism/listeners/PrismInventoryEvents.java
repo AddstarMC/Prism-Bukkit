@@ -1,12 +1,8 @@
 package me.botsko.prism.listeners;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -22,6 +18,9 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class PrismInventoryEvents implements Listener {
 
@@ -63,11 +62,8 @@ public class PrismInventoryEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryDrag(final InventoryDragEvent event) {
-
-        // Someone cancelled this before we did
-        if( event.isCancelled() ) { return; }
 
         if( !plugin.getConfig().getBoolean( "prism.tracking.item-insert" )
                 && !plugin.getConfig().getBoolean( "prism.tracking.item-remove" ) )
@@ -95,7 +91,7 @@ public class PrismInventoryEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
 
         if( !plugin.getConfig().getBoolean( "prism.tracking.item-insert" )
