@@ -116,14 +116,6 @@ public class PrismInventoryEvents implements Listener {
             final DoubleChest chest = (DoubleChest) event.getInventory().getHolder();
             containerLoc = chest.getLocation();
         }
-
-//         Prism.debug("Raw slot: " + event.getRawSlot());
-//         Prism.debug("Slot: " + event.getSlot());
-//         Prism.debug("Def. Size " + event.getView().getType().getDefaultSize());
-        // Prism.debug("Cursor Item: " + (cursoritem != null ?
-        // cursoritem.getTypeId() : "null"));
-        // Prism.debug("Current Item: " + (currentitem != null ?
-        // currentitem.getTypeId() : "null"));
         
         // Double chests report 27 default size, though they actually
         // have 6 rows of 9 for 54 slots
@@ -135,18 +127,47 @@ public class PrismInventoryEvents implements Listener {
         // Click in the block inventory produces slot/rawslot that are equal, only until the slot numbers exceed the
         // slot count of the inventory. At that point, they represent the player inv.
         if( event.getSlot() == event.getRawSlot() && event.getRawSlot() <= defaultSize ) {
+            ItemStack addStack = null;
+            ItemStack removeStack = null;
 
-            // If BOTH items are not air then you've swapped an item. We need to
-            // record an insert for the cursor item and
-            // and remove for the current.
             if( currentitem != null && !currentitem.getType().equals( Material.AIR ) && cursoritem != null
                     && !cursoritem.getType().equals( Material.AIR ) ) {
-                recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), "item-remove", event );
-                recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), "item-insert", event );
+                // If BOTH items are not air then you've swapped an item. We need to
+                // record an insert for the cursor item and
+                // and remove for the current.
+
+                if (currentitem.isSimilar(cursoritem)) {
+                    // Items are similar enough to stack
+                    int amount = cursoritem.getAmount();
+
+                    if(event.isRightClick()) {
+                        amount = 1;
+                    }
+
+                    int remaining = (currentitem.getMaxStackSize() - currentitem.getAmount());
+                    int inserted = (amount <= remaining) ? amount : remaining;
+
+                    if (inserted > 0) {
+                        addStack = cursoritem.clone();
+                        addStack.setAmount(inserted);
+                    }
+                } else {
+                    // Items are not similar
+                    addStack = cursoritem.clone();
+                    removeStack = currentitem.clone();
+                }
             } else if( currentitem != null && !currentitem.getType().equals( Material.AIR ) ) {
-                recordInvAction( player, containerLoc, currentitem, event.getRawSlot(), "item-remove", event );
+                removeStack = currentitem.clone();
             } else if( cursoritem != null && !cursoritem.getType().equals( Material.AIR ) ) {
-                recordInvAction( player, containerLoc, cursoritem, event.getRawSlot(), "item-insert", event );
+                addStack = cursoritem.clone();
+            }
+
+            // Record events
+            if (addStack != null) {
+                recordInvAction( player, containerLoc, addStack, event.getRawSlot(), "item-insert", event );
+            }
+            if (removeStack != null) {
+                recordInvAction( player, containerLoc, removeStack, event.getRawSlot(), "item-remove", event );
             }
             return;
         }
