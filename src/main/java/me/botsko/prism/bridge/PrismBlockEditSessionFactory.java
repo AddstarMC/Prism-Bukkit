@@ -1,11 +1,7 @@
 package me.botsko.prism.bridge;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionFactory;
-import com.sk89q.worldedit.LocalPlayer;
-import com.sk89q.worldedit.LocalWorld;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bags.BlockBag;
+import com.sk89q.worldedit.*;
+import com.sk89q.worldedit.extent.inventory.BlockBag;
 
 public class PrismBlockEditSessionFactory extends EditSessionFactory {
 

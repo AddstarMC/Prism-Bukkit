@@ -1,19 +1,17 @@
 package me.botsko.prism.bridge;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionFactory;
-import me.botsko.prism.actionlibs.RecordingQueue;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.bags.BlockBag;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.extent.inventory.BlockBag;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 public class PrismBlockEditSession extends EditSession {
 

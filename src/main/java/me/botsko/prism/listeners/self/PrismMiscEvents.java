@@ -1,7 +1,5 @@
 package me.botsko.prism.listeners.self;
 
-import java.util.ArrayList;
-
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actionlibs.RecordingTask;
@@ -10,10 +8,12 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.events.PrismBlocksExtinguishEvent;
-
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+
+import java.util.ArrayList;
 
 public class PrismMiscEvents implements Listener {
 
@@ -21,7 +21,7 @@ public class PrismMiscEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksDrainEvent(final PrismBlocksDrainEvent event) {
 
         // Get all block changes for this event
@@ -51,7 +51,7 @@ public class PrismMiscEvents implements Listener {
      * 
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksExtinguishEvent(final PrismBlocksExtinguishEvent event) {
 
         // Get all block changes for this event
