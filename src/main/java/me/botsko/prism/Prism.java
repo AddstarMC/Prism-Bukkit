@@ -322,7 +322,7 @@ public class Prism extends JavaPlugin {
         pool.setMaxIdle( config.getInt( "prism.database.max-idle-connections" ) );
         pool.setMaxWait( config.getInt( "prism.database.max-wait" ) );
         pool.setRemoveAbandoned( true );
-        pool.setRemoveAbandonedTimeout( 60 );
+        pool.setRemoveAbandonedTimeout( 180 );
         pool.setTestOnBorrow( true );
         pool.setValidationQuery( "/* ping */SELECT 1" );
         pool.setValidationInterval( 30000 );
