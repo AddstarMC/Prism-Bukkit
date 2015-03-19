@@ -4,10 +4,13 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import net.minecraft.server.v1_7_R4.NBTTagCompound;
+import net.minecraft.server.v1_7_R4.NBTTagList;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHorse;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Villager.Profession;
@@ -35,6 +38,7 @@ public class EntityAction extends GenericAction {
         public String saddle;
         public String armor;
         public double maxHealth;
+        public double speed;
     }
 
     /**
@@ -149,7 +153,18 @@ public class EntityAction extends GenericAction {
                 this.actionData.maxDom = h.getMaxDomestication();
                 this.actionData.jump = h.getJumpStrength();
                 this.actionData.maxHealth = h.getMaxHealth();
-
+                
+                // Get speed
+                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse =  ((CraftHorse) entity).getHandle();
+                NBTTagCompound nbtTag = new NBTTagCompound();
+                nmsHorse.c(nbtTag);
+                NBTTagList horseAttributes = nbtTag.getList("Attributes", 10);
+                for (int i = 0; i < horseAttributes.size(); ++i) {
+                    if (horseAttributes.get(i).getString("Name") == "generic.movementSpeed") {
+                        this.actionData.speed = horseAttributes.get(i).getDouble("Base");
+                        break;
+                    }
+                }
                 final HorseInventory hi = h.getInventory();
 
                 if( hi.getSaddle() != null ) {
@@ -383,7 +398,7 @@ public class EntityAction extends GenericAction {
                 if( !isAdult() ) {
                     age.setBaby();
                 } else {
-                	age.setAdult();
+                    age.setAdult();
                 }
             }
 
@@ -479,7 +494,20 @@ public class EntityAction extends GenericAction {
                 h.setMaxDomestication( this.actionData.maxDom );
                 h.setJumpStrength( this.actionData.jump );
                 h.setMaxHealth( this.actionData.maxHealth );
-
+                
+                // Set speed
+                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse =  ((CraftHorse) entity).getHandle();
+                NBTTagCompound nbtTag = new NBTTagCompound();
+                nmsHorse.c(nbtTag);
+                NBTTagList horseAttributes = nbtTag.getList("Attributes", 10);
+                for (int i = 0; i < horseAttributes.size(); ++i) {
+                    if (horseAttributes.get(i).getString("Name") == "generic.movementSpeed") {
+                        horseAttributes.get(i).setDouble("Base", this.actionData.speed);
+                        nmsHorse.f(nbtTag);
+                        break;
+                    }
+                }
+                
                 // Stuff
                 h.getInventory().setSaddle( getSaddle() );
                 h.getInventory().setArmor( getArmor() );
