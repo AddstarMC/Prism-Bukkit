@@ -24,6 +24,7 @@ import org.bukkit.entity.Horse;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -518,6 +519,10 @@ public class PrismEntityEvents implements Listener {
                     RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
                 }
             }
+        } else if (to == Material.AIR && event.getEntity() instanceof Wither) {
+            if( !Prism.getIgnore().event("entity-break", event.getBlock()))
+                return;
+            RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
         }
     }
 
