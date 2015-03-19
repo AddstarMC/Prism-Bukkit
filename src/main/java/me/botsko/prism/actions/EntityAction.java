@@ -164,6 +164,7 @@ public class EntityAction extends GenericAction {
                         break;
                     }
                 }
+                
                 final HorseInventory hi = h.getInventory();
 
                 if( hi.getSaddle() != null ) {
@@ -171,6 +172,9 @@ public class EntityAction extends GenericAction {
                 }
                 if( hi.getArmor() != null ) {
                     this.actionData.armor = "" + hi.getArmor().getTypeId();
+                }
+                if ((this.actionData.var == "DONKEY" || this.actionData.var == "MULE") && hi.getSize() == 17) {
+                	this.actionData.chest = true;
                 }
 
                 // Owner
