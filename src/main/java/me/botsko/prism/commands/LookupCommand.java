@@ -12,8 +12,12 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
+import net.minecraft.server.v1_7_R4.ChatSerializer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,12 +109,18 @@ public class LookupCommand implements SubHandler {
                                     am.showExtended();
                                 }
                                 am.setResultIndex( result_count );
-                                player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                                //player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                                for (String message : am.getMessageWithTpAction() ) {
+                                	((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
+                                }
                                 result_count++;
                             }
                         } else {
                             player.sendMessage( Prism.messenger
                                     .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+                        }
+                        if (results.getTotal_pages() > 1) {
+                        	((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"        §f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}")));
                         }
                         if( parameters.hasFlag( Flag.PASTE ) ) {
                             String paste = "";
