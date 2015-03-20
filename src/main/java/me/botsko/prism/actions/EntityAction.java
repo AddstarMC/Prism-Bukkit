@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import net.minecraft.server.v1_7_R4.GenericAttributes;
 import net.minecraft.server.v1_7_R4.NBTTagCompound;
 import net.minecraft.server.v1_7_R4.NBTTagList;
 
@@ -154,16 +155,8 @@ public class EntityAction extends GenericAction {
                 this.actionData.maxHealth = h.getMaxHealth();
                 
                 // Get speed
-                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse =  ((CraftHorse) entity).getHandle();
-                NBTTagCompound nbtTag = new NBTTagCompound();
-                nmsHorse.c(nbtTag);
-                NBTTagList horseAttributes = nbtTag.getList("Attributes", 10);
-                for (int i = 0; i < horseAttributes.size(); ++i) {
-                    if (horseAttributes.get(i).getString("Name") == "generic.movementSpeed") {
-                        this.actionData.speed = horseAttributes.get(i).getDouble("Base");
-                        break;
-                    }
-                }
+                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
+                this.actionData.speed = nmsHorse.getAttributeInstance(GenericAttributes.d).getValue();
                 
                 final HorseInventory hi = h.getInventory();
 
@@ -532,17 +525,8 @@ public class EntityAction extends GenericAction {
                 h.setMaxHealth( this.actionData.maxHealth );
                 
                 // Set speed
-                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse =  ((CraftHorse) entity).getHandle();
-                NBTTagCompound nbtTag = new NBTTagCompound();
-                nmsHorse.c(nbtTag);
-                NBTTagList horseAttributes = nbtTag.getList("Attributes", 10);
-                for (int i = 0; i < horseAttributes.size(); ++i) {
-                    if (horseAttributes.get(i).getString("Name") == "generic.movementSpeed") {
-                        horseAttributes.get(i).setDouble("Base", this.actionData.speed);
-                        nmsHorse.f(nbtTag);
-                        break;
-                    }
-                }
+                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
+                nmsHorse.getAttributeInstance(GenericAttributes.d).setValue(this.actionData.speed);
                 
                 // Stuff
                 h.getInventory().setSaddle( getSaddle() );
