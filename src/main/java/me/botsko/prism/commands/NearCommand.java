@@ -10,8 +10,12 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+import net.minecraft.server.v1_7_R4.ChatSerializer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
 
 import java.util.List;
+
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 
 public class NearCommand implements SubHandler {
 
@@ -94,7 +98,10 @@ public class NearCommand implements SubHandler {
                                 am.showExtended();
                             }
                             am.setResultIndex( result_count );
-                            call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                            //call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                            for (String message : am.getMessageWithTpAction() ) {
+                            	((CraftPlayer) call.getPlayer()).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
+                            }
                             result_count++;
                         }
 
@@ -106,6 +113,10 @@ public class NearCommand implements SubHandler {
                                 .sendMessage(
                                         Prism.messenger
                                                 .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+                    }
+                    
+                    if (results.getTotal_pages() > 1) {
+                    	((CraftPlayer) call.getPlayer()).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"        §f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}")));
                     }
                 } else {
                     call.getPlayer().sendMessage( Prism.messenger.playerError( "Couldn't find anything." ) );
