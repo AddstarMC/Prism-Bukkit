@@ -9,11 +9,14 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
+import net.minecraft.server.v1_7_R4.ChatSerializer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -119,6 +122,10 @@ public class InspectorWand extends QueryWandBase implements Wand {
                             am.showExtended();
                         }
                         player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                    }
+                    
+                    if (results.getTotal_pages() > 1) {
+                    	((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"        §f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}")));
                     }
                 } else {
                     final String space_name = ( block.getType().equals( Material.AIR ) ? "space" : block.getType()
