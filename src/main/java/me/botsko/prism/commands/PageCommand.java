@@ -8,11 +8,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-import net.minecraft.server.v1_7_R4.ChatSerializer;
-import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
-
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -129,22 +126,20 @@ public class PageCommand implements SubHandler {
             }
             am.setResultIndex( result_count );
             //call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
-            for (String message : am.getMessageWithTpAction() ) {
-            	((CraftPlayer) call.getSender()).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
-            }
+            MiscUtils.sendJSONMessage(call.getSender(), am.getJSONMessage());
             result_count++;
         }
         
         if (results.getTotal_pages() > 1) {
 	        String paginationMessage = "";
 	        if (page == 1) {
-	        	paginationMessage = "{\"text\":\"        §f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}";
+	        	paginationMessage = "[{\"text\":\"         \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
 	        } else if (results.getTotal_pages() == page) {
-	        	paginationMessage = "{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}}";
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"\"}]";
 	        } else  {
-	        	paginationMessage = "[{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}]";
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
 	        }
-	        ((CraftPlayer) call.getPlayer()).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(paginationMessage)));
+	        MiscUtils.sendJSONMessage(call.getSender(), paginationMessage);
         }
     }
 

@@ -9,6 +9,7 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.utils.MiscUtils;
 import net.minecraft.server.v1_7_R4.ChatSerializer;
 import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
 
@@ -125,7 +126,8 @@ public class InspectorWand extends QueryWandBase implements Wand {
                     }
                     
                     if (results.getTotal_pages() > 1) {
-                    	((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a("{\"text\":\"        §f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}}")));
+                        String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+                        MiscUtils.sendJSONMessage(player, paginationMessage);
                     }
                 } else {
                     final String space_name = ( block.getType().equals( Material.AIR ) ? "space" : block.getType()

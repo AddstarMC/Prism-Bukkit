@@ -84,9 +84,17 @@ public class ActionMessage {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
+    public String[] getJSONMessage() {
+    	return getMessage(true);
+    }
+    
     public String[] getMessage() {
+    	return getMessage(false);
+    }
+    
+    public String[] getMessage(boolean isJSON) {
 
         String[] msg = new String[1];
         if( showExtended ) {
@@ -97,12 +105,14 @@ public class ActionMessage {
 
         String line1 = "";
 
-        // +/-
-        line1 += getPosNegPrefix();
-
         // Result index for teleporting
-        if( index > 0 ) {
-            line1 += ChatColor.GRAY + " [" + index + "] ";
+        String indexString = "";
+        if (index > 0) {
+            if (isJSON) {
+                indexString = " \"},{\"text\":\"" + ChatColor.GRAY + "[" + index + "]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/tp " + (a.getX() + 0.5) + " " + a.getY() + " " + (a.getZ() + 0.5) + "\"}},{\"text\":\" ";
+            } else {
+                indexString = ChatColor.GRAY + " [" + index + "] ";
+            }
         }
 
         // Who
@@ -154,21 +164,22 @@ public class ActionMessage {
             line2 += " - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ() + " ";
         }
 
-        msg[0] = line1;
+        if (isJSON) {
+            msg[0] = "[{\"text\":\"" + getPosNegPrefix() + indexString + "\"},{\"text\":\"" + line1.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}]";
+        } else {
+            msg[0] = getPosNegPrefix() + indexString + line1;
+        }
+        
         if( showExtended ) {
-            msg[1] = line2;
+            if (isJSON) {
+                msg[1] = "{\"text\":\"" + line2.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}";
+            } else {
+                msg[1] = line2;
+            }
         }
 
         return msg;
 
-    }
-    
-    public String[] getMessageWithTpAction() {
-        String[] message = getMessage();
-        for (int i = 0; i < message.length; ++i) {
-			message[i] = "{\"text\":\"" + message[i].replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/tp " + (a.getX() + 0.5) + " " + a.getY() + " " + (a.getZ() + 0.5) + "\"}}";
-        }
-        return message;
     }
 
     /**
