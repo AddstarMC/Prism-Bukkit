@@ -382,6 +382,8 @@ public class EntityAction extends GenericAction {
                 final Ageable age = (Ageable) entity;
                 if( !isAdult() ) {
                     age.setBaby();
+                } else {
+                    age.setAdult();
                 }
             }
 
