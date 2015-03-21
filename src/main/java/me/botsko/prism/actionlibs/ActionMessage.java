@@ -166,7 +166,7 @@ public class ActionMessage {
     public String[] getMessageWithTpAction() {
         String[] message = getMessage();
         for (int i = 0; i < message.length; ++i) {
-            message[i] = "{\"text\":\"" + message[i] + "\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/tp " + (a.getX() + 0.5) + " " + a.getY() + " " + (a.getZ() + 0.5) + "\"}}";
+			message[i] = "{\"text\":\"" + message[i].replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/tp " + (a.getX() + 0.5) + " " + a.getY() + " " + (a.getZ() + 0.5) + "\"}}";
         }
         return message;
     }
