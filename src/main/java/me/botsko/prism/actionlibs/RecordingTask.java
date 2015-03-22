@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.PrismConfig;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
@@ -380,5 +379,40 @@ public class RecordingTask implements Runnable {
         }
         plugin.recordingTask = plugin.getServer().getScheduler()
                 .runTaskLaterAsynchronously( plugin, new RecordingTask( plugin ), getTickDelayForNextBatch() );
+    }
+
+    public static void updateRollbackDatabase(ArrayList<Integer> dataIds, boolean isRestore) {
+        if (dataIds.isEmpty()) {
+            return;
+        }
+
+        String prefix = Prism.config.getString("prism.mysql.prefix");
+        final Connection conn = Prism.dbc();
+        try {
+            if (conn == null || conn.isClosed()) {
+                Prism.log( "Prism database error. Connection should be there but it's not. This action wasn't logged." );
+                return;
+            }
+
+            conn.setAutoCommit(false);
+            final PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "data_rollback (data_id,rollback) VALUES (?,?) ON DUPLICATE KEY UPDATE rollback = ?");
+            for (int id : dataIds) {
+                s.setInt(1, id);
+                s.setInt(2, isRestore ? 0 : 1);
+                s.setInt(3, isRestore ? 0 : 1);
+                s.addBatch();
+            }
+
+            s.executeBatch();
+            conn.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if( conn != null )
+                try {
+                    conn.close();
+                } catch ( final SQLException ignored ) {}
+        }
     }
 }

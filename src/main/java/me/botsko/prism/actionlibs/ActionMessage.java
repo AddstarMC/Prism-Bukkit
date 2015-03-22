@@ -105,6 +105,12 @@ public class ActionMessage {
 
         String line1 = "";
 
+        // Strikethrough when was rollback
+        String strike = "";
+        if (a.getWasRollback() == 1) {
+            strike = "§m";
+        }
+
         // Result index for teleporting
         String indexString = "";
         if (index > 0) {
@@ -116,21 +122,21 @@ public class ActionMessage {
         }
 
         // Who
-        line1 += highlight + a.getPlayerName();
+        line1 += highlight + strike + a.getPlayerName();
 
         // Description of event
-        line1 += " " + ChatColor.WHITE + a.getType().getNiceDescription();
+        line1 += " " + ChatColor.WHITE + strike + a.getType().getNiceDescription();
         if( a.getType().getHandler() != null ) {
             if( !a.getNiceName().isEmpty() )
-                line1 += " " + highlight + a.getNiceName();
+                line1 += " " + highlight + strike + a.getNiceName();
         } else {
             // We should really improve this, but this saves me from having to
             // make
             // a custom handler.
             if( a.getType().getName().equals( "lava-bucket" ) ) {
-                line1 += " " + highlight + "lava";
+                line1 += " " + highlight + strike + "lava";
             } else if( a.getType().getName().equals( "water-bucket" ) ) {
-                line1 += " " + highlight + "water";
+                line1 += " " + highlight + strike + "water";
             }
         }
 
@@ -140,16 +146,16 @@ public class ActionMessage {
 
         // Aggregate count
         if( a.getAggregateCount() > 1 ) {
-            line1 += ChatColor.GREEN + " x" + a.getAggregateCount();
+            line1 += ChatColor.GREEN + strike + " x" + a.getAggregateCount();
         }
 
         // Time since
         if( !a.getTimeSince().isEmpty() ) {
-            line1 += ChatColor.WHITE + " " + a.getTimeSince();
+            line1 += ChatColor.WHITE + strike + " " + a.getTimeSince();
         }
 
         // Action type reminder
-        line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getShortName() + ")";
+        line1 += " " + ChatColor.GRAY + strike + "(a:" + a.getType().getShortName() + ")";
 
         // Line 2
         String line2 = ChatColor.GRAY + " --";
@@ -165,7 +171,7 @@ public class ActionMessage {
         }
 
         if (isJSON) {
-            msg[0] = "[{\"text\":\"" + getPosNegPrefix() + indexString + "\"},{\"text\":\"" + line1.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}]";
+            msg[0] = "[{\"text\":\"" + getPosNegPrefix() + indexString + line1.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}]";
         } else {
             msg[0] = getPosNegPrefix() + indexString + line1;
         }

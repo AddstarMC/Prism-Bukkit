@@ -176,6 +176,14 @@ public interface Handler {
     public abstract void setData(String data);
 
     /**
+     * @param int
+     *            was rollback
+     */
+    public abstract void setWasRollback(int rollback);
+
+    public abstract int getWasRollback();
+
+    /**
      * 
      * @param m
      */

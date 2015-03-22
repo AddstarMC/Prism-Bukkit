@@ -456,6 +456,22 @@ public class Prism extends JavaPlugin {
                 st.executeUpdate( query );
             }
 
+            // rollback data table
+            resultSet = metadata.getTables( null, null, "" + prefix + "data_rollback", null );
+            if( !resultSet.next() ) {
+
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_rollback` ("
+                        + "`rollback_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` int(10) unsigned NOT NULL," + "`rollback` TINYINT(1) NULL,"
+                        + "PRIMARY KEY (`rollback_id`)," + "UNIQUE KEY `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+                st.executeUpdate( query );
+
+                // add rollback data delete cascade
+                query = "ALTER TABLE `" + prefix + "data_rollback` ADD CONSTRAINT `" + prefix + "data_rollback_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                st.executeUpdate( query );
+            }
+
             // meta
             query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`k` varchar(25) NOT NULL," + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)"
