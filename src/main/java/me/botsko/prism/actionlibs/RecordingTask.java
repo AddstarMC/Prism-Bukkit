@@ -398,8 +398,13 @@ public class RecordingTask implements Runnable {
             final PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "data_rollback (data_id,rollback) VALUES (?,?) ON DUPLICATE KEY UPDATE rollback = ?");
             for (int id : dataIds) {
                 s.setInt(1, id);
-                s.setInt(2, isRestore ? 0 : 1);
-                s.setInt(3, isRestore ? 0 : 1);
+                if (isRestore) {
+                    s.setNull(2, java.sql.Types.TINYINT);
+                    s.setNull(3, java.sql.Types.TINYINT);
+                } else {
+                s.setInt(2, 1);
+                s.setInt(3, 1);
+                }
                 s.addBatch();
             }
 
