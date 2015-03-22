@@ -402,8 +402,8 @@ public class RecordingTask implements Runnable {
                     s.setNull(2, java.sql.Types.TINYINT);
                     s.setNull(3, java.sql.Types.TINYINT);
                 } else {
-                s.setInt(2, 1);
-                s.setInt(3, 1);
+                    s.setInt(2, 1);
+                    s.setInt(3, 1);
                 }
                 s.addBatch();
             }
