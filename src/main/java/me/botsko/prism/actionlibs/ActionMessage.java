@@ -109,7 +109,7 @@ public class ActionMessage {
         String indexString = "";
         if (index > 0) {
             if (isJSON) {
-                indexString = " \"},{\"text\":\"" + ChatColor.GRAY + "[" + index + "]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/tp " + (a.getX() + 0.5) + " " + a.getY() + " " + (a.getZ() + 0.5) + "\"}},{\"text\":\" ";
+                indexString = " \"},{\"text\":\"" + ChatColor.GRAY + "[" + index + "]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr tp id:" + a.getId() + "\"}},{\"text\":\" ";
             } else {
                 indexString = ChatColor.GRAY + " [" + index + "] ";
             }
