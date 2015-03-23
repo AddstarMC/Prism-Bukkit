@@ -60,6 +60,14 @@ public class ActionsQuery {
      * @return
      */
     public QueryResult lookup(QueryParameters parameters, CommandSender sender) {
+        return lookup(parameters, sender, false);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public QueryResult lookup(QueryParameters parameters, CommandSender sender, boolean noCache) {
 
         Player player = null;
         if( sender instanceof Player ) {
@@ -213,9 +221,9 @@ public class ActionsQuery {
         final QueryResult res = new QueryResult( actions, parameters );
         res.setPerPage( parameters.getPerPage() );
 
-        // Cache it if we're doing a lookup. Otherwise we don't
-        // need a cache.
-        if( parameters.getProcessType().equals( PrismProcessType.LOOKUP ) ) {
+        // Cache it if we're doing a lookup and param noCache = false.
+        // Otherwise we don't need a cache.
+        if(parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !noCache) {
             String keyName = "console";
             if( player != null ) {
                 keyName = player.getName();

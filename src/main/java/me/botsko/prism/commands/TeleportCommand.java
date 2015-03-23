@@ -98,9 +98,9 @@ public class TeleportCommand implements SubHandler {
             params.setWorld( call.getPlayer().getWorld().getName() );
             params.setId( record_id );
 
-            // Query
+            // No cashed query
             final ActionsQuery aq = new ActionsQuery( plugin );
-            final QueryResult results = aq.lookup( params, call.getPlayer() );
+            final QueryResult results = aq.lookup( params, call.getPlayer(), true);
             if( results.getActionResults().isEmpty() ) {
                 call.getPlayer().sendMessage( Prism.messenger.playerError( "No records exists with this ID." ) );
                 return;
