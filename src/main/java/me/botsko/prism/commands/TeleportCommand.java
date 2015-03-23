@@ -142,8 +142,8 @@ public class TeleportCommand implements SubHandler {
                         Prism.messenger.playerError( "Action record occurred in world we can't find anymore." ) );
                 return;
             }
-            final Location loc = new Location( world, destinationAction.getX(), destinationAction.getY(),
-                    destinationAction.getZ() );
+            final Location loc = new Location( world, destinationAction.getX() + 0.5, destinationAction.getY(),
+                    destinationAction.getZ() +0.5 );
             call.getPlayer().teleport( loc );
             call.getPlayer().sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg( "Teleporting... " + ChatColor.WHITE
