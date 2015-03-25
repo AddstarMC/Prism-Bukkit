@@ -406,18 +406,31 @@ public class ItemStackAction extends GenericAction {
                             // least check for it.
                             // https://snowy-evening.com/botsko/prism/318/
                             if( !block.getWorld().equals( e.getWorld() ) ) continue;
-                            // Let's limit this to only entities within 1 block of the current.
+                            // Let's limit this to only entities in current block.
                             Prism.debug( block.getLocation() );
                             Prism.debug( e.getLocation() );
-                            if( block.getLocation().distance( e.getLocation() ) < 2 ){
+                            if (block.getLocation().equals(e.getLocation().getBlock().getLocation())) {
                                 final ItemFrame frame = (ItemFrame) e;
-                                
-                                if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
-                                    frame.setItem( item );
-                                } else {
-                                    frame.setItem( null );
+
+                                // When rolling back a:remove or restoring a:insert we should place the item into frame
+                                if ((getType().getName().equals("item-remove") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
+                                    (getType().getName().equals("item-insert") && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
+
+                                    if (frame.getItem().getType().equals(Material.AIR)) {
+                                        frame.setItem(item);
+                                        result = ChangeResultType.APPLIED;
+                                        break;
+                                    }
+                                       // When rolling back a:insert or restoring a:remove we should remove the item from frame
+                                } else if ((getType().getName().equals("item-insert") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
+                                           (getType().getName().equals("item-remove") && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
+
+                                    if (frame.getItem().equals(item)) {
+                                        frame.setItem(null);
+                                        result = ChangeResultType.APPLIED;
+                                        break;
+                                    }
                                 }
-                                result = ChangeResultType.APPLIED;
                             }
                         }
                     }
