@@ -371,9 +371,9 @@ public class GenericAction implements Handler {
     public void setLoc(Location loc) {
         if( loc != null ) {
             this.world_name = loc.getWorld().getName();
-            this.x = loc.getX();
-            this.y = loc.getY();
-            this.z = loc.getZ();
+            this.x = loc.getBlockX();
+            this.y = loc.getBlockY();
+            this.z = loc.getBlockZ();
         }
     }
 
