@@ -434,7 +434,7 @@ public class PrismEntityEvents implements Listener {
             // If an item frame, track it's contents
             if( e instanceof ItemFrame ) {
                 final ItemFrame frame = (ItemFrame) e;
-                if( frame.getItem() != null ) {
+                if(!frame.getItem().getType().equals(Material.AIR)) {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                             .getAmount(), -1, null, e.getLocation(), player) );
                 }
@@ -476,7 +476,7 @@ public class PrismEntityEvents implements Listener {
         // If an item frame, track it's contents
         if( event.getEntity() instanceof ItemFrame ) {
             final ItemFrame frame = (ItemFrame) event.getEntity();
-            if( frame.getItem() != null ) {
+            if (!frame.getItem().getType().equals(Material.AIR)) {
                 RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                         .getAmount(), -1, null, entity.getLocation(), breaking_name) );
             }
