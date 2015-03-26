@@ -116,6 +116,11 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
+    protected int rollback;
+
+    /**
+	 * 
+	 */
     protected int aggregateCount = 0;
 
     /**
@@ -491,6 +496,16 @@ public class GenericAction implements Handler {
     public void setData(String data) {
         this.data = data;
     }
+
+	@Override
+	public void setWasRollback(int rollback) {
+	    this.rollback = rollback;
+	}
+
+	@Override
+	public int getWasRollback() {
+	    return rollback;
+	}
 
     /*
      * (non-Javadoc)

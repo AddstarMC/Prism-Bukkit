@@ -181,12 +181,13 @@ public class ActionsQuery {
                         baseHandler.setOldBlockId( rs.getInt( 11 ) );
                         baseHandler.setOldBlockSubId( rs.getInt( 12 ) );
                         baseHandler.setData( rs.getString( 13 ) );
+                        baseHandler.setWasRollback( rs.getInt( 14 ) );
                         baseHandler.setMaterialAliases( Prism.getItems() );
 
                         // Set aggregate counts if a lookup
                         int aggregated = 0;
                         if( shouldGroup ) {
-                            aggregated = rs.getInt( 14 );
+                            aggregated = rs.getInt( 15 );
                         }
                         baseHandler.setAggregateCount( aggregated );
 
