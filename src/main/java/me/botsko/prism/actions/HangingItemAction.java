@@ -5,8 +5,10 @@ import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Painting;
@@ -17,6 +19,7 @@ public class HangingItemAction extends GenericAction {
     public class HangingItemActionData {
         public String type;
         public String direction;
+        public String art;
     }
 
     /**
@@ -34,11 +37,30 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            this.actionData.direction = hanging.getFacing().name().toLowerCase();
             this.world_name = hanging.getWorld().getName();
             this.x = hanging.getLocation().getBlockX();
             this.y = hanging.getLocation().getBlockY();
             this.z = hanging.getLocation().getBlockZ();
+
+            if (hanging.getType().equals(EntityType.PAINTING)) {
+                final Painting painting = (Painting) hanging;
+                this.actionData.art = painting.getArt().name().toLowerCase();
+
+                // Sometimes coordinates of the painting are not equal placement coordinates. Fix it.
+                final double offsetY = -0.5;
+                double offsetX = 0;
+                double offsetZ = 0;
+                if (painting.getFacing().equals(BlockFace.SOUTH)) {
+                    offsetX = -0.5;
+                } else if (painting.getFacing().equals(BlockFace.WEST)) {
+                    offsetZ = -0.5;
+                }
+                final Location addLoc = painting.getLocation().add(offsetX, offsetY, offsetZ);
+                this.x = addLoc.getBlockX();
+                this.y = addLoc.getBlockY();
+                this.z = addLoc.getBlockZ();
+            }
         }
     }
 
@@ -82,6 +104,15 @@ public class HangingItemAction extends GenericAction {
      * 
      * @return
      */
+    public Art getArt() {
+        if( actionData.art != null ) { return Art.valueOf( actionData.art.toUpperCase() ); }
+        return null;
+    }
+
+    /**
+     * 
+     * @return
+     */
     @Override
     public String getNiceName() {
         return this.actionData.type != null ? this.actionData.type : data.toLowerCase();
@@ -108,23 +139,26 @@ public class HangingItemAction extends GenericAction {
 	 */
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
-        final BlockFace attachedFace = getDirection();
+        final BlockFace facingDirection = getDirection();
 
-        final Location loc = new Location( getWorld(), getX(), getY(), getZ() ).getBlock().getRelative( getDirection() )
-                .getLocation();
+        final Location loc = new Location( getWorld(), getX(), getY(), getZ() );
+        final Location locAcceptor = loc.getBlock().getRelative(facingDirection.getOppositeFace()).getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
+        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( locAcceptor.getBlock().getType() ) ) { return new ChangeResult(
                 ChangeResultType.SKIPPED, null ); }
 
         try {
             if( getHangingType().equals( "item_frame" ) ) {
-                final Hanging hangingItem = getWorld().spawn( loc, ItemFrame.class );
-                hangingItem.setFacingDirection( attachedFace, true );
+                final Hanging hangingItem = getWorld().spawn( locAcceptor, ItemFrame.class );
+                hangingItem.teleport(loc);
+                hangingItem.setFacingDirection( facingDirection, true );
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             } else if( getHangingType().equals( "painting" ) ) {
-                final Hanging hangingItem = getWorld().spawn( loc, Painting.class );
-                hangingItem.setFacingDirection( getDirection(), true );
+                final Hanging hangingItem = getWorld().spawn( locAcceptor, Painting.class );
+                ((Painting)hangingItem).setArt(getArt(), true);
+                hangingItem.teleport(loc);
+                hangingItem.setFacingDirection( facingDirection, true );
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             }
         } catch ( final IllegalArgumentException e ) {
