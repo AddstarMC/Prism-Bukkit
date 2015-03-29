@@ -11,10 +11,11 @@ import me.botsko.prism.appliers.ChangeResult;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.libs.com.google.gson.Gson;
-import org.bukkit.craftbukkit.libs.com.google.gson.GsonBuilder;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class GenericAction implements Handler {
 
