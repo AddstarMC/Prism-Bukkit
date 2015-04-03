@@ -3,25 +3,13 @@ package me.botsko.prism.actions;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-<<<<<<< HEAD
-=======
 import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Art;
->>>>>>> bukit1710
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-<<<<<<< HEAD
 import org.bukkit.entity.*;
-=======
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Painting;
-import org.bukkit.entity.Player;
->>>>>>> bukit1710
 
 public class HangingItemAction extends GenericAction {
 
