@@ -195,6 +195,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "player-chat", false, false, false, "PlayerAction", "said" ) );
         registerAction( new ActionType( "player-command", false, false, false, "PlayerAction", "ran command" ) );
         registerAction( new ActionType( "player-death", false, false, false, "PlayerDeathAction", "died" ) );
+        registerAction( new ActionType( "player-hit", false, false, false, "PlayerAction", "hit" ) );
         registerAction( new ActionType( "player-join", false, false, false, "PlayerAction", "joined" ) );
         registerAction( new ActionType( "player-kill", false, true, false, "EntityAction", "killed" ) );
         registerAction( new ActionType( "player-quit", false, false, false, "PlayerAction", "quit" ) );

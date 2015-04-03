@@ -98,6 +98,13 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         }
+
+        if(entity instanceof Player) {
+            final Player damaged = (Player) event.getEntity();
+            if(Prism.getIgnore().event("player-hit", player)) {
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, damaged.getName()));
+            }
+        }
     }
 
     /**

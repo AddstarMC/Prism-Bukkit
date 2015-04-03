@@ -186,6 +186,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.player-chat", false );
         config.addDefault( "prism.tracking.player-command", false );
         config.addDefault( "prism.tracking.player-death", true );
+        config.addDefault( "prism.tracking.player-hit", false );
         config.addDefault( "prism.tracking.player-join", false );
         config.addDefault( "prism.tracking.player-kill", true );
         config.addDefault( "prism.tracking.player-quit", false );
