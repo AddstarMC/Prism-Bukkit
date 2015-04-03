@@ -78,9 +78,10 @@ public class PrismEntityEvents implements Listener {
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
         Player player = null;
+        Projectile projectile = null;
         // Don't forget about arrow, snowball, etc.
         if (event.getDamager() instanceof Projectile) {
-            Projectile projectile = (Projectile) event.getDamager();
+            projectile = (Projectile) event.getDamager();
             ProjectileSource shooter = projectile.getShooter();
 			if (shooter instanceof Player) {
 				player = (Player) shooter;
@@ -113,8 +114,12 @@ public class PrismEntityEvents implements Listener {
 
         if (entity instanceof Player) {
             final Player victim = (Player) entity;
-            if(Prism.getIgnore().event("player-hit", player)) {
-                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, victim.getName()));
+            if (Prism.getIgnore().event("player-hit", player)) {
+                String data = victim.getName();
+                if (projectile != null) {
+                    data += " by " + projectile.getType().toString().toLowerCase();
+                }
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, data));
             }
         }
     }
