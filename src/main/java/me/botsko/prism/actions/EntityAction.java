@@ -6,11 +6,11 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import net.minecraft.server.v1_7_R4.GenericAttributes;
+import net.minecraft.server.v1_8_R2.GenericAttributes;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_7_R4.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_8_R2.entity.CraftHorse;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Villager.Profession;
@@ -152,7 +152,7 @@ public class EntityAction extends GenericAction {
                 this.actionData.maxHealth = h.getMaxHealth();
                 
                 // Get speed
-                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
+                net.minecraft.server.v1_8_R2.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
                 this.actionData.speed = nmsHorse.getAttributeInstance(GenericAttributes.d).getValue();
                 
                 final HorseInventory hi = h.getInventory();
@@ -522,7 +522,7 @@ public class EntityAction extends GenericAction {
                 h.setMaxHealth( this.actionData.maxHealth );
                 
                 // Set speed
-                net.minecraft.server.v1_7_R4.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
+                net.minecraft.server.v1_8_R2.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
                 nmsHorse.getAttributeInstance(GenericAttributes.d).setValue(this.actionData.speed);
                 
                 // Stuff
