@@ -12,6 +12,7 @@ import me.botsko.prism.utils.WandUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Creeper;
@@ -523,6 +524,11 @@ public class PrismEntityEvents implements Listener {
             if( !Prism.getIgnore().event("entity-break", event.getBlock()))
                 return;
             RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
+        } else if (from == Material.SOIL && to == Material.DIRT) {
+            if(!Prism.getIgnore().event("crop-trample"))
+                return;
+            RecordingQueue.addToQueue(ActionFactory.createBlock("crop-trample", event.getBlock().getRelative(BlockFace.UP),
+                    event.getEntityType().getName()));
         }
     }
 
