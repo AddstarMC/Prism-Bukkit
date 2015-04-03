@@ -24,6 +24,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.minecart.PoweredMinecart;
@@ -76,11 +77,22 @@ public class PrismEntityEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
-        if( !( event.getDamager() instanceof Player ) )
-            return;
+        Player player = null;
+        // Don't forget about arrow, snowball, etc.
+        if (event.getDamager() instanceof Projectile) {
+            Projectile projectile = (Projectile) event.getDamager();
+            ProjectileSource shooter = projectile.getShooter();
+			if (shooter instanceof Player) {
+				player = (Player) shooter;
+		    }
+		} else if (event.getDamager() instanceof Player) {
+		    player = (Player) event.getDamager();
+		}
 
+        if (player == null) {
+            return;
+            }
         final Entity entity = event.getEntity();
-        final Player player = (Player) event.getDamager();
 
         // Cancel the event if a wand is in use
         if( WandUtils.playerUsesWandOnClick( player, entity.getLocation() ) ) {
@@ -99,10 +111,10 @@ public class PrismEntityEvents implements Listener {
             }
         }
 
-        if(entity instanceof Player) {
-            final Player damaged = (Player) event.getEntity();
+        if (entity instanceof Player) {
+            final Player victim = (Player) entity;
             if(Prism.getIgnore().event("player-hit", player)) {
-                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, damaged.getName()));
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, victim.getName()));
             }
         }
     }
