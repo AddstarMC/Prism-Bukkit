@@ -116,6 +116,11 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
+    protected int rollback;
+
+    /**
+	 * 
+	 */
     protected int aggregateCount = 0;
 
     /**
@@ -371,9 +376,9 @@ public class GenericAction implements Handler {
     public void setLoc(Location loc) {
         if( loc != null ) {
             this.world_name = loc.getWorld().getName();
-            this.x = loc.getX();
-            this.y = loc.getY();
-            this.z = loc.getZ();
+            this.x = loc.getBlockX();
+            this.y = loc.getBlockY();
+            this.z = loc.getBlockZ();
         }
     }
 
@@ -491,6 +496,16 @@ public class GenericAction implements Handler {
     public void setData(String data) {
         this.data = data;
     }
+
+	@Override
+	public void setWasRollback(int rollback) {
+	    this.rollback = rollback;
+	}
+
+	@Override
+	public int getWasRollback() {
+	    return rollback;
+	}
 
     /*
      * (non-Javadoc)

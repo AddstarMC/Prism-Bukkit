@@ -84,9 +84,17 @@ public class ActionMessage {
     }
 
     /**
-	 * 
-	 */
+     * 
+     */
+    public String[] getJSONMessage() {
+    	return getMessage(true);
+    }
+    
     public String[] getMessage() {
+    	return getMessage(false);
+    }
+    
+    public String[] getMessage(boolean isJSON) {
 
         String[] msg = new String[1];
         if( showExtended ) {
@@ -97,30 +105,38 @@ public class ActionMessage {
 
         String line1 = "";
 
-        // +/-
-        line1 += getPosNegPrefix();
+        // Strikethrough when was rollback
+        String strike = "";
+        if (a.getWasRollback() == 1) {
+            strike = "§m";
+        }
 
         // Result index for teleporting
-        if( index > 0 ) {
-            line1 += ChatColor.GRAY + " [" + index + "] ";
+        String indexString = "";
+        if (index > 0) {
+            if (isJSON) {
+                indexString = " \"},{\"text\":\"" + ChatColor.GRAY + "[" + index + "]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr tp id:" + a.getId() + "\"}},{\"text\":\" ";
+            } else {
+                indexString = ChatColor.GRAY + " [" + index + "] ";
+            }
         }
 
         // Who
-        line1 += highlight + a.getPlayerName();
+        line1 += highlight + strike + a.getPlayerName();
 
         // Description of event
-        line1 += " " + ChatColor.WHITE + a.getType().getNiceDescription();
+        line1 += " " + ChatColor.WHITE + strike + a.getType().getNiceDescription();
         if( a.getType().getHandler() != null ) {
             if( !a.getNiceName().isEmpty() )
-                line1 += " " + highlight + a.getNiceName();
+                line1 += " " + highlight + strike + a.getNiceName();
         } else {
             // We should really improve this, but this saves me from having to
             // make
             // a custom handler.
             if( a.getType().getName().equals( "lava-bucket" ) ) {
-                line1 += " " + highlight + "lava";
+                line1 += " " + highlight + strike + "lava";
             } else if( a.getType().getName().equals( "water-bucket" ) ) {
-                line1 += " " + highlight + "water";
+                line1 += " " + highlight + strike + "water";
             }
         }
 
@@ -130,16 +146,16 @@ public class ActionMessage {
 
         // Aggregate count
         if( a.getAggregateCount() > 1 ) {
-            line1 += ChatColor.GREEN + " x" + a.getAggregateCount();
+            line1 += ChatColor.GREEN + strike + " x" + a.getAggregateCount();
         }
 
         // Time since
         if( !a.getTimeSince().isEmpty() ) {
-            line1 += ChatColor.WHITE + " " + a.getTimeSince();
+            line1 += ChatColor.WHITE + strike + " " + a.getTimeSince();
         }
 
         // Action type reminder
-        line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getShortName() + ")";
+        line1 += " " + ChatColor.GRAY + strike + "(a:" + a.getType().getShortName() + ")";
 
         // Line 2
         String line2 = ChatColor.GRAY + " --";
@@ -154,9 +170,18 @@ public class ActionMessage {
             line2 += " - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ() + " ";
         }
 
-        msg[0] = line1;
+        if (isJSON) {
+            msg[0] = "[{\"text\":\"" + getPosNegPrefix() + indexString + line1.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}]";
+        } else {
+            msg[0] = getPosNegPrefix() + indexString + line1;
+        }
+        
         if( showExtended ) {
-            msg[1] = line2;
+            if (isJSON) {
+                msg[1] = "{\"text\":\"" + line2.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}";
+            } else {
+                msg[1] = line2;
+            }
         }
 
         return msg;

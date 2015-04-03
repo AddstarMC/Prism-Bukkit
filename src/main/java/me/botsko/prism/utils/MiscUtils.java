@@ -4,12 +4,18 @@ import com.google.common.base.CaseFormat;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
+
 import me.botsko.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
+import net.minecraft.server.v1_7_R4.ChatSerializer;
+import net.minecraft.server.v1_7_R4.PacketPlayOutChat;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.v1_7_R4.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -140,4 +146,28 @@ public class MiscUtils {
             return ((Player)entity).getName();
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
     }
+    
+    public static void sendJSONMessage(Player player, String message) {
+        if (player != null) {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
+        }
+    }
+    
+    public static void sendJSONMessage(Player player, String[] message) {
+        for (String line : message ) {
+            sendJSONMessage (player, line);
+        }
+    }
+    
+    public static void sendJSONMessage(CommandSender player, String message) {
+        if (player != null) {
+            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
+        }
+    }
+
+	public static void sendJSONMessage(CommandSender player, String[] message) {
+        for (String line : message ) {
+            sendJSONMessage (player, line);
+        }
+	}
 }

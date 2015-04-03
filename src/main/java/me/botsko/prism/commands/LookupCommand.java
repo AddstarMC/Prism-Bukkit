@@ -14,7 +14,6 @@ import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,12 +104,17 @@ public class LookupCommand implements SubHandler {
                                     am.showExtended();
                                 }
                                 am.setResultIndex( result_count );
-                                player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                                //player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                                MiscUtils.sendJSONMessage(player, am.getJSONMessage());
                                 result_count++;
                             }
                         } else {
                             player.sendMessage( Prism.messenger
                                     .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+                        }
+                        if (results.getTotal_pages() > 1) {
+                        	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+                        	MiscUtils.sendJSONMessage(player, paginationMessage);
                         }
                         if( parameters.hasFlag( Flag.PASTE ) ) {
                             String paste = "";

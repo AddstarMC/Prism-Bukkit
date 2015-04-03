@@ -8,6 +8,7 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -124,8 +125,21 @@ public class PageCommand implements SubHandler {
                 am.showExtended();
             }
             am.setResultIndex( result_count );
-            call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+            //call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+            MiscUtils.sendJSONMessage(call.getSender(), am.getJSONMessage());
             result_count++;
+        }
+        
+        if (results.getTotal_pages() > 1) {
+	        String paginationMessage = "";
+	        if (page == 1) {
+	        	paginationMessage = "[{\"text\":\"         \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+	        } else if (results.getTotal_pages() == page) {
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"\"}]";
+	        } else  {
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+	        }
+	        MiscUtils.sendJSONMessage(call.getSender(), paginationMessage);
         }
     }
 

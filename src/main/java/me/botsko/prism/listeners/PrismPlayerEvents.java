@@ -455,7 +455,7 @@ public class PrismPlayerEvents implements Listener {
         if( block != null && event.getAction() == Action.PHYSICAL ) {
             if( block.getType() == Material.SOIL ) { // They are stepping on
                                                      // soil
-                if( !Prism.getIgnore().event( "crop=trample", player ) )
+                if( !Prism.getIgnore().event( "crop-trample", player ) )
                     return;
                 RecordingQueue.addToQueue( ActionFactory.createBlock("crop-trample", block.getRelative(BlockFace.UP),
                         player.getName()) );

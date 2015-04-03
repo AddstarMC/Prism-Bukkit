@@ -14,8 +14,8 @@ import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
-
 import java.util.List;
 
 public class UndoCommand implements SubHandler {
@@ -131,7 +131,8 @@ public class UndoCommand implements SubHandler {
                                 || plugin.getConfig().getBoolean( "prism.messenger.always-show-extended" ) ) {
                             am.showExtended();
                         }
-                        call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                        //call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                        MiscUtils.sendJSONMessage(call.getPlayer(), am.getJSONMessage());
                     }
                 } else {
                     call.getPlayer()

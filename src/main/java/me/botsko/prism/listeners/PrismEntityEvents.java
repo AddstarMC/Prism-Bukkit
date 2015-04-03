@@ -10,6 +10,7 @@ import me.botsko.prism.utils.WandUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.*;
 import org.bukkit.entity.minecart.PoweredMinecart;
@@ -54,11 +55,23 @@ public class PrismEntityEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
-        if( !( event.getDamager() instanceof Player ) )
-            return;
+        Player player = null;
+        Projectile projectile = null;
+        // Don't forget about arrow, snowball, etc.
+        if (event.getDamager() instanceof Projectile) {
+            projectile = (Projectile) event.getDamager();
+            ProjectileSource shooter = projectile.getShooter();
+			if (shooter instanceof Player) {
+				player = (Player) shooter;
+		    }
+		} else if (event.getDamager() instanceof Player) {
+		    player = (Player) event.getDamager();
+		}
 
+        if (player == null) {
+            return;
+            }
         final Entity entity = event.getEntity();
-        final Player player = (Player) event.getDamager();
 
         // Cancel the event if a wand is in use
         if( WandUtils.playerUsesWandOnClick( player, entity.getLocation() ) ) {
@@ -74,6 +87,17 @@ public class PrismEntityEvents implements Listener {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), 1, 0, null,
                             entity.getLocation(), player.getName()) );
                 }
+            }
+        }
+
+        if (entity instanceof Player) {
+            final Player victim = (Player) entity;
+            if (Prism.getIgnore().event("player-hit", player)) {
+                String data = victim.getName();
+                if (projectile != null) {
+                    data += " by " + projectile.getType().toString().toLowerCase();
+                }
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, data));
             }
         }
     }
@@ -413,7 +437,7 @@ public class PrismEntityEvents implements Listener {
             // If an item frame, track it's contents
             if( e instanceof ItemFrame ) {
                 final ItemFrame frame = (ItemFrame) e;
-                if( frame.getItem() != null ) {
+                if(!frame.getItem().getType().equals(Material.AIR)) {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                             .getAmount(), -1, null, e.getLocation(), player) );
                 }
@@ -455,7 +479,7 @@ public class PrismEntityEvents implements Listener {
         // If an item frame, track it's contents
         if( event.getEntity() instanceof ItemFrame ) {
             final ItemFrame frame = (ItemFrame) event.getEntity();
-            if( frame.getItem() != null ) {
+            if (!frame.getItem().getType().equals(Material.AIR)) {
                 RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                         .getAmount(), -1, null, entity.getLocation(), breaking_name) );
             }
@@ -499,9 +523,14 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         } else if (to == Material.AIR && event.getEntity() instanceof Wither) {
-            if (!Prism.getIgnore().event("entity-break", event.getBlock()))
+            if( !Prism.getIgnore().event("entity-break", event.getBlock()))
                 return;
             RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
+        } else if (from == Material.SOIL && to == Material.DIRT && !(event.getEntity() instanceof Player)) {
+            if(!Prism.getIgnore().event("crop-trample"))
+                return;
+            RecordingQueue.addToQueue(ActionFactory.createBlock("crop-trample", event.getBlock().getRelative(BlockFace.UP),
+                    event.getEntityType().getName()));
         }
     }
 

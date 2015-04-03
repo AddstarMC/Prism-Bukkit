@@ -6,6 +6,7 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
@@ -96,9 +97,15 @@ public class PrismVehicleEvents implements Listener {
 
         final Entity entity = event.getEntered();
         if( entity instanceof Player ) {
-            if( !Prism.getIgnore().event( "vehicle-enter", ( (Player) entity ) ) )
-                return;
-            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-enter", vehicle, ((Player) entity).getName()) );
+            if (vehicle instanceof LivingEntity ) {
+                if( !Prism.getIgnore().event( "entity-enter", ( (Player) entity ) ) )
+                    return;
+                RecordingQueue.addToQueue( ActionFactory.createEntity("entity-enter", vehicle, ((Player) entity).getName()) );
+            } else {
+                if( !Prism.getIgnore().event( "vehicle-enter", ( (Player) entity ) ) )
+                    return;
+                RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-enter", vehicle, ((Player) entity).getName()) );
+            }
         } else {
             if( !Prism.getIgnore().event( "vehicle-enter", entity.getWorld() ) )
                 return;
@@ -118,9 +125,15 @@ public class PrismVehicleEvents implements Listener {
 
         final Entity entity = event.getExited();
         if( entity instanceof Player ) {
-            if( !Prism.getIgnore().event( "vehicle-enter", ( (Player) entity ) ) )
-                return;
-            RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-exit", vehicle, ((Player) entity).getName()) );
+            if (vehicle instanceof LivingEntity ) {
+                if( !Prism.getIgnore().event( "entity-exit", ( (Player) entity ) ) )
+                    return;
+                RecordingQueue.addToQueue( ActionFactory.createEntity("entity-exit", vehicle, ((Player) entity).getName()) );
+            } else {
+                if( !Prism.getIgnore().event( "vehicle-exit", ( (Player) entity ) ) )
+                    return;
+                RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-exit", vehicle, ((Player) entity).getName()) );
+            }
         } else {
             if( !Prism.getIgnore().event( "vehicle-enter", entity.getWorld() ) )
                 return;
