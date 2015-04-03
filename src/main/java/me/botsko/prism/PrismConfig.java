@@ -155,6 +155,8 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.enderman-place", true );
         config.addDefault( "prism.tracking.entity-break", true );
         config.addDefault( "prism.tracking.entity-dye", false );
+        config.addDefault( "prism.tracking.entity-enter", true );
+        config.addDefault( "prism.tracking.entity-exit", true );
         config.addDefault( "prism.tracking.entity-explode", true );
         config.addDefault( "prism.tracking.entity-follow", true );
         config.addDefault( "prism.tracking.entity-form", true );

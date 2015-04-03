@@ -164,6 +164,8 @@ public class ActionRegistry {
         registerAction( new ActionType( "enderman-place", true, true, true, "BlockAction", "placed" ) );
         registerAction( new ActionType( "entity-break", true, true, true, "BlockAction", "broke" ) );
         registerAction( new ActionType( "entity-dye", false, false, false, "EntityAction", "dyed" ) );
+        registerAction( new ActionType( "entity-enter", false, false, false, "EntityAction", "entered" ) );
+        registerAction( new ActionType( "entity-exit", false, false, false, "EntityAction", "exited" ) );
         registerAction( new ActionType( "entity-explode", false, true, true, "BlockAction", "blew up" ) );
         registerAction( new ActionType( "entity-follow", false, false, false, "EntityAction", "lured" ) );
         registerAction( new ActionType( "entity-form", true, true, true, "BlockChangeAction", "formed" ) );
