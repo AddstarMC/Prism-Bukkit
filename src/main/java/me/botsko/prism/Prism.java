@@ -1,11 +1,12 @@
 package me.botsko.prism;
 
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
+import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.*;
@@ -683,7 +684,7 @@ public class Prism extends JavaPlugin {
         final Plugin we = getServer().getPluginManager().getPlugin( "WorldEdit" );
         if( we != null ) {
             plugin_worldEdit = (WorldEditPlugin) we;
-            PrismBlockEditSessionFactory.initialize();
+            WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
             log( "WorldEdit found. Associated features enabled." );
         } else {
             log( "WorldEdit not found. Certain optional features of Prism disabled." );
