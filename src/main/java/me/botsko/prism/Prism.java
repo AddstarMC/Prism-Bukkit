@@ -432,7 +432,7 @@ public class Prism extends JavaPlugin {
                     + "`block_id` mediumint(5) DEFAULT NULL," + "`block_subid` mediumint(5) DEFAULT NULL,"
                     + "`old_block_id` mediumint(5) DEFAULT NULL," + "`old_block_subid` mediumint(5) DEFAULT NULL,"
                     + "PRIMARY KEY (`id`)," + "KEY `epoch` (`epoch`),"
-                    + "KEY  `location` (`world_id`, `x`, `z`, `y`, `action_id`)"
+                    + "KEY  `location` (`x`, `z`, `y`, `action_id`, `world_id`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
 
