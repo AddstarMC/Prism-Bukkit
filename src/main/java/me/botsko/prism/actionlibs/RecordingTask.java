@@ -82,7 +82,7 @@ public class RecordingTask implements Runnable {
                     "INSERT INTO " + prefix + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS );
             s.setLong( 1, System.currentTimeMillis() / 1000L );
-            s.setInt( 2, world_id );
+            s.setInt( 2, action_id );
             s.setInt( 3, player_id );
             s.setInt( 4, world_id );
             s.setInt( 5, a.getBlockId() );
