@@ -400,7 +400,7 @@ public class BlockAction extends GenericAction {
                 final Skull skull = (Skull) block.getState();
                 skull.setRotation( s.getRotation() );
                 skull.setSkullType( s.getSkullType() );
-                if( !s.owner.isEmpty() ) {
+                if( s.owner != null && !s.owner.isEmpty() ) {
                     skull.setOwner( s.owner );
                 }
                 skull.update();
