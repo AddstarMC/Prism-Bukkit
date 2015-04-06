@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 
 public class DateUtil {
 

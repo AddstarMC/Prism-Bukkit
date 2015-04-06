@@ -1,6 +1,6 @@
 package me.botsko.prism.actions;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -299,7 +299,7 @@ public class BlockAction extends GenericAction {
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
         if( !getType().requiresHandler( "BlockChangeAction" ) && !getType().requiresHandler( "PrismRollbackAction" ) ) {
-            if( !me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) {
                 // System.out.print("Block skipped due to being unaccaptable for block place.");
                 return new ChangeResult( ChangeResultType.SKIPPED, null );
@@ -335,7 +335,7 @@ public class BlockAction extends GenericAction {
 
             // If portal, we need to light the portal. seems to be the only way.
             if( getBlockId() == 90 ) {
-                final Block obsidian = me.botsko.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
+                final Block obsidian = us.dhmc.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
                         block.getLocation() );
                 if( obsidian != null ) {
                     final Block above = obsidian.getRelative( BlockFace.UP );
@@ -432,7 +432,7 @@ public class BlockAction extends GenericAction {
             // This may need to go before setting the block, but I prefer the
             // BlockUtil
             // logic to use materials.
-            if( me.botsko.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
+            if( us.dhmc.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
                 final Block below = block.getRelative( BlockFace.DOWN );
                 if( below.getType().equals( Material.DIRT ) || below.getType().equals( Material.AIR )
                         || below.getType().equals( Material.GRASS ) ) {
@@ -452,6 +452,7 @@ public class BlockAction extends GenericAction {
             // If we're rolling back a door, we need to set it properly
             if( BlockUtils.isDoor(m) ) {
                 BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
+                Prism.debug(Boolean.toString(BlockUtils.isDoor(m)));
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
@@ -495,8 +496,8 @@ public class BlockAction extends GenericAction {
         if( !block.getType().equals( Material.AIR ) ) {
 
             // Ensure it's acceptable to remove the current block
-            if( !me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    && !me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
+            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    && !us.dhmc.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) { return new ChangeResult( ChangeResultType.SKIPPED,
                     null ); }
 

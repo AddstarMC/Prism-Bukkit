@@ -75,7 +75,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
                 params.setSpecificBlockLocation( loc );
 
                 // Do we need a second location? (For beds, doors, etc)
-                final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+                final Block sibling = us.dhmc.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
                 if( sibling != null ) {
                     params.addSpecificBlockLocation( sibling.getLocation() );
                 }

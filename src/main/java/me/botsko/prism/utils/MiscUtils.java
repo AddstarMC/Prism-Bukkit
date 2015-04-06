@@ -5,7 +5,7 @@ import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
 import net.minecraft.server.v1_8_R2.IChatBaseComponent.ChatSerializer;

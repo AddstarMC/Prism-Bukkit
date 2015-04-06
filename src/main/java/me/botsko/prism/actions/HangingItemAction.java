@@ -144,7 +144,7 @@ public class HangingItemAction extends GenericAction {
         final Location locAcceptor = loc.getBlock().getRelative(facingDirection.getOppositeFace()).getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( locAcceptor.getBlock().getType() ) ) { return new ChangeResult(
+        if( us.dhmc.elixr.BlockUtils.materialMeansBlockDetachment( locAcceptor.getBlock().getType() ) ) { return new ChangeResult(
                 ChangeResultType.SKIPPED, null ); }
 
         if ((getType().getName().equals("hangingitem-break") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
