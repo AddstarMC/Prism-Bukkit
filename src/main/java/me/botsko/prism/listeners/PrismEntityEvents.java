@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,6 +25,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
@@ -304,6 +306,42 @@ public class PrismEntityEvents implements Listener {
                     (byte) p.getItemInHand().getDurability() );
             RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
                     .getName(), newColor) );
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerArmorStandManipulateEvent(final PlayerArmorStandManipulateEvent event) {
+        final ItemStack armorStandItem = event.getArmorStandItem();
+        final ItemStack playerItem = event.getPlayerItem();
+        int slot = 0;
+        if (event.getSlot() != null) {
+            switch (event.getSlot()) {
+            case HAND:
+                slot = 0;
+                break;
+            case FEET:
+                slot = 1;
+                break;
+            case LEGS:
+                slot = 2;
+                break;
+            case CHEST:
+                slot = 3;
+                break;
+            case HEAD:
+                slot = 4;
+		    }
+        }
+
+        // Player remove item from ArmorStand
+        if (armorStandItem.getType() != Material.AIR) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", armorStandItem, armorStandItem.getAmount(), slot, null,
+                    event.getRightClicked().getLocation(), event.getPlayer().getName()) );
+        }
+        // Player insert item to ArmorStand
+        if (playerItem.getType() != Material.AIR) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-insert", playerItem, playerItem.getAmount(), slot, null,
+                    event.getRightClicked().getLocation(), event.getPlayer().getName()) );
         }
     }
 
