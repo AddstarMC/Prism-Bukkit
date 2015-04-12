@@ -29,6 +29,7 @@ import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
@@ -48,6 +49,35 @@ public class PrismEntityEvents implements Listener {
      */
     public PrismEntityEvents(Prism plugin) {
         this.plugin = plugin;
+    }
+
+    /**
+     * This method use event in my Spigot fork (https://hub.spigotmc.org/jira/browse/SPIGOT-787)
+     * @param event
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onArmorStandDestroyEvent(final ArmorStandDestroyByEntityEvent event) {
+        if (event.getAttacker() != null && event.getAttacker() instanceof Player) {
+            Player player = (Player) event.getAttacker();
+    
+            if (Prism.getIgnore().event("item-remove", player)) {
+                final ArmorStand armorStand = (ArmorStand) event.getEntity();
+                final EntityEquipment armor = armorStand.getEquipment();
+                ItemStack[] equipment = new ItemStack[5];
+                equipment[0] = armor.getItemInHand();
+                equipment[1] = armor.getBoots();
+                equipment[2] = armor.getLeggings();
+                equipment[3] = armor.getChestplate();
+                equipment[4] = armor.getHelmet();
+
+                for (int i = 0; i < 5; i++) {
+                    if (!equipment[i].getType().equals(Material.AIR)) {
+                        RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", equipment[i],
+                                equipment[i].getAmount(), i, null, armorStand.getLocation(), player.getName()));
+                    }
+                }
+            }
+        }
     }
 
     /**
