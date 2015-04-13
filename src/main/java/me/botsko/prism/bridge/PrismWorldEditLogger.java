@@ -4,15 +4,14 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.logging.AbstractLoggingExtent;
-import com.sk89q.worldedit.world.World;
 
 public class PrismWorldEditLogger extends AbstractLoggingExtent {
 	private final Actor player;
@@ -31,8 +30,7 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 
 		BaseBlock oldBlock = getBlock(pt);
 		
-		Location loc = new Location(Bukkit.getWorld(world.getName()),
-				pt.getBlockX(),pt.getBlockY(), pt.getBlockZ());
+		Location loc = new Location(world, pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, 
 				oldBlock.getId(), 

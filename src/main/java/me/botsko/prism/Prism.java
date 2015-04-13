@@ -684,8 +684,15 @@ public class Prism extends JavaPlugin {
         final Plugin we = getServer().getPluginManager().getPlugin( "WorldEdit" );
         if( we != null ) {
             plugin_worldEdit = (WorldEditPlugin) we;
-            WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
-            log( "WorldEdit found. Associated features enabled." );
+            
+            //Easier and foolproof way.
+            try { 
+                WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
+                log( "WorldEdit found. Associated features enabled." );
+            } catch (Throwable error) {
+                log( "Required WorldEdit version is 6.0.0 or greater! Certain optional features of Prism disabled." );
+            }
+            
         } else {
             log( "WorldEdit not found. Certain optional features of Prism disabled." );
         }
