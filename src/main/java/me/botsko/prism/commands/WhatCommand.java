@@ -30,7 +30,7 @@ public class WhatCommand extends Executor {
         /**
          * /prism about
          */
-        addSub( new String[] { "about", "default" }, "prism.help" ).allowConsole().setHandler( new SubHandler() {
+        addSub( new String[] { "about", "default" }, "prism.help" ).setHandler( new SubHandler() {
             @Override
             public void handle(CallInfo call) {
                 final ItemStack item = call.getPlayer().getItemInHand();
