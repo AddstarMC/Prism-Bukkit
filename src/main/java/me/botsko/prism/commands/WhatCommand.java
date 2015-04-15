@@ -1,13 +1,11 @@
 package me.botsko.prism.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.utils.ItemUtils;
+import org.bukkit.ChatColor;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
@@ -23,14 +21,13 @@ public class WhatCommand extends Executor {
     }
 
     /**
-	 * 
-	 */
+     *
+     */
     private void setupCommands() {
-
         /**
-         * /prism about
+         * /what
          */
-        addSub( new String[] { "about", "default" }, "prism.help" ).setHandler( new SubHandler() {
+        addSub( "what", "prism.what" ).setHandler( new SubHandler() {
             @Override
             public void handle(CallInfo call) {
                 final ItemStack item = call.getPlayer().getItemInHand();
