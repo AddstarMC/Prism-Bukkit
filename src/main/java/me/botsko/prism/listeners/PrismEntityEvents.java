@@ -525,7 +525,7 @@ public class PrismEntityEvents implements Listener {
             if (!Prism.getIgnore().event("entity-break", event.getBlock()))
                 return;
             RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
-        } else if ((from == Material.SOIL && to == Material.DIRT) && !(event.getEntity() instanceof Player)) {
+        } else if (from == Material.SOIL && to == Material.DIRT && !(event.getEntity() instanceof Player)) {
             if(!Prism.getIgnore().event("crop-trample"))
                 return;
             RecordingQueue.addToQueue(ActionFactory.createBlock("crop-trample", event.getBlock().getRelative(BlockFace.UP),
