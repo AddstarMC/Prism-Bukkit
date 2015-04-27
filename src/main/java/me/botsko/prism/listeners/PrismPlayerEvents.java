@@ -386,6 +386,11 @@ public class PrismPlayerEvents implements Listener {
                 case SPRUCE_DOOR:
                 case TRAP_DOOR:
                 case FENCE_GATE:
+                case SPRUCE_FENCE_GATE:
+                case BIRCH_FENCE_GATE:
+                case JUNGLE_FENCE_GATE:
+                case DARK_OAK_FENCE_GATE:
+                case ACACIA_FENCE_GATE:
                 case LEVER:
                 case STONE_BUTTON:
                 case WOOD_BUTTON:
