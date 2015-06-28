@@ -349,10 +349,11 @@ public class PrismBlockEvents implements Listener {
             final Player player = event.getPlayer();
 
             if( player != null ) {
-                if( cause.equals( "lighter" ) && plugin.getConfig().getBoolean( "prism.alerts.uses.lighter" )
+                if( ( cause.equals( "lighter" ) || cause.equals( "fireball" ) )
+                        && plugin.getConfig().getBoolean( "prism.alerts.uses.lighter" )
                         && !player.hasPermission( "prism.alerts.use.lighter.ignore" )
                         && !player.hasPermission( "prism.alerts.ignore" ) ) {
-                    plugin.useMonitor.alertOnItemUse( player, "used a lighter" );
+                    plugin.useMonitor.alertOnItemUse( player, "used a " + cause );
                 }
             }
 
