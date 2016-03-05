@@ -29,6 +29,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.google.common.base.Strings;
+
 public class BlockAction extends GenericAction {
 
     /**
@@ -399,7 +401,7 @@ public class BlockAction extends GenericAction {
                 final Skull skull = (Skull) block.getState();
                 skull.setRotation( s.getRotation() );
                 skull.setSkullType( s.getSkullType() );
-                if( !s.owner.isEmpty() ) {
+                if( !Strings.isNullOrEmpty(s.owner) ) {
                     skull.setOwner( s.owner );
                 }
                 skull.update();

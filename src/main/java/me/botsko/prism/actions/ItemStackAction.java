@@ -14,11 +14,14 @@ import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -28,6 +31,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
@@ -52,6 +56,8 @@ public class ItemStackAction extends GenericAction {
         public int[] fadeColors;
         public boolean hasFlicker;
         public boolean hasTrail;
+        public String[] patterns;
+        public String baseColor;
     }
 
     /**
@@ -194,6 +200,22 @@ public class ItemStackAction extends GenericAction {
                 }
             }
         }
+        
+        // Banners
+        if (meta != null && block_id == 425) {
+        	final BannerMeta bannerMeta = (BannerMeta) meta;
+        	
+        	if (bannerMeta.getBaseColor() != null) {
+        		actionData.baseColor = bannerMeta.getBaseColor().name();
+        	}
+        	String[] patterns = new String[bannerMeta.getPatterns().size()];
+        	for (int i = 0; i < patterns.length; ++i) {
+        		Pattern pattern = bannerMeta.getPattern(i);
+        		patterns[i] = String.format("%s:%s", pattern.getColor().name(), pattern.getPattern().name());
+        	}
+        	
+        	actionData.patterns = patterns;
+        }
     }
 
     /**
@@ -301,6 +323,20 @@ public class ItemStackAction extends GenericAction {
             }
             fireworkMeta.setEffect( effect.build() );
             item.setItemMeta( fireworkMeta );
+        }
+        
+        // Banners
+        if( block_id == 425 && actionData.patterns != null ) {
+        	final BannerMeta bannerMeta = (BannerMeta) item.getItemMeta();
+        	if (actionData.baseColor != null) {
+        		bannerMeta.setBaseColor(DyeColor.valueOf(actionData.baseColor));
+        	}
+        	
+        	for (String pattern : actionData.patterns) {
+        		String[] parts = pattern.split(":");
+        		bannerMeta.addPattern(new Pattern(DyeColor.valueOf(parts[0]), PatternType.valueOf(parts[1])));
+        	}
+        	item.setItemMeta(bannerMeta);
         }
 
         // Item display names
