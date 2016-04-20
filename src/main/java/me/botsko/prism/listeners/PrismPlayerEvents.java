@@ -1,14 +1,7 @@
 package me.botsko.prism.listeners;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionFactory;
-import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.Handler;
-import me.botsko.prism.players.PlayerIdentification;
-import me.botsko.prism.utils.MiscUtils;
-import me.botsko.prism.wands.ProfileWand;
-import me.botsko.prism.wands.Wand;
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -22,11 +15,31 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.actions.Handler;
+import me.botsko.prism.players.PlayerIdentification;
+import me.botsko.prism.utils.MiscUtils;
+import me.botsko.prism.wands.ProfileWand;
+import me.botsko.prism.wands.Wand;
 
 public class PrismPlayerEvents implements Listener {
 
@@ -311,7 +324,7 @@ public class PrismPlayerEvents implements Listener {
         Block block = event.getClickedBlock();
 
         // Are they using a wand (or do we always allow it)
-        if( Prism.playersWithActiveTools.containsKey( player.getName() ) ) {
+        if ( Prism.playersWithActiveTools.containsKey( player.getName() ) ) {
 
             final Wand wand = Prism.playersWithActiveTools.get( player.getName() );
 
@@ -325,8 +338,16 @@ public class PrismPlayerEvents implements Listener {
             // player.getItemInHand().getDurability());
 
             // Does the player have such item?
-            if( wand != null && player.getItemInHand().getTypeId() == item_id
-                    && player.getItemInHand().getDurability() == item_subid ) {
+            if( wand != null && player.getInventory().getItemInMainHand().getTypeId() == item_id
+                    && player.getInventory().getItemInMainHand().getDurability() == item_subid ) {
+
+                if( event.getHand() == EquipmentSlot.OFF_HAND
+                        && ( event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK ) ) {
+                    Prism.debug( "Cancelling event for wand use." );
+                    event.setCancelled( true );
+                    player.updateInventory();
+                    return;
+                }
 
                 // Left click is for current block
                 if( event.getAction() == Action.LEFT_CLICK_BLOCK ) {
@@ -373,7 +394,7 @@ public class PrismPlayerEvents implements Listener {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("container-access", block, player.getName()) );
                     break;
                 case JUKEBOX:
-                    recordDiscInsert( block, player );
+                    recordDiscInsert( block, event.getItem(), player );
                     break;
                 case CAKE_BLOCK:
                     recordCakeEat( block, player );
@@ -394,12 +415,12 @@ public class PrismPlayerEvents implements Listener {
                 case LEVER:
                 case STONE_BUTTON:
                 case WOOD_BUTTON:
-                    if( !Prism.getIgnore().event( "block-use", player ) )
+                    if ( !Prism.getIgnore().event( "block-use", player ) )
                         return;
                     RecordingQueue.addToQueue( ActionFactory.createBlock("block-use", block, player.getName()) );
                     break;
                 case LOG:
-                    recordCocoaPlantEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+                    recordCocoaPlantEvent( block, event.getItem(), event.getBlockFace(), player.getName() );
                     break;
                 case CROPS:
                 case GRASS:
@@ -408,7 +429,7 @@ public class PrismPlayerEvents implements Listener {
                 case SAPLING:
                 case CARROT:
                 case POTATO:
-                    recordBonemealEvent( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+                    recordBonemealEvent( block, event.getItem(), event.getBlockFace(), player.getName() );
                     break;
                 case RAILS:
                 case DETECTOR_RAIL:
@@ -418,7 +439,7 @@ public class PrismPlayerEvents implements Listener {
                     plugin.preplannedVehiclePlacement.put( coord_key, player.getName() );
                     break;
                 case TNT:
-                    if( player.getItemInHand().getType().equals( Material.FLINT_AND_STEEL ) ) {
+                    if ( event.getItem().getType().equals( Material.FLINT_AND_STEEL ) ) {
                         if( !Prism.getIgnore().event( "tnt-prime", player ) )
                             return;
                         RecordingQueue.addToQueue( ActionFactory.createUse("tnt-prime", "tnt", block, player.getName()) );
@@ -429,18 +450,18 @@ public class PrismPlayerEvents implements Listener {
             }
 
             // if they're holding a spawner egg
-            if( player.getItemInHand().getType().equals( Material.MONSTER_EGG ) ) {
-                recordMonsterEggUse( block, player.getItemInHand(), player.getName() );
+            if ( event.getItem() != null && event.getItem().getType().equals( Material.MONSTER_EGG ) ) {
+                recordMonsterEggUse( block, event.getItem(), player.getName() );
             }
 
             // if they're holding a rocket
-            if( player.getItemInHand().getType().equals( Material.FIREWORK ) ) {
-                recordRocketLaunch( block, player.getItemInHand(), event.getBlockFace(), player.getName() );
+            if ( event.getItem() != null && event.getItem().getType().equals( Material.FIREWORK ) ) {
+                recordRocketLaunch( block, event.getItem(), event.getBlockFace(), player.getName() );
             }
 
             // if they're holding a boat (why they hell can you put boats on
             // anything...)
-            if( player.getItemInHand().getType().equals( Material.BOAT ) ) {
+            if ( event.getItem() != null && event.getItem().getType().equals( Material.BOAT ) ) {
                 coord_key = block.getX() + ":" + ( block.getY() + 1 ) + ":" + block.getZ();
                 plugin.preplannedVehiclePlacement.put( coord_key, player.getName() );
             }
@@ -475,7 +496,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player
      */
     protected void recordCocoaPlantEvent(Block block, ItemStack inhand, BlockFace clickedFace, String player) {
-        if( !Prism.getIgnore().event( "block-place", block ) )
+        if( !Prism.getIgnore().event( "block-place", block ) || inhand == null )
             return;
         if( block.getType().equals( Material.LOG ) && block.getData() >= 3 && inhand.getTypeId() == 351
                 && inhand.getDurability() == 3 ) {
@@ -503,7 +524,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player
      */
     protected void recordBonemealEvent(Block block, ItemStack inhand, BlockFace clickedFace, String player) {
-        if( inhand.getTypeId() == 351 && inhand.getDurability() == 15 ) {
+        if( inhand != null && inhand.getTypeId() == 351 && inhand.getDurability() == 15 ) {
             if( !Prism.getIgnore().event( "bonemeal-use", block ) )
                 return;
             RecordingQueue.addToQueue( ActionFactory.createUse("bonemeal-use", "bonemeal", block, player) );
@@ -517,7 +538,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player
      */
     protected void recordMonsterEggUse(Block block, ItemStack inhand, String player) {
-        if( !Prism.getIgnore().event( "spawnegg-use", block ) )
+        if( !Prism.getIgnore().event( "spawnegg-use", block ) || inhand == null )
             return;
         RecordingQueue.addToQueue( ActionFactory.createUse("spawnegg-use", "monster egg", block, player) );
     }
@@ -530,7 +551,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player
      */
     protected void recordRocketLaunch(Block block, ItemStack inhand, BlockFace clickedFace, String player) {
-        if( !Prism.getIgnore().event( "firework-launch", block ) )
+        if( !Prism.getIgnore().event( "firework-launch", block ) || inhand == null )
             return;
         RecordingQueue
                 .addToQueue( ActionFactory.createItemStack("firework-launch", inhand, null, block.getLocation(), player) );
@@ -550,13 +571,10 @@ public class PrismPlayerEvents implements Listener {
     /**
      * 
      * @param block
+     * @param inhand
      * @param player
      */
-    protected void recordDiscInsert(Block block, Player player) {
-
-        // They have to be holding a record
-        if( !player.getItemInHand().getType().isRecord() )
-            return;
+    protected void recordDiscInsert(Block block, ItemStack inhand, Player player) {
 
         final Jukebox jukebox = (Jukebox) block.getState();
 
@@ -570,8 +588,12 @@ public class PrismPlayerEvents implements Listener {
 
         } else {
 
+            // They have to be holding a record
+            if( inhand == null || !inhand.getType().isRecord() )
+                return;
+
             // Record the insert
-            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", player.getItemInHand(), 1, 0, null,
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", inhand, 1, 0, null,
                     block.getLocation(), player.getName()) );
 
         }

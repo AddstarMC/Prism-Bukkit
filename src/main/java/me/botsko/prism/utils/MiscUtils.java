@@ -1,27 +1,31 @@
 package me.botsko.prism.utils;
 
-import com.google.common.base.CaseFormat;
-import com.helion3.pste.api.Paste;
-import com.helion3.pste.api.PsteApi;
-import com.helion3.pste.api.Results;
-
-import us.dhmc.elixr.TypeUtils;
-import me.botsko.prism.Prism;
-import me.botsko.prism.appliers.PrismProcessType;
-import net.minecraft.server.v1_8_R2.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_8_R2.PacketPlayOutChat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.craftbukkit.v1_8_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.CaseFormat;
+
+import com.helion3.pste.api.Paste;
+import com.helion3.pste.api.PsteApi;
+import com.helion3.pste.api.Results;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.appliers.PrismProcessType;
+
+import net.minecraft.server.v1_9_R1.IChatBaseComponent.ChatSerializer;
+import net.minecraft.server.v1_9_R1.PacketPlayOutChat;
+
+import org.bukkit.craftbukkit.v1_9_R1.entity.CraftPlayer;
+
+import us.dhmc.elixr.TypeUtils;
 
 public class MiscUtils {
 

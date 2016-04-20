@@ -2,6 +2,13 @@ package me.botsko.prism.wands;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -10,12 +17,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 public class InspectorWand extends QueryWandBase implements Wand {
 
@@ -122,7 +123,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
                     }
                     
                     if (results.getTotal_pages() > 1) {
-                        String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+                        String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
                         MiscUtils.sendJSONMessage(player, paginationMessage);
                     }
                 } else {

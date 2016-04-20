@@ -1,5 +1,11 @@
 package me.botsko.prism.commands;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -12,10 +18,6 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LookupCommand implements SubHandler {
 
@@ -113,7 +115,7 @@ public class LookupCommand implements SubHandler {
                                     .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
                         }
                         if (results.getTotal_pages() > 1) {
-                        	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+                        	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
                         	MiscUtils.sendJSONMessage(player, paginationMessage);
                         }
                         if( parameters.hasFlag( Flag.PASTE ) ) {

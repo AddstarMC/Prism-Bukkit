@@ -1,6 +1,10 @@
 package me.botsko.prism.commands;
 
-import us.dhmc.elixr.TypeUtils;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -9,10 +13,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import us.dhmc.elixr.TypeUtils;
 
 public class PageCommand implements SubHandler {
 
@@ -133,11 +134,11 @@ public class PageCommand implements SubHandler {
         if (results.getTotal_pages() > 1) {
 	        String paginationMessage = "";
 	        if (page == 1) {
-	        	paginationMessage = "[{\"text\":\"         \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+	        	paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
 	        } else if (results.getTotal_pages() == page) {
-	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"\"}]";
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Prev]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"\"}]";
 	        } else  {
-	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Назад]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Prev]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
 	        }
 	        MiscUtils.sendJSONMessage(call.getSender(), paginationMessage);
         }
