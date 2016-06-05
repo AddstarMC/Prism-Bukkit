@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,10 +26,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-
-import net.minecraft.server.v1_9_R1.GenericAttributes;
-
-import org.bukkit.craftbukkit.v1_9_R1.entity.CraftHorse;
 
 public class EntityAction extends GenericAction {
 
@@ -165,8 +162,7 @@ public class EntityAction extends GenericAction {
                 this.actionData.maxHealth = h.getMaxHealth();
                 
                 // Get speed
-                net.minecraft.server.v1_9_R1.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
-                this.actionData.speed = nmsHorse.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).getValue();
+                this.actionData.speed = h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
                 
                 final HorseInventory hi = h.getInventory();
 
@@ -535,8 +531,7 @@ public class EntityAction extends GenericAction {
                 h.setMaxHealth( this.actionData.maxHealth );
                 
                 // Set speed
-                net.minecraft.server.v1_9_R1.EntityHorse nmsHorse = ((CraftHorse) entity).getHandle();
-                nmsHorse.getAttributeInstance(GenericAttributes.MOVEMENT_SPEED).setValue(this.actionData.speed);
+                h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.actionData.speed);
                 
                 // Stuff
                 h.getInventory().setSaddle( getSaddle() );
