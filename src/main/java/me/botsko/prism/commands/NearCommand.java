@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
-import us.dhmc.elixr.TypeUtils;
+import java.util.List;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -11,7 +12,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
-import java.util.List;
+import us.dhmc.elixr.TypeUtils;
 
 public class NearCommand implements SubHandler {
 
@@ -110,7 +111,7 @@ public class NearCommand implements SubHandler {
                     }
                     
                     if (results.getTotal_pages() > 1) {
-                    	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Вперед]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
+                    	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
                     	MiscUtils.sendJSONMessage(call.getPlayer(), paginationMessage);
                     }
                 } else {
