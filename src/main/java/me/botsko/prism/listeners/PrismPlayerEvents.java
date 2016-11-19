@@ -324,9 +324,15 @@ public class PrismPlayerEvents implements Listener {
             // " Item in hand:" + player.getItemInHand().getTypeId() + ":" +
             // player.getItemInHand().getDurability());
 
+            int itemInHandId = player.getItemInHand().getTypeId();
+            short itemInHandDurability = player.getItemInHand().getDurability();
+            if (itemInHandId == 0 && itemInHandDurability == -1) {
+                itemInHandDurability = 0;
+            }
+
             // Does the player have such item?
-            if( wand != null && player.getItemInHand().getTypeId() == item_id
-                    && player.getItemInHand().getDurability() == item_subid ) {
+            if( wand != null && itemInHandId == item_id
+                    && itemInHandDurability == item_subid ) {
 
                 // Left click is for current block
                 if( event.getAction() == Action.LEFT_CLICK_BLOCK ) {
