@@ -326,8 +326,8 @@ public class PrismPlayerEvents implements Listener {
 
             int itemInHandId = player.getItemInHand().getTypeId();
             short itemInHandDurability = player.getItemInHand().getDurability();
-            if (itemInHandId == 0 && itemInHandDurability == -1) {
-                itemInHandDurability = 0;
+            if (itemInHandId == 0 && itemInHandDurability == 0) {
+                itemInHandDurability = -1;
             }
 
             // Does the player have such item?
