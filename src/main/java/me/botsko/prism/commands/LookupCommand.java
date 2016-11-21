@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
@@ -76,25 +77,25 @@ public class LookupCommand implements SubHandler {
                 // Add current sender
                 parameters.addSharedPlayer( call.getSender() );
 
-                for ( final CommandSender player : parameters.getSharedPlayers() ) {
+                for ( final CommandSender sender : parameters.getSharedPlayers() ) {
 
-                    final boolean isSender = player.getName().equals( call.getSender().getName() );
+                    final boolean isSender = sender.getName().equals( call.getSender().getName() );
 
                     if( !isSender ) {
-                        player.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC
+                        sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.YELLOW + "" + ChatColor.ITALIC
                                 + call.getSender().getName() + ChatColor.GOLD
                                 + " shared these Prism lookup logs with you:" ) );
                     } else if( !sharingWithPlayers.isEmpty() ) {
-                        player.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD
+                        sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD
                                 + "Sharing results with players: " + ChatColor.YELLOW + "" + ChatColor.ITALIC
                                 + sharingWithPlayers ) );
                     }
 
                     if( !results.getActionResults().isEmpty() ) {
-                        player.sendMessage( Prism.messenger.playerHeaderMsg( "Showing " + results.getTotalResults()
+                        sender.sendMessage( Prism.messenger.playerHeaderMsg( "Showing " + results.getTotalResults()
                                 + " results. Page 1 of " + results.getTotal_pages() ) );
                         if( !defaultsReminder.isEmpty() && isSender ) {
-                            player.sendMessage( Prism.messenger.playerSubduedHeaderMsg( defaultsReminder ) );
+                            sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg( defaultsReminder ) );
                         }
                         final List<Handler> paginated = results.getPaginatedActionResults();
                         if( paginated != null ) {
@@ -106,33 +107,35 @@ public class LookupCommand implements SubHandler {
                                     am.showExtended();
                                 }
                                 am.setResultIndex( result_count );
-                                //player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
-                                MiscUtils.sendJSONMessage(player, am.getJSONMessage());
+                                if (sender instanceof Player) {
+                                    ((Player) sender).spigot().sendMessage(am.getJSONMessage());
+                                } else {
+                                    sender.sendMessage(am.getMessage());
+                                }
                                 result_count++;
                             }
                         } else {
-                            player.sendMessage( Prism.messenger
+                            sender.sendMessage( Prism.messenger
                                     .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
                         }
-                        if (results.getTotal_pages() > 1) {
-                        	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
-                        	MiscUtils.sendJSONMessage(player, paginationMessage);
+                        if (sender instanceof Player && results.getTotal_pages() > 1) {
+                            ((Player) sender).spigot().sendMessage(MiscUtils.getNextButton());
                         }
                         if( parameters.hasFlag( Flag.PASTE ) ) {
                             String paste = "";
                             for ( final Handler a : results.getActionResults() ) {
                                 paste += new ActionMessage( a ).getRawMessage() + "\r\n";
                             }
-                            player.sendMessage( MiscUtils.paste_results( plugin, paste ) );
+                            sender.sendMessage( MiscUtils.paste_results( plugin, paste ) );
                         }
                     } else {
                         if( !defaultsReminder.isEmpty() ) {
                             if( isSender ) {
-                                player.sendMessage( Prism.messenger.playerSubduedHeaderMsg( defaultsReminder ) );
+                                sender.sendMessage( Prism.messenger.playerSubduedHeaderMsg( defaultsReminder ) );
                             }
                         }
                         if( isSender ) {
-                            player.sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY
+                            sender.sendMessage( Prism.messenger.playerError( "Nothing found." + ChatColor.GRAY
                                     + " Either you're missing something, or we are." ) );
                         }
                     }

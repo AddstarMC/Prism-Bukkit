@@ -123,8 +123,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
                     }
                     
                     if (results.getTotal_pages() > 1) {
-                        String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
-                        MiscUtils.sendJSONMessage(player, paginationMessage);
+                        player.spigot().sendMessage(MiscUtils.getNextButton());
                     }
                 } else {
                     final String space_name = ( block.getType().equals( Material.AIR ) ? "space" : block.getType()

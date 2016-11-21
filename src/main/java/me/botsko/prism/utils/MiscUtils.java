@@ -3,28 +3,26 @@ package me.botsko.prism.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.helion3.pste.api.Paste;
+import com.helion3.pste.api.PsteApi;
+import com.helion3.pste.api.Results;
+
+import com.google.common.base.CaseFormat;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import com.google.common.base.CaseFormat;
-
-import com.helion3.pste.api.Paste;
-import com.helion3.pste.api.PsteApi;
-import com.helion3.pste.api.Results;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
-
-import net.minecraft.server.v1_10_R1.IChatBaseComponent.ChatSerializer;
-import net.minecraft.server.v1_10_R1.PacketPlayOutChat;
-
-import org.bukkit.craftbukkit.v1_10_R1.entity.CraftPlayer;
-
 import us.dhmc.elixr.TypeUtils;
 
 public class MiscUtils {
@@ -150,28 +148,37 @@ public class MiscUtils {
             return ((Player)entity).getName();
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
     }
-    
-    public static void sendJSONMessage(Player player, String message) {
-        if (player != null) {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
-        }
-    }
-    
-    public static void sendJSONMessage(Player player, String[] message) {
-        for (String line : message ) {
-            sendJSONMessage (player, line);
-        }
-    }
-    
-    public static void sendJSONMessage(CommandSender player, String message) {
-        if (player != null) {
-            ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new PacketPlayOutChat(ChatSerializer.a(message)));
-        }
+
+    public static BaseComponent getPreviousButton() {
+        TextComponent textComponent = new TextComponent("[Prev]");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
+                new TextComponent("Click to view the previous page") }));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
+        return textComponent;
     }
 
-	public static void sendJSONMessage(CommandSender player, String[] message) {
-        for (String line : message ) {
-            sendJSONMessage (player, line);
-        }
-	}
+    public static BaseComponent getNextButton() {
+        TextComponent textComponent = new TextComponent("        ");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
+    private static BaseComponent getNextButtonComponent() {
+        TextComponent textComponent = new TextComponent("[Next]");
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
+                new TextComponent("Click to view the next page") }));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
+        return textComponent;
+    }
+
+    public static BaseComponent getPrevNextButtons() {
+        TextComponent textComponent = new TextComponent();
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getPreviousButton());
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
 }

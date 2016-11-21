@@ -95,8 +95,7 @@ public class NearCommand implements SubHandler {
                                 am.showExtended();
                             }
                             am.setResultIndex( result_count );
-                            //call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
-                            MiscUtils.sendJSONMessage(call.getPlayer(), am.getJSONMessage());
+                            call.getPlayer().spigot().sendMessage(am.getJSONMessage());
                             result_count++;
                         }
 
@@ -111,8 +110,7 @@ public class NearCommand implements SubHandler {
                     }
                     
                     if (results.getTotal_pages() > 1) {
-                    	String paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
-                    	MiscUtils.sendJSONMessage(call.getPlayer(), paginationMessage);
+                        call.getPlayer().spigot().sendMessage(MiscUtils.getNextButton());
                     }
                 } else {
                     call.getPlayer().sendMessage( Prism.messenger.playerError( "Couldn't find anything." ) );

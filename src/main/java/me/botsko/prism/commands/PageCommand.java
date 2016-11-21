@@ -5,6 +5,8 @@ import java.util.List;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.chat.BaseComponent;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -126,21 +128,24 @@ public class PageCommand implements SubHandler {
                 am.showExtended();
             }
             am.setResultIndex( result_count );
-            //call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
-            MiscUtils.sendJSONMessage(call.getSender(), am.getJSONMessage());
+            if (call.getSender() instanceof Player) {
+                ((Player) call.getSender()).spigot().sendMessage(am.getJSONMessage());
+            } else {
+                call.getSender().sendMessage(am.getMessage());
+            }
             result_count++;
         }
         
-        if (results.getTotal_pages() > 1) {
-	        String paginationMessage = "";
-	        if (page == 1) {
-	        	paginationMessage = "[{\"text\":\"        \"},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
-	        } else if (results.getTotal_pages() == page) {
-	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Prev]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"\"}]";
-	        } else  {
-	        	paginationMessage = "[{\"text\":\"\"},{\"text\":\"§f§7[Prev]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg p\"}},{\"text\":\"§f§7[Next]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr pg n\"}},{\"text\":\"\"}]";
-	        }
-	        MiscUtils.sendJSONMessage(call.getSender(), paginationMessage);
+        if (call.getSender() instanceof Player && results.getTotal_pages() > 1) {
+            BaseComponent paginationMessage;
+            if (page == 1) {
+                paginationMessage = MiscUtils.getNextButton();
+            } else if (results.getTotal_pages() == page) {
+                paginationMessage = MiscUtils.getPreviousButton();
+            } else  {
+                paginationMessage = MiscUtils.getPrevNextButtons();
+            }
+            ((Player) call.getSender()).spigot().sendMessage(paginationMessage);
         }
     }
 

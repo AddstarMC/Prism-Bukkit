@@ -1,8 +1,12 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.actions.Handler;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
-import org.bukkit.ChatColor;
+import me.botsko.prism.actions.Handler;
 
 public class ActionMessage {
 
@@ -83,18 +87,107 @@ public class ActionMessage {
         return msg.toString();
     }
 
-    /**
-     * 
-     */
-    public String[] getJSONMessage() {
-    	return getMessage(true);
+    public BaseComponent getJSONMessage() {
+
+        final ChatColor highlight = ChatColor.DARK_AQUA;
+        // Strikethrough when was rollback
+        final boolean strike = a.getWasRollback() == 1;
+
+        TextComponent textComponent = new TextComponent();
+        TextComponent extraComponent;
+
+        // Positive/negative prefixing
+        if( a.getType().doesCreateBlock() || a.getType().getName().equals( "item-insert" )
+                || a.getType().getName().equals( "sign-change" ) ) {
+            extraComponent = new TextComponent(" + ");
+            extraComponent.setColor(ChatColor.GREEN);
+        } else {
+            extraComponent = new TextComponent(" - ");
+            extraComponent.setColor(ChatColor.RED);
+        }
+        textComponent.addExtra(extraComponent);
+
+        // Result index for teleporting
+        if ( index > 0 ) {
+            extraComponent = new TextComponent("[" + index + "]");
+            extraComponent.setClickEvent(
+                    new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp id:" + a.getId()));
+            extraComponent.setHoverEvent(
+                    new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
+                            new TextComponent("Click to teleport to " + a.getId() + "\n" + a.getWorldName()
+                                    + " @ " + a.getX() + " " + a.getY() + " " + a.getZ()) }));
+            textComponent.addExtra(extraComponent);
+        }
+
+        // Who
+        extraComponent = new TextComponent(a.getPlayerName());
+        extraComponent.setColor(highlight);
+        extraComponent.setStrikethrough(strike);
+        textComponent.addExtra(extraComponent);
+
+        // Description of event
+        extraComponent = new TextComponent(" " + a.getType().getNiceDescription());
+        extraComponent.setColor(ChatColor.WHITE);
+        extraComponent.setStrikethrough(strike);
+        if( a.getType().getHandler() != null ) {
+            if( !a.getNiceName().isEmpty() ) {
+                TextComponent extraExtra = new TextComponent(" " + a.getNiceName());
+                extraExtra.setColor(highlight);
+                extraExtra.setStrikethrough(strike);
+                extraComponent.addExtra(extraExtra);
+            }
+        } else {
+            // We should really improve this, but this saves me from having to
+            // make a custom handler.
+            String niceBucket = null;
+            if( a.getType().getName().equals( "lava-bucket" ) ) {
+                niceBucket = " lava";
+            } else if( a.getType().getName().equals( "water-bucket" ) ) {
+                niceBucket = " water";
+            }
+            if ( niceBucket != null ) {
+                TextComponent extraExtra = new TextComponent(" " + a.getNiceName());
+                extraExtra.setColor(highlight);
+                extraExtra.setStrikethrough(strike);
+                extraComponent.addExtra(extraExtra);
+            }
+        }
+        // Action type reminder
+        TextComponent extraExtra = new TextComponent("a:" + a.getType().getShortName());
+        extraExtra.setColor(ChatColor.GRAY);
+        extraComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] { extraExtra }));
+        textComponent.addExtra(extraComponent);
+
+        if( showExtended ) {
+            extraComponent = new TextComponent(" " + a.getBlockId() + ":" + a.getBlockSubId());
+            extraComponent.setColor(ChatColor.GRAY);
+            textComponent.addExtra(extraComponent);
+        }
+
+        // Aggregate count
+        if( a.getAggregateCount() > 1 ) {
+            extraComponent = new TextComponent(" x" + a.getAggregateCount());
+            extraComponent.setColor(ChatColor.GREEN);
+            extraComponent.setStrikethrough(strike);
+            textComponent.addExtra(extraComponent);
+        }
+
+        // Time since
+        if( !a.getTimeSince().isEmpty() ) {
+            extraComponent = new TextComponent(" " + a.getTimeSince());
+            extraComponent.setColor(ChatColor.WHITE);
+            extraComponent.setStrikethrough(strike);
+            // Additional date data (line2 of non-JSON message)
+            extraExtra = new TextComponent(a.getDisplayDate() + " " + a.getDisplayTime().toLowerCase());
+            extraExtra.setColor(ChatColor.GRAY);
+            extraComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] { extraExtra }));
+            textComponent.addExtra(extraComponent);
+        }
+
+        return textComponent;
     }
     
     public String[] getMessage() {
-    	return getMessage(false);
-    }
-    
-    public String[] getMessage(boolean isJSON) {
 
         String[] msg = new String[1];
         if( showExtended ) {
@@ -114,11 +207,7 @@ public class ActionMessage {
         // Result index for teleporting
         String indexString = "";
         if (index > 0) {
-            if (isJSON) {
-                indexString = " \"},{\"text\":\"" + ChatColor.GRAY + "[" + index + "]\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/pr tp id:" + a.getId() + "\"}},{\"text\":\" ";
-            } else {
-                indexString = ChatColor.GRAY + " [" + index + "] ";
-            }
+            indexString = ChatColor.GRAY + " [" + index + "] ";
         }
 
         // Who
@@ -170,18 +259,10 @@ public class ActionMessage {
             line2 += " - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ() + " ";
         }
 
-        if (isJSON) {
-            msg[0] = "[{\"text\":\"" + getPosNegPrefix() + indexString + line1.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}]";
-        } else {
-            msg[0] = getPosNegPrefix() + indexString + line1;
-        }
-        
+        msg[0] = getPosNegPrefix() + indexString + line1;
+
         if( showExtended ) {
-            if (isJSON) {
-                msg[1] = "{\"text\":\"" + line2.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + "\"}";
-            } else {
-                msg[1] = line2;
-            }
+            msg[1] = line2;
         }
 
         return msg;
@@ -201,4 +282,18 @@ public class ActionMessage {
             return ChatColor.RED + " - " + ChatColor.WHITE;
         }
     }
+
+    protected BaseComponent getPosNegPrefixComponent() {
+        TextComponent component;
+        if( a.getType().doesCreateBlock() || a.getType().getName().equals( "item-insert" )
+                || a.getType().getName().equals( "sign-change" ) ) {
+            component = new TextComponent(" + ");
+            component.setColor(ChatColor.GREEN);
+        } else {
+            component = new TextComponent(" - ");
+            component.setColor(ChatColor.RED);
+        }
+        return component;
+    }
+
 }
