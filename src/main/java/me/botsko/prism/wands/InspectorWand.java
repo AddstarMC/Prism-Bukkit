@@ -2,6 +2,13 @@ package me.botsko.prism.wands;
 
 import java.util.ArrayList;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -9,13 +16,7 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
-
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import me.botsko.prism.utils.MiscUtils;
 
 public class InspectorWand extends QueryWandBase implements Wand {
 
@@ -75,7 +76,7 @@ public class InspectorWand extends QueryWandBase implements Wand {
                 params.setSpecificBlockLocation( loc );
 
                 // Do we need a second location? (For beds, doors, etc)
-                final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+                final Block sibling = us.dhmc.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
                 if( sibling != null ) {
                     params.addSpecificBlockLocation( sibling.getLocation() );
                 }
@@ -119,6 +120,10 @@ public class InspectorWand extends QueryWandBase implements Wand {
                             am.showExtended();
                         }
                         player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                    }
+                    
+                    if (results.getTotal_pages() > 1) {
+                        player.spigot().sendMessage(MiscUtils.getNextButton());
                     }
                 } else {
                     final String space_name = ( block.getType().equals( Material.AIR ) ? "space" : block.getType()

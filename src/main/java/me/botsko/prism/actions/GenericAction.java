@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import me.botsko.elixr.MaterialAliases;
+import us.dhmc.elixr.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -112,6 +112,11 @@ public class GenericAction implements Handler {
 	 * 
 	 */
     protected String data;
+
+    /**
+	 * 
+	 */
+    protected int rollback;
 
     /**
 	 * 
@@ -371,9 +376,9 @@ public class GenericAction implements Handler {
     public void setLoc(Location loc) {
         if( loc != null ) {
             this.world_name = loc.getWorld().getName();
-            this.x = loc.getX();
-            this.y = loc.getY();
-            this.z = loc.getZ();
+            this.x = loc.getBlockX();
+            this.y = loc.getBlockY();
+            this.z = loc.getBlockZ();
         }
     }
 
@@ -491,6 +496,16 @@ public class GenericAction implements Handler {
     public void setData(String data) {
         this.data = data;
     }
+
+	@Override
+	public void setWasRollback(int rollback) {
+	    this.rollback = rollback;
+	}
+
+	@Override
+	public int getWasRollback() {
+	    return rollback;
+	}
 
     /*
      * (non-Javadoc)

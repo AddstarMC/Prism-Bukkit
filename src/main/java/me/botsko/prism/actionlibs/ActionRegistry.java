@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import org.bukkit.plugin.Plugin;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.exceptions.InvalidActionException;
 
@@ -164,6 +164,8 @@ public class ActionRegistry {
         registerAction( new ActionType( "enderman-place", true, true, true, "BlockAction", "placed" ) );
         registerAction( new ActionType( "entity-break", true, true, true, "BlockAction", "broke" ) );
         registerAction( new ActionType( "entity-dye", false, false, false, "EntityAction", "dyed" ) );
+        registerAction( new ActionType( "entity-enter", false, false, false, "EntityAction", "entered" ) );
+        registerAction( new ActionType( "entity-exit", false, false, false, "EntityAction", "exited" ) );
         registerAction( new ActionType( "entity-explode", false, true, true, "BlockAction", "blew up" ) );
         registerAction( new ActionType( "entity-follow", false, false, false, "EntityAction", "lured" ) );
         registerAction( new ActionType( "entity-form", true, true, true, "BlockChangeAction", "formed" ) );
@@ -193,6 +195,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "player-chat", false, false, false, "PlayerAction", "said" ) );
         registerAction( new ActionType( "player-command", false, false, false, "PlayerAction", "ran command" ) );
         registerAction( new ActionType( "player-death", false, false, false, "PlayerDeathAction", "died" ) );
+        registerAction( new ActionType( "player-hit", false, false, false, "PlayerAction", "hit" ) );
         registerAction( new ActionType( "player-join", false, false, false, "PlayerAction", "joined" ) );
         registerAction( new ActionType( "player-kill", false, true, false, "EntityAction", "killed" ) );
         registerAction( new ActionType( "player-quit", false, false, false, "PlayerAction", "quit" ) );

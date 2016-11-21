@@ -7,15 +7,21 @@
   <name>prism</name>
   <dependencies>
     <dependency>
-      <groupId>me.botsko</groupId>
+      <groupId>us.dhmc</groupId>
       <artifactId>elixr</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>1.2.1-SNAPSHOT</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.bukkit</groupId>
-      <artifactId>bukkit</artifactId>
-      <version>1.8.3-R0.1-SNAPSHOT</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.11-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot</artifactId>
+      <version>1.11-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -86,7 +92,7 @@
         <configuration>
           <relocations>
             <relocation>
-              <pattern>me.botsko.elixr</pattern>
+              <pattern>us.dhmc.elixr</pattern>
               <shadedPattern>com.helion3.prism.libs.elixr</shadedPattern>
             </relocation>
             <relocation>

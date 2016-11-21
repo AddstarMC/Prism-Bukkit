@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import me.botsko.elixr.MaterialAliases;
+import us.dhmc.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -174,6 +174,14 @@ public interface Handler {
      *            the data to set
      */
     public abstract void setData(String data);
+
+    /**
+     * @param int
+     *            was rollback
+     */
+    public abstract void setWasRollback(int rollback);
+
+    public abstract int getWasRollback();
 
     /**
      * 

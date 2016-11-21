@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 
 import org.bukkit.Bukkit;

@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import me.botsko.elixr.TypeUtils;
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -58,6 +58,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         columns.add( "old_block_id" );
         columns.add( "old_block_subid" );
         columns.add( "data" );
+        columns.add( "rollback" );
 
         if( shouldGroup ) {
             columns.add( "COUNT(*) counted" );
@@ -74,6 +75,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         // Joins
         query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
         query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
+        query += "LEFT JOIN " + tableNameDataRollback + " rb ON rb.data_id = " + tableNameData + ".id ";
 
         return query;
 
@@ -319,7 +321,7 @@ public class SelectQueryBuilder extends QueryBuilder {
     @Override
     protected String group() {
         if( shouldGroup ) { return " GROUP BY " + tableNameData + ".action_id, " + tableNameData + ".player_id, "
-                + tableNameData + ".block_id, ex.data, DATE(FROM_UNIXTIME(" + tableNameData + ".epoch))"; }
+                + tableNameData + ".block_id, ex.data, DATE(FROM_UNIXTIME(" + tableNameData + ".epoch)), rb.rollback"; }
         return "";
     }
 

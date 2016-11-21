@@ -1,6 +1,8 @@
 package me.botsko.prism.actions;
 
-import me.botsko.elixr.TypeUtils;
+import java.util.ArrayList;
+
+import us.dhmc.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -10,8 +12,10 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -19,6 +23,8 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -81,6 +87,19 @@ public class BlockAction extends GenericAction {
                 actionData = signActionData;
             }
 
+            // banners
+            else if( ( state.getTypeId() == 176 || state.getTypeId() == 177 ) ) {
+                final BannerActionData bannerActionData = new BannerActionData();
+                final Banner s = (Banner) state;
+                bannerActionData.patterns = new String[1+s.numberOfPatterns()*2];
+                bannerActionData.patterns[0] = s.getBaseColor().toString();
+                for(int i=0; i<s.numberOfPatterns(); ++i) {
+                    bannerActionData.patterns[1+2*i] = s.getPattern(i).getColor().toString();
+                    bannerActionData.patterns[2+2*i] = s.getPattern(i).getPattern().toString();
+                }
+                actionData = bannerActionData;
+            }
+
             // command block
             else if( ( state.getTypeId() == 137 ) ) {
                 final CommandBlock cmdblock = (CommandBlock) state;
@@ -107,6 +126,8 @@ public class BlockAction extends GenericAction {
                 actionData = gson.fromJson( data, SpawnerActionData.class );
             } else if( block_id == 63 || block_id == 68 ) {
                 actionData = gson.fromJson( data, SignActionData.class );
+            } else if( block_id == 176 || block_id == 177 ) {
+                actionData = gson.fromJson( data, BannerActionData.class );
             } else if( block_id == 137 ) {
                 actionData = new BlockActionData();
             } else {
@@ -153,6 +174,11 @@ public class BlockAction extends GenericAction {
             final SignActionData ad = (SignActionData) getActionData();
             if( ad.lines != null && ad.lines.length > 0 ) {
                 name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
+            }
+        } else if( actionData instanceof BannerActionData ) {
+            final BannerActionData ad = (BannerActionData) getActionData();
+            if( ad.patterns != null && ad.patterns.length > 0 ) {
+                name += " (" + TypeUtils.join( ad.patterns, ", " ).replace("_", " ").toLowerCase() + ")";
             }
         } else if( block_id == 137 ) {
             name += " (" + data + ")";
@@ -237,6 +263,13 @@ public class BlockAction extends GenericAction {
     /**
 	 * 
 	 */
+    public class BannerActionData extends BlockActionData {
+        public String[] patterns;
+    }
+
+    /**
+	 * 
+	 */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
@@ -299,7 +332,7 @@ public class BlockAction extends GenericAction {
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
         if( !getType().requiresHandler( "BlockChangeAction" ) && !getType().requiresHandler( "PrismRollbackAction" ) ) {
-            if( !me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) {
                 // System.out.print("Block skipped due to being unaccaptable for block place.");
                 return new ChangeResult( ChangeResultType.SKIPPED, null );
@@ -335,7 +368,7 @@ public class BlockAction extends GenericAction {
 
             // If portal, we need to light the portal. seems to be the only way.
             if( getBlockId() == 90 ) {
-                final Block obsidian = me.botsko.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
+                final Block obsidian = us.dhmc.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
                         block.getLocation() );
                 if( obsidian != null ) {
                     final Block above = obsidian.getRelative( BlockFace.UP );
@@ -367,7 +400,7 @@ public class BlockAction extends GenericAction {
                 final Skull skull = (Skull) block.getState();
                 skull.setRotation( s.getRotation() );
                 skull.setSkullType( s.getSkullType() );
-                if( !s.owner.isEmpty() ) {
+                if( s.owner != null && !s.owner.isEmpty() ) {
                     skull.setOwner( s.owner );
                 }
                 skull.update();
@@ -427,12 +460,47 @@ public class BlockAction extends GenericAction {
                 }
             }
 
+            /**
+             * Banners
+             */
+            if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
+                    && ( getBlockId() == 176 || getBlockId() == 177 ) && getActionData() instanceof BannerActionData ) {
+
+                final BannerActionData s = (BannerActionData) getActionData();
+				if( block.getState() instanceof Banner ) {
+
+					// Set sign data
+					final Banner banner = (Banner) block.getState();
+					int i = 0;
+					if( s.patterns != null && s.patterns.length > 0 ) {
+						ArrayList <Pattern> patterns = new ArrayList<Pattern>();
+						DyeColor tmpcolor = DyeColor.BLACK;
+						PatternType tmppattern;
+						for ( final String pattern : s.patterns ) {
+							if(i == 0) {
+								banner.setBaseColor(DyeColor.valueOf(pattern));
+							}
+							else if(i % 2 == 1) {
+								tmpcolor = DyeColor.valueOf(pattern);
+							}
+							else {
+								tmppattern = PatternType.valueOf(pattern);
+								patterns.add(new Pattern(tmpcolor, tmppattern));
+							}
+							i++;
+						}
+						banner.setPatterns(patterns);
+					}
+					banner.update();
+				}
+            }
+
             // If the material is a crop that needs soil, we must restore the
             // soil
             // This may need to go before setting the block, but I prefer the
             // BlockUtil
             // logic to use materials.
-            if( me.botsko.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
+            if( us.dhmc.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
                 final Block below = block.getRelative( BlockFace.DOWN );
                 if( below.getType().equals( Material.DIRT ) || below.getType().equals( Material.AIR )
                         || below.getType().equals( Material.GRASS ) ) {
@@ -452,6 +520,7 @@ public class BlockAction extends GenericAction {
             // If we're rolling back a door, we need to set it properly
             if( BlockUtils.isDoor(m) ) {
                 BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
+                Prism.debug(Boolean.toString(BlockUtils.isDoor(m)));
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
@@ -495,8 +564,8 @@ public class BlockAction extends GenericAction {
         if( !block.getType().equals( Material.AIR ) ) {
 
             // Ensure it's acceptable to remove the current block
-            if( !me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    && !me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
+            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    && !us.dhmc.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) { return new ChangeResult( ChangeResultType.SKIPPED,
                     null ); }
 

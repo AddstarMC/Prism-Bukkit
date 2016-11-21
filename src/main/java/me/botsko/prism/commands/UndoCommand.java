@@ -1,6 +1,9 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -14,9 +17,7 @@ import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-import org.bukkit.ChatColor;
-
-import java.util.List;
+import us.dhmc.elixr.TypeUtils;
 
 public class UndoCommand implements SubHandler {
 
@@ -131,7 +132,7 @@ public class UndoCommand implements SubHandler {
                                 || plugin.getConfig().getBoolean( "prism.messenger.always-show-extended" ) ) {
                             am.showExtended();
                         }
-                        call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                        call.getPlayer().spigot().sendMessage(am.getJSONMessage());
                     }
                 } else {
                     call.getPlayer()

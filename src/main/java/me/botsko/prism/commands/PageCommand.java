@@ -1,6 +1,12 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import java.util.List;
+
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+
+import net.md_5.bungee.api.chat.BaseComponent;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -8,10 +14,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import java.util.List;
+import me.botsko.prism.utils.MiscUtils;
+import us.dhmc.elixr.TypeUtils;
 
 public class PageCommand implements SubHandler {
 
@@ -124,8 +128,24 @@ public class PageCommand implements SubHandler {
                 am.showExtended();
             }
             am.setResultIndex( result_count );
-            call.getSender().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+            if (call.getSender() instanceof Player) {
+                ((Player) call.getSender()).spigot().sendMessage(am.getJSONMessage());
+            } else {
+                call.getSender().sendMessage(am.getMessage());
+            }
             result_count++;
+        }
+        
+        if (call.getSender() instanceof Player && results.getTotal_pages() > 1) {
+            BaseComponent paginationMessage;
+            if (page == 1) {
+                paginationMessage = MiscUtils.getNextButton();
+            } else if (results.getTotal_pages() == page) {
+                paginationMessage = MiscUtils.getPreviousButton();
+            } else  {
+                paginationMessage = MiscUtils.getPrevNextButtons();
+            }
+            ((Player) call.getSender()).spigot().sendMessage(paginationMessage);
         }
     }
 

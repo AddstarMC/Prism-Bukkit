@@ -1,18 +1,31 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
+import java.util.UUID;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.Horse.Variant;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Ocelot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Sheep;
+import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
+import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
 
 public class EntityAction extends GenericAction {
 
@@ -25,6 +38,7 @@ public class EntityAction extends GenericAction {
         public String newColor;
         public String profession;
         public String taming_owner;
+        public UUID taming_owner_UUID;
         public String var;
         public String hColor;
         public String style;
@@ -35,6 +49,7 @@ public class EntityAction extends GenericAction {
         public String saddle;
         public String armor;
         public double maxHealth;
+        public double speed;
     }
 
     /**
@@ -97,11 +112,9 @@ public class EntityAction extends GenericAction {
 
                 // Owner
                 if( wolf.isTamed() ) {
-                    if( wolf.getOwner() instanceof Player ) {
-                        this.actionData.taming_owner = wolf.getOwner().getName();
-                    }
                     if( wolf.getOwner() instanceof OfflinePlayer ) {
                         this.actionData.taming_owner = wolf.getOwner().getName();
+                        this.actionData.taming_owner_UUID = wolf.getOwner().getUniqueId();
                     }
                 }
 
@@ -121,11 +134,9 @@ public class EntityAction extends GenericAction {
 
                 // Owner
                 if( ocelot.isTamed() ) {
-                    if( ocelot.getOwner() instanceof Player ) {
-                        this.actionData.taming_owner = ocelot.getOwner().getName();
-                    }
                     if( ocelot.getOwner() instanceof OfflinePlayer ) {
                         this.actionData.taming_owner = ocelot.getOwner().getName();
+                        this.actionData.taming_owner_UUID = ocelot.getOwner().getUniqueId();
                     }
                 }
 
@@ -149,7 +160,10 @@ public class EntityAction extends GenericAction {
                 this.actionData.maxDom = h.getMaxDomestication();
                 this.actionData.jump = h.getJumpStrength();
                 this.actionData.maxHealth = h.getMaxHealth();
-
+                
+                // Get speed
+                this.actionData.speed = h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
+                
                 final HorseInventory hi = h.getInventory();
 
                 if( hi.getSaddle() != null ) {
@@ -158,14 +172,15 @@ public class EntityAction extends GenericAction {
                 if( hi.getArmor() != null ) {
                     this.actionData.armor = "" + hi.getArmor().getTypeId();
                 }
+                if ((this.actionData.var == "DONKEY" || this.actionData.var == "MULE") && hi.getSize() == 17) {
+                	this.actionData.chest = true;
+                }
 
                 // Owner
                 if( h.isTamed() ) {
-                    if( h.getOwner() instanceof Player ) {
-                        this.actionData.taming_owner = h.getOwner().getName();
-                    }
                     if( h.getOwner() instanceof OfflinePlayer ) {
                         this.actionData.taming_owner = h.getOwner().getName();
+                        this.actionData.taming_owner_UUID = h.getOwner().getUniqueId();
                     }
                 }
             }
@@ -246,6 +261,14 @@ public class EntityAction extends GenericAction {
      */
     public String getTamingOwner() {
         return this.actionData.taming_owner;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public UUID getTamingOwnerUUID() {
+        return this.actionData.taming_owner_UUID;
     }
 
     /**
@@ -401,20 +424,34 @@ public class EntityAction extends GenericAction {
 
             // Set wolf details
             if( entity instanceof Wolf ) {
+            
+                final Wolf wolf = (Wolf) entity;
 
                 // Owner
-                final Wolf wolf = (Wolf) entity;
-                final String tamingOwner = getTamingOwner();
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
+            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
+                if (tamingOwnerUUID != null) {
+                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
+                    if(owner == null) {
+                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
+                        if (offlineOwner != null) {
+                            wolf.setOwner(offlineOwner);
                         }
+                    } else {
+                        wolf.setOwner(owner); 
                     }
-                    if( owner != null )
-                        wolf.setOwner( owner );
+                } else {
+                    final String tamingOwner = getTamingOwner();
+                    if( tamingOwner != null ) {
+                        Player owner = plugin.getServer().getPlayer( tamingOwner );
+                        if( owner == null ) {
+                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                            if( offlinePlayer.hasPlayedBefore() ) {
+                                owner = offlinePlayer.getPlayer();
+                            }
+                        }
+                        if( owner != null )
+                            wolf.setOwner( owner );
+                    }
                 }
 
                 // Collar color
@@ -429,20 +466,33 @@ public class EntityAction extends GenericAction {
 
             // Set ocelot details
             if( entity instanceof Ocelot ) {
+            
+                final Ocelot ocelot = (Ocelot) entity;
 
                 // Owner
-                final Ocelot ocelot = (Ocelot) entity;
-                final String tamingOwner = getTamingOwner();
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
+            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
+                if (tamingOwnerUUID != null) {
+                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
+                    if(owner == null) {
+                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
+                        if (offlineOwner != null) {
+                        	ocelot.setOwner(offlineOwner);
                         }
+                    } else {
+                    	ocelot.setOwner(owner); 
                     }
-                    if( owner != null ) {
-                        ocelot.setOwner(owner);
+                } else {
+                    final String tamingOwner = getTamingOwner();
+                    if( tamingOwner != null ) {
+                        Player owner = plugin.getServer().getPlayer( tamingOwner );
+                        if( owner == null ) {
+                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                            if( offlinePlayer.hasPlayedBefore() ) {
+                                owner = offlinePlayer.getPlayer();
+                            }
+                        }
+                        if( owner != null )
+                        	ocelot.setOwner( owner );
                     }
                 }
 
@@ -479,23 +529,39 @@ public class EntityAction extends GenericAction {
                 h.setMaxDomestication( this.actionData.maxDom );
                 h.setJumpStrength( this.actionData.jump );
                 h.setMaxHealth( this.actionData.maxHealth );
-
+                
+                // Set speed
+                h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.actionData.speed);
+                
                 // Stuff
                 h.getInventory().setSaddle( getSaddle() );
                 h.getInventory().setArmor( getArmor() );
 
                 // Owner
-                final String tamingOwner = getTamingOwner();
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
+            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
+                if (tamingOwnerUUID != null) {
+                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
+                    if(owner == null) {
+                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
+                        if (offlineOwner != null) {
+                            h.setOwner(offlineOwner);
                         }
+                    } else {
+                        h.setOwner(owner); 
                     }
-                    if( owner != null )
-                        h.setOwner( owner );
+                } else {
+                    final String tamingOwner = getTamingOwner();
+                    if( tamingOwner != null ) {
+                        Player owner = plugin.getServer().getPlayer( tamingOwner );
+                        if( owner == null ) {
+                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                            if( offlinePlayer.hasPlayedBefore() ) {
+                                owner = offlinePlayer.getPlayer();
+                            }
+                        }
+                        if( owner != null )
+                            h.setOwner( owner );
+                    }
                 }
             }
 
