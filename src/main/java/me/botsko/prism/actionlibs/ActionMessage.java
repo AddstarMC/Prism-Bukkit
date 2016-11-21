@@ -109,7 +109,7 @@ public class ActionMessage {
 
         // Result index for teleporting
         if ( index > 0 ) {
-            extraComponent = new TextComponent("[" + index + "]");
+            extraComponent = new TextComponent("[" + index + "] ");
             extraComponent.setClickEvent(
                     new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp id:" + a.getId()));
             extraComponent.setHoverEvent(

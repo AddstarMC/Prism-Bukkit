@@ -113,15 +113,17 @@ public class InspectorWand extends QueryWandBase implements Wand {
                         player.sendMessage( Prism.messenger.playerHeaderMsg( "Showing " + results.getTotalResults()
                                 + " results. Page 1 of " + results.getTotal_pages() ) );
                     }
+                    int result_count = results.getIndexOfFirstResult();
                     for ( final me.botsko.prism.actions.Handler a : results.getPaginatedActionResults() ) {
                         final ActionMessage am = new ActionMessage( a );
                         if( parameters.hasFlag( Flag.EXTENDED )
                                 || plugin.getConfig().getBoolean( "prism.messenger.always-show-extended" ) ) {
                             am.showExtended();
                         }
-                        player.sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                        am.setResultIndex( result_count );
+                        player.spigot().sendMessage( am.getJSONMessage() );
+                        result_count++;
                     }
-                    
                     if (results.getTotal_pages() > 1) {
                         player.spigot().sendMessage(MiscUtils.getNextButton());
                     }

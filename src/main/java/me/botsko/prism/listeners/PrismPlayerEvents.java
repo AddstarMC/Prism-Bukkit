@@ -339,7 +339,7 @@ public class PrismPlayerEvents implements Listener {
 
             // Does the player have such item?
             if( wand != null && player.getInventory().getItemInMainHand().getTypeId() == item_id
-                    && player.getInventory().getItemInMainHand().getDurability() == item_subid ) {
+                    && ( item_id == 0 || player.getInventory().getItemInMainHand().getDurability() == item_subid ) ) {
 
                 if( event.getHand() == EquipmentSlot.OFF_HAND
                         && ( event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK ) ) {
