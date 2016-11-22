@@ -324,6 +324,8 @@ public class PrismPlayerEvents implements Listener {
             // " Item in hand:" + player.getItemInHand().getTypeId() + ":" +
             // player.getItemInHand().getDurability());
 
+            // In Spigot 1.10 and newer, the durability value of an ItemStack representing
+            // an empty hand is 0 instead of -1.
             short itemInHandDurability = player.getItemInHand().getDurability();
             if (player.getItemInHand().getTypeId() == 0 && itemInHandDurability == 0) {
                 itemInHandDurability = -1;
