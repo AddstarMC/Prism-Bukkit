@@ -23,9 +23,19 @@ public class Ignore {
     private final List<String> ignore_players;
 
     /**
+     *
+     */
+    private final boolean ignore_players_whitelist;
+
+    /**
 	 * 
 	 */
     private final List<String> ignore_worlds;
+
+    /**
+     *
+     */
+    private final boolean ignore_worlds_whitelist;
 
     /**
 	 * 
@@ -40,7 +50,9 @@ public class Ignore {
     public Ignore(Prism plugin) {
         this.plugin = plugin;
         ignore_players = (List<String>) plugin.getConfig().getList( "prism.ignore.players" );
+        ignore_players_whitelist = plugin.getConfig().getBoolean("prism.ignore.players_whitelist");
         ignore_worlds = (List<String>) plugin.getConfig().getList( "prism.ignore.worlds" );
+        ignore_worlds_whitelist = plugin.getConfig().getBoolean("prism.ignore.worlds_whitelist");
         ignore_creative = plugin.getConfig().getBoolean( "prism.ignore.players-in-creative" );
     }
 
@@ -112,7 +124,7 @@ public class Ignore {
         }
 
         // Should we ignore this player?
-        if( ignore_players != null && ignore_players.contains( player.getName() ) ) {
+        if( ignore_players != null && ignore_players.contains( player.getName() ) != ignore_players_whitelist ) {
             Prism.debug( "Player is being ignored, per config: " + player.getName() );
             return false;
         }
@@ -149,7 +161,7 @@ public class Ignore {
     public boolean event(String actionTypeName, World world) {
 
         // Should we ignore this world?
-        if( ignore_worlds != null && ignore_worlds.contains( world.getName() ) ) {
+        if( ignore_worlds != null && ignore_worlds.contains( world.getName() ) != ignore_worlds_whitelist ) {
             Prism.debug( "World is being ignored, per config: " + world.getName() );
             return false;
         }

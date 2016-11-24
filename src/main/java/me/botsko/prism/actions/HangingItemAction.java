@@ -36,8 +36,8 @@ public class HangingItemAction extends GenericAction {
 
         if( hanging != null ) {
             this.actionData.type = hanging.getType().name().toLowerCase();
-            if (hanging.getType() != EntityType.LEASH_HITCH) {
-            	this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            if(hanging.getAttachedFace() != null || hanging.getType() != EntityType.LEASH_HITCH) {
+                this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
             }
             this.world_name = hanging.getWorld().getName();
             this.x = hanging.getLocation().getBlockX();

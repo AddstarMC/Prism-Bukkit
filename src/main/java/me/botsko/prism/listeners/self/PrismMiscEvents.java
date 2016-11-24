@@ -10,7 +10,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.events.PrismBlocksExtinguishEvent;
-
 import org.bukkit.block.BlockState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;

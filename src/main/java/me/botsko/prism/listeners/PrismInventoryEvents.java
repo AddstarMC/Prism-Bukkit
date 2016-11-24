@@ -162,7 +162,7 @@ public class PrismInventoryEvents implements Listener {
             	// Held item is not AIR, so played inserted item
                 itemadded = cursoritem.clone();
             }
-        	
+
         	// Now record the events in the DB
         	if (itemadded != null) {
                 recordInvAction( player, containerLoc, itemadded, event.getRawSlot(), "item-insert", event );

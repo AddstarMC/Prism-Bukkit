@@ -199,7 +199,7 @@ public class BlockAction extends GenericAction {
     public class BannerActionData extends BlockActionData {
     	public String[] patterns;
     }
-    
+
     /**
      * 
      * @author botskonet
@@ -518,15 +518,15 @@ public class BlockAction extends GenericAction {
 
             // If we're rolling back a door, we need to set it properly
             if( BlockUtils.isDoor(m) ) {
-                me.botsko.elixr.BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
-                me.botsko.elixr.BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or double plants
             else if( m.equals( Material.DOUBLE_PLANT ) ) {
-                me.botsko.elixr.BlockUtils.properlySetDoublePlant( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetDoublePlant( block, getBlockId(), (byte) getBlockSubId() );
             }
         } else {
 

@@ -1,7 +1,5 @@
 package me.botsko.prism.listeners;
 
-import java.util.List;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -11,7 +9,6 @@ import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -25,20 +22,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 public class PrismPlayerEvents implements Listener {
 
@@ -336,9 +324,16 @@ public class PrismPlayerEvents implements Listener {
             // " Item in hand:" + player.getItemInHand().getTypeId() + ":" +
             // player.getItemInHand().getDurability());
 
+            // In Spigot 1.10 and newer, the durability value of an ItemStack representing
+            // an empty hand is 0 instead of -1.
+            short itemInHandDurability = player.getItemInHand().getDurability();
+            if (player.getItemInHand().getTypeId() == 0 && itemInHandDurability == 0) {
+                itemInHandDurability = -1;
+            }
+
             // Does the player have such item?
             if( wand != null && player.getItemInHand().getTypeId() == item_id
-                    && player.getItemInHand().getDurability() == item_subid ) {
+                    && itemInHandDurability == item_subid ) {
 
                 // Left click is for current block
                 if( event.getAction() == Action.LEFT_CLICK_BLOCK ) {

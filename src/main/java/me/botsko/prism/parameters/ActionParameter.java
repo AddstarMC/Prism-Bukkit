@@ -1,5 +1,6 @@
 package me.botsko.prism.parameters;
 
+import com.google.common.base.Joiner;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -9,6 +10,7 @@ import me.botsko.prism.utils.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class ActionParameter extends SimplePrismParameterHandler {
@@ -40,6 +42,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
                 final ArrayList<ActionType> actionTypes = Prism.getActionRegistry().getActionsByShortname(
                         action.replace( "!", "" ) );
                 if( !actionTypes.isEmpty() ) {
+                    List<String> noPermission = new ArrayList<String>();
                     for ( final ActionType actionType : actionTypes ) {
 
                         // Ensure the action allows this process type
@@ -50,13 +53,31 @@ public class ActionParameter extends SimplePrismParameterHandler {
                             // spammy with a:place, because vehicle-place
                             // doesn't support a rollback etc
                             // respond( sender,
-                            // Prism.messenger.playerError("Ingoring action '"+actionType.getName()+"' because it doesn't support rollbacks.")
+                            // Prism.messenger.playerError("Ignoring action '"+actionType.getName()+"' because it doesn't support rollbacks.")
                             // );
+                            continue;
+                        }
+
+                        if( !sender.hasPermission( getPermission() + "." + actionType.getName() ) ) {
+                            noPermission.add(actionType.getName());
                             continue;
                         }
 
                         query.addActionType( actionType.getName(), match );
                     }
+
+                    if ( !noPermission.isEmpty() ) {
+                        String message = "Ignoring action '" + action + "' because you don't have permission for ";
+                        if (noPermission.size() != 1) {
+                            message += "any of " + Joiner.on(',').join(noPermission) + ".";
+                        } else if(noPermission.get(0).equals(action)){
+                            message += "it.";
+                        } else {
+                            message += noPermission.get(0) + ".";
+                        }
+                        sender.sendMessage(Prism.messenger.playerError(message));
+                    }
+
                 } else {
                     if( sender != null ) {
                         sender.sendMessage( Prism.messenger.playerError( "Ignoring action '" + action.replace( "!", "" )

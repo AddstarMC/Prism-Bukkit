@@ -1,11 +1,12 @@
 package me.botsko.prism;
 
+import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
 import me.botsko.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.bridge.PrismBlockEditSessionFactory;
+import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.*;
@@ -311,7 +312,7 @@ public class Prism extends JavaPlugin {
         DataSource pool = null;
 
         final String dns = "jdbc:mysql://" + config.getString( "prism.mysql.hostname" ) + ":"
-                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" );
+                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8";
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
@@ -683,8 +684,15 @@ public class Prism extends JavaPlugin {
         final Plugin we = getServer().getPluginManager().getPlugin( "WorldEdit" );
         if( we != null ) {
             plugin_worldEdit = (WorldEditPlugin) we;
-            PrismBlockEditSessionFactory.initialize();
-            log( "WorldEdit found. Associated features enabled." );
+            
+            //Easier and foolproof way.
+            try { 
+                WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
+                log( "WorldEdit found. Associated features enabled." );
+            } catch (Throwable error) {
+                log( "Required WorldEdit version is 6.0.0 or greater! Certain optional features of Prism disabled." );
+            }
+            
         } else {
             log( "WorldEdit not found. Certain optional features of Prism disabled." );
         }
