@@ -43,14 +43,14 @@ public interface Handler {
     public abstract String getDisplayTime();
 
     /**
-     * @param display_time
-     *            the display_time to set
+     * @param epoch  the display_time to set
+     *
      */
     public abstract void setUnixEpoch(String epoch);
 
     /**
      * 
-     * @return
+     * @return the time since
      */
     public abstract String getTimeSince();
 

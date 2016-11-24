@@ -72,9 +72,10 @@ public class ItemStackAction extends GenericAction {
 
     /**
      * 
-     * @param action_type
-     * @param block
-     * @param player
+     * @param item the item
+     * @param quantity qty
+     * @param enchantments enchants
+     * @param slot  eq slot
      */
     public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
 

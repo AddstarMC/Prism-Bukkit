@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.PrismConfig;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
@@ -147,7 +146,7 @@ public class RecordingTask implements Runnable {
 
                 Prism.debug( "Beginning batch insert from queue. " + System.currentTimeMillis() );
 
-                final ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
+                final ArrayList<Handler> extraDataQueue = new ArrayList<>();
                 conn = Prism.dbc();
 
                 // Handle dead connections

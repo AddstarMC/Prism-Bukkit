@@ -44,11 +44,11 @@ public class ReportCommand implements SubHandler {
      */
     public ReportCommand(Prism plugin) {
         this.plugin = plugin;
-        secondaries = new ArrayList<String>();
+        secondaries = new ArrayList<>();
         secondaries.add( "queue" );
         secondaries.add( "db" );
         secondaries.add( "sum" );
-        sumTertiaries = new ArrayList<String>();
+        sumTertiaries = new ArrayList<>();
         sumTertiaries.add( "blocks" );
         sumTertiaries.add( "actions" );
     }
@@ -193,7 +193,7 @@ public class ReportCommand implements SubHandler {
 
     /**
      * 
-     * @param sender
+     * @param call Callinfo
      */
     protected void blockSumReports(final CallInfo call) {
 
@@ -301,7 +301,8 @@ public class ReportCommand implements SubHandler {
 
     /**
      * 
-     * @param sender
+     * @param call
+     *
      */
     protected void actionTypeCountReport(final CallInfo call) {
 

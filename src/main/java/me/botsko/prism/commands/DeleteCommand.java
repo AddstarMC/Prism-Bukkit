@@ -125,7 +125,7 @@ public class DeleteCommand implements SubHandler {
             callback.setSender( call.getSender() );
 
             // add to an arraylist so we're consistent
-            final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
+            final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
             paramList.add( parameters );
 
             Prism.log( "Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db..." );

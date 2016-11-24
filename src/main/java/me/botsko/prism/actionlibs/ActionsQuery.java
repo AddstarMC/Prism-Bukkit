@@ -81,7 +81,7 @@ public class ActionsQuery {
         }
 
         // Pull results
-        final List<Handler> actions = new ArrayList<Handler>();
+        final List<Handler> actions = new ArrayList<>();
 
         // Build conditions based off final args
         final String query = qb.getQuery( parameters, shouldGroup );

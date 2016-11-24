@@ -33,7 +33,7 @@ public class Executor implements CommandExecutor, TabCompleter {
     /**
 	 * 
 	 */
-    public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
+    public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<>();
 
     /**
      * 

@@ -48,7 +48,7 @@ public class PlayerIdentification {
      * Runs during PlayerJoin events, so it will never be for a fake/null
      * player.
      *
-     * @param player
+     * @param playerName
      */
     public static PrismPlayer cachePrismPlayer( final String playerName ){
 
@@ -102,8 +102,8 @@ public class PlayerIdentification {
      *
      * Used by the recorder in determining proper foreign key
      *
-     * @param playerName
-     * @return
+     * @param player the Player
+     * @return PrismPlayer the prism player
      */
     public static PrismPlayer getPrismPlayer( Player player ){
 
@@ -173,7 +173,7 @@ public class PlayerIdentification {
 
     /**
      * Converts UUID to a string ready for use against database
-     * @param player
+     * @param id UUID
      */
     protected static String uuidToDbString( UUID id ){
         return id.toString().replace("-", "");
@@ -182,7 +182,7 @@ public class PlayerIdentification {
 
     /**
      * Converts UUID to a string ready for use against database
-     * @param player
+     * @param uuid String
      */
     protected static UUID uuidFromDbString( String uuid ){
         // Positions need to be -2

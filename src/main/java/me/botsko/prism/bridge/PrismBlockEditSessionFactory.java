@@ -6,19 +6,17 @@ import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.LocalWorld;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bags.BlockBag;
-import com.sk89q.worldedit.entity.Player;
-import com.sk89q.worldedit.world.World;
 
 public class PrismBlockEditSessionFactory extends EditSessionFactory {
 
     /**
-	 * 
+	 *
 	 */
     @Override
     public EditSession getEditSession(LocalWorld world, int maxBlocks, LocalPlayer player) {
         return new PrismBlockEditSession( world, maxBlocks, player );
     }
-    
+
     @Override
     public EditSession getEditSession(LocalWorld world, int maxBlocks, com.sk89q.worldedit.extent.inventory.BlockBag blockBag, LocalPlayer player) {
     	return new PrismBlockEditSession( world, maxBlocks, blockBag, player );

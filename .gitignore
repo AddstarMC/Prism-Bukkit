@@ -14,8 +14,6 @@ dependency-reduced-pom.xml
 *.swp
 *.vi
 *~
-pass.txt
-
 # OS or Editor folders
 .DS_Store
 .cache
@@ -44,9 +42,6 @@ publish
 
 # Eclipse stuff
 .classpath
-.project
-.settings
-nbproject
 build.xml
 target
 
@@ -57,6 +52,3 @@ dist
 manifest.mf
 
 # Mac filesystem dust
-.DS_Store
-
-

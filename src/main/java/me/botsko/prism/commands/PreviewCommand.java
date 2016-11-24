@@ -29,7 +29,7 @@ public class PreviewCommand implements SubHandler {
      */
     public PreviewCommand(Prism plugin) {
         this.plugin = plugin;
-        secondaries = new ArrayList<String>();
+        secondaries = new ArrayList<>();
         secondaries.add( "apply" );
         secondaries.add( "cancel" );
         secondaries.add( "rollback" );

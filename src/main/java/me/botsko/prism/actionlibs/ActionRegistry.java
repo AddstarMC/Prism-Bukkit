@@ -15,7 +15,7 @@ public class ActionRegistry {
     /**
 	 * 
 	 */
-    private final TreeMap<String, ActionType> registeredActions = new TreeMap<String, ActionType>();
+    private final TreeMap<String, ActionType> registeredActions = new TreeMap<>();
 
     /**
 	 * 
@@ -83,7 +83,7 @@ public class ActionRegistry {
      * @return
      */
     public ArrayList<ActionType> getActionsByShortname(String name) {
-        final ArrayList<ActionType> actions = new ArrayList<ActionType>();
+        final ArrayList<ActionType> actions = new ArrayList<>();
         for ( final Entry<String, ActionType> entry : registeredActions.entrySet() ) {
             // Match either the name or the short name
             if( entry.getValue().getFamilyName().equals( name ) || entry.getValue().getShortName().equals( name )
@@ -113,7 +113,7 @@ public class ActionRegistry {
      * @return
      */
     public ArrayList<String> listActionsThatAllowRollback() {
-        final ArrayList<String> names = new ArrayList<String>();
+        final ArrayList<String> names = new ArrayList<>();
         for ( final Entry<String, ActionType> entry : registeredActions.entrySet() ) {
             if( entry.getValue().canRollback() ) {
                 names.add( entry.getKey() );
@@ -127,7 +127,7 @@ public class ActionRegistry {
      * @return
      */
     public ArrayList<String> listActionsThatAllowRestore() {
-        final ArrayList<String> names = new ArrayList<String>();
+        final ArrayList<String> names = new ArrayList<>();
         for ( final Entry<String, ActionType> entry : registeredActions.entrySet() ) {
             if( entry.getValue().canRestore() ) {
                 names.add( entry.getKey() );

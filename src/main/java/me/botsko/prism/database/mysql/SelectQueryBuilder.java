@@ -131,7 +131,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
-        final ArrayList<String> prismActionIds = new ArrayList<String>();
+        final ArrayList<String> prismActionIds = new ArrayList<>();
         for ( final Entry<String, Integer> entry : Prism.prismActions.entrySet() ) {
             if( entry.getKey().contains( "prism" ) ) {
                 containsPrismProcessType = true;
@@ -142,8 +142,8 @@ public class SelectQueryBuilder extends QueryBuilder {
         // scan whitelist of given actions
         if( action_types.size() > 0 ) {
 
-            final ArrayList<String> includeIds = new ArrayList<String>();
-            final ArrayList<String> excludeIds = new ArrayList<String>();
+            final ArrayList<String> includeIds = new ArrayList<>();
+            final ArrayList<String> excludeIds = new ArrayList<>();
             for ( final Entry<String, MatchRule> entry : action_types.entrySet() ) {
                 if( entry.getValue().equals( MatchRule.INCLUDE ) ) {
                     includeIds.add( "" + Prism.prismActions.get( entry.getKey() ) );
@@ -356,9 +356,9 @@ public class SelectQueryBuilder extends QueryBuilder {
         String query = "";
         if( !origValues.isEmpty() ) {
 
-            final ArrayList<String> whereIs = new ArrayList<String>();
-            final ArrayList<String> whereNot = new ArrayList<String>();
-            final ArrayList<String> whereIsLike = new ArrayList<String>();
+            final ArrayList<String> whereIs = new ArrayList<>();
+            final ArrayList<String> whereNot = new ArrayList<>();
+            final ArrayList<String> whereIsLike = new ArrayList<>();
             for ( final Entry<String, MatchRule> entry : origValues.entrySet() ) {
                 if( entry.getValue().equals( MatchRule.EXCLUDE ) ) {
                     whereNot.add( entry.getKey() );

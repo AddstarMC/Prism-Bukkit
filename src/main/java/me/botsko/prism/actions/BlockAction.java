@@ -388,9 +388,7 @@ public class BlockAction extends GenericAction {
             block.setTypeId( getBlockId() );
             block.setData( (byte) getBlockSubId() );
 
-            /**
-             * Skulls
-             */
+            //Skulls
             if( ( getBlockId() == 144 || getBlockId() == 397 ) && getActionData() instanceof SkullActionData ) {
 
                 final SkullActionData s = (SkullActionData) getActionData();
@@ -406,9 +404,7 @@ public class BlockAction extends GenericAction {
 
             }
 
-            /**
-             * Spawner
-             */
+            //Spawner
             if( getBlockId() == 52 ) {
 
                 final SpawnerActionData s = (SpawnerActionData) getActionData();
@@ -421,18 +417,17 @@ public class BlockAction extends GenericAction {
 
             }
 
-            /**
-             * Restoring command block
-             */
+
+             //Restoring command block
             if( getBlockId() == 137 ) {
                 final CommandBlock cmdblock = (CommandBlock) block.getState();
                 cmdblock.setCommand( data );
                 cmdblock.update();
             }
 
-            /**
-             * Signs
-             */
+
+             //Signs
+
             if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
                     && ( getBlockId() == 63 || getBlockId() == 68 ) && getActionData() instanceof SignActionData ) {
 
@@ -459,9 +454,7 @@ public class BlockAction extends GenericAction {
                 }
             }
 
-            /**
-             * Banners
-             */
+             // Banners
             if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
             		&& ( getBlockId() == 176 || getBlockId() == 177 ) && getActionData() instanceof BannerActionData ) {
 
@@ -472,7 +465,7 @@ public class BlockAction extends GenericAction {
 					final Banner banner = (Banner) block.getState();
 					int i = 0;
 					if( s.patterns != null && s.patterns.length > 0 ) {
-						ArrayList <Pattern> patterns = new ArrayList<Pattern>();
+						ArrayList <Pattern> patterns = new ArrayList<>();
 						DyeColor tmpcolor = DyeColor.BLACK;
 						PatternType tmppattern;
 						for ( final String pattern : s.patterns ) {

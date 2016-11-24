@@ -62,14 +62,14 @@ public class Prism extends JavaPlugin {
     private static MaterialAliases items;
     private Language language;
     private static Logger log = Logger.getLogger( "Minecraft" );
-    private final ArrayList<String> enabledPlugins = new ArrayList<String>();
+    private final ArrayList<String> enabledPlugins = new ArrayList<>();
     private static ActionRegistry actionRegistry;
     private static HandlerRegistry<?> handlerRegistry;
     private static Ignore ignore;
     protected static ArrayList<Integer> illegalBlocks;
     protected static ArrayList<String> illegalEntities;
-    protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
-    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
+    protected static HashMap<String, String> alertedOres = new HashMap<>();
+    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor( 1 );
     private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor( 1 );
     // private ScheduledFuture<?> scheduledPurgeExecutor;
@@ -85,11 +85,11 @@ public class Prism extends JavaPlugin {
     public ActionsQuery actionsQuery;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<String, Wand>();
-    public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<String, PreviewSession>();
-    public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<String, ArrayList<Block>>();
-    public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String, QueryResult>();
-    public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<Location, Long>();
+    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
     public TimeTaken eventTimer;
     public QueueStats queueStats;
     public BukkitTask recordingTask;
@@ -98,23 +98,23 @@ public class Prism extends JavaPlugin {
     /**
      * DB Foreign key caches
      */
-    public static HashMap<String, Integer> prismWorlds = new HashMap<String, Integer>();
-    public static HashMap<UUID,PrismPlayer> prismPlayers = new HashMap<UUID,PrismPlayer>();
-    public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
+    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+    public static HashMap<UUID,PrismPlayer> prismPlayers = new HashMap<>();
+    public static HashMap<String, Integer> prismActions = new HashMap<>();
 
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that when
      * they do fall we can attribute them to the player who broke the original
      * block.
      */
-    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
 
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so
      * we need to track players right-clicking rails with minecart vehicles, or
      * water for boats
      */
-    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
 
     /**
      * Enables the plugin and activates our player listeners

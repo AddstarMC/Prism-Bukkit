@@ -28,8 +28,8 @@ public class BlockReportQueryBuilder extends SelectQueryBuilder {
         this.shouldGroup = shouldGroup;
 
         // Reset
-        columns = new ArrayList<String>();
-        conditions = new ArrayList<String>();
+        columns = new ArrayList<>();
+        conditions = new ArrayList<>();
 
         String query = select();
 

@@ -54,7 +54,7 @@ public class PlayerParameter extends SimplePrismParameterHandler {
             partialName = partialName.substring( end + 1 );
         }
         partialName = partialName.toLowerCase();
-        final List<String> completions = new ArrayList<String>();
+        final List<String> completions = new ArrayList<>();
         for ( final Player player : Bukkit.getOnlinePlayers() ) {
             if( player.getName().toLowerCase().startsWith( partialName ) )
                 completions.add( prefix + player.getName() );

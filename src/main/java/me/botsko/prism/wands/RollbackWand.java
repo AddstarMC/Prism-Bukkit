@@ -53,7 +53,7 @@ public class RollbackWand extends QueryWandBase implements Wand {
     /**
      * 
      * @param player
-     * @param block
+     * @param loc   the location
      */
     protected void rollback(Player player, Location loc) {
 

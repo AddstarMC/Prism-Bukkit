@@ -38,7 +38,7 @@ public class ActionsCommand implements SubHandler {
         sender.sendMessage( Prism.messenger.playerHeaderMsg( ChatColor.GOLD + "--- Actions List ---" ) );
 
         // Build short list
-        final ArrayList<String> shortNames = new ArrayList<String>();
+        final ArrayList<String> shortNames = new ArrayList<>();
         final TreeMap<String, ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
         for ( final Entry<String, ActionType> entry : actions.entrySet() ) {
             if( entry.getKey().contains( "prism" ) )

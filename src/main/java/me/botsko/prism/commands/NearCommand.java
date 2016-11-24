@@ -31,6 +31,9 @@ public class NearCommand implements SubHandler {
 
     /**
      * Handle the command
+     *
+     * Run the lookup itself in an async task so the lookup query isn't done
+     * on the main thread
      */
     @Override
     public void handle(final CallInfo call) {
@@ -67,10 +70,7 @@ public class NearCommand implements SubHandler {
         parameters.setMinMaxVectorsFromPlayerLocation( call.getPlayer().getLocation() );
         parameters.setLimit( plugin.getConfig().getInt( "prism.near.max-results" ) );
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
-         */
+
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override
             public void run() {
