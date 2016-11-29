@@ -105,27 +105,27 @@ public class HangingItemAction extends GenericAction {
 	 */
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
-        final BlockFace attachedFace = getDirection();
+        final BlockFace attachedFace = getDirection().getOppositeFace();
 
-        final Location loc = new Location( getWorld(), getX(), getY(), getZ() ).getBlock().getRelative( getDirection() )
-                .getLocation();
+        final Location loc = new Location( getWorld(), getX(), getY(), getZ() );
 
-        // Ensure there's a block at this location that accepts an attachment
-        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
+        //Ensure there's a block at this location that accepts an attachment
+        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getRelative( getDirection() ).getLocation().getBlock().getType() ) ) { return new ChangeResult(
                 ChangeResultType.SKIPPED, null ); }
 
         try {
             if( getHangingType().equals( "item_frame" ) ) {
                 final Hanging hangingItem = getWorld().spawn( loc, ItemFrame.class );
-                hangingItem.setFacingDirection( attachedFace, true );
+                hangingItem.setFacingDirection( attachedFace, true );       
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             } else if( getHangingType().equals( "painting" ) ) {
                 final Hanging hangingItem = getWorld().spawn( loc, Painting.class );
-                hangingItem.setFacingDirection( getDirection(), true );
+                hangingItem.setFacingDirection( getDirection(), true );      
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             }
         } catch ( final IllegalArgumentException e ) {
-            // Something interfered with being able to place the painting
+            //e.printStackTrace();
+            //Something interfered with being able to place the painting
         }
         return new ChangeResult( ChangeResultType.SKIPPED, null );
     }
