@@ -332,7 +332,7 @@ public class SelectQueryBuilder extends QueryBuilder {
     @Override
     protected String order() {
         final String sort_dir = parameters.getSortDirection();
-        return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", x ASC, z ASC, y ASC, id " + sort_dir;
+        return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", id " + sort_dir;
     }
 
     /**
