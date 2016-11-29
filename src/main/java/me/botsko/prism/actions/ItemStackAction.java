@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
@@ -396,31 +397,21 @@ public class ItemStackAction extends GenericAction {
                     final InventoryHolder ih = (InventoryHolder) block.getState();
                     inventory = ih.getInventory();
                 } else {
-                  
-                    Entity[] foundEntities = block.getChunk().getEntities();
-                    if(foundEntities.length > 0){
-                        for(Entity e : foundEntities){
-                            if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
-                            // Some modded servers seems to list entities in the chunk
-                            // that exists in other worlds. No idea why but we can at
-                            // least check for it.
-                            // https://snowy-evening.com/botsko/prism/318/
-                            if( !block.getWorld().equals( e.getWorld() ) ) continue;
-                            // Let's limit this to only entities within 1 block of the current.
-                            Prism.debug( block.getLocation() );
-                            Prism.debug( e.getLocation() );
-                            if( block.getLocation().distance( e.getLocation() ) < 2 ){
-                                final ItemFrame frame = (ItemFrame) e;
-                                
-                                if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
-                                    frame.setItem( item );
-                                } else {
-                                    frame.setItem( null );
-                                }
-                                result = ChangeResultType.APPLIED;
-                            }
-                        }
-                    }
+                  final Location loc = new Location( getWorld(), getX() + 0.5 , getY() + 0.5, getZ() + 0.5 );
+                  for (Entity e : loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5)) {
+                      if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
+                      if( !block.getWorld().equals( e.getWorld() ) ) continue;
+                      Prism.debug( block.getLocation() );
+                      Prism.debug( e.getLocation() );
+                      final ItemFrame frame = (ItemFrame) e;
+                      if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
+                        frame.setItem( item );
+                      } else {
+                        frame.setItem( null );
+                      }
+                      result = ChangeResultType.APPLIED;
+                      break;
+                  }
                 }
             }
 
