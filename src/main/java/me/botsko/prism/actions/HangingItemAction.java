@@ -105,13 +105,12 @@ public class HangingItemAction extends GenericAction {
 	 */
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
-        final BlockFace attachedFace = getDirection();
+        final BlockFace attachedFace = getDirection().getOppositeFace();
 
-        final Location loc = new Location( getWorld(), getX(), getY(), getZ() ).getBlock().getRelative( getDirection() )
-                .getLocation();
+        final Location loc = new Location( getWorld(), getX(), getY(), getZ() );
 
         // Ensure there's a block at this location that accepts an attachment
-        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
+        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getRelative( getDirection() ).getLocation().getBlock().getType() ) ) { return new ChangeResult(
                 ChangeResultType.SKIPPED, null ); }
 
         try {
@@ -125,6 +124,7 @@ public class HangingItemAction extends GenericAction {
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             }
         } catch ( final IllegalArgumentException e ) {
+            e.printStackTrace();
             // Something interfered with being able to place the painting
         }
         return new ChangeResult( ChangeResultType.SKIPPED, null );
