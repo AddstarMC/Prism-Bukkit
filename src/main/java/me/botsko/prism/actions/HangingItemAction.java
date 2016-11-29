@@ -124,7 +124,7 @@ public class HangingItemAction extends GenericAction {
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             }
         } catch ( final IllegalArgumentException e ) {
-            e.printStackTrace();
+            //e.printStackTrace();
             // Something interfered with being able to place the painting
         }
         return new ChangeResult( ChangeResultType.SKIPPED, null );
