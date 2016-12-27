@@ -471,6 +471,12 @@ public class Prism extends JavaPlugin {
                     + "UNIQUE KEY `player_uuid` (`player_uuid`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
+            ResultSet rs = conn.getMetaData().getColumns(null, null, prefix+"players", "player_uuid");
+            if (!rs.next()) {
+                st.executeUpdate("ALTER TABLE " + prefix + "players ADD COLUMN "
+                        + "player_uuid" + " BINARY(16) NOT NULL;");
+            }
+            rs.close();
 
             // worlds
             query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
