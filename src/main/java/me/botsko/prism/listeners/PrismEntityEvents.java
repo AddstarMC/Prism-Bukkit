@@ -55,7 +55,7 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
-import us.dhmc.elixr.DeathUtils;
+import com.helion3.prism.libs.elixr.DeathUtils;
 
 public class PrismEntityEvents implements Listener {
 
@@ -713,7 +713,7 @@ public class PrismEntityEvents implements Listener {
             }
 
             // Change handling a bit if it's a long block
-            final Block sibling = us.dhmc.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+            final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
             if( sibling != null && !block.getType().equals( Material.CHEST )
                     && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
                 block = sibling;

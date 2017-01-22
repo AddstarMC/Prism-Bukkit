@@ -3,7 +3,7 @@ package me.botsko.prism;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-import us.dhmc.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditHandler;

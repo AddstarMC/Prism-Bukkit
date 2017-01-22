@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import us.dhmc.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;

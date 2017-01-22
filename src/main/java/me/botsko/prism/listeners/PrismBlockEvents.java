@@ -86,7 +86,7 @@ public class PrismBlockEvents implements Listener {
         if( BlockUtils.isDoor(block.getType()) ) { return; }
 
         // Find a list of all blocks above this block that we know will fall.
-        final ArrayList<Block> falling_blocks = us.dhmc.elixr.BlockUtils.findFallingBlocksAboveBlock( block );
+        final ArrayList<Block> falling_blocks = com.helion3.prism.libs.elixr.BlockUtils.findFallingBlocksAboveBlock( block );
         if( falling_blocks.size() > 0 ) {
             for ( final Block b : falling_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, playername) );
@@ -101,7 +101,7 @@ public class PrismBlockEvents implements Listener {
         // if it's a piston, the base will break without a physics events
         if( block.getType().equals( Material.PISTON_EXTENSION )
                 || block.getType().equals( Material.PISTON_MOVING_PIECE ) ) {
-            final ArrayList<Block> pistonBases = us.dhmc.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
+            final ArrayList<Block> pistonBases = com.helion3.prism.libs.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
             if( pistonBases.size() > 0 ) {
                 for ( final Block p : pistonBases ) {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", p, playername) );
@@ -110,7 +110,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of side-face attached blocks that will detach
-        ArrayList<Block> detached_blocks = us.dhmc.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
+        ArrayList<Block> detached_blocks = com.helion3.prism.libs.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
         if( detached_blocks.size() > 0 ) {
             for ( final Block b : detached_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
@@ -118,7 +118,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of top-side attached blocks that will detach
-        detached_blocks = us.dhmc.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
+        detached_blocks = com.helion3.prism.libs.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
         if( detached_blocks.size() > 0 ) {
             for ( final Block b : detached_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
@@ -126,7 +126,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = us.dhmc.elixr.BlockUtils.findHangingEntities( block );
+        final ArrayList<Entity> hanging = com.helion3.prism.libs.elixr.BlockUtils.findHangingEntities( block );
         if( hanging.size() > 0 ) {
             for ( final Entity e : hanging ) {
                 final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
@@ -158,7 +158,7 @@ public class PrismBlockEvents implements Listener {
             return;
 
         // Change handling a bit if it's a long block
-        final Block sibling = us.dhmc.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+        final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
         if( sibling != null && !block.getType().equals( Material.CHEST )
                 && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
             block = sibling;
@@ -176,7 +176,7 @@ public class PrismBlockEvents implements Listener {
 
         // if obsidian, log portal blocks
         if( block.getType().equals( Material.OBSIDIAN ) ) {
-            final ArrayList<Block> blocks = us.dhmc.elixr.BlockUtils.findConnectedBlocksOfType( Material.PORTAL,
+            final ArrayList<Block> blocks = com.helion3.prism.libs.elixr.BlockUtils.findConnectedBlocksOfType( Material.PORTAL,
                     block, null );
             if( !blocks.isEmpty() ) {
                 // Only log 1 portal break, we don't need all 8
@@ -302,7 +302,7 @@ public class PrismBlockEvents implements Listener {
         RecordingQueue.addToQueue( ActionFactory.createBlock("block-burn", block, "Environment") );
 
         // Change handling a bit if it's a long block
-        final Block sibling = us.dhmc.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+        final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
         if( sibling != null && !block.getType().equals( Material.CHEST )
                 && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
             block = sibling;
@@ -457,7 +457,7 @@ public class PrismBlockEvents implements Listener {
         final BlockState to = event.getToBlock().getState();
 
         // Watch for blocks that the liquid can break
-        if( us.dhmc.elixr.BlockUtils.canFlowBreakMaterial( to.getType() ) ) {
+        if( com.helion3.prism.libs.elixr.BlockUtils.canFlowBreakMaterial( to.getType() ) ) {
             if( from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER ) {
                 if( Prism.getIgnore().event( "water-break", event.getBlock() ) ) {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("water-break", event.getToBlock(), "Water") );

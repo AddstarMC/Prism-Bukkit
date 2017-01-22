@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import us.dhmc.elixr.InventoryUtils;
+import com.helion3.prism.libs.elixr.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -337,7 +337,7 @@ public class ItemStackAction extends GenericAction {
     public String getNiceName() {
         String name = "";
         if( item != null ) {
-            final String fullItemName = us.dhmc.elixr.ItemUtils.getItemFullNiceName( item );
+            final String fullItemName = com.helion3.prism.libs.elixr.ItemUtils.getItemFullNiceName( item );
             name = actionData.amt + " " + fullItemName;
         }
         return name;
@@ -545,7 +545,7 @@ public class ItemStackAction extends GenericAction {
 
                     // If the item was removed and it's a drop type, re-drop it
                     if( removed && ( n.equals( "item-drop" ) || n.equals( "item-pickup" ) ) ) {
-                        us.dhmc.elixr.ItemUtils.dropItem( getLoc(), getItem() );
+                        com.helion3.prism.libs.elixr.ItemUtils.dropItem( getLoc(), getItem() );
                     }
                 }
             }

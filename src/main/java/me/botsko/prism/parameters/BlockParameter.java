@@ -1,8 +1,8 @@
 package me.botsko.prism.parameters;
 
-import us.dhmc.elixr.ItemUtils;
-import us.dhmc.elixr.MaterialAliases;
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.ItemUtils;
+import com.helion3.prism.libs.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;

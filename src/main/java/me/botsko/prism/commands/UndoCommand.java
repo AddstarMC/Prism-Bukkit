@@ -17,7 +17,7 @@ import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 
 public class UndoCommand implements SubHandler {
 

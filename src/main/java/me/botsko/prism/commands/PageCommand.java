@@ -15,7 +15,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 
 public class PageCommand implements SubHandler {
 

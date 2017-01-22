@@ -1,6 +1,6 @@
 package me.botsko.prism.utils;
 
-public class ItemUtils extends us.dhmc.elixr.ItemUtils {
+public class ItemUtils extends com.helion3.prism.libs.elixr.ItemUtils {
 
     /**
      * 

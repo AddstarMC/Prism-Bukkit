@@ -11,7 +11,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 
-public class BlockUtils extends us.dhmc.elixr.BlockUtils {
+public class BlockUtils extends com.helion3.prism.libs.elixr.BlockUtils {
 
     /**
      * There are some blocks that are broken in an "on" state. Rather than

@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 import org.bukkit.plugin.Plugin;
 
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.exceptions.InvalidActionException;
 

@@ -1,7 +1,7 @@
 package me.botsko.prism.parameters;
 
-import us.dhmc.elixr.ChunkUtils;
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.ChunkUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;

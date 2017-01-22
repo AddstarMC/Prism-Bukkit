@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import us.dhmc.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;

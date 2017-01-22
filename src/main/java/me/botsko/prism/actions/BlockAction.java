@@ -2,7 +2,7 @@ package me.botsko.prism.actions;
 
 import java.util.ArrayList;
 
-import us.dhmc.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -332,7 +332,7 @@ public class BlockAction extends GenericAction {
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
         if( !getType().requiresHandler( "BlockChangeAction" ) && !getType().requiresHandler( "PrismRollbackAction" ) ) {
-            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+            if( !com.helion3.prism.libs.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) {
                 // System.out.print("Block skipped due to being unaccaptable for block place.");
                 return new ChangeResult( ChangeResultType.SKIPPED, null );
@@ -368,7 +368,7 @@ public class BlockAction extends GenericAction {
 
             // If portal, we need to light the portal. seems to be the only way.
             if( getBlockId() == 90 ) {
-                final Block obsidian = us.dhmc.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
+                final Block obsidian = com.helion3.prism.libs.elixr.BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
                         block.getLocation() );
                 if( obsidian != null ) {
                     final Block above = obsidian.getRelative( BlockFace.UP );
@@ -500,7 +500,7 @@ public class BlockAction extends GenericAction {
             // This may need to go before setting the block, but I prefer the
             // BlockUtil
             // logic to use materials.
-            if( us.dhmc.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
+            if( com.helion3.prism.libs.elixr.BlockUtils.materialRequiresSoil( block.getType() ) ) {
                 final Block below = block.getRelative( BlockFace.DOWN );
                 if( below.getType().equals( Material.DIRT ) || below.getType().equals( Material.AIR )
                         || below.getType().equals( Material.GRASS ) ) {
@@ -564,8 +564,8 @@ public class BlockAction extends GenericAction {
         if( !block.getType().equals( Material.AIR ) ) {
 
             // Ensure it's acceptable to remove the current block
-            if( !us.dhmc.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    && !us.dhmc.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
+            if( !com.helion3.prism.libs.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    && !com.helion3.prism.libs.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) { return new ChangeResult( ChangeResultType.SKIPPED,
                     null ); }
 
