@@ -304,9 +304,9 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Entity> findAttachedHangingEntities( final Block block ){
+	public static ArrayList<Hanging> findAttachedHangingEntities( final Block block ){
 		
-		ArrayList<Entity> entities = new ArrayList<Entity>();
+		ArrayList<Hanging> entities = new ArrayList<>();
 
 		Collection<Entity> foundEntities = block.getWorld().getNearbyEntities(block.getLocation(), 1.5, 1.5, 1.5);
 		for (Entity e : foundEntities) {
@@ -323,7 +323,7 @@ public class BlockUtils {
 
 			// Only get hanging entities actually attached to this block
 			if (e.getLocation().getBlock().getRelative(attachedFace).equals(block)) {
-				entities.add(e);
+				entities.add(hangingEntity);
 			}
 		}
 		
@@ -699,13 +699,16 @@ public class BlockUtils {
 				return false;
 		}
 	}
-    
-    
-    /**
+
+
+	/**
+	 *
+	 * @param type
 	 * @param currBlock
-	 * @param toBeFelled
+	 * @param foundLocations
+	 * @return
 	 */
-    public static ArrayList<Block> findConnectedBlocksOfType( Material type, Block currBlock, ArrayList<Location> foundLocations ) {
+	public static ArrayList<Block> findConnectedBlocksOfType( Material type, Block currBlock, ArrayList<Location> foundLocations ) {
     	
     	ArrayList<Block> foundBlocks = new ArrayList<Block>();
     	

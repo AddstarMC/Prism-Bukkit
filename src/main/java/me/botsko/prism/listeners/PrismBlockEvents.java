@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Jukebox;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -126,9 +127,9 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = com.helion3.prism.libs.elixr.BlockUtils.findAttachedHangingEntities( block );
+        final ArrayList<Hanging> hanging = BlockUtils.findAttachedHangingEntities( block );
         if( hanging.size() > 0 ) {
-            for ( final Entity e : hanging ) {
+            for ( final Hanging e : hanging ) {
                 final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
                         + e.getLocation().getBlockZ();
                 plugin.preplannedBlockFalls.put( coord_key, playername );
