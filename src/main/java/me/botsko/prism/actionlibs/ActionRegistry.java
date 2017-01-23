@@ -183,7 +183,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "item-insert", false, true, true, "ItemStackAction", "inserted" ) );
         registerAction( new ActionType( "item-pickup", false, true, true, "ItemStackAction", "picked up" ) );
         registerAction( new ActionType( "item-remove", false, true, true, "ItemStackAction", "removed" ) );
-        registerAction( new ActionType( "item-rotate", false, false, false, "UseAction", "turned item" ) );
+        registerAction( new ActionType( "item-rotate", false, true, true, "HangingItemAction", "turned item" ) );
         registerAction( new ActionType( "lava-break", false, true, true, "BlockAction", "broke" ) );
         registerAction( new ActionType( "lava-bucket", true, true, true, "BlockChangeAction", "poured" ) );
         registerAction( new ActionType( "lava-flow", true, true, true, "BlockAction", "flowed into" ) );

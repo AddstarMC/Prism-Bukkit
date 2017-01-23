@@ -66,7 +66,15 @@ public class HangingItemAction extends GenericAction {
             } else if (hanging.getType().equals(EntityType.ITEM_FRAME)) {
                 final ItemFrame frame = (ItemFrame) hanging;
                 final Rotation rotation = frame.getRotation();
-                this.actionData.rotation = rotation.name().toLowerCase();
+
+                if ( getType().getName().equals("item-rotate") ) {
+                    // Don't save type for rotation events; it'll always be item frame
+                    this.actionData.type = null;
+                    // Use new rotation instead of current (old) one
+                    this.actionData.rotation = rotation.rotateClockwise().name().toLowerCase();
+                } else {
+                    this.actionData.rotation = rotation.name().toLowerCase();
+                }
             }
         }
     }
@@ -131,7 +139,24 @@ public class HangingItemAction extends GenericAction {
      */
     @Override
     public String getNiceName() {
-        return this.actionData.type != null ? this.actionData.type : data.toLowerCase();
+        if ( getType().getName().equals("item-rotate") ) {
+            // Special case for older item-rotate records
+            String rotation = this.actionData != null ? this.actionData.rotation : data.toLowerCase();
+
+            switch (rotation) {
+                case "none": return "0°";
+                case "clockwise_45": return "45°";
+                case "clockwise": return "90°";
+                case "clockwise_135": return "135°";
+                case "flipped": return "180°";
+                case "flipped_45": return "225°";
+                case "counter_clockwise": return "270°";
+                case "counter_clockwise_45": return "315°";
+                default: return rotation;
+            }
+        } else {
+            return this.actionData.type != null ? this.actionData.type : data.toLowerCase();
+        }
     }
 
     /**
@@ -209,7 +234,23 @@ public class HangingItemAction extends GenericAction {
                 }
             }
 
+        } else if ( getType().getName().equals("item-rotate") ) {
+            for ( Hanging e : BlockUtils.findHangingEntities(loc) ) {
+                if (!e.getType().equals(EntityType.ITEM_FRAME)) continue;
+
+                final ItemFrame frame = (ItemFrame) e;
+                if (!frame.getFacing().equals(facingDirection)) continue;
+
+                if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) {
+                    frame.setRotation( getRotation().rotateCounterClockwise() );
+                    return new ChangeResult( ChangeResultType.APPLIED, null );
+                } else if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
+                    frame.setRotation( getRotation().rotateClockwise() );
+                    return new ChangeResult( ChangeResultType.APPLIED, null );
+                }
+            }
         }
+
         return new ChangeResult( ChangeResultType.SKIPPED, null );
     }
 }

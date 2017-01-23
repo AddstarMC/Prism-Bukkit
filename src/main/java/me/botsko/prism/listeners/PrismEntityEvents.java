@@ -327,8 +327,7 @@ public class PrismEntityEvents implements Listener {
 
             // If held item doesn't equal existing item frame object type
             if( !frame.getItem().getType().equals( Material.AIR ) ) {
-                RecordingQueue.addToQueue( ActionFactory.createPlayer("item-rotate", event.getPlayer(), frame.getRotation()
-                        .name().toLowerCase()) );
+                RecordingQueue.addToQueue( ActionFactory.createHangingItem("item-rotate", frame, p.getName()) );
             }
 
             // Frame is empty but an item is held
