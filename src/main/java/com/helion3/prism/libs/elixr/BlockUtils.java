@@ -296,6 +296,33 @@ public class BlockUtils {
 				return false;
 		}
 	}
+
+
+	/**
+	 * Searches for hanging entities that are inside the given location
+	 *
+	 * @param loc
+	 * @return
+	 */
+	public static ArrayList<Hanging> findHangingEntities( final Location loc ) {
+
+		ArrayList<Hanging> entities = new ArrayList<>();
+
+		loc.add(0.5, 0.5, 0.5);
+		Collection<Entity> foundEntities = loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5);
+		for (Entity e : foundEntities) {
+			// Some modded servers seems to list entities in the chunk
+			// that exists in other worlds. No idea why but we can at
+			// least check for it.
+			// https://snowy-evening.com/botsko/prism/318/
+			if( !loc.getWorld().equals( e.getWorld() ) ) continue;
+			// Only check hanging entities
+			if( isHangingEntity(e) ) entities.add( (Hanging) e );
+		}
+
+		return entities;
+
+	}
 	
 	
 	/**

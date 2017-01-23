@@ -12,6 +12,7 @@ import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 
+import me.botsko.prism.utils.BlockUtils;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.block.Block;
@@ -68,10 +69,11 @@ public class ItemStackAction extends GenericAction {
     protected Map<Enchantment, Integer> enchantments;
 
     /**
-     * 
-     * @param action_type
-     * @param block
-     * @param player
+     *
+     * @param item
+     * @param quantity
+     * @param slot
+     * @param enchantments
      */
     public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
 
@@ -393,8 +395,7 @@ public class ItemStackAction extends GenericAction {
                     final InventoryHolder ih = (InventoryHolder) block.getState();
                     inventory = ih.getInventory();
                 } else {
-                    final Location loc = new Location( getWorld(), getX() + 0.5 , getY() + 0.5, getZ() + 0.5 );
-                    for (Entity e : loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5)) {
+                    for (Entity e : BlockUtils.findHangingEntities( getLoc() )) {
                         if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
                         // Some modded servers seems to list entities in the chunk
                         // that exists in other worlds. No idea why but we can at
