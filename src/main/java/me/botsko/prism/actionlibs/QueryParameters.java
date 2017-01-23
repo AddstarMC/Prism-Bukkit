@@ -455,9 +455,8 @@ public class QueryParameters implements Cloneable {
      * @return
      */
     public String getSortDirection() {
-        if( this.processType.equals( PrismProcessType.RESTORE ) ) { return "ASC"; }
-        if( this.processType.equals( PrismProcessType.ROLLBACK ) ) { return "ASC"; }
-        return "DESC";
+        if( !this.processType.equals( PrismProcessType.RESTORE ) ) { return "DESC"; }
+        return "ASC";
     }
 
     /**
