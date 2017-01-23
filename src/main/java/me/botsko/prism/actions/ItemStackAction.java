@@ -12,11 +12,8 @@ import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
@@ -396,41 +393,31 @@ public class ItemStackAction extends GenericAction {
                     final InventoryHolder ih = (InventoryHolder) block.getState();
                     inventory = ih.getInventory();
                 } else {
-                  
-                    Entity[] foundEntities = block.getChunk().getEntities();
-                    if(foundEntities.length > 0){
-                        for(Entity e : foundEntities){
-                            if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
-                            // Some modded servers seems to list entities in the chunk
-                            // that exists in other worlds. No idea why but we can at
-                            // least check for it.
-                            // https://snowy-evening.com/botsko/prism/318/
-                            if( !block.getWorld().equals( e.getWorld() ) ) continue;
-                            // Let's limit this to only entities in current block.
-                            Prism.debug( block.getLocation() );
-                            Prism.debug( e.getLocation() );
-                            if (block.getLocation().equals(e.getLocation().getBlock().getLocation())) {
-                                final ItemFrame frame = (ItemFrame) e;
-
-                                // When rolling back a:remove or restoring a:insert we should place the item into frame
-                                if ((getType().getName().equals("item-remove") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
-                                    (getType().getName().equals("item-insert") && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
-
-                                    if (frame.getItem().getType().equals(Material.AIR)) {
-                                        frame.setItem(item);
-                                        result = ChangeResultType.APPLIED;
-                                        break;
-                                    }
-                                       // When rolling back a:insert or restoring a:remove we should remove the item from frame
-                                } else if ((getType().getName().equals("item-insert") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
-                                           (getType().getName().equals("item-remove") && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
-
-                                    if (frame.getItem().equals(item)) {
-                                        frame.setItem(null);
-                                        result = ChangeResultType.APPLIED;
-                                        break;
-                                    }
-                                }
+                    final Location loc = new Location( getWorld(), getX() + 0.5 , getY() + 0.5, getZ() + 0.5 );
+                    for (Entity e : loc.getWorld().getNearbyEntities(loc, 0.5, 0.5, 0.5)) {
+                        if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
+                        // Some modded servers seems to list entities in the chunk
+                        // that exists in other worlds. No idea why but we can at
+                        // least check for it.
+                        // https://snowy-evening.com/botsko/prism/318/
+                        if( !block.getWorld().equals( e.getWorld() ) ) continue;
+                        final ItemFrame frame = (ItemFrame) e;
+                        // When rolling back a:remove or restoring a:insert we should place the item into frame
+                        if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) ||
+                            (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
+                            // Only place if item frame is empty
+                            if (frame.getItem().getType().equals(Material.AIR)) {
+                                frame.setItem(item);
+                                result = ChangeResultType.APPLIED;
+                                break;
+                            }
+                        // When rolling back a:insert or restoring a:remove we should remove the item from frame
+                        } else {
+                            // Only remove if item frame has what was placed
+                            if (frame.getItem().equals(item)) {
+                                frame.setItem(null);
+                                result = ChangeResultType.APPLIED;
+                                break;
                             }
                         }
                     }
