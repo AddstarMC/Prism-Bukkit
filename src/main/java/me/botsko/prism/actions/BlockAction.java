@@ -386,8 +386,7 @@ public class BlockAction extends GenericAction {
             }
 
             // Set the material
-            block.setTypeId( getBlockId() );
-            block.setData( (byte) getBlockSubId() );
+            block.setTypeIdAndData(getBlockId(), (byte) getBlockSubId(), false);
 
             /**
              * Skulls

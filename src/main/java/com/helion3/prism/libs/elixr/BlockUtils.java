@@ -349,6 +349,7 @@ public class BlockUtils {
 			final BlockFace attachedFace = hangingEntity.getAttachedFace();
 
 			// Only get hanging entities actually attached to this block
+			// BUG: Not accurate for paintings. Large paintings are left out by this check...
 			if (e.getLocation().getBlock().getRelative(attachedFace).equals(block)) {
 				entities.add(hangingEntity);
 			}
