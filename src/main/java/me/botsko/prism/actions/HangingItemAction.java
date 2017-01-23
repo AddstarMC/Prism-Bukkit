@@ -10,6 +10,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 
@@ -18,6 +19,7 @@ public class HangingItemAction extends GenericAction {
     public class HangingItemActionData {
         public String type;
         public String direction;
+        public String rotation;
         public String art;
     }
 
@@ -61,6 +63,10 @@ public class HangingItemAction extends GenericAction {
                 this.x = addLoc.getBlockX();
                 this.y = addLoc.getBlockY();
                 this.z = addLoc.getBlockZ();
+            } else if (hanging.getType().equals(EntityType.ITEM_FRAME)) {
+                final ItemFrame frame = (ItemFrame) hanging;
+                final Rotation rotation = frame.getRotation();
+                this.actionData.rotation = rotation.name().toLowerCase();
             }
         }
     }
@@ -99,6 +105,15 @@ public class HangingItemAction extends GenericAction {
     public BlockFace getDirection() {
         if( actionData.direction != null ) { return BlockFace.valueOf( actionData.direction.toUpperCase() ); }
         return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Rotation getRotation() {
+        if( actionData.rotation != null ) { return Rotation.valueOf( actionData.rotation.toUpperCase() ); }
+        return Rotation.NONE;
     }
 
     /**
@@ -156,9 +171,10 @@ public class HangingItemAction extends GenericAction {
             // We should place the ItemFrame or Painting
             try {
                 if( getHangingType().equals( "item_frame" ) ) {
-                    final Hanging hangingItem = getWorld().spawn( loc, ItemFrame.class );
-                    hangingItem.teleport(loc);
-                    hangingItem.setFacingDirection( facingDirection, true );
+                    final ItemFrame frame = getWorld().spawn( loc, ItemFrame.class );
+                    frame.teleport(loc);
+                    frame.setFacingDirection( facingDirection, true );
+                    frame.setRotation( getRotation() );
                     return new ChangeResult( ChangeResultType.APPLIED, null );
                 } else if( getHangingType().equals( "painting" ) ) {
                     final Hanging hangingItem = getWorld().spawn( loc, Painting.class );
