@@ -304,7 +304,7 @@ public class BlockUtils {
 	 * @param block
 	 * @return
 	 */
-	public static ArrayList<Entity> findHangingEntities( final Block block ){
+	public static ArrayList<Entity> findAttachedHangingEntities( final Block block ){
 		
 		ArrayList<Entity> entities = new ArrayList<Entity>();
 

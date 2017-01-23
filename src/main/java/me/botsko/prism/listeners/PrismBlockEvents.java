@@ -126,7 +126,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = com.helion3.prism.libs.elixr.BlockUtils.findHangingEntities( block );
+        final ArrayList<Entity> hanging = com.helion3.prism.libs.elixr.BlockUtils.findAttachedHangingEntities( block );
         if( hanging.size() > 0 ) {
             for ( final Entity e : hanging ) {
                 final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
