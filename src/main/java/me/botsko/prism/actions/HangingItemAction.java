@@ -194,35 +194,33 @@ public class HangingItemAction extends GenericAction {
 
             // We should remove the ItemFrame or Painting
             Entity[] foundEntities = loc.getChunk().getEntities();
-            if (foundEntities.length > 0) {
-                for (Entity e : foundEntities) {
-                    if (!e.getType().name().toLowerCase().equals(getHangingType()) || !loc.getWorld().equals(e.getWorld())) {
+            for (Entity e : foundEntities) {
+                if (!e.getType().name().toLowerCase().equals(getHangingType()) || !loc.getWorld().equals(e.getWorld())) {
+                }
+                if (e.getType().equals(EntityType.ITEM_FRAME) && loc.equals(e.getLocation().getBlock().getLocation())) {
+                    final ItemFrame frame = (ItemFrame) e;
+                    if (frame.getFacing().equals(facingDirection) && frame.getItem().getType().equals(Material.AIR)) {
+                        frame.remove();
+                        return new ChangeResult( ChangeResultType.APPLIED, null );
                     }
-                    if (e.getType().equals(EntityType.ITEM_FRAME) && loc.equals(e.getLocation().getBlock().getLocation())) {
-                        final ItemFrame frame = (ItemFrame) e;
-                        if (frame.getFacing().equals(facingDirection) && frame.getItem().getType().equals(Material.AIR)) {
-                            frame.remove();
-                            return new ChangeResult( ChangeResultType.APPLIED, null );
-                        }
-                    } else if (e.getType().equals(EntityType.PAINTING)) {
-                        final Painting painting = (Painting) e;
+                } else if (e.getType().equals(EntityType.PAINTING)) {
+                    final Painting painting = (Painting) e;
 
-                        // Sometimes coordinates of the painting are not equal placement coordinates.
-                        final double offsetY = -0.5;
-                        double offsetX = 0;
-                        double offsetZ = 0;
-                        if (painting.getFacing().equals(BlockFace.SOUTH)) {
-                            offsetX = -0.5;
-                        } else if (painting.getFacing().equals(BlockFace.WEST)) {
-                            offsetZ = -0.5;
-                        }
-                        final Location addLoc = painting.getLocation().add(offsetX, offsetY, offsetZ).getBlock().getLocation();
+                    // Sometimes coordinates of the painting are not equal placement coordinates.
+                    final double offsetY = -0.5;
+                    double offsetX = 0;
+                    double offsetZ = 0;
+                    if (painting.getFacing().equals(BlockFace.SOUTH)) {
+                        offsetX = -0.5;
+                    } else if (painting.getFacing().equals(BlockFace.WEST)) {
+                        offsetZ = -0.5;
+                    }
+                    final Location addLoc = painting.getLocation().add(offsetX, offsetY, offsetZ).getBlock().getLocation();
 
-                        if (addLoc.equals(painting.getLocation().getBlock().getLocation()) && painting.getFacing().equals(facingDirection) &&
-                                painting.getArt().equals(getArt())) {
-                            painting.remove();
-                            return new ChangeResult( ChangeResultType.APPLIED, null );
-                        }
+                    if (addLoc.equals(painting.getLocation().getBlock().getLocation()) && painting.getFacing().equals(facingDirection) &&
+                            painting.getArt().equals(getArt())) {
+                        painting.remove();
+                        return new ChangeResult( ChangeResultType.APPLIED, null );
                     }
                 }
             }
