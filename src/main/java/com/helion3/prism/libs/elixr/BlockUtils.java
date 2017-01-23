@@ -1,6 +1,7 @@
 package com.helion3.prism.libs.elixr;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
 import org.bukkit.material.Bed;
 
 public class BlockUtils {
@@ -297,7 +299,7 @@ public class BlockUtils {
 	
 	
 	/**
-	 * Searches for detachable entities in a
+	 * Searches for hanging entities that are attached to the given block
 	 * 
 	 * @param block
 	 * @return
@@ -305,19 +307,23 @@ public class BlockUtils {
 	public static ArrayList<Entity> findHangingEntities( final Block block ){
 		
 		ArrayList<Entity> entities = new ArrayList<Entity>();
-		
-		Entity[] foundEntities = block.getChunk().getEntities();
-		if(foundEntities.length > 0){
-			for(Entity e : foundEntities){
-				// Some modded servers seems to list entities in the chunk
-				// that exists in other worlds. No idea why but we can at
-				// least check for it.
-				// https://snowy-evening.com/botsko/prism/318/
-				if( !block.getWorld().equals( e.getWorld() ) ) continue;
-				// Let's limit this to only entities within 1 block of the current.
-				if( block.getLocation().distance( e.getLocation() ) < 2 && isHangingEntity(e) ){
-					entities.add(e);
-				}
+
+		Collection<Entity> foundEntities = block.getWorld().getNearbyEntities(block.getLocation(), 1.5, 1.5, 1.5);
+		for (Entity e : foundEntities) {
+			// Some modded servers seems to list entities in the chunk
+			// that exists in other worlds. No idea why but we can at
+			// least check for it.
+			// https://snowy-evening.com/botsko/prism/318/
+			if( !block.getWorld().equals( e.getWorld() ) ) continue;
+			// Only check hanging entities
+			if( !isHangingEntity(e) ) continue;
+
+			final Hanging hangingEntity = (Hanging) e;
+			final BlockFace attachedFace = hangingEntity.getAttachedFace();
+
+			// Only get hanging entities actually attached to this block
+			if (e.getLocation().getBlock().getRelative(attachedFace).equals(block)) {
+				entities.add(e);
 			}
 		}
 		
