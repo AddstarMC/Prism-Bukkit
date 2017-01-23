@@ -239,13 +239,14 @@ public class HangingItemAction extends GenericAction {
                 if (!e.getType().equals(EntityType.ITEM_FRAME)) continue;
 
                 final ItemFrame frame = (ItemFrame) e;
+                final Rotation rotation = frame.getRotation();
                 if (!frame.getFacing().equals(facingDirection)) continue;
 
-                if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) {
+                if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK) && rotation.equals( getRotation() )) {
                     frame.setRotation( getRotation().rotateCounterClockwise() );
                     return new ChangeResult( ChangeResultType.APPLIED, null );
-                } else if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
-                    frame.setRotation( getRotation().rotateClockwise() );
+                } else if (parameters.getProcessType().equals(PrismProcessType.RESTORE) && rotation.equals( getRotation().rotateCounterClockwise() )) {
+                    frame.setRotation( getRotation() );
                     return new ChangeResult( ChangeResultType.APPLIED, null );
                 }
             }
