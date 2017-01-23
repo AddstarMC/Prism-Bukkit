@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import com.helion3.prism.libs.elixr.BlockUtils;
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -138,14 +140,15 @@ public class HangingItemAction extends GenericAction {
 	 */
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
-        final BlockFace facingDirection = getDirection();
+        final BlockFace facingDirection = getDirection().getOppositeFace();
 
         final Location loc = new Location( getWorld(), getX(), getY(), getZ() );
         final Location locAcceptor = loc.getBlock().getRelative(facingDirection.getOppositeFace()).getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if( com.helion3.prism.libs.elixr.BlockUtils.materialMeansBlockDetachment( locAcceptor.getBlock().getType() ) ) { return new ChangeResult(
-                ChangeResultType.SKIPPED, null ); }
+        if( BlockUtils.materialMeansBlockDetachment( locAcceptor.getBlock().getType() ) ) {
+            return new ChangeResult(ChangeResultType.SKIPPED, null );
+        }
 
         if ((getType().getName().equals("hangingitem-break") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
             (getType().getName().equals("hangingitem-place") && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
@@ -153,12 +156,12 @@ public class HangingItemAction extends GenericAction {
             // We should place the ItemFrame or Painting
             try {
                 if( getHangingType().equals( "item_frame" ) ) {
-                    final Hanging hangingItem = getWorld().spawn( locAcceptor, ItemFrame.class );
+                    final Hanging hangingItem = getWorld().spawn( loc, ItemFrame.class );
                     hangingItem.teleport(loc);
                     hangingItem.setFacingDirection( facingDirection, true );
                     return new ChangeResult( ChangeResultType.APPLIED, null );
                 } else if( getHangingType().equals( "painting" ) ) {
-                    final Hanging hangingItem = getWorld().spawn( locAcceptor, Painting.class );
+                    final Hanging hangingItem = getWorld().spawn( loc, Painting.class );
                     ((Painting)hangingItem).setArt(getArt(), true);
                     hangingItem.teleport(loc);
                     hangingItem.setFacingDirection( facingDirection, true );
@@ -166,6 +169,8 @@ public class HangingItemAction extends GenericAction {
                 }
             } catch ( final IllegalArgumentException e ) {
                 // Something interfered with being able to place the painting
+                Prism.debug("Could not place item frame: " + e.getMessage());
+                Prism.debug(locAcceptor);
             }
 
         } else if ((getType().getName().equals("hangingitem-place") && parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) ||
