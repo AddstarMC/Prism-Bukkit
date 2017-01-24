@@ -406,7 +406,7 @@ public class EntityAction extends GenericAction
     @Nullable
     public ItemStack getSaddle()
     {
-        if ( Strings.isNullOrEmpty(actionData.style) )
+        if ( Strings.isNullOrEmpty(actionData.saddle) )
             return null;
 
         short data = actionData.saddleData != null
