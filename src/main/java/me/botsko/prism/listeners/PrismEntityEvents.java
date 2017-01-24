@@ -165,7 +165,7 @@ public class PrismEntityEvents implements Listener {
                                 if( i == null )
                                     continue;
                                 RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
-                                        null, entity.getLocation(), "horse") );
+                                        null, entity.getLocation(), entity.getType().name().toLowerCase()) );
                             }
                         }
                     }
