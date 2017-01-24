@@ -5,9 +5,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import org.bukkit.DyeColor;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
@@ -583,8 +581,7 @@ public class EntityAction extends GenericAction
 
             if (absHorse instanceof Horse)
             {
-                final Horse          horse = (Horse) absHorse;
-                final HorseInventory hi    = horse.getInventory();
+                final Horse horse = (Horse) absHorse;
 
                 if (getHorseColor() != null)
                     horse.setColor( getHorseColor() );
@@ -592,8 +589,10 @@ public class EntityAction extends GenericAction
                 if (getStyle() != null)
                     horse.setStyle( getStyle() );
 
-                hi.setSaddle( getSaddle() );
-                hi.setArmor( getArmor() );
+                // For some reason, HorseInventory does not like being put into its own variable.
+                // Setting anything to the referenced inventory randomly doesn't work.
+                horse.getInventory().setSaddle( getSaddle() );
+                horse.getInventory().setArmor( getArmor() );
             }
 
             if (absHorse instanceof ChestedHorse)
@@ -605,7 +604,6 @@ public class EntityAction extends GenericAction
             if (absHorse instanceof Llama)
             {
                 final Llama llama = (Llama) absHorse;
-                final LlamaInventory li = llama.getInventory();
 
                 if (getLlamaColor() != null)
                     llama.setColor( getLlamaColor() );
@@ -613,8 +611,9 @@ public class EntityAction extends GenericAction
                 if (actionData.strength > 0 && actionData.strength <= 5)
                     llama.setStrength( actionData.strength );
 
-                // TODO: Report spigot bug; setDecor isn't working
-                li.setDecor( getSaddle() );
+                // For some reason, LlamaInventory does not like being put into its own variable.
+                // Setting anything to the referenced inventory randomly doesn't work.
+                llama.getInventory().setDecor( getSaddle() );
             }
             else
                 // Llama is only horse subtype without jump
