@@ -6,19 +6,9 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
+import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Ocelot;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Sheep;
-import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.entity.Wolf;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -26,6 +16,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import org.bukkit.inventory.LlamaInventory;
 
 public class EntityAction extends GenericAction {
 
@@ -47,9 +38,11 @@ public class EntityAction extends GenericAction {
         public int maxDom;
         public double jump;
         public String saddle;
+        public String saddleData;
         public String armor;
         public double maxHealth;
         public double speed;
+        public int strength;
     }
 
     /**
@@ -150,37 +143,51 @@ public class EntityAction extends GenericAction {
             }
 
             // Horse details
-            if( entity instanceof Horse ) {
-                final Horse h = (Horse) entity;
-                this.actionData.var = h.getVariant().toString();
-                this.actionData.hColor = h.getColor().toString();
-                this.actionData.style = h.getStyle().toString();
-                this.actionData.chest = h.isCarryingChest();
-                this.actionData.dom = h.getDomestication();
-                this.actionData.maxDom = h.getMaxDomestication();
-                this.actionData.jump = h.getJumpStrength();
-                this.actionData.maxHealth = h.getMaxHealth();
-                
-                // Get speed
-                this.actionData.speed = h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
-                
-                final HorseInventory hi = h.getInventory();
+            if ( entity instanceof AbstractHorse ) {
+                final AbstractHorse absHorse = (AbstractHorse) entity;
+                this.actionData.var = absHorse.getType().toString().toUpperCase();
+                this.actionData.dom = absHorse.getDomestication();
+                this.actionData.maxDom = absHorse.getMaxDomestication();
+                this.actionData.jump = absHorse.getJumpStrength();
+                this.actionData.maxHealth = absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                this.actionData.speed = absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
 
-                if( hi.getSaddle() != null ) {
-                    this.actionData.saddle = "" + hi.getSaddle().getTypeId();
-                }
-                if( hi.getArmor() != null ) {
-                    this.actionData.armor = "" + hi.getArmor().getTypeId();
-                }
-                if ((this.actionData.var == "DONKEY" || this.actionData.var == "MULE") && hi.getSize() == 17) {
-                	this.actionData.chest = true;
+                // Due to a API regression in 1.11, it's not yet possible to set saddles for
+                // mules, donkeys, zombie and skeleton horses
+
+                if ( absHorse instanceof Horse ) {
+                    final Horse horse = (Horse) absHorse;
+                    final HorseInventory hi = horse.getInventory();
+
+                    this.actionData.hColor = horse.getColor().toString();
+                    this.actionData.style = horse.getStyle().toString();
+
+                    if( hi.getSaddle() != null ) {
+                        this.actionData.saddle = "" + hi.getSaddle().getTypeId();
+                        this.actionData.saddleData = "" + hi.getSaddle().getDurability();
+                    }
+
+                    if( hi.getArmor() != null ) {
+                        this.actionData.armor = "" + hi.getArmor().getTypeId();
+                    }
+                } else if ( absHorse instanceof ChestedHorse ) {
+                    final ChestedHorse chestHorse = (ChestedHorse) absHorse;
+                    this.actionData.chest = chestHorse.isCarryingChest();
+                } else if ( absHorse instanceof Llama ) {
+                    final Llama llama = (Llama) absHorse;
+                    final LlamaInventory li = llama.getInventory();
+
+                    this.actionData.hColor = llama.getColor().toString();
+                    this.actionData.strength = llama.getStrength();
+                    this.actionData.saddle = "" + li.getDecor().getTypeId();
+                    this.actionData.saddleData = "" + li.getDecor().getDurability();
                 }
 
                 // Owner
-                if( h.isTamed() ) {
-                    if( h.getOwner() instanceof OfflinePlayer ) {
-                        this.actionData.taming_owner = h.getOwner().getName();
-                        this.actionData.taming_owner_UUID = h.getOwner().getUniqueId();
+                if( absHorse.isTamed() ) {
+                    if( absHorse.getOwner() instanceof OfflinePlayer ) {
+                        this.actionData.taming_owner = absHorse.getOwner().getName();
+                        this.actionData.taming_owner_UUID = absHorse.getOwner().getUniqueId();
                     }
                 }
             }
