@@ -328,9 +328,9 @@ public class EntityAction extends GenericAction {
         if( actionData.color != null && !actionData.color.isEmpty() ) {
             name += actionData.color + " ";
         }
-        // if(actionData.isAdult){
-        // name += "baby ";
-        // }
+        if( !actionData.isAdult ){
+            name += "baby ";
+        }
         if( this.actionData.profession != null ) {
             name += this.actionData.profession + " ";
         }
