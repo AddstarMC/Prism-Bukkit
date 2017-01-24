@@ -534,9 +534,15 @@ public class EntityAction extends GenericAction
                 absHorse.setMaxDomestication(actionData.maxDom);
             }
 
-            // TODO: check for zeros
-            absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(actionData.maxHealth);
-            absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(actionData.speed);
+            if (actionData.maxHealth > 0)
+                absHorse
+                    .getAttribute(Attribute.GENERIC_MAX_HEALTH)
+                    .setBaseValue(actionData.maxHealth);
+
+            if (actionData.speed > 0)
+                absHorse
+                    .getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
+                    .setBaseValue(actionData.speed);
 
             if (absHorse instanceof Horse)
             {
