@@ -183,7 +183,6 @@ public class EntityAction extends GenericAction
                 if ( hi.getSaddle() != null )
                 {
                     actionData.saddle     = "" + hi.getSaddle().getTypeId();
-                    // TODO: remove for horse
                     actionData.saddleData = "" + hi.getSaddle().getDurability();
                 }
 

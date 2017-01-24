@@ -47,7 +47,6 @@ public class InspectorWand extends QueryWandBase implements Wand {
     /**
      * 
      * @param player
-     * @param block
      * @param loc
      */
     protected void showLocationHistory(final Player player, final Location loc) {

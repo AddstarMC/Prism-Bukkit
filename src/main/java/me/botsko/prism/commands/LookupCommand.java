@@ -47,6 +47,9 @@ public class LookupCommand implements SubHandler {
                 PrismProcessType.LOOKUP, 1, !plugin.getConfig().getBoolean( "prism.queries.never-use-defaults" ) );
         if( parameters == null ) { return; }
 
+        call.getSender().sendMessage(
+            Prism.messenger.playerSubduedHeaderMsg( "Preparing results; please wait up to a minute..." ) );
+
         /**
          * Run the lookup itself in an async task so the lookup query isn't done
          * on the main thread

@@ -68,6 +68,9 @@ public class NearCommand implements SubHandler {
         parameters.setMinMaxVectorsFromPlayerLocation( call.getPlayer().getLocation() );
         parameters.setLimit( plugin.getConfig().getInt( "prism.near.max-results" ) );
 
+        call.getSender().sendMessage(
+            Prism.messenger.playerSubduedHeaderMsg( "Preparing results; please wait up to a minute..." ) );
+
         /**
          * Run the lookup itself in an async task so the lookup query isn't done
          * on the main thread
