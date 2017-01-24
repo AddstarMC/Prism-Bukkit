@@ -114,6 +114,10 @@ public class EntityAction extends GenericAction
         if (entity instanceof Sheep)
             actionData.color = ((Sheep) entity).getColor().name().toLowerCase();
 
+        // Get rabbit type
+        if (entity instanceof Rabbit)
+            actionData.var = ((Rabbit) entity).getRabbitType().toString().toLowerCase();
+
         // Get color it will become
         if (dyeUsed != null)
             actionData.newColor = dyeUsed;
@@ -326,6 +330,14 @@ public class EntityAction extends GenericAction
             ? Ocelot.Type.valueOf( actionData.var.toUpperCase() )
             : null;
     }
+
+    /** @return Bukkit type of this action's rabbit */
+    @Nullable
+    public Rabbit.Type getRabbitType()
+    {
+        return actionData.var != null
+            ? Rabbit.Type.valueOf( actionData.var.toUpperCase() )
+            : null;
     }
 
     /** @return Fancy name for this entity, based on its data */
@@ -347,11 +359,29 @@ public class EntityAction extends GenericAction
         if ( !Strings.isNullOrEmpty(actionData.taming_owner) )
             name += actionData.taming_owner + "'s ";
 
-        if ( (actionData.entity_name.equals("ocelot") || actionData.entity_name.equals("horse"))
-            && actionData.var != null )
-            name += actionData.var.toLowerCase().replace( "_", " " );
-        else
-            name += actionData.entity_name;
+        // Variant names
+        String varName = "";
+        if (actionData.var != null)
+        {
+            final String cleanVarName = actionData.var.toLowerCase().replace( "_", " " );
+
+            if ( actionData.entity_name.equals("ocelot") )
+                varName += cleanVarName;
+            // Pre-1.11 horse variants
+            else if ( actionData.entity_name.equals("horse") )
+                varName += cleanVarName;
+            else if ( actionData.entity_name.equals("rabbit") )
+            {
+                if ( cleanVarName.equals("the killer bunny") )
+                    varName += "killer bunny";
+                else
+                    varName += cleanVarName + " rabbit";
+            }
+        }
+
+        name += !Strings.isNullOrEmpty(varName)
+            ? varName
+            : actionData.entity_name;
 
         if ( !Strings.isNullOrEmpty(actionData.newColor) )
             name += " " + actionData.newColor;
@@ -494,6 +524,10 @@ public class EntityAction extends GenericAction
         // Set sheep color
         if (entity instanceof Sheep && getColor() != null)
             ((Sheep) entity).setColor( getColor() );
+
+        // Set rabbit type
+        if (entity instanceof Rabbit && getRabbitType() != null)
+            ((Rabbit) entity).setRabbitType( getRabbitType() );
 
         // Set villager profession
         if (entity instanceof Villager && getProfession() != null)
