@@ -133,6 +133,27 @@
               <include>mkremins:fanciful</include>
             </includes>
           </artifactSet>
+
+          <!-- Relocate certain dependencies -->
+          <relocations>
+            <!-- Tomcat JDBC dependency -->
+            <relocation>
+              <pattern>org.apache.tomcat.jdbc</pattern>
+              <shadedPattern>com.helion3.prism.libs.org.apache.tomcat.jdbc</shadedPattern>
+            </relocation>
+
+            <!-- Tomcat JDBC JULI dependency -->
+            <relocation>
+              <pattern>org.apache.juli</pattern>
+              <shadedPattern>com.helion3.prism.libs.org.apache.juli</shadedPattern>
+            </relocation>
+
+            <!-- Fanciful dependency -->
+            <relocation>
+              <pattern>mkremins.fanciful</pattern>
+              <shadedPattern>com.helion3.prism.libs.mkremins.fanciful</shadedPattern>
+            </relocation>
+          </relocations>
         </configuration>
 
         <!-- Perform shading for package phase -->
@@ -148,61 +169,4 @@
 
     </plugins>
   </build>
-
-  <!-- Defines a single profile: production -->
-
-  <!-- This profile is necessary; it makes it so shaded dependencies are relocated to another   -->
-  <!-- package name, to prevent conflict with other plugins. However, it is a profile because   -->
-  <!-- relocation breaks debugging, so excluding this profile is a way to turn off relocation.  -->
-
-  <!-- This profile will automatically activate if the "debug" system property is undefined,     -->
-  <!-- which makes it default behavior. IntelliJ and other IDE users should disable this profile -->
-  <!-- profile in the UI when debugging. -->
-  <profiles>
-    <profile>
-      <id>production</id>
-
-      <!-- Automatically activate profile unless "debug" system property is defined -->
-      <activation>
-        <property>
-          <name>!debug</name>
-        </property>
-      </activation>
-
-      <build>
-        <plugins>
-
-          <!-- Shade and relocate certain dependencies -->
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-shade-plugin</artifactId>
-            <version>2.3</version>
-
-            <configuration>
-              <relocations>
-                <!-- Tomcat JDBC dependency -->
-                <relocation>
-                  <pattern>org.apache.tomcat.jdbc</pattern>
-                  <shadedPattern>com.helion3.prism.libs.org.apache.tomcat.jdbc</shadedPattern>
-                </relocation>
-
-                <!-- Tomcat JDBC JULI dependency -->
-                <relocation>
-                  <pattern>org.apache.juli</pattern>
-                  <shadedPattern>com.helion3.prism.libs.org.apache.juli</shadedPattern>
-                </relocation>
-
-                <!-- Fanciful dependency -->
-                <relocation>
-                  <pattern>mkremins.fanciful</pattern>
-                  <shadedPattern>com.helion3.prism.libs.mkremins.fanciful</shadedPattern>
-                </relocation>
-              </relocations>
-            </configuration>
-          </plugin>
-
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
