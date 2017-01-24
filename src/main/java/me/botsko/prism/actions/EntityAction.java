@@ -149,7 +149,7 @@ public class EntityAction extends GenericAction {
                 // TODO: When rolling back, handle old and new variants
                 this.actionData.dom = absHorse.getDomestication();
                 this.actionData.maxDom = absHorse.getMaxDomestication();
-                this.actionData.maxHealth = absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
+                this.actionData.maxHealth = absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
                 this.actionData.speed = absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
 
                 // Due to a API regression in 1.11, it's not yet possible to set saddles for
@@ -183,8 +183,11 @@ public class EntityAction extends GenericAction {
 
                     this.actionData.hColor = llama.getColor().toString();
                     this.actionData.strength = llama.getStrength();
-                    this.actionData.saddle = "" + li.getDecor().getTypeId();
-                    this.actionData.saddleData = "" + li.getDecor().getDurability();
+
+                    if (li.getDecor() != null) {
+                        this.actionData.saddle = "" + li.getDecor().getTypeId();
+                        this.actionData.saddleData = "" + li.getDecor().getDurability();
+                    }
                 } else {
                     // Llama is only horse subtype without jump
                     this.actionData.jump = absHorse.getJumpStrength();
