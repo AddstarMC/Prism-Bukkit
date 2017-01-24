@@ -443,6 +443,10 @@ public class EntityAction extends GenericAction
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview)
     {
+        // Previewing unsupported
+        if (is_preview)
+            return new ChangeResult(ChangeResultType.PLANNED, null);
+
         EntityType entityType = getEntityType();
 
         if (entityType == null)
@@ -451,223 +455,218 @@ public class EntityAction extends GenericAction
         if ( Prism.getIllegalEntities().contains( entityType.name().toLowerCase() ) )
             return new ChangeResult(ChangeResultType.SKIPPED, null);
 
-        if (!is_preview)
+        final Location loc = getLoc();
+
+        loc.setX( loc.getX() + 0.5 );
+        loc.setZ( loc.getZ() + 0.5 );
+
+        final Entity entity = loc.getWorld().spawnEntity( loc, getEntityType() );
+
+        // Get custom name
+        if (getCustomName() != null)
+            entity.setCustomName( getCustomName() );
+
+        // Get animal age
+        if (entity instanceof Ageable)
         {
-            final Location loc = getLoc();
+            final Ageable age = (Ageable) entity;
 
-            loc.setX( loc.getX() + 0.5 );
-            loc.setZ( loc.getZ() + 0.5 );
-
-            final Entity entity = loc.getWorld().spawnEntity( loc, getEntityType() );
-
-            // Get custom name
-            if (getCustomName() != null)
-                entity.setCustomName( getCustomName() );
-
-            // Get animal age
-            if (entity instanceof Ageable)
-            {
-                final Ageable age = (Ageable) entity;
-
-                if ( isAdult() ) age.setAdult();
-                else             age.setBaby();
-            }
-
-            // Set sheep color
-            if (entity instanceof Sheep && getColor() != null)
-                ((Sheep) entity).setColor( getColor() );
-
-            // Set villager profession
-            if (entity instanceof Villager && getProfession() != null)
-                ((Villager) entity).setProfession( getProfession() );
-
-            // Set wolf details
-            if (entity instanceof Wolf)
-            {
-                final Wolf wolf            = (Wolf) entity;
-                final UUID tamingOwnerUUID = getTamingOwnerUUID();
-
-                if (tamingOwnerUUID != null)
-                {
-                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
-                    if (owner == null)
-                    {
-                        final OfflinePlayer offlineOwner = plugin
-                            .getServer()
-                            .getOfflinePlayer(tamingOwnerUUID);
-
-                        if (offlineOwner != null)
-                            wolf.setOwner( offlineOwner );
-                    }
-                    else
-                        wolf.setOwner(owner);
-                }
-                else
-                {
-                    // TODO: remove this; data should, by now, be using UUID
-                    final String tamingOwner = getTamingOwner();
-                    if ( tamingOwner != null )
-                    {
-                        Player owner = plugin.getServer().getPlayer(tamingOwner);
-                        if ( owner == null )
-                        {
-                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if ( offlinePlayer.hasPlayedBefore() )
-                                owner = offlinePlayer.getPlayer();
-                        }
-
-                        if ( owner != null )
-                            wolf.setOwner( owner );
-                    }
-                }
-
-                // Collar color
-                if ( getColor() != null )
-                    wolf.setCollarColor( getColor() );
-
-                if ( isSitting() )
-                    wolf.setSitting(true);
-            }
-
-            // Set ocelot details
-            if (entity instanceof Ocelot)
-            {
-                final Ocelot ocelot          = (Ocelot) entity;
-                final UUID   tamingOwnerUUID = getTamingOwnerUUID();
-
-                if (tamingOwnerUUID != null)
-                {
-                    final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
-                    if ( owner == null )
-                    {
-                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
-                        if (offlineOwner != null)
-                            ocelot.setOwner( offlineOwner );
-                    }
-                    else
-                        ocelot.setOwner(owner);
-                }
-                else
-                {
-                    final String tamingOwner = getTamingOwner();
-                    if ( tamingOwner != null )
-                    {
-                        Player owner = plugin.getServer().getPlayer( tamingOwner );
-                        if ( owner == null )
-                        {
-                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if ( offlinePlayer.hasPlayedBefore() )
-                            {
-                                owner = offlinePlayer.getPlayer();
-                            }
-                        }
-                        if ( owner != null )
-                            ocelot.setOwner( owner );
-                    }
-                }
-
-                // Cat type
-                if ( getCatType() != null )
-                    ocelot.setCatType( getCatType() );
-
-                // Sitting
-                if ( isSitting() )
-                    ocelot.setSitting(true);
-            }
-
-            // Set horse details
-            if (entity instanceof AbstractHorse)
-            {
-                final AbstractHorse absHorse = (AbstractHorse) entity;
-
-                if (actionData.dom > 0 && actionData.dom < actionData.maxDom)
-                {
-                    absHorse.setDomestication(actionData.dom);
-                    absHorse.setMaxDomestication(actionData.maxDom);
-                }
-
-                // TODO: check for zeros
-                absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(actionData.maxHealth);
-                absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(actionData.speed);
-
-                if (absHorse instanceof Horse)
-                {
-                    final Horse          horse = (Horse) absHorse;
-                    final HorseInventory hi    = horse.getInventory();
-
-                    if (getHorseColor() != null)
-                        horse.setColor( getHorseColor() );
-
-                    if (getStyle() != null)
-                        horse.setStyle( getStyle() );
-
-                    hi.setSaddle( getSaddle() );
-                    hi.setArmor( getArmor() );
-                }
-
-                if (absHorse instanceof ChestedHorse)
-                {
-                    final ChestedHorse chestHorse = (ChestedHorse) absHorse;
-                    chestHorse.setCarryingChest(actionData.chest);
-                }
-
-                if (absHorse instanceof Llama)
-                {
-                    final Llama llama = (Llama) absHorse;
-                    final LlamaInventory li = llama.getInventory();
-
-                    if (getLlamaColor() != null)
-                        llama.setColor( getLlamaColor() );
-
-                    if (actionData.strength > 0 && actionData.strength <= 5)
-                        llama.setStrength( actionData.strength );
-
-                    // TODO: Report spigot bug; setDecor isn't working
-                    li.setDecor( getSaddle() );
-                }
-                else
-                    // Llama is only horse subtype without jump
-                    absHorse.setJumpStrength( actionData.jump );
-
-                // Owner
-                final UUID tamingOwnerUUID = getTamingOwnerUUID();
-                if ( tamingOwnerUUID != null )
-                {
-                    final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
-                    if ( owner == null )
-                    {
-                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
-                        if ( offlineOwner != null )
-                        {
-                            absHorse.setOwner( offlineOwner );
-                        }
-                    }
-                    else
-                    {
-                        absHorse.setOwner( owner );
-                    }
-                }
-                else
-                {
-                    final String tamingOwner = getTamingOwner();
-                    if ( tamingOwner != null )
-                    {
-                        Player owner = plugin.getServer().getPlayer( tamingOwner );
-                        if ( owner == null )
-                        {
-                            final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if ( offlinePlayer.hasPlayedBefore() )
-                                owner = offlinePlayer.getPlayer();
-                        }
-                        if ( owner != null )
-                            absHorse.setOwner( owner );
-                    }
-                }
-            }
-
-            return new ChangeResult(ChangeResultType.APPLIED, null);
-
+            if ( isAdult() ) age.setAdult();
+            else             age.setBaby();
         }
-        return new ChangeResult(ChangeResultType.PLANNED, null);
+
+        // Set sheep color
+        if (entity instanceof Sheep && getColor() != null)
+            ((Sheep) entity).setColor( getColor() );
+
+        // Set villager profession
+        if (entity instanceof Villager && getProfession() != null)
+            ((Villager) entity).setProfession( getProfession() );
+
+        // Set wolf details
+        if (entity instanceof Wolf)
+        {
+            final Wolf wolf            = (Wolf) entity;
+            final UUID tamingOwnerUUID = getTamingOwnerUUID();
+
+            if (tamingOwnerUUID != null)
+            {
+                final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
+                if (owner == null)
+                {
+                    final OfflinePlayer offlineOwner = plugin
+                        .getServer()
+                        .getOfflinePlayer(tamingOwnerUUID);
+
+                    if (offlineOwner != null)
+                        wolf.setOwner( offlineOwner );
+                }
+                else
+                    wolf.setOwner(owner);
+            }
+            else
+            {
+                // TODO: remove this; data should, by now, be using UUID
+                final String tamingOwner = getTamingOwner();
+                if ( tamingOwner != null )
+                {
+                    Player owner = plugin.getServer().getPlayer(tamingOwner);
+                    if ( owner == null )
+                    {
+                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                        if ( offlinePlayer.hasPlayedBefore() )
+                            owner = offlinePlayer.getPlayer();
+                    }
+
+                    if ( owner != null )
+                        wolf.setOwner( owner );
+                }
+            }
+
+            // Collar color
+            if ( getColor() != null )
+                wolf.setCollarColor( getColor() );
+
+            if ( isSitting() )
+                wolf.setSitting(true);
+        }
+
+        // Set ocelot details
+        if (entity instanceof Ocelot)
+        {
+            final Ocelot ocelot          = (Ocelot) entity;
+            final UUID   tamingOwnerUUID = getTamingOwnerUUID();
+
+            if (tamingOwnerUUID != null)
+            {
+                final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
+                if ( owner == null )
+                {
+                    final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
+                    if (offlineOwner != null)
+                        ocelot.setOwner( offlineOwner );
+                }
+                else
+                    ocelot.setOwner(owner);
+            }
+            else
+            {
+                final String tamingOwner = getTamingOwner();
+                if ( tamingOwner != null )
+                {
+                    Player owner = plugin.getServer().getPlayer( tamingOwner );
+                    if ( owner == null )
+                    {
+                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                        if ( offlinePlayer.hasPlayedBefore() )
+                        {
+                            owner = offlinePlayer.getPlayer();
+                        }
+                    }
+                    if ( owner != null )
+                        ocelot.setOwner( owner );
+                }
+            }
+
+            // Cat type
+            if ( getCatType() != null )
+                ocelot.setCatType( getCatType() );
+
+            // Sitting
+            if ( isSitting() )
+                ocelot.setSitting(true);
+        }
+
+        // Set horse details
+        if (entity instanceof AbstractHorse)
+        {
+            final AbstractHorse absHorse = (AbstractHorse) entity;
+
+            if (actionData.dom > 0 && actionData.dom < actionData.maxDom)
+            {
+                absHorse.setDomestication(actionData.dom);
+                absHorse.setMaxDomestication(actionData.maxDom);
+            }
+
+            // TODO: check for zeros
+            absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(actionData.maxHealth);
+            absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(actionData.speed);
+
+            if (absHorse instanceof Horse)
+            {
+                final Horse          horse = (Horse) absHorse;
+                final HorseInventory hi    = horse.getInventory();
+
+                if (getHorseColor() != null)
+                    horse.setColor( getHorseColor() );
+
+                if (getStyle() != null)
+                    horse.setStyle( getStyle() );
+
+                hi.setSaddle( getSaddle() );
+                hi.setArmor( getArmor() );
+            }
+
+            if (absHorse instanceof ChestedHorse)
+            {
+                final ChestedHorse chestHorse = (ChestedHorse) absHorse;
+                chestHorse.setCarryingChest(actionData.chest);
+            }
+
+            if (absHorse instanceof Llama)
+            {
+                final Llama llama = (Llama) absHorse;
+                final LlamaInventory li = llama.getInventory();
+
+                if (getLlamaColor() != null)
+                    llama.setColor( getLlamaColor() );
+
+                if (actionData.strength > 0 && actionData.strength <= 5)
+                    llama.setStrength( actionData.strength );
+
+                // TODO: Report spigot bug; setDecor isn't working
+                li.setDecor( getSaddle() );
+            }
+            else
+                // Llama is only horse subtype without jump
+                absHorse.setJumpStrength( actionData.jump );
+
+            // Owner
+            final UUID tamingOwnerUUID = getTamingOwnerUUID();
+            if ( tamingOwnerUUID != null )
+            {
+                final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
+                if ( owner == null )
+                {
+                    final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
+                    if ( offlineOwner != null )
+                    {
+                        absHorse.setOwner( offlineOwner );
+                    }
+                }
+                else
+                {
+                    absHorse.setOwner( owner );
+                }
+            }
+            else
+            {
+                final String tamingOwner = getTamingOwner();
+                if ( tamingOwner != null )
+                {
+                    Player owner = plugin.getServer().getPlayer( tamingOwner );
+                    if ( owner == null )
+                    {
+                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
+                        if ( offlinePlayer.hasPlayedBefore() )
+                            owner = offlinePlayer.getPlayer();
+                    }
+                    if ( owner != null )
+                        absHorse.setOwner( owner );
+                }
+            }
+        }
+
+        return new ChangeResult(ChangeResultType.APPLIED, null);
     }
 }
