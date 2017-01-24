@@ -319,9 +319,13 @@ public class EntityAction extends GenericAction
     }
 
     /** @return Bukkit type of this action's cat */
+    @Nullable
     public Ocelot.Type getCatType()
     {
-        return Ocelot.Type.valueOf( actionData.var.toUpperCase() );
+        return actionData.var != null
+            ? Ocelot.Type.valueOf( actionData.var.toUpperCase() )
+            : null;
+    }
     }
 
     /** @return Fancy name for this entity, based on its data */
