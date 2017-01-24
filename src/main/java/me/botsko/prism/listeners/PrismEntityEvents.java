@@ -192,6 +192,17 @@ public class PrismEntityEvents implements Listener {
                         RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
 
                     }
+                // Mob killed by a lingering potion
+                } else if ( entityDamageByEntityEvent.getDamager() instanceof AreaEffectCloud ) {
+                    final AreaEffectCloud cloud = (AreaEffectCloud) entityDamageByEntityEvent.getDamager();
+                    if( cloud.getSource() instanceof Player ) {
+
+                        final Player player = (Player) cloud.getSource();
+                        if( !Prism.getIgnore().event( "player-kill", player ) )
+                            return;
+                        RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
+
+                    }
                 } else {
                     // Mob died by another mob
                     final Entity damager = entityDamageByEntityEvent.getDamager();
