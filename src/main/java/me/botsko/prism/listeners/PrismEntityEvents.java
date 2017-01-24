@@ -7,19 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.Arrow;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.EnderDragon;
-import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Wither;
+import org.bukkit.entity.*;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -168,8 +156,8 @@ public class PrismEntityEvents implements Listener {
         if( !( entity instanceof Player ) ) {
             if( entity.getLastDamageCause() instanceof EntityDamageByEntityEvent ) {
 
-                if( entity instanceof Horse ) {
-                    final Horse horse = (Horse) entity;
+                if( entity instanceof ChestedHorse ) {
+                    final ChestedHorse horse = (ChestedHorse) entity;
                     if( horse.isCarryingChest() ) {
                         // Log item drops
                         if( Prism.getIgnore().event( "item-drop", entity.getWorld() ) ) {
