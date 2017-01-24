@@ -1,7 +1,10 @@
 package me.botsko.prism.actions;
 
-import java.util.UUID;
-
+import com.google.common.base.Strings;
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -11,426 +14,445 @@ import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
-
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.inventory.LlamaInventory;
 
-public class EntityAction extends GenericAction {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.UUID;
 
+/** Represents an entity-related action (e.g. death, dye change) */
+public class EntityAction extends GenericAction
+{
     // TODO: Optimize data storage on these by making value types nullable ones
-    public class EntityActionData {
-        public String entity_name;
-        public String custom_name;
+    public class EntityActionData
+    {
+        // All entities
+        public String  entity_name;
+        public String  custom_name;
         public boolean isAdult;
+
+        // Pets
         public boolean sitting;
+
+        // Sheep and wolf dying
         public String color;
         public String newColor;
+
+        // Villagers
         public String profession;
+        // TODO: save villager trades
+
+        // Tameables
         public String taming_owner;
-        public UUID taming_owner_UUID;
-        public String var;
-        public String hColor;
-        public String style;
+        public UUID   taming_owner_UUID;
+
+        // Horses & llamas
+        public String  var;
+        public String  hColor;
+        public String  style;
+        public String  saddle;
+        public String  saddleData;
+        public String  armor;
         public boolean chest;
-        public int dom;
-        public int maxDom;
-        public double jump;
-        public String saddle;
-        public String saddleData;
-        public String armor;
-        public double maxHealth;
-        public double speed;
-        public int strength;
+        public int     dom;
+        public int     maxDom;
+        public int     strength;
+        public double  jump;
+        public double  maxHealth;
+        public double  speed;
     }
 
     /**
-	 * 
-	 */
+     * Holds entity data captured by this action
+     */
     protected EntityActionData actionData;
 
     /**
-     * 
-     * @param entity
-     * @param dyeUsed
+     * Populates the given entity's data to be persisted to database by this action
+     *
+     * @param entity  Entity involved in this action
+     * @param dyeUsed New dye applied to dyable animal, may be null
      */
-    public void setEntity(Entity entity, String dyeUsed) {
-
+    public void setEntity(Entity entity, String dyeUsed)
+    {
         // Build an object for the specific details of this action
         actionData = new EntityActionData();
 
-        if( entity != null && entity.getType() != null && entity.getType().name() != null ) {
-            this.actionData.entity_name = entity.getType().name().toLowerCase();
-            this.world_name = entity.getWorld().getName();
-            this.x = entity.getLocation().getBlockX();
-            this.y = entity.getLocation().getBlockY();
-            this.z = entity.getLocation().getBlockZ();
+        if (entity == null || entity.getType() == null || entity.getType().name() == null)
+            return;
 
-            // Get custom name
-            if( entity instanceof LivingEntity ) {
-                this.actionData.custom_name = ( (LivingEntity) entity ).getCustomName();
+        actionData.entity_name = entity.getType().name().toLowerCase();
+        world_name             = entity.getWorld().getName();
+
+        x = entity.getLocation().getBlockX();
+        y = entity.getLocation().getBlockY();
+        z = entity.getLocation().getBlockZ();
+
+        // Get custom name
+        if (entity instanceof LivingEntity)
+            actionData.custom_name = entity.getCustomName();
+
+        // Get animal age
+        if (entity instanceof Ageable)
+            actionData.isAdult = ((Ageable) entity).isAdult();
+        else
+            actionData.isAdult = true;
+
+        // Get current sheep color
+        if (entity instanceof Sheep)
+            actionData.color = ((Sheep) entity).getColor().name().toLowerCase();
+
+        // Get color it will become
+        if (dyeUsed != null)
+            actionData.newColor = dyeUsed;
+
+        // Get villager type
+        if (entity instanceof Villager)
+        {
+            final Villager v = (Villager) entity;
+
+            if (v.getProfession() != null)
+                actionData.profession = v.getProfession().toString().toLowerCase();
+        }
+
+        // Wolf details
+        if (entity instanceof Wolf)
+        {
+            final Wolf wolf = (Wolf) entity;
+
+            // Owner
+            // TODO: Move Tameable checks to own section
+            if (wolf.isTamed() && wolf.getOwner() instanceof OfflinePlayer)
+            {
+                actionData.taming_owner      = wolf.getOwner().getName();
+                actionData.taming_owner_UUID = wolf.getOwner().getUniqueId();
             }
 
-            // Get animal age
-            if( entity instanceof Ageable && !( entity instanceof Monster ) ) {
-                final Ageable a = (Ageable) entity;
-                this.actionData.isAdult = a.isAdult();
-            } else {
-                this.actionData.isAdult = true;
+            // Collar color
+            actionData.color = wolf.getCollarColor().name().toLowerCase();
+
+            // Sitting
+            if ( wolf.isSitting() )
+                actionData.sitting = true;
+        }
+
+        // Ocelot details
+        if (entity instanceof Ocelot)
+        {
+            final Ocelot ocelot = (Ocelot) entity;
+
+            // Owner
+            if (ocelot.isTamed() && ocelot.getOwner() instanceof OfflinePlayer)
+            {
+                actionData.taming_owner      = ocelot.getOwner().getName();
+                actionData.taming_owner_UUID = ocelot.getOwner().getUniqueId();
             }
 
-            // Get current sheep color
-            if( entity instanceof Sheep ) {
-                final Sheep sheep = ( (Sheep) entity );
-                this.actionData.color = sheep.getColor().name().toLowerCase();
+            // Cat type
+            actionData.var = ocelot.getCatType().toString().toLowerCase();
+
+            // Sitting
+            if (ocelot.isSitting())
+                actionData.sitting = true;
+        }
+
+        // Horse details
+        if (entity instanceof AbstractHorse)
+        {
+            final AbstractHorse absHorse = (AbstractHorse) entity;
+
+            actionData.dom    = absHorse.getDomestication();
+            actionData.maxDom = absHorse.getMaxDomestication();
+
+            actionData.maxHealth = absHorse
+                .getAttribute( Attribute.GENERIC_MAX_HEALTH )
+                .getBaseValue();
+
+            actionData.speed = absHorse
+                .getAttribute( Attribute.GENERIC_MOVEMENT_SPEED )
+                .getBaseValue();
+
+            // Due to a API regression in 1.11, it's not yet possible to set saddles for
+            // mules, donkeys, zombie and skeleton horses
+
+            if (absHorse instanceof Horse)
+            {
+                final Horse          horse = (Horse) absHorse;
+                final HorseInventory hi    = horse.getInventory();
+
+                actionData.hColor = horse.getColor().toString();
+                actionData.style  = horse.getStyle().toString();
+
+                if ( hi.getSaddle() != null )
+                {
+                    actionData.saddle     = "" + hi.getSaddle().getTypeId();
+                    // TODO: remove for horse
+                    actionData.saddleData = "" + hi.getSaddle().getDurability();
+                }
+
+                if ( hi.getArmor() != null )
+                    actionData.armor = "" + hi.getArmor().getTypeId();
             }
 
-            // Get color it will become
-            if( dyeUsed != null ) {
-                this.actionData.newColor = dyeUsed;
-            }
+            if (absHorse instanceof ChestedHorse)
+                actionData.chest = ((ChestedHorse) absHorse).isCarryingChest();
 
-            // Get villager type
-            if( entity instanceof Villager ) {
-                final Villager v = (Villager) entity;
-                if( v.getProfession() != null ){
-                    this.actionData.profession = v.getProfession().toString().toLowerCase();
+            if (absHorse instanceof Llama)
+            {
+                final Llama          llama = (Llama) absHorse;
+                final LlamaInventory li    = llama.getInventory();
+
+                actionData.hColor   = llama.getColor().toString();
+                actionData.strength = llama.getStrength();
+
+                if ( li.getDecor() != null )
+                {
+                    actionData.saddle     = "" + li.getDecor().getTypeId();
+                    actionData.saddleData = "" + li.getDecor().getDurability();
                 }
             }
+            else
+                // Llama is only horse subtype without jump
+                actionData.jump = absHorse.getJumpStrength();
 
-            // Wolf details
-            if( entity instanceof Wolf ) {
-                final Wolf wolf = (Wolf) entity;
-
-                // Owner
-                if( wolf.isTamed() ) {
-                    if( wolf.getOwner() instanceof OfflinePlayer ) {
-                        this.actionData.taming_owner = wolf.getOwner().getName();
-                        this.actionData.taming_owner_UUID = wolf.getOwner().getUniqueId();
-                    }
-                }
-
-                // Collar color
-                this.actionData.color = wolf.getCollarColor().name().toLowerCase();
-
-                // Sitting
-                if( wolf.isSitting() ) {
-                    this.actionData.sitting = true;
-                }
-
-            }
-
-            // Ocelot details
-            if( entity instanceof Ocelot ) {
-                final Ocelot ocelot = (Ocelot) entity;
-
-                // Owner
-                if( ocelot.isTamed() ) {
-                    if( ocelot.getOwner() instanceof OfflinePlayer ) {
-                        this.actionData.taming_owner = ocelot.getOwner().getName();
-                        this.actionData.taming_owner_UUID = ocelot.getOwner().getUniqueId();
-                    }
-                }
-
-                // Cat type
-                this.actionData.var = ocelot.getCatType().toString().toLowerCase();
-
-                // Sitting
-                if ( ocelot.isSitting() ) {
-                    this.actionData.sitting = true;
-                }
-            }
-
-            // Horse details
-            if ( entity instanceof AbstractHorse ) {
-                final AbstractHorse absHorse = (AbstractHorse) entity;
-                // TODO: When rolling back, handle old and new variants
-                this.actionData.dom = absHorse.getDomestication();
-                this.actionData.maxDom = absHorse.getMaxDomestication();
-                this.actionData.maxHealth = absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-                this.actionData.speed = absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
-
-                // Due to a API regression in 1.11, it's not yet possible to set saddles for
-                // mules, donkeys, zombie and skeleton horses
-
-                if ( absHorse instanceof Horse ) {
-                    final Horse horse = (Horse) absHorse;
-                    final HorseInventory hi = horse.getInventory();
-
-                    this.actionData.hColor = horse.getColor().toString();
-                    this.actionData.style = horse.getStyle().toString();
-
-                    if( hi.getSaddle() != null ) {
-                        this.actionData.saddle = "" + hi.getSaddle().getTypeId();
-                        this.actionData.saddleData = "" + hi.getSaddle().getDurability();
-                    }
-
-                    if( hi.getArmor() != null ) {
-                        this.actionData.armor = "" + hi.getArmor().getTypeId();
-                    }
-                }
-
-                if ( absHorse instanceof ChestedHorse ) {
-                    final ChestedHorse chestHorse = (ChestedHorse) absHorse;
-                    this.actionData.chest = chestHorse.isCarryingChest();
-                }
-
-                if ( absHorse instanceof Llama ) {
-                    final Llama llama = (Llama) absHorse;
-                    final LlamaInventory li = llama.getInventory();
-
-                    this.actionData.hColor = llama.getColor().toString();
-                    this.actionData.strength = llama.getStrength();
-
-                    if (li.getDecor() != null) {
-                        this.actionData.saddle = "" + li.getDecor().getTypeId();
-                        this.actionData.saddleData = "" + li.getDecor().getDurability();
-                    }
-                } else {
-                    // Llama is only horse subtype without jump
-                    this.actionData.jump = absHorse.getJumpStrength();
-                }
-
-                // Owner
-                if( absHorse.isTamed() ) {
-                    if( absHorse.getOwner() instanceof OfflinePlayer ) {
-                        this.actionData.taming_owner = absHorse.getOwner().getName();
-                        this.actionData.taming_owner_UUID = absHorse.getOwner().getUniqueId();
-                    }
-                }
+            // Owner
+            if ( absHorse.isTamed() )
+            if ( absHorse.getOwner() instanceof OfflinePlayer )
+            {
+                actionData.taming_owner      = absHorse.getOwner().getName();
+                actionData.taming_owner_UUID = absHorse.getOwner().getUniqueId();
             }
         }
     }
 
-    /**
-	 * 
-	 */
+    /** Serializes data of this action, internally */
     @Override
-    public void save() {
+    public void save()
+    {
         data = gson.toJson( actionData );
     }
 
-    /**
-	 * 
-	 */
+    /** Loads entity data of this action from given JSON string */
     @Override
-    public void setData(String data) {
-        if( data != null && data.startsWith( "{" ) ) {
+    public void setData(String data)
+    {
+        if ( data != null && data.startsWith( "{" ) )
             actionData = gson.fromJson( data, EntityActionData.class );
-        }
     }
 
-    /**
-     * 
-     * @return
-     */
-    public EntityType getEntityType() {
-        try {
+    /** @return Bukkit type of this action's entity, or null if invalid */
+    @Nullable
+    public EntityType getEntityType()
+    {
+        try
+        {
             final EntityType e = EntityType.valueOf( actionData.entity_name.toUpperCase() );
 
             // Transform pre-1.11 horse variants to horse entities
-            if (e.equals(EntityType.HORSE) && actionData.var != null) {
-                switch ( actionData.var.toUpperCase() ) {
-                    case "DONKEY": return EntityType.DONKEY;
-                    case "MULE": return EntityType.MULE;
-                    case "UNDEAD_HORSE": return EntityType.ZOMBIE_HORSE;
-                    case "SKELETON_HORSE": return EntityType.SKELETON_HORSE;
-                    case "LLAMA": return EntityType.LLAMA;
+            if (e.equals(EntityType.HORSE) && actionData.var != null)
+            {
+                switch ( actionData.var.toUpperCase() )
+                {
+                    case "DONKEY":
+                        return EntityType.DONKEY;
+                    case "MULE":
+                        return EntityType.MULE;
+                    case "UNDEAD_HORSE":
+                        return EntityType.ZOMBIE_HORSE;
+                    case "SKELETON_HORSE":
+                        return EntityType.SKELETON_HORSE;
+                    case "LLAMA":
+                        return EntityType.LLAMA;
                     case "HORSE":
-                    default: return EntityType.HORSE;
+                    default:
+                        return EntityType.HORSE;
                 }
             }
 
             return e;
-        } catch ( final IllegalArgumentException e ) {
-            // In pre-RC builds we logged the wrong name of entities, sometimes
-            // the names
-            // don't match the enum.
+        }
+        catch (final IllegalArgumentException e)
+        {
+            // In pre-RC builds we logged the wrong name of entities, sometimes the names don't
+            // match the enum.
         }
         return null;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public boolean isAdult() {
-        return this.actionData.isAdult;
+    /** @return true if action's entity is adult, false otherwise */
+    public boolean isAdult()
+    {
+        return actionData.isAdult;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public boolean isSitting() {
-        return this.actionData.sitting;
+    /** @return true if action's entity is sitting, false otherwise */
+    public boolean isSitting()
+    {
+        return actionData.sitting;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public DyeColor getColor() {
-        if( actionData.color != null ) { return DyeColor.valueOf( actionData.color.toUpperCase() ); }
-        return null;
+    /** @return Bukkit dye color of this action's entity */
+    @Nullable
+    public DyeColor getColor()
+    {
+        return !Strings.isNullOrEmpty(actionData.color)
+            ? DyeColor.valueOf( actionData.color.toUpperCase() )
+            : null;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public Profession getProfession() {
-        if( actionData.profession != null ) { return Profession.valueOf( actionData.profession.toUpperCase() ); }
-        return null;
+    /** @return Bukkit profession of this action's villager */
+    @Nullable
+    public Profession getProfession()
+    {
+        return !Strings.isNullOrEmpty(actionData.profession)
+            ? Profession.valueOf( actionData.profession.toUpperCase() )
+            : null;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public String getTamingOwner() {
-        return this.actionData.taming_owner;
+    /** @return Owner's name of this action's entity */
+    @Nullable
+    public String getTamingOwner()
+    {
+        return actionData.taming_owner;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public UUID getTamingOwnerUUID() {
-        return this.actionData.taming_owner_UUID;
+    /** @return Owner's UUID of this action's entity */
+    @Nullable
+    public UUID getTamingOwnerUUID()
+    {
+        return actionData.taming_owner_UUID;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public String getCustomName() {
-        return this.actionData.custom_name;
+    /** @return Custom name this action's entity */
+    @Nullable
+    public String getCustomName()
+    {
+        return actionData.custom_name;
     }
 
-    /**
-     *
-     * @return
-     */
-    public Ocelot.Type getCatType() {
+    /** @return Bukkit type of this action's cat */
+    public Ocelot.Type getCatType()
+    {
         return Ocelot.Type.valueOf( actionData.var.toUpperCase() );
     }
 
-    /**
-     * 
-     * @return
-     */
+    /** @return Fancy name for this entity, based on its data */
+    @Nonnull
     @Override
-    public String getNiceName() {
+    public String getNiceName()
+    {
         String name = "";
-        if( actionData.color != null && !actionData.color.isEmpty() ) {
+
+        if ( !Strings.isNullOrEmpty(actionData.color) )
             name += actionData.color + " ";
-        }
-        if( !actionData.isAdult ){
+
+        if (!actionData.isAdult)
             name += "baby ";
-        }
-        if( this.actionData.profession != null ) {
-            name += this.actionData.profession + " ";
-        }
-        if( actionData.taming_owner != null ) {
+
+        if ( !Strings.isNullOrEmpty(actionData.profession) )
+            name += actionData.profession + " ";
+
+        if ( !Strings.isNullOrEmpty(actionData.taming_owner) )
             name += actionData.taming_owner + "'s ";
-        }
-        if( (actionData.entity_name.equals("ocelot") || actionData.entity_name.equals("horse")) && actionData.var != null ) {
-            name += actionData.var.toLowerCase().replace("_", " ");
-        } else {
+
+        if ( (actionData.entity_name.equals("ocelot") || actionData.entity_name.equals("horse"))
+            && actionData.var != null )
+            name += actionData.var.toLowerCase().replace( "_", " " );
+        else
             name += actionData.entity_name;
-        }
-        if( this.actionData.newColor != null ) {
-            name += " " + this.actionData.newColor;
-        }
-        if( this.actionData.custom_name != null ) {
-            name += " named " + this.actionData.custom_name;
-        }
+
+        if ( !Strings.isNullOrEmpty(actionData.newColor) )
+            name += " " + actionData.newColor;
+
+        if ( !Strings.isNullOrEmpty(actionData.custom_name) )
+            name += " named " + actionData.custom_name;
+
         return name;
     }
 
     /**
-     * 
-     * @return
+     * 1.11 separates horse variants into individual types. This is only for older pre-1.11 records.
+     * @return Bukkit horse variant of this action's horse
      */
-    public Variant getVariant() {
-        if( !this.actionData.var.isEmpty() ) { return Variant.valueOf( this.actionData.var ); }
-        return null;
+    @Deprecated
+    @Nullable
+    public Variant getVariant()
+    {
+        return !Strings.isNullOrEmpty(actionData.var)
+            ? Variant.valueOf(actionData.var)
+            : null;
     }
 
-    /**
-     *
-     * @return
-     */
-    public Horse.Color getHorseColor() {
-        if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ) { return Horse.Color
-            .valueOf( this.actionData.hColor ); }
-        return null;
+    /** @return Bukkit horse color of this action's horse */
+    @Nullable
+    public Horse.Color getHorseColor()
+    {
+        return !Strings.isNullOrEmpty(actionData.hColor)
+            ? Horse.Color.valueOf(actionData.hColor)
+            : null;
     }
 
-    /**
-     *
-     * @return
-     */
-    public Llama.Color getLlamaColor() {
-        if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ) { return Llama.Color
-            .valueOf( this.actionData.hColor ); }
-        return null;
+    /** @return Bukkit llama color of this action's llama */
+    @Nullable
+    public Llama.Color getLlamaColor()
+    {
+        return !Strings.isNullOrEmpty(actionData.hColor)
+            ? Llama.Color.valueOf(actionData.hColor)
+            : null;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public Horse.Style getStyle() {
-        if( !this.actionData.style.isEmpty() ) { return Horse.Style.valueOf( this.actionData.style ); }
-        return null;
+    /** @return Bukkit horse style of this action's horse */
+    @Nullable
+    public Horse.Style getStyle()
+    {
+        return !Strings.isNullOrEmpty(actionData.style)
+            ? Horse.Style.valueOf(actionData.style)
+            : null;
     }
 
-    /**
-     * 
-     * @return
-     */
-    public ItemStack getSaddle() {
-        if( this.actionData.saddle != null ) {
-            short data = this.actionData.saddleData != null ? Short.parseShort(this.actionData.saddleData) : 0;
-            return new ItemStack( Integer.parseInt( this.actionData.saddle ), 1, data );
-        }
-        return null;
+    /** @return Bukkit item stack of this action's entity's saddle */
+    @Nullable
+    public ItemStack getSaddle()
+    {
+        if ( Strings.isNullOrEmpty(actionData.style) )
+            return null;
+
+        short data = actionData.saddleData != null
+            ? Short.parseShort( actionData.saddleData )
+            : 0;
+
+        return new ItemStack(Integer.parseInt(actionData.saddle), 1, data);
     }
 
-    /**
-     * 
-     * @return
-     */
-    public ItemStack getArmor() {
-        if( this.actionData.armor != null ) { return new ItemStack( Integer.parseInt( this.actionData.armor ), 1 ); }
-        return null;
+    /** @return Bukkit item stack of this action's entity's armor */
+    @Nullable
+    public ItemStack getArmor()
+    {
+        return !Strings.isNullOrEmpty(actionData.armor)
+            ? new ItemStack(Integer.parseInt(actionData.armor), 1)
+            : null;
     }
 
-    /**
-     *
-     * @return
-     */
-    public double getMaxHealth() {
-        return this.actionData.maxHealth;
+    /** @return Max health of this action's entity, may be 0 */
+    public double getMaxHealth()
+    {
+        return actionData.maxHealth;
     }
 
-    /**
-	 * 
-	 */
+    /** Handles rolling back of entity actions */
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
+    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview)
+    {
+        EntityType entityType = getEntityType();
 
-        if( getEntityType() == null ) { return new ChangeResult( ChangeResultType.SKIPPED, null ); }
+        if (entityType == null)
+            return new ChangeResult(ChangeResultType.SKIPPED, null);
 
-        if( Prism.getIllegalEntities().contains( getEntityType().name().toLowerCase() ) ) { return new ChangeResult(
-                ChangeResultType.SKIPPED, null ); }
+        if ( Prism.getIllegalEntities().contains( entityType.name().toLowerCase() ) )
+            return new ChangeResult(ChangeResultType.SKIPPED, null);
 
-        if( !is_preview ) {
-
+        if (!is_preview)
+        {
             final Location loc = getLoc();
 
             loc.setX( loc.getX() + 0.5 );
@@ -439,202 +461,213 @@ public class EntityAction extends GenericAction {
             final Entity entity = loc.getWorld().spawnEntity( loc, getEntityType() );
 
             // Get custom name
-            if( entity instanceof LivingEntity && getCustomName() != null ) {
-                final LivingEntity namedEntity = (LivingEntity) entity;
-                namedEntity.setCustomName( getCustomName() );
-            }
+            if (getCustomName() != null)
+                entity.setCustomName( getCustomName() );
 
             // Get animal age
-            if( entity instanceof Ageable ) {
+            if (entity instanceof Ageable)
+            {
                 final Ageable age = (Ageable) entity;
-                if( !isAdult() ) {
-                    age.setBaby();
-                } else {
-                    age.setAdult();
-                }
+
+                if ( isAdult() ) age.setAdult();
+                else             age.setBaby();
             }
 
             // Set sheep color
-            if( entity.getType().equals( EntityType.SHEEP ) && getColor() != null ) {
-                final Sheep sheep = ( (Sheep) entity );
-                sheep.setColor( getColor() );
-            }
+            if (entity instanceof Sheep && getColor() != null)
+                ((Sheep) entity).setColor( getColor() );
 
             // Set villager profession
-            if( entity instanceof Villager && getProfession() != null ) {
-                final Villager v = (Villager) entity;
-                v.setProfession( getProfession() );
-            }
+            if (entity instanceof Villager && getProfession() != null)
+                ((Villager) entity).setProfession( getProfession() );
 
             // Set wolf details
-            if( entity instanceof Wolf ) {
-            
-                final Wolf wolf = (Wolf) entity;
+            if (entity instanceof Wolf)
+            {
+                final Wolf wolf            = (Wolf) entity;
+                final UUID tamingOwnerUUID = getTamingOwnerUUID();
 
-                // Owner
-            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
-                if (tamingOwnerUUID != null) {
+                if (tamingOwnerUUID != null)
+                {
                     final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
-                    if(owner == null) {
-                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
-                        if (offlineOwner != null) {
-                            wolf.setOwner(offlineOwner);
-                        }
-                    } else {
-                        wolf.setOwner(owner); 
+                    if (owner == null)
+                    {
+                        final OfflinePlayer offlineOwner = plugin
+                            .getServer()
+                            .getOfflinePlayer(tamingOwnerUUID);
+
+                        if (offlineOwner != null)
+                            wolf.setOwner( offlineOwner );
                     }
-                } else {
+                    else
+                        wolf.setOwner(owner);
+                }
+                else
+                {
+                    // TODO: remove this; data should, by now, be using UUID
                     final String tamingOwner = getTamingOwner();
-                    if( tamingOwner != null ) {
-                        Player owner = plugin.getServer().getPlayer( tamingOwner );
-                        if( owner == null ) {
+                    if ( tamingOwner != null )
+                    {
+                        Player owner = plugin.getServer().getPlayer(tamingOwner);
+                        if ( owner == null )
+                        {
                             final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if( offlinePlayer.hasPlayedBefore() ) {
+                            if ( offlinePlayer.hasPlayedBefore() )
                                 owner = offlinePlayer.getPlayer();
-                            }
                         }
-                        if( owner != null )
+
+                        if ( owner != null )
                             wolf.setOwner( owner );
                     }
                 }
 
                 // Collar color
-                if( getColor() != null ) {
+                if ( getColor() != null )
                     wolf.setCollarColor( getColor() );
-                }
 
-                if( isSitting() ) {
-                    wolf.setSitting( true );
-                }
+                if ( isSitting() )
+                    wolf.setSitting(true);
             }
 
             // Set ocelot details
-            if( entity instanceof Ocelot ) {
-            
-                final Ocelot ocelot = (Ocelot) entity;
+            if (entity instanceof Ocelot)
+            {
+                final Ocelot ocelot          = (Ocelot) entity;
+                final UUID   tamingOwnerUUID = getTamingOwnerUUID();
 
-                // Owner
-            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
-                if (tamingOwnerUUID != null) {
-                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
-                    if(owner == null) {
-                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
-                        if (offlineOwner != null) {
-                        	ocelot.setOwner(offlineOwner);
-                        }
-                    } else {
-                    	ocelot.setOwner(owner); 
+                if (tamingOwnerUUID != null)
+                {
+                    final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
+                    if ( owner == null )
+                    {
+                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
+                        if (offlineOwner != null)
+                            ocelot.setOwner( offlineOwner );
                     }
-                } else {
+                    else
+                        ocelot.setOwner(owner);
+                }
+                else
+                {
                     final String tamingOwner = getTamingOwner();
-                    if( tamingOwner != null ) {
+                    if ( tamingOwner != null )
+                    {
                         Player owner = plugin.getServer().getPlayer( tamingOwner );
-                        if( owner == null ) {
+                        if ( owner == null )
+                        {
                             final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if( offlinePlayer.hasPlayedBefore() ) {
+                            if ( offlinePlayer.hasPlayedBefore() )
+                            {
                                 owner = offlinePlayer.getPlayer();
                             }
                         }
-                        if( owner != null )
-                        	ocelot.setOwner( owner );
+                        if ( owner != null )
+                            ocelot.setOwner( owner );
                     }
                 }
 
                 // Cat type
-                if( getCatType() != null ) {
+                if ( getCatType() != null )
                     ocelot.setCatType( getCatType() );
-                }
 
                 // Sitting
-                if ( isSitting() ) {
-                    ocelot.setSitting( true );
-                }
+                if ( isSitting() )
+                    ocelot.setSitting(true);
             }
 
             // Set horse details
-            if( entity instanceof AbstractHorse ) {
-
+            if (entity instanceof AbstractHorse)
+            {
                 final AbstractHorse absHorse = (AbstractHorse) entity;
 
-                if ( this.actionData.dom > 0 && this.actionData.dom < this.actionData.maxDom ) {
-                    absHorse.setDomestication(this.actionData.dom);
-                    absHorse.setMaxDomestication( this.actionData.maxDom );
+                if (actionData.dom > 0 && actionData.dom < actionData.maxDom)
+                {
+                    absHorse.setDomestication(actionData.dom);
+                    absHorse.setMaxDomestication(actionData.maxDom);
                 }
 
-                absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue( this.actionData.maxHealth );
-                absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.actionData.speed);
+                // TODO: check for zeros
+                absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(actionData.maxHealth);
+                absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(actionData.speed);
 
-                if ( absHorse instanceof Horse ) {
-                    final Horse horse = (Horse) absHorse;
-                    final HorseInventory hi = horse.getInventory();
+                if (absHorse instanceof Horse)
+                {
+                    final Horse          horse = (Horse) absHorse;
+                    final HorseInventory hi    = horse.getInventory();
 
-                    if( getHorseColor() != null ) {
+                    if (getHorseColor() != null)
                         horse.setColor( getHorseColor() );
-                    }
 
-                    if( getStyle() != null ) {
+                    if (getStyle() != null)
                         horse.setStyle( getStyle() );
-                    }
 
                     hi.setSaddle( getSaddle() );
                     hi.setArmor( getArmor() );
                 }
 
-                if ( absHorse instanceof ChestedHorse ) {
+                if (absHorse instanceof ChestedHorse)
+                {
                     final ChestedHorse chestHorse = (ChestedHorse) absHorse;
-                    chestHorse.setCarryingChest( this.actionData.chest );
+                    chestHorse.setCarryingChest(actionData.chest);
                 }
 
-                if ( absHorse instanceof Llama ) {
+                if (absHorse instanceof Llama)
+                {
                     final Llama llama = (Llama) absHorse;
                     final LlamaInventory li = llama.getInventory();
 
-                    if ( getLlamaColor() != null ) {
+                    if (getLlamaColor() != null)
                         llama.setColor( getLlamaColor() );
-                    }
 
-                    if ( this.actionData.strength > 0 && this.actionData.strength <= 5 ) {
-                        llama.setStrength(this.actionData.strength);
-                    }
+                    if (actionData.strength > 0 && actionData.strength <= 5)
+                        llama.setStrength( actionData.strength );
 
                     // TODO: Report spigot bug; setDecor isn't working
                     li.setDecor( getSaddle() );
-                } else {
-                    // Llama is only horse subtype without jump
-                    absHorse.setJumpStrength( this.actionData.jump );
                 }
+                else
+                    // Llama is only horse subtype without jump
+                    absHorse.setJumpStrength( actionData.jump );
 
                 // Owner
-            	final UUID tamingOwnerUUID = getTamingOwnerUUID();
-                if (tamingOwnerUUID != null) {
-                    final Player owner = plugin.getServer().getPlayer(tamingOwnerUUID);
-                    if(owner == null) {
-                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
-                        if (offlineOwner != null) {
-                            absHorse.setOwner(offlineOwner);
+                final UUID tamingOwnerUUID = getTamingOwnerUUID();
+                if ( tamingOwnerUUID != null )
+                {
+                    final Player owner = plugin.getServer().getPlayer( tamingOwnerUUID );
+                    if ( owner == null )
+                    {
+                        final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer( tamingOwnerUUID );
+                        if ( offlineOwner != null )
+                        {
+                            absHorse.setOwner( offlineOwner );
                         }
-                    } else {
-                        absHorse.setOwner(owner);
                     }
-                } else {
+                    else
+                    {
+                        absHorse.setOwner( owner );
+                    }
+                }
+                else
+                {
                     final String tamingOwner = getTamingOwner();
-                    if( tamingOwner != null ) {
+                    if ( tamingOwner != null )
+                    {
                         Player owner = plugin.getServer().getPlayer( tamingOwner );
-                        if( owner == null ) {
+                        if ( owner == null )
+                        {
                             final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                            if( offlinePlayer.hasPlayedBefore() ) {
+                            if ( offlinePlayer.hasPlayedBefore() )
                                 owner = offlinePlayer.getPlayer();
-                            }
                         }
-                        if( owner != null )
+                        if ( owner != null )
                             absHorse.setOwner( owner );
                     }
                 }
             }
 
-            return new ChangeResult( ChangeResultType.APPLIED, null );
+            return new ChangeResult(ChangeResultType.APPLIED, null);
 
         }
-        return new ChangeResult( ChangeResultType.PLANNED, null );
+        return new ChangeResult(ChangeResultType.PLANNED, null);
     }
 }
