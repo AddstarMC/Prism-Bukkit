@@ -229,7 +229,21 @@ public class EntityAction extends GenericAction {
     public EntityType getEntityType() {
         try {
             final EntityType e = EntityType.valueOf( actionData.entity_name.toUpperCase() );
-            if( e != null ) { return e; }
+
+            // Transform pre-1.11 horse variants to horse entities
+            if (e.equals(EntityType.HORSE) && actionData.var != null) {
+                switch ( actionData.var.toUpperCase() ) {
+                    case "DONKEY": return EntityType.DONKEY;
+                    case "MULE": return EntityType.MULE;
+                    case "UNDEAD_HORSE": return EntityType.ZOMBIE_HORSE;
+                    case "SKELETON_HORSE": return EntityType.SKELETON_HORSE;
+                    case "LLAMA": return EntityType.LLAMA;
+                    case "HORSE":
+                    default: return EntityType.HORSE;
+                }
+            }
+
+            return e;
         } catch ( final IllegalArgumentException e ) {
             // In pre-RC builds we logged the wrong name of entities, sometimes
             // the names
@@ -347,12 +361,22 @@ public class EntityAction extends GenericAction {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public Horse.Color getHorseColor() {
         if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ) { return Horse.Color
-                .valueOf( this.actionData.hColor ); }
+            .valueOf( this.actionData.hColor ); }
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Llama.Color getLlamaColor() {
+        if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ) { return Llama.Color
+            .valueOf( this.actionData.hColor ); }
         return null;
     }
 
@@ -370,7 +394,10 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public ItemStack getSaddle() {
-        if( this.actionData.saddle != null ) { return new ItemStack( Integer.parseInt( this.actionData.saddle ), 1 ); }
+        if( this.actionData.saddle != null ) {
+            short data = this.actionData.saddleData != null ? Short.parseShort(this.actionData.saddleData) : 0;
+            return new ItemStack( Integer.parseInt( this.actionData.saddle ), 1, data );
+        }
         return null;
     }
 
@@ -525,34 +552,57 @@ public class EntityAction extends GenericAction {
             }
 
             // Set horse details
-            if( entity instanceof Horse ) {
+            if( entity instanceof AbstractHorse ) {
 
-                final Horse h = (Horse) entity;
+                final AbstractHorse absHorse = (AbstractHorse) entity;
 
-                if( getVariant() != null ) {
-                    h.setVariant( getVariant() );
+                if ( this.actionData.dom > 0 && this.actionData.dom < this.actionData.maxDom ) {
+                    absHorse.setDomestication(this.actionData.dom);
+                    absHorse.setMaxDomestication( this.actionData.maxDom );
                 }
 
-                if( getHorseColor() != null ) {
-                    h.setColor( getHorseColor() );
+                absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue( this.actionData.maxHealth );
+                absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.actionData.speed);
+
+                if ( absHorse instanceof Horse ) {
+                    final Horse horse = (Horse) absHorse;
+                    final HorseInventory hi = horse.getInventory();
+
+                    if( getHorseColor() != null ) {
+                        horse.setColor( getHorseColor() );
+                    }
+
+                    if( getStyle() != null ) {
+                        horse.setStyle( getStyle() );
+                    }
+
+                    hi.setSaddle( getSaddle() );
+                    hi.setArmor( getArmor() );
                 }
 
-                if( getStyle() != null ) {
-                    h.setStyle( getStyle() );
+                if ( absHorse instanceof ChestedHorse ) {
+                    final ChestedHorse chestHorse = (ChestedHorse) absHorse;
+                    chestHorse.setCarryingChest( this.actionData.chest );
                 }
 
-                h.setCarryingChest( this.actionData.chest );
-                h.setDomestication( this.actionData.dom );
-                h.setMaxDomestication( this.actionData.maxDom );
-                h.setJumpStrength( this.actionData.jump );
-                h.setMaxHealth( this.actionData.maxHealth );
-                
-                // Set speed
-                h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(this.actionData.speed);
-                
-                // Stuff
-                h.getInventory().setSaddle( getSaddle() );
-                h.getInventory().setArmor( getArmor() );
+                if ( absHorse instanceof Llama ) {
+                    final Llama llama = (Llama) absHorse;
+                    final LlamaInventory li = llama.getInventory();
+
+                    if ( getLlamaColor() != null ) {
+                        llama.setColor( getLlamaColor() );
+                    }
+
+                    if ( this.actionData.strength > 0 && this.actionData.strength <= 5 ) {
+                        llama.setStrength(this.actionData.strength);
+                    }
+
+                    // TODO: Report spigot bug; setDecor isn't working
+                    li.setDecor( getSaddle() );
+                } else {
+                    // Llama is only horse subtype without jump
+                    absHorse.setJumpStrength( this.actionData.jump );
+                }
 
                 // Owner
             	final UUID tamingOwnerUUID = getTamingOwnerUUID();
@@ -561,10 +611,10 @@ public class EntityAction extends GenericAction {
                     if(owner == null) {
                         final OfflinePlayer offlineOwner = plugin.getServer().getOfflinePlayer(tamingOwnerUUID);
                         if (offlineOwner != null) {
-                            h.setOwner(offlineOwner);
+                            absHorse.setOwner(offlineOwner);
                         }
                     } else {
-                        h.setOwner(owner); 
+                        absHorse.setOwner(owner);
                     }
                 } else {
                     final String tamingOwner = getTamingOwner();
@@ -577,7 +627,7 @@ public class EntityAction extends GenericAction {
                             }
                         }
                         if( owner != null )
-                            h.setOwner( owner );
+                            absHorse.setOwner( owner );
                     }
                 }
             }
