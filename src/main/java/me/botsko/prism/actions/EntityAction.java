@@ -20,6 +20,7 @@ import org.bukkit.inventory.LlamaInventory;
 
 public class EntityAction extends GenericAction {
 
+    // TODO: Optimize data storage on these by making value types nullable ones
     public class EntityActionData {
         public String entity_name;
         public String custom_name;
@@ -145,10 +146,9 @@ public class EntityAction extends GenericAction {
             // Horse details
             if ( entity instanceof AbstractHorse ) {
                 final AbstractHorse absHorse = (AbstractHorse) entity;
-                this.actionData.var = absHorse.getType().toString().toUpperCase();
+                // TODO: When rolling back, handle old and new variants
                 this.actionData.dom = absHorse.getDomestication();
                 this.actionData.maxDom = absHorse.getMaxDomestication();
-                this.actionData.jump = absHorse.getJumpStrength();
                 this.actionData.maxHealth = absHorse.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
                 this.actionData.speed = absHorse.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue();
 
@@ -170,10 +170,14 @@ public class EntityAction extends GenericAction {
                     if( hi.getArmor() != null ) {
                         this.actionData.armor = "" + hi.getArmor().getTypeId();
                     }
-                } else if ( absHorse instanceof ChestedHorse ) {
+                }
+
+                if ( absHorse instanceof ChestedHorse ) {
                     final ChestedHorse chestHorse = (ChestedHorse) absHorse;
                     this.actionData.chest = chestHorse.isCarryingChest();
-                } else if ( absHorse instanceof Llama ) {
+                }
+
+                if ( absHorse instanceof Llama ) {
                     final Llama llama = (Llama) absHorse;
                     final LlamaInventory li = llama.getInventory();
 
@@ -181,6 +185,9 @@ public class EntityAction extends GenericAction {
                     this.actionData.strength = llama.getStrength();
                     this.actionData.saddle = "" + li.getDecor().getTypeId();
                     this.actionData.saddleData = "" + li.getDecor().getDurability();
+                } else {
+                    // Llama is only horse subtype without jump
+                    this.actionData.jump = absHorse.getJumpStrength();
                 }
 
                 // Owner
