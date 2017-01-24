@@ -4,9 +4,9 @@ up, rolled back, restored, etc. There are also various anti-griefing tools.
 GPrism is a downstream fork of @viveleroi's [Prism-Bukkit][PRISM], with various fixes and feature
 additions by a few GitHub contributors and Roy Curtis.
 
-# Differences
+# Differences from upstream
 
-## From other forks of Prism-Bukkit
+## Pulled in from other forks
 
 * 1.9, 1.9.4 and 1.10 support by @Jikoo
 * UTF-8 MySQL support by @paulmory
@@ -14,7 +14,7 @@ additions by a few GitHub contributors and Roy Curtis.
 * Removal of NMS usage and chat component API fixes by @Jikoo
 * Item frame rollback fixes by @PhanaticD
 
-# By Roy Curtis
+## By Roy Curtis
 
 * Removed duplicate GSON dependency and included Elixr (repository down)
 * Added `useSSL=false` to MySQL string (due to spam from new versions)
