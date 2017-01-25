@@ -1,3 +1,8 @@
+*This README is from the original version of PRISM, written by viveleroi. The information on this
+README does not apply to GPrism*
+
+-----
+
 ### Contributing
 
 Prism is open source and we're accepting pull requests via GitHub. If you'd like to contribute, please read the following:

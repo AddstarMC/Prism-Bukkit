@@ -4,6 +4,8 @@ up, rolled back, restored, etc. There are also various anti-griefing tools.
 GPrism is a downstream fork of @viveleroi's [Prism-Bukkit][PRISM], with various fixes and feature
 additions by a few GitHub contributors and Roy Curtis.
 
+For information on how to use GPrism, [see the original Prism wiki.][WIKI]
+
 # Differences from upstream
 
 ## Pulled in from other forks
@@ -63,6 +65,7 @@ for the full license.
 
 [PRISM]: https://github.com/prism/Prism-Bukkit
 [SPONGE]: https://github.com/prism/Prism
+[WIKI]: http://discover-prism.com/wiki/
 [BUILD]: https://docs.google.com/document/d/1TTDXG7IZ9M0D2-rzbILAWg1CKjynHK8fNGxbf3W4wBk/view
 [SHADE]: http://i.imgur.com/9eqRiwR.png
 [LICENSE]: http://creativecommons.org/licenses/by-nc-sa/3.0/us/
