@@ -12,7 +12,7 @@ For information on how to use GPrism, [see the original Prism wiki.][WIKI]
 
 * 1.9, 1.9.4 and 1.10 support by @Jikoo
 * UTF-8 MySQL support by @paulmory
-* Inspect hand item and wand fixes by @Siggi88
+* Inspect hand item and wand fixes by @Siggi88 and @Jikoo
 * Removal of NMS usage and chat component API fixes by @Jikoo
 * Item frame rollback fixes by @PhanaticD
 
