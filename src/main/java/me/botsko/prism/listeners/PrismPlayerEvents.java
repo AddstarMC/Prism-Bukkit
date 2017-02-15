@@ -446,7 +446,7 @@ public class PrismPlayerEvents implements Listener {
                     plugin.preplannedVehiclePlacement.put( coord_key, player.getName() );
                     break;
                 case TNT:
-                    if ( event.getItem().getType().equals( Material.FLINT_AND_STEEL ) ) {
+                    if ( event.getItem() != null && event.getItem().getType().equals( Material.FLINT_AND_STEEL ) ) {
                         if( !Prism.getIgnore().event( "tnt-prime", player ) )
                             return;
                         RecordingQueue.addToQueue( ActionFactory.createUse("tnt-prime", "tnt", block, player.getName()) );
