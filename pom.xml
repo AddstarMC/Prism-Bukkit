@@ -8,7 +8,7 @@
 
   <groupId>me.botsko</groupId>
   <artifactId>prism</artifactId>
-  <version>1.11-2.0.7</version>
+  <version>1.11.2-2.0.8</version>
 
   <name>Prism</name>
   <description>
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.11-R0.1-SNAPSHOT</version>
+      <version>1.11.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
