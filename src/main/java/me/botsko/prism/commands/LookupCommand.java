@@ -110,7 +110,7 @@ public class LookupCommand implements SubHandler {
                                     am.showExtended();
                                 }
                                 am.setResultIndex( result_count );
-                                if (sender instanceof Player) {
+                                if (sender instanceof Player && !parameters.hasFlag( Flag.RAW ) ) {
                                     ((Player) sender).spigot().sendMessage(am.getJSONMessage());
                                 } else {
                                     sender.sendMessage(am.getMessage());
