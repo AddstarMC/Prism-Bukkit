@@ -261,6 +261,12 @@ public class PrismBlockEvents implements Listener {
             return;
         final Block b = event.getBlock();
         final BlockState s = event.getNewState();
+
+        // Frost walker ice is already handled by EntityBlockFormEvent
+        if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)
+        if (s.getType() == Material.FROSTED_ICE)
+            return;
+
         RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-form", b.getLocation(), b.getTypeId(), b.getData(),
                 s.getTypeId(), s.getRawData(), "Environment") );
     }
