@@ -702,6 +702,7 @@ public class BlockUtils {
 			case WOOD_PLATE:
 			case WOODEN_DOOR:
 			case YELLOW_FLOWER:
+			case END_ROD:
 				return true;
 			default:
 				return false;
