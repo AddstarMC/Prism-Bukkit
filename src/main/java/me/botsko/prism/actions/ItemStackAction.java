@@ -441,19 +441,19 @@ public class ItemStackAction extends GenericAction {
                     boolean added = false;
 
                     // We'll attempt to put it back in the same slot
-                    if( getActionData().slot >= 0 ) {
+                    if( actionData.slot >= 0 ) {
                         // Ensure slot exists in this inventory
                         // I'm not sure why this happens but sometimes
                         // a slot larger than the contents size is recorded
                         // and triggers ArrayIndexOutOfBounds
                         // https://snowy-evening.com/botsko/prism/450/
-                        if( getActionData().slot < inventory.getSize() ) {
-                            final ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+                        if( actionData.slot < inventory.getSize() ) {
+                            final ItemStack currentSlotItem = inventory.getItem( actionData.slot );
                             // Make sure nothing's there.
                             if( currentSlotItem == null ) {
                                 result = ChangeResultType.APPLIED;
                                 added = true;
-                                inventory.setItem( getActionData().slot, getItem() );
+                                inventory.setItem( actionData.slot, getItem() );
                             }
                         }
                     }
@@ -502,18 +502,18 @@ public class ItemStackAction extends GenericAction {
                     boolean removed = false;
 
                     // We'll attempt to take it from the same slot
-                    if( getActionData().slot >= 0 ) {
+                    if( actionData.slot >= 0 ) {
 
-                        if( getActionData().slot > inventory.getContents().length ) {
+                        if( actionData.slot > inventory.getContents().length ) {
                             inventory.addItem( getItem() );
                         } else {
-                            final ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+                            final ItemStack currentSlotItem = inventory.getItem( actionData.slot );
                             // Make sure something's there.
                             if( currentSlotItem != null ) {
                                 currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
                                 result = ChangeResultType.APPLIED;
                                 removed = true;
-                                inventory.setItem( getActionData().slot, currentSlotItem );
+                                inventory.setItem( actionData.slot, currentSlotItem );
                             }
                         }
                     }
