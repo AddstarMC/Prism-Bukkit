@@ -1,9 +1,10 @@
 package me.botsko.prism.actions;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.helion3.prism.libs.elixr.InventoryUtils;
 import me.botsko.prism.Prism;
@@ -32,24 +33,39 @@ import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class ItemStackAction extends GenericAction {
 
+    /** @deprecated For legacy data pre-1.11.2-2.0.9 */
     public class ItemStackActionData {
+        // Native meta
         public int amt;
-        public String name;
+        public int slot = -1;
+        public String meta;
+
+        // Legacy
         public int color;
+        public String name;
         public String owner;
         public String[] enchs;
         public String by;
         public String title;
         public String[] lore;
         public String[] content;
-        public int slot = -1;
         public int[] effectColors;
         public int[] fadeColors;
         public boolean hasFlicker;
         public boolean hasTrail;
+    }
+
+    /** Tempoarily a separate class for serialization, until we can get rid of legacy */
+    public class ItemStackNewActionData {
+        public int    amt;
+        public int    slot = -1;
+        public String meta;
     }
 
     /**
@@ -62,137 +78,69 @@ public class ItemStackAction extends GenericAction {
 	 */
     protected ItemStackActionData actionData;
 
-    /**
-     * We store the enchantments here because an event like item enchant doesn't
-     * give us the item with the enchantments already on it.
-     */
-    protected Map<Enchantment, Integer> enchantments;
-
-    /**
-     *
-     * @param item
-     * @param quantity
-     * @param slot
-     * @param enchantments
-     */
+    /** Sets and serializes the ItemStack of this action */
     public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
-
         actionData = new ItemStackActionData();
-
-        if( enchantments != null ) {
-            this.enchantments = enchantments;
-        }
 
         if( item == null || item.getAmount() <= 0 ) {
             this.setCanceled( true );
             return;
         }
 
-        this.item = item;
-        if( enchantments == null ) {
-            this.enchantments = item.getEnchantments();
-        }
-
         // Set basics
+        this.item = item;
         this.block_id = item.getTypeId();
         this.block_subid = item.getDurability();
         actionData.amt = quantity;
-        if( slot >= 0 ) {
+
+        if (slot >= 0)
             actionData.slot = slot;
-        }
 
-        // Set additional data all items may have
-        final ItemMeta meta = item.getItemMeta();
-        if( meta != null && meta.getDisplayName() != null ) {
-            actionData.name = meta.getDisplayName();
-        }
+        // Necessary because enchant-item event doesn't directly apply the new enchants
+        if (enchantments != null)
+            this.item.addEnchantments(enchantments);
 
-        // Leather Coloring
-        if( meta != null && item.getType().name().contains( "LEATHER_" ) ) {
-            final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
-            if( lam.getColor() != null ) {
-                actionData.color = lam.getColor().asRGB();
-            }
-        }
+        // Don't continue by this point if the item has no meta
+        if ( !item.hasItemMeta() )
+            return;
 
-        // Skull Owner
-        else if( meta != null && item.getType().equals( Material.SKULL_ITEM ) ) {
-            final SkullMeta skull = (SkullMeta) meta;
-            if( skull.hasOwner() ) {
-                actionData.owner = skull.getOwner();
-            }
-        }
+        // Serialize the ItemStack using native API
+        // Won't use try-with-resources here; ByteArrayOutputStream requires another try/catch
+        // This generates garbage, but unfortunately BukkitObjectOutputStream.reset() is broken
+        ByteArrayOutputStream    outputStream;
+        BukkitObjectOutputStream dataObject;
+        try
+        {
+            outputStream = new ByteArrayOutputStream();
+            dataObject   = new BukkitObjectOutputStream(outputStream);
+            dataObject.writeObject( item.getItemMeta() );
+            dataObject.close();
+            outputStream.close();
 
-        // Written books
-        if( meta != null && meta instanceof BookMeta ) {
-            final BookMeta bookMeta = (BookMeta) meta;
-            actionData.by = bookMeta.getAuthor();
-            actionData.title = bookMeta.getTitle();
-            actionData.content = bookMeta.getPages().toArray( new String[0] );
+            actionData.meta = Base64Coder.encodeLines( outputStream.toByteArray() );
         }
+        catch (Exception e)
+        {
+            Prism.debug("Could not base64 serialize item meta: " + this.item);
+            e.printStackTrace();
+        }
+    }
 
-        // Lore
-        if( meta != null && meta.getLore() != null ) {
-            actionData.lore = meta.getLore().toArray( new String[0] );
-        }
+    /**
+     *
+     */
+    @Override
+    public void save() {
+        if (actionData == null)
+            return;
 
-        // Enchantments
-        if( !this.enchantments.isEmpty() ) {
-            final String[] enchs = new String[this.enchantments.size()];
-            int i = 0;
-            for ( final Entry<Enchantment, Integer> ench : this.enchantments.entrySet() ) {
-                enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-                i++;
-            }
-            actionData.enchs = enchs;
-        }
+        ItemStackNewActionData toSerialize = new ItemStackNewActionData();
 
-        // Book enchantments
-        else if( meta != null && item.getType().equals( Material.ENCHANTED_BOOK ) ) {
-            final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
-            if( bookEnchantments.hasStoredEnchants() ) {
-                if( bookEnchantments.getStoredEnchants().size() > 0 ) {
-                    final String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
-                    int i = 0;
-                    for ( final Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet() ) {
-                        enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-                        i++;
-                    }
-                    actionData.enchs = enchs;
-                }
-            }
-        }
+        toSerialize.amt  = actionData.amt;
+        toSerialize.slot = actionData.slot;
+        toSerialize.meta = actionData.meta;
 
-        // Fireworks
-        if( meta != null && block_id == 402 ) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            if( fireworkMeta.hasEffect() ) {
-                final FireworkEffect effect = fireworkMeta.getEffect();
-                if( !effect.getColors().isEmpty() ) {
-                    final int[] effectColors = new int[effect.getColors().size()];
-                    int i = 0;
-                    for ( final Color effectColor : effect.getColors() ) {
-                        effectColors[i] = effectColor.asRGB();
-                        i++;
-                    }
-                    actionData.effectColors = effectColors;
-                }
-                if( !effect.getFadeColors().isEmpty() ) {
-                    final int[] fadeColors = new int[effect.getColors().size()];
-                    final int i = 0;
-                    for ( final Color fadeColor : effect.getFadeColors() ) {
-                        fadeColors[i] = fadeColor.asRGB();
-                    }
-                    actionData.fadeColors = fadeColors;
-                }
-                if( effect.hasFlicker() ) {
-                    actionData.hasFlicker = true;
-                }
-                if( effect.hasTrail() ) {
-                    actionData.hasTrail = true;
-                }
-            }
-        }
+        data = gson.toJson(toSerialize);
     }
 
     /**
@@ -201,34 +149,51 @@ public class ItemStackAction extends GenericAction {
     @Override
     public void setData(String data) {
         this.data = data;
-        setItemStackFromData();
+
+        if ( item != null || data == null )
+            return;
+
+        if ( data.contains("\"hasFlicker\"") )
+            setItemStackFromLegacyDataFormat();
+        else
+            setItemStackFromNativeDataFormat();
     }
 
-    /**
-     * Prism began tracking very little data about an item stack and we felt
-     * that an object wasn't necessary. That soon became a bad decision because
-     * we kept piling on data to an existing string. Now we have a lot of old
-     * data that won't work with the new object, so we must keep around the old
-     * parsing methods.
-     */
-    protected void setItemStackFromData() {
-        if( item == null && data != null ) {
-            setItemStackFromNewDataFormat();
+    protected void setItemStackFromNativeDataFormat() {
+        if( data == null || !data.startsWith( "{" ) )
+            return;
+
+        actionData = gson.fromJson(data, ItemStackActionData.class);
+        item = new ItemStack( this.block_id, actionData.amt, (short) this.block_subid );
+
+        // Don't bother by this point, if there is no meta to deserialize
+        if (actionData.meta == null)
+            return;
+
+        // Won't use try-with-resources here; too noisy
+        ByteArrayInputStream    inputStream;
+        BukkitObjectInputStream dataInput;
+        try
+        {
+            byte[] decoded = Base64Coder.decodeLines(actionData.meta);
+
+            inputStream = new ByteArrayInputStream(decoded);
+            dataInput   = new BukkitObjectInputStream(inputStream);
+
+            item.setItemMeta( (ItemMeta) dataInput.readObject() );
+        }
+        catch (Exception e)
+        {
+            Prism.debug("Could not base64 deserialize item meta for " + item);
+            e.printStackTrace();
         }
     }
 
     /**
-	 * 
-	 */
-    @Override
-    public void save() {
-        data = gson.toJson( actionData );
-    }
-
-    /**
-	 * 
-	 */
-    protected void setItemStackFromNewDataFormat() {
+     * Converts JSON data from pre-1.11.2-2.0.9 to item stack
+     * @deprecated Future item events will reliably serialize data using Bukkit's API
+     */
+    protected void setItemStackFromLegacyDataFormat() {
 
         if( data == null || !data.startsWith( "{" ) )
             return;
