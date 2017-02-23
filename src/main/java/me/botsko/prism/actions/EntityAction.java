@@ -24,16 +24,17 @@ import java.util.UUID;
 /** Represents an entity-related action (e.g. death, dye change) */
 public class EntityAction extends GenericAction
 {
-    // TODO: Optimize data storage on these by making value types nullable ones
     public class EntityActionData
     {
         // All entities
-        public String  entity_name;
-        public String  custom_name;
-        public boolean isAdult;
+        public String entity_name;
+        public String custom_name;
+
+        // Ageables
+        public Boolean isAdult;
 
         // Pets
-        public boolean sitting;
+        public Boolean sitting;
 
         // Sheep and wolf dying
         public String color;
@@ -50,20 +51,20 @@ public class EntityAction extends GenericAction
         public String taming_owner;
         public UUID   taming_owner_UUID;
 
-        // Horses & llamas
+        // Horses & llamas & rabbits
         public String  var;
         public String  hColor;
         public String  style;
         public String  saddle;
         public String  saddleData;
         public String  armor;
-        public boolean chest;
-        public int     dom;
-        public int     maxDom;
-        public int     strength;
-        public double  jump;
-        public double  maxHealth;
-        public double  speed;
+        public Boolean chest;
+        public Integer dom;
+        public Integer maxDom;
+        public Integer strength;
+        public Double  jump;
+        public Double  maxHealth;
+        public Double  speed;
     }
 
     /** Serializable version of {@link org.bukkit.inventory.MerchantRecipe} */
@@ -108,9 +109,15 @@ public class EntityAction extends GenericAction
 
         // Get animal age
         if (entity instanceof Ageable)
-            actionData.isAdult = ((Ageable) entity).isAdult();
-        else
-            actionData.isAdult = true;
+        {
+            final Ageable ageable = (Ageable) entity;
+
+            // Instead of directly using the result of isAdult, we can simply assume that all
+            // entities are adults until specified otherwise. Thus, adults can have their "isAdult"
+            // flag kept null, avoiding serialization.
+            if ( !ageable.isAdult() )
+                actionData.isAdult = false;
+        }
 
         // Get owner information
         if (entity instanceof Tameable)
@@ -318,13 +325,20 @@ public class EntityAction extends GenericAction
     /** @return true if action's entity is adult, false otherwise */
     public boolean isAdult()
     {
-        return actionData.isAdult;
+        // In setEntity, we only actually set isAdult to non-null (false), as babies are a special
+        // condition. Thus, null can be safely assumed as adult. In older data, both true and false
+        // are recorded anyway.
+        return actionData.isAdult != null
+            ? actionData.isAdult
+            : true;
     }
 
     /** @return true if action's entity is sitting, false otherwise */
     public boolean isSitting()
     {
-        return actionData.sitting;
+        return actionData.sitting != null
+            ? actionData.sitting
+            : false;
     }
 
     /** @return Bukkit dye color of this action's entity */
@@ -442,7 +456,7 @@ public class EntityAction extends GenericAction
         if ( !Strings.isNullOrEmpty(actionData.color) )
             name += actionData.color + " ";
 
-        if (!actionData.isAdult)
+        if (actionData.isAdult != null && !actionData.isAdult)
             name += "baby ";
 
         if ( !Strings.isNullOrEmpty(actionData.profession) )
@@ -547,10 +561,60 @@ public class EntityAction extends GenericAction
             : null;
     }
 
+    /** @return Whether or not this action's entity is chested */
+    public boolean getChest()
+    {
+        return actionData.chest != null
+            ? actionData.chest
+            : false;
+    }
+
+    /** @return Jump strength of this action's entity, may be 0 */
+    public double getJump()
+    {
+        return actionData.jump != null
+            ? actionData.jump
+            : 0.0;
+    }
+
     /** @return Max health of this action's entity, may be 0 */
     public double getMaxHealth()
     {
-        return actionData.maxHealth;
+        return actionData.maxHealth != null
+            ? actionData.maxHealth
+            : 0.0;
+    }
+
+    /** @return Speed of this action's entity, may be 0 */
+    public double getSpeed()
+    {
+        return actionData.speed != null
+            ? actionData.speed
+            : 0.0;
+    }
+
+    /** @return Current domestication of this action's entity, may be 0 */
+    public int getDomestication()
+    {
+        return actionData.dom != null
+            ? actionData.dom
+            : 0;
+    }
+
+    /** @return Max domestication of this action's entity, may be 0 */
+    public int getMaxDomestication()
+    {
+        return actionData.maxDom != null
+            ? actionData.maxDom
+            : 0;
+    }
+
+    /** @return Strength of this action's llama, may be 0 */
+    public int getStrength()
+    {
+        return actionData.strength != null
+            ? actionData.strength
+            : 0;
     }
 
     /** Handles rolling back of entity actions */
@@ -675,21 +739,22 @@ public class EntityAction extends GenericAction
         {
             final AbstractHorse absHorse = (AbstractHorse) entity;
 
-            if (actionData.dom > 0 && actionData.dom < actionData.maxDom)
+            if ( getDomestication() > 0 )
+            if ( getDomestication() < getMaxDomestication() )
             {
-                absHorse.setDomestication(actionData.dom);
-                absHorse.setMaxDomestication(actionData.maxDom);
+                absHorse.setDomestication( getDomestication() );
+                absHorse.setMaxDomestication( getMaxDomestication() );
             }
 
-            if (actionData.maxHealth > 0)
+            if (getMaxHealth() > 0)
                 absHorse
                     .getAttribute(Attribute.GENERIC_MAX_HEALTH)
-                    .setBaseValue(actionData.maxHealth);
+                    .setBaseValue( getMaxHealth() );
 
-            if (actionData.speed > 0)
+            if (getSpeed() > 0)
                 absHorse
                     .getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)
-                    .setBaseValue(actionData.speed);
+                    .setBaseValue( getSpeed() );
 
             if (absHorse instanceof Horse)
             {
@@ -710,7 +775,7 @@ public class EntityAction extends GenericAction
             if (absHorse instanceof ChestedHorse)
             {
                 final ChestedHorse chestHorse = (ChestedHorse) absHorse;
-                chestHorse.setCarryingChest(actionData.chest);
+                chestHorse.setCarryingChest( getChest() );
             }
 
             if (absHorse instanceof Llama)
@@ -720,16 +785,16 @@ public class EntityAction extends GenericAction
                 if (getLlamaColor() != null)
                     llama.setColor( getLlamaColor() );
 
-                if (actionData.strength > 0 && actionData.strength <= 5)
-                    llama.setStrength( actionData.strength );
+                if (getStrength() > 0 && getStrength() <= 5)
+                    llama.setStrength( getStrength() );
 
                 // For some reason, LlamaInventory does not like being put into its own variable.
                 // Setting anything to the referenced inventory randomly doesn't work.
                 llama.getInventory().setDecor( getSaddle() );
             }
-            else
+            else if (getJump() > 0)
                 // Llama is only horse subtype without jump
-                absHorse.setJumpStrength( actionData.jump );
+                absHorse.setJumpStrength( getJump() );
         }
 
         return new ChangeResult(ChangeResultType.APPLIED, null);
