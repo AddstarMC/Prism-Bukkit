@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +12,7 @@ import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.block.Block;
@@ -33,9 +32,6 @@ import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class ItemStackAction extends GenericAction {
 
@@ -100,29 +96,13 @@ public class ItemStackAction extends GenericAction {
         if (enchantments != null)
             this.item.addEnchantments(enchantments);
 
-        // Don't continue by this point if the item has no meta
-        if ( !item.hasItemMeta() )
-            return;
-
-        // Serialize the ItemStack using native API
-        // Won't use try-with-resources here; ByteArrayOutputStream requires another try/catch
-        // This generates garbage, but unfortunately BukkitObjectOutputStream.reset() is broken
-        ByteArrayOutputStream    outputStream;
-        BukkitObjectOutputStream dataObject;
-        try
+        if ( item.hasItemMeta() )
         {
-            outputStream = new ByteArrayOutputStream();
-            dataObject   = new BukkitObjectOutputStream(outputStream);
-            dataObject.writeObject( item.getItemMeta() );
-            dataObject.close();
-            outputStream.close();
+            // Serialize the ItemStack's meta using native API
+            actionData.meta = MiscUtils.serializeToBase64( item.getItemMeta() );
 
-            actionData.meta = Base64Coder.encodeLines( outputStream.toByteArray() );
-        }
-        catch (Exception e)
-        {
-            Prism.debug("Could not base64 serialize item meta: " + this.item);
-            e.printStackTrace();
+            if (actionData.meta == null)
+                Prism.debug("Could not base64 serialize item meta: " + item);
         }
     }
 
@@ -166,26 +146,15 @@ public class ItemStackAction extends GenericAction {
         actionData = gson.fromJson(data, ItemStackActionData.class);
         item = new ItemStack( this.block_id, actionData.amt, (short) this.block_subid );
 
-        // Don't bother by this point, if there is no meta to deserialize
-        if (actionData.meta == null)
-            return;
-
-        // Won't use try-with-resources here; too noisy
-        ByteArrayInputStream    inputStream;
-        BukkitObjectInputStream dataInput;
-        try
+        // Deserialize any metadata
+        if (actionData.meta != null)
         {
-            byte[] decoded = Base64Coder.decodeLines(actionData.meta);
+            ItemMeta meta = MiscUtils.deserializeFromBase64(actionData.meta);
 
-            inputStream = new ByteArrayInputStream(decoded);
-            dataInput   = new BukkitObjectInputStream(inputStream);
-
-            item.setItemMeta( (ItemMeta) dataInput.readObject() );
-        }
-        catch (Exception e)
-        {
-            Prism.debug("Could not base64 deserialize item meta for " + item);
-            e.printStackTrace();
+            if (meta == null)
+                Prism.debug("Could not base64 deserialize item meta: " + item);
+            else
+                item.setItemMeta(meta);
         }
     }
 
