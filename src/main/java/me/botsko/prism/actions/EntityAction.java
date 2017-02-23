@@ -5,17 +5,20 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import org.bukkit.*;
+import me.botsko.prism.utils.MiscUtils;
+import org.bukkit.DyeColor;
+import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Horse.Variant;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.inventory.HorseInventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.LlamaInventory;
+import org.bukkit.inventory.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /** Represents an entity-related action (e.g. death, dye change) */
@@ -37,8 +40,11 @@ public class EntityAction extends GenericAction
         public String newColor;
 
         // Villagers
-        public String profession;
-        // TODO: save villager trades
+        public String  profession;
+        public Integer riches;
+
+        // Merchants
+        public MerchantRecipeData[] trades;
 
         // Tameables
         public String taming_owner;
@@ -58,6 +64,16 @@ public class EntityAction extends GenericAction
         public double  jump;
         public double  maxHealth;
         public double  speed;
+    }
+
+    /** Serializable version of {@link org.bukkit.inventory.MerchantRecipe} */
+    public class MerchantRecipeData
+    {
+        public String[] ingredientItems;
+        public String   resultItem;
+        public Integer  uses;
+        public Integer  maxUses;
+        public Boolean  expReward;
     }
 
     /**
@@ -120,13 +136,43 @@ public class EntityAction extends GenericAction
         if (dyeUsed != null)
             actionData.newColor = dyeUsed;
 
-        // Get villager type
+        // Villager details
         if (entity instanceof Villager)
         {
             final Villager v = (Villager) entity;
 
             if (v.getProfession() != null)
                 actionData.profession = v.getProfession().toString().toLowerCase();
+
+            actionData.riches = v.getRiches();
+        }
+
+        // Merchant trades
+        if (entity instanceof Merchant)
+        {
+            final Merchant m = (Merchant) entity;
+
+            actionData.trades = new MerchantRecipeData[ m.getRecipeCount() ];
+
+            for (int i = 0; i < actionData.trades.length; i++)
+            {
+                MerchantRecipeData data        = new MerchantRecipeData();
+                MerchantRecipe     recipe      = m.getRecipe(i);
+                List<ItemStack>    ingredients = recipe.getIngredients();
+
+                data.ingredientItems = new String[ ingredients.size() ];
+
+                // If one slot is AIR, null is returned
+                for (int j = 0; j < data.ingredientItems.length; j++)
+                    data.ingredientItems[j] = MiscUtils.serializeToBase64( ingredients.get(j) );
+
+                data.resultItem = MiscUtils.serializeToBase64( recipe.getResult() );
+                data.uses       = recipe.getUses();
+                data.maxUses    = recipe.getMaxUses();
+                data.expReward  = recipe.hasExperienceReward();
+
+                actionData.trades[i] = data;
+            }
         }
 
         // Wolf details
@@ -297,6 +343,54 @@ public class EntityAction extends GenericAction
         return !Strings.isNullOrEmpty(actionData.profession)
             ? Profession.valueOf( actionData.profession.toUpperCase() )
             : null;
+    }
+
+    /** @return Amount of emeralds owned by this villager */
+    public int getRiches()
+    {
+        return actionData.riches != null
+            ? actionData.riches
+            : 0;
+    }
+
+    @Nullable
+    public List<MerchantRecipe> getTrades()
+    {
+        if (actionData.trades == null)
+            return null;
+
+        List<MerchantRecipe> trades = new ArrayList<>(actionData.trades.length);
+
+        for (MerchantRecipeData data : actionData.trades)
+        {
+            // Valid trades require at least an input and output
+            if (data.ingredientItems == null) continue;
+            if (data.resultItem      == null) continue;
+            if (data.uses            == null) data.uses      = 0;
+            if (data.maxUses         == null) data.maxUses   = 0;
+            if (data.expReward       == null) data.expReward = false;
+
+            ItemStack result = MiscUtils.deserializeFromBase64(data.resultItem);
+
+            if (result == null) continue;
+
+            MerchantRecipe recipe = new MerchantRecipe(result, data.maxUses);
+            recipe.setUses(data.uses);
+            recipe.setExperienceReward(data.expReward);
+
+            for (String ingredientData : data.ingredientItems)
+            {
+                // For AIR slots, the ingredientData is null
+                ItemStack ingredient = MiscUtils.deserializeFromBase64(ingredientData);
+
+                if (ingredient != null)
+                    recipe.addIngredient(ingredient);
+            }
+
+            trades.add(recipe);
+        }
+
+        return trades;
     }
 
     /** @return Owner's name of this action's entity */
@@ -527,9 +621,27 @@ public class EntityAction extends GenericAction
         if (entity instanceof Rabbit && getRabbitType() != null)
             ((Rabbit) entity).setRabbitType( getRabbitType() );
 
-        // Set villager profession
-        if (entity instanceof Villager && getProfession() != null)
-            ((Villager) entity).setProfession( getProfession() );
+        // Set villager details
+        if (entity instanceof Villager)
+        {
+            final Villager v = (Villager) entity;
+
+            // Profession
+            if ( getProfession() != null )
+                v.setProfession( getProfession() );
+
+            v.setRiches( getRiches() );
+        }
+
+        // Set merchant trades
+        if (entity instanceof Merchant)
+        {
+            final Merchant             m = (Merchant) entity;
+            final List<MerchantRecipe> t = getTrades();
+
+            if (t != null)
+                m.setRecipes(t);
+        }
 
         // Set wolf details
         if (entity instanceof Wolf)
