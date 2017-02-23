@@ -190,13 +190,17 @@ public class MiscUtils {
 
     /**
      * Serializes given Bukkit object to a base64 string, for data storage. Uses
-     * {@link BukkitObjectOutputStream}, so data of items should serialize properly
+     * {@link BukkitObjectOutputStream}, so data of items should serialize properly. If given null,
+     * will just return null silently.
      *
      * @param obj ConfigurationSerializable to serialize to a base64 string
      * @return Base64 representation of the given object, or null if it failed to serialize
      */
     public static String serializeToBase64(ConfigurationSerializable obj)
     {
+        if (obj == null)
+            return null;
+
         // Won't use try-with-resources here; ByteArrayOutputStream requires another try/catch
         // This generates garbage, but unfortunately BukkitObjectOutputStream.reset() is broken
         ByteArrayOutputStream outputStream;
@@ -221,7 +225,8 @@ public class MiscUtils {
 
     /**
      * Deserializes given base64 string to Bukkit object, for data restore. Uses
-     * {@link BukkitObjectInputStream}, so data of items should deserialize properly
+     * {@link BukkitObjectInputStream}, so data of items should deserialize properly. If given null,
+     * will just return null silently.
      *
      * @param base64 Base64 string to deserialize into a ConfigurationSerializable
      * @return A ConfigurationSerializable object, or null if it failed to deserialize
@@ -229,6 +234,9 @@ public class MiscUtils {
     @SuppressWarnings("unchecked")
     public static <T extends ConfigurationSerializable> T deserializeFromBase64(String base64)
     {
+        if (base64 == null)
+            return null;
+
         // Won't use try-with-resources here; too noisy
         ByteArrayInputStream    inputStream;
         BukkitObjectInputStream dataInput;
