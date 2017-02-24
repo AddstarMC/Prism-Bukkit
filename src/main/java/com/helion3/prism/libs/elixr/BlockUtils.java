@@ -1,8 +1,5 @@
 package com.helion3.prism.libs.elixr;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,6 +8,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Hanging;
 import org.bukkit.material.Bed;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class BlockUtils {
 
@@ -52,7 +52,7 @@ public class BlockUtils {
 		
 		// Get block above
 		Block above = block.getRelative(BlockFace.UP);
-		if(BlockUtils.isFallingBlock(above)){
+		if( above.getType().hasGravity() ){
 			falling_blocks.add(above);
 			ArrayList<Block> fallingBlocksAbove = findFallingBlocksAboveBlock( above );
 			if(fallingBlocksAbove.size() > 0){
@@ -62,26 +62,6 @@ public class BlockUtils {
 			}
 		}
 		return falling_blocks;
-	}
-	
-	/**
-	 * Determine whether or not a block is capable of falling.
-	 * 
-	 * Seems like there's got to be another way to do this...
-	 * @param block the block to check for the ability to fall
-	 * @return whether the block is capable of falling
-	 */
-	public static boolean isFallingBlock( Block block ){
-		Material m = block.getType();
-
-        switch (m){
-            case SAND:
-            case GRAVEL:
-            case ANVIL:
-                return true;
-            default:
-                return false;
-        }
 	}
 	
 	/**
