@@ -15,17 +15,22 @@ For information on how to use GPrism, [see the original Prism wiki.][WIKI]
 * Inspect hand item and wand fixes by @Siggi88 and @Jikoo
 * Removal of NMS usage and chat component API fixes by @Jikoo
 * Item frame rollback fixes by @PhanaticD
+* `-raw` flag for non-JSON output by @cbarber
 
 ## By Roy Curtis
 
+* **Major changes to data storage format of items (full metadata support)**
+* Fixed rollback of villager trades and riches
+* Optimized data storage of entities
 * Removed duplicate GSON dependency and included Elixr (repository down)
 * Added `useSSL=false` to MySQL string (due to spam from new versions)
 * Hid purge cycle messages if 0 rows affected (reduces noise)
 * More fixes to item frame tracking and rollbacks
 * Made `item-rotate` action rollbackable and more accurate
-* Fixed rollbacks of torches against walls
+* Fixed rollbacks of torches against walls and end rods broken by water
 * Updated entity events and rollbacks to handle all the new 1.11 horse subtypes (incl. llamas)
 * Fixed attribute rollbacks of killed horses
+* Fixed tracking and attribution of frost walker ice
 * Added wait messages to `/pr i` and `/pr near`
 * Added support for rabbit types
 * Attributed lingering potion deaths to players
@@ -40,6 +45,8 @@ remove features that we don't use or think should be provided by GPrism.
 
 That said; please feel free to cherry pick commits or fork from this fork, or contribute to this
 fork with issues and pull requests.
+
+**Only the latest server version (1.11.2) is supported; older servers may break GPrism.**
 
 # Building, debugging and debug logging
 
