@@ -55,6 +55,12 @@
       <email>javw.phanatic@gmail.com</email>
       <url>https://github.com/PhanaticD</url>
     </developer>
+    <!-- Helped update to 1.12 -->
+    <developer>
+      <name>Mark Vainomaa</name>
+      <email>mikroskeem@mikroskeem.eu</email>
+      <url>https://github.com/mikroskeem</url>
+    </developer>
     <!-- Current maintainer of GPrism fork -->
     <developer>
       <name>Roy Curtis</name>
