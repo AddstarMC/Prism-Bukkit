@@ -503,7 +503,7 @@ public class Prism extends JavaPlugin {
                 addActionName( a );
             }
         } catch ( final SQLException e ) {
-            log( "Database connection error: " + e.getMessage() );
+            log( "Database connection error during setup: " + e.getMessage() );
             e.printStackTrace();
         } finally {
             if( st != null )
