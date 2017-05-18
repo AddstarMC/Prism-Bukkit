@@ -1,16 +1,11 @@
 package me.botsko.prism;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class ConfigBase {
 
@@ -83,14 +78,18 @@ public class ConfigBase {
      */
     protected FileConfiguration loadConfig(String default_folder, String filename) {
         final File file = getFilename( filename );
-        if( file.exists() ) {
+        if( file.exists() )
             return YamlConfiguration.loadConfiguration( file );
-        } else {
-            // Look for defaults in the jar
-            final InputStream defConfigStream = plugin.getResource( default_folder + filename + ".yml" );
-            if( defConfigStream != null ) {
-                return YamlConfiguration.loadConfiguration( new InputStreamReader( defConfigStream, StandardCharsets.UTF_8 ) );
-            }
+
+        // Look for defaults in the jar
+        try (
+            final InputStream       defConfigStream = plugin.getResource(default_folder + filename + ".yml");
+            final InputStreamReader reader          = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)
+        ) {
+            return YamlConfiguration.loadConfiguration(reader);
+        }
+        catch (Exception e)
+        {
             return null;
         }
     }

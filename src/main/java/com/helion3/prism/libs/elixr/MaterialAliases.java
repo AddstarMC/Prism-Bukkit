@@ -37,11 +37,18 @@ public class MaterialAliases {
 	public MaterialAliases(){
 		
 		FileConfiguration items = null;
-		InputStream defConfigStream = this.getClass().getResourceAsStream("/items.yml");
-	    if (defConfigStream != null){
-	    	System.out.println("Elixr: Loaded items directory");
-			items = YamlConfiguration.loadConfiguration( new InputStreamReader( defConfigStream, StandardCharsets.UTF_8 ));
-	    }
+
+		try (
+			final InputStream       defConfigStream = this.getClass().getResourceAsStream("/items.yml");
+			final InputStreamReader reader          = new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)
+		) {
+			System.out.println("Elixr: Loaded items directory");
+			items = YamlConfiguration.loadConfiguration(reader);
+		}
+		catch (Exception ignored)
+		{
+			// Error is handled later
+		}
 	    
 	    if( items != null ){
 
