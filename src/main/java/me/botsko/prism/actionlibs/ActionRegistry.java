@@ -1,14 +1,13 @@
 package me.botsko.prism.actionlibs;
 
-import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import org.bukkit.plugin.Plugin;
-
 import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.exceptions.InvalidActionException;
+import org.bukkit.plugin.Plugin;
+
+import java.util.ArrayList;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 public class ActionRegistry {
 
@@ -147,7 +146,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "block-fade", false, true, true, "BlockChangeAction", "faded" ) );
         registerAction( new ActionType( "block-fall", false, true, true, "BlockAction", "fell" ) );
         registerAction( new ActionType( "block-form", false, true, true, "BlockChangeAction", "formed" ) );
-        registerAction( new ActionType( "block-place", true, true, true, "BlockChangeAction", "placed" ) );
+        registerAction( new ActionType( "block-place", true, true, true, "BlockAction", "placed" ) );
         registerAction( new ActionType( "block-shift", true, false, false, "BlockShift", "moved" ) );
         registerAction( new ActionType( "block-spread", true, true, true, "BlockChangeAction", "grew" ) );
         registerAction( new ActionType( "block-use", false, false, false, "BlockAction", "used" ) );
