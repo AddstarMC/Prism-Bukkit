@@ -23,6 +23,7 @@ import org.bukkit.material.Sign;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Add support for concrete powder, when necessary events are implemented in Bukkit
 public class PrismBlockEvents implements Listener {
 
     /**
