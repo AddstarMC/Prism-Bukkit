@@ -193,10 +193,6 @@ public class EntityAction extends GenericAction
 
             // Collar color
             actionData.color = wolf.getCollarColor().name().toLowerCase();
-
-            // Sitting
-            if ( wolf.isSitting() )
-                actionData.sitting = true;
         }
 
         // Ocelot details
@@ -206,9 +202,14 @@ public class EntityAction extends GenericAction
 
             // Cat type
             actionData.var = ocelot.getCatType().toString().toLowerCase();
+        }
 
-            // Sitting
-            if ( ocelot.isSitting() )
+        // Sittable details
+        if (entity instanceof Sittable)
+        {
+            final Sittable sittable = (Sittable) entity;
+
+            if ( sittable.isSitting() )
                 actionData.sitting = true;
         }
 
@@ -734,9 +735,6 @@ public class EntityAction extends GenericAction
             // Collar color
             if ( getColor() != null )
                 wolf.setCollarColor( getColor() );
-
-            if ( isSitting() )
-                wolf.setSitting(true);
         }
 
         // Set ocelot details
@@ -747,10 +745,15 @@ public class EntityAction extends GenericAction
             // Cat type
             if ( getCatType() != null )
                 ocelot.setCatType( getCatType() );
+        }
 
-            // Sitting
+        // Set sittable details
+        if (entity instanceof Sittable)
+        {
+            final Sittable sittable = (Sittable) entity;
+
             if ( isSitting() )
-                ocelot.setSitting(true);
+                sittable.setSitting(true);
         }
 
         // Set horse details
