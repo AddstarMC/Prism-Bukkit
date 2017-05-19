@@ -603,6 +603,15 @@ public class BlockUtils {
 		if(top != null){
 			top.setTypeId(typeid);
 			top.setData((byte)new_subid);
+
+			if (originalBlock.getState() instanceof org.bukkit.block.Bed
+				&& top.getState()        instanceof org.bukkit.block.Bed
+			) {
+				final org.bukkit.block.Bed bedS = (org.bukkit.block.Bed) originalBlock.getState();
+				final org.bukkit.block.Bed topS = (org.bukkit.block.Bed) top.getState();
+				topS.setColor( bedS.getColor() );
+				topS.update();
+			}
 		} else {
 			System.out.println("Error setting bed: block top location was illegal. Data value: " + subid + " New data value: " + new_subid);
 		}

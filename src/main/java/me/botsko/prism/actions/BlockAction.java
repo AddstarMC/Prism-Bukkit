@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import java.util.ArrayList;
-
 import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -11,23 +9,17 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
+import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class BlockAction extends GenericAction {
 
@@ -106,6 +98,14 @@ public class BlockAction extends GenericAction {
                 data = cmdblock.getCommand();
             }
 
+            // beds
+            else if( ( state.getTypeId() == 26 ) ) {
+                final BedActionData bedActionData = new BedActionData();
+                final Bed bed = (Bed) state;
+                bedActionData.color = bed.getColor();
+                actionData = bedActionData;
+            }
+
             this.world_name = state.getWorld().getName();
             this.x = state.getLocation().getBlockX();
             this.y = state.getLocation().getBlockY();
@@ -128,6 +128,8 @@ public class BlockAction extends GenericAction {
                 actionData = gson.fromJson( data, SignActionData.class );
             } else if( block_id == 176 || block_id == 177 ) {
                 actionData = gson.fromJson( data, BannerActionData.class );
+            } else if( block_id == 26 ) {
+                actionData = gson.fromJson( data, BedActionData.class );
             } else if( block_id == 137 ) {
                 actionData = new BlockActionData();
             } else {
@@ -179,6 +181,11 @@ public class BlockAction extends GenericAction {
             final BannerActionData ad = (BannerActionData) getActionData();
             if( ad.patterns != null && ad.patterns.length > 0 ) {
                 name += " (" + TypeUtils.join( ad.patterns, ", " ).replace("_", " ").toLowerCase() + ")";
+            }
+        } else if( actionData instanceof BedActionData ) {
+            final BedActionData ad = (BedActionData) getActionData();
+            if( ad.color != null ) {
+                name = ad.color.toString().toLowerCase() + " " + name;
             }
         } else if( block_id == 137 ) {
             name += " (" + data + ")";
@@ -265,6 +272,10 @@ public class BlockAction extends GenericAction {
 	 */
     public class BannerActionData extends BlockActionData {
         public String[] patterns;
+    }
+
+    public class BedActionData extends BlockActionData {
+        public DyeColor color;
     }
 
     /**
@@ -523,6 +534,20 @@ public class BlockAction extends GenericAction {
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
+                if (getActionData() instanceof BedActionData) {
+                    final BedActionData s = (BedActionData) getActionData();
+                    if( block.getState() instanceof Bed ) {
+                        // Set bed color
+                        final Bed bed = (Bed) block.getState();
+
+                        if (s.color != null) {
+                            bed.setColor(s.color);
+                        }
+
+                        bed.update();
+                    }
+                }
+
                 BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
             }
             // Or double plants

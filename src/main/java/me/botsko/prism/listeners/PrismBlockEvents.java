@@ -10,7 +10,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Jukebox;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -212,7 +211,8 @@ public class PrismBlockEvents implements Listener {
         if ((block.getType() == Material.WALL_BANNER)
                 || (block.getType() == Material.STANDING_BANNER)
                 || (block.getType() == Material.SKULL)
-                || (block.getType() == Material.MOB_SPAWNER) ) {
+                || (block.getType() == Material.MOB_SPAWNER)
+                || (block.getType() == Material.BED_BLOCK) ) {
             // Record full item data
             RecordingQueue.addToQueue( ActionFactory.createBlock("block-place", block, player.getName()) );
 	    } else {
