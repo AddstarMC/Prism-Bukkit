@@ -139,6 +139,10 @@ public class EntityAction extends GenericAction
         if (entity instanceof Rabbit)
             actionData.var = ((Rabbit) entity).getRabbitType().toString().toLowerCase();
 
+        // Get parrot type
+        if (entity instanceof Parrot)
+            actionData.var = ((Parrot) entity).getVariant().toString().toLowerCase();
+
         // Get color it will become
         if (dyeUsed != null)
             actionData.newColor = dyeUsed;
@@ -446,6 +450,15 @@ public class EntityAction extends GenericAction
             : null;
     }
 
+    /** @return Bukkit type of this action's rabbit */
+    @Nullable
+    public Parrot.Variant getParrotType()
+    {
+        return actionData.var != null
+            ? Parrot.Variant.valueOf( actionData.var.toUpperCase() )
+            : null;
+    }
+
     /** @return Fancy name for this entity, based on its data */
     @Nonnull
     @Override
@@ -483,6 +496,8 @@ public class EntityAction extends GenericAction
                 else
                     varName += cleanVarName + " rabbit";
             }
+            else if ( actionData.entity_name.equals("parrot") )
+                varName += cleanVarName + " parrot";
         }
 
         name += !Strings.isNullOrEmpty(varName)
@@ -684,6 +699,10 @@ public class EntityAction extends GenericAction
         // Set rabbit type
         if (entity instanceof Rabbit && getRabbitType() != null)
             ((Rabbit) entity).setRabbitType( getRabbitType() );
+
+        // Set parrot type
+        if (entity instanceof Parrot && getParrotType() != null)
+            ((Parrot) entity).setVariant( getParrotType() );
 
         // Set villager details
         if (entity instanceof Villager)
