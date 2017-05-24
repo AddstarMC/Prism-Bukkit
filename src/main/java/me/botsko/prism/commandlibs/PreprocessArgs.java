@@ -128,6 +128,13 @@ public class PreprocessArgs {
      */
     private static ParseResult parseParam(Prism plugin, CommandSender sender, QueryParameters parameters, HashMap<String, PrismParameterHandler> registeredParams, Set<String> foundArgsNames, List<MatchedParam> foundArgsList, String arg) {
         ParseResult result = ParseResult.NotFound;
+        
+        // Set alias "ng" for "no-group" and "ext" for "extended"
+        if (arg.equals("-ng")) {
+        	arg = "-no-group";
+        } else if (arg.equals("-ext")) {
+        	arg = "-extended";
+        }
 
         // Match command argument to parameter handler
         for ( final Entry<String, PrismParameterHandler> entry : registeredParams.entrySet() ) {

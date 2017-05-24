@@ -60,6 +60,14 @@ public class ActionsQuery {
      * @return
      */
     public QueryResult lookup(QueryParameters parameters, CommandSender sender) {
+        return lookup(parameters, sender, false);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public QueryResult lookup(QueryParameters parameters, CommandSender sender, boolean noCache) {
 
         Player player = null;
         if( sender instanceof Player ) {
@@ -173,12 +181,13 @@ public class ActionsQuery {
                         baseHandler.setOldBlockId( rs.getInt( 11 ) );
                         baseHandler.setOldBlockSubId( rs.getInt( 12 ) );
                         baseHandler.setData( rs.getString( 13 ) );
+                        baseHandler.setWasRollback( rs.getInt( 14 ) );
                         baseHandler.setMaterialAliases( Prism.getItems() );
 
                         // Set aggregate counts if a lookup
                         int aggregated = 0;
                         if( shouldGroup ) {
-                            aggregated = rs.getInt( 14 );
+                            aggregated = rs.getInt( 15 );
                         }
                         baseHandler.setAggregateCount( aggregated );
 
@@ -213,9 +222,9 @@ public class ActionsQuery {
         final QueryResult res = new QueryResult( actions, parameters );
         res.setPerPage( parameters.getPerPage() );
 
-        // Cache it if we're doing a lookup. Otherwise we don't
-        // need a cache.
-        if( parameters.getProcessType().equals( PrismProcessType.LOOKUP ) ) {
+        // Cache it if we're doing a lookup and param noCache = false.
+        // Otherwise we don't need a cache.
+        if(parameters.getProcessType().equals(PrismProcessType.LOOKUP) && !noCache) {
             String keyName = "console";
             if( player != null ) {
                 keyName = player.getName();

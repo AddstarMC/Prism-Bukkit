@@ -2,13 +2,6 @@ package me.botsko.prism.listeners;
 
 import java.util.Collection;
 
-import me.botsko.elixr.DeathUtils;
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionFactory;
-import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.MiscUtils;
-import me.botsko.prism.utils.WandUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,18 +13,37 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityBreakDoorEvent;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.EntityUnleashEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionFactory;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.MiscUtils;
+import me.botsko.prism.utils.WandUtils;
+import com.helion3.prism.libs.elixr.DeathUtils;
 
 public class PrismEntityEvents implements Listener {
 
@@ -48,6 +60,35 @@ public class PrismEntityEvents implements Listener {
         this.plugin = plugin;
     }
 
+//    /**
+//     * This method use event in my Spigot fork (https://hub.spigotmc.org/jira/browse/SPIGOT-787)
+//     * @param event
+//     */
+//    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+//    public void onArmorStandDestroyEvent(final ArmorStandDestroyByEntityEvent event) {
+//        if (event.getAttacker() != null && event.getAttacker() instanceof Player) {
+//            Player player = (Player) event.getAttacker();
+//
+//            if (Prism.getIgnore().event("item-remove", player)) {
+//                final ArmorStand armorStand = (ArmorStand) event.getEntity();
+//                final EntityEquipment armor = armorStand.getEquipment();
+//                ItemStack[] equipment = new ItemStack[5];
+//                equipment[0] = armor.getItemInHand();
+//                equipment[1] = armor.getBoots();
+//                equipment[2] = armor.getLeggings();
+//                equipment[3] = armor.getChestplate();
+//                equipment[4] = armor.getHelmet();
+//
+//                for (int i = 0; i < 5; i++) {
+//                    if (!equipment[i].getType().equals(Material.AIR)) {
+//                        RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", equipment[i],
+//                                equipment[i].getAmount(), i, null, armorStand.getLocation(), player.getName()));
+//                    }
+//                }
+//            }
+//        }
+//    }
+
     /**
      * 
      * @param event
@@ -55,11 +96,23 @@ public class PrismEntityEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
-        if( !( event.getDamager() instanceof Player ) )
-            return;
+        Player player = null;
+        Projectile projectile = null;
+        // Don't forget about arrow, snowball, etc.
+        if (event.getDamager() instanceof Projectile) {
+            projectile = (Projectile) event.getDamager();
+            ProjectileSource shooter = projectile.getShooter();
+			if (shooter instanceof Player) {
+				player = (Player) shooter;
+		    }
+		} else if (event.getDamager() instanceof Player) {
+		    player = (Player) event.getDamager();
+		}
 
+        if (player == null) {
+            return;
+            }
         final Entity entity = event.getEntity();
-        final Player player = (Player) event.getDamager();
 
         // Cancel the event if a wand is in use
         if( WandUtils.playerUsesWandOnClick( player, entity.getLocation() ) ) {
@@ -77,6 +130,17 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         }
+
+        if (entity instanceof Player) {
+            final Player victim = (Player) entity;
+            if (Prism.getIgnore().event("player-hit", player)) {
+                String data = victim.getName();
+                if (projectile != null) {
+                    data += " by " + projectile.getType().toString().toLowerCase();
+                }
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-hit", player, data));
+            }
+        }
     }
 
     /**
@@ -92,8 +156,8 @@ public class PrismEntityEvents implements Listener {
         if( !( entity instanceof Player ) ) {
             if( entity.getLastDamageCause() instanceof EntityDamageByEntityEvent ) {
 
-                if( entity instanceof Horse ) {
-                    final Horse horse = (Horse) entity;
+                if( entity instanceof ChestedHorse ) {
+                    final ChestedHorse horse = (ChestedHorse) entity;
                     if( horse.isCarryingChest() ) {
                         // Log item drops
                         if( Prism.getIgnore().event( "item-drop", entity.getWorld() ) ) {
@@ -101,7 +165,7 @@ public class PrismEntityEvents implements Listener {
                                 if( i == null )
                                     continue;
                                 RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
-                                        null, entity.getLocation(), "horse") );
+                                        null, entity.getLocation(), entity.getType().name().toLowerCase()) );
                             }
                         }
                     }
@@ -123,6 +187,17 @@ public class PrismEntityEvents implements Listener {
                     if( arrow.getShooter() instanceof Player ) {
 
                         final Player player = (Player) arrow.getShooter();
+                        if( !Prism.getIgnore().event( "player-kill", player ) )
+                            return;
+                        RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
+
+                    }
+                // Mob killed by a lingering potion
+                } else if ( entityDamageByEntityEvent.getDamager() instanceof AreaEffectCloud ) {
+                    final AreaEffectCloud cloud = (AreaEffectCloud) entityDamageByEntityEvent.getDamager();
+                    if( cloud.getSource() instanceof Player ) {
+
+                        final Player player = (Player) cloud.getSource();
                         if( !Prism.getIgnore().event( "player-kill", player ) )
                             return;
                         RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
@@ -251,8 +326,7 @@ public class PrismEntityEvents implements Listener {
 
             // If held item doesn't equal existing item frame object type
             if( !frame.getItem().getType().equals( Material.AIR ) ) {
-                RecordingQueue.addToQueue( ActionFactory.createPlayer("item-rotate", event.getPlayer(), frame.getRotation()
-                        .name().toLowerCase()) );
+                RecordingQueue.addToQueue( ActionFactory.createHangingItem("item-rotate", frame, p.getName()) );
             }
 
             // Frame is empty but an item is held
@@ -281,6 +355,42 @@ public class PrismEntityEvents implements Listener {
                     (byte) p.getItemInHand().getDurability() );
             RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
                     .getName(), newColor) );
+        }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onPlayerArmorStandManipulateEvent(final PlayerArmorStandManipulateEvent event) {
+        final ItemStack armorStandItem = event.getArmorStandItem();
+        final ItemStack playerItem = event.getPlayerItem();
+        int slot = 0;
+        if (event.getSlot() != null) {
+            switch (event.getSlot()) {
+            case HAND:
+                slot = 0;
+                break;
+            case FEET:
+                slot = 1;
+                break;
+            case LEGS:
+                slot = 2;
+                break;
+            case CHEST:
+                slot = 3;
+                break;
+            case HEAD:
+                slot = 4;
+		    }
+        }
+
+        // Player remove item from ArmorStand
+        if (armorStandItem.getType() != Material.AIR) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", armorStandItem, armorStandItem.getAmount(), slot, null,
+                    event.getRightClicked().getLocation(), event.getPlayer().getName()) );
+        }
+        // Player insert item to ArmorStand
+        if (playerItem.getType() != Material.AIR) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-insert", playerItem, playerItem.getAmount(), slot, null,
+                    event.getRightClicked().getLocation(), event.getPlayer().getName()) );
         }
     }
 
@@ -414,7 +524,7 @@ public class PrismEntityEvents implements Listener {
             // If an item frame, track it's contents
             if( e instanceof ItemFrame ) {
                 final ItemFrame frame = (ItemFrame) e;
-                if( frame.getItem() != null ) {
+                if(!frame.getItem().getType().equals(Material.AIR)) {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                             .getAmount(), -1, null, e.getLocation(), player) );
                 }
@@ -456,7 +566,7 @@ public class PrismEntityEvents implements Listener {
         // If an item frame, track it's contents
         if( event.getEntity() instanceof ItemFrame ) {
             final ItemFrame frame = (ItemFrame) event.getEntity();
-            if( frame.getItem() != null ) {
+            if (!frame.getItem().getType().equals(Material.AIR)) {
                 RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
                         .getAmount(), -1, null, entity.getLocation(), breaking_name) );
             }
@@ -500,7 +610,7 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         } else if (to == Material.AIR && event.getEntity() instanceof Wither) {
-            if (!Prism.getIgnore().event("entity-break", event.getBlock()))
+            if( !Prism.getIgnore().event("entity-break", event.getBlock()))
                 return;
             RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
         } else if (from == Material.SOIL && to == Material.DIRT && !(event.getEntity() instanceof Player)) {
@@ -522,7 +632,7 @@ public class PrismEntityEvents implements Listener {
         final Block block = event.getBlock();
         final Location loc = block.getLocation();
         final BlockState newState = event.getNewState();
-        final String entity = event.getEntity().getType().name().toLowerCase();
+        final String entity = event.getEntity().getName();
         RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getTypeId(), block.getData(),
                 newState.getTypeId(), newState.getRawData(), entity) );
     }
@@ -601,7 +711,7 @@ public class PrismEntityEvents implements Listener {
             }
 
             // Change handling a bit if it's a long block
-            final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+            final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
             if( sibling != null && !block.getType().equals( Material.CHEST )
                     && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
                 block = sibling;

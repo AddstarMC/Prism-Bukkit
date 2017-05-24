@@ -3,7 +3,7 @@ package me.botsko.prism;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-import me.botsko.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
@@ -312,7 +312,7 @@ public class Prism extends JavaPlugin {
         DataSource pool = null;
 
         final String dns = "jdbc:mysql://" + config.getString( "prism.mysql.hostname" ) + ":"
-                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8";
+                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
@@ -323,7 +323,7 @@ public class Prism extends JavaPlugin {
         pool.setMaxIdle( config.getInt( "prism.database.max-idle-connections" ) );
         pool.setMaxWait( config.getInt( "prism.database.max-wait" ) );
         pool.setRemoveAbandoned( true );
-        pool.setRemoveAbandonedTimeout( 60 );
+        pool.setRemoveAbandonedTimeout( 180 );
         pool.setTestOnBorrow( true );
         pool.setValidationQuery( "/* ping */SELECT 1" );
         pool.setValidationInterval( 30000 );
@@ -457,6 +457,22 @@ public class Prism extends JavaPlugin {
                 st.executeUpdate( query );
             }
 
+            // rollback data table
+            resultSet = metadata.getTables( null, null, "" + prefix + "data_rollback", null );
+            if( !resultSet.next() ) {
+
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_rollback` ("
+                        + "`rollback_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` int(10) unsigned NOT NULL," + "`rollback` TINYINT(1) NULL,"
+                        + "PRIMARY KEY (`rollback_id`)," + "UNIQUE KEY `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+                st.executeUpdate( query );
+
+                // add rollback data delete cascade
+                query = "ALTER TABLE `" + prefix + "data_rollback` ADD CONSTRAINT `" + prefix + "data_rollback_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                st.executeUpdate( query );
+            }
+
             // meta
             query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` (" + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
                     + "`k` varchar(25) NOT NULL," + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)"
@@ -487,7 +503,7 @@ public class Prism extends JavaPlugin {
                 addActionName( a );
             }
         } catch ( final SQLException e ) {
-            log( "Database connection error: " + e.getMessage() );
+            log( "Database connection error during setup: " + e.getMessage() );
             e.printStackTrace();
         } finally {
             if( st != null )

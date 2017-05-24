@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -98,9 +98,9 @@ public class TeleportCommand implements SubHandler {
             params.setWorld( call.getPlayer().getWorld().getName() );
             params.setId( record_id );
 
-            // Query
+            // No cached query
             final ActionsQuery aq = new ActionsQuery( plugin );
-            final QueryResult results = aq.lookup( params, call.getPlayer() );
+            final QueryResult results = aq.lookup( params, call.getPlayer(), true);
             if( results.getActionResults().isEmpty() ) {
                 call.getPlayer().sendMessage( Prism.messenger.playerError( "No records exists with this ID." ) );
                 return;
@@ -142,8 +142,8 @@ public class TeleportCommand implements SubHandler {
                         Prism.messenger.playerError( "Action record occurred in world we can't find anymore." ) );
                 return;
             }
-            final Location loc = new Location( world, destinationAction.getX()+0.5, destinationAction.getY(),
-                    destinationAction.getZ()+0.5 );
+            final Location loc = new Location( world, destinationAction.getX() + 0.5, destinationAction.getY(),
+                    destinationAction.getZ() +0.5 );
             call.getPlayer().teleport( loc );
             call.getPlayer().sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg( "Teleporting... " + ChatColor.WHITE

@@ -1,9 +1,11 @@
-name: Prism
-main: me.botsko.prism.Prism
-version: ${pom.version}-${env.BUILD_NUMBER}
-softdepend: [WorldEdit,HeroChat]
-author: viveleroi
-website: http://discover-prism.com
+name:        ${project.name}
+version:     ${project.version}
+description: ${project.description}
+authors:     [viveleroi, Jikoo, Siggi88, PavelM, PhanaticD, RoyCurtis]
+website:     https://github.com/Gamealition/GPrism
+main:        me.botsko.prism.Prism
+softdepend:  [WorldEdit,HeroChat]
+
 commands:
    prism:
       description: Base command for everything Prism
@@ -13,6 +15,7 @@ commands:
       description: Identifies the held item according to the prism profiling system
       usage: /what
       aliases: [wtfisthis]
+
 permissions:
     prism.help:
         default: op

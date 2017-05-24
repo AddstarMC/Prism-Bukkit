@@ -155,6 +155,8 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.enderman-place", true );
         config.addDefault( "prism.tracking.entity-break", true );
         config.addDefault( "prism.tracking.entity-dye", false );
+        config.addDefault( "prism.tracking.entity-enter", true );
+        config.addDefault( "prism.tracking.entity-exit", true );
         config.addDefault( "prism.tracking.entity-explode", true );
         config.addDefault( "prism.tracking.entity-follow", true );
         config.addDefault( "prism.tracking.entity-form", true );
@@ -184,6 +186,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.tracking.player-chat", false );
         config.addDefault( "prism.tracking.player-command", false );
         config.addDefault( "prism.tracking.player-death", true );
+        config.addDefault( "prism.tracking.player-hit", false );
         config.addDefault( "prism.tracking.player-join", false );
         config.addDefault( "prism.tracking.player-kill", true );
         config.addDefault( "prism.tracking.player-quit", false );

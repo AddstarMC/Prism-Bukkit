@@ -17,6 +17,7 @@ abstract public class QueryBuilder {
 
     protected final String tableNameData;
     protected final String tableNameDataExtra;
+    protected final String tableNameDataRollback;
 
     protected QueryParameters parameters;
     protected boolean shouldGroup;
@@ -30,6 +31,7 @@ abstract public class QueryBuilder {
         String prefix = plugin.getConfig().getString("prism.mysql.prefix");
         tableNameData = prefix + "data";
         tableNameDataExtra = prefix + "data_extra";
+        tableNameDataRollback = prefix + "data_rollback";
     }
 
     /**
