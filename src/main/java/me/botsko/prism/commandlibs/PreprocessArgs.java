@@ -74,8 +74,8 @@ public class PreprocessArgs {
             return null;
         }
 
-        /**
-         * Call default method for handlers *not* used
+        /*
+          Call default method for handlers *not* used
          */
         if( useDefaults ) {
             for ( final Entry<String, PrismParameterHandler> entry : registeredParams.entrySet() ) {
@@ -85,8 +85,8 @@ public class PreprocessArgs {
             }
         }
 
-        /**
-         * Send arguments to parameter handlers
+        /*
+          Send arguments to parameter handlers
          */
         for ( final MatchedParam matchedParam : foundArgsList ) {
             try {

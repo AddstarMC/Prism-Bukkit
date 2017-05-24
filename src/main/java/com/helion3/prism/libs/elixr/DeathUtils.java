@@ -16,11 +16,10 @@ import org.bukkit.projectiles.ProjectileSource;
 
 public class DeathUtils {
 
-	
+
 	/**
-	 * Returns the name of what caused an entity to die.
-	 * @param damageCause
-	 * @param p
+	 *
+	 * @param entity
 	 * @return
 	 */
 	public static String getCauseNiceName( Entity entity ){
@@ -97,8 +96,7 @@ public class DeathUtils {
 	/**
 	 * Returns the name of the attacker, whether mob or player.
 	 * 
-	 * @param event
-	 * @param p
+	 * @param victim
 	 * @return
 	 */
 	public static String getAttackerName( Entity victim ){
@@ -158,8 +156,7 @@ public class DeathUtils {
 	/**
 	 * Returns the name of the attacker, whether mob or player.
 	 * 
-	 * @param event
-	 * @param p
+	 * @param victim
 	 * @return
 	 */
 	public static String getVictimName( Entity victim ){

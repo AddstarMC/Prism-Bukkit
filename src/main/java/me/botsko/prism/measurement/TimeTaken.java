@@ -58,8 +58,7 @@ public class TimeTaken {
     }
 
     /**
-     * 
-     * @param plugin
+     *
      */
     public void printTimeRecord() {
 

@@ -43,14 +43,14 @@ public interface Handler {
     public abstract String getDisplayTime();
 
     /**
-     * @param display_time
-     *            the display_time to set
+     * @param epoch  the display_time to set
+     *
      */
     public abstract void setUnixEpoch(String epoch);
 
     /**
      * 
-     * @return
+     * @return the time since
      */
     public abstract String getTimeSince();
 
@@ -176,7 +176,7 @@ public interface Handler {
     public abstract void setData(String data);
 
     /**
-     * @param int
+     * @param rollback
      *            was rollback
      */
     public abstract void setWasRollback(int rollback);

@@ -56,9 +56,9 @@ public class RestoreCommand implements SubHandler {
         call.getSender().sendMessage(
                 Prism.messenger.playerSubduedHeaderMsg( "Preparing results..." + defaultsReminder ) );
 
-        /**
-         * Run the query itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the query itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override

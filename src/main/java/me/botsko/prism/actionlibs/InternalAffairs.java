@@ -14,7 +14,7 @@ public class InternalAffairs implements Runnable {
 
     /**
      * 
-     * @param prism
+     * @param plugin Prism plugin
      */
     public InternalAffairs(Prism plugin) {
         Prism.debug( "[InternalAffairs] Keeping watch over the watchers." );

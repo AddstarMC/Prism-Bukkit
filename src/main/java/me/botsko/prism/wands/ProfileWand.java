@@ -32,7 +32,6 @@ public class ProfileWand extends WandBase implements Wand {
     /**
      * 
      * @param player
-     * @param block
      * @param loc
      */
     protected void showLocationProfile(Player player, Location loc) {

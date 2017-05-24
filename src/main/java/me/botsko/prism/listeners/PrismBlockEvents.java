@@ -492,10 +492,10 @@ public class PrismBlockEvents implements Listener {
             }
         }
 
-        /**
-         * Predict the forming of Stone, Obsidian, Cobblestone because of
-         * lava/water flowing into each other. Boy, I wish bukkit used
-         * block_form for this.
+        /*
+          Predict the forming of Stone, Obsidian, Cobblestone because of
+          lava/water flowing into each other. Boy, I wish bukkit used
+          block_form for this.
          */
         if( !Prism.getIgnore().event( "block-form", event.getBlock() ) )
             return;

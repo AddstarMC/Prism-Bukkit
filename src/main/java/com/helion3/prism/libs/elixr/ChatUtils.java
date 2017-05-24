@@ -5,10 +5,11 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class ChatUtils {
-    
+
     /**
-     * 
-     * @param player
+     *
+     * @param loc
+     * @param radius
      * @param msg
      */
     public static void notifyNearby( Location loc, int radius, String msg ){
