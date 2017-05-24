@@ -152,7 +152,7 @@ public class DynamicPluginCommand extends org.bukkit.command.Command implements 
     
     /**
      * 
-     * @param arguments
+     * @param flags
      */
     public void setFlags( Flag[] flags ){
         this.flags = flags;

@@ -285,15 +285,12 @@ public class CommandManager {
         
         return usage;
     }
-    
+
     /**
-     * Register the methods of a class.
      *
      * @param cls
-     * @param parent
-     * @param obj
      * @return
-     * @throws Exception 
+     * @throws Exception
      */
     private List<DynamicPluginCommand> registerDynamicCommand(Class<?> cls) throws Exception {
         

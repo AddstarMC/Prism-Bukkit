@@ -193,7 +193,7 @@ public class ReportCommand implements SubHandler {
 
     /**
      * 
-     * @param call Callinfo
+     * @param call
      */
     protected void blockSumReports(final CallInfo call) {
 
@@ -233,9 +233,9 @@ public class ReportCommand implements SubHandler {
         final int colTextLen = 20;
         final int colIntLen = 12;
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the lookup itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override
@@ -302,7 +302,6 @@ public class ReportCommand implements SubHandler {
     /**
      * 
      * @param call
-     *
      */
     protected void actionTypeCountReport(final CallInfo call) {
 
@@ -338,9 +337,9 @@ public class ReportCommand implements SubHandler {
         final int colTextLen = 16;
         final int colIntLen = 12;
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the lookup itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override

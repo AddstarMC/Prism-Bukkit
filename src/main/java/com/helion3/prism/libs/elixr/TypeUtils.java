@@ -42,7 +42,7 @@ public class TypeUtils {
 	/**
 	 * Replaces string template placeholders with values in a Hashtable.
 	 * Text should be formatted with %(key) type placeholders.
-	 * @param key
+	 * @param msg
 	 * @param replacer
 	 * @return
 	 */

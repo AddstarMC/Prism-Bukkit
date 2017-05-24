@@ -88,7 +88,10 @@ public class OreMonitor {
                 final String msg = getOreColor( block ) + player.getName() + " found " + count + " "
                         + getOreNiceName( block ) + " " + light + "% light";
 
-
+                /*
+                  Run the lookup itself in an async task so the lookup query
+                  isn't done on the main thread
+                 */
                 plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -161,9 +164,11 @@ public class OreMonitor {
     }
 
     /**
+     *
+     * @param type
      * @param currBlock
-     * @param type to be felled
-     * @param matchingBlocks the blocks that match the material
+     * @param matchingBlocks
+     * @return
      */
     private ArrayList<Block> findNeighborBlocks(Material type, Block currBlock, ArrayList<Block> matchingBlocks) {
 

@@ -55,9 +55,7 @@ public abstract class WandBase {
         wand_mode = mode;
     }
 
-    /**
-     *
-     */
+
     public String getWandMode() {
         return wand_mode;
     }

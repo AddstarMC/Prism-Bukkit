@@ -42,9 +42,7 @@ public interface Wand {
      */
     public void setWandMode(String mode);
 
-    /**
-     *
-     */
+
     public String getWandMode();
 
     /**

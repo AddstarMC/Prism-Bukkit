@@ -36,8 +36,8 @@ public class ResetmyCommand implements SubHandler {
             setType = call.getArg( 1 );
         }
 
-        /**
-         * Inspector wand
+        /*
+          Inspector wand
          */
         if( setType != null && !setType.equalsIgnoreCase( "wand" ) ) {
             call.getPlayer().sendMessage( Prism.messenger.playerError( "Invalid arguments. Use /prism ? for help." ) );

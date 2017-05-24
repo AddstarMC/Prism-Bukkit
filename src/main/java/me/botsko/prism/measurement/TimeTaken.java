@@ -57,6 +57,9 @@ public class TimeTaken {
         return eventsTimed;
     }
 
+    /**
+     *
+     */
     public void printTimeRecord() {
 
         // record timed events to log

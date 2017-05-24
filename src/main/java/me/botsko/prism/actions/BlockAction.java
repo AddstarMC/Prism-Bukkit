@@ -400,8 +400,8 @@ public class BlockAction extends GenericAction {
             // Set the material
             block.setTypeIdAndData(getBlockId(), (byte) getBlockSubId(), false);
 
-            /**
-             * Skulls
+            /*
+              Skulls
              */
             if( ( getBlockId() == 144 || getBlockId() == 397 ) && getActionData() instanceof SkullActionData ) {
 
@@ -418,8 +418,8 @@ public class BlockAction extends GenericAction {
 
             }
 
-            /**
-             * Spawner
+            /*
+              Spawner
              */
             if( getBlockId() == 52 ) {
 
@@ -433,8 +433,8 @@ public class BlockAction extends GenericAction {
 
             }
 
-            /**
-             * Restoring command block
+            /*
+              Restoring command block
              */
             if( getBlockId() == 137 ) {
                 final CommandBlock cmdblock = (CommandBlock) block.getState();
@@ -442,8 +442,8 @@ public class BlockAction extends GenericAction {
                 cmdblock.update();
             }
 
-            /**
-             * Signs
+            /*
+              Signs
              */
             if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
                     && ( getBlockId() == 63 || getBlockId() == 68 ) && getActionData() instanceof SignActionData ) {
@@ -471,8 +471,8 @@ public class BlockAction extends GenericAction {
                 }
             }
 
-            /**
-             * Banners
+            /*
+              Banners
              */
             if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
                     && ( getBlockId() == 176 || getBlockId() == 177 ) && getActionData() instanceof BannerActionData ) {

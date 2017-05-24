@@ -364,8 +364,8 @@ public class BlockUtils {
 	 * @param block the block to get the sibling of
 	 */
 	public static Block getSiblingForDoubleLengthBlock(Block block){
-		/**
-		 * Handle special double-length blocks
+		/*
+		  Handle special double-length blocks
 		 */
         switch (block.getType()) {
             case ACACIA_DOOR:

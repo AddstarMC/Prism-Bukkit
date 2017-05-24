@@ -46,6 +46,7 @@ public class PurgeChunkingUtil {
         return id;
     }
 
+
     public static int getMaximumPrimaryKey() {
         String prefix = Prism.config.getString("prism.mysql.prefix");
         int id = 0;

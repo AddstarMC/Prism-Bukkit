@@ -24,8 +24,8 @@ public class WhatCommand extends Executor {
      *
      */
     private void setupCommands() {
-        /**
-         * /what
+        /*
+          /what
          */
         addSub( "what", "prism.what" ).setHandler( new SubHandler() {
             @Override
