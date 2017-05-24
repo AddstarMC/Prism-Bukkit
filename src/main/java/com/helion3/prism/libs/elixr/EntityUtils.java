@@ -69,6 +69,7 @@ public class EntityUtils {
 			case DIODE:
 			case DIODE_BLOCK_OFF:
 			case DIODE_BLOCK_ON:
+			case FIRE:
 			case FLOWER_POT:
 			case LEVER:
 			case LONG_GRASS:

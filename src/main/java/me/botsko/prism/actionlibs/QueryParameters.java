@@ -86,10 +86,7 @@ public class QueryParameters implements Cloneable {
         this.minId = minId;
     }
 
-    /**
-     * 
-     * @param minId
-     */
+
     public int getMinPrimaryKey() {
         return this.minId;
     }
@@ -102,10 +99,7 @@ public class QueryParameters implements Cloneable {
         this.maxId = maxId;
     }
 
-    /**
-     * 
-     * @param minId
-     */
+
     public int getMaxPrimaryKey() {
         return this.maxId;
     }
@@ -365,8 +359,7 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-     * @param time
-     *            the time to set
+     * @param epoch the time to set
      */
     public void setBeforeTime(Long epoch) {
         this.before_time = epoch;
@@ -380,8 +373,7 @@ public class QueryParameters implements Cloneable {
     }
 
     /**
-     * @param time
-     *            the time to set
+     * @param epoch the time to set
      */
     public void setSinceTime(Long epoch) {
         this.since_time = epoch;

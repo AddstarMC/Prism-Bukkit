@@ -53,9 +53,9 @@ public class InspectorWand extends QueryWandBase implements Wand {
 
         final Block block = loc.getBlock();
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the lookup itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override

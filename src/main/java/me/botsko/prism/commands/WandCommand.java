@@ -117,8 +117,8 @@ public class WandCommand implements SubHandler {
         boolean enabled = false;
         Wand wand = null;
 
-        /**
-         * Inspector wand
+        /*
+          Inspector wand
          */
         if( type.equalsIgnoreCase( "i" ) || type.equalsIgnoreCase( "inspect" ) ) {
             if( !call.getPlayer().hasPermission( "prism.lookup" )
@@ -139,8 +139,8 @@ public class WandCommand implements SubHandler {
             }
         }
 
-        /**
-         * Profile wand
+        /*
+          Profile wand
          */
         else if( type.equalsIgnoreCase( "p" ) || type.equalsIgnoreCase( "profile" ) ) {
             if( !call.getPlayer().hasPermission( "prism.lookup" )
@@ -161,8 +161,8 @@ public class WandCommand implements SubHandler {
             }
         }
 
-        /**
-         * Rollback wand
+        /*
+          Rollback wand
          */
         else if( type.equalsIgnoreCase( "rollback" ) || type.equalsIgnoreCase( "rb" ) ) {
             if( !call.getPlayer().hasPermission( "prism.rollback" )
@@ -183,8 +183,8 @@ public class WandCommand implements SubHandler {
             }
         }
 
-        /**
-         * Restore wand
+        /*
+          Restore wand
          */
         else if( type.equalsIgnoreCase( "restore" ) || type.equalsIgnoreCase( "rs" ) ) {
             if( !call.getPlayer().hasPermission( "prism.restore" )
@@ -206,8 +206,8 @@ public class WandCommand implements SubHandler {
             }
         }
 
-        /**
-         * Off
+        /*
+          Off
          */
         else if( type.equalsIgnoreCase( "off" ) ) {
             call.getPlayer().sendMessage(

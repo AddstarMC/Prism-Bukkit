@@ -18,10 +18,10 @@ public class CommandArguments {
         this.named = named;
         this.flags = flags;
     }
-    
+
     /**
-     * 
-     * @param rawArgs
+     *
+     * @param flags
      */
     public CommandArguments( Map<String,String> flags ){
         this.rawArgs = new String[0];

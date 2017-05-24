@@ -34,8 +34,8 @@ public class ViewCommand implements SubHandler {
 
         final String playerName = call.getPlayer().getName();
 
-        /**
-         * View current chunk boundaries
+        /*
+          View current chunk boundaries
          */
         if( call.getArg( 1 ).equals( "chunk" ) ) {
 

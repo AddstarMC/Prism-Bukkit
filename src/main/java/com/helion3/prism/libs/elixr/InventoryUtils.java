@@ -146,15 +146,18 @@ public class InventoryUtils {
 	
 	/**
 	 * Adds an item to the inventory, returns a hashmap of leftovers
-	 * @param player
+	 * @param inv
+	 * @param item
 	 */
 	public static HashMap<Integer,ItemStack> addItemToInventory( Inventory inv, ItemStack item ){
 		return inv.addItem(item);
 	}
-	
+
 	/**
-	 * 
-	 * @param player
+	 *
+	 * @param inv
+	 * @param item
+	 * @return
 	 */
 	public static boolean handItemToPlayer( PlayerInventory inv, ItemStack item ){
 		// Ensure there's at least one empty inv spot
@@ -228,7 +231,7 @@ public class InventoryUtils {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param inv
 	 * @param target
 	 * @return
 	 * @throws Exception 
@@ -242,7 +245,7 @@ public class InventoryUtils {
 	
 	/**
 	 * 
-	 * @param player
+	 * @param inv
 	 * @param target
 	 * @return
 	 * @throws Exception 
@@ -254,9 +257,10 @@ public class InventoryUtils {
 	
 	/**
 	 * 
-	 * @param player
-	 * @param chest
+	 * @param from
+	 * @param to
 	 * @param fullFlag
+	 * @param filters
 	 * @return
 	 */
 	public static boolean moveInventoryToInventory( Inventory from, Inventory to, boolean fullFlag, HashMap<Integer,Short> filters ) {

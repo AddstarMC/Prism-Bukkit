@@ -292,9 +292,9 @@ public class Preview implements Previewable {
                             continue;
                         }
 
-                        /**
-                         * Reverse or restore block changes by allowing the
-                         * handler to decide what needs to happen.
+                        /*
+                          Reverse or restore block changes by allowing the
+                          handler to decide what needs to happen.
                          */
                         ChangeResult result = null;
 
