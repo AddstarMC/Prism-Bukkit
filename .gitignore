@@ -52,7 +52,6 @@ dist
 manifest.mf
 
 # Mac filesystem dust
-.DS_Store
 
 
 *.iml
