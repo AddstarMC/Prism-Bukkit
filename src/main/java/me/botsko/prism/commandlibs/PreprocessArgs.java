@@ -47,8 +47,8 @@ public class PreprocessArgs {
         final HashMap<String, PrismParameterHandler> registeredParams = Prism.getParameters();
 
         // Store names of matched params/handlers
-        final Set<String> foundArgsNames = new HashSet<String>();
-        final List<MatchedParam> foundArgsList = new ArrayList<MatchedParam>();
+        final Set<String> foundArgsNames = new HashSet<>();
+        final List<MatchedParam> foundArgsList = new ArrayList<>();
 
         // Iterate all command arguments
         if (args == null) {

@@ -21,7 +21,7 @@ public class TimeTaken {
     /**
 	 * 
 	 */
-    protected final TreeMap<Long, String> eventsTimed = new TreeMap<Long, String>();
+    protected final TreeMap<Long, String> eventsTimed = new TreeMap<>();
 
     /**
      * 

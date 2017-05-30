@@ -175,7 +175,7 @@ public class PrismBlockEvents implements Listener {
         logBlockRelationshipsForBlock( player.getName(), block );
 
         RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName()) );
-        
+
         // if obsidian, log portal blocks
         if( block.getType().equals( Material.OBSIDIAN ) ) {
             final ArrayList<Block> blocks = com.helion3.prism.libs.elixr.BlockUtils.findConnectedBlocksOfType( Material.PORTAL,

@@ -46,6 +46,26 @@ public class RecordingTask implements Runnable {
         Connection conn = null;
         PreparedStatement s = null;
         ResultSet generatedKeys = null;
+
+        int world_id = 0;
+        if( Prism.prismWorlds.containsKey( a.getWorldName() ) ) {
+            world_id = Prism.prismWorlds.get( a.getWorldName() );
+        }
+
+        int action_id = 0;
+        if( Prism.prismActions.containsKey( a.getType().getName() ) ) {
+            action_id = Prism.prismActions.get( a.getType().getName() );
+        }
+
+        int player_id = 0;
+        PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
+        if( prismPlayer != null ){
+            player_id = prismPlayer.getId();
+        }
+
+        if( world_id == 0 || action_id == 0 || player_id == 0 ) {
+            // @todo do something, error here
+        }
         try {
 
             // prepare to save to the db
@@ -55,26 +75,6 @@ public class RecordingTask implements Runnable {
             if( conn == null ) {
                 Prism.log( "Prism database error. Connection should be there but it's not. This action wasn't logged." );
                 return 0;
-            }
-
-            int world_id = 0;
-            if( Prism.prismWorlds.containsKey( a.getWorldName() ) ) {
-                world_id = Prism.prismWorlds.get( a.getWorldName() );
-            }
-
-            int action_id = 0;
-            if( Prism.prismActions.containsKey( a.getType().getName() ) ) {
-                action_id = Prism.prismActions.get( a.getType().getName() );
-            }
-
-            int player_id = 0;
-            PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
-            if( prismPlayer != null ){
-                player_id = prismPlayer.getId();
-            }
-
-            if( world_id == 0 || action_id == 0 || player_id == 0 ) {
-                // @todo do something, error here
             }
 
             s = conn.prepareStatement(
@@ -146,7 +146,7 @@ public class RecordingTask implements Runnable {
 
                 Prism.debug( "Beginning batch insert from queue. " + System.currentTimeMillis() );
 
-                final ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
+                final ArrayList<Handler> extraDataQueue = new ArrayList<>();
                 conn = Prism.dbc();
 
                 // Handle dead connections

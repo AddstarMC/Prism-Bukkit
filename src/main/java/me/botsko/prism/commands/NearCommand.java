@@ -110,7 +110,7 @@ public class NearCommand implements SubHandler {
                                         Prism.messenger
                                                 .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
                     }
-                    
+
                     if (results.getTotal_pages() > 1) {
                         call.getPlayer().spigot().sendMessage(MiscUtils.getNextButton());
                     }

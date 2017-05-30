@@ -288,7 +288,6 @@ public class PlayerIdentification {
 
         Connection conn = null;
         PreparedStatement s = null;
-        ResultSet rs = null;
         try {
 
             conn = Prism.dbc();
@@ -301,7 +300,6 @@ public class PlayerIdentification {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if(rs != null) try { rs.close(); } catch (SQLException e) {}
             if(s != null) try { s.close(); } catch (SQLException e) {}
             if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }

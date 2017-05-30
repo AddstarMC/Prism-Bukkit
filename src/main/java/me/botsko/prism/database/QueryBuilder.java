@@ -12,8 +12,8 @@ abstract public class QueryBuilder {
 	 * 
 	 */
     protected final Prism plugin;
-    protected List<String> columns = new ArrayList<String>();
-    protected List<String> conditions = new ArrayList<String>();
+    protected List<String> columns = new ArrayList<>();
+    protected List<String> conditions = new ArrayList<>();
 
     protected final String tableNameData;
     protected final String tableNameDataExtra;
@@ -46,8 +46,8 @@ abstract public class QueryBuilder {
         this.shouldGroup = shouldGroup;
 
         // Reset
-        columns = new ArrayList<String>();
-        conditions = new ArrayList<String>();
+        columns = new ArrayList<>();
+        conditions = new ArrayList<>();
 
         String query = select() + where() + group() + order() + limit();
 

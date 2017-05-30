@@ -59,12 +59,12 @@ public class Preview implements Previewable {
     /**
 	 * 
 	 */
-    protected final HashMap<Entity, Integer> entities_moved = new HashMap<Entity, Integer>();
+    protected final HashMap<Entity, Integer> entities_moved = new HashMap<>();
 
     /**
 	 * 
 	 */
-    protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+    protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
 
     /**
 	 * 

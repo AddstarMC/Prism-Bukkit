@@ -116,7 +116,7 @@ public class MiscUtils {
     }
 
     public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         if( caseSensitive ) {
             for ( final String option : options ) {
                 if( option.startsWith( start ) )

@@ -52,7 +52,9 @@ public class OreMonitor {
     }
 
     /**
-     * 
+     * Run the lookup itself in an async task so the lookup query
+     * isn't done on the main thread
+     *
      * @param player
      * @param block
      */
@@ -67,7 +69,7 @@ public class OreMonitor {
             threshold = 1;
 
             // identify all ore blocks on same Y axis in x/z direction
-            final ArrayList<Block> matchingBlocks = new ArrayList<Block>();
+            final ArrayList<Block> matchingBlocks = new ArrayList<>();
             final ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
             if( !foundores.isEmpty() ) {
 
