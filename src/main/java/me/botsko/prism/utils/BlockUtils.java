@@ -51,7 +51,7 @@ public class BlockUtils extends com.helion3.prism.libs.elixr.BlockUtils {
      * @param radius
      */
     public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, Location loc, int radius) {
-        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if( loc != null && radius > 0 && materials != null && materials.length > 0 ) {
             final int x1 = loc.getBlockX();
             final int y1 = loc.getBlockY();

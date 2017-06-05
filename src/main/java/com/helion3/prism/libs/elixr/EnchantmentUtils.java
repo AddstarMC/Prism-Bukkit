@@ -20,7 +20,7 @@ public class EnchantmentUtils {
 				conflict = true;
 			}
 		}
-		return (enchantments.containsKey(ench) || conflict);
+		return enchantments.containsKey(ench) || conflict;
 	}
 	
 	

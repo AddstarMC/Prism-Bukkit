@@ -98,7 +98,7 @@ public class TeleportCommand implements SubHandler {
             params.setWorld( call.getPlayer().getWorld().getName() );
             params.setId( record_id );
 
-            // No cashed query
+            // No cached query
             final ActionsQuery aq = new ActionsQuery( plugin );
             final QueryResult results = aq.lookup( params, call.getPlayer(), true);
             if( results.getActionResults().isEmpty() ) {

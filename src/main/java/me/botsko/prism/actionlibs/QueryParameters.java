@@ -23,9 +23,9 @@ public class QueryParameters implements Cloneable {
     /**
      * Internal use
      */
-    protected Set<String> foundArgs = new HashSet<String>();
+    protected Set<String> foundArgs = new HashSet<>();
     protected PrismProcessType processType = PrismProcessType.LOOKUP;
-    protected final ArrayList<String> defaultsUsed = new ArrayList<String>();
+    protected final ArrayList<String> defaultsUsed = new ArrayList<>();
     protected String original_command;
 
     /**
@@ -40,7 +40,7 @@ public class QueryParameters implements Cloneable {
     protected int parent_id = 0;
     protected Location player_location;
     protected int radius;
-    protected final ArrayList<Location> specific_block_locations = new ArrayList<Location>();
+    protected final ArrayList<Location> specific_block_locations = new ArrayList<>();
     protected Long since_time;
     protected Long before_time;
     protected String world;
@@ -50,12 +50,12 @@ public class QueryParameters implements Cloneable {
     /**
      * Params that allow multiple values
      */
-    protected HashMap<String, MatchRule> actionTypeRules = new HashMap<String, MatchRule>();
-    protected final HashMap<Integer, Short> block_filters = new HashMap<Integer, Short>();
-    protected final HashMap<String, MatchRule> entity_filters = new HashMap<String, MatchRule>();
-    protected final HashMap<String, MatchRule> player_names = new HashMap<String, MatchRule>();
-    protected final ArrayList<Flag> flags = new ArrayList<Flag>();
-    protected final ArrayList<CommandSender> shared_players = new ArrayList<CommandSender>();
+    protected HashMap<String, MatchRule> actionTypeRules = new HashMap<>();
+    protected final HashMap<Integer, Short> block_filters = new HashMap<>();
+    protected final HashMap<String, MatchRule> entity_filters = new HashMap<>();
+    protected final HashMap<String, MatchRule> player_names = new HashMap<>();
+    protected final ArrayList<Flag> flags = new ArrayList<>();
+    protected final ArrayList<CommandSender> shared_players = new ArrayList<>();
 
     /**
      * Pagination

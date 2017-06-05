@@ -36,7 +36,7 @@ final public class PurgeManager implements Runnable {
 
         if( !purgeRules.isEmpty() ) {
 
-            final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
+            final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
 
             for ( final String purgeArgs : purgeRules ) {
 

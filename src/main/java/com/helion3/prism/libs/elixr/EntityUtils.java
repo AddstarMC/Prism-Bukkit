@@ -40,14 +40,14 @@ public class EntityUtils {
 	 */
 	public static boolean inCube(Location loc1, int radius, Location loc2) {
 		if(loc1 == null || loc2 == null) return false;
-		return (
+		return
 				loc1.getBlockX() + radius > loc2.getBlockX()
 				&& loc1.getBlockX() - radius < loc2.getBlockX()
 				&& loc1.getBlockY() + radius > loc2.getBlockY()
 				&& loc1.getBlockY() - radius < loc2.getBlockY()
 				&& loc1.getBlockZ() + radius > loc2.getBlockZ()
 				&& loc1.getBlockZ() - radius < loc2.getBlockZ()
-				);
+				;
 	}
 	
 	

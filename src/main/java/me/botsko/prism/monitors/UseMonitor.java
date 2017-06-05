@@ -31,7 +31,7 @@ public class UseMonitor {
     /**
 	 * 
 	 */
-    private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<String, Integer>();
+    private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<>();
 
     /**
      * 
@@ -174,7 +174,7 @@ public class UseMonitor {
         plugin.getServer().getScheduler().scheduleSyncRepeatingTask( plugin, new Runnable() {
             @Override
             public void run() {
-                countedEvents = new ConcurrentHashMap<String, Integer>();
+                countedEvents = new ConcurrentHashMap<>();
             }
         }, 7000L, 7000L );
     }

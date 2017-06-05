@@ -38,6 +38,9 @@ public class LookupCommand implements SubHandler {
 
     /**
      * Handle the command
+     * Run the lookup itself in an async task so the lookup query isn't done
+     * on the main thread
+     *
      */
     @Override
     public void handle(final CallInfo call) {
@@ -50,10 +53,6 @@ public class LookupCommand implements SubHandler {
         call.getSender().sendMessage(
             Prism.messenger.playerSubduedHeaderMsg( "Preparing results; please wait up to a minute..." ) );
 
-        /*
-          Run the lookup itself in an async task so the lookup query isn't done
-          on the main thread
-         */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override
             public void run() {
