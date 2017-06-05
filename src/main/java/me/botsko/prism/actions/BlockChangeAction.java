@@ -44,42 +44,6 @@ public class BlockChangeAction extends BlockAction {
     }
 
     /**
-     * 
-     * @return
-     */
-    @Override
-    public String getNiceName() {
-    	if (actionData == null) actionData = getActionData();
-        String name = "";
-        if( actionData instanceof SkullActionData ) {
-            final SkullActionData ad = (SkullActionData) getActionData();
-            name += ad.skull_type + " ";
-        } else if( actionData instanceof SpawnerActionData ) {
-            final SpawnerActionData ad = (SpawnerActionData) getActionData();
-            name += ad.entity_type + " ";
-        }
-        if( this.getType().getName().equals( "block-fade" ) ) {
-            name += materialAliases.getAlias( this.old_block_id, this.old_block_subid );
-        } else {
-            name += materialAliases.getAlias( this.block_id, this.block_subid );
-        }
-        if( actionData instanceof SignActionData ) {
-            final SignActionData ad = (SignActionData) getActionData();
-            if( ad.lines != null && ad.lines.length > 0 ) {
-                name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
-            }
-        } else if( actionData instanceof BannerActionData ) {
-        	final BannerActionData ad = (BannerActionData) getActionData();
-        	if( ad.patterns != null && ad.patterns.length > 0 ) {
-        		name += " (" + TypeUtils.join( ad.patterns, ", " ).replace("_", " ").toLowerCase() + ")";
-        	}
-        } else if( block_id == 137 ) {
-            name += " (" + data + ")";
-        }
-        return name;
-    }
-
-    /**
 	 * 
 	 */
     @Override

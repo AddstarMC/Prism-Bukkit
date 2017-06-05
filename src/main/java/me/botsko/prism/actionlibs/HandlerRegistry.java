@@ -79,8 +79,7 @@ public class HandlerRegistry<H> {
      * @return
      */
     public Handler getHandler(String name) {
-        if( name != null ) {
-            if( registeredHandlers.containsKey( name ) ) {
+        if( name != null && registeredHandlers.containsKey( name )) {
                 try {
                     final Class<? extends Handler> handlerClass = registeredHandlers.get( name );
                     return new HandlerFactory<Handler>( handlerClass ).create();
@@ -89,7 +88,6 @@ public class HandlerRegistry<H> {
                 } catch ( final IllegalAccessException e ) {
                     e.printStackTrace();
                 }
-            }
         }
         return new GenericAction();
     }

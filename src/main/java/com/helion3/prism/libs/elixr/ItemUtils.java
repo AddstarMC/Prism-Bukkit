@@ -1,8 +1,5 @@
 package com.helion3.prism.libs.elixr;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +14,9 @@ import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
+
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ItemUtils {
     
@@ -42,11 +42,9 @@ public class ItemUtils {
         if( !a.getType().equals( b.getType() ) ) return false;
         
         // Durability check
-        if( checkDura && a.getDurability() != b.getDurability() ) return false;
-        
-        return true;
-        
-    }
+		return !(checkDura && a.getDurability() != b.getDurability());
+
+	}
     
     /**
      * 
@@ -107,15 +105,15 @@ public class ItemUtils {
             BookMeta bookB = (BookMeta) metaB;
             
             // Author
-            if( bookA.getAuthor() != null ){
-                if( !bookA.getAuthor().equals( bookB.getAuthor() ) ) return false;
+            if (bookA.getAuthor() != null && !bookA.getAuthor().equals(bookB.getAuthor())) {
+                return false;
             }
-            
-            if( bookA.getTitle() != null ){
-                if( !bookA.getTitle().equals( bookB.getTitle() ) ) return false;
+
+            if (bookA.getTitle() != null && !bookA.getTitle().equals(bookB.getTitle())) {
+                return false;
             }
-            
-            // Pages
+
+			// Pages
             if( bookA.getPageCount() != bookB.getPageCount() ) return false;
             
             for( int page = 0; page < bookA.getPages().size(); page++ ){
@@ -461,11 +459,8 @@ public class ItemUtils {
     	}
     	// Has meta
     	ItemMeta im = item.getItemMeta();
-    	if( im.hasDisplayName() || im.hasEnchants() || im.hasLore() ){
-    		return false;
-    	}
-    	return true;
-    }
+		return !(im.hasDisplayName() || im.hasEnchants() || im.hasLore());
+	}
     
     
     /**

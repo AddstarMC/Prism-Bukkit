@@ -52,7 +52,7 @@ public class Prism extends JavaPlugin {
     /**
      * Connection Pool
      */
-    private static DataSource pool = new DataSource();
+    private static volatile DataSource pool = new DataSource();
 
     /**
      * Protected/private
@@ -74,6 +74,7 @@ public class Prism extends JavaPlugin {
     private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor( 1 );
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
+
     /**
      * Public
      */
@@ -924,10 +925,9 @@ public class Prism extends JavaPlugin {
      */
     public void alertPlayers(Player player, String msg) {
         for ( final Player p : getServer().getOnlinePlayers() ) {
-            if( !p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self" ) ) {
-                if( p.hasPermission( "prism.alerts" ) ) {
+            if( (!p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self") &&
+                    p.hasPermission( "prism.alerts" ) ) ) {
                     p.sendMessage( messenger.playerMsg( ChatColor.RED + "[!] " + msg ) );
-                }
             }
         }
     }
@@ -972,16 +972,14 @@ public class Prism extends JavaPlugin {
     public void notifyNearby(Player player, int radius, String msg) {
         if( !getConfig().getBoolean( "prism.appliers.notify-nearby.enabled" ) ) { return; }
         for ( final Player p : player.getServer().getOnlinePlayers() ) {
-            if( !p.equals( player ) ) {
-                if( player.getWorld().equals( p.getWorld() ) ) {
-                    if( player.getLocation().distance( p.getLocation() ) <= ( radius + config
-                            .getInt( "prism.appliers.notify-nearby.additional-radius" ) ) ) {
+            if( !p.equals( player ) && player.getWorld().equals( p.getWorld() )
+                    && player.getLocation().distance( p.getLocation() ) <= ( radius + config
+                    .getInt( "prism.appliers.notify-nearby.additional-radius" ) )) {
                         p.sendMessage( messenger.playerHeaderMsg( msg ) );
-                    }
-                }
             }
         }
     }
+
 
     /**
      * 

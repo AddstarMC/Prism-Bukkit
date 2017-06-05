@@ -51,26 +51,27 @@ public class ActionsCommand implements SubHandler {
         Collections.sort( shortNames );
 
         // Build display of shortname list
-        String actionList = "";
+        StringBuilder actionList = new StringBuilder();
         int i = 1;
         for ( final String shortName : shortNames ) {
-            actionList += shortName + ( i < shortNames.size() ? ", " : "" );
+            actionList.append(shortName);
+            if(i < shortNames.size()){actionList.append(", ");}
             i++;
         }
         sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE
-                + " " + actionList ) );
+                + " " + actionList.toString() ) );
 
         // Build display of full actions
-        actionList = "";
+        actionList.setLength(0);
         i = 1;
         for ( final Entry<String, ActionType> entry : actions.entrySet() ) {
             if( entry.getKey().contains( "prism" ) )
                 continue;
-            actionList += entry.getKey() + ( i < actions.size() ? ", " : "" );
+            actionList.append(entry.getKey());
+            if( i < actions.size()){actionList.append(", ");}
             i++;
         }
         sender.sendMessage( Prism.messenger.playerMsg( ChatColor.LIGHT_PURPLE + "Full Actions:" + ChatColor.GRAY + " "
-                + actionList ) );
-
+                + actionList.toString() ) );
     }
 }
