@@ -164,35 +164,44 @@ public class BlockAction extends GenericAction {
      */
     @Override
     public String getNiceName() {
+        if (actionData == null) actionData = getActionData();
         String name = "";
+        String result = name;
+        if( type.getName().equals( "crop-trample" ) && block_id == 0 ) {
+            result = "empty soil";
+            return result;
+        }
         if( actionData instanceof SkullActionData ) {
             final SkullActionData ad = (SkullActionData) getActionData();
-            name += ad.skull_type + " ";
+            result += ad.skull_type + " ";
         } else if( actionData instanceof SpawnerActionData ) {
             final SpawnerActionData ad = (SpawnerActionData) getActionData();
-            name += ad.entity_type + " ";
+            result += ad.entity_type + " ";
         }
-        name += materialAliases.getAlias( this.block_id, this.block_subid );
+        if( this.getType().getName().equals( "block-fade" ) ) {
+            result += materialAliases.getAlias( this.old_block_id, this.old_block_subid );
+        } else {
+            result += materialAliases.getAlias( this.block_id, this.block_subid );
+        }
         if( actionData instanceof SignActionData ) {
             final SignActionData ad = (SignActionData) getActionData();
             if( ad.lines != null && ad.lines.length > 0 ) {
-                name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
+                result += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
             }
         } else if( actionData instanceof BannerActionData ) {
             final BannerActionData ad = (BannerActionData) getActionData();
-            if( ad.patterns != null && ad.patterns.length > 0 ) {
-                name += " (" + TypeUtils.join( ad.patterns, ", " ).replace("_", " ").toLowerCase() + ")";
+            if (ad.patterns != null && ad.patterns.length > 0) {
+                result += " (" + TypeUtils.join(ad.patterns, ", ").replace("_", " ").toLowerCase() + ")";
             }
         } else if( actionData instanceof BedActionData ) {
             final BedActionData ad = (BedActionData) getActionData();
             if( ad.color != null ) {
-                name = ad.color.toString().toLowerCase() + " " + name;
+                result = ad.color.toString().toLowerCase() + " " + result;
             }
         } else if( block_id == 137 ) {
-            name += " (" + data + ")";
+            result += " (" + data + ")";
         }
-        if( type.getName().equals( "crop-trample" ) && block_id == 0 ) { return "empty soil"; }
-        return name;
+        return result;
     }
 
     /**
@@ -269,7 +278,7 @@ public class BlockAction extends GenericAction {
     }
 
     /**
-	 * 
+	 *
 	 */
     public class BannerActionData extends BlockActionData {
         public String[] patterns;

@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -40,21 +41,6 @@ public class BlockChangeAction extends BlockAction {
         public byte originalBlock_subid;
         public int newBlock_id;
         public byte newBlock_subid;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    @Override
-    public String getNiceName() {
-        String name = "";
-        if( this.getType().getName().equals( "block-fade" ) ) {
-            name += materialAliases.getAlias( this.old_block_id, this.old_block_subid );
-        } else {
-            name += materialAliases.getAlias( this.block_id, this.block_subid );
-        }
-        return name;
     }
 
     /**
