@@ -35,7 +35,7 @@ final public class PurgeManager implements Runnable {
         Prism.log( "Scheduled purge executor beginning new run..." );
 
         if( !purgeRules.isEmpty() ) {
-
+            Prism.debug("Purge Rules:" + purgeRules.toString());
             final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
 
             for ( final String purgeArgs : purgeRules ) {
@@ -54,7 +54,9 @@ final public class PurgeManager implements Runnable {
                     paramList.add( parameters );
                 }
             }
-
+            if(purgeRules.size()<paramList.size()){
+                Prism.debug("We found " + purgeRules.size() + " purge rules.  Only processed : " + paramList.size());
+            }
             if( paramList.size() > 0 ) {
 
                 // Identify the minimum for chunking

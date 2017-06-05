@@ -74,7 +74,6 @@ public class Prism extends JavaPlugin {
     private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor( 1 );
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
-
     /**
      * Public
      */
@@ -116,6 +115,15 @@ public class Prism extends JavaPlugin {
      */
     public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
 
+    /**
+     *
+     * @return the current threadpool
+     */
+
+
+    public ScheduledThreadPoolExecutor getSchedulePool() {
+        return schedulePool;
+    }
     /**
      * Enables the plugin and activates our player listeners
      */

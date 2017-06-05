@@ -31,6 +31,11 @@ public class PrismCommands extends Executor {
         addSub( new String[] { "about", "default" }, "prism.help" ).allowConsole()
                 .setHandler( new AboutCommand( prism ) );
 
+        //Purge handling
+        addSub(new String[]{"purge"},"prism.purge").allowConsole()
+                .setHandler(new PurgeCommand(prism));
+
+
         /*
           /prism lookup
          */
