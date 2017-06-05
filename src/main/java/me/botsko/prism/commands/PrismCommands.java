@@ -115,7 +115,7 @@ public class PrismCommands extends Executor {
         /*
           /prism delete (time)
          */
-        addSub( new String[] { "delete", "purge" }, "prism.delete" ).allowConsole().setHandler(
+        addSub( new String[] { "delete"}, "prism.delete" ).allowConsole().setHandler(
                 new DeleteCommand( prism ) );
 
         /*
