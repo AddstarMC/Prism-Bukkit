@@ -895,9 +895,10 @@ public class Prism extends JavaPlugin {
 	 */
     public void launchScheduledPurgeManager() {
         final List<String> purgeRules = getConfig().getStringList( "prism.db-records-purge-rules" );
+        Integer purgeCycleTime = Math.round(24/getConfig().getInt("prism.purge.perday",2));
         purgeManager = new PurgeManager( this, purgeRules );
         // scheduledPurgeExecutor =
-        schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS );
+        schedulePool.scheduleAtFixedRate( purgeManager, 0, purgeCycleTime, TimeUnit.HOURS );
         // scheduledPurgeExecutor.cancel();
     }
 
