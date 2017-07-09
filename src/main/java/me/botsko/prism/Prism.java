@@ -312,7 +312,11 @@ public class Prism extends JavaPlugin {
         DataSource pool = null;
 
         final String dns = "jdbc:mysql://" + config.getString( "prism.mysql.hostname" ) + ":"
-                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
+                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) 
+                + "?useUnicode=true" 
+                + "&characterEncoding=UTF-8" 
+                + "&verifyServerCertificate=" + ( config.getBoolean( "prism.mysql.verify-server-certificate" ) ? "true" : "false")
+                + "&useSSL=" + ( config.getBoolean( "prism.mysql.use-ssl" ) ? "true" : "false");
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
