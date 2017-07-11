@@ -61,6 +61,22 @@
       <email>mikroskeem@mikroskeem.eu</email>
       <url>https://github.com/mikroskeem</url>
     </developer>
+    <!-- Code and javadoc cleanup, purge cycle enhancements -->
+    <developer>
+      <name>Narimm</name>
+      <url>https://github.com/Narimm</url>
+    </developer>
+    <!-- Alert fixes -->
+    <developer>
+      <name>vcdf</name>
+      <url>https://github.com/vcdf</url>
+    </developer>
+    <!-- SSL fixes and bug reporting -->
+    <developer>
+      <name>PugaBear</name>
+      <email>pugabear@bn-mc.net</email>
+      <url>https://github.com/pugabear</url>
+    </developer>
     <!-- Current maintainer of GPrism fork -->
     <developer>
       <name>Roy Curtis</name>
