@@ -157,7 +157,7 @@ public class MiscUtils {
     }
 
     public static BaseComponent getPreviousButton() {
-        TextComponent textComponent = new TextComponent("[Prev]");
+        TextComponent textComponent = new TextComponent(" [<< Prev]");
         textComponent.setColor(ChatColor.GRAY);
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
                 new TextComponent("Click to view the previous page") }));
@@ -166,14 +166,14 @@ public class MiscUtils {
     }
 
     public static BaseComponent getNextButton() {
-        TextComponent textComponent = new TextComponent("        ");
+        TextComponent textComponent = new TextComponent("           ");
         textComponent.setColor(ChatColor.GRAY);
         textComponent.addExtra(getNextButtonComponent());
         return textComponent;
     }
 
     private static BaseComponent getNextButtonComponent() {
-        TextComponent textComponent = new TextComponent("[Next]");
+        TextComponent textComponent = new TextComponent("[Next >>]");
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
                 new TextComponent("Click to view the next page") }));
         textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
@@ -184,6 +184,7 @@ public class MiscUtils {
         TextComponent textComponent = new TextComponent();
         textComponent.setColor(ChatColor.GRAY);
         textComponent.addExtra(getPreviousButton());
+        textComponent.addExtra(" | ");
         textComponent.addExtra(getNextButtonComponent());
         return textComponent;
     }
