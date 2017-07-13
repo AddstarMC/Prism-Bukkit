@@ -1,5 +1,6 @@
 package com.helion3.prism.libs.elixr;
 
+import org.bukkit.ChatColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -395,7 +396,7 @@ public class ItemUtils {
 		if(im != null){
 			String displayName = im.getDisplayName();
 			if(displayName != null){
-				item_name += ", named \"" + displayName + "\"";
+				item_name += ", named " + ChatColor.DARK_AQUA + "\"" + displayName + ChatColor.DARK_AQUA + "\"";
 			}
 		}
 		
