@@ -77,6 +77,12 @@
       <email>pugabear@bn-mc.net</email>
       <url>https://github.com/pugabear</url>
     </developer>
+    <!-- Formatting improvements and fixes -->
+    <developer>
+      <name>syokkendesuyo</name>
+      <email>syokkendesuyo@gmail.com</email>
+      <url>https://github.com/syokkendesuyo</url>
+    </developer>
     <!-- Current maintainer of GPrism fork -->
     <developer>
       <name>Roy Curtis</name>
