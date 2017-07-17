@@ -105,6 +105,12 @@ public class SetmyCommand implements SubHandler {
         /*
           Set your custom wand item for either "item" or "block" modes
          */
+
+        // Null check
+        if( setSubType == null){
+            call.getPlayer().sendMessage( Prism.messenger.playerError( "Invalid arguments. Use /prism ? for help." ) );
+            return;
+        }
         if( !setSubType.equalsIgnoreCase( "item" ) ) { return; }
         String setWandItem = null;
         if( call.getArgs().length >= 4 ) {
