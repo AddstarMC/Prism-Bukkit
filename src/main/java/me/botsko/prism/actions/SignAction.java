@@ -5,7 +5,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -109,11 +108,11 @@ public class SignAction extends GenericAction {
     public String getNiceName() {
         String name = "sign (";
         if( actionData.lines != null && actionData.lines.length > 0 ) {
-            name += TypeUtils.join( actionData.lines, ChatColor.DARK_AQUA + ", " + ChatColor.RESET );
+            name += TypeUtils.join( actionData.lines, ", " );
         } else {
             name += "no text";
         }
-        name += ChatColor.DARK_AQUA + ")";
+        name += ")";
         return name;
     }
 
