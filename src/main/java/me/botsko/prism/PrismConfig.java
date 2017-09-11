@@ -52,6 +52,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault( "prism.mysql.port", "3306" );
         config.addDefault( "prism.mysql.verify-server-certificate", false );
         config.addDefault( "prism.mysql.use-ssl", false );
+        config.addDefault( "prism.mysql.use-cursor-fetch", false );
 
         // pste.me sharing.
         config.addDefault( "prism.paste.enable", false );
