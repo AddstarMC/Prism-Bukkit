@@ -316,7 +316,8 @@ public class Prism extends JavaPlugin {
                 + "?useUnicode=true" 
                 + "&characterEncoding=UTF-8" 
                 + "&verifyServerCertificate=" + ( config.getBoolean( "prism.mysql.verify-server-certificate" ) ? "true" : "false")
-                + "&useSSL=" + ( config.getBoolean( "prism.mysql.use-ssl" ) ? "true" : "false");
+                + "&useSSL=" + ( config.getBoolean( "prism.mysql.use-ssl" ) ? "true" : "false")
+                + "&useCursorFetch=" + ( config.getBoolean( "prism.mysql.use-cursor-fetch" ) ? "true" : "false");;
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
