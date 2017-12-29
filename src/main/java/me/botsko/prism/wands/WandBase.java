@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import me.botsko.elixr.InventoryUtils;
+import com.helion3.prism.libs.elixr.InventoryUtils;
 
 public abstract class WandBase {
 
@@ -55,10 +55,7 @@ public abstract class WandBase {
         wand_mode = mode;
     }
 
-    /**
-     * 
-     * @param mode
-     */
+
     public String getWandMode() {
         return wand_mode;
     }

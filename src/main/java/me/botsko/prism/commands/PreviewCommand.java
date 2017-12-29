@@ -29,7 +29,7 @@ public class PreviewCommand implements SubHandler {
      */
     public PreviewCommand(Prism plugin) {
         this.plugin = plugin;
-        secondaries = new ArrayList<String>();
+        secondaries = new ArrayList<>();
         secondaries.add( "apply" );
         secondaries.add( "cancel" );
         secondaries.add( "rollback" );
@@ -45,8 +45,8 @@ public class PreviewCommand implements SubHandler {
     public void handle( final CallInfo call ) {
         if( call.getArgs().length >= 2 ) {
 
-            /**
-             * Apply previous preview changes
+            /*
+              Apply previous preview changes
              */
             if( call.getArg( 1 ).equalsIgnoreCase( "apply" ) ) {
                 if( plugin.playerActivePreviews.containsKey( call.getPlayer().getName() ) ) {
@@ -59,8 +59,8 @@ public class PreviewCommand implements SubHandler {
                 return;
             }
 
-            /**
-             * Cancel preview
+            /*
+              Cancel preview
              */
             if( call.getArg( 1 ).equalsIgnoreCase( "cancel" ) ) {
                 if( plugin.playerActivePreviews.containsKey( call.getPlayer().getName() ) ) {
@@ -82,8 +82,8 @@ public class PreviewCommand implements SubHandler {
                 return;
             }
 
-            /**
-             * Begin a rollback or restore preview
+            /*
+              Begin a rollback or restore preview
              */
             if( call.getArg( 1 ).equalsIgnoreCase( "rollback" ) || call.getArg( 1 ).equalsIgnoreCase( "restore" )
                     || call.getArg( 1 ).equalsIgnoreCase( "rb" ) || call.getArg( 1 ).equalsIgnoreCase( "rs" ) ) {
@@ -115,9 +115,9 @@ public class PreviewCommand implements SubHandler {
                 call.getPlayer().sendMessage(
                         Prism.messenger.playerSubduedHeaderMsg( "Preparing results..." + defaultsReminder ) );
                 
-                /**
-                 * Run the query itself in an async task so the lookup query isn't done
-                 * on the main thread
+                /*
+                  Run the query itself in an async task so the lookup query isn't done
+                  on the main thread
                  */
                 plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
                     @Override

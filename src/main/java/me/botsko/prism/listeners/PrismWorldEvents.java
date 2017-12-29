@@ -27,7 +27,7 @@ public class PrismWorldEvents implements Listener {
         if( !Prism.getIgnore().event( type, event.getWorld() ) )
             return;
         for ( final BlockState block : event.getBlocks() ) {
-            if( me.botsko.elixr.BlockUtils.isGrowableStructure( block.getType() ) ) {
+            if( com.helion3.prism.libs.elixr.BlockUtils.isGrowableStructure( block.getType() ) ) {
                 String player = "Environment";
                 if( event.getPlayer() != null ) {
                     player = event.getPlayer().getName();

@@ -9,10 +9,7 @@ import me.botsko.prism.Prism;
 
 public class PurgeChunkingUtil {
 
-    /**
-     * 
-     * @param playername
-     */
+
     public static int getMinimumPrimaryKey() {
         String prefix = Prism.config.getString("prism.mysql.prefix");
         int id = 0;
@@ -49,10 +46,7 @@ public class PurgeChunkingUtil {
         return id;
     }
 
-    /**
-     * 
-     * @param playername
-     */
+
     public static int getMaximumPrimaryKey() {
         String prefix = Prism.config.getString("prism.mysql.prefix");
         int id = 0;

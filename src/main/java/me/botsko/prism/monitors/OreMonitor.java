@@ -3,7 +3,7 @@ package me.botsko.prism.monitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -52,7 +52,9 @@ public class OreMonitor {
     }
 
     /**
-     * 
+     * Run the lookup itself in an async task so the lookup query
+     * isn't done on the main thread
+     *
      * @param player
      * @param block
      */
@@ -67,7 +69,7 @@ public class OreMonitor {
             threshold = 1;
 
             // identify all ore blocks on same Y axis in x/z direction
-            final ArrayList<Block> matchingBlocks = new ArrayList<Block>();
+            final ArrayList<Block> matchingBlocks = new ArrayList<>();
             final ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
             if( !foundores.isEmpty() ) {
 
@@ -86,9 +88,9 @@ public class OreMonitor {
                 final String msg = getOreColor( block ) + player.getName() + " found " + count + " "
                         + getOreNiceName( block ) + " " + light + "% light";
 
-                /**
-                 * Run the lookup itself in an async task so the lookup query
-                 * isn't done on the main thread
+                /*
+                  Run the lookup itself in an async task so the lookup query
+                  isn't done on the main thread
                  */
                 plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
                     @Override
@@ -162,8 +164,11 @@ public class OreMonitor {
     }
 
     /**
+     *
+     * @param type
      * @param currBlock
-     * @param toBeFelled
+     * @param matchingBlocks
+     * @return
      */
     private ArrayList<Block> findNeighborBlocks(Material type, Block currBlock, ArrayList<Block> matchingBlocks) {
 

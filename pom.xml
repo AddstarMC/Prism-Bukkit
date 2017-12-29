@@ -1,116 +1,241 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project properties -->
+
   <groupId>me.botsko</groupId>
   <artifactId>prism</artifactId>
-  <version>2.0.6</version>
-  <name>prism</name>
+  <version>1.12-2.0.12</version>
+
+  <name>Prism</name>
+  <description>
+    Handles event tracking, rollbacks, restores and grief management tools
+  </description>
+
+  <!-- Project metadata -->
+
+  <licenses>
+    <license>
+      <name>Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported</name>
+      <url>http://creativecommons.org/licenses/by-nc-sa/3.0/us/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <!-- Original developer of Prism -->
+    <developer>
+      <name>Mike Botsko</name>
+      <email>botsko@gmail.com</email>
+      <url>https://github.com/viveleroi</url>
+    </developer>
+    <!-- Updater for 1.9 and 1.10 -->
+    <developer>
+      <name>Jikoo</name>
+      <email>Jikoo.Games@gmail.com</email>
+      <url>https://github.com/Jikoo</url>
+    </developer>
+    <!-- Provided hand fixes -->
+    <developer>
+      <name>Siggi88</name>
+      <url>https://github.com/siggi88</url>
+    </developer>
+    <!-- Provided MySQL utf-8 fix -->
+    <developer>
+      <name>Pavel M</name>
+      <email>p.mikhaylov@gmail.com</email>
+      <url>https://github.com/paulmory</url>
+    </developer>
+    <!-- Provided item frame fixes -->
+    <developer>
+      <name>Josh</name>
+      <email>javw.phanatic@gmail.com</email>
+      <url>https://github.com/PhanaticD</url>
+    </developer>
+    <!-- Helped update to 1.12 -->
+    <developer>
+      <name>Mark Vainomaa</name>
+      <email>mikroskeem@mikroskeem.eu</email>
+      <url>https://github.com/mikroskeem</url>
+    </developer>
+    <!-- Code and javadoc cleanup, purge cycle enhancements -->
+    <developer>
+      <name>Narimm</name>
+      <url>https://github.com/Narimm</url>
+    </developer>
+    <!-- Alert fixes -->
+    <developer>
+      <name>vcdf</name>
+      <url>https://github.com/vcdf</url>
+    </developer>
+    <!-- SSL fixes and bug reporting -->
+    <developer>
+      <name>Pugabyte</name>
+      <email>pugabyte@bear-nation.net</email>
+      <url>https://github.com/pugabyte</url>
+    </developer>
+    <!-- Formatting improvements and fixes -->
+    <developer>
+      <name>syokkendesuyo</name>
+      <email>syokkendesuyo@gmail.com</email>
+      <url>https://github.com/syokkendesuyo</url>
+    </developer>
+    <!-- Current maintainer of GPrism fork -->
+    <developer>
+      <name>Roy Curtis</name>
+      <email>roy.adrian.curtis+github@gmail.com</email>
+      <url>https://github.com/RoyCurtis</url>
+    </developer>
+  </developers>
+
+  <!-- Project dependencies -->
+
+  <repositories>
+    <!-- For Spigot + Bukkit API -->
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <!-- For WorldEdit API -->
+    <repository>
+      <id>sk89q-repo</id>
+      <url>http://maven.sk89q.com/repo/</url>
+    </repository>
+    <!-- For Fanciful dependency -->
+    <repository>
+      <id>fanciful-mvn-repo</id>
+      <url>http://repo.stealthyone.com/content/groups/public/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
+    <!--Spigot + Bukkit API-->
     <dependency>
-      <groupId>me.botsko</groupId>
-      <artifactId>elixr</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
-      <scope>compile</scope>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.12-R0.1-SNAPSHOT</version>
+      <scope>provided</scope>
     </dependency>
-    <!--Spigot API-->
-    <dependency>
-           <groupId>org.spigotmc</groupId>
-           <artifactId>spigot-api</artifactId>
-           <version>1.11-R0.1-SNAPSHOT</version>
-           <scope>provided</scope>
-    </dependency>
-    <!--Bukkit API-->
-    <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.11-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <groupId>com.sk89q</groupId>
       <artifactId>worldedit</artifactId>
       <version>6.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jdbc</artifactId>
       <version>7.0.52</version>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.2.4</version>
+      <groupId>mkremins</groupId>
+      <artifactId>fanciful</artifactId>
+      <version>0.3.3-SNAPSHOT</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
-  <repositories>
-    <repository>
-      <id>dhmc-repo</id>
-      <url>http://dhmc.us:8081/nexus/content/repositories/snapshots</url>
-    </repository>
-    <repository>
-      <id>sk89q-repo</id>
-      <url>http://maven.sk89q.com/repo/</url>
-    </repository>
-    <repository>
-        <id>spigot-repo</id>
-        <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-    </repository>
-  </repositories>
+
+  <!-- Project settings -->
+
+  <!-- Enforce Unicode when compiling Java -->
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
+    <!-- Replaces tokens like "${project.version}" in plugin.yml -->
     <resources>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
         <includes>
-          <include>**/*.yml</include>
+          <include>**/plugin.yml</include>
         </includes>
       </resource>
+
       <resource>
         <directory>src/main/resources</directory>
         <filtering>false</filtering>
         <excludes>
-          <exclude>**/*.yml</exclude>
+          <exclude>**/plugin.yml</exclude>
         </excludes>
       </resource>
     </resources>
+
     <plugins>
+      <!-- Specifies minimum Java version and Unicode for compile and runtime -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0.2</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.8</source>
+          <target>1.8</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
           <showDeprecation>false</showDeprecation>
           <showWarnings>true</showWarnings>
         </configuration>
       </plugin>
+
+      <!-- Ensure resource files are processed as Unicode -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.1</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- Shade dependencies into built JAR -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.3</version>
+
         <configuration>
+          <!-- Disable auto generation of dependency-reduced-pom.xml -->
+          <createDependencyReducedPom>false</createDependencyReducedPom>
+
+          <!-- Include only direct dependencies -->
+          <artifactSet>
+            <includes>
+              <include>org.apache.tomcat:tomcat-jdbc</include>
+              <include>org.apache.tomcat:tomcat-juli</include>
+              <include>mkremins:fanciful</include>
+            </includes>
+          </artifactSet>
+
+          <!-- Relocate certain dependencies -->
           <relocations>
-            <relocation>
-              <pattern>me.botsko.elixr</pattern>
-              <shadedPattern>com.helion3.prism.libs.elixr</shadedPattern>
-            </relocation>
+            <!-- Tomcat JDBC dependency -->
             <relocation>
               <pattern>org.apache.tomcat.jdbc</pattern>
               <shadedPattern>com.helion3.prism.libs.org.apache.tomcat.jdbc</shadedPattern>
             </relocation>
+
+            <!-- Tomcat JDBC JULI dependency -->
             <relocation>
               <pattern>org.apache.juli</pattern>
               <shadedPattern>com.helion3.prism.libs.org.apache.juli</shadedPattern>
             </relocation>
+
+            <!-- Fanciful dependency -->
             <relocation>
-               <pattern>com.google.gson</pattern>
-               <shadedPattern>com.helion3.prism.libs.com.google.gson</shadedPattern>
+              <pattern>mkremins.fanciful</pattern>
+              <shadedPattern>com.helion3.prism.libs.mkremins.fanciful</shadedPattern>
             </relocation>
           </relocations>
         </configuration>
+
+        <!-- Perform shading for package phase -->
         <executions>
           <execution>
             <phase>package</phase>
@@ -120,18 +245,7 @@
           </execution>
         </executions>
       </plugin>
+
     </plugins>
   </build>
-  <distributionManagement>
-    <repository>
-      <id>deployment</id>
-      <name>Internal Releases</name>
-      <url>http://dhmc.us:8081/nexus/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>deployment</id>
-      <name>Internal Releases</name>
-      <url>http://dhmc.us:8081/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
 </project>

@@ -12,11 +12,12 @@ abstract public class QueryBuilder {
 	 * 
 	 */
     protected final Prism plugin;
-    protected List<String> columns = new ArrayList<String>();
-    protected List<String> conditions = new ArrayList<String>();
+    protected List<String> columns = new ArrayList<>();
+    protected List<String> conditions = new ArrayList<>();
 
     protected final String tableNameData;
     protected final String tableNameDataExtra;
+    protected final String tableNameDataRollback;
 
     protected QueryParameters parameters;
     protected boolean shouldGroup;
@@ -30,6 +31,7 @@ abstract public class QueryBuilder {
         String prefix = plugin.getConfig().getString("prism.mysql.prefix");
         tableNameData = prefix + "data";
         tableNameDataExtra = prefix + "data_extra";
+        tableNameDataRollback = prefix + "data_rollback";
     }
 
     /**
@@ -44,8 +46,8 @@ abstract public class QueryBuilder {
         this.shouldGroup = shouldGroup;
 
         // Reset
-        columns = new ArrayList<String>();
-        conditions = new ArrayList<String>();
+        columns = new ArrayList<>();
+        conditions = new ArrayList<>();
 
         String query = select() + where() + group() + order() + limit();
 

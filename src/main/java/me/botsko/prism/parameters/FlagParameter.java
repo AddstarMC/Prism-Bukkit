@@ -1,6 +1,6 @@
 package me.botsko.prism.parameters;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.commandlibs.Flag;
 import org.bukkit.Bukkit;
@@ -96,7 +96,7 @@ public class FlagParameter implements PrismParameterHandler {
         try {
             flag = Flag.valueOf( name );
         } catch ( final IllegalArgumentException ex ) {
-            final List<String> completions = new ArrayList<String>();
+            final List<String> completions = new ArrayList<>();
             for ( final Flag possibleFlag : Flag.values() ) {
                 final String flagName = possibleFlag.toString();
                 if( flagName.startsWith( name ) ) {
@@ -119,7 +119,7 @@ public class FlagParameter implements PrismParameterHandler {
                 prefix = prefix + value.substring( 0, end ) + ",";
             }
             partialName = partialName.toLowerCase();
-            final List<String> completions = new ArrayList<String>();
+            final List<String> completions = new ArrayList<>();
             for ( final Player player : Bukkit.getOnlinePlayers() ) {
                 if( player.getName().toLowerCase().startsWith( partialName ) )
                     completions.add( prefix + player.getName() );

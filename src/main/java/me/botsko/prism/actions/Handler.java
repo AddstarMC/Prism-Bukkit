@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-import me.botsko.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -43,14 +43,14 @@ public interface Handler {
     public abstract String getDisplayTime();
 
     /**
-     * @param display_time
-     *            the display_time to set
+     * @param epoch  the display_time to set
+     *
      */
     public abstract void setUnixEpoch(String epoch);
 
     /**
      * 
-     * @return
+     * @return the time since
      */
     public abstract String getTimeSince();
 
@@ -174,6 +174,14 @@ public interface Handler {
      *            the data to set
      */
     public abstract void setData(String data);
+
+    /**
+     * @param rollback
+     *            was rollback
+     */
+    public abstract void setWasRollback(int rollback);
+
+    public abstract int getWasRollback();
 
     /**
      * 

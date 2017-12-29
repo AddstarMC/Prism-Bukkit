@@ -21,7 +21,7 @@ public class TimeTaken {
     /**
 	 * 
 	 */
-    protected final TreeMap<Long, String> eventsTimed = new TreeMap<Long, String>();
+    protected final TreeMap<Long, String> eventsTimed = new TreeMap<>();
 
     /**
      * 
@@ -58,8 +58,7 @@ public class TimeTaken {
     }
 
     /**
-     * 
-     * @param plugin
+     *
      */
     public void printTimeRecord() {
 

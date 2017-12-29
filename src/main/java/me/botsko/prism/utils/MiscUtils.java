@@ -1,21 +1,36 @@
 package me.botsko.prism.utils;
 
-import com.google.common.base.CaseFormat;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
-import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.Prism;
-import me.botsko.prism.appliers.PrismProcessType;
+
+import com.google.common.base.CaseFormat;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+
+import me.botsko.prism.Prism;
+import me.botsko.prism.appliers.PrismProcessType;
+import com.helion3.prism.libs.elixr.TypeUtils;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 public class MiscUtils {
 
@@ -101,7 +116,7 @@ public class MiscUtils {
     }
 
     public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
-        final List<String> result = new ArrayList<String>();
+        final List<String> result = new ArrayList<>();
         if( caseSensitive ) {
             for ( final String option : options ) {
                 if( option.startsWith( start ) )
@@ -139,5 +154,107 @@ public class MiscUtils {
         if(entity.getType() == EntityType.PLAYER)
             return ((Player)entity).getName();
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
+    }
+
+    public static BaseComponent getPreviousButton() {
+        TextComponent textComponent = new TextComponent(" [<< Prev]");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
+                new TextComponent("Click to view the previous page") }));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
+        return textComponent;
+    }
+
+    public static BaseComponent getNextButton() {
+        TextComponent textComponent = new TextComponent("           ");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
+    private static BaseComponent getNextButtonComponent() {
+        TextComponent textComponent = new TextComponent("[Next >>]");
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[] {
+                new TextComponent("Click to view the next page") }));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
+        return textComponent;
+    }
+
+    public static BaseComponent getPrevNextButtons() {
+        TextComponent textComponent = new TextComponent();
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getPreviousButton());
+        textComponent.addExtra(" | ");
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
+    /**
+     * Serializes given Bukkit object to a base64 string, for data storage. Uses
+     * {@link BukkitObjectOutputStream}, so data of items should serialize properly. If given null,
+     * will just return null silently.
+     *
+     * @param obj ConfigurationSerializable to serialize to a base64 string
+     * @return Base64 representation of the given object, or null if it failed to serialize
+     */
+    public static String serializeToBase64(ConfigurationSerializable obj)
+    {
+        if (obj == null)
+            return null;
+
+        // Won't use try-with-resources here; ByteArrayOutputStream requires another try/catch
+        // This generates garbage, but unfortunately BukkitObjectOutputStream.reset() is broken
+        ByteArrayOutputStream outputStream;
+        BukkitObjectOutputStream dataObject;
+
+        try
+        {
+            outputStream = new ByteArrayOutputStream();
+            dataObject   = new BukkitObjectOutputStream(outputStream);
+            dataObject.writeObject(obj);
+            dataObject.close();
+            outputStream.close();
+
+            return Base64Coder.encodeLines( outputStream.toByteArray() );
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Deserializes given base64 string to Bukkit object, for data restore. Uses
+     * {@link BukkitObjectInputStream}, so data of items should deserialize properly. If given null,
+     * will just return null silently.
+     *
+     * @param base64 Base64 string to deserialize into a ConfigurationSerializable
+     * @return A ConfigurationSerializable object, or null if it failed to deserialize
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends ConfigurationSerializable> T deserializeFromBase64(String base64)
+    {
+        if (base64 == null)
+            return null;
+
+        // Won't use try-with-resources here; too noisy
+        ByteArrayInputStream    inputStream;
+        BukkitObjectInputStream dataInput;
+
+        try
+        {
+            byte[] decoded = Base64Coder.decodeLines(base64);
+
+            inputStream = new ByteArrayInputStream(decoded);
+            dataInput   = new BukkitObjectInputStream(inputStream);
+
+            return (T) dataInput.readObject();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -8,7 +8,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.PrismConfig;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
@@ -47,6 +46,26 @@ public class RecordingTask implements Runnable {
         Connection conn = null;
         PreparedStatement s = null;
         ResultSet generatedKeys = null;
+
+        int world_id = 0;
+        if( Prism.prismWorlds.containsKey( a.getWorldName() ) ) {
+            world_id = Prism.prismWorlds.get( a.getWorldName() );
+        }
+
+        int action_id = 0;
+        if( Prism.prismActions.containsKey( a.getType().getName() ) ) {
+            action_id = Prism.prismActions.get( a.getType().getName() );
+        }
+
+        int player_id = 0;
+        PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
+        if( prismPlayer != null ){
+            player_id = prismPlayer.getId();
+        }
+
+        if( world_id == 0 || action_id == 0 || player_id == 0 ) {
+            // @todo do something, error here
+        }
         try {
 
             // prepare to save to the db
@@ -56,26 +75,6 @@ public class RecordingTask implements Runnable {
             if( conn == null ) {
                 Prism.log( "Prism database error. Connection should be there but it's not. This action wasn't logged." );
                 return 0;
-            }
-
-            int world_id = 0;
-            if( Prism.prismWorlds.containsKey( a.getWorldName() ) ) {
-                world_id = Prism.prismWorlds.get( a.getWorldName() );
-            }
-
-            int action_id = 0;
-            if( Prism.prismActions.containsKey( a.getType().getName() ) ) {
-                action_id = Prism.prismActions.get( a.getType().getName() );
-            }
-
-            int player_id = 0;
-            PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
-            if( prismPlayer != null ){
-                player_id = prismPlayer.getId();
-            }
-
-            if( world_id == 0 || action_id == 0 || player_id == 0 ) {
-                // @todo do something, error here
             }
 
             s = conn.prepareStatement(
@@ -147,7 +146,7 @@ public class RecordingTask implements Runnable {
 
                 Prism.debug( "Beginning batch insert from queue. " + System.currentTimeMillis() );
 
-                final ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
+                final ArrayList<Handler> extraDataQueue = new ArrayList<>();
                 conn = Prism.dbc();
 
                 // Handle dead connections
@@ -380,5 +379,45 @@ public class RecordingTask implements Runnable {
         }
         plugin.recordingTask = plugin.getServer().getScheduler()
                 .runTaskLaterAsynchronously( plugin, new RecordingTask( plugin ), getTickDelayForNextBatch() );
+    }
+
+    public static void updateRollbackDatabase(ArrayList<Integer> dataIds, boolean isRestore) {
+        if (dataIds.isEmpty()) {
+            return;
+        }
+
+        String prefix = Prism.config.getString("prism.mysql.prefix");
+        final Connection conn = Prism.dbc();
+        try {
+            if (conn == null || conn.isClosed()) {
+                Prism.log( "Prism database error. Connection should be there but it's not. This action wasn't logged." );
+                return;
+            }
+
+            conn.setAutoCommit(false);
+            final PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "data_rollback (data_id,rollback) VALUES (?,?) ON DUPLICATE KEY UPDATE rollback = ?");
+            for (int id : dataIds) {
+                s.setInt(1, id);
+                if (isRestore) {
+                    s.setNull(2, java.sql.Types.TINYINT);
+                    s.setNull(3, java.sql.Types.TINYINT);
+                } else {
+                    s.setInt(2, 1);
+                    s.setInt(3, 1);
+                }
+                s.addBatch();
+            }
+
+            s.executeBatch();
+            conn.commit();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if( conn != null )
+                try {
+                    conn.close();
+                } catch ( final SQLException ignored ) {}
+        }
     }
 }

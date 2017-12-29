@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.events.PrismCustomBlockEvent;
 import me.botsko.prism.events.PrismCustomPlayerActionEvent;
 
 import org.bukkit.event.EventHandler;
@@ -38,6 +39,20 @@ public class PrismCustomEvents implements Listener {
         if( allowedPlugins.contains( event.getPluginName() ) ) {
             RecordingQueue.addToQueue( ActionFactory.createPlayer(event.getActionTypeName(), event.getPlayer(),
                     event.getMessage()) );
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @SuppressWarnings("unchecked")
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCustomBlockAction(final PrismCustomBlockEvent event) {
+        final ArrayList<String> allowedPlugins = (ArrayList<String>) plugin.getConfig().getList(
+                "prism.tracking.api.allowed-plugins");
+        if (allowedPlugins.contains(event.getPluginName())) {
+            RecordingQueue.addToQueue(ActionFactory.createBlock(event.getActionTypeName(), event.getBlock(),
+                    event.getPlayer().getName()));
         }
     }
 }

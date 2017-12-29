@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 
 import org.bukkit.Bukkit;
@@ -48,7 +48,6 @@ public class PlayerIdentification {
      * Runs during PlayerJoin events, so it will never be for a fake/null
      * player.
      *
-     * @param player
      */
     public static PrismPlayer cachePrismPlayer( final String playerName ){
 
@@ -102,7 +101,7 @@ public class PlayerIdentification {
      *
      * Used by the recorder in determining proper foreign key
      *
-     * @param playerName
+     * @param player
      * @return
      */
     public static PrismPlayer getPrismPlayer( Player player ){
@@ -173,7 +172,7 @@ public class PlayerIdentification {
 
     /**
      * Converts UUID to a string ready for use against database
-     * @param player
+     * @param id
      */
     protected static String uuidToDbString( UUID id ){
         return id.toString().replace("-", "");
@@ -182,7 +181,7 @@ public class PlayerIdentification {
 
     /**
      * Converts UUID to a string ready for use against database
-     * @param player
+     * @param uuid
      */
     protected static UUID uuidFromDbString( String uuid ){
         // Positions need to be -2
@@ -289,7 +288,6 @@ public class PlayerIdentification {
 
         Connection conn = null;
         PreparedStatement s = null;
-        ResultSet rs = null;
         try {
 
             conn = Prism.dbc();
@@ -302,7 +300,6 @@ public class PlayerIdentification {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            if(rs != null) try { rs.close(); } catch (SQLException e) {}
             if(s != null) try { s.close(); } catch (SQLException e) {}
             if(conn != null) try { conn.close(); } catch (SQLException e) {}
         }

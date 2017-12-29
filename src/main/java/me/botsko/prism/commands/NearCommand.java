@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import java.util.List;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -10,8 +11,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
-
-import java.util.List;
+import me.botsko.prism.utils.MiscUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 
 public class NearCommand implements SubHandler {
 
@@ -31,6 +32,9 @@ public class NearCommand implements SubHandler {
 
     /**
      * Handle the command
+     *
+     * Run the lookup itself in an async task so the lookup query isn't done
+     * on the main thread
      */
     @Override
     public void handle(final CallInfo call) {
@@ -67,10 +71,9 @@ public class NearCommand implements SubHandler {
         parameters.setMinMaxVectorsFromPlayerLocation( call.getPlayer().getLocation() );
         parameters.setLimit( plugin.getConfig().getInt( "prism.near.max-results" ) );
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
-         */
+        call.getSender().sendMessage(
+            Prism.messenger.playerSubduedHeaderMsg( "Preparing results; please wait up to a minute..." ) );
+
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override
             public void run() {
@@ -94,7 +97,7 @@ public class NearCommand implements SubHandler {
                                 am.showExtended();
                             }
                             am.setResultIndex( result_count );
-                            call.getPlayer().sendMessage( Prism.messenger.playerMsg( am.getMessage() ) );
+                            call.getPlayer().spigot().sendMessage(am.getJSONMessage());
                             result_count++;
                         }
 
@@ -106,6 +109,10 @@ public class NearCommand implements SubHandler {
                                 .sendMessage(
                                         Prism.messenger
                                                 .playerError( "Pagination can't find anything. Do you have the right page number?" ) );
+                    }
+
+                    if (results.getTotal_pages() > 1) {
+                        call.getPlayer().spigot().sendMessage(MiscUtils.getNextButton());
                     }
                 } else {
                     call.getPlayer().sendMessage( Prism.messenger.playerError( "Couldn't find anything." ) );

@@ -24,8 +24,8 @@ public class WhatCommand extends Executor {
      *
      */
     private void setupCommands() {
-        /**
-         * /what
+        /*
+          /what
          */
         addSub( "what", "prism.what" ).setHandler( new SubHandler() {
             @Override
@@ -44,7 +44,7 @@ public class WhatCommand extends Executor {
                 call.getPlayer().sendMessage( Prism.messenger.playerMsg( line1 ) );
                 call.getPlayer().sendMessage(
                         Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA
-                                + me.botsko.elixr.ItemUtils.getItemFullNiceName( item, Prism.getItems() ) ) );
+                                + com.helion3.prism.libs.elixr.ItemUtils.getItemFullNiceName( item ) ) );
 
             }
 

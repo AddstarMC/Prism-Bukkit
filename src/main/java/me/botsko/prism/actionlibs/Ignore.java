@@ -7,7 +7,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 
 public class Ignore {
@@ -130,13 +130,10 @@ public class Ignore {
         }
 
         // Should we ignore this player for being in creative?
-        if( ignore_creative ) {
-            if( player.getGameMode().equals( GameMode.CREATIVE ) ) {
+        if( ignore_creative && player.getGameMode().equals( GameMode.CREATIVE ) ) {
                 Prism.debug( "Player is in creative mode, creative mode ignored: " + player.getName() );
                 return false;
-            }
         }
-
         return true;
     }
 

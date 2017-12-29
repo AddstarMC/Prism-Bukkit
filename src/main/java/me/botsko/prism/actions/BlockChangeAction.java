@@ -1,11 +1,11 @@
 package me.botsko.prism.actions;
 
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -41,21 +41,6 @@ public class BlockChangeAction extends BlockAction {
         public byte originalBlock_subid;
         public int newBlock_id;
         public byte newBlock_subid;
-    }
-
-    /**
-     * 
-     * @return
-     */
-    @Override
-    public String getNiceName() {
-        String name = "";
-        if( this.getType().getName().equals( "block-fade" ) ) {
-            name += materialAliases.getAlias( this.old_block_id, this.old_block_subid );
-        } else {
-            name += materialAliases.getAlias( this.block_id, this.block_subid );
-        }
-        return name;
     }
 
     /**
@@ -127,8 +112,8 @@ public class BlockChangeAction extends BlockAction {
             // have been properly changed yet.
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
-            if( me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), new_id ) || is_preview
+            if( com.helion3.prism.libs.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    || com.helion3.prism.libs.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), new_id ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
                 b.setBlockId( old_id );
                 b.setBlockSubId( old_subid );
@@ -146,8 +131,8 @@ public class BlockChangeAction extends BlockAction {
             // have been properly changed yet.
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
-            if( me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), old_id ) || is_preview
+            if( com.helion3.prism.libs.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    || com.helion3.prism.libs.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), old_id ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
                 b.setBlockId( new_id );
                 b.setBlockSubId( new_subid );

@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -44,11 +44,11 @@ public class ReportCommand implements SubHandler {
      */
     public ReportCommand(Prism plugin) {
         this.plugin = plugin;
-        secondaries = new ArrayList<String>();
+        secondaries = new ArrayList<>();
         secondaries.add( "queue" );
         secondaries.add( "db" );
         secondaries.add( "sum" );
-        sumTertiaries = new ArrayList<String>();
+        sumTertiaries = new ArrayList<>();
         sumTertiaries.add( "blocks" );
         sumTertiaries.add( "actions" );
     }
@@ -193,7 +193,7 @@ public class ReportCommand implements SubHandler {
 
     /**
      * 
-     * @param sender
+     * @param call
      */
     protected void blockSumReports(final CallInfo call) {
 
@@ -233,9 +233,9 @@ public class ReportCommand implements SubHandler {
         final int colTextLen = 20;
         final int colIntLen = 12;
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the lookup itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override
@@ -301,7 +301,7 @@ public class ReportCommand implements SubHandler {
 
     /**
      * 
-     * @param sender
+     * @param call
      */
     protected void actionTypeCountReport(final CallInfo call) {
 
@@ -337,9 +337,9 @@ public class ReportCommand implements SubHandler {
         final int colTextLen = 16;
         final int colIntLen = 12;
 
-        /**
-         * Run the lookup itself in an async task so the lookup query isn't done
-         * on the main thread
+        /*
+          Run the lookup itself in an async task so the lookup query isn't done
+          on the main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously( plugin, new Runnable() {
             @Override

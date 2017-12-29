@@ -47,8 +47,8 @@ public class PreprocessArgs {
         final HashMap<String, PrismParameterHandler> registeredParams = Prism.getParameters();
 
         // Store names of matched params/handlers
-        final Set<String> foundArgsNames = new HashSet<String>();
-        final List<MatchedParam> foundArgsList = new ArrayList<MatchedParam>();
+        final Set<String> foundArgsNames = new HashSet<>();
+        final List<MatchedParam> foundArgsList = new ArrayList<>();
 
         // Iterate all command arguments
         if (args == null) {
@@ -74,8 +74,8 @@ public class PreprocessArgs {
             return null;
         }
 
-        /**
-         * Call default method for handlers *not* used
+        /*
+          Call default method for handlers *not* used
          */
         if( useDefaults ) {
             for ( final Entry<String, PrismParameterHandler> entry : registeredParams.entrySet() ) {
@@ -85,8 +85,8 @@ public class PreprocessArgs {
             }
         }
 
-        /**
-         * Send arguments to parameter handlers
+        /*
+          Send arguments to parameter handlers
          */
         for ( final MatchedParam matchedParam : foundArgsList ) {
             try {
@@ -128,6 +128,13 @@ public class PreprocessArgs {
      */
     private static ParseResult parseParam(Prism plugin, CommandSender sender, QueryParameters parameters, HashMap<String, PrismParameterHandler> registeredParams, Set<String> foundArgsNames, List<MatchedParam> foundArgsList, String arg) {
         ParseResult result = ParseResult.NotFound;
+        
+        // Set alias "ng" for "no-group" and "ext" for "extended"
+        if (arg.equals("-ng")) {
+        	arg = "-no-group";
+        } else if (arg.equals("-ext")) {
+        	arg = "-extended";
+        }
 
         // Match command argument to parameter handler
         for ( final Entry<String, PrismParameterHandler> entry : registeredParams.entrySet() ) {

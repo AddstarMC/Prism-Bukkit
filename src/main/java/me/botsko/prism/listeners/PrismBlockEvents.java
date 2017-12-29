@@ -10,7 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Jukebox;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,6 +23,7 @@ import org.bukkit.material.Sign;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Add support for concrete powder, when necessary events are implemented in Bukkit
 public class PrismBlockEvents implements Listener {
 
     /**
@@ -86,7 +87,7 @@ public class PrismBlockEvents implements Listener {
         if( BlockUtils.isDoor(block.getType()) ) { return; }
 
         // Find a list of all blocks above this block that we know will fall.
-        final ArrayList<Block> falling_blocks = me.botsko.elixr.BlockUtils.findFallingBlocksAboveBlock( block );
+        final ArrayList<Block> falling_blocks = com.helion3.prism.libs.elixr.BlockUtils.findFallingBlocksAboveBlock( block );
         if( falling_blocks.size() > 0 ) {
             for ( final Block b : falling_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, playername) );
@@ -101,7 +102,7 @@ public class PrismBlockEvents implements Listener {
         // if it's a piston, the base will break without a physics events
         if( block.getType().equals( Material.PISTON_EXTENSION )
                 || block.getType().equals( Material.PISTON_MOVING_PIECE ) ) {
-            final ArrayList<Block> pistonBases = me.botsko.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
+            final ArrayList<Block> pistonBases = com.helion3.prism.libs.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
             if( pistonBases.size() > 0 ) {
                 for ( final Block p : pistonBases ) {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", p, playername) );
@@ -110,7 +111,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of side-face attached blocks that will detach
-        ArrayList<Block> detached_blocks = me.botsko.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
+        ArrayList<Block> detached_blocks = com.helion3.prism.libs.elixr.BlockUtils.findSideFaceAttachedBlocks( block );
         if( detached_blocks.size() > 0 ) {
             for ( final Block b : detached_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
@@ -118,7 +119,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of top-side attached blocks that will detach
-        detached_blocks = me.botsko.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
+        detached_blocks = com.helion3.prism.libs.elixr.BlockUtils.findTopFaceAttachedBlocks( block );
         if( detached_blocks.size() > 0 ) {
             for ( final Block b : detached_blocks ) {
                 RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, playername) );
@@ -126,9 +127,9 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = me.botsko.elixr.BlockUtils.findHangingEntities( block );
+        final ArrayList<Hanging> hanging = BlockUtils.findAttachedHangingEntities( block );
         if( hanging.size() > 0 ) {
-            for ( final Entity e : hanging ) {
+            for ( final Hanging e : hanging ) {
                 final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
                         + e.getLocation().getBlockZ();
                 plugin.preplannedBlockFalls.put( coord_key, playername );
@@ -158,7 +159,7 @@ public class PrismBlockEvents implements Listener {
             return;
 
         // Change handling a bit if it's a long block
-        final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+        final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
         if( sibling != null && !block.getType().equals( Material.CHEST )
                 && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
             block = sibling;
@@ -169,14 +170,15 @@ public class PrismBlockEvents implements Listener {
         // properly
         logItemRemoveFromDestroyedContainer( player.getName(), block );
 
-        RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName()) );
-
         // check for block relationships
+        // must be done before root block is broken, for rollbacks to work properly
         logBlockRelationshipsForBlock( player.getName(), block );
+
+        RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", block, player.getName()) );
 
         // if obsidian, log portal blocks
         if( block.getType().equals( Material.OBSIDIAN ) ) {
-            final ArrayList<Block> blocks = me.botsko.elixr.BlockUtils.findConnectedBlocksOfType( Material.PORTAL,
+            final ArrayList<Block> blocks = com.helion3.prism.libs.elixr.BlockUtils.findConnectedBlocksOfType( Material.PORTAL,
                     block, null );
             if( !blocks.isEmpty() ) {
                 // Only log 1 portal break, we don't need all 8
@@ -207,8 +209,18 @@ public class PrismBlockEvents implements Listener {
             return;
 
         final BlockState s = event.getBlockReplacedState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getTypeId(),
-                s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
+        if ((block.getType() == Material.WALL_BANNER)
+                || (block.getType() == Material.STANDING_BANNER)
+                || (block.getType() == Material.SKULL)
+                || (block.getType() == Material.MOB_SPAWNER)
+                || (block.getType() == Material.BED_BLOCK) ) {
+            // Record full item data
+            RecordingQueue.addToQueue( ActionFactory.createBlock("block-place", block, player.getName()) );
+	    } else {
+            // Record partial item data
+            RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getTypeId(),
+                    s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
+	    }
 
         // Pass to the placement alerter
         if( !player.hasPermission( "prism.alerts.use.place.ignore" ) && !player.hasPermission( "prism.alerts.ignore" ) ) {
@@ -250,6 +262,12 @@ public class PrismBlockEvents implements Listener {
             return;
         final Block b = event.getBlock();
         final BlockState s = event.getNewState();
+
+        // Frost walker ice is already handled by EntityBlockFormEvent
+        if (b.getType() == Material.WATER || b.getType() == Material.STATIONARY_WATER)
+        if (s.getType() == Material.FROSTED_ICE)
+            return;
+
         RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-form", b.getLocation(), b.getTypeId(), b.getData(),
                 s.getTypeId(), s.getRawData(), "Environment") );
     }
@@ -293,7 +311,7 @@ public class PrismBlockEvents implements Listener {
         RecordingQueue.addToQueue( ActionFactory.createBlock("block-burn", block, "Environment") );
 
         // Change handling a bit if it's a long block
-        final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+        final Block sibling = com.helion3.prism.libs.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
         if( sibling != null && !block.getType().equals( Material.CHEST )
                 && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
             block = sibling;
@@ -448,7 +466,7 @@ public class PrismBlockEvents implements Listener {
         final BlockState to = event.getToBlock().getState();
 
         // Watch for blocks that the liquid can break
-        if( me.botsko.elixr.BlockUtils.canFlowBreakMaterial( to.getType() ) ) {
+        if( com.helion3.prism.libs.elixr.BlockUtils.canFlowBreakMaterial( to.getType() ) ) {
             if( from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER ) {
                 if( Prism.getIgnore().event( "water-break", event.getBlock() ) ) {
                     RecordingQueue.addToQueue( ActionFactory.createBlock("water-break", event.getToBlock(), "Water") );
@@ -474,10 +492,10 @@ public class PrismBlockEvents implements Listener {
             }
         }
 
-        /**
-         * Predict the forming of Stone, Obsidian, Cobblestone because of
-         * lava/water flowing into each other. Boy, I wish bukkit used
-         * block_form for this.
+        /*
+          Predict the forming of Stone, Obsidian, Cobblestone because of
+          lava/water flowing into each other. Boy, I wish bukkit used
+          block_form for this.
          */
         if( !Prism.getIgnore().event( "block-form", event.getBlock() ) )
             return;

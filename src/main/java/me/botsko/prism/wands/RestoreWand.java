@@ -46,9 +46,9 @@ public class RestoreWand extends QueryWandBase implements Wand {
     }
 
     /**
-     * 
+     *
      * @param player
-     * @param block
+     * @param loc
      */
     protected void restore(Player player, Location loc) {
 

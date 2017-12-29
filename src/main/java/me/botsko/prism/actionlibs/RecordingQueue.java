@@ -9,7 +9,7 @@ public class RecordingQueue {
     /**
 	 * 
 	 */
-    private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
+    private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<>();
 
     /**
 	 * 

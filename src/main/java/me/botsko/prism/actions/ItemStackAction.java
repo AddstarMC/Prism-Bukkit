@@ -3,20 +3,18 @@ package me.botsko.prism.actions;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import me.botsko.elixr.InventoryUtils;
+import com.helion3.prism.libs.elixr.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.FireworkEffect;
+import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.MiscUtils;
+import org.bukkit.*;
 import org.bukkit.FireworkEffect.Builder;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
@@ -37,21 +35,33 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 public class ItemStackAction extends GenericAction {
 
+    /** @deprecated For legacy data pre-1.11.2-2.0.9 */
     public class ItemStackActionData {
+        // Native meta
         public int amt;
-        public String name;
+        public int slot = -1;
+        public String meta;
+
+        // Legacy
         public int color;
+        public String name;
         public String owner;
         public String[] enchs;
         public String by;
         public String title;
         public String[] lore;
         public String[] content;
-        public int slot = -1;
         public int[] effectColors;
         public int[] fadeColors;
         public boolean hasFlicker;
         public boolean hasTrail;
+    }
+
+    /** Tempoarily a separate class for serialization, until we can get rid of legacy */
+    public class ItemStackNewActionData {
+        public int    amt;
+        public int    slot = -1;
+        public String meta;
     }
 
     /**
@@ -64,136 +74,53 @@ public class ItemStackAction extends GenericAction {
 	 */
     protected ItemStackActionData actionData;
 
-    /**
-     * We store the enchantments here because an event like item enchant doesn't
-     * give us the item with the enchantments already on it.
-     */
-    protected Map<Enchantment, Integer> enchantments;
-
-    /**
-     * 
-     * @param action_type
-     * @param block
-     * @param player
-     */
+    /** Sets and serializes the ItemStack of this action */
     public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
-
         actionData = new ItemStackActionData();
-
-        if( enchantments != null ) {
-            this.enchantments = enchantments;
-        }
 
         if( item == null || item.getAmount() <= 0 ) {
             this.setCanceled( true );
             return;
         }
 
-        this.item = item;
-        if( enchantments == null ) {
-            this.enchantments = item.getEnchantments();
-        }
-
         // Set basics
+        this.item = item;
         this.block_id = item.getTypeId();
         this.block_subid = item.getDurability();
         actionData.amt = quantity;
-        if( slot >= 0 ) {
+
+        if (slot >= 0)
             actionData.slot = slot;
-        }
 
-        // Set additional data all items may have
-        final ItemMeta meta = item.getItemMeta();
-        if( meta != null && meta.getDisplayName() != null ) {
-            actionData.name = meta.getDisplayName();
-        }
+        // Necessary because enchant-item event doesn't directly apply the new enchants
+        if (enchantments != null)
+            this.item.addEnchantments(enchantments);
 
-        // Leather Coloring
-        if( meta != null && item.getType().name().contains( "LEATHER_" ) ) {
-            final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
-            if( lam.getColor() != null ) {
-                actionData.color = lam.getColor().asRGB();
-            }
-        }
+        if ( item.hasItemMeta() )
+        {
+            // Serialize the ItemStack's meta using native API
+            actionData.meta = MiscUtils.serializeToBase64( item.getItemMeta() );
 
-        // Skull Owner
-        else if( meta != null && item.getType().equals( Material.SKULL_ITEM ) ) {
-            final SkullMeta skull = (SkullMeta) meta;
-            if( skull.hasOwner() ) {
-                actionData.owner = skull.getOwner();
-            }
+            if (actionData.meta == null)
+                Prism.debug("Could not base64 serialize item meta: " + item);
         }
+    }
 
-        // Written books
-        if( meta != null && meta instanceof BookMeta ) {
-            final BookMeta bookMeta = (BookMeta) meta;
-            actionData.by = bookMeta.getAuthor();
-            actionData.title = bookMeta.getTitle();
-            actionData.content = bookMeta.getPages().toArray( new String[0] );
-        }
+    /**
+     *
+     */
+    @Override
+    public void save() {
+        if (actionData == null)
+            return;
 
-        // Lore
-        if( meta != null && meta.getLore() != null ) {
-            actionData.lore = meta.getLore().toArray( new String[0] );
-        }
+        ItemStackNewActionData toSerialize = new ItemStackNewActionData();
 
-        // Enchantments
-        if( !this.enchantments.isEmpty() ) {
-            final String[] enchs = new String[this.enchantments.size()];
-            int i = 0;
-            for ( final Entry<Enchantment, Integer> ench : this.enchantments.entrySet() ) {
-                enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-                i++;
-            }
-            actionData.enchs = enchs;
-        }
+        toSerialize.amt  = actionData.amt;
+        toSerialize.slot = actionData.slot;
+        toSerialize.meta = actionData.meta;
 
-        // Book enchantments
-        else if( meta != null && item.getType().equals( Material.ENCHANTED_BOOK ) ) {
-            final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
-            if( bookEnchantments.hasStoredEnchants() ) {
-                if( bookEnchantments.getStoredEnchants().size() > 0 ) {
-                    final String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
-                    int i = 0;
-                    for ( final Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet() ) {
-                        enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
-                        i++;
-                    }
-                    actionData.enchs = enchs;
-                }
-            }
-        }
-
-        // Fireworks
-        if( meta != null && block_id == 402 ) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            if( fireworkMeta.hasEffect() ) {
-                final FireworkEffect effect = fireworkMeta.getEffect();
-                if( !effect.getColors().isEmpty() ) {
-                    final int[] effectColors = new int[effect.getColors().size()];
-                    int i = 0;
-                    for ( final Color effectColor : effect.getColors() ) {
-                        effectColors[i] = effectColor.asRGB();
-                        i++;
-                    }
-                    actionData.effectColors = effectColors;
-                }
-                if( !effect.getFadeColors().isEmpty() ) {
-                    final int[] fadeColors = new int[effect.getColors().size()];
-                    final int i = 0;
-                    for ( final Color fadeColor : effect.getFadeColors() ) {
-                        fadeColors[i] = fadeColor.asRGB();
-                    }
-                    actionData.fadeColors = fadeColors;
-                }
-                if( effect.hasFlicker() ) {
-                    actionData.hasFlicker = true;
-                }
-                if( effect.hasTrail() ) {
-                    actionData.hasTrail = true;
-                }
-            }
-        }
+        data = gson.toJson(toSerialize);
     }
 
     /**
@@ -202,34 +129,40 @@ public class ItemStackAction extends GenericAction {
     @Override
     public void setData(String data) {
         this.data = data;
-        setItemStackFromData();
+
+        if ( item != null || data == null )
+            return;
+
+        if ( data.contains("\"hasFlicker\"") )
+            setItemStackFromLegacyDataFormat();
+        else
+            setItemStackFromNativeDataFormat();
     }
 
-    /**
-     * Prism began tracking very little data about an item stack and we felt
-     * that an object wasn't necessary. That soon became a bad decision because
-     * we kept piling on data to an existing string. Now we have a lot of old
-     * data that won't work with the new object, so we must keep around the old
-     * parsing methods.
-     */
-    protected void setItemStackFromData() {
-        if( item == null && data != null ) {
-            setItemStackFromNewDataFormat();
+    protected void setItemStackFromNativeDataFormat() {
+        if( data == null || !data.startsWith( "{" ) )
+            return;
+
+        actionData = gson.fromJson(data, ItemStackActionData.class);
+        item = new ItemStack( this.block_id, actionData.amt, (short) this.block_subid );
+
+        // Deserialize any metadata
+        if (actionData.meta != null)
+        {
+            ItemMeta meta = MiscUtils.deserializeFromBase64(actionData.meta);
+
+            if (meta == null)
+                Prism.debug("Could not base64 deserialize item meta: " + item);
+            else
+                item.setItemMeta(meta);
         }
     }
 
     /**
-	 * 
-	 */
-    @Override
-    public void save() {
-        data = gson.toJson( actionData );
-    }
-
-    /**
-	 * 
-	 */
-    protected void setItemStackFromNewDataFormat() {
+     * Converts JSON data from pre-1.11.2-2.0.9 to item stack
+     * @deprecated Future item events will reliably serialize data using Bukkit's API
+     */
+    protected void setItemStackFromLegacyDataFormat() {
 
         if( data == null || !data.startsWith( "{" ) )
             return;
@@ -337,7 +270,7 @@ public class ItemStackAction extends GenericAction {
     public String getNiceName() {
         String name = "";
         if( item != null ) {
-            final String fullItemName = me.botsko.elixr.ItemUtils.getItemFullNiceName( item, this.materialAliases );
+            final String fullItemName = com.helion3.prism.libs.elixr.ItemUtils.getItemFullNiceName( item );
             name = actionData.amt + " " + fullItemName;
         }
         return name;
@@ -396,28 +329,30 @@ public class ItemStackAction extends GenericAction {
                     final InventoryHolder ih = (InventoryHolder) block.getState();
                     inventory = ih.getInventory();
                 } else {
-                  
-                    Entity[] foundEntities = block.getChunk().getEntities();
-                    if(foundEntities.length > 0){
-                        for(Entity e : foundEntities){
-                            if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
-                            // Some modded servers seems to list entities in the chunk
-                            // that exists in other worlds. No idea why but we can at
-                            // least check for it.
-                            // https://snowy-evening.com/botsko/prism/318/
-                            if( !block.getWorld().equals( e.getWorld() ) ) continue;
-                            // Let's limit this to only entities within 1 block of the current.
-                            Prism.debug( block.getLocation() );
-                            Prism.debug( e.getLocation() );
-                            if( block.getLocation().distance( e.getLocation() ) < 2 ){
-                                final ItemFrame frame = (ItemFrame) e;
-                                
-                                if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
-                                    frame.setItem( item );
-                                } else {
-                                    frame.setItem( null );
-                                }
+                    for (Entity e : BlockUtils.findHangingEntities( getLoc() )) {
+                        if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
+                        // Some modded servers seems to list entities in the chunk
+                        // that exists in other worlds. No idea why but we can at
+                        // least check for it.
+                        // https://snowy-evening.com/botsko/prism/318/
+                        if( !block.getWorld().equals( e.getWorld() ) ) continue;
+                        final ItemFrame frame = (ItemFrame) e;
+                        // When rolling back a:remove or restoring a:insert we should place the item into frame
+                        if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) ||
+                            (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
+                            // Only place if item frame is empty
+                            if (frame.getItem().getType().equals(Material.AIR)) {
+                                frame.setItem(item);
                                 result = ChangeResultType.APPLIED;
+                                break;
+                            }
+                        // When rolling back a:insert or restoring a:remove we should remove the item from frame
+                        } else {
+                            // Only remove if item frame has what was placed
+                            if (frame.getItem().equals(item)) {
+                                frame.setItem(null);
+                                result = ChangeResultType.APPLIED;
+                                break;
                             }
                         }
                     }
@@ -440,19 +375,19 @@ public class ItemStackAction extends GenericAction {
                     boolean added = false;
 
                     // We'll attempt to put it back in the same slot
-                    if( getActionData().slot >= 0 ) {
+                    if( actionData.slot >= 0 ) {
                         // Ensure slot exists in this inventory
                         // I'm not sure why this happens but sometimes
                         // a slot larger than the contents size is recorded
                         // and triggers ArrayIndexOutOfBounds
                         // https://snowy-evening.com/botsko/prism/450/
-                        if( getActionData().slot < inventory.getSize() ) {
-                            final ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+                        if( actionData.slot < inventory.getSize() ) {
+                            final ItemStack currentSlotItem = inventory.getItem( actionData.slot );
                             // Make sure nothing's there.
                             if( currentSlotItem == null ) {
                                 result = ChangeResultType.APPLIED;
                                 added = true;
-                                inventory.setItem( getActionData().slot, getItem() );
+                                inventory.setItem( actionData.slot, getItem() );
                             }
                         }
                     }
@@ -501,18 +436,18 @@ public class ItemStackAction extends GenericAction {
                     boolean removed = false;
 
                     // We'll attempt to take it from the same slot
-                    if( getActionData().slot >= 0 ) {
+                    if( actionData.slot >= 0 ) {
 
-                        if( getActionData().slot > inventory.getContents().length ) {
+                        if( actionData.slot > inventory.getContents().length ) {
                             inventory.addItem( getItem() );
                         } else {
-                            final ItemStack currentSlotItem = inventory.getItem( getActionData().slot );
+                            final ItemStack currentSlotItem = inventory.getItem( actionData.slot );
                             // Make sure something's there.
                             if( currentSlotItem != null ) {
                                 currentSlotItem.setAmount( currentSlotItem.getAmount() - getItem().getAmount() );
                                 result = ChangeResultType.APPLIED;
                                 removed = true;
-                                inventory.setItem( getActionData().slot, currentSlotItem );
+                                inventory.setItem( actionData.slot, currentSlotItem );
                             }
                         }
                     }
@@ -532,7 +467,7 @@ public class ItemStackAction extends GenericAction {
 
                     // If the item was removed and it's a drop type, re-drop it
                     if( removed && ( n.equals( "item-drop" ) || n.equals( "item-pickup" ) ) ) {
-                        me.botsko.elixr.ItemUtils.dropItem( getLoc(), getItem() );
+                        com.helion3.prism.libs.elixr.ItemUtils.dropItem( getLoc(), getItem() );
                     }
                 }
             }

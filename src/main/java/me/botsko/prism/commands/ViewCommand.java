@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.ChunkUtils;
+import com.helion3.prism.libs.elixr.ChunkUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -34,8 +34,8 @@ public class ViewCommand implements SubHandler {
 
         final String playerName = call.getPlayer().getName();
 
-        /**
-         * View current chunk boundaries
+        /*
+          View current chunk boundaries
          */
         if( call.getArg( 1 ).equals( "chunk" ) ) {
 

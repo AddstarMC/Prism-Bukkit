@@ -34,7 +34,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         this.name = name;
         this.inputMatcher = inputMatcher;
         // Set aliases to name + aliases
-        this.aliases = new HashSet<String>( Arrays.asList( aliases ) );
+        this.aliases = new HashSet<>(Arrays.asList(aliases));
         if( this.aliases.isEmpty() ) {
             this.aliases.add( this.name.toLowerCase() );
         }
@@ -126,7 +126,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         final List<String> completions = tabComplete( alias, input, sender );
         if(completions == null)
             return Collections.emptyList();
-        final List<String> edited = new ArrayList<String>( completions.size() );
+        final List<String> edited = new ArrayList<>(completions.size());
         for ( final String completion : completions ) {
             edited.add( alias + ":" + completion );
         }

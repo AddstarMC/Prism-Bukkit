@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-import me.botsko.elixr.TypeUtils;
+import com.helion3.prism.libs.elixr.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -58,6 +58,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         columns.add( "old_block_id" );
         columns.add( "old_block_subid" );
         columns.add( "data" );
+        columns.add( "rollback" );
 
         if( shouldGroup ) {
             columns.add( "COUNT(*) counted" );
@@ -74,6 +75,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         // Joins
         query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
         query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
+        query += "LEFT JOIN " + tableNameDataRollback + " rb ON rb.data_id = " + tableNameData + ".id ";
 
         return query;
 
@@ -131,7 +133,7 @@ public class SelectQueryBuilder extends QueryBuilder {
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
-        final ArrayList<String> prismActionIds = new ArrayList<String>();
+        final ArrayList<String> prismActionIds = new ArrayList<>();
         for ( final Entry<String, Integer> entry : Prism.prismActions.entrySet() ) {
             if( entry.getKey().contains( "prism" ) ) {
                 containsPrismProcessType = true;
@@ -142,8 +144,8 @@ public class SelectQueryBuilder extends QueryBuilder {
         // scan whitelist of given actions
         if( action_types.size() > 0 ) {
 
-            final ArrayList<String> includeIds = new ArrayList<String>();
-            final ArrayList<String> excludeIds = new ArrayList<String>();
+            final ArrayList<String> includeIds = new ArrayList<>();
+            final ArrayList<String> excludeIds = new ArrayList<>();
             for ( final Entry<String, MatchRule> entry : action_types.entrySet() ) {
                 if( entry.getValue().equals( MatchRule.INCLUDE ) ) {
                     includeIds.add( "" + Prism.prismActions.get( entry.getKey() ) );
@@ -319,7 +321,7 @@ public class SelectQueryBuilder extends QueryBuilder {
     @Override
     protected String group() {
         if( shouldGroup ) { return " GROUP BY " + tableNameData + ".action_id, " + tableNameData + ".player_id, "
-                + tableNameData + ".block_id, ex.data, DATE(FROM_UNIXTIME(" + tableNameData + ".epoch))"; }
+                + tableNameData + ".block_id, ex.data, DATE(FROM_UNIXTIME(" + tableNameData + ".epoch)), rb.rollback"; }
         return "";
     }
 
@@ -330,7 +332,7 @@ public class SelectQueryBuilder extends QueryBuilder {
     @Override
     protected String order() {
         final String sort_dir = parameters.getSortDirection();
-        return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", x ASC, z ASC, y ASC, id " + sort_dir;
+        return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", id " + sort_dir;
     }
 
     /**

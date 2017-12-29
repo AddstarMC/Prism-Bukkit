@@ -1,21 +1,20 @@
 package me.botsko.prism.actionlibs;
 
+import com.helion3.prism.libs.elixr.TypeUtils;
+import me.botsko.prism.Prism;
+import me.botsko.prism.exceptions.InvalidActionException;
+import org.bukkit.plugin.Plugin;
+
 import java.util.ArrayList;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
-import org.bukkit.plugin.Plugin;
-
-import me.botsko.elixr.TypeUtils;
-import me.botsko.prism.Prism;
-import me.botsko.prism.exceptions.InvalidActionException;
 
 public class ActionRegistry {
 
     /**
 	 * 
 	 */
-    private final TreeMap<String, ActionType> registeredActions = new TreeMap<String, ActionType>();
+    private final TreeMap<String, ActionType> registeredActions = new TreeMap<>();
 
     /**
 	 * 
@@ -147,7 +146,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "block-fade", false, true, true, "BlockChangeAction", "faded" ) );
         registerAction( new ActionType( "block-fall", false, true, true, "BlockAction", "fell" ) );
         registerAction( new ActionType( "block-form", false, true, true, "BlockChangeAction", "formed" ) );
-        registerAction( new ActionType( "block-place", true, true, true, "BlockChangeAction", "placed" ) );
+        registerAction( new ActionType( "block-place", true, true, true, "BlockAction", "placed" ) );
         registerAction( new ActionType( "block-shift", true, false, false, "BlockShift", "moved" ) );
         registerAction( new ActionType( "block-spread", true, true, true, "BlockChangeAction", "grew" ) );
         registerAction( new ActionType( "block-use", false, false, false, "BlockAction", "used" ) );
@@ -164,6 +163,8 @@ public class ActionRegistry {
         registerAction( new ActionType( "enderman-place", true, true, true, "BlockAction", "placed" ) );
         registerAction( new ActionType( "entity-break", true, true, true, "BlockAction", "broke" ) );
         registerAction( new ActionType( "entity-dye", false, false, false, "EntityAction", "dyed" ) );
+        registerAction( new ActionType( "entity-enter", false, false, false, "EntityAction", "entered" ) );
+        registerAction( new ActionType( "entity-exit", false, false, false, "EntityAction", "exited" ) );
         registerAction( new ActionType( "entity-explode", false, true, true, "BlockAction", "blew up" ) );
         registerAction( new ActionType( "entity-follow", false, false, false, "EntityAction", "lured" ) );
         registerAction( new ActionType( "entity-form", true, true, true, "BlockChangeAction", "formed" ) );
@@ -181,7 +182,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "item-insert", false, true, true, "ItemStackAction", "inserted" ) );
         registerAction( new ActionType( "item-pickup", false, true, true, "ItemStackAction", "picked up" ) );
         registerAction( new ActionType( "item-remove", false, true, true, "ItemStackAction", "removed" ) );
-        registerAction( new ActionType( "item-rotate", false, false, false, "UseAction", "turned item" ) );
+        registerAction( new ActionType( "item-rotate", false, true, true, "HangingItemAction", "turned item" ) );
         registerAction( new ActionType( "lava-break", false, true, true, "BlockAction", "broke" ) );
         registerAction( new ActionType( "lava-bucket", true, true, true, "BlockChangeAction", "poured" ) );
         registerAction( new ActionType( "lava-flow", true, true, true, "BlockAction", "flowed into" ) );
@@ -193,6 +194,7 @@ public class ActionRegistry {
         registerAction( new ActionType( "player-chat", false, false, false, "PlayerAction", "said" ) );
         registerAction( new ActionType( "player-command", false, false, false, "PlayerAction", "ran command" ) );
         registerAction( new ActionType( "player-death", false, false, false, "PlayerDeathAction", "died" ) );
+        registerAction( new ActionType( "player-hit", false, false, false, "PlayerAction", "hit" ) );
         registerAction( new ActionType( "player-join", false, false, false, "PlayerAction", "joined" ) );
         registerAction( new ActionType( "player-kill", false, true, false, "EntityAction", "killed" ) );
         registerAction( new ActionType( "player-quit", false, false, false, "PlayerAction", "quit" ) );

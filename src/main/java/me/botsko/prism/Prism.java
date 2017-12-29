@@ -3,7 +3,7 @@ package me.botsko.prism;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
-import me.botsko.elixr.MaterialAliases;
+import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
@@ -52,7 +52,7 @@ public class Prism extends JavaPlugin {
     /**
      * Connection Pool
      */
-    private static DataSource pool = new DataSource();
+    private static volatile DataSource pool = new DataSource();
 
     /**
      * Protected/private
@@ -62,14 +62,14 @@ public class Prism extends JavaPlugin {
     private static MaterialAliases items;
     private Language language;
     private static Logger log = Logger.getLogger( "Minecraft" );
-    private final ArrayList<String> enabledPlugins = new ArrayList<String>();
+    private final ArrayList<String> enabledPlugins = new ArrayList<>();
     private static ActionRegistry actionRegistry;
     private static HandlerRegistry<?> handlerRegistry;
     private static Ignore ignore;
     protected static ArrayList<Integer> illegalBlocks;
     protected static ArrayList<String> illegalEntities;
-    protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
-    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
+    protected static HashMap<String, String> alertedOres = new HashMap<>();
+    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor( 1 );
     private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor( 1 );
     // private ScheduledFuture<?> scheduledPurgeExecutor;
@@ -85,11 +85,11 @@ public class Prism extends JavaPlugin {
     public ActionsQuery actionsQuery;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<String, Wand>();
-    public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<String, PreviewSession>();
-    public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<String, ArrayList<Block>>();
-    public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String, QueryResult>();
-    public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<Location, Long>();
+    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
     public TimeTaken eventTimer;
     public QueueStats queueStats;
     public BukkitTask recordingTask;
@@ -98,23 +98,23 @@ public class Prism extends JavaPlugin {
     /**
      * DB Foreign key caches
      */
-    public static HashMap<String, Integer> prismWorlds = new HashMap<String, Integer>();
-    public static HashMap<UUID,PrismPlayer> prismPlayers = new HashMap<UUID,PrismPlayer>();
-    public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
+    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+    public static HashMap<UUID,PrismPlayer> prismPlayers = new HashMap<>();
+    public static HashMap<String, Integer> prismActions = new HashMap<>();
 
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that when
      * they do fall we can attribute them to the player who broke the original
      * block.
      */
-    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
 
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so
      * we need to track players right-clicking rails with minecart vehicles, or
      * water for boats
      */
-    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
 
     /**
      * Enables the plugin and activates our player listeners
@@ -312,7 +312,12 @@ public class Prism extends JavaPlugin {
         DataSource pool = null;
 
         final String dns = "jdbc:mysql://" + config.getString( "prism.mysql.hostname" ) + ":"
-                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8";
+                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) 
+                + "?useUnicode=true" 
+                + "&characterEncoding=UTF-8" 
+                + "&verifyServerCertificate=" + ( config.getBoolean( "prism.mysql.verify-server-certificate" ) ? "true" : "false")
+                + "&useSSL=" + ( config.getBoolean( "prism.mysql.use-ssl" ) ? "true" : "false")
+                + "&useCursorFetch=" + ( config.getBoolean( "prism.mysql.use-cursor-fetch" ) ? "true" : "false");;
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
@@ -323,7 +328,7 @@ public class Prism extends JavaPlugin {
         pool.setMaxIdle( config.getInt( "prism.database.max-idle-connections" ) );
         pool.setMaxWait( config.getInt( "prism.database.max-wait" ) );
         pool.setRemoveAbandoned( true );
-        pool.setRemoveAbandonedTimeout( 60 );
+        pool.setRemoveAbandonedTimeout( 180 );
         pool.setTestOnBorrow( true );
         pool.setValidationQuery( "/* ping */SELECT 1" );
         pool.setValidationInterval( 30000 );
@@ -433,7 +438,7 @@ public class Prism extends JavaPlugin {
                     + "`block_id` mediumint(5) DEFAULT NULL," + "`block_subid` mediumint(5) DEFAULT NULL,"
                     + "`old_block_id` mediumint(5) DEFAULT NULL," + "`old_block_subid` mediumint(5) DEFAULT NULL,"
                     + "PRIMARY KEY (`id`)," + "KEY `epoch` (`epoch`),"
-                    + "KEY  `location` (`world_id`, `x`, `z`, `y`, `action_id`)"
+                    + "KEY  `location` (`x`, `z`, `y`, `action_id`, `world_id`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
 
@@ -454,6 +459,22 @@ public class Prism extends JavaPlugin {
 
                 // add extra data delete cascade
                 query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                st.executeUpdate( query );
+            }
+
+            // rollback data table
+            resultSet = metadata.getTables( null, null, "" + prefix + "data_rollback", null );
+            if( !resultSet.next() ) {
+
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_rollback` ("
+                        + "`rollback_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` int(10) unsigned NOT NULL," + "`rollback` TINYINT(1) NULL,"
+                        + "PRIMARY KEY (`rollback_id`)," + "UNIQUE KEY `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+                st.executeUpdate( query );
+
+                // add rollback data delete cascade
+                query = "ALTER TABLE `" + prefix + "data_rollback` ADD CONSTRAINT `" + prefix + "data_rollback_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
                 st.executeUpdate( query );
             }
 
@@ -487,7 +508,7 @@ public class Prism extends JavaPlugin {
                 addActionName( a );
             }
         } catch ( final SQLException e ) {
-            log( "Database connection error: " + e.getMessage() );
+            log( "Database connection error during setup: " + e.getMessage() );
             e.printStackTrace();
         } finally {
             if( st != null )
@@ -879,9 +900,10 @@ public class Prism extends JavaPlugin {
 	 */
     public void launchScheduledPurgeManager() {
         final List<String> purgeRules = getConfig().getStringList( "prism.db-records-purge-rules" );
+        Integer purgeCycleTime = Math.round(24/getConfig().getInt("prism.purge.perday",2));
         purgeManager = new PurgeManager( this, purgeRules );
         // scheduledPurgeExecutor =
-        schedulePool.scheduleAtFixedRate( purgeManager, 0, 12, TimeUnit.HOURS );
+        schedulePool.scheduleAtFixedRate( purgeManager, 0, purgeCycleTime, TimeUnit.HOURS );
         // scheduledPurgeExecutor.cancel();
     }
 
@@ -899,10 +921,9 @@ public class Prism extends JavaPlugin {
      */
     public void alertPlayers(Player player, String msg) {
         for ( final Player p : getServer().getOnlinePlayers() ) {
-            if( !p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self" ) ) {
-                if( p.hasPermission( "prism.alerts" ) ) {
+            if( (!p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self") ) &&
+                    p.hasPermission( "prism.alerts" ) ) {
                     p.sendMessage( messenger.playerMsg( ChatColor.RED + "[!] " + msg ) );
-                }
             }
         }
     }
@@ -947,16 +968,14 @@ public class Prism extends JavaPlugin {
     public void notifyNearby(Player player, int radius, String msg) {
         if( !getConfig().getBoolean( "prism.appliers.notify-nearby.enabled" ) ) { return; }
         for ( final Player p : player.getServer().getOnlinePlayers() ) {
-            if( !p.equals( player ) ) {
-                if( player.getWorld().equals( p.getWorld() ) ) {
-                    if( player.getLocation().distance( p.getLocation() ) <= ( radius + config
-                            .getInt( "prism.appliers.notify-nearby.additional-radius" ) ) ) {
+            if( !p.equals( player ) && player.getWorld().equals( p.getWorld() )
+                    && player.getLocation().distance( p.getLocation() ) <= ( radius + config
+                    .getInt( "prism.appliers.notify-nearby.additional-radius" ) )) {
                         p.sendMessage( messenger.playerHeaderMsg( msg ) );
-                    }
-                }
             }
         }
     }
+
 
     /**
      * 
