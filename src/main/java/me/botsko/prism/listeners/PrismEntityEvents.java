@@ -1,6 +1,6 @@
 package me.botsko.prism.listeners;
 
-import me.botsko.elixr.DeathUtils;
+import me.botsko.prism.utils.DeathUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -595,7 +595,7 @@ public class PrismEntityEvents implements Listener {
             }
 
             // Change handling a bit if it's a long block
-            final Block sibling = me.botsko.elixr.BlockUtils.getSiblingForDoubleLengthBlock( block );
+            final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock( block );
             if( sibling != null && !block.getType().equals( Material.CHEST )
                     && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
                 block = sibling;

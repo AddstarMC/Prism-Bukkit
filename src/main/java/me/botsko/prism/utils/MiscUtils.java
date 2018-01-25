@@ -4,7 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
-import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Bukkit;

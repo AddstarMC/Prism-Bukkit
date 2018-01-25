@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.ChunkUtils;
+import me.botsko.prism.utils.ChunkUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;

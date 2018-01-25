@@ -3,6 +3,8 @@ package me.botsko.prism.actions;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.utils.BlockUtils;
+
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
@@ -111,7 +113,7 @@ public class HangingItemAction extends GenericAction {
                 .getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if( me.botsko.elixr.BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
+        if( BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
                 ChangeResultType.SKIPPED, null ); }
 
         try {

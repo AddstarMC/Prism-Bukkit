@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -86,7 +87,7 @@ public class ConfigBase {
         } else {
             // Look for defaults in the jar
             final InputStream defConfigStream = plugin.getResource( default_folder + filename + ".yml" );
-            if( defConfigStream != null ) { return YamlConfiguration.loadConfiguration( defConfigStream ); }
+            if( defConfigStream != null ) { return YamlConfiguration.loadConfiguration( new InputStreamReader( defConfigStream ) ); }
             return null;
         }
     }

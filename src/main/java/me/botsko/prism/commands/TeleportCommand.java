@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;

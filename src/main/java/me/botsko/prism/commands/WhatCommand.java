@@ -4,6 +4,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.utils.ItemUtils;
+
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,7 +46,7 @@ public class WhatCommand extends Executor {
                 call.getPlayer().sendMessage( Prism.messenger.playerMsg( line1 ) );
                 call.getPlayer().sendMessage(
                         Prism.messenger.playerMsg( ChatColor.WHITE + "Full Display Name: " + ChatColor.DARK_AQUA
-                                + me.botsko.elixr.ItemUtils.getItemFullNiceName( item, Prism.getItems() ) ) );
+                                + ItemUtils.getItemFullNiceName( item ) ) );
 
             }
 

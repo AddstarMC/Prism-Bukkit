@@ -3,6 +3,7 @@ main: me.botsko.prism.Prism
 version: ${pom.version}-${env.BUILD_NUMBER}
 softdepend: [WorldEdit,HeroChat]
 author: viveleroi
+authors: [ezeiger92]
 website: http://discover-prism.com
 commands:
    prism:

@@ -3,7 +3,7 @@ package me.botsko.prism.monitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.botsko.elixr.TypeUtils;
+import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;

@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
@@ -27,7 +28,7 @@ public class PrismWorldEvents implements Listener {
         if( !Prism.getIgnore().event( type, event.getWorld() ) )
             return;
         for ( final BlockState block : event.getBlocks() ) {
-            if( me.botsko.elixr.BlockUtils.isGrowableStructure( block.getType() ) ) {
+            if( BlockUtils.isGrowableStructure( block.getType() ) ) {
                 String player = "Environment";
                 if( event.getPlayer() != null ) {
                     player = event.getPlayer().getName();

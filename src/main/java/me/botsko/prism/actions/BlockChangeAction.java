@@ -127,8 +127,8 @@ public class BlockChangeAction extends BlockAction {
             // have been properly changed yet.
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
-            if( me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), new_id ) || is_preview
+            if( BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    || BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), new_id ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
                 b.setBlockId( old_id );
                 b.setBlockSubId( old_subid );
@@ -146,8 +146,8 @@ public class BlockChangeAction extends BlockAction {
             // have been properly changed yet.
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
-            if( me.botsko.elixr.BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || me.botsko.elixr.BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), old_id ) || is_preview
+            if( BlockUtils.isAcceptableForBlockPlace( block.getType() )
+                    || BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), old_id ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
                 b.setBlockId( new_id );
                 b.setBlockSubId( new_subid );
