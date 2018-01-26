@@ -519,7 +519,7 @@ public class ItemStackAction extends GenericAction {
                     }
                     // If that failed we'll attempt to take it from anywhere
                     if( !removed ) {
-                        final int slot = InventoryUtils.inventoryHasItem( inventory, getItem().getTypeId(), getItem()
+                        final int slot = InventoryUtils.inventoryHasItem( inventory, getItem().getType(), getItem()
                                 .getDurability() );
                         if( slot > -1 ) {
                             inventory.removeItem( getItem() );

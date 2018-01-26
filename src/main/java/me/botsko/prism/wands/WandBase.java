@@ -1,12 +1,13 @@
 package me.botsko.prism.wands;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import me.botsko.prism.utils.InventoryUtils;
 
-public abstract class WandBase {
+public abstract class WandBase implements Wand {
 
     /**
 	 * 
@@ -21,7 +22,9 @@ public abstract class WandBase {
     /**
 	 * 
 	 */
+    @Deprecated
     protected int item_id = 0;
+    protected Material item = Material.AIR;
 
     /**
 	 * 
@@ -66,16 +69,27 @@ public abstract class WandBase {
     /**
      * @return the item_id
      */
+    @Deprecated
     public int getItemId() {
         return item_id;
+    }
+    
+    @Override
+    public Material getItem() {
+    	return item;
     }
 
     /**
      * @param item_id
      *            the item_id to set
      */
+    @Deprecated
     public void setItemId(int item_id) {
         this.item_id = item_id;
+    }
+    
+    public void setItem(Material material) {
+    	item = material;
     }
 
     /**
@@ -110,7 +124,7 @@ public abstract class WandBase {
      * @param item
      */
     public void setOriginallyHeldItem(ItemStack item) {
-        if( item.getTypeId() > 0 ) {
+        if( item.getType() != Material.AIR ) {
             original_item = item;
         }
     }
@@ -123,18 +137,18 @@ public abstract class WandBase {
         if( itemWasGiven() ) {
             int itemSlot;
             // Likely is what they're holding
-            if( inv.getItemInHand().getTypeId() == item_id && inv.getItemInHand().getDurability() == item_subid ) {
+            if( inv.getItemInMainHand().getType() == item && inv.getItemInMainHand().getDurability() == item_subid ) {
                 itemSlot = inv.getHeldItemSlot();
             } else {
-                itemSlot = InventoryUtils.inventoryHasItem( inv, item_id, item_subid );
+                itemSlot = InventoryUtils.inventoryHasItem( inv, item, item_subid );
             }
             if( itemSlot > -1 ) {
                 InventoryUtils.subtractAmountFromPlayerInvSlot( inv, itemSlot, 1 );
-                player.updateInventory();
+                InventoryUtils.updateInventory(player);
             }
         }
         if( original_item != null ) {
-            InventoryUtils.moveItemToHand( inv, original_item.getTypeId(), (byte) original_item.getDurability() );
+            InventoryUtils.moveItemToHand( inv, original_item.getType(), (byte) original_item.getDurability() );
         }
     }
 }

@@ -27,6 +27,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Door;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
@@ -91,8 +92,8 @@ public class PrismEntityEvents implements Listener {
         if( !( entity instanceof Player ) ) {
             if( entity.getLastDamageCause() instanceof EntityDamageByEntityEvent ) {
 
-                if( entity instanceof Horse ) {
-                    final Horse horse = (Horse) entity;
+                if( entity instanceof ChestedHorse ) {
+                    final ChestedHorse horse = (ChestedHorse) entity;
                     if( horse.isCarryingChest() ) {
                         // Log item drops
                         if( Prism.getIgnore().event( "item-drop", entity.getWorld() ) ) {
@@ -236,7 +237,7 @@ public class PrismEntityEvents implements Listener {
 
         final Player p = event.getPlayer();
         final Entity e = event.getRightClicked();
-
+        final ItemStack hand = p.getInventory().getItemInMainHand();
         // @todo right clicks should technically follow blockface
         // Cancel the event if a wand is in use
         if( WandUtils.playerUsesWandOnClick( p, e.getLocation() ) ) {
@@ -255,9 +256,9 @@ public class PrismEntityEvents implements Listener {
             }
 
             // Frame is empty but an item is held
-            if( frame.getItem().getType().equals( Material.AIR ) && p.getItemInHand() != null ) {
+            if( frame.getItem().getType().equals( Material.AIR ) && hand != null ) {
                 if( Prism.getIgnore().event( "item-insert", p ) ) {
-                    RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", p.getItemInHand(), 1, 0, null,
+                    RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
                             e.getLocation(), p.getName()) );
                 }
             }
@@ -265,19 +266,19 @@ public class PrismEntityEvents implements Listener {
 
         // if they're holding coal (or charcoal, a subitem) and they click a
         // powered minecart
-        if( p.getItemInHand().getType().equals( Material.COAL ) && e instanceof PoweredMinecart ) {
+        if( hand.getType().equals( Material.COAL ) && e instanceof PoweredMinecart ) {
             if( !Prism.getIgnore().event( "item-insert", p ) )
                 return;
-            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", p.getItemInHand(), 1, 0, null,
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
                     e.getLocation(), p.getName()) );
         }
 
         if( !Prism.getIgnore().event( "entity-dye", p ) )
             return;
         // Only track the event on sheep, when player holds dye
-        if( p.getItemInHand().getTypeId() == 351 && e.getType().equals( EntityType.SHEEP ) ) {
-            final String newColor = Prism.getItems().getAlias( p.getItemInHand().getTypeId(),
-                    (byte) p.getItemInHand().getDurability() );
+        if( hand.getType() == Material.INK_SACK && e.getType().equals( EntityType.SHEEP ) ) {
+            final String newColor = Prism.getItems().getAlias( hand.getType(),
+                    (byte) hand.getDurability() );
             RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
                     .getName(), newColor) );
         }
@@ -589,7 +590,7 @@ public class PrismEntityEvents implements Listener {
 
             // don't bother record upper doors.
             if( BlockUtils.isDoor(block.getType()) ) {
-                if( block.getData() >= 4 ) {
+                if( ((Door)block.getState().getData()).isTopHalf() ) {
                     continue;
                 }
             }

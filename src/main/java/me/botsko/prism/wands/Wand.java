@@ -1,6 +1,7 @@
 package me.botsko.prism.wands;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -51,13 +52,17 @@ public interface Wand {
     /**
      * @return the item_id
      */
+    @Deprecated
     public int getItemId();
+    public Material getItem();
 
     /**
      * @param item_id
      *            the item_id to set
      */
+    @Deprecated
     public void setItemId(int item_id);
+    public void setItem(Material material);
 
     /**
      * @return the item_subid

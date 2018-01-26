@@ -1,6 +1,5 @@
 package me.botsko.prism.wands;
 
-import java.util.Arrays;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;

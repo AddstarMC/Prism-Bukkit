@@ -4,10 +4,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -18,6 +16,7 @@ import org.bukkit.inventory.PlayerInventory;
  */
 public class InventoryUtils {
     
+	// L O L   W H A T   I S   T Y P I N G
     /**
      * Easier to supress depracation errors
      * @param p
@@ -58,10 +57,10 @@ public class InventoryUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static int inventoryHasItem( Inventory inv, int item_id, int sub_id ){
+	public static int inventoryHasItem( Inventory inv, Material material, int sub_id ){
 		int currentSlot = 0;
 		for(ItemStack item : inv.getContents()){
-			if( item != null && item.getTypeId() == item_id && item.getDurability() == sub_id ){
+			if( item != null && item.getType() == material && item.getDurability() == sub_id ){
 				return currentSlot;
 			}
 			currentSlot++;
@@ -120,8 +119,8 @@ public class InventoryUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static boolean moveItemToHand( PlayerInventory inv, int item_id, byte sub_id ){
-		int slot = inventoryHasItem( inv, item_id, sub_id );
+	public static boolean moveItemToHand( PlayerInventory inv, Material material, byte sub_id ){
+		int slot = inventoryHasItem( inv, material, sub_id );
 		if( slot > -1 ){
 			ItemStack item = inv.getItem(slot);
 			inv.clear(slot);
@@ -141,7 +140,7 @@ public class InventoryUtils {
 	 * @return
 	 */
 	public static boolean playerHasEmptyHand( PlayerInventory inv ){
-		return (inv.getItemInMainHand().getTypeId() == 0);
+		return (inv.getItemInMainHand().getType() == Material.AIR);
 	}
 	
 	/**
@@ -233,12 +232,12 @@ public class InventoryUtils {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static void movePlayerInventoryToContainer( PlayerInventory inv, Block target, HashMap<Integer,Short> filters ) throws Exception{
+	/*public static void movePlayerInventoryToContainer( PlayerInventory inv, Block target, HashMap<Integer,Short> filters ) throws Exception{
 		InventoryHolder container = (InventoryHolder) target.getState();
 		if( !moveInventoryToInventory( inv, container.getInventory(), false, filters ) ){
 			throw new Exception("Target container is full.");
 		}
-	}
+	}*/
 	
 	/**
 	 * 
@@ -247,10 +246,10 @@ public class InventoryUtils {
 	 * @return
 	 * @throws Exception 
 	 */
-	public static void moveContainerInventoryToPlayer( PlayerInventory inv, Block target, HashMap<Integer,Short> filters ) throws Exception{
+	/*public static void moveContainerInventoryToPlayer( PlayerInventory inv, Block target, HashMap<Integer,Short> filters ) throws Exception{
 		InventoryHolder container = (InventoryHolder) target.getState();
 		moveInventoryToInventory( container.getInventory(), inv, false, filters );
-	}
+	}*/
 	
 	/**
 	 * 
@@ -259,7 +258,7 @@ public class InventoryUtils {
 	 * @param fullFlag
 	 * @return
 	 */
-	public static boolean moveInventoryToInventory( Inventory from, Inventory to, boolean fullFlag, HashMap<Integer,Short> filters ) {
+	/*public static boolean moveInventoryToInventory( Inventory from, Inventory to, boolean fullFlag, HashMap<Integer,Short> filters ) {
 
 		HashMap<Integer, ItemStack> leftovers;
 
@@ -296,7 +295,7 @@ public class InventoryUtils {
 			return true;
 		}
 		return false;
-	}
+	}*/
 	
 	/**
 	 * 
@@ -353,7 +352,7 @@ public class InventoryUtils {
 
                     // Same type?
                     // Blocks store their color in the damage value
-                    if (item2.getTypeId() == item.getTypeId() && (!ItemUtils.dataValueUsedForSubitems(item.getTypeId()) || item.getDurability() == item2.getDurability())) {
+                    if (item2.getType() == item.getType() && (!ItemUtils.dataValueUsedForSubitems(item.getTypeId()) || item.getDurability() == item2.getDurability())) {
                         // This stack won't fit in the parent stack
                         if (item2.getAmount() > needed) {
                             item.setAmount(max_stack);
@@ -362,7 +361,7 @@ public class InventoryUtils {
                         } else {
                             item.setAmount(item.getAmount() + item2.getAmount());
                             needed = max_stack - item.getAmount();
-                            items[j].setTypeId(0);
+                            items[j].setType(Material.AIR);
                         }
                     }
                 }

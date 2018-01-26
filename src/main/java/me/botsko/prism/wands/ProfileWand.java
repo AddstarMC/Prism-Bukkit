@@ -41,10 +41,11 @@ public class ProfileWand extends WandBase implements Wand {
 
         player.sendMessage( Prism.messenger.playerHeaderMsg( "Location Profile" ) );
 
+        // TODO: More use of data
         player.sendMessage( Prism.messenger.playerMsg( "Name: " + block.getType().toString().toLowerCase() ) );
         player.sendMessage( Prism.messenger.playerMsg( "Alias: "
-                + Prism.getItems().getAlias( block.getTypeId(), block.getData() ) ) );
-        player.sendMessage( Prism.messenger.playerMsg( "ID: " + block.getTypeId() + ":" + block.getData() ) );
+                + Prism.getItems().getAlias( block.getType(), block.getData() ) ) );
+        player.sendMessage( Prism.messenger.playerMsg( "ID: " + block.getType() + ":" + block.getData() ) );
         player.sendMessage( Prism.messenger.playerMsg( "Coords: " + block.getX() + " " + block.getY() + " "
                 + block.getZ() ) );
 

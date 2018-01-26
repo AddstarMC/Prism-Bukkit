@@ -32,15 +32,16 @@ public class WhatCommand extends Executor {
         addSub( "what", "prism.what" ).setHandler( new SubHandler() {
             @Override
             public void handle(CallInfo call) {
-                final ItemStack item = call.getPlayer().getItemInHand();
+                final ItemStack item = call.getPlayer().getInventory().getItemInMainHand();
 
                 call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg( "Item Profile:" ) );
 
+                // TODO: Better material formatting
                 String line1 = ChatColor.WHITE + "Name: " + ChatColor.DARK_AQUA
                         + item.getType().toString().toLowerCase();
                 line1 += ChatColor.WHITE + " Prism Alias: " + ChatColor.DARK_AQUA
-                        + Prism.getItems().getAlias( item.getTypeId(), item.getDurability() );
-                line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getTypeId() + ":"
+                        + Prism.getItems().getAlias( item.getType(), item.getDurability() );
+                line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getType() + ":"
                         + item.getDurability();
 
                 call.getPlayer().sendMessage( Prism.messenger.playerMsg( line1 ) );

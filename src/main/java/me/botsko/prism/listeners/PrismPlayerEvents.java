@@ -21,6 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -184,11 +185,14 @@ public class PrismPlayerEvents implements Listener {
      * @param event
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
-        if( !Prism.getIgnore().event( "item-pickup", event.getPlayer() ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(), event.getItem()
-                .getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(), event.getPlayer().getName()) );
+    public void onPlayerPickupItem(final EntityPickupItemEvent event) {
+    	if(event.getEntity() instanceof Player) {
+    		Player p = (Player) event.getEntity();
+	        if( !Prism.getIgnore().event( "item-pickup", p ) )
+	            return;
+	        RecordingQueue.addToQueue( ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(), event.getItem()
+	                .getItemStack().getAmount(), -1, null, p.getLocation(), p.getName()) );
+	    	}
     }
 
     /**
@@ -240,9 +244,9 @@ public class PrismPlayerEvents implements Listener {
         final Block spot = event.getBlockClicked().getRelative( event.getBlockFace() );
 
         String liquid_type = "milk";
-        if( spot.getTypeId() == 8 || spot.getTypeId() == 9 ) {
+        if( spot.getType() == Material.WATER || spot.getType() == Material.STATIONARY_WATER ) {
             liquid_type = "water";
-        } else if( spot.getTypeId() == 10 || spot.getTypeId() == 11 ) {
+        } else if( spot.getType() == Material.LAVA || spot.getType() == Material.STATIONARY_LAVA ) {
             liquid_type = "lava";
         }
 
