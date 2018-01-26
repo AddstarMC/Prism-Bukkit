@@ -1,7 +1,6 @@
 package me.botsko.prism.bridge;
 
 import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalPlayer;
 import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 import com.sk89q.worldedit.regions.Region;
@@ -25,10 +24,10 @@ public class WorldEditBridge {
         // Get selected area
         Region region;
         try {
-            final LocalPlayer lp = new BukkitPlayer( Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit()
+            final BukkitPlayer lp = new BukkitPlayer( Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit()
                     .getServer(), player );
             final World lw = lp.getWorld();
-            region = Prism.plugin_worldEdit.getWorldEdit().getSession( lp ).getSelection( lw );
+            region = Prism.plugin_worldEdit.getWorldEdit().getSessionManager().getIfPresent( lp ).getSelection( lw );
         } catch ( final IncompleteRegionException e ) {
             return false;
         }

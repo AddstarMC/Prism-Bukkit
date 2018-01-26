@@ -18,6 +18,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.PistonBaseMaterial;
 import org.bukkit.material.Sign;
 
 import java.util.ArrayList;
@@ -207,8 +208,8 @@ public class PrismBlockEvents implements Listener {
             return;
 
         final BlockState s = event.getBlockReplacedState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getTypeId(),
-                s.getRawData(), block.getTypeId(), block.getData(), player.getName()) );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-place", block.getLocation(), s.getType(),
+                s.getRawData(), block.getType(), block.getData(), player.getName()) );
 
         // Pass to the placement alerter
         if( !player.hasPermission( "prism.alerts.use.place.ignore" ) && !player.hasPermission( "prism.alerts.ignore" ) ) {
@@ -236,8 +237,8 @@ public class PrismBlockEvents implements Listener {
 
         final Block b = event.getBlock();
         final BlockState s = event.getNewState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange(type, b.getLocation(), b.getTypeId(), b.getData(),
-                s.getTypeId(), s.getRawData(), "Environment") );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange(type, b.getLocation(), b.getType(), b.getData(),
+                s.getType(), s.getRawData(), "Environment") );
     }
 
     /**
@@ -250,8 +251,8 @@ public class PrismBlockEvents implements Listener {
             return;
         final Block b = event.getBlock();
         final BlockState s = event.getNewState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-form", b.getLocation(), b.getTypeId(), b.getData(),
-                s.getTypeId(), s.getRawData(), "Environment") );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(), b.getData(),
+                s.getType(), s.getRawData(), "Environment") );
     }
 
     /**
@@ -266,8 +267,8 @@ public class PrismBlockEvents implements Listener {
         if( b.getType().equals( Material.FIRE ) )
             return;
         final BlockState s = event.getNewState();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getTypeId(), b.getData(),
-                s.getTypeId(), s.getRawData(), "Environment") );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(), b.getData(),
+                s.getType(), s.getRawData(), "Environment") );
     }
 
     /**
@@ -429,7 +430,8 @@ public class PrismBlockEvents implements Listener {
         final Block block = event.getBlock();
         if( block.getType().equals( Material.AIR ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.createBlockShift("block-shift", event.getRetractLocation().getBlock(), block
+        PistonBaseMaterial data = (PistonBaseMaterial) event.getBlock().getState().getData();
+        RecordingQueue.addToQueue( ActionFactory.createBlockShift("block-shift", event.getBlock().getRelative(data.getFacing()), block
                 .getRelative(event.getDirection()).getLocation(), "Piston") );
     }
 

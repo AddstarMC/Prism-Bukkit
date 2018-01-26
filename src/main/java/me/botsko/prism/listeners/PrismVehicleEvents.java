@@ -4,6 +4,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 
+import java.util.List;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -75,8 +77,9 @@ public class PrismVehicleEvents implements Listener {
         } else {
 
             // Otherwise its driver was reckless
-            final Entity passenger = vehicle.getPassenger();
-            if( passenger != null && passenger instanceof Player ) {
+            final List<Entity> passengers = vehicle.getPassengers();
+            if( !passengers.isEmpty() ) {
+            	Entity passenger = passengers.get(0);
                 if( !Prism.getIgnore().event( "vehicle-break", ( (Player) passenger ) ) )
                     return;
                 RecordingQueue.addToQueue( ActionFactory.createVehicle("vehicle-break", vehicle,

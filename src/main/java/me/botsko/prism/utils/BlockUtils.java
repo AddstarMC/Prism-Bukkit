@@ -15,6 +15,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.material.Bed;
+import org.bukkit.material.Door;
 
 public class BlockUtils {
 	
@@ -479,12 +480,15 @@ public class BlockUtils {
             case IRON_DOOR_BLOCK:
             case SPRUCE_DOOR:
             case WOODEN_DOOR:
-                if(block.getData() == 8 || block.getData() == 9) {
-                    return block.getRelative(BlockFace.DOWN);
-                }
+            	if(((Door)block.getState().getData()).isTopHalf()) {
+            		return block.getRelative(BlockFace.DOWN);
+            	}
                 break;
             case DOUBLE_PLANT:
-                if(block.getData() == 10) {
+            	//TODO: 1.13 
+            	@SuppressWarnings("deprecation")
+            	byte data = block.getData();
+                if(data == 10) {
                     return block.getRelative(BlockFace.DOWN);
                 }
                 break;
@@ -609,17 +613,17 @@ public class BlockUtils {
 	 * @param typeid
 	 * @param subid
 	 */
-	public static void properlySetDoor( Block originalBlock, int typeid, byte subid ){
+	public static void properlySetDoor( Block originalBlock, Material typeid, byte subid ){
 		// Wood door upper or iron door upper
 		if( subid == 8 || subid == 9 ){ // 8 for single doors or left side of double, 9 for right side of double
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
-			aboveOrBelow.setTypeId( typeid );
+			aboveOrBelow.setType( typeid );
 			aboveOrBelow.setData( (byte)0 ); // we have no way to know which direction the lower half was facing
 		}
 		// Wood door lower or iron door lower
 		else {
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
-			aboveOrBelow.setTypeId( typeid );
+			aboveOrBelow.setType( typeid );
 			// Determine the directing the bottom half is facing, then check
 			// it's left side for an existing door, because the subid changes
 			// if we're on the right.
@@ -685,7 +689,7 @@ public class BlockUtils {
 	 * @param typeid
 	 * @param subid
 	 */
-	public static void properlySetBed( Block originalBlock, int typeid, byte subid ){
+	public static void properlySetBed( Block originalBlock, Material typeid, byte subid ){
 		Block top = null;
 		int new_subid = 0;
 		switch(subid){
@@ -707,7 +711,7 @@ public class BlockUtils {
 				break;
 		}
 		if(top != null){
-			top.setTypeId(typeid);
+			top.setType(typeid);
 			top.setData((byte)new_subid);
 		} else {
 			System.out.println("Error setting bed: block top location was illegal. Data value: " + subid + " New data value: " + new_subid);
@@ -722,13 +726,13 @@ public class BlockUtils {
 	 * @param typeid
 	 * @param subid
 	 */
-	public static void properlySetDoublePlant( Block originalBlock, int typeid, byte subid ){
+	public static void properlySetDoublePlant( Block originalBlock, Material typeid, byte subid ){
 		if( !originalBlock.getType().equals(Material.DOUBLE_PLANT) ) return;
 		Block above = originalBlock.getRelative(BlockFace.UP);
 		if( !isAcceptableForBlockPlace( above.getType() ) ) return;
 		// choose an acceptable subid
-		if( typeid == 175 && subid < 8 ) subid = 8;
-		above.setTypeId(typeid);
+		if( typeid == Material.DOUBLE_PLANT && subid < 8 ) subid = 8;
+		above.setType(typeid);
 		above.setData((byte)subid);
 	}
 	

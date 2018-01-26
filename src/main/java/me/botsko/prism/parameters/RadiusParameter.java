@@ -60,14 +60,14 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                     }
                     coordsLoc = ( new Location( player.getWorld(), Integer.parseInt( coordinates[0] ),
                             Integer.parseInt( coordinates[1] ), Integer.parseInt( coordinates[2] ) ) );
-
-                }
-                // Try to find an online player
-                else if( Bukkit.getServer().getPlayer( radiusLocOrPlayer ) != null ) {
-                    player = Bukkit.getServer().getPlayer( radiusLocOrPlayer );
                 } else {
-                    throw new IllegalArgumentException( "Couldn't find the player named '" + radiusLocOrPlayer
-                            + "'. Perhaps they are not online or you misspelled their name?" );
+                	// Try to find an online player
+                	@SuppressWarnings("deprecation")
+					Player p2 = Bukkit.getServer().getPlayer( radiusLocOrPlayer );
+                	if(p2 == null)
+	                    throw new IllegalArgumentException( "Couldn't find the player named '" + radiusLocOrPlayer
+	                            + "'. Perhaps they are not online or you misspelled their name?" );
+                	player = p2;
                 }
             } else {
                 desiredRadius = Integer.parseInt( inputValue );

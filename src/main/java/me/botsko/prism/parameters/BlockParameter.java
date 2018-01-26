@@ -6,6 +6,7 @@ import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
+import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -46,17 +47,16 @@ public class BlockParameter extends SimplePrismParameterHandler {
 
                         // Lookup the item name, get the ids
                         final MaterialAliases items = Prism.getItems();
-                        final ArrayList<int[]> itemIds = items.getIdsByAlias( b );
-                        if( itemIds.size() > 0 ) {
-                            for ( final int[] ids : itemIds ) {
-                                if( ids.length == 2 ) {
-                                    // If we really care about the sub id
-                                    // because it's a whole different item
-                                    if( ItemUtils.dataValueUsedForSubitems( ids[0] ) ) {
-                                        query.addBlockFilter( ids[0], (short) ids[1] );
-                                    } else {
-                                        query.addBlockFilter( ids[0], (short) 0 );
-                                    }
+                        final ArrayList<MaterialData> itemMaterials = items.getMaterialsByAlias( b );
+                        
+                        if( itemMaterials.size() > 0 ) {
+                            for ( final MaterialData data : itemMaterials ) {
+                                // If we really care about the sub id
+                                // because it's a whole different item
+                                if( ItemUtils.dataValueUsedForSubitems( data.getItemType() ) ) {
+                                    query.addBlockFilter( data.getItemTypeId(), (short) data.getData() );
+                                } else {
+                                    query.addBlockFilter( data.getItemTypeId(), (short) 0 );
                                 }
                             }
                         } else {

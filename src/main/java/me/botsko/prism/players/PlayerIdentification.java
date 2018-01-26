@@ -80,7 +80,8 @@ public class PlayerIdentification {
      */
     public static PrismPlayer getPrismPlayer( String playerName ){
 
-        Player player = Bukkit.getPlayer(playerName);
+        @SuppressWarnings("deprecation")
+		Player player = Bukkit.getPlayer(playerName);
 
         if( player != null ) return getPrismPlayer( player );
 

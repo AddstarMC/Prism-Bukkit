@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import me.botsko.prism.Prism;
@@ -17,9 +18,9 @@ public class WandUtils {
             if( wand == null )
                 return false;
 
-            final int item_id = wand.getItemId();
+            final Material item = wand.getItem();
             final byte item_subid = wand.getItemSubId();
-            if( player.getInventory().getItemInMainHand().getTypeId() == item_id && player.getInventory().getItemInMainHand().getDurability() == item_subid ) {
+            if( player.getInventory().getItemInMainHand().getType() == item && player.getInventory().getItemInMainHand().getDurability() == item_subid ) {
                 // Left click is for current location
                 wand.playerLeftClick( player, loc );
                 return true;

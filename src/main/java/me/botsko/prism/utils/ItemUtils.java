@@ -1,5 +1,6 @@
 package me.botsko.prism.utils;
 
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -29,17 +30,19 @@ public class ItemUtils {
      * @param sub_id
      * @return
      */
-    public static boolean isAcceptableWand(int item_id, byte sub_id) {
-
-        // Water/lava
-        if( item_id >= 8 && item_id <= 11 ) { return false; }
-        // Fire
-        if( item_id == 51 || item_id == 259 ) { return false; }
-        // Portal
-        if( item_id == 90 || item_id == 119 ) { return false; }
-        // Monster
-        if( item_id == 383 ) { return false; }
-        return true;
+	private static EnumSet<Material> badWands = EnumSet.of(
+			Material.WATER,
+			Material.STATIONARY_WATER,
+			Material.LAVA,
+			Material.STATIONARY_LAVA,
+			Material.FIRE,
+			Material.FLINT_AND_STEEL,
+			Material.PORTAL,
+			Material.ENDER_PORTAL,
+			Material.MONSTER_EGG);
+	
+    public static boolean isAcceptableWand(Material material, byte sub_id) {
+    	return !badWands.contains(material);
     }
     
     /**
@@ -77,7 +80,7 @@ public class ItemUtils {
      * @return
      */
     public static boolean equals( ItemStack a, ItemStack b ){
-        return equals(a,b,dataValueUsedForSubitems( a.getTypeId() ));
+        return equals(a,b,dataValueUsedForSubitems( a.getType() ));
     }
     
     /**
@@ -330,10 +333,10 @@ public class ItemUtils {
 		}
 		
 		// Set the base item name
-		if(dataValueUsedForSubitems(item.getTypeId())){
-			item_name += MaterialAliases.getInstance().getAlias(item.getTypeId(), item.getDurability());
+		if(dataValueUsedForSubitems(item.getType())){
+			item_name += MaterialAliases.getInstance().getAlias(item.getType(), item.getDurability());
 		} else {
-			item_name += MaterialAliases.getInstance().getAlias(item.getTypeId(), 0);
+			item_name += MaterialAliases.getInstance().getAlias(item.getType(), 0);
 		}
 		if(item_name.isEmpty()){
 			item_name += item.getType().toString().toLowerCase().replace("_", " ");
@@ -435,39 +438,55 @@ public class ItemUtils {
      * @param id
      * @return
      */
-    public static boolean dataValueUsedForSubitems( int id ){
-    	return  id == 5         // planks
-    	        || id == 17     // logs
-    	        || id == 162    // logs 2
-        		|| id == 18 	// leaves
-        		|| id == 24     // sandstone
-        		|| id == 31 	// tallgrass
-                || id == 35 	// wool
-                || id == 38     // flowers
-                || id == 43 	// double slab
-                || id == 44 	// slab
-                || id == 95     // stained glass
-                || id == 98 	// stonebrick
-                || id == 139    // mossycobblewall
-                || id == 155    // quartz
-                || id == 159    // hard clay
-                || id == 160    // stained glass pane
-                || id == 171    // carpet
-                || id == 175    // flower/bushes
-                || id == 263 	// charcoal
-                || id == 351    // dye
-                || id == 322    // golden apple
-                || id == 349    // fish
-                || id == 125    // double wood slab
-                || id == 126    // wood slab
-                || id == 6		// saplings
-                || id == 373    // potions
-        		|| id == 383    // creature eggs
-    			|| id == 397    // skulls
-                || id == 1      // stone
-                || id == 3      // dirt
-                || id == 19     // sponge
-                || id == 168;   // prismarine
+	private static EnumSet<Material> dataMaterials = EnumSet.of(
+			Material.STONE,
+			Material.DIRT,
+			Material.WOOD,
+			Material.SAPLING,
+			Material.SAND,
+			Material.LOG,
+			Material.LEAVES,
+			Material.SPONGE,
+			Material.SANDSTONE,
+			Material.DIRT,
+			Material.LONG_GRASS,
+			Material.WOOL,
+			Material.RED_ROSE,
+			Material.DOUBLE_STEP,
+			Material.STEP,
+			Material.SNOW,
+			Material.STAINED_GLASS,
+			Material.MONSTER_EGGS,
+			Material.SMOOTH_BRICK,
+			Material.SNOW,
+			Material.WOOD_DOUBLE_STEP,
+			Material.WOOD_STEP,
+			Material.COBBLE_WALL,
+			Material.SKULL,
+			Material.ANVIL,
+			Material.QUARTZ_BLOCK,
+			Material.HARD_CLAY,
+			Material.STAINED_GLASS_PANE,
+			Material.LEAVES_2,
+			Material.LOG_2,
+			Material.PRISMARINE,
+			Material.CARPET,
+			Material.DOUBLE_PLANT,
+			Material.RED_SANDSTONE,
+			Material.CONCRETE,
+			Material.CONCRETE_POWDER,
+			
+			Material.COAL,
+			Material.GOLDEN_APPLE,
+			Material.RAW_FISH,
+			Material.COOKED_FISH,
+			Material.INK_SACK,
+			Material.MAP,
+			Material.POTION,
+			Material.SKULL_ITEM);
+	
+    public static boolean dataValueUsedForSubitems( Material material ){
+    	return dataMaterials.contains(material);
     }
     
     

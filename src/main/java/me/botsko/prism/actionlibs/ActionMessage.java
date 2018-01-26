@@ -60,7 +60,7 @@ public class ActionMessage {
         msg.append( " #" + a.getId() );
         msg.append( " " + a.getPlayerName() );
         msg.append( " " + a.getType().getName() );
-        msg.append( " " + a.getBlockId() + ":" + a.getBlockSubId() );
+        msg.append( " " + a.getBlock() + ":" + a.getBlockSubId() );
         if( a.getType().getHandler() != null ) {
             if( !a.getNiceName().isEmpty() )
                 msg.append( " (" + a.getNiceName() + ")" );
@@ -125,7 +125,7 @@ public class ActionMessage {
         }
 
         if( showExtended ) {
-            line1 += " " + a.getBlockId() + ":" + a.getBlockSubId();
+            line1 += " " + a.getBlock() + ":" + a.getBlockSubId();
         }
 
         // Aggregate count

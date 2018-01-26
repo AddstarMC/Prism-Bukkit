@@ -106,12 +106,16 @@ public class UseMonitor {
         if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
-        final String blockType = "" + block.getTypeId();
+        final String blockType = "" + block.getType();
+        
+        // TODO: 1.13
+        @SuppressWarnings("deprecation")
+		byte data = block.getData();
 
         // Ensure we're tracking this block
         if( blocksToAlertOnPlace.contains( blockType )
-                || blocksToAlertOnPlace.contains( block.getTypeId() + ":" + block.getData() ) ) {
-            final String alias = Prism.getItems().getAlias( block.getTypeId(), block.getData() );
+                || blocksToAlertOnPlace.contains( block.getType() + ":" + data ) ) {
+            final String alias = Prism.getItems().getAlias( block.getType(), data );
             incrementCount( playername, "placed " + alias );
         }
     }
@@ -127,12 +131,16 @@ public class UseMonitor {
         if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
-        final String blockType = "" + block.getTypeId();
-
+        final String blockType = "" + block.getType();
+        
+        // TODO: 1.13
+        @SuppressWarnings("deprecation")
+		byte data = block.getData();
+        
         // Ensure we're tracking this block
         if( blocksToAlertOnBreak.contains( blockType )
-                || blocksToAlertOnBreak.contains( block.getTypeId() + ":" + block.getData() ) ) {
-            final String alias = Prism.getItems().getAlias( block.getTypeId(), block.getData() );
+                || blocksToAlertOnBreak.contains( block.getType() + ":" + data ) ) {
+            final String alias = Prism.getItems().getAlias( block.getType(), data );
             incrementCount( playername, "broke " + alias );
         }
     }

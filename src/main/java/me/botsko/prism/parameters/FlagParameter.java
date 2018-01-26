@@ -67,7 +67,8 @@ public class FlagParameter implements PrismParameterHandler {
                     for ( final String sharePlayer : flagComponents[1].split( "," ) ) {
                         if( sharePlayer.equals( sender.getName() ) ) { throw new IllegalArgumentException(
                                 "You can't share lookup results with yourself!" ); }
-                        final Player shareWith = Bukkit.getServer().getPlayer( sharePlayer );
+                        @SuppressWarnings("deprecation")
+						final Player shareWith = Bukkit.getServer().getPlayer( sharePlayer );
                         if( shareWith != null ) {
                             query.addSharedPlayer( shareWith );
                         } else {

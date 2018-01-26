@@ -21,6 +21,7 @@ import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.appliers.PrismProcessType;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
@@ -82,13 +83,13 @@ public class ActionFactory {
      * @param action_type
      * @param player
      */
-    public static Handler createBlockChange(String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid,
+    public static Handler createBlockChange(String action_type, Location loc, Material oldMat, byte oldSubid, Material newMat, byte newSubid,
                                             String player) {
         final BlockChangeAction a = new BlockChangeAction();
         a.setActionType( action_type );
-        a.setBlockId( newId );
+        a.setBlock( newMat );
         a.setBlockSubId( newSubid );
-        a.setOldBlockId( oldId );
+        a.setOldBlock( oldMat );
         a.setOldBlockSubId( oldSubid );
         a.setPlayerName( player );
         a.setLoc( loc );
@@ -302,7 +303,7 @@ public class ActionFactory {
 
     // Backwards compat:
 
-    @Deprecated
+    /*@Deprecated
     public static Handler create(String action_type, String player) {
         return createBlock(action_type, player);
     }
@@ -316,7 +317,7 @@ public class ActionFactory {
     public static Handler create(String action_type, Location loc, int oldId, byte oldSubid, int newId, byte newSubid,
                                  String player) {
         return createBlockChange(action_type, loc, oldId, oldSubid, newId, newSubid, player);
-    }
+    }*/
 
     @Deprecated
     public static Handler create(String action_type, Block from, Location to, String player) {

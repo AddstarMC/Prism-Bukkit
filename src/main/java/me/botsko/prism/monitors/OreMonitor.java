@@ -136,7 +136,7 @@ public class OreMonitor {
      */
     protected String getOreColor(Block block) {
         if( isWatched( block ) ) {
-            return Prism.getAlertedOres().get( "" + block.getTypeId() );
+            return Prism.getAlertedOres().get( "" + block.getType() );
         } else {
             return "&f";
         }
@@ -157,8 +157,12 @@ public class OreMonitor {
      * @return
      */
     protected boolean isWatched(Block block) {
-        return Prism.getAlertedOres().containsKey( block.getTypeId() + ":" + block.getData() )
-                || Prism.getAlertedOres().containsKey( "" + block.getTypeId() );
+        // TODO: 1.13
+        @SuppressWarnings("deprecation")
+		byte data = block.getData();
+        
+        return Prism.getAlertedOres().containsKey( block.getType() + ":" + data )
+                || Prism.getAlertedOres().containsKey( "" + block.getType() );
     }
 
     /**

@@ -133,7 +133,7 @@ public class PrismEntityEvents implements Listener {
                     final Entity damager = entityDamageByEntityEvent.getDamager();
                     String name = "unknown";
                     if( damager != null ) {
-                        name = damager.getType().getName();
+                        name = damager.getType().name().toLowerCase();
                     }
                     if( name == null )
                         name = "unknown";
@@ -293,7 +293,7 @@ public class PrismEntityEvents implements Listener {
         if( !Prism.getIgnore().event( "entity-break", event.getEntity().getWorld() ) )
             return;
         RecordingQueue.addToQueue( ActionFactory.createBlock("entity-break", event.getBlock(), event.getEntityType()
-                .getName()) );
+                .name().toLowerCase()) );
     }
 
     /**
@@ -444,7 +444,7 @@ public class PrismEntityEvents implements Listener {
         if( !Prism.getIgnore().event( "hangingitem-break", event.getEntity().getWorld() ) )
             return;
 
-        String breaking_name = remover.getType().getName();
+        String breaking_name = remover.getType().name().toLowerCase();
         if( player != null )
             breaking_name = player.getName();
 
@@ -502,7 +502,7 @@ public class PrismEntityEvents implements Listener {
         } else if (to == Material.AIR && event.getEntity() instanceof Wither) {
             if (!Prism.getIgnore().event("entity-break", event.getBlock()))
                 return;
-            RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().getName()));
+            RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().name().toLowerCase()));
         }
     }
 
@@ -518,8 +518,8 @@ public class PrismEntityEvents implements Listener {
         final Location loc = block.getLocation();
         final BlockState newState = event.getNewState();
         final String entity = event.getEntity().getType().name().toLowerCase();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getTypeId(), block.getData(),
-                newState.getTypeId(), newState.getRawData(), entity) );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getType(), block.getData(),
+                newState.getType(), newState.getRawData(), entity) );
     }
 
     /**
@@ -555,7 +555,7 @@ public class PrismEntityEvents implements Listener {
                 if( !Prism.getIgnore().event( "entity-explode", event.getLocation().getWorld() ) )
                     return;
                 try {
-                    name = event.getEntity().getType().getName().replace( "_", " " );
+                    name = event.getEntity().getType().name().toLowerCase().replace( "_", " " );
                     name = name.length() > 15 ? name.substring( 0, 15 ) : name; // I
                                                                                 // don't
                                                                                 // think

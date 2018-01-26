@@ -220,9 +220,9 @@ public class PrismPlayerEvents implements Listener {
             return;
 
         final Block spot = event.getBlockClicked().getRelative( event.getBlockFace() );
-        final int newId = ( cause.equals( "lava-bucket" ) ? 11 : 9 );
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getTypeId(), spot.getData(),
-                newId, (byte) 0, player.getName()) );
+        final Material newMat = ( cause.equals( "lava-bucket" ) ? Material.STATIONARY_LAVA : Material.STATIONARY_WATER );
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), spot.getData(),
+        		newMat, (byte) 0, player.getName()) );
 
         if( plugin.getConfig().getBoolean( "prism.alerts.uses.lava" ) && event.getBucket() == Material.LAVA_BUCKET
                 && !player.hasPermission( "prism.alerts.use.lavabucket.ignore" )

@@ -84,9 +84,16 @@ public class RecordingTask implements Runnable {
             s.setInt( 2, action_id );
             s.setInt( 3, player_id );
             s.setInt( 4, world_id );
-            s.setInt( 5, a.getBlockId() );
+            
+            // TODO: Lookup name and get id
+            @SuppressWarnings("deprecation")
+			int newId = a.getBlock().getId();
+            @SuppressWarnings("deprecation")
+			int oldId = a.getOldBlock().getId();
+            
+            s.setInt( 5, newId );
             s.setInt( 6, a.getBlockSubId() );
-            s.setInt( 7, a.getOldBlockId() );
+            s.setInt( 7, oldId );
             s.setInt( 8, a.getOldBlockSubId() );
             s.setInt( 9, (int) a.getX() );
             s.setInt( 10, (int) a.getY() );
@@ -100,10 +107,15 @@ public class RecordingTask implements Runnable {
 
             // Add insert query for extra data if needed
             if( a.getData() != null && !a.getData().isEmpty() ) {
-                s = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)" );
-                s.setInt( 1, id );
-                s.setString( 2, a.getData() );
-                s.executeUpdate();
+            	
+            	PreparedStatement s2 = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)" );
+                s2.setInt( 1, id );
+                s2.setString( 2, a.getData() );
+                s2.executeUpdate();
+                
+                try {
+                	s2.close();
+                } catch ( final SQLException ignored ) {}
             }
 
         } catch ( final SQLException e ) {
@@ -219,9 +231,16 @@ public class RecordingTask implements Runnable {
                     s.setInt( 2, action_id );
                     s.setInt( 3, player_id );
                     s.setInt( 4, world_id );
-                    s.setInt( 5, a.getBlockId() );
+                    
+                    // TODO: Lookup name and get id
+                    @SuppressWarnings("deprecation")
+        			int newId = a.getBlock().getId();
+                    @SuppressWarnings("deprecation")
+        			int oldId = a.getOldBlock().getId();
+                    
+                    s.setInt( 5, newId );
                     s.setInt( 6, a.getBlockSubId() );
-                    s.setInt( 7, a.getOldBlockId() );
+                    s.setInt( 7, oldId );
                     s.setInt( 8, a.getOldBlockSubId() );
                     s.setInt( 9, (int) a.getX() );
                     s.setInt( 10, (int) a.getY() );

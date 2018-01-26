@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -168,9 +169,16 @@ public class ActionsQuery {
                         baseHandler.setX( rs.getInt( 6 ) );
                         baseHandler.setY( rs.getInt( 7 ) );
                         baseHandler.setZ( rs.getInt( 8 ) );
-                        baseHandler.setBlockId( rs.getInt( 9 ) );
+                        
+                        // TODO: Lookup name and get material
+                        @SuppressWarnings("deprecation")
+						Material newMat = Material.getMaterial( rs.getInt( 9 ) );
+                        @SuppressWarnings("deprecation")
+						Material oldMat = Material.getMaterial( rs.getInt( 11 ) );
+                        
+                        baseHandler.setBlock( newMat );
                         baseHandler.setBlockSubId( rs.getInt( 10 ) );
-                        baseHandler.setOldBlockId( rs.getInt( 11 ) );
+                        baseHandler.setOldBlock( oldMat );
                         baseHandler.setOldBlockSubId( rs.getInt( 12 ) );
                         baseHandler.setData( rs.getString( 13 ) );
                         baseHandler.setMaterialAliases( Prism.getItems() );

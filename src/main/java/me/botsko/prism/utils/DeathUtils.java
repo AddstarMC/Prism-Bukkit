@@ -6,7 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Skeleton.SkeletonType;
+import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -122,9 +122,9 @@ public class DeathUtils {
         		return ((Player)killer).getName(); 
         	}
         	// Which skeleton type?
+        	// TODO: Other skeleton types
         	else if (killer instanceof Skeleton){
-        		Skeleton skele = (Skeleton) killer;
-        		if(skele.getSkeletonType() == SkeletonType.WITHER){
+        		if(killer instanceof WitherSkeleton){
         			return "witherskeleton";
         		} else {
         			return "skeleton";
@@ -148,7 +148,7 @@ public class DeathUtils {
                 }
         	}
         	else {
-        		return killer.getType().getName().toLowerCase();
+        		return killer.getType().name().toLowerCase();
         	}
         }
         return cause;
@@ -169,9 +169,9 @@ public class DeathUtils {
         } else {
 
         	// Which skeleton type?
+        	// TODO: Other skeleton types
         	if (victim instanceof Skeleton){
-        		Skeleton skele = (Skeleton) victim;
-        		if(skele.getSkeletonType() == SkeletonType.WITHER){
+        		if(victim instanceof WitherSkeleton){
         			return "witherskeleton";
         		} else {
         			return "skeleton";
@@ -195,7 +195,7 @@ public class DeathUtils {
                 }
         	}
         	else {
-        		return victim.getType().getName().toLowerCase();
+        		return victim.getType().name().toLowerCase();
         	}
         }
 	}

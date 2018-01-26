@@ -453,15 +453,15 @@ public class BlockAction extends GenericAction {
 
             // If we're rolling back a door, we need to set it properly
             if( BlockUtils.isDoor(m) ) {
-                BlockUtils.properlySetDoor( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetDoor( block, getBlock(), (byte) getBlockSubId() );
             }
             // Or a bed
             else if( m.equals( Material.BED_BLOCK ) ) {
-                BlockUtils.properlySetBed( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetBed( block, getBlock(), (byte) getBlockSubId() );
             }
             // Or double plants
             else if( m.equals( Material.DOUBLE_PLANT ) ) {
-                BlockUtils.properlySetDoublePlant( block, getBlockId(), (byte) getBlockSubId() );
+                BlockUtils.properlySetDoublePlant( block, getBlock(), (byte) getBlockSubId() );
             }
         } else {
 

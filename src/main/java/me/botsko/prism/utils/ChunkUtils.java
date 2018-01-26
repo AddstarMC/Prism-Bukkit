@@ -17,6 +17,8 @@ public class ChunkUtils {
 	 * @param player
 	 * @param blocks
 	 */
+	// TODO: Check for non-deprecated method in future
+	@SuppressWarnings("deprecation")
 	public static void resetPreviewBoundaryBlocks( Player player, List<Block> blocks ){
 		for (Block block : blocks){
 			player.sendBlockChange(block.getLocation(), block.getType(), block.getData());
@@ -29,6 +31,8 @@ public class ChunkUtils {
 	 * @param player
 	 * @param blocks
 	 */
+	// TODO: Check for non-deprecated method in future
+	@SuppressWarnings("deprecation")
 	public static void setPreviewBoundaryBlocks( Player player, List<Block> blocks, Material m ){
 		for (Block block : blocks){
 			player.sendBlockChange(block.getLocation(), m, (byte)0);

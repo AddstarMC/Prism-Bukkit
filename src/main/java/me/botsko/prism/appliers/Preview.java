@@ -18,6 +18,7 @@ import me.botsko.prism.wands.Wand;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -143,6 +144,8 @@ public class Preview implements Previewable {
 	 * 
 	 */
     @Override
+    // TODO: 1.13
+    @SuppressWarnings("deprecation")
     public void cancel_preview() {
         if( player == null )
             return;
@@ -153,10 +156,14 @@ public class Preview implements Previewable {
             previewPlayers.add( player );
 
             for ( final BlockStateChange u : blockStateChanges ) {
+                Location loc = u.getOriginalBlock().getLocation();
+                Material mat = u.getOriginalBlock().getType();
+                
+				byte data = u.getOriginalBlock().getData().getData();
+                
                 for ( final CommandSender sharedPlayer : previewPlayers ) {
                     if( sharedPlayer instanceof Player )
-                        ( (Player) sharedPlayer ).sendBlockChange( u.getOriginalBlock().getLocation(), u
-                                .getOriginalBlock().getTypeId(), u.getOriginalBlock().getRawData() );
+                        ( (Player) sharedPlayer ).sendBlockChange( loc, mat, data );
                 }
             }
         }

@@ -5,10 +5,14 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
+import com.sk89q.worldedit.blocks.BlockType;
+import com.sk89q.worldedit.bukkit.BukkitUtil;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.extent.logging.AbstractLoggingExtent;
@@ -28,14 +32,20 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 		if(!Prism.config.getBoolean("prism.tracking.world-edit")) 
 			return;
 
-		BaseBlock oldBlock = getBlock(pt);
+		Location loc = BukkitUtil.toLocation(world, pt);
+		Block oldBlock = loc.getBlock();
 		
-		Location loc = new Location(world, pt.getBlockX(), pt.getBlockY(), pt.getBlockZ());
+		// TODO: 1.13
+		@SuppressWarnings("deprecation")
+		byte data = oldBlock.getData();
+		
+		Material newMaterial = Material.matchMaterial(
+				BlockType.fromID(newBlock.getId()).name());
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, 
-				oldBlock.getId(), 
-				(byte) oldBlock.getData(), 
-				newBlock.getId(), 
+				oldBlock.getType(), 
+				data, 
+				newMaterial, 
 				(byte) newBlock.getData(), player.getName()));
 	}
 }
