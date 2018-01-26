@@ -2,6 +2,7 @@ package me.botsko.prism.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.EnumSet;
 
 import me.botsko.prism.events.BlockStateChange;
@@ -902,57 +903,26 @@ public class BlockUtils {
      * @param id2
      * @return
      */
-    public static boolean areBlockIdsSameCoreItem( int id1, int id2 ){
+    private static EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
+    static {
+    	baseMaterials.put(Material.GRASS, Material.DIRT);
+    	baseMaterials.put(Material.MYCEL, Material.DIRT);
+    	baseMaterials.put(Material.STATIONARY_WATER, Material.WATER);
+    	baseMaterials.put(Material.STATIONARY_LAVA, Material.LAVA);
+    	baseMaterials.put(Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON);
+    	baseMaterials.put(Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF);
+    	baseMaterials.put(Material.REDSTONE_LAMP_ON, Material.REDSTONE_LAMP_OFF);
+    	baseMaterials.put(Material.BURNING_FURNACE, Material.FURNACE);
+    	baseMaterials.put(Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF);
+    }
+    public static boolean areBlockIdsSameCoreItem( Material mat1, Material mat2 ){
     	
     	// Get the obvious one out of the way.
-    	if(id1 == id2) return true;
+    	if(mat1 == mat2) return true;
     	
-    	// Grass/Dirt
-    	if( (id1 == 2 || id1 == 3) && (id2 == 2 || id2 == 3) ){
-    		return true;
-    	}
+    	mat1 = baseMaterials.get(mat1);
+    	mat2 = baseMaterials.get(mat2);
     	
-    	// Mycel/Dirt
-    	if( (id1 == 110 || id1 == 3) && (id2 == 110 || id2 == 3) ){
-    		return true;
-    	}
-    	
-    	// Water
-    	if( (id1 == 8 || id1 == 9) && (id2 == 8 || id2 == 9) ){
-    		return true;
-    	}
-    	
-    	// Lava
-    	if( (id1 == 10 || id1 == 11) && (id2 == 10 || id2 == 11) ){
-    		return true;
-    	}
-    	
-    	// Redstone torch
-    	if( (id1 == 75 || id1 == 76) && (id2 == 75 || id2 == 76) ){
-    		return true;
-    	}
-    	
-    	// Repeater
-    	if( (id1 == 93 || id1 == 94) && (id2 == 93 || id2 == 94) ){
-    		return true;
-    	}
-    	
-    	// Redstone lamp
-    	if( (id1 == 123 || id1 == 124) && (id2 == 123 || id2 == 124) ){
-    		return true;
-    	}
-    	
-    	// Furnace
-    	if( (id1 == 61 || id1 == 62) && (id2 == 61 || id2 == 62) ){
-    		return true;
-    	}
-    	
-    	// Redstone comparator
-    	if( (id1 == 149 || id1 == 150) && (id2 == 149 || id2 == 150) ){
-    		return true;
-    	}
-    	
-    	return false;
-    	
+    	return mat1 != null && mat1 == mat2;
     }
 }

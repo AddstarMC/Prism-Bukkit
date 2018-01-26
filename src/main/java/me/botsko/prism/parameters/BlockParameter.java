@@ -5,6 +5,8 @@ import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.material.MaterialData;
 
@@ -33,16 +35,18 @@ public class BlockParameter extends SimplePrismParameterHandler {
                 // if user provided id:subid
                 if( b.contains( ":" ) && b.length() >= 3 ) {
                     final String[] ids = b.split( ":" );
-                    if( ids.length == 2 && TypeUtils.isNumeric( ids[0] ) && TypeUtils.isNumeric( ids[1] ) ) {
-                        query.addBlockFilter( Integer.parseInt( ids[0] ), Short.parseShort( ids[1] ) );
+                    Material mat = Material.matchMaterial(ids[0]);
+                    if( ids.length == 2 && mat != null && TypeUtils.isNumeric( ids[1] ) ) {
+                        query.addBlockFilter( mat, Short.parseShort( ids[1] ) );
                     } else {
                         throw new IllegalArgumentException( "Invalid block name '" + b + "'. Try /pr ? for help" );
                     }
                 } else {
 
                     // It's id without a subid
+                	// TODO: This goes away entirely
                     if( TypeUtils.isNumeric( b ) ) {
-                        query.addBlockFilter( Integer.parseInt( b ), (short) 0 );
+                        query.addBlockFilter( Material.matchMaterial(b), (short) 0 );
                     } else {
 
                         // Lookup the item name, get the ids
@@ -53,10 +57,14 @@ public class BlockParameter extends SimplePrismParameterHandler {
                             for ( final MaterialData data : itemMaterials ) {
                                 // If we really care about the sub id
                                 // because it's a whole different item
+                            	// TODO: 1.13
+                            	@SuppressWarnings("deprecation")
+								short d = data.getData();
+                            	
                                 if( ItemUtils.dataValueUsedForSubitems( data.getItemType() ) ) {
-                                    query.addBlockFilter( data.getItemTypeId(), (short) data.getData() );
+                                    query.addBlockFilter( data.getItemType(), d );
                                 } else {
-                                    query.addBlockFilter( data.getItemTypeId(), (short) 0 );
+                                    query.addBlockFilter( data.getItemType(), (short) 0 );
                                 }
                             }
                         } else {

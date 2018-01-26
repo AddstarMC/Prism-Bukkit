@@ -7,6 +7,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -64,8 +65,8 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
-        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlockId(), getOldBlockSubId(),
-                getBlockId(), getBlockSubId(), block, false );
+        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
+                getBlock(), getBlockSubId(), block, false );
     }
 
     /**
@@ -74,8 +75,8 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
-        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlockId(), getOldBlockSubId(),
-                getBlockId(), getBlockSubId(), block, false );
+        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
+                getBlock(), getBlockSubId(), block, false );
     }
 
     /**
@@ -84,8 +85,8 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
-        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlockId(), getOldBlockSubId(),
-                getBlockId(), getBlockSubId(), block, false );
+        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
+                getBlock(), getBlockSubId(), block, false );
     }
 
     /**
@@ -94,8 +95,8 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
         final Block block = getWorld().getBlockAt( getLoc() );
-        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlockId(), getOldBlockSubId(),
-                getBlockId(), getBlockSubId(), block, true );
+        return placeBlock( player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
+                getBlock(), getBlockSubId(), block, true );
     }
 
     /**
@@ -110,7 +111,7 @@ public class BlockChangeAction extends BlockAction {
      * @return
      */
     protected ChangeResult placeBlock(Player player, QueryParameters parameters, boolean is_preview, String type,
-            int old_id, int old_subid, int new_id, int new_subid, Block block, boolean is_deferred) {
+            Material old_mat, int old_subid, Material new_mat, int new_subid, Block block, boolean is_deferred) {
 
         final BlockAction b = new BlockAction();
         b.setActionType( type );
@@ -128,9 +129,9 @@ public class BlockChangeAction extends BlockAction {
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
             if( BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), new_id ) || is_preview
+                    || BlockUtils.areBlockIdsSameCoreItem( block.getType(), new_mat ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
-                b.setBlockId( old_id );
+                b.setBlock( old_mat );
                 b.setBlockSubId( old_subid );
                 return b.placeBlock( player, parameters, is_preview, block, is_deferred );
             } else {
@@ -147,9 +148,9 @@ public class BlockChangeAction extends BlockAction {
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
             if( BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    || BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), old_id ) || is_preview
+                    || BlockUtils.areBlockIdsSameCoreItem( block.getType(), old_mat ) || is_preview
                     || parameters.hasFlag( Flag.OVERWRITE ) ) {
-                b.setBlockId( new_id );
+                b.setBlock( new_mat );
                 b.setBlockSubId( new_subid );
                 return b.placeBlock( player, parameters, is_preview, block, is_deferred );
             } else {
@@ -159,7 +160,7 @@ public class BlockChangeAction extends BlockAction {
             }
         }
         if( parameters.getProcessType().equals( PrismProcessType.UNDO ) ) {
-            b.setBlockId( old_id );
+            b.setBlock( old_mat );
             b.setBlockSubId( old_subid );
             return b.placeBlock( player, parameters, is_preview, block, is_deferred );
         }

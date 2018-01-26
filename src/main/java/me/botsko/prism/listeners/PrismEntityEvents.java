@@ -518,8 +518,15 @@ public class PrismEntityEvents implements Listener {
         final Location loc = block.getLocation();
         final BlockState newState = event.getNewState();
         final String entity = event.getEntity().getType().name().toLowerCase();
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getType(), block.getData(),
-                newState.getType(), newState.getRawData(), entity) );
+        
+        // TODO: 1.13
+        @SuppressWarnings("deprecation")
+		byte oldData = block.getData();
+        @SuppressWarnings("deprecation")
+		byte newData = newState.getData().getData();
+        
+        RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getType(), oldData,
+                newState.getType(), newData, entity) );
     }
 
     /**

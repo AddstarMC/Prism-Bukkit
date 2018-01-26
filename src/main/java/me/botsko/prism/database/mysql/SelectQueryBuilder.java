@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
 import me.botsko.prism.utils.TypeUtils;
@@ -207,15 +208,20 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
     protected void blockCondition() {
         // Blocks
-        final HashMap<Integer, Short> blockfilters = parameters.getBlockFilters();
+        final HashMap<Material, Short> blockfilters = parameters.getBlockFilters();
         if( !blockfilters.isEmpty() ) {
             final String[] blockArr = new String[blockfilters.size()];
             int i = 0;
-            for ( final Entry<Integer, Short> entry : blockfilters.entrySet() ) {
+            for ( final Entry<Material, Short> entry : blockfilters.entrySet() ) {
+            	
+            	// TODO: lookup id by mat
+            	@SuppressWarnings("deprecation")
+				int id = entry.getKey().getId();
+            	
                 if( entry.getValue() == 0 ) {
-                    blockArr[i] = tableNameData + ".block_id = " + entry.getKey();
+                    blockArr[i] = tableNameData + ".block_id = " + id;
                 } else {
-                    blockArr[i] = tableNameData + ".block_id = " + entry.getKey() + " AND " + tableNameData
+                    blockArr[i] = tableNameData + ".block_id = " + id + " AND " + tableNameData
                             + ".block_subid = " + entry.getValue();
                 }
                 i++;

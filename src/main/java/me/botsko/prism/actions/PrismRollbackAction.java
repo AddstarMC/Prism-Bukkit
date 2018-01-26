@@ -13,10 +13,17 @@ public class PrismRollbackAction extends BlockChangeAction {
     public void setBlockChange(BlockState oldblock, BlockState newBlock, int parent_id) {
         this.data = "" + parent_id;
         if( oldblock != null ) {
+        	// TODO: This... is all old block? What?
+        	// TODO: 1.13
+        	@SuppressWarnings("deprecation")
+			byte oldData = oldblock.getData().getData();
+        	@SuppressWarnings("deprecation")
+			byte newData = oldblock.getData().getData();
+        	
             this.old_block = oldblock.getType();
-            this.old_block_subid = oldblock.getRawData();
+            this.old_block_subid = oldData;
             this.block = oldblock.getType();
-            this.block_subid = oldblock.getRawData();
+            this.block_subid = newData;
         }
     }
 

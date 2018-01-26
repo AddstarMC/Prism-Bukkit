@@ -1,6 +1,5 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -123,7 +122,12 @@ public class SetmyCommand implements SubHandler {
                 if( itemMaterials.size() > 0 ) {
                     final MaterialData data = itemMaterials.get( 0 );
                     setWand = data.getItemType();
-                    setWandData = data.getData();
+                    
+                    // TODO: 1.13
+                    @SuppressWarnings("deprecation")
+					byte d = data.getData();
+                    
+                    setWandData = d;
                     wandString = setWand + ":" + setWandData;
                 } else {
                     call.getPlayer().sendMessage( Prism.messenger.playerError( "There's no item matching that name." ) );

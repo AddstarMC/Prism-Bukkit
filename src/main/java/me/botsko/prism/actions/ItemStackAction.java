@@ -121,7 +121,7 @@ public class ItemStackAction extends GenericAction {
         else if( meta != null && item.getType().equals( Material.SKULL_ITEM ) ) {
             final SkullMeta skull = (SkullMeta) meta;
             if( skull.hasOwner() ) {
-                actionData.owner = skull.getOwner();
+                actionData.owner = skull.getOwningPlayer().getName();
             }
         }
 

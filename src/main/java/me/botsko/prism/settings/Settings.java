@@ -83,6 +83,7 @@ public class Settings {
         String prefix = Prism.config.getString("prism.mysql.prefix");
         Connection conn = null;
         PreparedStatement s = null;
+        PreparedStatement s2 = null;
         try {
 
             String finalKey = key;
@@ -95,10 +96,10 @@ public class Settings {
             s.setString( 1, finalKey );
             s.executeUpdate();
 
-            s = conn.prepareStatement( "INSERT INTO " + prefix + "meta (k,v) VALUES (?,?)" );
-            s.setString( 1, finalKey );
-            s.setString( 2, value );
-            s.executeUpdate();
+            s2 = conn.prepareStatement( "INSERT INTO " + prefix + "meta (k,v) VALUES (?,?)" );
+            s2.setString( 1, finalKey );
+            s2.setString( 2, value );
+            s2.executeUpdate();
 
         } catch ( final SQLException e ) {
             // plugin.logDbError( e );
@@ -106,6 +107,10 @@ public class Settings {
             if( s != null )
                 try {
                     s.close();
+                } catch ( final SQLException ignored ) {}
+            if( s2 != null )
+                try {
+                    s2.close();
                 } catch ( final SQLException ignored ) {}
             if( conn != null )
                 try {

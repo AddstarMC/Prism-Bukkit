@@ -47,7 +47,12 @@ public class BlockAction extends GenericAction {
         if( state != null ) {
 
             block = BlockUtils.blockIdMustRecordAs( state.getType() );
-            block_subid = state.getRawData();
+            
+            // TODO: 1.13
+            @SuppressWarnings("deprecation")
+			byte d = state.getData().getData();
+            
+            block_subid = d;
 
             // Build an object for the specific details of this action
             // TODO: clean this up
@@ -295,7 +300,7 @@ public class BlockAction extends GenericAction {
     protected ChangeResult placeBlock(Player player, QueryParameters parameters, boolean is_preview, Block block,
             boolean is_deferred) {
 
-        final Material m = Material.getMaterial( getBlockId() );
+        final Material m = getBlock();
         BlockStateChange stateChange;
 
         // Ensure block action is allowed to place a block here.
@@ -309,7 +314,7 @@ public class BlockAction extends GenericAction {
         }
 
         // On the blacklist (except an undo)
-        if( Prism.getIllegalBlocks().contains( getBlockId() )
+        if( Prism.getIllegalBlocks().contains( getBlock() )
                 && !parameters.getProcessType().equals( PrismProcessType.UNDO ) ) {
             // System.out.print("Block skipped because it's not allowed to be placed.");
             return new ChangeResult( ChangeResultType.SKIPPED, null );
@@ -323,7 +328,7 @@ public class BlockAction extends GenericAction {
 
             // If lilypad, check that block below is water. Be sure
             // it's set to stationary water so the lilypad will sit
-            if( getBlockId() == 111 ) {
+            if( getBlock() == Material.WATER_LILY ) {
 
                 final Block below = block.getRelative( BlockFace.DOWN );
                 if( below.getType().equals( Material.WATER ) || below.getType().equals( Material.AIR )
@@ -336,7 +341,7 @@ public class BlockAction extends GenericAction {
             }
 
             // If portal, we need to light the portal. seems to be the only way.
-            if( getBlockId() == 90 ) {
+            if( getBlock() == Material.PORTAL ) {
                 final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow( Material.OBSIDIAN,
                         block.getLocation() );
                 if( obsidian != null ) {
@@ -350,18 +355,18 @@ public class BlockAction extends GenericAction {
 
             // Jukebox, never use the data val because
             // it becomes unplayable
-            if( getBlockId() == 84 ) {
+            if( getBlock() == Material.JUKEBOX ) {
                 block_subid = 0;
             }
 
             // Set the material
-            block.setTypeId( getBlockId() );
+            block.setType( getBlock() );
             block.setData( (byte) getBlockSubId() );
 
             /**
              * Skulls
              */
-            if( ( getBlockId() == 144 || getBlockId() == 397 ) && getActionData() instanceof SkullActionData ) {
+            if( ( getBlock() == Material.SKULL || getBlock() == Material.SKULL_ITEM ) && getActionData() instanceof SkullActionData ) {
 
                 final SkullActionData s = (SkullActionData) getActionData();
 
@@ -379,7 +384,7 @@ public class BlockAction extends GenericAction {
             /**
              * Spawner
              */
-            if( getBlockId() == 52 ) {
+            if( getBlock() == Material.MOB_SPAWNER ) {
 
                 final SpawnerActionData s = (SpawnerActionData) getActionData();
 
@@ -394,7 +399,7 @@ public class BlockAction extends GenericAction {
             /**
              * Restoring command block
              */
-            if( getBlockId() == 137 ) {
+            if( getBlock() == Material.COMMAND ) {
                 final CommandBlock cmdblock = (CommandBlock) block.getState();
                 cmdblock.setCommand( data );
                 cmdblock.update();
@@ -404,7 +409,7 @@ public class BlockAction extends GenericAction {
              * Signs
              */
             if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
-                    && ( getBlockId() == 63 || getBlockId() == 68 ) && getActionData() instanceof SignActionData ) {
+                    && ( getBlock() == Material.SIGN_POST || getBlock() == Material.WALL_SIGN ) && getActionData() instanceof SignActionData ) {
 
                 final SignActionData s = (SignActionData) getActionData();
 
@@ -498,7 +503,7 @@ public class BlockAction extends GenericAction {
 
             // Ensure it's acceptable to remove the current block
             if( !BlockUtils.isAcceptableForBlockPlace( block.getType() )
-                    && !BlockUtils.areBlockIdsSameCoreItem( block.getTypeId(), getBlockId() )
+                    && !BlockUtils.areBlockIdsSameCoreItem( block.getType(), getBlock() )
                     && !parameters.hasFlag( Flag.OVERWRITE ) ) { return new ChangeResult( ChangeResultType.SKIPPED,
                     null ); }
 
@@ -530,7 +535,7 @@ public class BlockAction extends GenericAction {
                 // Send preview to shared players
                 for ( final CommandSender sharedPlayer : parameters.getSharedPlayers() ) {
                     if( sharedPlayer instanceof Player ) {
-                        ( (Player) sharedPlayer ).sendBlockChange( block.getLocation(), getBlockId(),
+                        ( (Player) sharedPlayer ).sendBlockChange( block.getLocation(), getBlock(),
                                 (byte) getBlockSubId() );
                     }
                 }

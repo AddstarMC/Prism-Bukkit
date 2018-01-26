@@ -1,16 +1,29 @@
 package me.botsko.prism.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.UUID;
 
 public class EntityUtils {
 	
+	public static UUID uuidOf( String uuidOrName ) {
+		try {
+			return UUID.fromString(uuidOrName);
+		}
+		catch(IllegalArgumentException e){}
+		
+		@SuppressWarnings("deprecation")
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
+		return player.getUniqueId();
+	}
 	
 	/**
 	 * Removes item drops near an entity

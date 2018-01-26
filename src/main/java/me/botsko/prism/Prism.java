@@ -25,10 +25,12 @@ import me.botsko.prism.wands.Wand;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,6 +48,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
@@ -66,8 +69,8 @@ public class Prism extends JavaPlugin {
     private static ActionRegistry actionRegistry;
     private static HandlerRegistry<?> handlerRegistry;
     private static Ignore ignore;
-    protected static ArrayList<Integer> illegalBlocks;
-    protected static ArrayList<String> illegalEntities;
+    protected static List<Material> illegalBlocks;
+    protected static List<EntityType> illegalEntities;
     protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
     private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor( 1 );
@@ -274,14 +277,26 @@ public class Prism extends JavaPlugin {
     /**
      * Load configuration and language files
      */
-    @SuppressWarnings("unchecked")
     public void loadConfig() {
         final PrismConfig mc = new PrismConfig( this );
         config = mc.getConfig();
 
         // Cache config arrays we check constantly
-        illegalBlocks = (ArrayList<Integer>) getConfig().getList( "prism.appliers.never-place-block" );
-        illegalEntities = (ArrayList<String>) getConfig().getList( "prism.appliers.never-spawn-entity" );
+        illegalBlocks = getConfig().getStringList( "prism.appliers.never-place-block" ).stream()
+        		.map(s -> Material.matchMaterial(s))
+        		.filter(m -> m != null)
+        		.collect(Collectors.toList());
+        illegalEntities = getConfig().getStringList( "prism.appliers.never-spawn-entity" ).stream()
+        		.map(s -> {
+        			try {
+        				return EntityType.valueOf(s.toUpperCase());
+        			}
+        			catch(Exception e){}
+        			
+        			return null;
+        		})
+        		.filter(e -> e != null)
+        		.collect(Collectors.toList());
 
         final ConfigurationSection alertBlocks = getConfig().getConfigurationSection( "prism.alerts.ores.blocks" );
         alertedOres.clear();
@@ -710,14 +725,14 @@ public class Prism extends JavaPlugin {
      * 
      * @return
      */
-    public static ArrayList<Integer> getIllegalBlocks() {
+    public static List<Material> getIllegalBlocks() {
         return illegalBlocks;
     }
 
     /**
 	 * 
 	 */
-    public static ArrayList<String> getIllegalEntities() {
+    public static List<EntityType> getIllegalEntities() {
         return illegalEntities;
     }
 

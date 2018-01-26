@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
@@ -40,7 +41,7 @@ public class QueryParameters implements Cloneable {
     protected int parent_id = 0;
     protected Location player_location;
     protected int radius;
-    protected final ArrayList<Location> specific_block_locations = new ArrayList<Location>();
+    protected final ArrayList<Location> specific_block_locations = new ArrayList<>();
     protected Long since_time;
     protected Long before_time;
     protected String world;
@@ -50,12 +51,12 @@ public class QueryParameters implements Cloneable {
     /**
      * Params that allow multiple values
      */
-    protected HashMap<String, MatchRule> actionTypeRules = new HashMap<String, MatchRule>();
-    protected final HashMap<Integer, Short> block_filters = new HashMap<Integer, Short>();
-    protected final HashMap<String, MatchRule> entity_filters = new HashMap<String, MatchRule>();
-    protected final HashMap<String, MatchRule> player_names = new HashMap<String, MatchRule>();
+    protected HashMap<String, MatchRule> actionTypeRules = new HashMap<>();
+    protected final HashMap<Material, Short> block_filters = new HashMap<>();
+    protected final HashMap<String, MatchRule> entity_filters = new HashMap<>();
+    protected final HashMap<String, MatchRule> player_names = new HashMap<>();
     protected final ArrayList<Flag> flags = new ArrayList<Flag>();
-    protected final ArrayList<CommandSender> shared_players = new ArrayList<CommandSender>();
+    protected final ArrayList<CommandSender> shared_players = new ArrayList<>();
 
     /**
      * Pagination
@@ -136,7 +137,7 @@ public class QueryParameters implements Cloneable {
     /**
      * @return the block
      */
-    public HashMap<Integer, Short> getBlockFilters() {
+    public HashMap<Material, Short> getBlockFilters() {
         return block_filters;
     }
 
@@ -144,8 +145,8 @@ public class QueryParameters implements Cloneable {
      * @param id
      *            the block to set
      */
-    public void addBlockFilter(int id, short data) {
-        this.block_filters.put( id, data );
+    public void addBlockFilter(Material mat, short data) {
+        this.block_filters.put( mat, data );
     }
 
     /**
