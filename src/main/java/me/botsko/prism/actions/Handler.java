@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -124,44 +125,56 @@ public interface Handler {
      * 
      * @param id
      */
+    @Deprecated
     public abstract void setBlockId(int id);
+    public abstract void setBlock(Material material);
 
     /**
      * 
      * @param id
      */
+    // TODO: Safe until the flattening in 1.13
     public abstract void setBlockSubId(int id);
 
     /**
 	 * 
 	 */
+    @Deprecated
     public abstract int getBlockId();
+    public abstract Material getBlock();
 
     /**
 	 * 
 	 */
+    // TODO: Safe until the flattening in 1.13
     public abstract int getBlockSubId();
 
     /**
      * 
      * @param id
      */
+    @Deprecated
     public abstract void setOldBlockId(int id);
+    public abstract void setOldBlock(Material material);
 
     /**
      * 
      * @param id
      */
+    // TODO: Safe until the flattening in 1.13
     public abstract void setOldBlockSubId(int id);
 
     /**
 	 * 
 	 */
+    @Deprecated
     public abstract int getOldBlockId();
+    public abstract Material getOldBlock();
 
     /**
 	 * 
 	 */
+    // TODO: Safe until the flattening in 1.13
     public abstract int getOldBlockSubId();
 
     /**

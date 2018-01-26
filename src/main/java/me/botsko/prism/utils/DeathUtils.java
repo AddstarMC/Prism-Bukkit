@@ -232,7 +232,7 @@ public class DeathUtils {
 	public static String getWeapon(Player p){
         String death_weapon = "";
         if(p.getKiller() instanceof Player){
-        	ItemStack weapon = p.getKiller().getItemInHand();
+        	ItemStack weapon = p.getKiller().getInventory().getItemInMainHand();
         	death_weapon = weapon.getType().toString().toLowerCase();
         	death_weapon = death_weapon.replaceAll("_", " ");
         	if(death_weapon.equalsIgnoreCase("air")){

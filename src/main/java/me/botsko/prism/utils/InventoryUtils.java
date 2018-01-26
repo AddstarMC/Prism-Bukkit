@@ -77,12 +77,12 @@ public class InventoryUtils {
      */
     public static ItemStack extractItemsMatchingHeldItemFromPlayer( Player player, int desiredQuantity ){
         
-        if( player == null || !ItemUtils.isValidItem( player.getItemInHand() ) ){
+        if( player == null || !ItemUtils.isValidItem( player.getInventory().getItemInMainHand() ) ){
             throw new IllegalArgumentException("Invalid player or invalid held item.");
         }
         
         int quantityFound = 0;
-        ItemStack itemDefinition = player.getItemInHand().clone();
+        ItemStack itemDefinition = player.getInventory().getItemInMainHand().clone();
         
         for( int slot = 0; slot < player.getInventory().getSize(); slot++ ){
             ItemStack item = player.getInventory().getItem( slot );
@@ -127,9 +127,9 @@ public class InventoryUtils {
 			inv.clear(slot);
 			// If the player has an item in-hand, switch to a vacant spot
 			if( !playerHasEmptyHand(inv) ){
-				inv.setItem(slot, inv.getItemInHand());
+				inv.setItem(slot, inv.getItemInMainHand());
 			}
-			inv.setItemInHand(item);
+			inv.setItemInMainHand(item);
 			return true;
 		}
 		return false;
@@ -141,7 +141,7 @@ public class InventoryUtils {
 	 * @return
 	 */
 	public static boolean playerHasEmptyHand( PlayerInventory inv ){
-		return (inv.getItemInHand().getTypeId() == 0);
+		return (inv.getItemInMainHand().getTypeId() == 0);
 	}
 	
 	/**
@@ -159,7 +159,7 @@ public class InventoryUtils {
 	public static boolean handItemToPlayer( PlayerInventory inv, ItemStack item ){
 		// Ensure there's at least one empty inv spot
 		if( inv.firstEmpty() != -1 ){
-			ItemStack originalItem = inv.getItemInHand().clone();
+			ItemStack originalItem = inv.getItemInMainHand().clone();
 			// If the player has an item in-hand, switch to a vacant spot
 			if( !playerHasEmptyHand( inv ) ){
 				// We need to manually add the item stack to a different
@@ -175,7 +175,7 @@ public class InventoryUtils {
 					}
 				}
 			}
-			inv.setItemInHand(item);
+			inv.setItemInMainHand(item);
 			return true;
 		}
 		return false;

@@ -10,6 +10,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.SkullType;
 import org.bukkit.block.Block;
@@ -45,17 +46,18 @@ public class BlockAction extends GenericAction {
     public void setBlock(BlockState state) {
         if( state != null ) {
 
-            block_id = BlockUtils.blockIdMustRecordAs( state.getTypeId() );
+            block = BlockUtils.blockIdMustRecordAs( state.getType() );
             block_subid = state.getRawData();
 
             // Build an object for the specific details of this action
-            // @todo clean this up
-            if( block_id == 144 || block_id == 397 || block_id == 52 || block_id == 63 || block_id == 68 ) {
+            // TODO: clean this up
+            if( block == Material.SKULL || block == Material.SKULL_ITEM || block == Material.MOB_SPAWNER
+            		|| block == Material.SIGN_POST || block == Material.WALL_SIGN ) {
                 actionData = new BlockActionData();
             }
 
             // spawner
-            if( state.getTypeId() == 52 ) {
+            if( state.getType() == Material.MOB_SPAWNER ) {
                 final SpawnerActionData spawnerActionData = new SpawnerActionData();
                 final CreatureSpawner s = (CreatureSpawner) state;
                 spawnerActionData.entity_type = s.getSpawnedType().name().toLowerCase();
@@ -64,17 +66,17 @@ public class BlockAction extends GenericAction {
             }
 
             // skulls
-            else if( ( state.getTypeId() == 144 || state.getTypeId() == 397 ) ) {
+            else if( ( state.getType() == Material.SKULL || state.getType() == Material.SKULL_ITEM ) ) {
                 final SkullActionData skullActionData = new SkullActionData();
                 final Skull s = (Skull) state;
                 skullActionData.rotation = s.getRotation().name().toLowerCase();
-                skullActionData.owner = s.getOwner();
+                skullActionData.owner = s.getOwningPlayer().getName();
                 skullActionData.skull_type = s.getSkullType().name().toLowerCase();
                 actionData = skullActionData;
             }
 
             // signs
-            else if( ( state.getTypeId() == 63 || state.getTypeId() == 68 ) ) {
+            else if( ( state.getType() == Material.SIGN_POST || state.getType() == Material.WALL_SIGN ) ) {
                 final SignActionData signActionData = new SignActionData();
                 final Sign s = (Sign) state;
                 signActionData.lines = s.getLines();
@@ -82,7 +84,7 @@ public class BlockAction extends GenericAction {
             }
 
             // command block
-            else if( ( state.getTypeId() == 137 ) ) {
+            else if( ( state.getType() == Material.COMMAND ) ) {
                 final CommandBlock cmdblock = (CommandBlock) state;
                 data = cmdblock.getCommand();
             }
@@ -101,13 +103,13 @@ public class BlockAction extends GenericAction {
     public void setData(String data) {
         this.data = data;
         if( data != null && data.startsWith( "{" ) ) {
-            if( block_id == 144 || block_id == 397 ) {
+            if( block == Material.SKULL || block == Material.SKULL_ITEM ) {
                 actionData = gson.fromJson( data, SkullActionData.class );
-            } else if( block_id == 52 ) {
+            } else if( block == Material.MOB_SPAWNER ) {
                 actionData = gson.fromJson( data, SpawnerActionData.class );
-            } else if( block_id == 63 || block_id == 68 ) {
+            } else if( block == Material.SIGN_POST || block == Material.WALL_SIGN ) {
                 actionData = gson.fromJson( data, SignActionData.class );
-            } else if( block_id == 137 ) {
+            } else if( block == Material.COMMAND ) {
                 actionData = new BlockActionData();
             } else {
                 // No longer used, was for pre-1.5 data formats
@@ -148,16 +150,16 @@ public class BlockAction extends GenericAction {
             final SpawnerActionData ad = (SpawnerActionData) getActionData();
             name += ad.entity_type + " ";
         }
-        name += materialAliases.getAlias( this.block_id, this.block_subid );
+        name += materialAliases.getAlias( this.block, this.block_subid );
         if( actionData instanceof SignActionData ) {
             final SignActionData ad = (SignActionData) getActionData();
             if( ad.lines != null && ad.lines.length > 0 ) {
                 name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
             }
-        } else if( block_id == 137 ) {
+        } else if( block == Material.COMMAND ) {
             name += " (" + data + ")";
         }
-        if( type.getName().equals( "crop-trample" ) && block_id == 0 ) { return "empty soil"; }
+        if( type.getName().equals( "crop-trample" ) && block == Material.AIR ) { return "empty soil"; }
         return name;
     }
 
@@ -368,7 +370,7 @@ public class BlockAction extends GenericAction {
                 skull.setRotation( s.getRotation() );
                 skull.setSkullType( s.getSkullType() );
                 if( !s.owner.isEmpty() ) {
-                    skull.setOwner( s.owner );
+                    skull.setOwningPlayer( Bukkit.getOfflinePlayer(s.owner) );
                 }
                 skull.update();
 

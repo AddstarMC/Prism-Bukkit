@@ -96,7 +96,7 @@ public class ItemStackAction extends GenericAction {
         }
 
         // Set basics
-        this.block_id = item.getTypeId();
+        this.block = item.getType();
         this.block_subid = item.getDurability();
         actionData.amt = quantity;
         if( slot >= 0 ) {
@@ -166,7 +166,7 @@ public class ItemStackAction extends GenericAction {
         }
 
         // Fireworks
-        if( meta != null && block_id == 402 ) {
+        if( meta != null && block == Material.FIREWORK_CHARGE ) {
             final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
             if( fireworkMeta.hasEffect() ) {
                 final FireworkEffect effect = fireworkMeta.getEffect();
@@ -237,7 +237,7 @@ public class ItemStackAction extends GenericAction {
 
         actionData = gson.fromJson( data, ItemStackActionData.class );
 
-        item = new ItemStack( this.block_id, actionData.amt, (short) this.block_subid );
+        item = new ItemStack( this.block, actionData.amt, (short) this.block_subid );
 
         // Restore enchantment
         if( actionData.enchs != null && actionData.enchs.length > 0 ) {
@@ -266,7 +266,7 @@ public class ItemStackAction extends GenericAction {
         // Skulls
         else if( item.getType().equals( Material.SKULL_ITEM ) && actionData.owner != null ) {
             final SkullMeta meta = (SkullMeta) item.getItemMeta();
-            meta.setOwner( actionData.owner );
+            meta.setOwningPlayer( Bukkit.getOfflinePlayer( actionData.owner ) );
             item.setItemMeta( meta );
         }
         // Written books
@@ -279,7 +279,7 @@ public class ItemStackAction extends GenericAction {
         }
 
         // Fireworks
-        if( block_id == 402 && actionData.effectColors != null && actionData.effectColors.length > 0 ) {
+        if( block == Material.FIREWORK_CHARGE && actionData.effectColors != null && actionData.effectColors.length > 0 ) {
             final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
             final Builder effect = FireworkEffect.builder();
             if( actionData.effectColors != null ) {

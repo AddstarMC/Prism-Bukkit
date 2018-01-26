@@ -7,9 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 
 public class MaterialAliases {
     
@@ -54,7 +56,7 @@ public class MaterialAliases {
 					ArrayList<String> aliases = (ArrayList<String>)itemaliases.get(key);
 					if(aliases.size() > 0){
 						for(String alias : aliases){
-							itemAliases.put(key, alias);
+							itemAliases.put(key.toLowerCase(), alias);
 						}
 					}
 				}
@@ -80,19 +82,27 @@ public class MaterialAliases {
 	 * @param subid
 	 * @return
 	 */
+	@Deprecated
 	public String getAlias( int typeid, int subid ){
+		return getAlias( Material.getMaterial( typeid ), subid );
+	}
+	
+	@SuppressWarnings("deprecation")
+	public String getAlias( Material material, int subid ){
 		String item_name = null;
 		if(!itemAliases.isEmpty()){
-			String key = typeid+":"+subid;
+			String key = material.name().toLowerCase()+":"+subid;
 			item_name = itemAliases.get(key);
+			// TODO: Remove this for 1.13
+			if( item_name == null )
+				item_name = itemAliases.get( material.getId()+":"+subid );
 		}
 		if(item_name == null){
-			ItemStack i = new ItemStack( typeid,subid);
+			ItemStack i = new ItemStack( material,subid);
 			item_name = i.getType().name().toLowerCase().replace("_", " ");
 		}
 		return item_name;
 	}
-	
 	
 	/**
 	 * Returns the proper name given an item stack
@@ -100,7 +110,7 @@ public class MaterialAliases {
 	 * @return
 	 */
 	public String getAlias( ItemStack i ){
-		return getAlias( i.getTypeId(), (byte) i.getDurability() );
+		return getAlias( i.getType(), i.getDurability() );
 	}
 	
 	
@@ -109,6 +119,7 @@ public class MaterialAliases {
 	 * @param alias
 	 * @return
 	 */
+	@Deprecated
 	public ArrayList<int[]> getIdsByAlias( String alias ){
 		ArrayList<int[]> itemIds = new ArrayList<int[]>();
 		if(!itemAliases.isEmpty()){
@@ -119,6 +130,23 @@ public class MaterialAliases {
 			    	ids[0] = Integer.parseInt(_tmp[0]);
 			    	ids[1] = Integer.parseInt(_tmp[1]);
 			    	itemIds.add(ids);
+			    }
+			}
+		}
+		return itemIds;
+	}
+	
+	// TODO: Break this in 1.13. Woooo.
+	@SuppressWarnings("deprecation")
+	public ArrayList<MaterialData> getMaterialsByAlias( String alias ){
+		ArrayList<MaterialData> itemIds = new ArrayList<>();
+		if(!itemAliases.isEmpty()){
+			for (Entry<String, String> entry : itemAliases.entrySet()){
+			    if(entry.getValue().equals( alias )){
+			    	String[] _tmp = entry.getKey().split(":");
+			    	Material m = Material.matchMaterial(_tmp[0]);
+			    	byte b = Byte.parseByte(_tmp[1]);
+			    	itemIds.add(new MaterialData(m, b));
 			    }
 			}
 		}

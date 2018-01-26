@@ -10,7 +10,7 @@ public class GrowAction extends BlockAction {
      */
     public void setBlock(BlockState state) {
         if( state != null ) {
-            this.block_id = state.getTypeId();
+            this.block = state.getType();
             this.block_subid = state.getData().getData();
             this.world_name = state.getWorld().getName();
             this.x = state.getLocation().getBlockX();

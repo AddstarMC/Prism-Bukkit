@@ -2,6 +2,7 @@ package me.botsko.prism.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 
 import me.botsko.prism.events.BlockStateChange;
 
@@ -16,6 +17,113 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.material.Bed;
 
 public class BlockUtils {
+	
+	// TODO: 1.13 material change
+	private static EnumSet<Material> replaceableMaterials = EnumSet.of(
+			Material.AIR,
+			Material.FIRE,
+			Material.GRAVEL,
+			Material.LAVA,
+			Material.LONG_GRASS,
+			Material.SAND,
+			Material.SNOW,
+			Material.SNOW_BLOCK,
+			Material.STATIONARY_LAVA,
+			Material.STATIONARY_WATER,
+			Material.WATER);
+	
+	private static EnumSet<Material> fallingMaterials = EnumSet.of(
+			Material.SAND,
+			Material.GRAVEL,
+			Material.ANVIL,
+			Material.DRAGON_EGG,
+			Material.CONCRETE_POWDER);
+
+	private static EnumSet<Material> fallsOffWall = EnumSet.of(
+			Material.POWERED_RAIL,
+			Material.DETECTOR_RAIL,
+			Material.PISTON_STICKY_BASE,
+			Material.PISTON_BASE,
+			Material.PISTON_EXTENSION,
+			Material.PISTON_MOVING_PIECE,
+			Material.TORCH,
+			Material.LADDER,
+			Material.RAILS,
+			Material.WALL_SIGN,
+			Material.LEVER,
+			Material.REDSTONE_TORCH_OFF,
+			Material.REDSTONE_TORCH_ON,
+			Material.STONE_BUTTON,
+			Material.PORTAL,
+			Material.VINE,
+			Material.COCOA,
+			Material.TRIPWIRE_HOOK,
+			Material.WOOD_BUTTON,
+			Material.ACTIVATOR_RAIL);
+	
+	private static EnumSet<Material> fallsOffTop = EnumSet.of(
+			Material.SAPLING,
+			Material.POWERED_RAIL,
+			Material.DETECTOR_RAIL,
+			Material.PISTON_STICKY_BASE,
+			Material.LONG_GRASS,
+			Material.DEAD_BUSH,
+			Material.PISTON_BASE,
+			Material.PISTON_EXTENSION,
+			Material.PISTON_MOVING_PIECE,
+			Material.YELLOW_FLOWER,
+			Material.RED_ROSE,
+			Material.BROWN_MUSHROOM,
+			Material.RED_MUSHROOM,
+			Material.TORCH,
+			Material.REDSTONE,
+			Material.CROPS,
+			Material.WOODEN_DOOR,
+			Material.RAILS,
+			Material.SIGN_POST,
+			Material.LEVER,
+			Material.STONE_PLATE,
+			Material.IRON_DOOR_BLOCK,
+			Material.WOOD_PLATE,
+			Material.REDSTONE_TORCH_OFF,
+			Material.REDSTONE_TORCH_ON,
+			Material.STONE_BUTTON,
+			Material.SNOW,
+			Material.CACTUS,
+			Material.SUGAR_CANE_BLOCK,
+			Material.PORTAL,
+			Material.DIODE_BLOCK_OFF,
+			Material.DIODE_BLOCK_ON,
+			Material.PUMPKIN_STEM,
+			Material.MELON_STEM,
+			Material.WATER_LILY,
+			Material.NETHER_WARTS,
+			Material.FLOWER_POT,
+			Material.CARROT,
+			Material.POTATO,
+			Material.WOOD_BUTTON,
+			Material.GOLD_PLATE,
+			Material.IRON_PLATE,
+			Material.REDSTONE_COMPARATOR_OFF,
+			Material.REDSTONE_COMPARATOR_ON,
+			Material.ACTIVATOR_RAIL,
+			Material.CARPET,
+			Material.DOUBLE_PLANT,
+			Material.STANDING_BANNER,
+			Material.SPRUCE_DOOR,
+			Material.BIRCH_DOOR,
+			Material.JUNGLE_DOOR,
+			Material.ACACIA_DOOR,
+			Material.DARK_OAK_DOOR,
+			Material.BEETROOT_BLOCK);
+	
+	private static EnumSet<Material> detachingBlocks = EnumSet.of(
+			Material.AIR,
+			Material.FIRE,
+			Material.WATER,
+			Material.STATIONARY_WATER,
+			Material.LAVA,
+			Material.STATIONARY_LAVA);
 
     /**
      * There are some blocks that are broken in an "on" state. Rather than
@@ -30,10 +138,10 @@ public class BlockUtils {
      * @param block_id
      * @return
      */
-    public static int blockIdMustRecordAs(int block_id) {
+    public static Material blockIdMustRecordAs(Material material) {
         // Burning Furnace -> Furnace
-        if( block_id == 62 ) { return 61; }
-        return block_id;
+        if( material == Material.BURNING_FURNACE ) { return Material.FURNACE; }
+        return material;
     }
 
     /**
@@ -136,22 +244,7 @@ public class BlockUtils {
 	 * @return if the material is acceptable to replace
 	 */
 	public static boolean isAcceptableForBlockPlace( Material m ){
-		switch(m){
-			case AIR:
-			case FIRE:
-			case GRAVEL:
-			case LAVA:
-            case LONG_GRASS:
-			case SAND:
-            case SNOW:
-            case SNOW_BLOCK:
-            case STATIONARY_LAVA:
-			case STATIONARY_WATER:
-            case WATER:
-				return true;
-			default:
-				return false;
-		}
+		return replaceableMaterials.contains(m);
 	}
 
 	/**
@@ -186,16 +279,7 @@ public class BlockUtils {
 	 * @return whether the block is capable of falling
 	 */
 	public static boolean isFallingBlock( Block block ){
-		Material m = block.getType();
-
-        switch (m){
-            case SAND:
-            case GRAVEL:
-            case ANVIL:
-                return true;
-            default:
-                return false;
-        }
+		return fallingMaterials.contains(block.getType());
 	}
 	
 	/**
@@ -265,32 +349,7 @@ public class BlockUtils {
 	 * @return whether a block with a given material will detach from the side of a block
 	 */
 	public static boolean isSideFaceDetachableMaterial( Material m ){
-        switch (m){
-            case BANNER:
-            case COCOA:
-            case WALL_SIGN:
-            case LADDER:
-            case LEVER:
-            case IRON_TRAPDOOR:
-            case PORTAL:
-            case PISTON_BASE: // Fake entry, the base always breaks if the extension is lost
-            case PISTON_EXTENSION:
-            case PISTON_MOVING_PIECE:
-            case PISTON_STICKY_BASE:
-            case REDSTONE_TORCH_OFF:
-            case REDSTONE_TORCH_ON:
-            case STANDING_BANNER:
-            case STONE_BUTTON:
-            case TRAP_DOOR:
-            case TORCH:
-            case TRIPWIRE_HOOK:
-            case WALL_BANNER:
-            case WOOD_BUTTON:
-            case VINE:
-                return true;
-            default:
-                return false;
-        }
+		return fallsOffWall.contains(m);
 	}
 	
 	/**
@@ -330,62 +389,7 @@ public class BlockUtils {
 	 * @return whether a block with a given material will detach from the top of a block
 	 */
 	public static boolean isTopFaceDetachableMaterial( Material m ){
-		switch(m){
-            case ACTIVATOR_RAIL:
-            case BANNER:
-			case BROWN_MUSHROOM:
-			case CACTUS:
-			case CARROT:
-            case CROPS:
-			case DEAD_BUSH:
-			case DETECTOR_RAIL:
-            case DIODE:
-            case DIODE_BLOCK_OFF:
-            case DIODE_BLOCK_ON:
-			case DOUBLE_PLANT:
-            case FLOWER_POT:
-			case GOLD_PLATE:
-			case IRON_DOOR:
-			case IRON_DOOR_BLOCK:
-			case IRON_PLATE:
-			case LEVER:
-			case LONG_GRASS:
-			case MELON_STEM:
-			case NETHER_WARTS:
-			case PORTAL:
-            case POTATO:
-			case POWERED_RAIL:
-			case PUMPKIN_STEM:
-			case RAILS:
-			case RED_MUSHROOM:
-			case RED_ROSE:
-			case REDSTONE:
-			case REDSTONE_COMPARATOR_OFF:
-			case REDSTONE_COMPARATOR_ON:
-			case REDSTONE_TORCH_OFF:
-			case REDSTONE_TORCH_ON:
-			case REDSTONE_WIRE:
-			case SAPLING:
-			case SIGN:
-			case SIGN_POST:
-			case SKULL:
-			case SNOW:
-            case STANDING_BANNER:
-			case STONE_PLATE:
-            case SUGAR_CANE_BLOCK:
-			case TORCH:
-			case TRIPWIRE:
-            case WALL_BANNER:
-			case WATER_LILY:
-			case WHEAT:
-			case WOOD_DOOR:
-			case WOOD_PLATE:
-			case WOODEN_DOOR:
-			case YELLOW_FLOWER:
-				return true;
-			default:
-				return false;
-		}
+		return fallsOffTop.contains(m);
 	}
 	
 	
@@ -398,17 +402,7 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean materialMeansBlockDetachment(Material m){
-		switch(m){
-			case AIR:
-			case FIRE:
-			case WATER:
-			case STATIONARY_WATER:
-			case LAVA:
-			case STATIONARY_LAVA:
-				return true;
-			default:
-				return false;
-		}
+		return detachingBlocks.contains(m);
 	}
 	
 	
@@ -469,6 +463,14 @@ public class BlockUtils {
 		/**
 		 * Handle special double-length blocks
 		 */
+		/*MaterialData data = block.getState().getData();
+		
+		if(data instanceof Door) {
+			((Door)data).isTopHalf();
+			return block.getRelative(BlockFace.DOWN);
+		}
+		if(data instanceof )*/
+		
         switch (block.getType()) {
             case ACACIA_DOOR:
             case BIRCH_DOOR:
@@ -496,6 +498,8 @@ public class BlockUtils {
                 return findFirstSurroundingBlockOfType(block, block.getType());
             case TRAPPED_CHEST:
                 return findFirstSurroundingBlockOfType(block, block.getType());
+            default:
+                break;
         }
 
         return null;

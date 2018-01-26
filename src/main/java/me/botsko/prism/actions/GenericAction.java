@@ -10,6 +10,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -91,7 +92,7 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
-    protected int block_id;
+    protected Material block;
 
     /**
 	 * 
@@ -101,7 +102,7 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
-    protected int old_block_id;
+    protected Material old_block;
 
     /**
 	 * 
@@ -398,17 +399,23 @@ public class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#setBlockId(int)
      */
     @Override
+    @Deprecated
     public void setBlockId(int id) {
-        // Water/Lava placement always turns into stationary blocks, and a
+    	setBlock(Material.getMaterial(id));
+    }
+    
+    @Override
+    public void setBlock(Material material) {
+    	// Water/Lava placement always turns into stationary blocks, and a
         // rollback would
         // fail because we wouldn't detect the same block placed on rollback.
         // So,
         // we just force record the block as stationary.
         // https://snowy-evening.com/botsko/prism/297/
-        if( this.type.getName().equals( "block-place" ) && ( id == 8 || id == 10 ) ) {
-            id = ( id == 8 ? 9 : 11 );
+        if( this.type.getName().equals( "block-place" ) && ( material == Material.WATER || material == Material.LAVA ) ) {
+            material = ( material == Material.WATER ? Material.STATIONARY_WATER : Material.STATIONARY_LAVA );
         }
-        this.block_id = id;
+        this.block = material;
     }
 
     /*
@@ -425,8 +432,14 @@ public class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#getBlockId()
      */
     @Override
+    @Deprecated
     public int getBlockId() {
-        return block_id;
+        return getBlock().getId();
+    }
+    
+    @Override
+    public Material getBlock() {
+    	return block;
     }
 
     /*
@@ -443,8 +456,14 @@ public class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#setOldBlockId(int)
      */
     @Override
+    @Deprecated
     public void setOldBlockId(int id) {
-        this.old_block_id = id;
+    	setOldBlock(Material.getMaterial(id));
+    }
+    
+    @Override
+    public void setOldBlock(Material material) {
+    	this.old_block = material;
     }
 
     /*
@@ -461,8 +480,14 @@ public class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#getOldBlockId()
      */
     @Override
+    @Deprecated
     public int getOldBlockId() {
-        return old_block_id;
+        return getOldBlock().getId();
+    }
+    
+    @Override
+    public Material getOldBlock() {
+    	return old_block;
     }
 
     /*

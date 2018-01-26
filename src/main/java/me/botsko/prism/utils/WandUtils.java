@@ -19,7 +19,7 @@ public class WandUtils {
 
             final int item_id = wand.getItemId();
             final byte item_subid = wand.getItemSubId();
-            if( player.getItemInHand().getTypeId() == item_id && player.getItemInHand().getDurability() == item_subid ) {
+            if( player.getInventory().getItemInMainHand().getTypeId() == item_id && player.getInventory().getItemInMainHand().getDurability() == item_subid ) {
                 // Left click is for current location
                 wand.playerLeftClick( player, loc );
                 return true;

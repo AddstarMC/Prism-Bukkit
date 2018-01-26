@@ -830,8 +830,9 @@ public class Prism extends JavaPlugin {
                     final long diff = ( date.getTime() - result.getQueryTime() ) / 1000;
                     if( diff >= 60 ) {
                         // inform player
-                        final Player player = prism.getServer().getPlayer( result.getPlayer().getName() );
-                        if( player != null ) {
+                    	
+                        final Player player = result.getPlayer();
+                        if( player.isOnline() ) {
                             player.sendMessage( Prism.messenger.playerHeaderMsg( "Canceling forgotten preview." ) );
                         }
                         playerActivePreviews.remove( query.getKey() );

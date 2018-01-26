@@ -169,10 +169,10 @@ public class ItemUtils {
             SkullMeta skullA = (SkullMeta) metaA;
             SkullMeta skullB = (SkullMeta) metaB;
             
-            if( skullA.getOwner() != null ){
-                if( !skullA.getOwner().equals( skullB.getOwner() ) ) return false;
+            if( skullA.getOwningPlayer() != null ){
+                if( !skullA.getOwningPlayer().getUniqueId().equals( skullB.getOwningPlayer().getUniqueId() ) ) return false;
             } else {
-                if( skullB.getOwner() != null ) return false;
+                if( skullB.getOwningPlayer() != null ) return false;
             }
         }
         
@@ -325,7 +325,7 @@ public class ItemUtils {
 		else if(item.getType().equals(Material.SKULL_ITEM)){
 			SkullMeta skull = (SkullMeta) item.getItemMeta();
 			if(skull.hasOwner()){
-				item_name += skull.getOwner() + "'s ";
+				item_name += skull.getOwningPlayer().getName() + "'s ";
 			}
 		}
 		
@@ -340,7 +340,7 @@ public class ItemUtils {
 		}
 		
 		// Anvils
-		if( item.getTypeId() == 145 ){
+		if( item.getType() == Material.ANVIL ){
 			if( item.getDurability() == 1 ){
 				item_name = "slightly damaged anvil";
 			}
@@ -387,7 +387,7 @@ public class ItemUtils {
 		}
 		
 		// Fireworks
-		if( item.getTypeId() == 402 ){
+		if( item.getType() == Material.FIREWORK_CHARGE ){
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			if( fireworkMeta.hasEffect() ){
 				FireworkEffect effect = fireworkMeta.getEffect();
