@@ -33,9 +33,9 @@ public class EntityTravelAction extends GenericAction {
     public void setEntity(Entity entity) {
         if( entity != null ) {
             if( entity instanceof Player ) {
-                this.player_name = ( (Player) entity ).getName();
+            	setPlayer((Player)entity);
             } else {
-                this.player_name = entity.getType().name().toLowerCase();
+            	setNonPlayerName(entity.getType().name().toLowerCase());
             }
         }
     }

@@ -144,8 +144,6 @@ public class Preview implements Previewable {
 	 * 
 	 */
     @Override
-    // TODO: 1.13
-    @SuppressWarnings("deprecation")
     public void cancel_preview() {
         if( player == null )
             return;
@@ -159,11 +157,13 @@ public class Preview implements Previewable {
                 Location loc = u.getOriginalBlock().getLocation();
                 Material mat = u.getOriginalBlock().getType();
                 
+                // TODO: 1.13
+				@SuppressWarnings("deprecation")
 				byte data = u.getOriginalBlock().getData().getData();
                 
                 for ( final CommandSender sharedPlayer : previewPlayers ) {
                     if( sharedPlayer instanceof Player )
-                        ( (Player) sharedPlayer ).sendBlockChange( loc, mat, data );
+                    	EntityUtils.sendBlockChange((Player)sharedPlayer, loc, mat, data);
                 }
             }
         }

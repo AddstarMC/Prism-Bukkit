@@ -86,7 +86,7 @@ public interface Handler {
      * @param player_name
      *            the player_name to set
      */
-    public abstract void setPlayerName(String player_name);
+    public abstract void setNonPlayerName(String player_name);
 
     /**
      * @return the x

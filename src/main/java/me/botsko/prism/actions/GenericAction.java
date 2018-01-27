@@ -2,6 +2,7 @@ package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.Prism;
@@ -11,6 +12,7 @@ import me.botsko.prism.appliers.ChangeResult;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -73,6 +75,7 @@ public class GenericAction implements Handler {
 	 * 
 	 */
     protected String player_name;
+    protected UUID player_uuid;
 
     /**
 	 * 
@@ -287,10 +290,15 @@ public class GenericAction implements Handler {
      * 
      * @param player
      */
-    public void setPlayerName(Player player) {
+    public void setPlayer(OfflinePlayer player) {
         if( player != null ) {
             this.player_name = player.getName();
+            this.player_uuid = player.getUniqueId();
         }
+    }
+    
+    public void setUUID(UUID uuid) {
+    	this.player_uuid = uuid;
     }
 
     /*
@@ -301,14 +309,19 @@ public class GenericAction implements Handler {
     public String getPlayerName() {
         return player_name;
     }
+    
+    public UUID getUUID() {
+    	return player_uuid;
+    }
 
     /*
      * (non-Javadoc)
      * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
      */
     @Override
-    public void setPlayerName(String player_name) {
+    public void setNonPlayerName(String player_name) {
         this.player_name = player_name;
+        this.player_uuid = null;
     }
 
     /*

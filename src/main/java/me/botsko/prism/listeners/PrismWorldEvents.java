@@ -29,11 +29,11 @@ public class PrismWorldEvents implements Listener {
             return;
         for ( final BlockState block : event.getBlocks() ) {
             if( BlockUtils.isGrowableStructure( block.getType() ) ) {
-                String player = "Environment";
                 if( event.getPlayer() != null ) {
-                    player = event.getPlayer().getName();
+                	RecordingQueue.addToQueue( ActionFactory.createGrow(type, block, event.getPlayer()) );
                 }
-                RecordingQueue.addToQueue( ActionFactory.createGrow(type, block, player) );
+                else
+                	RecordingQueue.addToQueue( ActionFactory.createGrow(type, block, "Environment") );
             }
         }
     }

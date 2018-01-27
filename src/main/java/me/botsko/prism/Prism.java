@@ -110,14 +110,14 @@ public class Prism extends JavaPlugin {
      * they do fall we can attribute them to the player who broke the original
      * block.
      */
-    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
 
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so
      * we need to track players right-clicking rails with minecart vehicles, or
      * water for boats
      */
-    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<String, String>();
+    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
 
     /**
      * Enables the plugin and activates our player listeners

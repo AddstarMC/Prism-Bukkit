@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -46,6 +47,6 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 				oldBlock.getType(), 
 				data, 
 				newMaterial, 
-				(byte) newBlock.getData(), player.getName()));
+				(byte) newBlock.getData(), Bukkit.getPlayer( player.getUniqueId() )));
 	}
 }

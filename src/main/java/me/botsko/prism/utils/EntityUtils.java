@@ -24,6 +24,12 @@ public class EntityUtils {
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
 		return player.getUniqueId();
 	}
+
+    // TODO: 1.13
+	@SuppressWarnings("deprecation")
+	public static void sendBlockChange(Player p, Location loc, Material mat, int data) {
+		p.sendBlockChange(loc, mat, (byte)data);
+	}
 	
 	/**
 	 * Removes item drops near an entity

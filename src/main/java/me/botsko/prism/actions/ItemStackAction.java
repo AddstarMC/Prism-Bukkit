@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -121,7 +122,7 @@ public class ItemStackAction extends GenericAction {
         else if( meta != null && item.getType().equals( Material.SKULL_ITEM ) ) {
             final SkullMeta skull = (SkullMeta) meta;
             if( skull.hasOwner() ) {
-                actionData.owner = skull.getOwningPlayer().getName();
+                actionData.owner = skull.getOwningPlayer().getUniqueId().toString();
             }
         }
 
@@ -143,7 +144,7 @@ public class ItemStackAction extends GenericAction {
             final String[] enchs = new String[this.enchantments.size()];
             int i = 0;
             for ( final Entry<Enchantment, Integer> ench : this.enchantments.entrySet() ) {
-                enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
+                enchs[i] = ench.getKey().getName() + ":" + ench.getValue();
                 i++;
             }
             actionData.enchs = enchs;
@@ -157,7 +158,7 @@ public class ItemStackAction extends GenericAction {
                     final String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
                     int i = 0;
                     for ( final Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet() ) {
-                        enchs[i] = ench.getKey().getId() + ":" + ench.getValue();
+                        enchs[i] = ench.getKey().getName() + ":" + ench.getValue();
                         i++;
                     }
                     actionData.enchs = enchs;
@@ -243,9 +244,15 @@ public class ItemStackAction extends GenericAction {
         if( actionData.enchs != null && actionData.enchs.length > 0 ) {
             for ( final String ench : actionData.enchs ) {
                 final String[] enchArgs = ench.split( ":" );
-                final Enchantment enchantment = Enchantment.getById( Integer.parseInt( enchArgs[0] ) );
+                Enchantment enchantment = Enchantment.getByName( enchArgs[0] );
+                
+                if(enchantment == null) {
+                	@SuppressWarnings("deprecation")
+					Enchantment e2 = Enchantment.getById( Integer.valueOf( enchArgs[0] ) );
+                	enchantment = e2;
+                }
                 // Restore book enchantment
-                if( item.getType().equals( Material.ENCHANTED_BOOK ) ) {
+                if( item.getType() == Material.ENCHANTED_BOOK ) {
                     final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
                     bookEnchantments.addStoredEnchant( enchantment, Integer.parseInt( enchArgs[1] ), false );
                     item.setItemMeta( bookEnchantments );
@@ -266,7 +273,7 @@ public class ItemStackAction extends GenericAction {
         // Skulls
         else if( item.getType().equals( Material.SKULL_ITEM ) && actionData.owner != null ) {
             final SkullMeta meta = (SkullMeta) item.getItemMeta();
-            meta.setOwningPlayer( Bukkit.getOfflinePlayer( actionData.owner ) );
+            meta.setOwningPlayer( Bukkit.getOfflinePlayer( EntityUtils.uuidOf( actionData.owner ) ) );
             item.setItemMeta( meta );
         }
         // Written books
@@ -379,8 +386,7 @@ public class ItemStackAction extends GenericAction {
             if( getType().getName().equals( "item-drop" ) || getType().getName().equals( "item-pickup" ) ) {
 
                 // Is player online?
-                final String playerName = getPlayerName();
-                final Player onlinePlayer = Bukkit.getServer().getPlayer( playerName );
+                final Player onlinePlayer = Bukkit.getServer().getPlayer( getUUID() );
                 if( onlinePlayer != null ) {
                     inventory = onlinePlayer.getInventory();
                 } else {

@@ -619,7 +619,7 @@ public class BlockUtils {
 		if( subid == 8 || subid == 9 ){ // 8 for single doors or left side of double, 9 for right side of double
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
 			aboveOrBelow.setType( typeid );
-			aboveOrBelow.setData( (byte)0 ); // we have no way to know which direction the lower half was facing
+			BlockUtils.setData(aboveOrBelow, 0); // we have no way to know which direction the lower half was facing
 		}
 		// Wood door lower or iron door lower
 		else {
@@ -649,9 +649,9 @@ public class BlockUtils {
 			}
 			if(aboveOrBelow != null){
 				if( left != null && isDoor(left.getType()) ){
-					aboveOrBelow.setData( (byte)9 );
+					BlockUtils.setData(aboveOrBelow, 9 );
 				} else {
-					aboveOrBelow.setData( (byte)8 );
+					BlockUtils.setData(aboveOrBelow, 8 );
 				}
 			}
 		}
@@ -713,7 +713,7 @@ public class BlockUtils {
 		}
 		if(top != null){
 			top.setType(typeid);
-			top.setData((byte)new_subid);
+			BlockUtils.setData(top, new_subid);
 		} else {
 			System.out.println("Error setting bed: block top location was illegal. Data value: " + subid + " New data value: " + new_subid);
 		}
@@ -734,7 +734,7 @@ public class BlockUtils {
 		// choose an acceptable subid
 		if( typeid == Material.DOUBLE_PLANT && subid < 8 ) subid = 8;
 		above.setType(typeid);
-		above.setData((byte)subid);
+		BlockUtils.setData(above, subid);
 	}
 	
 	
@@ -924,5 +924,12 @@ public class BlockUtils {
     	mat2 = baseMaterials.get(mat2);
     	
     	return mat1 != null && mat1 == mat2;
+    }
+    
+    
+    // TODO: 1.13
+    @SuppressWarnings("deprecation")
+	public static void setData(Block block, int data) {
+    	block.setData((byte)data);
     }
 }

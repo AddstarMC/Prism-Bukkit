@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.bukkit.Material;
@@ -164,7 +165,7 @@ public class ActionsQuery {
                         baseHandler.setType( actionType );
                         baseHandler.setId( rs.getInt( 1 ) );
                         baseHandler.setUnixEpoch( rs.getString( 2 ) );
-                        baseHandler.setPlayerName( rs.getString( 4 ) );
+                        baseHandler.setNonPlayerName( rs.getString( 4 ) );
                         baseHandler.setWorldName( worldName );
                         baseHandler.setX( rs.getInt( 6 ) );
                         baseHandler.setY( rs.getInt( 7 ) );
@@ -305,7 +306,7 @@ public class ActionsQuery {
         ResultSet rs = null;
         try {
 
-            String sql = "SELECT id, action, epoch, world, player, x, y, z, data FROM " + prefix + "data d";
+            String sql = "SELECT id, action, epoch, world, player, player_uuid, x, y, z, data FROM " + prefix + "data d";
             // Joins
             sql += " INNER JOIN " + prefix + "players p ON p.player_id = d.player_id ";
             sql += " INNER JOIN " + prefix + "actions a ON a.action_id = d.action_id ";
@@ -328,7 +329,8 @@ public class ActionsQuery {
                     process.setType( Prism.getActionRegistry().getAction( rs.getString( "action" ) ) );
                     process.setUnixEpoch( rs.getString( "epoch" ) );
                     process.setWorldName( rs.getString( "world" ) );
-                    process.setPlayerName( rs.getString( "player" ) );
+                    process.setNonPlayerName( rs.getString( "player" ) );
+                    process.setUUID(UUID.fromString( rs.getString("player_uuid")));
                     process.setX( rs.getInt( "x" ) );
                     process.setY( rs.getInt( "y" ) );
                     process.setZ( rs.getInt( "z" ) );

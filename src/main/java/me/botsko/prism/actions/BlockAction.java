@@ -9,6 +9,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.EntityUtils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -75,7 +76,7 @@ public class BlockAction extends GenericAction {
                 final SkullActionData skullActionData = new SkullActionData();
                 final Skull s = (Skull) state;
                 skullActionData.rotation = s.getRotation().name().toLowerCase();
-                skullActionData.owner = s.getOwningPlayer().getName();
+                skullActionData.owner = s.getOwningPlayer().getUniqueId().toString();
                 skullActionData.skull_type = s.getSkullType().name().toLowerCase();
                 actionData = skullActionData;
             }
@@ -361,7 +362,7 @@ public class BlockAction extends GenericAction {
 
             // Set the material
             block.setType( getBlock() );
-            block.setData( (byte) getBlockSubId() );
+            BlockUtils.setData(block, getBlockSubId());
 
             /**
              * Skulls
@@ -375,7 +376,7 @@ public class BlockAction extends GenericAction {
                 skull.setRotation( s.getRotation() );
                 skull.setSkullType( s.getSkullType() );
                 if( !s.owner.isEmpty() ) {
-                    skull.setOwningPlayer( Bukkit.getOfflinePlayer(s.owner) );
+                    skull.setOwningPlayer( Bukkit.getOfflinePlayer( EntityUtils.uuidOf( (s.owner) ) ) );
                 }
                 skull.update();
 
@@ -477,13 +478,12 @@ public class BlockAction extends GenericAction {
             stateChange = new BlockStateChange( originalBlock, originalBlock );
 
             // Preview it
-            player.sendBlockChange( block.getLocation(), getBlockId(), (byte) getBlockSubId() );
+            EntityUtils.sendBlockChange(player, block.getLocation(), getBlock(), getBlockSubId());
 
             // Send preview to shared players
             for ( final CommandSender sharedPlayer : parameters.getSharedPlayers() ) {
                 if( sharedPlayer instanceof Player ) {
-                    ( (Player) sharedPlayer ).sendBlockChange( block.getLocation(), getBlockId(),
-                            (byte) getBlockSubId() );
+                    EntityUtils.sendBlockChange((Player)sharedPlayer, block.getLocation(), getBlock(), getBlockSubId());
                 }
             }
         }
@@ -530,13 +530,12 @@ public class BlockAction extends GenericAction {
                 stateChange = new BlockStateChange( originalBlock, originalBlock );
 
                 // Preview it
-                player.sendBlockChange( block.getLocation(), Material.AIR, (byte) 0 );
+                EntityUtils.sendBlockChange(player, block.getLocation(), Material.AIR, 0);
 
                 // Send preview to shared players
                 for ( final CommandSender sharedPlayer : parameters.getSharedPlayers() ) {
                     if( sharedPlayer instanceof Player ) {
-                        ( (Player) sharedPlayer ).sendBlockChange( block.getLocation(), getBlock(),
-                                (byte) getBlockSubId() );
+                        EntityUtils.sendBlockChange((Player)sharedPlayer, block.getLocation(), Material.AIR, 0);
                     }
                 }
             }

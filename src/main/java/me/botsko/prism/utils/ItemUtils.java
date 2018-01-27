@@ -172,11 +172,10 @@ public class ItemUtils {
             SkullMeta skullA = (SkullMeta) metaA;
             SkullMeta skullB = (SkullMeta) metaB;
             
-            if( skullA.getOwningPlayer() != null ){
-                if( !skullA.getOwningPlayer().getUniqueId().equals( skullB.getOwningPlayer().getUniqueId() ) ) return false;
-            } else {
-                if( skullB.getOwningPlayer() != null ) return false;
-            }
+            if( skullA.hasOwner() != skullB.hasOwner() )
+            	return false;
+            
+            return skullA.hasOwner() && skullA.getOwningPlayer().getUniqueId().equals(skullB.getOwningPlayer().getUniqueId());
         }
         
         // Potions

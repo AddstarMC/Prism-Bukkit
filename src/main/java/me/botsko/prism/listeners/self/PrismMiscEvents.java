@@ -40,7 +40,7 @@ public class PrismMiscEvents implements Listener {
 
                 // Build the action
                 RecordingQueue.addToQueue( ActionFactory.createPrismRollback("prism-drain", orig, newBlock, event.onBehalfOf()
-                        .getName(), id) );
+                        , id) );
 
             }
             // ActionQueue.save();
@@ -70,7 +70,7 @@ public class PrismMiscEvents implements Listener {
 
                 // Build the action
                 RecordingQueue.addToQueue( ActionFactory.createPrismRollback("prism-extinguish", orig, newBlock, event.onBehalfOf()
-                        .getName(), id) );
+                        , id) );
 
             }
             // ActionQueue.save();

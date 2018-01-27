@@ -68,6 +68,7 @@ public class RecordingTask implements Runnable {
             }
 
             int player_id = 0;
+            // TODO: caching by name
             PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
             if( prismPlayer != null ){
                 player_id = prismPlayer.getId();

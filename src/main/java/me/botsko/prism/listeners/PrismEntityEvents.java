@@ -7,6 +7,8 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,6 +34,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Collection;
+import java.util.UUID;
 
 public class PrismEntityEvents implements Listener {
 
@@ -73,7 +76,7 @@ public class PrismEntityEvents implements Listener {
             if( !frame.getItem().getType().equals( Material.AIR ) ) {
                 if( Prism.getIgnore().event( "item-remove", player ) ) {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), 1, 0, null,
-                            entity.getLocation(), player.getName()) );
+                            entity.getLocation(), player) );
                 }
             }
         }
@@ -114,7 +117,7 @@ public class PrismEntityEvents implements Listener {
                     final Player player = (Player) entityDamageByEntityEvent.getDamager();
                     if( !Prism.getIgnore().event( "player-kill", player ) )
                         return;
-                    RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
+                    RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player) );
 
                 }
                 // Mob shot by an arrow from a player
@@ -125,7 +128,7 @@ public class PrismEntityEvents implements Listener {
                         final Player player = (Player) arrow.getShooter();
                         if( !Prism.getIgnore().event( "player-kill", player ) )
                             return;
-                        RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player.getName()) );
+                        RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player) );
 
                     }
                 } else {
@@ -178,7 +181,7 @@ public class PrismEntityEvents implements Listener {
                 if( !event.getDrops().isEmpty() ) {
                     for ( final ItemStack i : event.getDrops() ) {
                         RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1, null,
-                                p.getLocation(), p.getName()) );
+                                p.getLocation(), p) );
                     }
                 }
             }
@@ -211,7 +214,7 @@ public class PrismEntityEvents implements Listener {
             if( event.getEntity().getType().equals( EntityType.CREEPER ) ) {
                 final Player player = (Player) event.getTarget();
                 RecordingQueue
-                        .addToQueue( ActionFactory.createEntity("entity-follow", event.getEntity(), player.getName()) );
+                        .addToQueue( ActionFactory.createEntity("entity-follow", event.getEntity(), player) );
             }
         }
     }
@@ -225,7 +228,7 @@ public class PrismEntityEvents implements Listener {
         if( !Prism.getIgnore().event( "entity-shear", event.getPlayer() ) )
             return;
         RecordingQueue
-                .addToQueue( ActionFactory.createEntity("entity-shear", event.getEntity(), event.getPlayer().getName()) );
+                .addToQueue( ActionFactory.createEntity("entity-shear", event.getEntity(), event.getPlayer()) );
     }
 
     /**
@@ -259,7 +262,7 @@ public class PrismEntityEvents implements Listener {
             if( frame.getItem().getType().equals( Material.AIR ) && hand != null ) {
                 if( Prism.getIgnore().event( "item-insert", p ) ) {
                     RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
-                            e.getLocation(), p.getName()) );
+                            e.getLocation(), p) );
                 }
             }
         }
@@ -270,7 +273,7 @@ public class PrismEntityEvents implements Listener {
             if( !Prism.getIgnore().event( "item-insert", p ) )
                 return;
             RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
-                    e.getLocation(), p.getName()) );
+                    e.getLocation(), p) );
         }
 
         if( !Prism.getIgnore().event( "entity-dye", p ) )
@@ -280,7 +283,7 @@ public class PrismEntityEvents implements Listener {
             final String newColor = Prism.getItems().getAlias( hand.getType(),
                     (byte) hand.getDurability() );
             RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
-                    .getName(), newColor) );
+                    , newColor) );
         }
     }
 
@@ -305,7 +308,7 @@ public class PrismEntityEvents implements Listener {
         if( !Prism.getIgnore().event( "entity-leash", event.getPlayer() ) )
             return;
         RecordingQueue
-                .addToQueue( ActionFactory.createEntity("entity-leash", event.getEntity(), event.getPlayer().getName()) );
+                .addToQueue( ActionFactory.createEntity("entity-leash", event.getEntity(), event.getPlayer()) );
     }
 
     /**
@@ -316,8 +319,7 @@ public class PrismEntityEvents implements Listener {
     public void onPlayerEntityUnleash(final PlayerUnleashEntityEvent event) {
         if( !Prism.getIgnore().event( "entity-unleash", event.getPlayer() ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-unleash", event.getEntity(), event.getPlayer()
-                .getName()) );
+        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-unleash", event.getEntity(), event.getPlayer() ) );
     }
 
     /**
@@ -375,8 +377,7 @@ public class PrismEntityEvents implements Listener {
         }
         if( !Prism.getIgnore().event( "hangingitem-place", event.getPlayer() ) )
             return;
-        RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-place", event.getEntity(), event.getPlayer()
-                .getName()) );
+        RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-place", event.getEntity(), event.getPlayer() ) );
     }
 
     /**
@@ -400,24 +401,34 @@ public class PrismEntityEvents implements Listener {
         // Check for planned hanging item breaks
         final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
                 + e.getLocation().getBlockZ();
-        if( plugin.preplannedBlockFalls.containsKey( coord_key ) ) {
+        
+        String value = plugin.preplannedBlockFalls.remove( coord_key );
+        UUID uuid = null;
+        try{ uuid = UUID.fromString(value); } catch(Exception e2){}
+        final Player player = uuid != null ? Bukkit.getPlayer( uuid ) : null;
 
-            final String player = plugin.preplannedBlockFalls.get( coord_key );
+        // Track the hanging item break
+        if(player != null)
+        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", e, player) );
+        else {
+        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", e, value) );
+        }
+        	
+        plugin.preplannedBlockFalls.remove( coord_key );
 
-            // Track the hanging item break
-            RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", e, player) );
-            plugin.preplannedBlockFalls.remove( coord_key );
+        if( !Prism.getIgnore().event( "item-remove", event.getEntity().getWorld() ) )
+            return;
 
-            if( !Prism.getIgnore().event( "item-remove", event.getEntity().getWorld() ) )
-                return;
-
-            // If an item frame, track it's contents
-            if( e instanceof ItemFrame ) {
-                final ItemFrame frame = (ItemFrame) e;
-                if( frame.getItem() != null ) {
-                    RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
-                            .getAmount(), -1, null, e.getLocation(), player) );
-                }
+        // If an item frame, track it's contents
+        if( e instanceof ItemFrame ) {
+            final ItemFrame frame = (ItemFrame) e;
+            if( frame.getItem() != null ) {
+            	if(player != null)
+	                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
+	                        .getAmount(), -1, null, e.getLocation(), player) );
+            	else
+            		RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
+	                        .getAmount(), -1, null, e.getLocation(), value) );
             }
         }
     }
@@ -446,9 +457,9 @@ public class PrismEntityEvents implements Listener {
 
         String breaking_name = remover.getType().name().toLowerCase();
         if( player != null )
-            breaking_name = player.getName();
-
-        RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), breaking_name) );
+        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), player) );
+        else
+        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), breaking_name) );
 
         if( !Prism.getIgnore().event( "item-remove", event.getEntity().getWorld() ) )
             return;
@@ -612,10 +623,16 @@ public class PrismEntityEvents implements Listener {
             // log items removed from container
             // note: done before the container so a "rewind" for rollback will
             // work properly
-            be.logItemRemoveFromDestroyedContainer( name, block );
-            RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, name) );
+            final Block b2 = block;
+            final String source = name;
+            be.forEachItem(block, (i,s) -> {
+            	RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+                        b2.getLocation(), source) );
+            });
+            //be.logItemRemoveFromDestroyedContainer( name, block );
+            RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, source) );
             // look for relationships
-            be.logBlockRelationshipsForBlock( name, block );
+            be.logBlockRelationshipsForBlock( source, block );
 
         }
     }
