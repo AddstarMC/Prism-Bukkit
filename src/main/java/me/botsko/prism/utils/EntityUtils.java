@@ -14,15 +14,37 @@ import java.util.UUID;
 
 public class EntityUtils {
 	
-	public static UUID uuidOf( String uuidOrName ) {
-		try {
-			return UUID.fromString(uuidOrName);
+	public static OfflinePlayer offlineOf( String uuidOrName ) {
+		if(uuidOrName != null) {
+			OfflinePlayer result;
+			try {
+				result = Bukkit.getOfflinePlayer(UUID.fromString(uuidOrName));
+			}
+			catch(IllegalArgumentException e){
+				@SuppressWarnings("deprecation")
+				OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
+				result = player;
+			}
+			
+			return result.hasPlayedBefore() ? result : null;
 		}
-		catch(IllegalArgumentException e){}
 		
-		@SuppressWarnings("deprecation")
-		OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
-		return player.getUniqueId();
+		return null;
+	}
+	
+	public static UUID uuidOf( String uuidOrName ) {
+		if(uuidOrName != null) {
+			try {
+				return UUID.fromString(uuidOrName);
+			}
+			catch(IllegalArgumentException e){}
+			
+			@SuppressWarnings("deprecation")
+			OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
+			return player.getUniqueId();
+		}
+		
+		return null;
 	}
 
     // TODO: 1.13

@@ -77,13 +77,13 @@ public class SetmyCommand implements SubHandler {
 
         String setSubType = null;
         if( call.getArgs().length >= 3 ) {
-            setSubType = call.getArg( 2 );
+            setSubType = call.getArg( 2 ).toLowerCase();
         }
 
         /**
          * Set your custom wand mode to "hand", "item", or "block"
          */
-        if( setSubType != null && setSubType.equalsIgnoreCase( "mode" ) ) {
+        if( setSubType != null && setSubType.equals( "mode" ) ) {
 
             String setWandMode = null;
             if( call.getArgs().length >= 4 ) {
@@ -106,47 +106,47 @@ public class SetmyCommand implements SubHandler {
         /**
          * Set your custom wand item for either "item" or "block" modes
          */
-        if( !setSubType.equalsIgnoreCase( "item" ) ) { return; }
-        
-        if( call.getArgs().length >= 4 ) {
-        	String wandString = call.getArg( 3 );
-        	String[] parts = wandString.split(":");
-        	Material setWand = Material.matchMaterial( parts[0] );
-        	byte setWandData = 0;
-        	if(parts.length > 1)
-        		setWandData = Byte.valueOf(parts[1]);
-
-            // If non-material, check for name
-            if( setWand == null ) {
-                final ArrayList<MaterialData> itemMaterials = Prism.getItems().getMaterialsByAlias( wandString );
-                if( itemMaterials.size() > 0 ) {
-                    final MaterialData data = itemMaterials.get( 0 );
-                    setWand = data.getItemType();
-                    
-                    // TODO: 1.13
-                    @SuppressWarnings("deprecation")
-					byte d = data.getData();
-                    
-                    setWandData = d;
-                    wandString = setWand + ":" + setWandData;
-                } else {
-                    call.getPlayer().sendMessage( Prism.messenger.playerError( "There's no item matching that name." ) );
-                    return;
-                }
-            }
-
-            if( !ItemUtils.isAcceptableWand( setWand, setWandData ) ) {
-                call.getPlayer().sendMessage(
-                        Prism.messenger
-                                .playerError( "Sorry, but you may not use " + wandString + " for a wand." ) );
-                return;
-            }
-
-            Settings.saveSetting( "wand.item", wandString, call.getPlayer() );
-            call.getPlayer().sendMessage(
-                    Prism.messenger.playerHeaderMsg( "Changed your personal wand item to " + ChatColor.GREEN
-                            + wandString + ChatColor.WHITE + "." ) );
-            return;
+        if( setSubType != null && setSubType.equals( "item" ) ) {
+	        if( call.getArgs().length >= 4 ) {
+	        	String wandString = call.getArg( 3 );
+	        	String[] parts = wandString.split(":");
+	        	Material setWand = Material.matchMaterial( parts[0] );
+	        	byte setWandData = 0;
+	        	if(parts.length > 1)
+	        		setWandData = Byte.valueOf(parts[1]);
+	
+	            // If non-material, check for name
+	            if( setWand == null ) {
+	                final ArrayList<MaterialData> itemMaterials = Prism.getItems().getMaterialsByAlias( wandString );
+	                if( itemMaterials.size() > 0 ) {
+	                    final MaterialData data = itemMaterials.get( 0 );
+	                    setWand = data.getItemType();
+	                    
+	                    // TODO: 1.13
+	                    @SuppressWarnings("deprecation")
+						byte d = data.getData();
+	                    
+	                    setWandData = d;
+	                    wandString = setWand + ":" + setWandData;
+	                } else {
+	                    call.getPlayer().sendMessage( Prism.messenger.playerError( "There's no item matching that name." ) );
+	                    return;
+	                }
+	            }
+	
+	            if( !ItemUtils.isAcceptableWand( setWand, setWandData ) ) {
+	                call.getPlayer().sendMessage(
+	                        Prism.messenger
+	                                .playerError( "Sorry, but you may not use " + wandString + " for a wand." ) );
+	                return;
+	            }
+	
+	            Settings.saveSetting( "wand.item", wandString, call.getPlayer() );
+	            call.getPlayer().sendMessage(
+	                    Prism.messenger.playerHeaderMsg( "Changed your personal wand item to " + ChatColor.GREEN
+	                            + wandString + ChatColor.WHITE + "." ) );
+	            return;
+	        }
         }
         call.getPlayer().sendMessage( Prism.messenger.playerError( "Invalid arguments. Use /prism ? for help." ) );
     }
