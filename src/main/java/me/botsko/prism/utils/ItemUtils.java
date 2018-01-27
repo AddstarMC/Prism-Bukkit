@@ -19,8 +19,8 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.utils.EnchantmentUtils;
-import me.botsko.prism.utils.MaterialAliases;
 
 public class ItemUtils {
 
@@ -43,6 +43,35 @@ public class ItemUtils {
 	
     public static boolean isAcceptableWand(Material material, byte sub_id) {
     	return !badWands.contains(material);
+    }
+    
+    public static String smallString(ItemStack stack) {
+    	if(stack != null) {
+    		String result = stack.getType().name().toLowerCase();
+    		
+    		@SuppressWarnings("deprecation")
+			byte data = stack.getData().getData();
+			if(data > 0)
+				result += ":" + data;
+			return result;
+    	}
+    	return null;
+    }
+    
+    public static ItemStack itemOf(String smallString) {
+    	if(smallString != null) {
+    		String[] parts = smallString.split(":", 2);
+    		Material mat = Material.matchMaterial(parts[0].toUpperCase());
+    		
+    		if(mat != null) {
+    			if(parts.length > 1)
+    				try{ return new ItemStack(mat, 1, Short.valueOf(parts[1])); }
+    				catch(NumberFormatException e){}
+    			
+    			return new ItemStack(mat, 1);
+    		}
+    	}
+    	return null;
     }
     
     /**
@@ -333,9 +362,9 @@ public class ItemUtils {
 		
 		// Set the base item name
 		if(dataValueUsedForSubitems(item.getType())){
-			item_name += MaterialAliases.getInstance().getAlias(item.getType(), item.getDurability());
+			item_name += Prism.getItems().getAlias(item.getType(), item.getDurability());
 		} else {
-			item_name += MaterialAliases.getInstance().getAlias(item.getType(), 0);
+			item_name += Prism.getItems().getAlias(item.getType(), 0);
 		}
 		if(item_name.isEmpty()){
 			item_name += item.getType().toString().toLowerCase().replace("_", " ");

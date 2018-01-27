@@ -63,6 +63,23 @@ public class MiscUtils {
             return desiredRadius;
         }
     }
+    
+    @SuppressWarnings("unchecked")
+	public static <T extends Enum<T>> T getEnum(String from, T fallback) {
+    	if(from != null)
+    		try{ return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase()); }
+    		catch(IllegalArgumentException e){}
+    	return fallback;
+    }
+    
+    public static String niceName(String in) {
+    	String parts[] = in.replace('_', ' ').trim().split("", 2);
+    	return parts[0].toUpperCase() + parts[1].toLowerCase();
+    }
+    
+    public static String niceLower(String in) {
+    	return in.replace('_', ' ').trim().toLowerCase();
+    }
 
     /**
      * 

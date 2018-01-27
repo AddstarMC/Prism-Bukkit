@@ -14,17 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 public class MaterialAliases {
-    
-    protected static MaterialAliases instance;
-    
-    public static MaterialAliases getInstance(){
-        if( instance == null ){
-            instance = new MaterialAliases();
-        }
-        return instance;
-    }
-    
-	
 	/**
 	 * Contains loaded item ids => aliases
 	 */
