@@ -235,9 +235,9 @@ public class RecordingTask implements Runnable {
                     
                     // TODO: Lookup name and get id
                     @SuppressWarnings("deprecation")
-        			int newId = a.getBlock().getId();
+        			int newId = a.getBlock() != null ? a.getBlock().getId() : 0;
                     @SuppressWarnings("deprecation")
-        			int oldId = a.getOldBlock().getId();
+        			int oldId = a.getOldBlock() != null ? a.getOldBlock().getId() : 0;
                     
                     s.setInt( 5, newId );
                     s.setInt( 6, a.getBlockSubId() );

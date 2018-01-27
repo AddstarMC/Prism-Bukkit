@@ -8,14 +8,13 @@ import me.botsko.prism.utils.EntityUtils;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.*;
 import org.bukkit.entity.Villager.Profession;
-import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.ItemStack;
 
 public class EntityAction extends GenericAction {
@@ -75,6 +74,18 @@ public class EntityAction extends GenericAction {
             } else {
                 this.actionData.isAdult = true;
             }
+            
+            // Owner
+            if( entity instanceof Tameable ){
+            	final Tameable mob = (Tameable) entity;
+            	if(mob.isTamed())
+            		this.actionData.taming_owner = mob.getOwner().getUniqueId().toString();
+            }
+            
+            // Sitting
+            if( entity instanceof Sittable ){
+            	this.actionData.sitting = ((Sittable) entity).isSitting();
+            }
 
             // Get current sheep color
             if( entity instanceof Sheep ) {
@@ -99,79 +110,47 @@ public class EntityAction extends GenericAction {
             if( entity instanceof Wolf ) {
                 final Wolf wolf = (Wolf) entity;
 
-                // Owner
-                if( wolf.isTamed() ) {
-                    this.actionData.taming_owner = wolf.getOwner().getUniqueId().toString();
-                }
-
                 // Collar color
                 this.actionData.color = wolf.getCollarColor().name().toLowerCase();
-
-                // Sitting
-                if( wolf.isSitting() ) {
-                    this.actionData.sitting = true;
-                }
-
             }
 
             // Ocelot details
             if( entity instanceof Ocelot ) {
                 final Ocelot ocelot = (Ocelot) entity;
 
-                // Owner
-                if( ocelot.isTamed() ) {
-                    this.actionData.taming_owner = ocelot.getOwner().getUniqueId().toString();
-                }
-
                 // Cat type
                 this.actionData.var = ocelot.getCatType().toString().toLowerCase();
-
-                // Sitting
-                if ( ocelot.isSitting() ) {
-                    this.actionData.sitting = true;
-                }
             }
 
             // Horse details
-            if( entity instanceof Horse ) {
-                final Horse h = (Horse) entity;
+            if( entity instanceof AbstractHorse ) {
+                final AbstractHorse h = (AbstractHorse) entity;
                 
                 // TODO: Cleanup
-                if(entity.getType() == EntityType.HORSE)
-                	this.actionData.var = "HORSE";
-                else if(entity.getType() == EntityType.DONKEY)
-                	this.actionData.var = "DONKEY";
-                else if(entity.getType() == EntityType.MULE)
-                	this.actionData.var = "MULE";
-                else if(entity.getType() == EntityType.ZOMBIE_HORSE)
-                	this.actionData.var = "UNDEAD_HORSE";
-                else if(entity.getType() == EntityType.SKELETON_HORSE)
-                	this.actionData.var = "SKELETON_HORSE";
-                else if(entity.getType() == EntityType.LLAMA)
-                	this.actionData.var = "LLAMA";
+                if(entity.getType() == EntityType.HORSE) {
+                	Horse horse = (Horse)h;
+                	this.actionData.hColor = horse.getColor().toString();
+                    this.actionData.style  = horse.getStyle().toString();
+                    setSaddle(horse.getInventory().getSaddle());
+                    setArmor(horse.getInventory().getArmor());
+                }
+                else if(entity.getType() == EntityType.LLAMA) {
+                	Llama llama = (Llama)h;
+                	this.actionData.hColor = llama.getColor().toString();
+                	setSaddle(llama.getInventory().getDecor());
+                }
+                else if(entity.getType() == EntityType.MULE || entity.getType() == EntityType.DONKEY) {
+                	// Actually a saddle
+                	setSaddle(h.getInventory().getItem(0));
+                }
                 
-                //this.actionData.var = h.getVariant().toString();
-                this.actionData.hColor = h.getColor().toString();
-                this.actionData.style = h.getStyle().toString();
-                this.actionData.chest = (entity instanceof ChestedHorse && ((ChestedHorse)entity).isCarryingChest());
+                if(entity instanceof ChestedHorse)
+                	this.actionData.chest = ((ChestedHorse)entity).isCarryingChest();
+                
                 this.actionData.dom = h.getDomestication();
                 this.actionData.maxDom = h.getMaxDomestication();
                 this.actionData.jump = h.getJumpStrength();
                 this.actionData.maxHealth = h.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
-
-                final HorseInventory hi = h.getInventory();
-
-                if( hi.getSaddle() != null ) {
-                    this.actionData.saddle = hi.getSaddle().getType().name();
-                }
-                if( hi.getArmor() != null ) {
-                    this.actionData.armor = hi.getArmor().getType().name();
-                }
-
-                // Owner
-                if( h.isTamed() ) {
-                    this.actionData.taming_owner = h.getOwner().getUniqueId().toString();
-                }
             }
         }
     }
@@ -231,8 +210,11 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public DyeColor getColor() {
-        if( actionData.color != null ) { return DyeColor.valueOf( actionData.color.toUpperCase() ); }
-        return null;
+        if( this.actionData.color != null )
+        	try{ return DyeColor.valueOf( this.actionData.color.toUpperCase() ); }
+        	catch(IllegalArgumentException e){}
+        // Collars are red by default, sheep are white
+    	return getEntityType() == EntityType.WOLF ? DyeColor.RED : DyeColor.WHITE;
     }
 
     /**
@@ -240,8 +222,10 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public Profession getProfession() {
-        if( actionData.profession != null ) { return Profession.valueOf( actionData.profession.toUpperCase() ); }
-        return null;
+    	if( this.actionData.profession != null )
+        	try{ return Profession.valueOf( this.actionData.profession.toUpperCase() ); }
+        	catch(IllegalArgumentException e){}
+    	return Profession.FARMER;
     }
 
     /**
@@ -265,7 +249,11 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public Ocelot.Type getCatType() {
-        return Ocelot.Type.valueOf( actionData.var.toUpperCase() );
+    	if( this.actionData.var != null )
+        	try{ return Ocelot.Type.valueOf( this.actionData.var.toUpperCase() ); }
+        	catch(IllegalArgumentException e){}
+    	// Tamed vs untamed ocelot
+    	return actionData.taming_owner != null ? Ocelot.Type.BLACK_CAT : Ocelot.Type.WILD_OCELOT;
     }
 
     /**
@@ -285,7 +273,12 @@ public class EntityAction extends GenericAction {
             name += this.actionData.profession + " ";
         }
         if( actionData.taming_owner != null ) {
-            name += actionData.taming_owner + "'s ";
+        	UUID uuid = null;
+        	try{ uuid = UUID.fromString(actionData.taming_owner); } catch(Exception e){}
+        	if(uuid != null)
+        		name += Bukkit.getOfflinePlayer(uuid).getName() + "'s ";
+        	else
+        		name += actionData.taming_owner + "'s ";
         }
         if( (actionData.entity_name.equals("ocelot") || actionData.entity_name.equals("horse")) && actionData.var != null ) {
             name += actionData.var.toLowerCase().replace("_", " ");
@@ -315,9 +308,17 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public Horse.Color getHorseColor() {
-        if( this.actionData.hColor != null && !this.actionData.hColor.isEmpty() ) { return Horse.Color
-                .valueOf( this.actionData.hColor ); }
-        return null;
+        if( this.actionData.hColor != null )
+        	try{ return Horse.Color.valueOf( this.actionData.hColor.toUpperCase() ); }
+        	catch(IllegalArgumentException e){}
+        return Horse.Color.WHITE;
+    }
+    
+    public Llama.Color getLlamaColor() {
+        if( this.actionData.hColor != null )
+        	try{ return Llama.Color.valueOf( this.actionData.hColor.toUpperCase() ); }
+    		catch(IllegalArgumentException e){}
+        return Llama.Color.CREAMY;
     }
 
     /**
@@ -325,8 +326,10 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public Horse.Style getStyle() {
-        if( !this.actionData.style.isEmpty() ) { return Horse.Style.valueOf( this.actionData.style ); }
-        return null;
+        if( this.actionData.style != null )
+        	try{ return Horse.Style.valueOf( this.actionData.style.toUpperCase() ); }
+        	catch(IllegalArgumentException e){}
+        return Horse.Style.NONE;
     }
 
     /**
@@ -334,8 +337,27 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public ItemStack getSaddle() {
-        if( this.actionData.saddle != null ) { return new ItemStack( Material.matchMaterial( this.actionData.saddle ), 1 ); }
+        if( this.actionData.saddle != null ) {
+        	String[] parts = this.actionData.saddle.split(":");
+        	Material mat = Material.matchMaterial(parts[0]);
+        	
+        	if(parts.length > 1)
+        		return new ItemStack(mat, 1, Short.valueOf(parts[1]));
+        	else
+        		return new ItemStack(mat, 1);
+        }
         return null;
+    }
+    
+    public void setSaddle(ItemStack stack) {
+    	if(stack != null) {
+	    	this.actionData.saddle = stack.getType().name();
+	
+	    	@SuppressWarnings("deprecation")
+			byte data = stack.getData().getData();
+	    	if(data > 0)
+	    		this.actionData.saddle += ":" + data;
+    	}
     }
 
     /**
@@ -343,8 +365,27 @@ public class EntityAction extends GenericAction {
      * @return
      */
     public ItemStack getArmor() {
-        if( this.actionData.armor != null ) { return new ItemStack( Material.matchMaterial( this.actionData.armor ), 1 ); }
+        if( this.actionData.armor != null ) {
+        	String[] parts = this.actionData.armor.split(":");
+        	Material mat = Material.matchMaterial(parts[0]);
+        	
+        	if(parts.length > 1)
+        		return new ItemStack(mat, 1, Short.valueOf(parts[1]));
+        	else
+        		return new ItemStack(mat, 1);
+        }
         return null;
+    }
+    
+    public void setArmor(ItemStack stack) {
+    	if(stack != null) {
+	    	this.actionData.armor = stack.getType().name();
+	
+	    	@SuppressWarnings("deprecation")
+			byte data = stack.getData().getData();
+	    	if(data > 0)
+	    		this.actionData.armor += ":" + data;
+    	}
     }
 
     /**
@@ -390,119 +431,85 @@ public class EntityAction extends GenericAction {
                     age.setAdult();
                 }
             }
+            
+            // Owner
+            if( entity instanceof Tameable ){
+            	((Tameable)entity).setOwner( EntityUtils.offlineOf( getTamingOwner() ) );
+            }
+            
+            // Sitting
+            if( entity instanceof Sittable ){
+            	((Sittable) entity).setSitting(this.actionData.sitting);
+            }
 
             // Set sheep color
-            if( entity.getType().equals( EntityType.SHEEP ) && getColor() != null ) {
+            if( entity.getType().equals( EntityType.SHEEP ) ) {
                 final Sheep sheep = ( (Sheep) entity );
                 sheep.setColor( getColor() );
             }
 
             // Set villager profession
-            if( entity instanceof Villager && getProfession() != null ) {
+            if( entity instanceof Villager ) {
                 final Villager v = (Villager) entity;
                 v.setProfession( getProfession() );
             }
 
             // Set wolf details
             if( entity instanceof Wolf ) {
-
-                // Owner
                 final Wolf wolf = (Wolf) entity;
-                final UUID tamingOwner = EntityUtils.uuidOf( getTamingOwner() );
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
-                        }
-                    }
-                    if( owner != null )
-                        wolf.setOwner( owner );
-                }
 
                 // Collar color
-                if( getColor() != null ) {
-                    wolf.setCollarColor( getColor() );
-                }
-
-                if( isSitting() ) {
-                    wolf.setSitting( true );
-                }
+                wolf.setCollarColor( getColor() );
             }
 
             // Set ocelot details
             if( entity instanceof Ocelot ) {
-
-                // Owner
                 final Ocelot ocelot = (Ocelot) entity;
-                final UUID tamingOwner = EntityUtils.uuidOf( getTamingOwner() );
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
-                        }
-                    }
-                    if( owner != null ) {
-                        ocelot.setOwner(owner);
-                    }
-                }
-
+                
                 // Cat type
-                if( getCatType() != null ) {
-                    ocelot.setCatType( getCatType() );
-                }
+                ocelot.setCatType( getCatType() );
 
                 // Sitting
-                if ( isSitting() ) {
-                    ocelot.setSitting( true );
-                }
+                ocelot.setSitting( isSitting() );
             }
 
             // Set horse details
-            if( entity instanceof Horse ) {
-
-                final Horse h = (Horse) entity;
+            if( entity instanceof AbstractHorse ) {
+                final AbstractHorse h = (AbstractHorse) entity;
 
                 // TODO: Check - This shouldn't be needed
                 /*if( getVariant() != null ) {
                     h.setVariant( getVariant() );
                 }*/
-
-                if( getHorseColor() != null ) {
-                    h.setColor( getHorseColor() );
+                
+                if(getEntityType() == EntityType.HORSE) {
+                	Horse horse = (Horse)h;
+                    horse.setColor( getHorseColor() );
+                    horse.setStyle( getStyle() );
+                    horse.getInventory().setSaddle( getSaddle() );
+                    horse.getInventory().setArmor( getArmor() );
                 }
-
-                if( getStyle() != null ) {
-                    h.setStyle( getStyle() );
+                else if(getEntityType() == EntityType.LLAMA) {
+                	Llama llama = (Llama)h;
+                	llama.setColor( getLlamaColor() );
+                	llama.getInventory().setDecor( getSaddle() );
                 }
+                else if(getEntityType() == EntityType.DONKEY || getEntityType() == EntityType.MULE) {
+                	h.getInventory().setItem(0, getSaddle());
+                }
+                
+                if(entity instanceof ChestedHorse) {
+                	((ChestedHorse)h).setCarryingChest( this.actionData.chest );
+                }
+                
+                this.actionData.maxDom = Math.max(1, this.actionData.maxDom);
+                this.actionData.dom = Math.min(Math.max(0, this.actionData.dom), this.actionData.maxDom);
+                this.actionData.jump = Math.max(0.0, this.actionData.jump);
 
-                if( this.actionData.chest )
-                	((ChestedHorse)h).setCarryingChest( true );
                 h.setDomestication( this.actionData.dom );
                 h.setMaxDomestication( this.actionData.maxDom );
                 h.setJumpStrength( this.actionData.jump );
                 h.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue( this.actionData.maxHealth );
-
-                // Stuff
-                h.getInventory().setSaddle( getSaddle() );
-                h.getInventory().setArmor( getArmor() );
-
-                // Owner
-                final UUID tamingOwner = EntityUtils.uuidOf( getTamingOwner() );
-                if( tamingOwner != null ) {
-                    Player owner = plugin.getServer().getPlayer( tamingOwner );
-                    if( owner == null ) {
-                        final OfflinePlayer offlinePlayer = plugin.getServer().getOfflinePlayer( tamingOwner );
-                        if( offlinePlayer.hasPlayedBefore() ) {
-                            owner = offlinePlayer.getPlayer();
-                        }
-                    }
-                    if( owner != null )
-                        h.setOwner( owner );
-                }
             }
 
             return new ChangeResult( ChangeResultType.APPLIED, null );

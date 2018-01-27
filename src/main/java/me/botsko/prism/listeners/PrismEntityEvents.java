@@ -34,6 +34,7 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class PrismEntityEvents implements Listener {
@@ -81,6 +82,19 @@ public class PrismEntityEvents implements Listener {
             }
         }
     }
+    
+
+    private HashMap<UUID, Boolean> chested = new HashMap<>();
+    // Spigot (git-Spigot-9b8bba4-bdcc7c7) calls the death event after removing the chest of
+    // chested horses, so we have to work around that. Sad.
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void checkChestedHorseDamage(final EntityDamageEvent event) {
+    	if(event.getEntity() instanceof ChestedHorse
+    			&& event.getFinalDamage() >= ((LivingEntity)event.getEntity()).getHealth()) {
+    		chested.put(event.getEntity().getUniqueId(), ((ChestedHorse)event.getEntity()).isCarryingChest());
+    	}
+    }
+    
 
     /**
      * 
@@ -88,7 +102,14 @@ public class PrismEntityEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
-
+    	Boolean isChested = chested.remove(event.getEntity().getUniqueId());
+    	boolean oldChested = false;
+    	// Set before check
+    	if(isChested != null) {
+    		oldChested = ((ChestedHorse)event.getEntity()).isCarryingChest();
+    		((ChestedHorse)event.getEntity()).setCarryingChest(isChested.booleanValue());
+    	}
+    	
         final Entity entity = event.getEntity();
 
         // Mob Death
@@ -186,6 +207,11 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         }
+        
+        // Return to old value
+        if(isChested != null) {
+    		((ChestedHorse)event.getEntity()).setCarryingChest(oldChested);
+    	}
     }
 
     /**
