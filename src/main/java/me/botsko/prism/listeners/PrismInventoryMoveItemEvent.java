@@ -10,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryHolder;
 
 public class PrismInventoryMoveItemEvent implements Listener {
@@ -35,11 +34,11 @@ public class PrismInventoryMoveItemEvent implements Listener {
 
             if( containerLoc == null )
                 return;
+            
+            String invName = event.getSource().getType().name().toLowerCase();
 
-            if( event.getSource().getType().equals( InventoryType.HOPPER ) ) {
-                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", event.getItem(), event.getItem()
-                        .getAmount(), 0, null, containerLoc, "hopper") );
-            }
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", event.getItem(), event.getItem()
+                    .getAmount(), 0, null, containerLoc, invName) );
         }
         
         // Hopper removed
@@ -55,11 +54,11 @@ public class PrismInventoryMoveItemEvent implements Listener {
 
             if( containerLoc == null )
                 return;
+            
+            String invName = event.getDestination().getType().name().toLowerCase();
 
-            if( event.getDestination().getType().equals( InventoryType.HOPPER ) ) {
-                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", event.getItem(), event.getItem()
-                        .getAmount(), 0, null, containerLoc, "hopper") );
-            }
+            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", event.getItem(), event.getItem()
+                    .getAmount(), 0, null, containerLoc, invName) );
         }
     }
 }

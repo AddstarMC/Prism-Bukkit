@@ -154,7 +154,8 @@ public class PrismCommands extends Executor {
         addSub( "reload", "prism.reload" ).allowConsole().setHandler( new SubHandler() {
             @Override
             public void handle(CallInfo call) {
-                prism.reloadConfig();
+            	prism.reloadConfig();
+                prism.loadConfig();
                 call.getSender()
                         .sendMessage( Prism.messenger.playerHeaderMsg( "Configuration reloaded successfully." ) );
             }

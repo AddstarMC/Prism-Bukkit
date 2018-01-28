@@ -312,12 +312,6 @@ public class Prism extends JavaPlugin {
         items = new MaterialAliases();
     }
 
-    @Override
-    public void reloadConfig() {
-        super.reloadConfig();
-        loadConfig();
-    }
-
     /**
      * 
      * @return
