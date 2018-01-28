@@ -1,11 +1,11 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Parrot;
 
 import me.botsko.prism.utils.MiscUtils;
 
-public class ParrotModifier extends EntityModifier {
+public class ParrotSerializer extends EntitySerializer {
 	protected String var = null;
 	
 	@Override

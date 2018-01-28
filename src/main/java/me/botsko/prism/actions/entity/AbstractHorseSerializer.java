@@ -1,4 +1,4 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractHorse;
@@ -11,7 +11,7 @@ import org.bukkit.entity.Llama;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.MiscUtils;
 
-public class AbstractHorseModifier extends EntityModifier {
+public class AbstractHorseSerializer extends EntitySerializer {
 	protected String hColor = null;
 	protected String style = null;
 	protected String saddle = null;

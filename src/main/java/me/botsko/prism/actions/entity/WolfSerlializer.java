@@ -1,4 +1,4 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
@@ -6,7 +6,7 @@ import org.bukkit.entity.Wolf;
 
 import me.botsko.prism.utils.MiscUtils;
 
-public class WolfModifier extends EntityModifier {
+public class WolfSerlializer extends EntitySerializer {
 	protected String color = null;
 	
 	@Override

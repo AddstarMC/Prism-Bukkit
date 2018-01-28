@@ -1,11 +1,11 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Ocelot;
 
 import me.botsko.prism.utils.MiscUtils;
 
-public class OcelotModifier extends EntityModifier {
+public class OcelotSerializer extends EntitySerializer {
 	protected String var = null;
 	
 	@Override

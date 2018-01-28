@@ -1,22 +1,22 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Villager;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.entity.Villager.Profession;
 
 import me.botsko.prism.utils.MiscUtils;
 
-public class VillagerModifier extends EntityModifier {
+public class ZombieVillagerSerlializer extends EntitySerializer {
 	protected String profession = null;
 	
 	@Override
 	protected void serializer(Entity entity) {
-		profession = ((Villager)entity).getProfession().name().toLowerCase();
+		profession = ((ZombieVillager)entity).getVillagerProfession().name().toLowerCase();
 	}
 	
 	@Override
 	protected void deserializer(Entity entity) {
-		((Villager)entity).setProfession(MiscUtils.getEnum(profession, Profession.FARMER));
+		((ZombieVillager)entity).setVillagerProfession(MiscUtils.getEnum(profession, Profession.FARMER));
 	}
 	
 	@Override

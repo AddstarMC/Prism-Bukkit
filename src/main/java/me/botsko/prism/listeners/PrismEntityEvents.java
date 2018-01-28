@@ -87,6 +87,8 @@ public class PrismEntityEvents implements Listener {
     private HashMap<UUID, Boolean> chested = new HashMap<>();
     // Spigot (git-Spigot-9b8bba4-bdcc7c7) calls the death event after removing the chest of
     // chested horses, so we have to work around that. Sad.
+    
+    // TODO: This is fixed as of git-Spigot-4bd94dc-015bda4, remove after we're sure it's not needed
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void checkChestedHorseDamage(final EntityDamageEvent event) {
     	if(event.getEntity() instanceof ChestedHorse

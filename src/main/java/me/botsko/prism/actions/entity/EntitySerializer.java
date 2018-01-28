@@ -1,4 +1,4 @@
-package me.botsko.prism.actionlibs.specificentity;
+package me.botsko.prism.actions.entity;
 
 import org.bukkit.Nameable;
 import org.bukkit.OfflinePlayer;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Zombie;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
 
-public class EntityModifier {
+public class EntitySerializer {
 	protected Boolean isAdult = null;
 	protected Boolean sitting = null;
 	protected String entity_name = null;
@@ -29,7 +29,7 @@ public class EntityModifier {
 		newColor = color;
 	}
 	
-	public final EntityModifier serialize(Entity entity) {
+	public final void serialize(Entity entity) {
 		entity_name = entity.getType().name().toLowerCase();
 		
 		// Get custom name
@@ -45,7 +45,6 @@ public class EntityModifier {
         	isAdult = !((Zombie)entity).isBaby();
         }
         
-        
         // Owner
         if(entity instanceof Tameable) {
         	final Tameable mob = (Tameable) entity;
@@ -59,13 +58,12 @@ public class EntityModifier {
         }
         
 		serializer(entity);
-		return this;
 	}
 	
 	protected void serializer(Entity entity) {
 	}
 	
-	public final EntityModifier deserialize(Entity entity) {
+	public final void deserialize(Entity entity) {
 		// Get custom name
         if( entity instanceof LivingEntity && custom_name != null ) {
             final LivingEntity namedEntity = (LivingEntity) entity;
@@ -96,7 +94,6 @@ public class EntityModifier {
         }
         
 		deserializer(entity);
-		return this;
 	}
 	
 	protected void deserializer(Entity entity) {
