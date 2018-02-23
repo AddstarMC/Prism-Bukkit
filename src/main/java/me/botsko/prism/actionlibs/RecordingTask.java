@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.bukkit.util.NumberConversions;
+
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
@@ -92,13 +94,13 @@ public class RecordingTask implements Runnable {
             @SuppressWarnings("deprecation")
 			int oldId = a.getOldBlock().getId();
             
-            s.setInt( 5, newId );
-            s.setInt( 6, a.getBlockSubId() );
-            s.setInt( 7, oldId );
-            s.setInt( 8, a.getOldBlockSubId() );
-            s.setInt( 9, (int) a.getX() );
-            s.setInt( 10, (int) a.getY() );
-            s.setInt( 11, (int) a.getZ() );
+            s.setInt( 5,  newId );
+            s.setInt( 6,  a.getBlockSubId() );
+            s.setInt( 7,  oldId );
+            s.setInt( 8,  a.getOldBlockSubId() );
+            s.setInt( 9,  NumberConversions.floor(a.getX()) );
+            s.setInt( 10, NumberConversions.floor(a.getY()) );
+            s.setInt( 11, NumberConversions.floor(a.getZ()) );
             s.executeUpdate();
 
             generatedKeys = s.getGeneratedKeys();
@@ -239,13 +241,13 @@ public class RecordingTask implements Runnable {
                     @SuppressWarnings("deprecation")
         			int oldId = a.getOldBlock() != null ? a.getOldBlock().getId() : 0;
                     
-                    s.setInt( 5, newId );
-                    s.setInt( 6, a.getBlockSubId() );
-                    s.setInt( 7, oldId );
-                    s.setInt( 8, a.getOldBlockSubId() );
-                    s.setInt( 9, (int) a.getX() );
-                    s.setInt( 10, (int) a.getY() );
-                    s.setInt( 11, (int) a.getZ() );
+                    s.setInt( 5,  newId );
+                    s.setInt( 6,  a.getBlockSubId() );
+                    s.setInt( 7,  oldId );
+                    s.setInt( 8,  a.getOldBlockSubId() );
+                    s.setInt( 9,  NumberConversions.floor(a.getX()) );
+                    s.setInt( 10, NumberConversions.floor(a.getY()) );
+                    s.setInt( 11, NumberConversions.floor(a.getZ()) );
                     s.addBatch();
 
                     extraDataQueue.add( a );

@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
@@ -405,27 +406,40 @@ public class ItemStackAction extends GenericAction {
                 } else {
                   
                     Entity[] foundEntities = block.getChunk().getEntities();
-                    if(foundEntities.length > 0){
-                        for(Entity e : foundEntities){
-                            if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
-                            // Some modded servers seems to list entities in the chunk
-                            // that exists in other worlds. No idea why but we can at
-                            // least check for it.
-                            // https://snowy-evening.com/botsko/prism/318/
-                            if( !block.getWorld().equals( e.getWorld() ) ) continue;
-                            // Let's limit this to only entities within 1 block of the current.
-                            Prism.debug( block.getLocation() );
-                            Prism.debug( e.getLocation() );
-                            if( block.getLocation().distance( e.getLocation() ) < 2 ){
-                                final ItemFrame frame = (ItemFrame) e;
-                                
-                                if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
-                                    frame.setItem( item );
-                                } else {
-                                    frame.setItem( null );
-                                }
+                    
+                    for(Entity e : foundEntities){
+                        if( !e.getType().equals( EntityType.ITEM_FRAME ) ) continue;
+                        // Some modded servers seems to list entities in the chunk
+                        // that exists in other worlds. No idea why but we can at
+                        // least check for it.
+                        // https://snowy-evening.com/botsko/prism/318/
+                        if( !block.getWorld().equals( e.getWorld() ) ) continue;
+                        // Let's limit this to only entities within 1 block of the current.
+                        
+                        // Get the block location for better comparisons
+                        Location loc = e.getLocation();
+                        loc.setX(loc.getBlockX());
+                        loc.setY(loc.getBlockY());
+                        loc.setZ(loc.getBlockZ());
+                        
+                        Prism.debug( block.getLocation() );
+                        Prism.debug( loc );
+                        
+                        if( block.getLocation().distanceSquared(loc) < 0.25 ){
+                            final ItemFrame frame = (ItemFrame) e;
+                            
+                            if( (getType().getName().equals( "item-remove" ) && parameters.getProcessType().equals( PrismProcessType.ROLLBACK )) || (getType().getName().equals( "item-insert" ) && parameters.getProcessType().equals( PrismProcessType.RESTORE ))  ){
+                            	if(frame.getItem().getType() == Material.AIR) {
+                            		frame.setItem( item );
+                            		result = ChangeResultType.APPLIED;
+                            		break;
+                            	}
+                            } else if(frame.getItem().getType() != Material.AIR) {
+                                frame.setItem( null );
                                 result = ChangeResultType.APPLIED;
+                                break;
                             }
+                            
                         }
                     }
                 }

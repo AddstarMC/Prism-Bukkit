@@ -1006,7 +1006,7 @@ public class Prism extends JavaPlugin {
      * @param loc
      */
     public static void debug(Location loc) {
-        debug( "Location: " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() );
+        debug( "Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ() );
     }
 
     /**
