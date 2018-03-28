@@ -125,8 +125,6 @@ public interface Handler {
      * 
      * @param id
      */
-    @Deprecated
-    public abstract void setBlockId(int id);
     public abstract void setBlock(Material material);
 
     /**
@@ -139,8 +137,6 @@ public interface Handler {
     /**
 	 * 
 	 */
-    @Deprecated
-    public abstract int getBlockId();
     public abstract Material getBlock();
 
     /**
@@ -153,8 +149,6 @@ public interface Handler {
      * 
      * @param id
      */
-    @Deprecated
-    public abstract void setOldBlockId(int id);
     public abstract void setOldBlock(Material material);
 
     /**
@@ -167,8 +161,6 @@ public interface Handler {
     /**
 	 * 
 	 */
-    @Deprecated
-    public abstract int getOldBlockId();
     public abstract Material getOldBlock();
 
     /**

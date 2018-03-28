@@ -70,7 +70,7 @@ public class RecordingTask implements Runnable {
             }
 
             int player_id = 0;
-            // TODO: caching by name
+
             PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
             if( prismPlayer != null ){
                 player_id = prismPlayer.getId();
@@ -87,17 +87,15 @@ public class RecordingTask implements Runnable {
             s.setInt( 2, action_id );
             s.setInt( 3, player_id );
             s.setInt( 4, world_id );
+
+            // TODO Better state handling
+            int newIds[] = Prism.getItems().materialToIds(a.getBlock(), String.valueOf(a.getBlockSubId()));
+            int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), String.valueOf(a.getOldBlockSubId()));
             
-            // TODO: Lookup name and get id
-            @SuppressWarnings("deprecation")
-			int newId = a.getBlock().getId();
-            @SuppressWarnings("deprecation")
-			int oldId = a.getOldBlock().getId();
-            
-            s.setInt( 5,  newId );
-            s.setInt( 6,  a.getBlockSubId() );
-            s.setInt( 7,  oldId );
-            s.setInt( 8,  a.getOldBlockSubId() );
+            s.setInt( 5,  newIds[0] );
+            s.setInt( 6,  newIds[1]);
+            s.setInt( 7,  oldIds[0] );
+            s.setInt( 8,  oldIds[1] );
             s.setInt( 9,  NumberConversions.floor(a.getX()) );
             s.setInt( 10, NumberConversions.floor(a.getY()) );
             s.setInt( 11, NumberConversions.floor(a.getZ()) );
@@ -235,16 +233,15 @@ public class RecordingTask implements Runnable {
                     s.setInt( 3, player_id );
                     s.setInt( 4, world_id );
                     
-                    // TODO: Lookup name and get id
-                    @SuppressWarnings("deprecation")
-        			int newId = a.getBlock() != null ? a.getBlock().getId() : 0;
-                    @SuppressWarnings("deprecation")
-        			int oldId = a.getOldBlock() != null ? a.getOldBlock().getId() : 0;
+                    // TODO Better state handling
+                    int newIds[] = Prism.getItems().materialToIds(a.getBlock(), String.valueOf(a.getBlockSubId()));
                     
-                    s.setInt( 5,  newId );
-                    s.setInt( 6,  a.getBlockSubId() );
-                    s.setInt( 7,  oldId );
-                    s.setInt( 8,  a.getOldBlockSubId() );
+                    int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), String.valueOf(a.getOldBlockSubId()));
+                    
+                    s.setInt( 5,  newIds[0] );
+                    s.setInt( 6,  newIds[1] );
+                    s.setInt( 7,  oldIds[0] );
+                    s.setInt( 8,  oldIds[1] );
                     s.setInt( 9,  NumberConversions.floor(a.getX()) );
                     s.setInt( 10, NumberConversions.floor(a.getY()) );
                     s.setInt( 11, NumberConversions.floor(a.getZ()) );

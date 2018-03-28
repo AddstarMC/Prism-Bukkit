@@ -15,8 +15,8 @@ import me.botsko.prism.database.mysql.BlockReportQueryBuilder;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.Connection;
@@ -265,10 +265,9 @@ public class ReportCommand implements SubHandler {
                                     + TypeUtils.padStringRight( "Broken", colIntLen ) ) );
 
                     while ( rs.next() ) {
+                    	ItemStack block = Prism.getItems().idsToMaterial(rs.getInt(1), 0).asItem();
 
-                    	// TODO: Get material name from another table
-                        @SuppressWarnings("deprecation")
-						final String alias = Prism.getItems().getAlias( Material.getMaterial( rs.getInt( 1 ) ), 0 );
+						final String alias = Prism.getItems().getAlias( block.getType(), block.getDurability() );
 
                         final int placed = rs.getInt( 2 );
                         final int broken = rs.getInt( 3 );

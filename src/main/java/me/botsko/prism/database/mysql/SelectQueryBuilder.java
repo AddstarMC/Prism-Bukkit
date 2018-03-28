@@ -213,16 +213,15 @@ public class SelectQueryBuilder extends QueryBuilder {
             final String[] blockArr = new String[blockfilters.size()];
             int i = 0;
             for ( final Entry<Material, Short> entry : blockfilters.entrySet() ) {
-            	
-            	// TODO: lookup id by mat
-            	@SuppressWarnings("deprecation")
-				int id = entry.getKey().getId();
-            	
-                if( entry.getValue() == 0 ) {
-                    blockArr[i] = tableNameData + ".block_id = " + id;
+
+                // TODO Better state handling
+                int ids[] = Prism.getItems().materialToIds(entry.getKey(), String.valueOf(entry.getValue()));
+                
+                if( ids[1] == 0 ) {
+                    blockArr[i] = tableNameData + ".block_id = " + ids[0];
                 } else {
-                    blockArr[i] = tableNameData + ".block_id = " + id + " AND " + tableNameData
-                            + ".block_subid = " + entry.getValue();
+                    blockArr[i] = tableNameData + ".block_id = " + ids[0] + " AND " + tableNameData
+                            + ".block_subid = " + ids[1];
                 }
                 i++;
             }

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
 
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
@@ -170,17 +170,14 @@ public class ActionsQuery {
                         baseHandler.setX( rs.getInt( 6 ) );
                         baseHandler.setY( rs.getInt( 7 ) );
                         baseHandler.setZ( rs.getInt( 8 ) );
+
+                        ItemStack block    = Prism.getItems().idsToMaterial(rs.getInt(  9 ), rs.getInt( 10 )).asItem();
+                        ItemStack oldBlock = Prism.getItems().idsToMaterial(rs.getInt( 11 ), rs.getInt( 12 )).asItem();
                         
-                        // TODO: Lookup name and get material
-                        @SuppressWarnings("deprecation")
-						Material newMat = Material.getMaterial( rs.getInt( 9 ) );
-                        @SuppressWarnings("deprecation")
-						Material oldMat = Material.getMaterial( rs.getInt( 11 ) );
-                        
-                        baseHandler.setBlock( newMat );
-                        baseHandler.setBlockSubId( rs.getInt( 10 ) );
-                        baseHandler.setOldBlock( oldMat );
-                        baseHandler.setOldBlockSubId( rs.getInt( 12 ) );
+                        baseHandler.setBlock( block.getType() );
+                        baseHandler.setBlockSubId( block.getDurability() );
+                        baseHandler.setOldBlock( oldBlock.getType() );
+                        baseHandler.setOldBlockSubId( oldBlock.getDurability() );
                         baseHandler.setData( rs.getString( 13 ) );
                         baseHandler.setMaterialAliases( Prism.getItems() );
 

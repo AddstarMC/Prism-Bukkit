@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
+
 public class MaterialAliases {
 	/**
 	 * Contains loaded item ids => aliases
@@ -55,6 +56,130 @@ public class MaterialAliases {
 	    }
 	}
 	
+	// TODO: org.bukkit.block.data.BlockData in 1.13
+	public static class MaterialState {
+		protected MaterialState() {
+		}
+		
+		public MaterialState(Material material, String state) {
+			this.material = material;
+			this.state = state;
+		}
+		public Material material;
+		public String state;
+		
+		@SuppressWarnings("deprecation")
+		public MaterialData asData() {
+			return new MaterialData(material, Byte.parseByte(state));
+		}
+		
+		public ItemStack asItem() {
+			return new ItemStack(material, 1, Short.parseShort(state));
+		}
+	}
+
+	//private Map<String, String> matCache = new HashMap<>();
+	//private Map<String, String> idCache = new HashMap<>();
+	
+	// TODO make it work
+	@SuppressWarnings("deprecation")
+	public MaterialState idsToMaterial(int block_id, int block_subid) {
+		return new MaterialState(Material.getMaterial(block_id), String.valueOf(block_subid));
+		/*String key = block_id + ":" + block_subid;
+		String result = matCache.get(key);
+		
+		if(result != null) {
+			String[] parts = result.split(":", 2);
+			Prism.log("matCache: [" + block_id + ", " + block_subid + "] -> [" + parts[0] + ", " + parts[1] + "]");
+			return new MaterialState(Material.matchMaterial(parts[0]), parts[1]);
+		}
+		
+		MaterialState state = new MaterialState();
+		
+		IdMapQuery query = new IdMapQuery();
+		
+		query.findMaterial(block_id, block_subid, (m, s) -> {
+			matCache.put(key, m + ":" + s);
+			Prism.log("matQuery: [" + block_id + ", " + block_subid + "] -> [" + m + ", " + s + "]");
+			state.material = Material.matchMaterial(m.toUpperCase(Locale.ENGLISH));
+			state.state = s;
+		},
+		() -> {
+			Material m = Material.matchMaterial(String.valueOf(block_id));
+			if(m != null) {
+				String matName = m.name().toLowerCase(Locale.ENGLISH);
+				String matState = String.valueOf(block_subid);
+				query.map(matName, matState, block_id, block_subid);
+				Prism.log("matMatch: [" + block_id + ", " + block_subid + "] -> [" + matName + ", " + matState + "]");
+
+				matCache.put(key, matName + ":" + matState);
+				idCache.put(matName + ":" + matState, key);
+				
+				state.material = m;
+				// TODO: Proper state handling 1.13
+				state.state = matState;
+			}
+			else
+				Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
+		});
+		
+		if(state.material == null)
+			return null;
+		
+		return state;*/
+	}
+	
+	@SuppressWarnings("deprecation")
+	public int[] materialToIds(Material material, String state) {
+		int data = 0;
+		try { data = Integer.parseInt(state); } catch(NumberFormatException e) {}
+		return new int[] { material.getId(), data };
+		/*String matName = material.name().toLowerCase(Locale.ENGLISH);
+		
+		String key = matName + ":" + state;
+		String result = idCache.get(key);
+		
+		if(result != null) {
+			String[] parts = result.split(":", 2);
+			Prism.log("idCache: [" + matName + ", " + state + "] -> [" + parts[0] + ", " + parts[1] + "]");
+			return new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
+		}
+		
+		int[] ids = new int[2];
+		
+		IdMapQuery query = new IdMapQuery();
+		
+		query.findIds(matName, state, (i, d) -> {
+			idCache.put(key, i + ":" + d);
+			Prism.log("idQuery: [" + matName + ", " + state + "] -> [" + i + ", " + d + "]");
+			ids[0] = i;
+			ids[1] = d;
+		},
+		() -> {
+			int id = 0;
+			int data = 0;
+
+			try { data = Integer.parseInt(state); } catch(NumberFormatException e) {}
+			
+			try {
+				id = (Integer)Material.class.getMethod("getId").invoke(material);
+				query.map(matName, state, id, data);
+				Prism.log("idFunc: [" + matName + ", " + state + "] -> [" + id + ", " + data + "]");
+			}
+			catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+				id = query.mapAutoId(matName, state);
+				Prism.log("idAuto: [" + matName + ", " + state + "] -> [" + id + ", " + data + "]");
+			}
+			
+			idCache.put(key, id + ":" + data);
+			matCache.put(id + ":" + data, key);
+			
+			ids[0] = id;
+			ids[1] = data;
+		});
+		
+		return ids;*/
+	}
 	
 	/**
 	 * Returns the loaded list of item aliases/ids;

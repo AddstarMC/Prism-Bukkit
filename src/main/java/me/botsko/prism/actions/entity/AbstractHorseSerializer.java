@@ -60,11 +60,6 @@ public class AbstractHorseSerializer extends EntitySerializer {
 	protected void deserializer(Entity entity) {
 		final AbstractHorse h = (AbstractHorse) entity;
 
-        // TODO: Check - This shouldn't be needed
-        //if( getVariant() != null ) {
-        //    h.setVariant( getVariant() );
-        //}
-        
         if(entity.getType() == EntityType.HORSE) {
         	Horse horse = (Horse)h;
         	Horse.Color color = MiscUtils.getEnum(hColor, Horse.Color.WHITE);

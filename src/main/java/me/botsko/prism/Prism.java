@@ -496,6 +496,16 @@ public class Prism extends JavaPlugin {
             for ( final String a : actions ) {
                 addActionName( a );
             }
+
+            // id map
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` ("
+                    + "`material` varchar(63) NOT NULL,"
+                    + "`state` varchar(63) NOT NULL,"
+                    + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
+                    + "`block_subid` mediumint(5) NOT NULL DEFAULT 0,"
+                    + "PRIMARY KEY (`material`, `state`),"+ "UNIQUE KEY `block_id` (`block_id`)"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            st.executeUpdate( query );
         } catch ( final SQLException e ) {
             log( "Database connection error: " + e.getMessage() );
             e.printStackTrace();

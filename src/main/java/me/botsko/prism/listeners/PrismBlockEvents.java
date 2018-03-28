@@ -112,62 +112,6 @@ public class PrismBlockEvents implements Listener {
      * @param player
      * @param block
      */
-    /*protected void logBlockRelationshipsForBlock(Player player, Block block) {
-
-        if( BlockUtils.isDoor(block.getType()) ) { return; }
-
-        // Find a list of all blocks above this block that we know will fall.
-        final ArrayList<Block> falling_blocks = BlockUtils.findFallingBlocksAboveBlock( block );
-        if( falling_blocks.size() > 0 ) {
-            for ( final Block b : falling_blocks ) {
-                RecordingQueue.addToQueue( ActionFactory.createBlock("block-fall", b, player) );
-            }
-        }
-
-        // Some blocks will essentially never have attachments - not
-        // even worth spending time looking for them.
-        // SUGAR CANE is not a solid but does have top face attached
-        if( !block.getType().isSolid() && !block.getType().equals( Material.SUGAR_CANE_BLOCK ) ) { return; }
-
-        // if it's a piston, the base will break without a physics events
-        if( block.getType().equals( Material.PISTON_EXTENSION )
-                || block.getType().equals( Material.PISTON_MOVING_PIECE ) ) {
-            final ArrayList<Block> pistonBases = BlockUtils.findSideFaceAttachedBlocks( block );
-            if( pistonBases.size() > 0 ) {
-                for ( final Block p : pistonBases ) {
-                    RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", p, player) );
-                }
-            }
-        }
-
-        // Find a list of side-face attached blocks that will detach
-        ArrayList<Block> detached_blocks = BlockUtils.findSideFaceAttachedBlocks( block );
-        if( detached_blocks.size() > 0 ) {
-            for ( final Block b : detached_blocks ) {
-                RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
-            }
-        }
-
-        // Find a list of top-side attached blocks that will detach
-        detached_blocks = BlockUtils.findTopFaceAttachedBlocks( block );
-        if( detached_blocks.size() > 0 ) {
-            for ( final Block b : detached_blocks ) {
-                RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );
-            }
-        }
-
-        // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = BlockUtils.findHangingEntities( block );
-        if( hanging.size() > 0 ) {
-            for ( final Entity e : hanging ) {
-                final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
-                        + e.getLocation().getBlockZ();
-                // TODO: Storage by name
-                plugin.preplannedBlockFalls.put( coord_key, player.getUniqueId() );
-            }
-        }
-    }*/
-    
     protected void logBlockRelationshipsForBlock(Player player, Block block) {
     	relatedBlockCallback(block, b -> {
     		RecordingQueue.addToQueue( ActionFactory.createBlock("block-break", b, player) );

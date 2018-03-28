@@ -95,7 +95,7 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
-    protected Material block;
+    protected Material block = Material.AIR;
 
     /**
 	 * 
@@ -105,7 +105,7 @@ public class GenericAction implements Handler {
     /**
 	 * 
 	 */
-    protected Material old_block;
+    protected Material old_block = Material.AIR;
 
     /**
 	 * 
@@ -406,16 +406,6 @@ public class GenericAction implements Handler {
     public Location getLoc() {
         return new Location( getWorld(), getX(), getY(), getZ() );
     }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setBlockId(int)
-     */
-    @Override
-    @Deprecated
-    public void setBlockId(int id) {
-    	setBlock(Material.getMaterial(id));
-    }
     
     @Override
     public void setBlock(Material material) {
@@ -439,16 +429,6 @@ public class GenericAction implements Handler {
     public void setBlockSubId(int id) {
         this.block_subid = id;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getBlockId()
-     */
-    @Override
-    @Deprecated
-    public int getBlockId() {
-        return getBlock().getId();
-    }
     
     @Override
     public Material getBlock() {
@@ -463,16 +443,6 @@ public class GenericAction implements Handler {
     public int getBlockSubId() {
         return block_subid;
     }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setOldBlockId(int)
-     */
-    @Override
-    @Deprecated
-    public void setOldBlockId(int id) {
-    	setOldBlock(Material.getMaterial(id));
-    }
     
     @Override
     public void setOldBlock(Material material) {
@@ -486,16 +456,6 @@ public class GenericAction implements Handler {
     @Override
     public void setOldBlockSubId(int id) {
         this.old_block_subid = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getOldBlockId()
-     */
-    @Override
-    @Deprecated
-    public int getOldBlockId() {
-        return getOldBlock().getId();
     }
     
     @Override
