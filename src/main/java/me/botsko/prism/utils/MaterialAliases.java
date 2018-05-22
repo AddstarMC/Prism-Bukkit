@@ -132,137 +132,146 @@ public class MaterialAliases {
 
 	private Map<String, String> matCache = new HashMap<>();
 	private Map<String, String> idCache = new HashMap<>();
-
-	public MaterialState idsToMaterial(int block_id, int block_subid) {
-		String key = block_id + ":" + block_subid;
-		String result = matCache.get(key);
-
-		if (result != null) {
-			String[] parts = result.split(":", 2);
-			// Prism.log("matCache: [" + block_id + ", " + block_subid + "] -> [" + parts[0]
-			// + ", " + parts[1] + "]");
+	
+	private void storeCache(Material material, String state, int block_id, int block_subid) {
+		String matKey = material.name().toLowerCase(Locale.ENGLISH) + ":" + state;
+		String idKey = block_id + ":" + block_subid;
+		
+		matCache.put(idKey, matKey);
+		idCache.put(matKey, idKey);
+	}
+	
+	private MaterialState fromCache(int block_id, int block_subid) {
+		String value = matCache.get(block_id + ":" + block_subid);
+		
+		if(value != null) {
+			String[] parts = value.split(":", 2);
+			
 			return new MaterialState(Material.matchMaterial(parts[0]), parts[1]);
 		}
+		
+		return null;
+	}
 
-		MaterialState state = new MaterialState();
+	public MaterialState idsToMaterial(int block_id, int block_subid) {
+		MaterialState cachedMaterial = fromCache(block_id, block_subid);
 
+		if (cachedMaterial != null)
+			return cachedMaterial;
+
+		MaterialState result = new MaterialState();
 		IdMapQuery query = new IdMapQuery();
 
-		query.findMaterial(block_id, block_subid, (m, s) -> {
-			matCache.put(key, m + ":" + s);
-			matCache.put(m + ":" + s, key);
-			// Prism.log("matQuery: [" + block_id + ", " + block_subid + "] -> [" + m + ", "
-			// + s + "]");
-			state.material = Material.matchMaterial(m.toUpperCase(Locale.ENGLISH));
-			state.state = s;
+		query.findMaterial(block_id, block_subid, (material, state) -> {
+			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
+			result.state = state;
+			
+			storeCache(result.material, result.state, block_id, block_subid);
 		}, () -> {
-			Material m;
+			Material material;
 			try {
-				m = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, block_id);
+				material = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, block_id);
 			} catch (Exception e) {
-				m = null;
+				material = null;
 				e.printStackTrace();
 			}
 
-			if (m != null) {
-				String matName = m.name().toLowerCase(Locale.ENGLISH);
-				String matState = String.valueOf(block_subid);
-				query.map(matName, matState, block_id, block_subid);
-				// Prism.log("matMatch: [" + block_id + ", " + block_subid + "] -> [" + matName
-				// + ", " + matState + "]");
+			if (material != null) {
+				String materialName = material.name().toLowerCase(Locale.ENGLISH);
+				String state = String.valueOf(block_subid);
+				
+				query.map(materialName, state, block_id, block_subid);
 
-				matCache.put(key, matName + ":" + matState);
-				idCache.put(matName + ":" + matState, key);
-
-				state.material = m;
 				// TODO: Proper state handling 1.13
-				state.state = matState;
+				result.material = material;
+				result.state = state;
+				
+				storeCache(result.material, result.state, block_id, block_subid);
 			} else
 				Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
 		});
 
-		if (state.material == null) {
-			// Prism.log("Error: Null material! input: [" + block_id + ", " + block_subid +
-			// "]");
+		if (result.material == null) {
 			return null;
 		}
 
-		/*
-		 * MaterialState asdf = new MaterialState(Material.getMaterial(block_id),
-		 * String.valueOf(block_subid));
-		 * 
-		 * 
-		 * 
-		 * if(asdf.material != state.material || !asdf.state.equals(state.state)) {
-		 * Prism.log("materialToIds mismatch: [" + block_id + ", " + block_subid + "]");
-		 * Prism.log("    expected: [" + asdf.material + ", " + asdf.state + "]");
-		 * Prism.log("    recieved: [" + state.material + ", " + state.state + "]"); }
-		 */
-
-		return state;
+		return result;
+	}
+	
+	private int[] fromCache(Material material, String state) {
+		String value = idCache.get(material.name().toLowerCase(Locale.ENGLISH) + ":" + state);
+		
+		if(value != null) {
+			String[] parts = value.split(":", 2);
+			int[] ids = { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
+			
+			return ids;
+		}
+		
+		return null;
 	}
 
 	public int[] materialToIds(Material material, String state) {
-		String matName = material.name().toLowerCase(Locale.ENGLISH);
+		int block_subid;
+		
+		// For tools, where durability doesn't mean a different item (different cached value) but is still important
+		int durability = 0;
+		try { durability = Integer.parseInt(state); } catch(NumberFormatException e) {}
+		
+		if(material.getMaxDurability() > 0)
+			block_subid = 0;
+		else
+			block_subid = durability;
+		
+		int[] cachedIds = fromCache(material, block_subid == 0 ? state : String.valueOf(block_subid));
 
-		String key = matName + ":" + state;
-		String result = idCache.get(key);
+		if (cachedIds != null)
+			return cachedIds;
 
-		if (result != null) {
-			String[] parts = result.split(":", 2);
-			// Prism.log("idCache: [" + matName + ", " + state + "] -> [" + parts[0] + ", "
-			// + parts[1] + "]");
-			return new int[] { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
-		}
-
-		int[] ids = new int[2];
-
+		int[] result = {0, 0};
 		IdMapQuery query = new IdMapQuery();
+		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
-		query.findIds(matName, state, (i, d) -> {
-			idCache.put(key, i + ":" + d);
-			matCache.put(i + ":" + d, key);
-			// Prism.log("idQuery: [" + matName + ", " + state + "] -> [" + i + ", " + d +
-			// "]");
-			ids[0] = i;
-			ids[1] = d;
+		query.findIds(materialName, state, (query_id, query_subid) -> {
+			result[0] = query_id;
+			result[1] = query_subid;
+			
+			storeCache(material, state, query_id, query_subid);
 		}, () -> {
-			int id = 0;
-			int data = 0;
+			int block_id = 0;
 
 			try {
-				data = Integer.parseInt(state);
-			} catch (NumberFormatException e) {
-			}
-
-			try {
-				id = (Integer) Material.class.getMethod("getId").invoke(material);
-				query.map(matName, state, id, data);
-				// Prism.log("idFunc: [" + matName + ", " + state + "] -> [" + id + ", " + data
-				// + "]");
+				block_id = (Integer) Material.class.getMethod("getId").invoke(material);
+				query.map(materialName, state, block_id, block_subid);
+				
+				result[0] = block_id;
+				result[1] = block_subid;
+				
+				storeCache(material, state, block_id, block_subid);
 			} catch (Exception e) {
-				id = query.mapAutoId(matName, state);
-				// Prism.log("idAuto: [" + matName + ", " + state + "] -> [" + id + ", " + data
-				// + "]");
+				block_id = query.mapAutoId(materialName, state);
+				
+				result[0] = block_id;
+				result[1] = 0;
+				
+				storeCache(material, state, block_id, 0);
 			}
-
-			idCache.put(key, id + ":" + data);
-			matCache.put(id + ":" + data, key);
-
-			ids[0] = id;
-			ids[1] = data;
 		});
-
-		/*
-		 * int data = 0; try { data = Integer.parseInt(state); }
-		 * catch(NumberFormatException e) {} int[] asdf = { material.getId(), data };
-		 * 
-		 * if(ids[0] != asdf[0] || ids[1] != asdf[1]) {
-		 * Prism.log("materialToIds mismatch: [" + material + ", " + state + "]");
-		 * Prism.log("    expected: [" + asdf[0] + ", " + asdf[1] + "]");
-		 * Prism.log("    recieved: [" + ids[0] + ", " + ids[1] + "]"); }
-		 */
-
+		
+		if(block_subid != durability)
+			result[1] = durability;
+		
+		return result;
+	}
+	
+	public static final int SUBID_WILDCARD = -1;
+	
+	public int[] materialToIdsWildcard(Material material, String state) {
+		int[] ids = materialToIds(material, state);
+		
+		if(material.getMaxDurability() > 0)
+			ids[1] = SUBID_WILDCARD;
+		
 		return ids;
 	}
 

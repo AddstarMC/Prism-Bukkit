@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
+import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -15,7 +16,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.database.QueryBuilder;
 
 public class SelectQueryBuilder extends QueryBuilder {
-
 	private final String prefix;
 
 	/**
@@ -218,9 +218,10 @@ public class SelectQueryBuilder extends QueryBuilder {
 			for (final Entry<Material, Short> entry : blockfilters.entrySet()) {
 
 				// TODO Better state handling
-				int ids[] = Prism.getItems().materialToIds(entry.getKey(), String.valueOf(entry.getValue()));
+				int ids[] = Prism.getItems().materialToIdsWildcard(entry.getKey(), String.valueOf(entry.getValue()));
 
-				if (ids[1] == 0) {
+				// 
+				if (ids[1] == MaterialAliases.SUBID_WILDCARD) {
 					blockArr[i] = tableNameData + ".block_id = " + ids[0];
 				} else {
 					blockArr[i] = tableNameData + ".block_id = " + ids[0] + " AND " + tableNameData + ".block_subid = "
