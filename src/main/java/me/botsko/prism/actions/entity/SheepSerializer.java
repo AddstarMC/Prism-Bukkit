@@ -8,20 +8,20 @@ import me.botsko.prism.utils.MiscUtils;
 
 public class SheepSerializer extends EntitySerializer {
 	protected String color = null;
-	
+
 	@Override
 	protected void serializer(Entity entity) {
-		color = ((Sheep)entity).getColor().name().toLowerCase();
+		color = ((Sheep) entity).getColor().name().toLowerCase();
 	}
-	
+
 	@Override
 	protected void deserializer(Entity entity) {
-		((Sheep)entity).setColor(MiscUtils.getEnum(color, DyeColor.WHITE));
+		((Sheep) entity).setColor(MiscUtils.getEnum(color, DyeColor.WHITE));
 	}
-	
+
 	@Override
 	protected void niceName(StringBuilder sb, int start) {
-		if(color != null)
+		if (color != null)
 			sb.insert(start, MiscUtils.niceName(color)).insert(start + color.length(), ' ');
 	}
 }

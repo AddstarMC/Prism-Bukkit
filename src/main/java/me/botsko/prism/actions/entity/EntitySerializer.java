@@ -18,112 +18,110 @@ public class EntitySerializer {
 	protected String custom_name = null;
 	protected String taming_owner = null;
 	protected String newColor = null;
-	
+
 	public final String getEntityName() {
 		return entity_name;
 	}
-	
+
 	// Le sigh
 	public final void setNewColor(String color) {
 		newColor = color;
 	}
-	
+
 	public final void serialize(Entity entity) {
 		entity_name = entity.getType().name().toLowerCase();
-		
-		// Get custom name
-        custom_name = entity.getCustomName();
 
-        // Get animal age
-        if(entity instanceof Ageable) {
-            isAdult = ((Ageable)entity).isAdult();
-        }
-        else if(entity instanceof Zombie) {
-        	isAdult = !((Zombie)entity).isBaby();
-        }
-        
-        // Owner
-        if(entity instanceof Tameable) {
-        	final Tameable mob = (Tameable) entity;
-        	if(mob.isTamed())
-        		taming_owner = mob.getOwner().getUniqueId().toString();
-        }
-        
-        // Sitting
-        if(entity instanceof Sittable) {
-        	sitting = ((Sittable)entity).isSitting();
-        }
-        
+		// Get custom name
+		custom_name = entity.getCustomName();
+
+		// Get animal age
+		if (entity instanceof Ageable) {
+			isAdult = ((Ageable) entity).isAdult();
+		} else if (entity instanceof Zombie) {
+			isAdult = !((Zombie) entity).isBaby();
+		}
+
+		// Owner
+		if (entity instanceof Tameable) {
+			final Tameable mob = (Tameable) entity;
+			if (mob.isTamed())
+				taming_owner = mob.getOwner().getUniqueId().toString();
+		}
+
+		// Sitting
+		if (entity instanceof Sittable) {
+			sitting = ((Sittable) entity).isSitting();
+		}
+
 		serializer(entity);
 	}
-	
+
 	protected void serializer(Entity entity) {
 	}
-	
+
 	public final void deserialize(Entity entity) {
 		// Get custom name
-        if( entity instanceof LivingEntity && custom_name != null ) {
-            final LivingEntity namedEntity = (LivingEntity) entity;
-            namedEntity.setCustomName( custom_name );
-        }
+		if (entity instanceof LivingEntity && custom_name != null) {
+			final LivingEntity namedEntity = (LivingEntity) entity;
+			namedEntity.setCustomName(custom_name);
+		}
 
-        // Get animal age
-        if( entity instanceof Ageable ) {
-            final Ageable age = (Ageable) entity;
-            if( Boolean.FALSE.equals(isAdult) ) {
-                age.setBaby();
-            } else {
-                age.setAdult();
-            }
-        }
-        else if(entity instanceof Zombie) {
-        	((Zombie)entity).setBaby(Boolean.FALSE.equals(isAdult));
-        }
-        
-        // Owner
-        if( entity instanceof Tameable ){
-        	((Tameable)entity).setOwner( EntityUtils.offlineOf( taming_owner ) );
-        }
-        
-        // Sitting
-        if( entity instanceof Sittable ){
-        	((Sittable)entity).setSitting(Boolean.TRUE.equals(sitting));
-        }
-        
+		// Get animal age
+		if (entity instanceof Ageable) {
+			final Ageable age = (Ageable) entity;
+			if (Boolean.FALSE.equals(isAdult)) {
+				age.setBaby();
+			} else {
+				age.setAdult();
+			}
+		} else if (entity instanceof Zombie) {
+			((Zombie) entity).setBaby(Boolean.FALSE.equals(isAdult));
+		}
+
+		// Owner
+		if (entity instanceof Tameable) {
+			((Tameable) entity).setOwner(EntityUtils.offlineOf(taming_owner));
+		}
+
+		// Sitting
+		if (entity instanceof Sittable) {
+			((Sittable) entity).setSitting(Boolean.TRUE.equals(sitting));
+		}
+
 		deserializer(entity);
 	}
-	
+
 	protected void deserializer(Entity entity) {
 	}
-	
+
 	@Override
 	public final String toString() {
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
-		if(taming_owner != null) {
+		if (taming_owner != null) {
 			OfflinePlayer player = EntityUtils.offlineOf(taming_owner);
-			if(player != null) {
+			if (player != null) {
 				String str = player.getName() + "'s ";
 				sb.append(str);
 				index = str.length();
 			}
 		}
-		
-		if(Boolean.FALSE.equals(isAdult))
+
+		if (Boolean.FALSE.equals(isAdult))
 			sb.append("baby ");
-		
+
 		sb.append(MiscUtils.niceName(entity_name)).append(' ');
 
-		if(newColor != null)
+		if (newColor != null)
 			sb.append(MiscUtils.niceName(newColor)).append(' ');
-		
-		if(custom_name != null)
+
+		if (custom_name != null)
 			sb.append("named ").append(custom_name);
-		
+
 		niceName(sb, index);
 		return sb.toString();
 	}
-	
+
 	protected void niceName(StringBuilder sb, int start) {
 	}
 }

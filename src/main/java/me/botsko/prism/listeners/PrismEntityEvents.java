@@ -38,625 +38,630 @@ import java.util.UUID;
 
 public class PrismEntityEvents implements Listener {
 
-    /**
+	/**
 	 *
 	 */
-    private final Prism plugin;
+	private final Prism plugin;
 
-    /**
-     * 
-     * @param plugin
-     */
-    public PrismEntityEvents(Prism plugin) {
-        this.plugin = plugin;
-    }
+	/**
+	 * 
+	 * @param plugin
+	 */
+	public PrismEntityEvents(Prism plugin) {
+		this.plugin = plugin;
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
-        if( !( event.getDamager() instanceof Player ) )
-            return;
+		if (!(event.getDamager() instanceof Player))
+			return;
 
-        final Entity entity = event.getEntity();
-        final Player player = (Player) event.getDamager();
+		final Entity entity = event.getEntity();
+		final Player player = (Player) event.getDamager();
 
-        // Cancel the event if a wand is in use
-        if( WandUtils.playerUsesWandOnClick( player, entity.getLocation() ) ) {
-            event.setCancelled( true );
-            return;
-        }
+		// Cancel the event if a wand is in use
+		if (WandUtils.playerUsesWandOnClick(player, entity.getLocation())) {
+			event.setCancelled(true);
+			return;
+		}
 
-        if( entity instanceof ItemFrame ) {
-            final ItemFrame frame = (ItemFrame) event.getEntity();
-            // Frame is empty but an item is held
-            if( !frame.getItem().getType().equals( Material.AIR ) ) {
-                if( Prism.getIgnore().event( "item-remove", player ) ) {
-                    RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), 1, 0, null,
-                            entity.getLocation(), player) );
-                }
-            }
-        }
-    }    
+		if (entity instanceof ItemFrame) {
+			final ItemFrame frame = (ItemFrame) event.getEntity();
+			// Frame is empty but an item is held
+			if (!frame.getItem().getType().equals(Material.AIR)) {
+				if (Prism.getIgnore().event("item-remove", player)) {
+					RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(), 1, 0, null,
+							entity.getLocation(), player));
+				}
+			}
+		}
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityDeath(final EntityDeathEvent event) {
-        final Entity entity = event.getEntity();
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityDeath(final EntityDeathEvent event) {
+		final Entity entity = event.getEntity();
 
-        // Mob Death
-        if( !( entity instanceof Player ) ) {
-            if( entity.getLastDamageCause() instanceof EntityDamageByEntityEvent ) {
+		// Mob Death
+		if (!(entity instanceof Player)) {
+			if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 
-                if( entity instanceof ChestedHorse ) {
-                    final ChestedHorse horse = (ChestedHorse) entity;
-                    if( horse.isCarryingChest() ) {
-                        // Log item drops
-                        if( Prism.getIgnore().event( "item-drop", entity.getWorld() ) ) {
-                            for ( final ItemStack i : horse.getInventory().getContents() ) {
-                                if( i == null )
-                                    continue;
-                                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
-                                        null, entity.getLocation(), "horse") );
-                            }
-                        }
-                    }
-                }
+				if (entity instanceof ChestedHorse) {
+					final ChestedHorse horse = (ChestedHorse) entity;
+					if (horse.isCarryingChest()) {
+						// Log item drops
+						if (Prism.getIgnore().event("item-drop", entity.getWorld())) {
+							for (final ItemStack i : horse.getInventory().getContents()) {
+								if (i == null)
+									continue;
+								RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
+										-1, null, entity.getLocation(), "horse"));
+							}
+						}
+					}
+				}
 
-                // Mob killed by player
-                final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
-                        .getLastDamageCause();
-                if( entityDamageByEntityEvent.getDamager() instanceof Player ) {
-                    final Player player = (Player) entityDamageByEntityEvent.getDamager();
-                    if( !Prism.getIgnore().event( "player-kill", player ) )
-                        return;
-                    RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player) );
+				// Mob killed by player
+				final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
+						.getLastDamageCause();
+				if (entityDamageByEntityEvent.getDamager() instanceof Player) {
+					final Player player = (Player) entityDamageByEntityEvent.getDamager();
+					if (!Prism.getIgnore().event("player-kill", player))
+						return;
+					RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
 
-                }
-                // Mob shot by an arrow from a player
-                else if( entityDamageByEntityEvent.getDamager() instanceof Arrow ) {
-                    final Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
-                    if( arrow.getShooter() instanceof Player ) {
+				}
+				// Mob shot by an arrow from a player
+				else if (entityDamageByEntityEvent.getDamager() instanceof Arrow) {
+					final Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
+					if (arrow.getShooter() instanceof Player) {
 
-                        final Player player = (Player) arrow.getShooter();
-                        if( !Prism.getIgnore().event( "player-kill", player ) )
-                            return;
-                        RecordingQueue.addToQueue( ActionFactory.createEntity("player-kill", entity, player) );
+						final Player player = (Player) arrow.getShooter();
+						if (!Prism.getIgnore().event("player-kill", player))
+							return;
+						RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
 
-                    }
-                } else {
-                    // Mob died by another mob
-                    final Entity damager = entityDamageByEntityEvent.getDamager();
-                    String name = "unknown";
-                    if( damager != null ) {
-                        name = damager.getType().name().toLowerCase();
-                    }
+					}
+				} else {
+					// Mob died by another mob
+					final Entity damager = entityDamageByEntityEvent.getDamager();
+					String name = "unknown";
+					if (damager != null) {
+						name = damager.getType().name().toLowerCase();
+					}
 
-                    if( !Prism.getIgnore().event( "entity-kill", entity.getWorld() ) )
-                        return;
-                    RecordingQueue.addToQueue( ActionFactory.createEntity("entity-kill", entity, name) );
-                }
-            } else {
+					if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+						return;
+					RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
+				}
+			} else {
 
-                if( !Prism.getIgnore().event( "entity-kill", entity.getWorld() ) )
-                    return;
+				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+					return;
 
-                String killer = "unknown";
-                final EntityDamageEvent damage = entity.getLastDamageCause();
-                if( damage != null ) {
-                    final DamageCause cause = damage.getCause();
-                    if( cause != null ) {
-                        killer = cause.name().toLowerCase();
-                    }
-                }
+				String killer = "unknown";
+				final EntityDamageEvent damage = entity.getLastDamageCause();
+				if (damage != null) {
+					final DamageCause cause = damage.getCause();
+					if (cause != null) {
+						killer = cause.name().toLowerCase();
+					}
+				}
 
-                // Record the death as natural
-                RecordingQueue.addToQueue( ActionFactory.createEntity("entity-kill", entity, killer) );
+				// Record the death as natural
+				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, killer));
 
-            }
-        } else {
+			}
+		} else {
 
-            // Determine who died and what the exact cause was
-            final Player p = (Player) event.getEntity();
-            if( Prism.getIgnore().event( "player-death", p ) ) {
-                final String cause = DeathUtils.getCauseNiceName( p );
-                String attacker = DeathUtils.getAttackerName( p );
-                if( attacker.equals( "pvpwolf" ) ) {
-                    final String owner = DeathUtils.getTameWolfOwner( event );
-                    attacker = owner + "'s wolf";
-                }
-                RecordingQueue.addToQueue( ActionFactory.createPlayerDeath("player-death", p, cause, attacker) );
-            }
+			// Determine who died and what the exact cause was
+			final Player p = (Player) event.getEntity();
+			if (Prism.getIgnore().event("player-death", p)) {
+				final String cause = DeathUtils.getCauseNiceName(p);
+				String attacker = DeathUtils.getAttackerName(p);
+				if (attacker.equals("pvpwolf")) {
+					final String owner = DeathUtils.getTameWolfOwner(event);
+					attacker = owner + "'s wolf";
+				}
+				RecordingQueue.addToQueue(ActionFactory.createPlayerDeath("player-death", p, cause, attacker));
+			}
 
-            // Log item drops
-            if( Prism.getIgnore().event( "item-drop", p ) ) {
-                if( !event.getDrops().isEmpty() ) {
-                    for ( final ItemStack i : event.getDrops() ) {
-                        RecordingQueue.addToQueue( ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1, null,
-                                p.getLocation(), p) );
-                    }
-                }
-            }
-        }
-    }
+			// Log item drops
+			if (Prism.getIgnore().event("item-drop", p)) {
+				if (!event.getDrops().isEmpty()) {
+					for (final ItemStack i : event.getDrops()) {
+						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1, null,
+								p.getLocation(), p));
+					}
+				}
+			}
+		}
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onCreatureSpawn(final CreatureSpawnEvent event) {
-        if( !Prism.getIgnore().event( "entity-spawn", event.getEntity().getWorld() ) )
-            return;
-        final String reason = event.getSpawnReason().name().toLowerCase().replace( "_", " " );
-        if( reason.equals( "natural" ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-spawn", event.getEntity(), reason) );
-    }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onCreatureSpawn(final CreatureSpawnEvent event) {
+		if (!Prism.getIgnore().event("entity-spawn", event.getEntity().getWorld()))
+			return;
+		final String reason = event.getSpawnReason().name().toLowerCase().replace("_", " ");
+		if (reason.equals("natural"))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createEntity("entity-spawn", event.getEntity(), reason));
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityTargetEvent(final EntityTargetEvent event) {
-        if( !Prism.getIgnore().event( "entity-follow", event.getEntity().getWorld() ) )
-            return;
-        if( event.getTarget() instanceof Player ) {
-            if( event.getEntity().getType().equals( EntityType.CREEPER ) ) {
-                final Player player = (Player) event.getTarget();
-                RecordingQueue
-                        .addToQueue( ActionFactory.createEntity("entity-follow", event.getEntity(), player) );
-            }
-        }
-    }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityTargetEvent(final EntityTargetEvent event) {
+		if (!Prism.getIgnore().event("entity-follow", event.getEntity().getWorld()))
+			return;
+		if (event.getTarget() instanceof Player) {
+			if (event.getEntity().getType().equals(EntityType.CREEPER)) {
+				final Player player = (Player) event.getTarget();
+				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-follow", event.getEntity(), player));
+			}
+		}
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
-        if( !Prism.getIgnore().event( "entity-shear", event.getPlayer() ) )
-            return;
-        RecordingQueue
-                .addToQueue( ActionFactory.createEntity("entity-shear", event.getEntity(), event.getPlayer()) );
-    }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerShearEntity(final PlayerShearEntityEvent event) {
+		if (!Prism.getIgnore().event("entity-shear", event.getPlayer()))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createEntity("entity-shear", event.getEntity(), event.getPlayer()));
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerInteractEntityEvent(final PlayerInteractEntityEvent event) {
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerInteractEntityEvent(final PlayerInteractEntityEvent event) {
 
-        final Player p = event.getPlayer();
-        final Entity e = event.getRightClicked();
-        final ItemStack hand = p.getInventory().getItemInMainHand();
-        // @todo right clicks should technically follow blockface
-        // Cancel the event if a wand is in use
-        if( WandUtils.playerUsesWandOnClick( p, e.getLocation() ) ) {
-            event.setCancelled( true );
-            return;
-        }
+		final Player p = event.getPlayer();
+		final Entity e = event.getRightClicked();
+		final ItemStack hand = p.getInventory().getItemInMainHand();
+		// @todo right clicks should technically follow blockface
+		// Cancel the event if a wand is in use
+		if (WandUtils.playerUsesWandOnClick(p, e.getLocation())) {
+			event.setCancelled(true);
+			return;
+		}
 
-        if( e instanceof ItemFrame ) {
+		if (e instanceof ItemFrame) {
 
-            final ItemFrame frame = (ItemFrame) e;
+			final ItemFrame frame = (ItemFrame) e;
 
-            // If held item doesn't equal existing item frame object type
-            if( !frame.getItem().getType().equals( Material.AIR ) ) {
-                RecordingQueue.addToQueue( ActionFactory.createPlayer("item-rotate", event.getPlayer(), frame.getRotation()
-                        .name().toLowerCase()) );
-            }
+			// If held item doesn't equal existing item frame object type
+			if (!frame.getItem().getType().equals(Material.AIR)) {
+				RecordingQueue.addToQueue(ActionFactory.createPlayer("item-rotate", event.getPlayer(),
+						frame.getRotation().name().toLowerCase()));
+			}
 
-            // Frame is empty but an item is held
-            if( frame.getItem().getType().equals( Material.AIR ) && hand != null ) {
-                if( Prism.getIgnore().event( "item-insert", p ) ) {
-                    RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
-                            e.getLocation(), p) );
-                }
-            }
-        }
-        
-        if(hand != null) {
-	        // if they're holding coal (or charcoal, a subitem) and they click a
-	        // powered minecart
-	        if( hand.getType() == Material.COAL && e instanceof PoweredMinecart ) {
-	            if( !Prism.getIgnore().event( "item-insert", p ) )
-	                return;
-	            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
-	                    e.getLocation(), p) );
-	        }
-	
-	        if( !Prism.getIgnore().event( "entity-dye", p ) )
-	            return;
-	        // Only track the event on sheep, when player holds dye
-	        if( hand.getType() == Material.INK_SACK && e.getType() == EntityType.SHEEP ) {
-	            final String newColor = Prism.getItems().getAlias( hand.getType(),
-	                    (byte) hand.getDurability() );
-	            RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
-	                    , newColor) );
-	        }
-        }
-    }
+			// Frame is empty but an item is held
+			if (frame.getItem().getType().equals(Material.AIR) && hand != null) {
+				if (Prism.getIgnore().event("item-insert", p)) {
+					RecordingQueue.addToQueue(
+							ActionFactory.createItemStack("item-insert", hand, 1, 0, null, e.getLocation(), p));
+				}
+			}
+		}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
-        if( !Prism.getIgnore().event( "entity-break", event.getEntity().getWorld() ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createBlock("entity-break", event.getBlock(), event.getEntityType()
-                .name().toLowerCase()) );
-    }
+		if (hand != null) {
+			// if they're holding coal (or charcoal, a subitem) and they click a
+			// powered minecart
+			if (hand.getType() == Material.COAL && e instanceof PoweredMinecart) {
+				if (!Prism.getIgnore().event("item-insert", p))
+					return;
+				RecordingQueue
+						.addToQueue(ActionFactory.createItemStack("item-insert", hand, 1, 0, null, e.getLocation(), p));
+			}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerEntityLeash(final PlayerLeashEntityEvent event) {
-        if( !Prism.getIgnore().event( "entity-leash", event.getPlayer() ) )
-            return;
-        RecordingQueue
-                .addToQueue( ActionFactory.createEntity("entity-leash", event.getEntity(), event.getPlayer()) );
-    }
+			if (!Prism.getIgnore().event("entity-dye", p))
+				return;
+			// Only track the event on sheep, when player holds dye
+			if (hand.getType() == Material.INK_SACK && e.getType() == EntityType.SHEEP) {
+				final String newColor = Prism.getItems().getAlias(hand.getType(), (byte) hand.getDurability());
+				RecordingQueue.addToQueue(
+						ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer(), newColor));
+			}
+		}
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerEntityUnleash(final PlayerUnleashEntityEvent event) {
-        if( !Prism.getIgnore().event( "entity-unleash", event.getPlayer() ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-unleash", event.getEntity(), event.getPlayer() ) );
-    }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityBreakDoor(final EntityBreakDoorEvent event) {
+		if (!Prism.getIgnore().event("entity-break", event.getEntity().getWorld()))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createBlock("entity-break", event.getBlock(),
+				event.getEntityType().name().toLowerCase()));
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityUnleash(final EntityUnleashEvent event) {
-        if( !Prism.getIgnore().event( "entity-unleash" ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createEntity("entity-unleash", event.getEntity(), event.getReason()
-                .toString().toLowerCase()) );
-    }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerEntityLeash(final PlayerLeashEntityEvent event) {
+		if (!Prism.getIgnore().event("entity-leash", event.getPlayer()))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createEntity("entity-leash", event.getEntity(), event.getPlayer()));
+	}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPotionSplashEvent(final PotionSplashEvent event) {
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerEntityUnleash(final PlayerUnleashEntityEvent event) {
+		if (!Prism.getIgnore().event("entity-unleash", event.getPlayer()))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createEntity("entity-unleash", event.getEntity(), event.getPlayer()));
+	}
 
-        final ProjectileSource source = event.getPotion().getShooter();
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityUnleash(final EntityUnleashEvent event) {
+		if (!Prism.getIgnore().event("entity-unleash"))
+			return;
+		RecordingQueue.addToQueue(ActionFactory.createEntity("entity-unleash", event.getEntity(),
+				event.getReason().toString().toLowerCase()));
+	}
 
-        // Ignore from non-players for the time being
-        if( !( source instanceof Player ) )
-            return;
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPotionSplashEvent(final PotionSplashEvent event) {
 
-        final Player player = (Player) source;
+		final ProjectileSource source = event.getPotion().getShooter();
 
-        if( !Prism.getIgnore().event( "potion-splash", player ) )
-            return;
+		// Ignore from non-players for the time being
+		if (!(source instanceof Player))
+			return;
 
-        // What type?
-        // Right now this won't support anything with multiple effects
-        final Collection<PotionEffect> potion = event.getPotion().getEffects();
-        String name = "";
-        for ( final PotionEffect eff : potion ) {
-            name = eff.getType().getName().toLowerCase();
-        }
+		final Player player = (Player) source;
 
-        RecordingQueue.addToQueue( ActionFactory.createPlayer("potion-splash", player, name) );
+		if (!Prism.getIgnore().event("potion-splash", player))
+			return;
 
-    }
+		// What type?
+		// Right now this won't support anything with multiple effects
+		final Collection<PotionEffect> potion = event.getPotion().getEffects();
+		String name = "";
+		for (final PotionEffect eff : potion) {
+			name = eff.getType().getName().toLowerCase();
+		}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onHangingPlaceEvent(final HangingPlaceEvent event) {
-        // Cancel the event if a wand is in use
-        if( WandUtils.playerUsesWandOnClick( event.getPlayer(), event.getEntity().getLocation() ) ) {
-            event.setCancelled( true );
-            return;
-        }
-        if( !Prism.getIgnore().event( "hangingitem-place", event.getPlayer() ) )
-            return;
-        RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-place", event.getEntity(), event.getPlayer() ) );
-    }
+		RecordingQueue.addToQueue(ActionFactory.createPlayer("potion-splash", player, name));
 
-    /**
-     * Hanging items broken by a player fall under the HangingBreakByEntityEvent
-     * events. This is merely here to capture cause = physics for when they
-     * detach from a block.
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onHangingBreakEvent(final HangingBreakEvent event) {
+	}
 
-        // Ignore other causes. Entity cause already handled.
-        if( !event.getCause().equals( RemoveCause.PHYSICS ) ) { return; }
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingPlaceEvent(final HangingPlaceEvent event) {
+		// Cancel the event if a wand is in use
+		if (WandUtils.playerUsesWandOnClick(event.getPlayer(), event.getEntity().getLocation())) {
+			event.setCancelled(true);
+			return;
+		}
+		if (!Prism.getIgnore().event("hangingitem-place", event.getPlayer()))
+			return;
+		RecordingQueue
+				.addToQueue(ActionFactory.createHangingItem("hangingitem-place", event.getEntity(), event.getPlayer()));
+	}
 
-        if( !Prism.getIgnore().event( "hangingitem-break", event.getEntity().getWorld() ) )
-            return;
+	/**
+	 * Hanging items broken by a player fall under the HangingBreakByEntityEvent
+	 * events. This is merely here to capture cause = physics for when they detach
+	 * from a block.
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingBreakEvent(final HangingBreakEvent event) {
 
-        final Hanging e = event.getEntity();
+		// Ignore other causes. Entity cause already handled.
+		if (!event.getCause().equals(RemoveCause.PHYSICS)) {
+			return;
+		}
 
-        // Check for planned hanging item breaks
-        final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
-                + e.getLocation().getBlockZ();
-        
-        String value = plugin.preplannedBlockFalls.remove( coord_key );
-        UUID uuid = null;
-        try{ uuid = UUID.fromString(value); } catch(Exception e2){}
-        final Player player = uuid != null ? Bukkit.getPlayer( uuid ) : null;
+		if (!Prism.getIgnore().event("hangingitem-break", event.getEntity().getWorld()))
+			return;
 
-        // Track the hanging item break
-        if(player != null)
-        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", e, player) );
-        else {
-        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", e, value) );
-        }
-        	
-        plugin.preplannedBlockFalls.remove( coord_key );
+		final Hanging e = event.getEntity();
 
-        if( !Prism.getIgnore().event( "item-remove", event.getEntity().getWorld() ) )
-            return;
+		// Check for planned hanging item breaks
+		final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
+				+ e.getLocation().getBlockZ();
 
-        // If an item frame, track it's contents
-        if( e instanceof ItemFrame ) {
-            final ItemFrame frame = (ItemFrame) e;
-            if( frame.getItem() != null ) {
-            	if(player != null)
-	                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
-	                        .getAmount(), -1, null, e.getLocation(), player) );
-            	else
-            		RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
-	                        .getAmount(), -1, null, e.getLocation(), value) );
-            }
-        }
-    }
+		String value = plugin.preplannedBlockFalls.remove(coord_key);
+		UUID uuid = null;
+		try {
+			uuid = UUID.fromString(value);
+		} catch (Exception e2) {
+		}
+		final Player player = uuid != null ? Bukkit.getPlayer(uuid) : null;
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
+		// Track the hanging item break
+		if (player != null)
+			RecordingQueue.addToQueue(ActionFactory.createHangingItem("hangingitem-break", e, player));
+		else {
+			RecordingQueue.addToQueue(ActionFactory.createHangingItem("hangingitem-break", e, value));
+		}
 
-        final Entity entity = event.getEntity();
-        final Entity remover = event.getRemover();
-        Player player = null;
-        if( remover instanceof Player )
-            player = (Player) remover;
+		plugin.preplannedBlockFalls.remove(coord_key);
 
-        // Cancel the event if a wand is in use
-        if( player != null && WandUtils.playerUsesWandOnClick( player, event.getEntity().getLocation() ) ) {
-            event.setCancelled( true );
-            return;
-        }
+		if (!Prism.getIgnore().event("item-remove", event.getEntity().getWorld()))
+			return;
 
-        if( !Prism.getIgnore().event( "hangingitem-break", event.getEntity().getWorld() ) )
-            return;
+		// If an item frame, track it's contents
+		if (e instanceof ItemFrame) {
+			final ItemFrame frame = (ItemFrame) e;
+			if (frame.getItem() != null) {
+				if (player != null)
+					RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(),
+							frame.getItem().getAmount(), -1, null, e.getLocation(), player));
+				else
+					RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(),
+							frame.getItem().getAmount(), -1, null, e.getLocation(), value));
+			}
+		}
+	}
 
-        String breaking_name = remover.getType().name().toLowerCase();
-        if( player != null )
-        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), player) );
-        else
-        	RecordingQueue.addToQueue( ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), breaking_name) );
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onHangingBreakByEntityEvent(final HangingBreakByEntityEvent event) {
 
-        if( !Prism.getIgnore().event( "item-remove", event.getEntity().getWorld() ) )
-            return;
+		final Entity entity = event.getEntity();
+		final Entity remover = event.getRemover();
+		Player player = null;
+		if (remover instanceof Player)
+			player = (Player) remover;
 
-        // If an item frame, track it's contents
-        if( event.getEntity() instanceof ItemFrame ) {
-            final ItemFrame frame = (ItemFrame) event.getEntity();
-            if( frame.getItem() != null ) {
-                RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", frame.getItem(), frame.getItem()
-                        .getAmount(), -1, null, entity.getLocation(), breaking_name) );
-            }
-        }
-    }
+		// Cancel the event if a wand is in use
+		if (player != null && WandUtils.playerUsesWandOnClick(player, event.getEntity().getLocation())) {
+			event.setCancelled(true);
+			return;
+		}
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
-        final String entity = MiscUtils.getEntityName(event.getEntity());
+		if (!Prism.getIgnore().event("hangingitem-break", event.getEntity().getWorld()))
+			return;
 
-        // Technically I think that I really should name it "entity-eat" for
-        // better consistency and
-        // in case other mobs ever are made to eat. But that's not as fun
-        Material to = event.getTo();
-        Material from = event.getBlock().getType();
-        if( from == Material.GRASS && to == Material.DIRT) {
-            if( event.getEntityType() != EntityType.SHEEP )
-                return;
-            if( !Prism.getIgnore().event( "sheep-eat", event.getBlock() ) )
-                return;
-            RecordingQueue.addToQueue( ActionFactory.createBlock("sheep-eat", event.getBlock(), entity) );
-        } else if (to == Material.AIR ^ from == Material.AIR && event.getEntity() instanceof Enderman) {
-            if (from == Material.AIR) {
-                if (!Prism.getIgnore().event("enderman-place", event.getBlock()))
-                    return;
-                BlockState state = event.getBlock().getState();
-                state.setType(to);
-                RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-place", state, entity));
-            } else {
-                if (!Prism.getIgnore().event("enderman-pickup", event.getBlock()))
-                    return;
-                final Enderman enderman = (Enderman) event.getEntity();
-                if (enderman.getCarriedMaterial() != null) {
-                    BlockState state = event.getBlock().getState();
-                    state.setData(enderman.getCarriedMaterial());
-                    RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
-                }
-            }
-        } else if (to == Material.AIR && event.getEntity() instanceof Wither) {
-            if (!Prism.getIgnore().event("entity-break", event.getBlock()))
-                return;
-            RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(), event.getEntityType().name().toLowerCase()));
-        }
-    }
+		String breaking_name = remover.getType().name().toLowerCase();
+		if (player != null)
+			RecordingQueue.addToQueue(ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), player));
+		else
+			RecordingQueue
+					.addToQueue(ActionFactory.createHangingItem("hangingitem-break", event.getEntity(), breaking_name));
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityBlockForm(final EntityBlockFormEvent event) {
-        if( !Prism.getIgnore().event( "entity-form", event.getBlock() ) )
-            return;
-        final Block block = event.getBlock();
-        final Location loc = block.getLocation();
-        final BlockState newState = event.getNewState();
-        final String entity = event.getEntity().getType().name().toLowerCase();
-        
-        // TODO: 1.13
-        @SuppressWarnings("deprecation")
+		if (!Prism.getIgnore().event("item-remove", event.getEntity().getWorld()))
+			return;
+
+		// If an item frame, track it's contents
+		if (event.getEntity() instanceof ItemFrame) {
+			final ItemFrame frame = (ItemFrame) event.getEntity();
+			if (frame.getItem() != null) {
+				RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(),
+						frame.getItem().getAmount(), -1, null, entity.getLocation(), breaking_name));
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
+		final String entity = MiscUtils.getEntityName(event.getEntity());
+
+		// Technically I think that I really should name it "entity-eat" for
+		// better consistency and
+		// in case other mobs ever are made to eat. But that's not as fun
+		Material to = event.getTo();
+		Material from = event.getBlock().getType();
+		if (from == Material.GRASS && to == Material.DIRT) {
+			if (event.getEntityType() != EntityType.SHEEP)
+				return;
+			if (!Prism.getIgnore().event("sheep-eat", event.getBlock()))
+				return;
+			RecordingQueue.addToQueue(ActionFactory.createBlock("sheep-eat", event.getBlock(), entity));
+		} else if (to == Material.AIR ^ from == Material.AIR && event.getEntity() instanceof Enderman) {
+			if (from == Material.AIR) {
+				if (!Prism.getIgnore().event("enderman-place", event.getBlock()))
+					return;
+				BlockState state = event.getBlock().getState();
+				state.setType(to);
+				RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-place", state, entity));
+			} else {
+				if (!Prism.getIgnore().event("enderman-pickup", event.getBlock()))
+					return;
+				final Enderman enderman = (Enderman) event.getEntity();
+				if (enderman.getCarriedMaterial() != null) {
+					BlockState state = event.getBlock().getState();
+					state.setData(enderman.getCarriedMaterial());
+					RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
+				}
+			}
+		} else if (to == Material.AIR && event.getEntity() instanceof Wither) {
+			if (!Prism.getIgnore().event("entity-break", event.getBlock()))
+				return;
+			RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(),
+					event.getEntityType().name().toLowerCase()));
+		}
+	}
+
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityBlockForm(final EntityBlockFormEvent event) {
+		if (!Prism.getIgnore().event("entity-form", event.getBlock()))
+			return;
+		final Block block = event.getBlock();
+		final Location loc = block.getLocation();
+		final BlockState newState = event.getNewState();
+		final String entity = event.getEntity().getType().name().toLowerCase();
+
+		// TODO: 1.13
+		@SuppressWarnings("deprecation")
 		byte oldData = block.getData();
-        @SuppressWarnings("deprecation")
+		@SuppressWarnings("deprecation")
 		byte newData = newState.getData().getData();
-        
-        RecordingQueue.addToQueue( ActionFactory.createBlockChange("entity-form", loc, block.getType(), oldData,
-                newState.getType(), newData, entity) );
-    }
 
-    /**
-     * 
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(), oldData,
+				newState.getType(), newData, entity));
+	}
 
-        if( event.blockList() == null || event.blockList().isEmpty() )
-            return;
+	/**
+	 * 
+	 * @param event
+	 */
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
 
-        String name;
-        String action = "entity-explode";
-        if( event.getEntity() != null ) {
-            if( event.getEntity() instanceof Creeper ) {
-                if( !Prism.getIgnore().event( "creeper-explode", event.getEntity().getWorld() ) )
-                    return;
-                action = "creeper-explode";
-                name = "creeper";
-            } else if( event.getEntity() instanceof TNTPrimed ) {
-                if( !Prism.getIgnore().event( "tnt-explode", event.getEntity().getWorld() ) )
-                    return;
-                action = "tnt-explode";
-                Entity source = ((TNTPrimed) event.getEntity()).getSource();
-                name = followTNTTrail(source);
-            } else if( event.getEntity() instanceof EnderDragon ) {
-                if( !Prism.getIgnore().event( "dragon-eat", event.getEntity().getWorld() ) )
-                    return;
-                action = "dragon-eat";
-                name = "enderdragon";
-            } else {
-                if( !Prism.getIgnore().event( "entity-explode", event.getLocation().getWorld() ) )
-                    return;
-                try {
-                    name = event.getEntity().getType().name().toLowerCase().replace( "_", " " );
-                    name = name.length() > 15 ? name.substring( 0, 15 ) : name; // I
-                                                                                // don't
-                                                                                // think
-                                                                                // this
-                                                                                // can
-                                                                                // happen,
-                                                                                // but
-                                                                                // just
-                                                                                // in
-                                                                                // case.
-                                                                                // Might
-                                                                                // look
-                                                                                // weird,
-                                                                                // but
-                                                                                // that's
-                                                                                // better
-                                                                                // than
-                                                                                // breaking
-                                                                                // stuff.
-                } catch ( final NullPointerException e ) {
-                    name = "unknown";
-                }
-            }
-        } else {
-            if( !Prism.getIgnore().event( "entity-explode", event.getLocation().getWorld() ) )
-                return;
-            name = "magic";
-        }
-        // Also log item-removes from chests that are blown up
-        final PrismBlockEvents be = new PrismBlockEvents( plugin );
-        for ( Block block : event.blockList() ) {
+		if (event.blockList() == null || event.blockList().isEmpty())
+			return;
 
-            // don't bother record upper doors.
-            if( BlockUtils.isDoor(block.getType()) ) {
-                if( ((Door)block.getState().getData()).isTopHalf() ) {
-                    continue;
-                }
-            }
+		String name;
+		String action = "entity-explode";
+		if (event.getEntity() != null) {
+			if (event.getEntity() instanceof Creeper) {
+				if (!Prism.getIgnore().event("creeper-explode", event.getEntity().getWorld()))
+					return;
+				action = "creeper-explode";
+				name = "creeper";
+			} else if (event.getEntity() instanceof TNTPrimed) {
+				if (!Prism.getIgnore().event("tnt-explode", event.getEntity().getWorld()))
+					return;
+				action = "tnt-explode";
+				Entity source = ((TNTPrimed) event.getEntity()).getSource();
+				name = followTNTTrail(source);
+			} else if (event.getEntity() instanceof EnderDragon) {
+				if (!Prism.getIgnore().event("dragon-eat", event.getEntity().getWorld()))
+					return;
+				action = "dragon-eat";
+				name = "enderdragon";
+			} else {
+				if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()))
+					return;
+				try {
+					name = event.getEntity().getType().name().toLowerCase().replace("_", " ");
+					name = name.length() > 15 ? name.substring(0, 15) : name; // I
+																				// don't
+																				// think
+																				// this
+																				// can
+																				// happen,
+																				// but
+																				// just
+																				// in
+																				// case.
+																				// Might
+																				// look
+																				// weird,
+																				// but
+																				// that's
+																				// better
+																				// than
+																				// breaking
+																				// stuff.
+				} catch (final NullPointerException e) {
+					name = "unknown";
+				}
+			}
+		} else {
+			if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()))
+				return;
+			name = "magic";
+		}
+		// Also log item-removes from chests that are blown up
+		final PrismBlockEvents be = new PrismBlockEvents(plugin);
+		for (Block block : event.blockList()) {
 
-            // Change handling a bit if it's a long block
-            final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock( block );
-            if( sibling != null && !block.getType().equals( Material.CHEST )
-                    && !block.getType().equals( Material.TRAPPED_CHEST ) ) {
-                block = sibling;
-            }
+			// don't bother record upper doors.
+			if (BlockUtils.isDoor(block.getType())) {
+				if (((Door) block.getState().getData()).isTopHalf()) {
+					continue;
+				}
+			}
 
-            // log items removed from container
-            // note: done before the container so a "rewind" for rollback will
-            // work properly
-            final Block b2 = block;
-            final String source = name;
-            be.forEachItem(block, (i,s) -> {
-            	RecordingQueue.addToQueue( ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
-                        b2.getLocation(), source) );
-            });
-            //be.logItemRemoveFromDestroyedContainer( name, block );
-            RecordingQueue.addToQueue( ActionFactory.createBlock(action, block, source) );
-            // look for relationships
-            be.logBlockRelationshipsForBlock( source, block );
+			// Change handling a bit if it's a long block
+			final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+			if (sibling != null && !block.getType().equals(Material.CHEST)
+					&& !block.getType().equals(Material.TRAPPED_CHEST)) {
+				block = sibling;
+			}
 
-        }
-    }
+			// log items removed from container
+			// note: done before the container so a "rewind" for rollback will
+			// work properly
+			final Block b2 = block;
+			final String source = name;
+			be.forEachItem(block, (i, s) -> {
+				RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+						b2.getLocation(), source));
+			});
+			// be.logItemRemoveFromDestroyedContainer( name, block );
+			RecordingQueue.addToQueue(ActionFactory.createBlock(action, block, source));
+			// look for relationships
+			be.logBlockRelationshipsForBlock(source, block);
 
-    private String followTNTTrail(Entity initial) {
-        int counter = 10000000;
+		}
+	}
 
-        while (initial != null) {
-            if (initial instanceof Player) {
-                return ((Player) initial).getName();
-            } else if (initial instanceof TNTPrimed) {
-                initial = (((TNTPrimed) initial).getSource());
-                if (counter < 0) {
-                    Location last = initial.getLocation();
-                    plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
-                    plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". " + last.getZ() + " in world " + last.getWorld());
-                    return "tnt";
-                }
-                counter--;
-            } else {
-                return initial.getType().name();
-            }
-        }
+	private String followTNTTrail(Entity initial) {
+		int counter = 10000000;
 
-        return "tnt";
-    }
+		while (initial != null) {
+			if (initial instanceof Player) {
+				return ((Player) initial).getName();
+			} else if (initial instanceof TNTPrimed) {
+				initial = (((TNTPrimed) initial).getSource());
+				if (counter < 0) {
+					Location last = initial.getLocation();
+					plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
+					plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". "
+							+ last.getZ() + " in world " + last.getWorld());
+					return "tnt";
+				}
+				counter--;
+			} else {
+				return initial.getType().name();
+			}
+		}
+
+		return "tnt";
+	}
 }

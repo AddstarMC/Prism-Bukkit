@@ -15,64 +15,64 @@ import java.util.regex.Pattern;
 
 public class BlockParameter extends SimplePrismParameterHandler {
 
-    /**
+	/**
 	 * 
 	 */
-    public BlockParameter() {
-        super( "Block", Pattern.compile( "[\\w,:]+" ), "b" );
-    }
+	public BlockParameter() {
+		super("Block", Pattern.compile("[\\w,:]+"), "b");
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public void process(QueryParameters query, String alias, String input, CommandSender sender) {
-        final String[] blocks = input.split( "," );
+	@Override
+	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
+		final String[] blocks = input.split(",");
 
-        if( blocks.length > 0 ) {
-            for ( final String b : blocks ) {
+		if (blocks.length > 0) {
+			for (final String b : blocks) {
 
-                // if user provided id:subid
-                if( b.contains( ":" ) && b.length() >= 3 ) {
-                    final String[] ids = b.split( ":" );
-                    Material mat = Material.matchMaterial(ids[0]);
-                    if( ids.length == 2 && mat != null && TypeUtils.isNumeric( ids[1] ) ) {
-                        query.addBlockFilter( mat, Short.parseShort( ids[1] ) );
-                    } else {
-                        throw new IllegalArgumentException( "Invalid block name '" + b + "'. Try /pr ? for help" );
-                    }
-                } else {
+				// if user provided id:subid
+				if (b.contains(":") && b.length() >= 3) {
+					final String[] ids = b.split(":");
+					Material mat = Material.matchMaterial(ids[0]);
+					if (ids.length == 2 && mat != null && TypeUtils.isNumeric(ids[1])) {
+						query.addBlockFilter(mat, Short.parseShort(ids[1]));
+					} else {
+						throw new IllegalArgumentException("Invalid block name '" + b + "'. Try /pr ? for help");
+					}
+				} else {
 
-                    // It's id without a subid
-                	// TODO: This goes away entirely
-                    if( TypeUtils.isNumeric( b ) ) {
-                        query.addBlockFilter( Material.matchMaterial(b), (short) 0 );
-                    } else {
+					// It's id without a subid
+					// TODO: This goes away entirely
+					if (TypeUtils.isNumeric(b)) {
+						query.addBlockFilter(Material.matchMaterial(b), (short) 0);
+					} else {
 
-                        // Lookup the item name, get the ids
-                        final MaterialAliases items = Prism.getItems();
-                        final ArrayList<MaterialData> itemMaterials = items.getMaterialsByAlias( b );
-                        
-                        if( itemMaterials.size() > 0 ) {
-                            for ( final MaterialData data : itemMaterials ) {
-                                // If we really care about the sub id
-                                // because it's a whole different item
-                            	// TODO: 1.13
-                            	@SuppressWarnings("deprecation")
+						// Lookup the item name, get the ids
+						final MaterialAliases items = Prism.getItems();
+						final ArrayList<MaterialData> itemMaterials = items.getMaterialsByAlias(b);
+
+						if (itemMaterials.size() > 0) {
+							for (final MaterialData data : itemMaterials) {
+								// If we really care about the sub id
+								// because it's a whole different item
+								// TODO: 1.13
+								@SuppressWarnings("deprecation")
 								short d = data.getData();
-                            	
-                                if( ItemUtils.dataValueUsedForSubitems( data.getItemType() ) ) {
-                                    query.addBlockFilter( data.getItemType(), d );
-                                } else {
-                                    query.addBlockFilter( data.getItemType(), (short) 0 );
-                                }
-                            }
-                        } else {
-                            throw new IllegalArgumentException( "Invalid block name '" + b + "'. Try /pr ? for help" );
-                        }
-                    }
-                }
-            }
-        }
-    }
+
+								if (ItemUtils.dataValueUsedForSubitems(data.getItemType())) {
+									query.addBlockFilter(data.getItemType(), d);
+								} else {
+									query.addBlockFilter(data.getItemType(), (short) 0);
+								}
+							}
+						} else {
+							throw new IllegalArgumentException("Invalid block name '" + b + "'. Try /pr ? for help");
+						}
+					}
+				}
+			}
+		}
+	}
 }

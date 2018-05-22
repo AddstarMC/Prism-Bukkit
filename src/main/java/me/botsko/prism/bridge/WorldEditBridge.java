@@ -13,53 +13,53 @@ import org.bukkit.util.Vector;
 
 public class WorldEditBridge {
 
-    /**
-     * 
-     * @param plugin
-     * @param player
-     * @param parameters
-     * @return
-     */
-    public static boolean getSelectedArea(Prism plugin, Player player, QueryParameters parameters) {
-        // Get selected area
-        Region region;
-        try {
-            final BukkitPlayer lp = new BukkitPlayer( Prism.plugin_worldEdit, Prism.plugin_worldEdit.getWorldEdit()
-                    .getServer(), player );
-            final World lw = lp.getWorld();
-            region = Prism.plugin_worldEdit.getWorldEdit().getSessionManager().getIfPresent( lp ).getSelection( lw );
-        } catch ( final IncompleteRegionException e ) {
-            return false;
-        }
+	/**
+	 * 
+	 * @param plugin
+	 * @param player
+	 * @param parameters
+	 * @return
+	 */
+	public static boolean getSelectedArea(Prism plugin, Player player, QueryParameters parameters) {
+		// Get selected area
+		Region region;
+		try {
+			final BukkitPlayer lp = new BukkitPlayer(Prism.plugin_worldEdit,
+					Prism.plugin_worldEdit.getWorldEdit().getServer(), player);
+			final World lw = lp.getWorld();
+			region = Prism.plugin_worldEdit.getWorldEdit().getSessionManager().getIfPresent(lp).getSelection(lw);
+		} catch (final IncompleteRegionException e) {
+			return false;
+		}
 
-        // Set WorldEdit locations
-        final Vector minLoc = new Vector( region.getMinimumPoint().getX(), region.getMinimumPoint().getY(), region
-                .getMinimumPoint().getZ() );
-        final Vector maxLoc = new Vector( region.getMaximumPoint().getX(), region.getMaximumPoint().getY(), region
-                .getMaximumPoint().getZ() );
+		// Set WorldEdit locations
+		final Vector minLoc = new Vector(region.getMinimumPoint().getX(), region.getMinimumPoint().getY(),
+				region.getMinimumPoint().getZ());
+		final Vector maxLoc = new Vector(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(),
+				region.getMaximumPoint().getZ());
 
-        // Check selection against max radius
-        final Selection sel = Prism.plugin_worldEdit.getSelection( player );
-        final double lRadius = (sel.getLength() + 1) / 2;
-        final double wRadius = (sel.getWidth() + 1) / 2;
-        final double hRadius = (sel.getHeight() + 1) / 2;
+		// Check selection against max radius
+		final Selection sel = Prism.plugin_worldEdit.getSelection(player);
+		final double lRadius = (sel.getLength() + 1) / 2;
+		final double wRadius = (sel.getWidth() + 1) / 2;
+		final double hRadius = (sel.getHeight() + 1) / 2;
 
-        String procType = "applier";
-        if( parameters.getProcessType().equals( PrismProcessType.LOOKUP ) ) {
-            procType = "lookup";
-        }
+		String procType = "applier";
+		if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
+			procType = "lookup";
+		}
 
-        final int maxRadius = plugin.getConfig().getInt( "prism.queries.max-" + procType + "-radius" );
-        if( maxRadius != 0 && ( lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius )
-                && !player.hasPermission( "prism.override-max-" + procType + "-radius" ) ) {
-            return false;
-        } else {
+		final int maxRadius = plugin.getConfig().getInt("prism.queries.max-" + procType + "-radius");
+		if (maxRadius != 0 && (lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius)
+				&& !player.hasPermission("prism.override-max-" + procType + "-radius")) {
+			return false;
+		} else {
 
-            parameters.setWorld( region.getWorld().getName() );
-            parameters.setMinLocation( minLoc );
-            parameters.setMaxLocation( maxLoc );
+			parameters.setWorld(region.getWorld().getName());
+			parameters.setMinLocation(minLoc);
+			parameters.setMaxLocation(maxLoc);
 
-        }
-        return true;
-    }
+		}
+		return true;
+	}
 }

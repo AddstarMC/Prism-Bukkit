@@ -11,7 +11,7 @@ public class PrismBlockEditHandler {
 	public void wrapForLogging(EditSessionEvent event) {
 		Actor actor = event.getActor();
 		org.bukkit.World world = Bukkit.getWorld(event.getWorld().getName());
-		if (actor != null && actor.isPlayer() && world != null) {			
+		if (actor != null && actor.isPlayer() && world != null) {
 			event.setExtent(new PrismWorldEditLogger(actor, event.getExtent(), world));
 		}
 	}

@@ -30,23 +30,19 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 
 	@Override
 	protected void onBlockChange(Vector pt, BaseBlock newBlock) {
-		if(!Prism.config.getBoolean("prism.tracking.world-edit")) 
+		if (!Prism.config.getBoolean("prism.tracking.world-edit"))
 			return;
 
 		Location loc = BukkitUtil.toLocation(world, pt);
 		Block oldBlock = loc.getBlock();
-		
+
 		// TODO: 1.13
 		@SuppressWarnings("deprecation")
 		byte data = oldBlock.getData();
-		
-		Material newMaterial = Material.matchMaterial(
-				BlockType.fromID(newBlock.getId()).name());
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, 
-				oldBlock.getType(), 
-				data, 
-				newMaterial, 
-				(byte) newBlock.getData(), Bukkit.getPlayer( player.getUniqueId() )));
+		Material newMaterial = Material.matchMaterial(BlockType.fromID(newBlock.getId()).name());
+
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(), data,
+				newMaterial, (byte) newBlock.getData(), Bukkit.getPlayer(player.getUniqueId())));
 	}
 }

@@ -8,89 +8,91 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Wand {
 
-    /**
+	/**
 	 * 
 	 */
-    public void playerLeftClick(Player player, Location loc);
+	public void playerLeftClick(Player player, Location loc);
 
-    /**
+	/**
 	 * 
 	 */
-    public void playerRightClick(Player player, Location loc);
+	public void playerRightClick(Player player, Location loc);
 
-    /**
-     * 
-     * @param player
-     * @param entity
-     */
-    public void playerRightClick(Player player, Entity entity);
+	/**
+	 * 
+	 * @param player
+	 * @param entity
+	 */
+	public void playerRightClick(Player player, Entity entity);
 
-    /**
-     * 
-     * @param given
-     */
-    public void setItemWasGiven(boolean given);
+	/**
+	 * 
+	 * @param given
+	 */
+	public void setItemWasGiven(boolean given);
 
-    /**
-     * 
-     * @return
-     */
-    public boolean itemWasGiven();
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean itemWasGiven();
 
-    /**
-     * 
-     * @param mode
-     */
-    public void setWandMode(String mode);
+	/**
+	 * 
+	 * @param mode
+	 */
+	public void setWandMode(String mode);
 
-    /**
-     * 
-     * @param mode
-     */
-    public String getWandMode();
+	/**
+	 * 
+	 * @param mode
+	 */
+	public String getWandMode();
 
-    /**
-     * @return the item_id
-     */
-    @Deprecated
-    public int getItemId();
-    public Material getItem();
+	/**
+	 * @return the item_id
+	 */
+	@Deprecated
+	public int getItemId();
 
-    /**
-     * @param item_id
-     *            the item_id to set
-     */
-    @Deprecated
-    public void setItemId(int item_id);
-    public void setItem(Material material);
+	public Material getItem();
 
-    /**
-     * @return the item_subid
-     */
-    public byte getItemSubId();
+	/**
+	 * @param item_id
+	 *            the item_id to set
+	 */
+	@Deprecated
+	public void setItemId(int item_id);
 
-    /**
-     * @param item_subid
-     *            the item_subid to set
-     */
-    public void setItemSubId(byte item_subid);
+	public void setItem(Material material);
 
-    /**
-     * 
-     * @param key
-     */
-    public void setItemFromKey(String key);
+	/**
+	 * @return the item_subid
+	 */
+	public byte getItemSubId();
 
-    /**
-     * 
-     * @param item
-     */
-    public void setOriginallyHeldItem(ItemStack item);
+	/**
+	 * @param item_subid
+	 *            the item_subid to set
+	 */
+	public void setItemSubId(byte item_subid);
 
-    /**
-     * 
-     * @param player
-     */
-    public void disable(Player player);
+	/**
+	 * 
+	 * @param key
+	 */
+	public void setItemFromKey(String key);
+
+	/**
+	 * 
+	 * @param item
+	 */
+	public void setOriginallyHeldItem(ItemStack item);
+
+	/**
+	 * 
+	 * @param player
+	 */
+	public void disable(Player player);
 
 }

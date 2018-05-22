@@ -6,16 +6,16 @@ import org.bukkit.entity.EntityType;
 
 public class EntitySerializerFactory {
 	private static EntitySerializerFactory factory = null;
-	
+
 	static EntitySerializerFactory get() {
-		if(factory != null)
+		if (factory != null)
 			return factory;
-		
+
 		return (factory = new EntitySerializerFactory());
 	}
 
 	private EnumMap<EntityType, Class<? extends EntitySerializer>> entitySerializers = new EnumMap<>(EntityType.class);
-	
+
 	private EntitySerializerFactory() {
 		entitySerializers.put(EntityType.HORSE, AbstractHorseSerializer.class);
 		entitySerializers.put(EntityType.LLAMA, AbstractHorseSerializer.class);
@@ -30,20 +30,19 @@ public class EntitySerializerFactory {
 		entitySerializers.put(EntityType.VILLAGER, VillagerSerializer.class);
 		entitySerializers.put(EntityType.WOLF, WolfSerlializer.class);
 		entitySerializers.put(EntityType.ZOMBIE_VILLAGER, ZombieVillagerSerlializer.class);
-		
+
 		/*
-		 * TODO:
-		 * Creeper charge, enderman block, magma cube size,
-		 * shulker color, slime size, rabbit color
+		 * TODO: Creeper charge, enderman block, magma cube size, shulker color, slime
+		 * size, rabbit color
 		 * 
 		 * all entities with armor ???
 		 */
 	}
-	
+
 	public static Class<? extends EntitySerializer> getSerlializingClass(EntityType type) {
 		return get().entitySerializers.getOrDefault(type, EntitySerializer.class);
 	}
-	
+
 	public static EntitySerializer getSerializer(EntityType type) {
 		Class<? extends EntitySerializer> clazz = getSerlializingClass(type);
 		try {

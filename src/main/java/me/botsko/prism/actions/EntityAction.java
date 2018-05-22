@@ -26,12 +26,12 @@ public class EntityAction extends GenericAction {
 	public void setEntity(Entity entity, String dyeUsed) {
 
 		// Build an object for the specific details of this action
-		if(entity != null && entity.getType() != null && entity.getType().name() != null) {
+		if (entity != null && entity.getType() != null && entity.getType().name() != null) {
 			this.world_name = entity.getWorld().getName();
 			this.x = entity.getLocation().getBlockX();
 			this.y = entity.getLocation().getBlockY();
 			this.z = entity.getLocation().getBlockZ();
-			
+
 			serializer = EntitySerializerFactory.getSerializer(entity.getType());
 			serializer.serialize(entity);
 			serializer.setNewColor(dyeUsed);
@@ -51,7 +51,7 @@ public class EntityAction extends GenericAction {
 	 */
 	@Override
 	public void setData(String data) {
-		if( data != null && data.startsWith( "{" ) ) {
+		if (data != null && data.startsWith("{")) {
 			String entity_name = gson.fromJson(data, JsonObject.class).get("entity_name").getAsString();
 			serializer = gson.fromJson(data, EntitySerializerFactory.getSerlializingClass(getEntityType(entity_name)));
 		}
@@ -63,8 +63,10 @@ public class EntityAction extends GenericAction {
 	 */
 	public static EntityType getEntityType(String name) {
 		try {
-			final EntityType e = EntityType.valueOf( name.toUpperCase() );
-			if(e != null) { return e; }
+			final EntityType e = EntityType.valueOf(name.toUpperCase());
+			if (e != null) {
+				return e;
+			}
 		} catch (final IllegalArgumentException e) {
 			// In pre-RC builds we logged the wrong name of entities, sometimes
 			// the names
@@ -88,20 +90,18 @@ public class EntityAction extends GenericAction {
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 		EntityType entityType = getEntityType(serializer.getEntityName());
-		if(entityType != null && !Prism.getIllegalEntities().contains(entityType)) {
-			if( !is_preview ) {
-				final Location loc = getLoc().add(0.5,  0.0,  0.5);
+		if (entityType != null && !Prism.getIllegalEntities().contains(entityType)) {
+			if (!is_preview) {
+				final Location loc = getLoc().add(0.5, 0.0, 0.5);
 				final Entity entity = loc.getWorld().spawnEntity(loc, entityType);
-				
+
 				serializer.deserialize(entity);
 
-				return new ChangeResult( ChangeResultType.APPLIED, null );
+				return new ChangeResult(ChangeResultType.APPLIED, null);
 
-			}
-			else
-				return new ChangeResult( ChangeResultType.PLANNED, null );
-		}
-		else
-			return new ChangeResult( ChangeResultType.SKIPPED, null );
+			} else
+				return new ChangeResult(ChangeResultType.PLANNED, null);
+		} else
+			return new ChangeResult(ChangeResultType.SKIPPED, null);
 	}
 }
