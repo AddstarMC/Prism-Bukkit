@@ -23,8 +23,7 @@ public class PurgeChunkingUtil {
 
             conn = Prism.dbc();
             s = conn.prepareStatement( "SELECT MIN(id) FROM " + prefix + "data" );
-            s.executeQuery();
-            rs = s.getResultSet();
+            rs = s.executeQuery();
 
             if( rs.first() ) {
                 id = rs.getInt( 1 );
@@ -63,8 +62,7 @@ public class PurgeChunkingUtil {
 
             conn = Prism.dbc();
             s = conn.prepareStatement( "SELECT id FROM " + prefix + "data ORDER BY id DESC LIMIT 1;" );
-            s.executeQuery();
-            rs = s.getResultSet();
+            rs = s.executeQuery();
 
             if( rs.first() ) {
                 id = rs.getInt( 1 );

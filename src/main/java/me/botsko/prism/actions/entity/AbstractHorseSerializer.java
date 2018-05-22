@@ -105,7 +105,7 @@ public class AbstractHorseSerializer extends EntitySerializer {
 		
 		if(style != null) {
 			sb.insert(start, MiscUtils.niceName(style)).insert(start + style.length(), ' ');
-			start += style.length() + 1;
+			//start += style.length() + 1;
 		}
 	}
 }

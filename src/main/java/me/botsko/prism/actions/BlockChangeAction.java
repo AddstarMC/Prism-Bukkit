@@ -14,11 +14,6 @@ import org.bukkit.entity.Player;
 public class BlockChangeAction extends BlockAction {
 
     /**
-	 * 
-	 */
-    protected BlockActionData actionData;
-
-    /**
      * Used only for pre-1.5 data formats
      * 
      * @author botskonet

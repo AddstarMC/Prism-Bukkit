@@ -19,6 +19,8 @@ public class IdMapQuery {
 	private static final String toMat = "SELECT material, state FROM <prefix>id_map WHERE block_id=? AND block_subid=? LIMIT 1;";
 	private static final String map = "INSERT INTO <prefix>id_map(material, state, block_id, block_subid) VALUES (?, ?, ?, ?);";
 	private static final String automap = "INSERT INTO <prefix>id_map(material, state) VALUES (?, ?);";
+	private static final String repair = "UPDATE <prefix>id_map SET block_id=?, block_subid=? WHERE block_id=?;";
+	private static final String unauto = "ALTER TABLE <prefix>id_map AUTO_INCREMENT=?;";
 	
 	public IdMapQuery() {
 		prefix = Prism.config.getString("prism.mysql.prefix");
@@ -67,7 +69,7 @@ public class IdMapQuery {
 		
 		String query = toIds.replace("<prefix>", prefix);
 		
-		if(state == "0")
+		if(state.equals("0"))
 			state = "";
 
 		try(Connection conn = Prism.dbc()) {
@@ -93,22 +95,49 @@ public class IdMapQuery {
 		
 		String query = map.replace("<prefix>", prefix);
 		
-		if(state == "0")
+		if(state.equals("0"))
 			state = "";
 		
-		try(Connection conn = Prism.dbc()) {
-			try(PreparedStatement st = conn.prepareStatement(query)) {
-				st.setString(1, material.toLowerCase(Locale.ENGLISH));
-				st.setString(2, state.toLowerCase(Locale.ENGLISH));
-				st.setInt(3, block_id);
-				st.setInt(4, block_subid);
+		// Auto increment trouble. "0" in MYSQL can also mean "I am a placeholder and fill me in please", which is annoying here.
+		if(block_id == 0) {
+			query = repair.replace("<prefix>", prefix);
+			int auto_id = mapAutoId(material, state);
+			
+			try(Connection conn = Prism.dbc()) {
+				try(PreparedStatement st = conn.prepareStatement(query)) {
+					st.setInt(1, block_id);
+					st.setInt(2, block_subid);
+					st.setInt(3, auto_id);
+					
+					st.executeUpdate();
+				}
 				
-				st.executeUpdate();
+				// If the statement above fails, we can't roll back the auto increment without risk of collision (and making things worse)
+				// Don't attempt to run in that case
+				try(PreparedStatement st = conn.prepareStatement(unauto.replace("<prefix>", prefix))) {
+					st.setInt(1, auto_id);
+					
+					st.executeUpdate();
+				}
+			} catch ( final SQLException e ) {
+	            Prism.log( "Database connection error: " + e.getMessage() );
+	            e.printStackTrace();
 			}
-		} catch ( final SQLException e ) {
-            Prism.log( "Database connection error: " + e.getMessage() );
-            e.printStackTrace();
 		}
+		else
+			try(Connection conn = Prism.dbc()) {
+				try(PreparedStatement st = conn.prepareStatement(query)) {
+					st.setString(1, material.toLowerCase(Locale.ENGLISH));
+					st.setString(2, state.toLowerCase(Locale.ENGLISH));
+					st.setInt(3, block_id);
+					st.setInt(4, block_subid);
+					
+					st.executeUpdate();
+				}
+			} catch ( final SQLException e ) {
+	            Prism.log( "Database connection error: " + e.getMessage() );
+	            e.printStackTrace();
+			}
 	}
 	
 	public int mapAutoId(String material, String state) {
@@ -117,7 +146,7 @@ public class IdMapQuery {
 		
 		String query = automap.replace("<prefix>", prefix);
 		
-		if(state == "0")
+		if(state.equals("0"))
 			state = "";
 		
 		try(Connection conn = Prism.dbc()) {

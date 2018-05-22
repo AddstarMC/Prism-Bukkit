@@ -222,7 +222,7 @@ public class GenericAction implements Handler {
         /* sec */diff[3] = ( diffInSeconds >= 60 ? diffInSeconds % 60 : diffInSeconds );
         /* min */diff[2] = ( diffInSeconds = ( diffInSeconds / 60 ) ) >= 60 ? diffInSeconds % 60 : diffInSeconds;
         /* hours */diff[1] = ( diffInSeconds = ( diffInSeconds / 60 ) ) >= 24 ? diffInSeconds % 24 : diffInSeconds;
-        /* days */diff[0] = ( diffInSeconds = ( diffInSeconds / 24 ) );
+        /* days */diff[0] = ( diffInSeconds / 24 );
 
         // Only show days if more than 1
         if( diff[0] >= 1 ) {

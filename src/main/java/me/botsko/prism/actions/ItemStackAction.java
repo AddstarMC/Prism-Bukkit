@@ -249,7 +249,7 @@ public class ItemStackAction extends GenericAction {
                 
                 if(enchantment == null) {
                 	@SuppressWarnings("deprecation")
-					Enchantment e2 = Enchantment.getById( Integer.valueOf( enchArgs[0] ) );
+					Enchantment e2 = Enchantment.getById( Integer.parseInt( enchArgs[0] ) );
                 	enchantment = e2;
                 }
                 // Restore book enchantment
@@ -290,12 +290,12 @@ public class ItemStackAction extends GenericAction {
         if( block == Material.FIREWORK_CHARGE && actionData.effectColors != null && actionData.effectColors.length > 0 ) {
             final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
             final Builder effect = FireworkEffect.builder();
-            if( actionData.effectColors != null ) {
-                for ( int i = 0; i < actionData.effectColors.length; i++ ) {
-                    effect.withColor( Color.fromRGB( actionData.effectColors[i] ) );
-                }
-                fireworkMeta.setEffect( effect.build() );
+
+            for ( int i = 0; i < actionData.effectColors.length; i++ ) {
+                effect.withColor( Color.fromRGB( actionData.effectColors[i] ) );
             }
+            fireworkMeta.setEffect( effect.build() );
+
             if( actionData.fadeColors != null ) {
                 for ( int i = 0; i < actionData.fadeColors.length; i++ ) {
                     effect.withFade( Color.fromRGB( actionData.fadeColors[i] ) );

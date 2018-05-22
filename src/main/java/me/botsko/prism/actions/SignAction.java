@@ -9,6 +9,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 
@@ -17,11 +19,6 @@ public class SignAction extends GenericAction {
         public String sign_type;
         public BlockFace facing;
     }
-
-    /**
-	 * 
-	 */
-    protected Block block;
 
     /**
 	 * 
@@ -40,13 +37,18 @@ public class SignAction extends GenericAction {
 
         if( block != null ) {
             actionData.sign_type = block.getType().name();
-            final org.bukkit.material.Sign sign = (org.bukkit.material.Sign) block.getState().getData();
-            actionData.facing = sign.getFacing();
-            this.block = block;
-            this.world_name = block.getWorld().getName();
-            this.x = block.getX();
-            this.y = block.getY();
-            this.z = block.getZ();
+            
+            MaterialData md = block.getState().getData();
+            
+            if(md instanceof Sign) {
+	            Sign sign = (Sign) md;
+	            actionData.facing = sign.getFacing();
+	            this.block = block.getType();
+	            this.world_name = block.getWorld().getName();
+	            this.x = block.getX();
+	            this.y = block.getY();
+	            this.z = block.getZ();
+	        }
         }
         if( lines != null ) {
             actionData.lines = lines;
@@ -131,11 +133,12 @@ public class SignAction extends GenericAction {
             if( block.getType().equals( Material.AIR ) ) {
                 block.setType( getSignType() );
             }
+            
+            MaterialData md = block.getState().getData();
 
             // Set the facing direction
-            if( block.getState().getData() instanceof org.bukkit.material.Sign ) {
-                final org.bukkit.material.Sign s = (org.bukkit.material.Sign) block.getState().getData();
-                s.setFacingDirection( getFacing() );
+            if( md instanceof Sign ) {
+            	((Sign)md).setFacingDirection(getFacing());
             }
             // Set the content
             if( block.getState() instanceof org.bukkit.block.Sign ) {

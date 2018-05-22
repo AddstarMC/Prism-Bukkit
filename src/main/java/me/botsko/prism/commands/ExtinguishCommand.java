@@ -63,7 +63,7 @@ public class ExtinguishCommand implements SubHandler {
 
         final ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish( call.getPlayer().getLocation(),
                 radius );
-        if( blockStateChanges != null && !blockStateChanges.isEmpty() ) {
+        if( !blockStateChanges.isEmpty() ) {
 
             call.getPlayer().sendMessage( Prism.messenger.playerHeaderMsg( "Extinguished nearby fire! Cool!" ) );
 

@@ -500,7 +500,6 @@ public class BlockUtils {
                 }
                 break;
             case CHEST:
-                return findFirstSurroundingBlockOfType(block, block.getType());
             case TRAPPED_CHEST:
                 return findFirstSurroundingBlockOfType(block, block.getType());
             default:
@@ -624,7 +623,6 @@ public class BlockUtils {
 		// Wood door lower or iron door lower
 		else {
 			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
-			aboveOrBelow.setType( typeid );
 			// Determine the directing the bottom half is facing, then check
 			// it's left side for an existing door, because the subid changes
 			// if we're on the right.
@@ -647,7 +645,9 @@ public class BlockUtils {
 					left = originalBlock.getRelative(BlockFace.WEST);
 					break;
 			}
-			if(aboveOrBelow != null){
+			if(aboveOrBelow != null) {
+				aboveOrBelow.setType( typeid );
+				
 				if( left != null && isDoor(left.getType()) ){
 					BlockUtils.setData(aboveOrBelow, 9 );
 				} else {

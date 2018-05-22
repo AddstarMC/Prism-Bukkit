@@ -149,16 +149,18 @@ public class BlockAction extends GenericAction {
     @Override
     public String getNiceName() {
         String name = "";
-        if( actionData instanceof SkullActionData ) {
-            final SkullActionData ad = (SkullActionData) getActionData();
+        BlockActionData blockActionData = getActionData();
+        
+        if( blockActionData instanceof SkullActionData ) {
+            final SkullActionData ad = (SkullActionData) blockActionData;
             name += ad.skull_type + " ";
-        } else if( actionData instanceof SpawnerActionData ) {
-            final SpawnerActionData ad = (SpawnerActionData) getActionData();
+        } else if( blockActionData instanceof SpawnerActionData ) {
+            final SpawnerActionData ad = (SpawnerActionData) blockActionData;
             name += ad.entity_type + " ";
         }
         name += materialAliases.getAlias( this.block, this.block_subid );
-        if( actionData instanceof SignActionData ) {
-            final SignActionData ad = (SignActionData) getActionData();
+        if( blockActionData instanceof SignActionData ) {
+            final SignActionData ad = (SignActionData) blockActionData;
             if( ad.lines != null && ad.lines.length > 0 ) {
                 name += " (" + TypeUtils.join( ad.lines, ", " ) + ")";
             }
@@ -363,13 +365,15 @@ public class BlockAction extends GenericAction {
             // Set the material
             block.setType( getBlock() );
             BlockUtils.setData(block, getBlockSubId());
+            
+            BlockActionData blockActionData = getActionData();
 
             /**
              * Skulls
              */
-            if( ( getBlock() == Material.SKULL || getBlock() == Material.SKULL_ITEM ) && getActionData() instanceof SkullActionData ) {
+            if( ( getBlock() == Material.SKULL || getBlock() == Material.SKULL_ITEM ) && blockActionData instanceof SkullActionData ) {
 
-                final SkullActionData s = (SkullActionData) getActionData();
+                final SkullActionData s = (SkullActionData) blockActionData;
 
                 // Set skull data
                 final Skull skull = (Skull) block.getState();
@@ -385,9 +389,9 @@ public class BlockAction extends GenericAction {
             /**
              * Spawner
              */
-            if( getBlock() == Material.MOB_SPAWNER ) {
+            if( getBlock() == Material.MOB_SPAWNER && blockActionData instanceof SpawnerActionData ) {
 
-                final SpawnerActionData s = (SpawnerActionData) getActionData();
+                final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
                 // Set spawner data
                 final CreatureSpawner spawner = (CreatureSpawner) block.getState();
@@ -409,10 +413,10 @@ public class BlockAction extends GenericAction {
             /**
              * Signs
              */
-            if( parameters.getProcessType().equals( PrismProcessType.ROLLBACK )
-                    && ( getBlock() == Material.SIGN_POST || getBlock() == Material.WALL_SIGN ) && getActionData() instanceof SignActionData ) {
+            if( parameters.getProcessType() == PrismProcessType.ROLLBACK 
+                    && ( getBlock() == Material.SIGN_POST || getBlock() == Material.WALL_SIGN ) && blockActionData instanceof SignActionData ) {
 
-                final SignActionData s = (SignActionData) getActionData();
+                final SignActionData s = (SignActionData) blockActionData;
 
                 // Verify block is sign. Rarely, if the block somehow pops off
                 // or fails

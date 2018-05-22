@@ -123,7 +123,7 @@ public class PrismPlayerEvents implements Listener {
 
         String ip = null;
         if( plugin.getConfig().getBoolean( "prism.track-player-ip-on-join" ) ) {
-            ip = player.getAddress().getAddress().getHostAddress().toString();
+            ip = player.getAddress().getAddress().getHostAddress();
         }
 
         RecordingQueue.addToQueue( ActionFactory.createPlayer("player-join", event.getPlayer(), ip) );
@@ -137,7 +137,7 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent event) {
 
         // Remove from primary key cache
-        Prism.prismPlayers.remove( event.getPlayer().getName() );
+        Prism.prismPlayers.remove( event.getPlayer().getUniqueId() );
 
         // Track player quit
         if( !Prism.getIgnore().event( "player-quit", event.getPlayer() ) )
@@ -326,10 +326,9 @@ public class PrismPlayerEvents implements Listener {
         
         ItemStack hand = player.getInventory().getItemInMainHand();
 
+        final Wand wand = Prism.playersWithActiveTools.get( player.getName() );
         // Are they using a wand (or do we always allow it)
-        if( Prism.playersWithActiveTools.containsKey( player.getName() ) ) {
-
-            final Wand wand = Prism.playersWithActiveTools.get( player.getName() );
+        if( wand != null ) {
 
             // The wand will tell us what to use.
             final Material item_mat = wand.getItem();
@@ -348,8 +347,7 @@ public class PrismPlayerEvents implements Listener {
             }
 
             // Does the player have such item?
-            if( wand != null && hand.getType() == item_mat
-                    && itemInHandDurability == item_subid ) {
+            if( hand.getType() == item_mat && itemInHandDurability == item_subid ) {
 
                 // Left click is for current block
                 if( event.getAction() == Action.LEFT_CLICK_BLOCK ) {

@@ -3,6 +3,7 @@ package me.botsko.prism.utils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Wolf;
@@ -113,7 +114,7 @@ public class DeathUtils {
         	}
         }
         	
-        if(cause == "mob"){
+        if(cause.equals("mob")) {
         	
         	Entity killer = ((EntityDamageByEntityEvent)victim.getLastDamageCause()).getDamager();
 
@@ -229,10 +230,10 @@ public class DeathUtils {
 	 * @param p
 	 * @return
 	 */
-	public static String getWeapon(Player p){
+	public static String getWeapon(LivingEntity entity){
         String death_weapon = "";
-        if(p.getKiller() instanceof Player){
-        	ItemStack weapon = p.getKiller().getInventory().getItemInMainHand();
+        if(entity.getKiller() != null) {
+        	ItemStack weapon = entity.getKiller().getInventory().getItemInMainHand();
         	death_weapon = weapon.getType().toString().toLowerCase();
         	death_weapon = death_weapon.replaceAll("_", " ");
         	if(death_weapon.equalsIgnoreCase("air")){

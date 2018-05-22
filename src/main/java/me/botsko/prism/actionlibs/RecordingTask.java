@@ -69,12 +69,8 @@ public class RecordingTask implements Runnable {
                 action_id = Prism.prismActions.get( a.getType().getName() );
             }
 
-            int player_id = 0;
-
             PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
-            if( prismPlayer != null ){
-                player_id = prismPlayer.getId();
-            }
+            int player_id = prismPlayer.getId();
 
             if( world_id == 0 || action_id == 0 || player_id == 0 ) {
                 // @todo do something, error here
@@ -109,13 +105,11 @@ public class RecordingTask implements Runnable {
             // Add insert query for extra data if needed
             if( a.getData() != null && !a.getData().isEmpty() ) {
             	
-            	PreparedStatement s2 = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)" );
-                s2.setInt( 1, id );
-                s2.setString( 2, a.getData() );
-                s2.executeUpdate();
-                
-                try {
-                	s2.close();
+            	try(PreparedStatement s2 = conn.prepareStatement( "INSERT INTO " + prefix + "data_extra (data_id, data) VALUES (?, ?)" )) {
+	                s2.setInt( 1, id );
+	                s2.setString( 2, a.getData() );
+	                s2.executeUpdate();
+	                
                 } catch ( final SQLException ignored ) {}
             }
 
@@ -135,6 +129,7 @@ public class RecordingTask implements Runnable {
                     conn.close();
                 } catch ( final SQLException ignored ) {}
         }
+        
         return id;
     }
 
@@ -208,11 +203,8 @@ public class RecordingTask implements Runnable {
                         action_id = Prism.prismActions.get( a.getType().getName() );
                     }
 
-                    int player_id = 0;
                     PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer( a.getPlayerName() );
-                    if( prismPlayer != null ){
-                        player_id = prismPlayer.getId();
-                    }
+                    int player_id = prismPlayer.getId();
 
                     if( world_id == 0 || action_id == 0 || player_id == 0 ) {
                         // @todo do something, error here

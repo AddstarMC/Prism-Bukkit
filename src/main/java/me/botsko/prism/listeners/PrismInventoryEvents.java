@@ -208,7 +208,7 @@ public class PrismInventoryEvents implements Listener {
             if( event != null && event.isRightClick() ) {
                 // If you're right-clicking to remove an item, it divides by two
                 if( actionType.equals( "item-remove" ) ) {
-                    officialQuantity = ( officialQuantity - (int) Math.floor( ( item.getAmount() / 2 ) ) );
+                    officialQuantity = ( officialQuantity - item.getAmount() / 2 );
                 }
                 // If you're right-clicking to insert, it's only one
                 else if( actionType.equals( "item-insert" ) ) {

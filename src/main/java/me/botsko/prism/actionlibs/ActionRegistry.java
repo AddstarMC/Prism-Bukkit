@@ -1,6 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -42,9 +43,8 @@ public class ActionRegistry {
     public void registerCustomAction(Plugin apiPlugin, ActionType actionType) throws InvalidActionException {
 
         // Is plugin allowed?
-        @SuppressWarnings("unchecked")
-        final ArrayList<String> allowedPlugins = (ArrayList<String>) Prism.config
-                .getList( "prism.tracking.api.allowed-plugins" );
+        final List<String> allowedPlugins = Prism.config
+                .getStringList( "prism.tracking.api.allowed-plugins" );
         if( !allowedPlugins.contains( apiPlugin.getName() ) ) { throw new InvalidActionException(
                 "Registering action type not allowed. Plugin '" + apiPlugin.getName()
                         + "' is not in list of allowed plugins." ); }

@@ -48,7 +48,7 @@ public abstract class QueryWandBase extends WandBase {
     public boolean setParameters(Player sender, String[] args, int argStart) {
         final PrismProcessType processType = this instanceof RollbackWand ? PrismProcessType.ROLLBACK
                 : this instanceof RestoreWand ? PrismProcessType.RESTORE
-                        : this instanceof InspectorWand ? PrismProcessType.LOOKUP : PrismProcessType.LOOKUP;
+                        : PrismProcessType.LOOKUP;
 
         final QueryParameters params = PreprocessArgs.process( plugin, sender, args, processType, argStart, false, true );
         if( params == null ) {

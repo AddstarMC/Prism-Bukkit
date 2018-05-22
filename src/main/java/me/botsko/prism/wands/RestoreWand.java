@@ -14,7 +14,7 @@ import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 
-public class RestoreWand extends QueryWandBase implements Wand {
+public class RestoreWand extends QueryWandBase {
 
     /**
      * 

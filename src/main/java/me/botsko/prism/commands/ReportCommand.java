@@ -253,8 +253,7 @@ public class ReportCommand implements SubHandler {
 
                     conn = Prism.dbc();
                     s = conn.prepareStatement( sql );
-                    s.executeQuery();
-                    rs = s.getResultSet();
+                    rs = s.executeQuery();
 
                     call.getSender().sendMessage(
                             Prism.messenger.playerHeaderMsg( "Total block changes for " + ChatColor.DARK_AQUA
@@ -358,8 +357,7 @@ public class ReportCommand implements SubHandler {
 
                     conn = Prism.dbc();
                     s = conn.prepareStatement( sql );
-                    s.executeQuery();
-                    rs = s.getResultSet();
+                    rs = s.executeQuery();
 
                     call.getSender().sendMessage(
                             Prism.messenger.playerMsg( ChatColor.GRAY + TypeUtils.padStringRight( "Action", colTextLen )

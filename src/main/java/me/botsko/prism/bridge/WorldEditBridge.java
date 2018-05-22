@@ -40,9 +40,9 @@ public class WorldEditBridge {
 
         // Check selection against max radius
         final Selection sel = Prism.plugin_worldEdit.getSelection( player );
-        final double lRadius = Math.ceil( sel.getLength() / 2 );
-        final double wRadius = Math.ceil( sel.getWidth() / 2 );
-        final double hRadius = Math.ceil( sel.getHeight() / 2 );
+        final double lRadius = (sel.getLength() + 1) / 2;
+        final double wRadius = (sel.getWidth() + 1) / 2;
+        final double hRadius = (sel.getHeight() + 1) / 2;
 
         String procType = "applier";
         if( parameters.getProcessType().equals( PrismProcessType.LOOKUP ) ) {

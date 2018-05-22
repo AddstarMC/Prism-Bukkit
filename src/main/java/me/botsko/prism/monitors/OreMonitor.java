@@ -77,7 +77,7 @@ public class OreMonitor {
                 // Set to air to get the light
                 block.setType( Material.AIR );
                 int light = block.getLightLevel();
-                light = ( light > 0 ? Math.round( ( ( light ) & 0xFF ) * 100 ) / 15 : 0 );
+                light = Math.max(0, light * 100 / 15);
 
                 // Restore the block
                 block.setType( state.getType() );

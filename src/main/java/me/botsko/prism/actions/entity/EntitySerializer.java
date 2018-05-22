@@ -1,6 +1,5 @@
 package me.botsko.prism.actions.entity;
 
-import org.bukkit.Nameable;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -33,9 +32,7 @@ public class EntitySerializer {
 		entity_name = entity.getType().name().toLowerCase();
 		
 		// Get custom name
-        if(entity instanceof Nameable) {
-        	custom_name = ((Nameable)entity).getCustomName();
-        }
+        custom_name = entity.getCustomName();
 
         // Get animal age
         if(entity instanceof Ageable) {

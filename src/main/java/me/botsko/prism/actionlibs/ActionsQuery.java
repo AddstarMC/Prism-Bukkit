@@ -190,7 +190,7 @@ public class ActionsQuery {
 
                         actions.add( baseHandler );
 
-                    } catch ( final Exception e ) {
+                    } catch ( final SQLException e ) {
                         if( !rs.isClosed() ) {
                             Prism.log( "Ignoring data from record #" + rs.getInt( 1 ) + " because it caused an error:" );
                         }
@@ -263,9 +263,8 @@ public class ActionsQuery {
                 s = conn.prepareStatement( "SELECT id FROM " + prefix + "data JOIN " + prefix + "players p ON p.player_id = " + prefix + "data.player_id WHERE action_id = ? AND p.player = ? ORDER BY id DESC LIMIT 1" );
                 s.setInt( 1, action_id );
                 s.setString( 2, playername );
-                s.executeQuery();
-                rs = s.getResultSet();
-
+                rs = s.executeQuery();
+                
                 if( rs.first() ) {
                     id = rs.getInt( "id" );
                 }
@@ -316,8 +315,7 @@ public class ActionsQuery {
             if( conn != null && !conn.isClosed() ) {
                 s = conn.prepareStatement( sql );
                 s.setInt( 1, id );
-                s.executeQuery();
-                rs = s.getResultSet();
+                rs = s.executeQuery();
 
                 if( rs.first() ) {
                     process = new PrismProcessAction();

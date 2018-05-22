@@ -63,7 +63,7 @@ public class Prism extends JavaPlugin {
     private static String plugin_name;
     private String plugin_version;
     private static MaterialAliases items;
-    private Language language;
+    //private Language language = null;
     private static Logger log = Logger.getLogger( "Minecraft" );
     private final ArrayList<String> enabledPlugins = new ArrayList<String>();
     private static ActionRegistry actionRegistry;
@@ -255,6 +255,16 @@ public class Prism extends JavaPlugin {
             // Keep watch on db connections, other sanity
             launchInternalAffairs();
 
+            if(config.getBoolean("prism.preload-materials")) {
+            	config.set("prism.preload-materials", false);
+            	saveConfig();
+            	Prism.log("Preloading materials - This will take a while!");
+            	
+            	items.initAllMaterials();
+            	Prism.log("Preloading complete!");
+            }
+            
+            items.initMaterials(Material.AIR);
         }
     }
 
@@ -503,7 +513,7 @@ public class Prism extends JavaPlugin {
                     + "`state` varchar(63) NOT NULL,"
                     + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
                     + "`block_subid` mediumint(5) NOT NULL DEFAULT 0,"
-                    + "PRIMARY KEY (`material`, `state`),"+ "UNIQUE KEY `block_id` (`block_id`)"
+                    + "PRIMARY KEY (`material`, `state`),"+ "UNIQUE KEY (`block_id`, `block_subid`)"
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             st.executeUpdate( query );
         } catch ( final SQLException e ) {
@@ -691,9 +701,9 @@ public class Prism extends JavaPlugin {
      * 
      * @return
      */
-    public Language getLang() {
+    /*public Language getLang() {
         return this.language;
-    }
+    }*/
 
     /**
 	 * 

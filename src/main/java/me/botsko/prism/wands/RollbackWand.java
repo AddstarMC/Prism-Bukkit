@@ -14,12 +14,7 @@ import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 
-public class RollbackWand extends QueryWandBase implements Wand {
-
-    /**
-	 * 
-	 */
-    protected boolean item_given = false;
+public class RollbackWand extends QueryWandBase {
 
     /**
      * 

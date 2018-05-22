@@ -137,8 +137,7 @@ public class PrismEntityEvents implements Listener {
                     if( damager != null ) {
                         name = damager.getType().name().toLowerCase();
                     }
-                    if( name == null )
-                        name = "unknown";
+
                     if( !Prism.getIgnore().event( "entity-kill", entity.getWorld() ) )
                         return;
                     RecordingQueue.addToQueue( ActionFactory.createEntity("entity-kill", entity, name) );
@@ -265,24 +264,26 @@ public class PrismEntityEvents implements Listener {
                 }
             }
         }
-
-        // if they're holding coal (or charcoal, a subitem) and they click a
-        // powered minecart
-        if( hand.getType().equals( Material.COAL ) && e instanceof PoweredMinecart ) {
-            if( !Prism.getIgnore().event( "item-insert", p ) )
-                return;
-            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
-                    e.getLocation(), p) );
-        }
-
-        if( !Prism.getIgnore().event( "entity-dye", p ) )
-            return;
-        // Only track the event on sheep, when player holds dye
-        if( hand.getType() == Material.INK_SACK && e.getType().equals( EntityType.SHEEP ) ) {
-            final String newColor = Prism.getItems().getAlias( hand.getType(),
-                    (byte) hand.getDurability() );
-            RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
-                    , newColor) );
+        
+        if(hand != null) {
+	        // if they're holding coal (or charcoal, a subitem) and they click a
+	        // powered minecart
+	        if( hand.getType() == Material.COAL && e instanceof PoweredMinecart ) {
+	            if( !Prism.getIgnore().event( "item-insert", p ) )
+	                return;
+	            RecordingQueue.addToQueue( ActionFactory.createItemStack("item-insert", hand, 1, 0, null,
+	                    e.getLocation(), p) );
+	        }
+	
+	        if( !Prism.getIgnore().event( "entity-dye", p ) )
+	            return;
+	        // Only track the event on sheep, when player holds dye
+	        if( hand.getType() == Material.INK_SACK && e.getType() == EntityType.SHEEP ) {
+	            final String newColor = Prism.getItems().getAlias( hand.getType(),
+	                    (byte) hand.getDurability() );
+	            RecordingQueue.addToQueue( ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer()
+	                    , newColor) );
+	        }
         }
     }
 

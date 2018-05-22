@@ -51,7 +51,7 @@ public class Rollback extends Preview {
                 if( !parameters.hasFlag( Flag.NO_EXT ) ) {
                     final ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish( player.getLocation(),
                             parameters.getRadius() );
-                    if( blockStateChanges != null && !blockStateChanges.isEmpty() ) {
+                    if( !blockStateChanges.isEmpty() ) {
                         player.sendMessage( Prism.messenger.playerHeaderMsg( "Extinguishing fire!" + ChatColor.GRAY
                                 + " Like a boss." ) );
                     }

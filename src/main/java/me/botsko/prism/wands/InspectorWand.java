@@ -18,7 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class InspectorWand extends QueryWandBase implements Wand {
+public class InspectorWand extends QueryWandBase {
 
     /**
      * 

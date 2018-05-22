@@ -18,7 +18,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.PistonBaseMaterial;
 import org.bukkit.material.Sign;
 
 import java.util.ArrayList;
@@ -511,12 +510,16 @@ public class PrismBlockEvents implements Listener {
             return;
         if( !event.isSticky() )
             return;
-        final Block block = event.getBlock();
-        if( block.getType().equals( Material.AIR ) )
-            return;
-        PistonBaseMaterial data = (PistonBaseMaterial) event.getBlock().getState().getData();
-        RecordingQueue.addToQueue( ActionFactory.createBlockShift("block-shift", event.getBlock().getRelative(data.getFacing()), block
-                .getRelative(event.getDirection()).getLocation(), "Piston") );
+
+        BlockFace facing = event.getDirection();
+        
+        for(Block block : event.getBlocks()) {
+
+            if( block.getType().equals( Material.AIR ) )
+                continue;
+        	RecordingQueue.addToQueue( ActionFactory.createBlockShift("block-shift", block,
+        			block.getRelative(facing).getLocation(), "Piston") );
+        }
     }
 
     /**
