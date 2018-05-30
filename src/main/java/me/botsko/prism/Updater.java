@@ -110,6 +110,7 @@ public class Updater {
 				update.run();
 			}
 		}
+		
 
 		// // Apply any updates for schema 1 -> 2
 		// if(clientSchemaVer < 2){
@@ -134,7 +135,7 @@ public class Updater {
 
 		// Save current version
 		saveCurrentSchemaVersion();
-
+		Prism.log("Update complete: Schema v" + currentDbSchemaVersion);
 	}
 
 	/**
