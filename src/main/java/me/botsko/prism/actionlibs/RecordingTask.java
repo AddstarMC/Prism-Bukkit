@@ -42,9 +42,9 @@ public class RecordingTask implements Runnable {
 	 *
 	 * @param a
 	 */
-	public static int insertActionIntoDatabase(Handler a) {
+	public static long insertActionIntoDatabase(Handler a) {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
-		int id = 0;
+		long id = 0;
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet generatedKeys = null;
@@ -99,7 +99,7 @@ public class RecordingTask implements Runnable {
 
 			generatedKeys = s.getGeneratedKeys();
 			if (generatedKeys.next()) {
-				id = generatedKeys.getInt(1);
+				id = generatedKeys.getLong(1);
 			}
 
 			// Add insert query for extra data if needed
@@ -107,7 +107,7 @@ public class RecordingTask implements Runnable {
 
 				try (PreparedStatement s2 = conn
 						.prepareStatement("INSERT INTO " + prefix + "data_extra (data_id, data) VALUES (?, ?)")) {
-					s2.setInt(1, id);
+					s2.setLong(1, id);
 					s2.setString(2, a.getData());
 					s2.executeUpdate();
 
@@ -325,7 +325,7 @@ public class RecordingTask implements Runnable {
 
 				// @todo should not happen
 				if (i >= extraDataQueue.size()) {
-					Prism.log("Skipping extra data for " + prefix + "data.id " + keys.getInt(1)
+					Prism.log("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
 							+ " because the queue doesn't have data for it.");
 					continue;
 				}
@@ -333,7 +333,7 @@ public class RecordingTask implements Runnable {
 				final Handler a = extraDataQueue.get(i);
 
 				if (a.getData() != null && !a.getData().isEmpty()) {
-					s.setInt(1, keys.getInt(1));
+					s.setLong(1, keys.getLong(1));
 					s.setString(2, a.getData());
 					s.addBatch();
 				}

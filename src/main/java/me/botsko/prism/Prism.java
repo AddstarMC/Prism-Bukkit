@@ -447,7 +447,7 @@ public class Prism extends JavaPlugin {
 
 			// data
 			query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` ("
-					+ "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
+					+ "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
 					+ "`action_id` int(10) unsigned NOT NULL," + "`player_id` int(10) unsigned NOT NULL,"
 					+ "`world_id` int(10) unsigned NOT NULL," + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL,"
 					+ "`z` int(11) NOT NULL," + "`block_id` mediumint(5) DEFAULT NULL,"
@@ -466,8 +466,8 @@ public class Prism extends JavaPlugin {
 
 				// extra data
 				query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
-						+ "`extra_id` int(10) unsigned NOT NULL AUTO_INCREMENT,"
-						+ "`data_id` int(10) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
+						+ "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
+						+ "`data_id` bigint(20) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
 						+ "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
 						+ ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
 				st.executeUpdate(query);

@@ -31,12 +31,12 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
-	private int minId = 0;
+	private long minId = 0;
 
 	/**
 	 * 
 	 */
-	private int maxId = 0;
+	private long maxId = 0;
 
 	/**
 	 * 
@@ -47,8 +47,8 @@ public class PurgeTask implements Runnable {
 	 * 
 	 * @param plugin
 	 */
-	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, int minId,
-			int maxId, PurgeCallback callback) {
+	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, long minId,
+			long maxId, PurgeCallback callback) {
 		this.plugin = plugin;
 		this.paramList = paramList;
 		this.purge_tick_delay = purge_tick_delay;
@@ -79,7 +79,7 @@ public class PurgeTask implements Runnable {
 		int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
 		if (spread <= 1)
 			spread = 10000;
-		int newMinId = minId + spread;
+		long newMinId = minId + spread;
 		param.setMinPrimaryKey(minId);
 		param.setMaxPrimaryKey(newMinId);
 

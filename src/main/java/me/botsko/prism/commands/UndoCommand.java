@@ -44,9 +44,9 @@ public class UndoCommand implements SubHandler {
 
 			final ActionsQuery aq = new ActionsQuery(plugin);
 
-			int record_id = 0;
+			long record_id = 0;
 			if (TypeUtils.isNumeric(call.getArg(1))) {
-				record_id = Integer.parseInt(call.getArg(1));
+				record_id = Long.parseLong(call.getArg(1));
 				if (record_id <= 0) {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("Record ID must be greater than zero."));
 					return;

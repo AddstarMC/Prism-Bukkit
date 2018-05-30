@@ -24,6 +24,6 @@ public class IdParameter extends SimplePrismParameterHandler {
 		if (!TypeUtils.isNumeric(input)) {
 			throw new IllegalArgumentException("ID must be a number. Use /prism ? for help.");
 		}
-		query.setId(Integer.parseInt(input));
+		query.setId(Long.parseLong(input));
 	}
 }

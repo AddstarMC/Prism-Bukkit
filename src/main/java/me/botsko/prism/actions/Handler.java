@@ -20,13 +20,13 @@ public interface Handler {
 	/**
 	 * @return the id
 	 */
-	public abstract int getId();
+	public abstract long getId();
 
 	/**
 	 * @param id
 	 *            the id to set
 	 */
-	public abstract void setId(int id);
+	public abstract void setId(long id);
 
 	/**
 	 * @return the action_time

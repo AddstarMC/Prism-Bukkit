@@ -29,6 +29,7 @@ public class PrismConfig extends ConfigBase {
 		// set defaults
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.preload-materials", false);
+		config.addDefault("prism.simulate-113", false);
 		// config.addDefault("prism.language", "en-us");
 
 		config.addDefault("prism.allow-metrics", true);

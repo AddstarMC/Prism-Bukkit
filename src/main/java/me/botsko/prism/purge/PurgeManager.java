@@ -58,14 +58,14 @@ final public class PurgeManager implements Runnable {
 			if (paramList.size() > 0) {
 
 				// Identify the minimum for chunking
-				final int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
+				final long minId = PurgeChunkingUtil.getMinimumPrimaryKey();
 				if (minId == 0) {
 					Prism.log("No minimum primary key could be found for purge chunking.");
 					return;
 				}
 
 				// Identify the max id for chunking
-				final int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
+				final long maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
 				if (maxId == 0) {
 					Prism.log("No maximum primary key could be found for purge chunking.");
 					return;

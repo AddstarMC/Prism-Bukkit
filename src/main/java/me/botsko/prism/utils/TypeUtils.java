@@ -20,7 +20,7 @@ public class TypeUtils {
 	 */
 	public static boolean isNumeric(String str) {
 		try {
-			Integer.parseInt(str);
+			Long.parseLong(str);
 		} catch (NumberFormatException nfe) {
 			return false;
 		}

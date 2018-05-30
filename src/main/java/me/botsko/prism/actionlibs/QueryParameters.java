@@ -33,12 +33,12 @@ public class QueryParameters implements Cloneable {
 	 * Single-value options
 	 */
 	protected boolean allow_no_radius = false;
-	protected int id = 0;
-	protected int minId = 0;
-	protected int maxId = 0;
+	protected long id = 0;
+	protected long minId = 0;
+	protected long maxId = 0;
 	protected Vector maxLoc;
 	protected Vector minLoc;
-	protected int parent_id = 0;
+	protected long parent_id = 0;
 	protected Location player_location;
 	protected int radius;
 	protected final ArrayList<Location> specific_block_locations = new ArrayList<>();
@@ -67,7 +67,7 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the id
 	 */
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -75,7 +75,7 @@ public class QueryParameters implements Cloneable {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -83,7 +83,7 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param minId
 	 */
-	public void setMinPrimaryKey(int minId) {
+	public void setMinPrimaryKey(long minId) {
 		this.minId = minId;
 	}
 
@@ -91,7 +91,7 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param minId
 	 */
-	public int getMinPrimaryKey() {
+	public long getMinPrimaryKey() {
 		return this.minId;
 	}
 
@@ -99,7 +99,7 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param maxId
 	 */
-	public void setMaxPrimaryKey(int maxId) {
+	public void setMaxPrimaryKey(long maxId) {
 		this.maxId = maxId;
 	}
 
@@ -107,7 +107,7 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param minId
 	 */
-	public int getMaxPrimaryKey() {
+	public long getMaxPrimaryKey() {
 		return this.maxId;
 	}
 
@@ -437,14 +437,14 @@ public class QueryParameters implements Cloneable {
 	 * 
 	 * @param id
 	 */
-	public void setParentId(int id) {
+	public void setParentId(long id) {
 		this.parent_id = id;
 	}
 
 	/**
 	 *
 	 */
-	public int getParentId() {
+	public long getParentId() {
 		return parent_id;
 	}
 

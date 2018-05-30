@@ -31,7 +31,7 @@ public class PrismMiscEvents implements Listener {
 			// Create an entry for the rollback as a whole
 			final Handler primaryAction = ActionFactory.createPrismProcess("prism-process", PrismProcessType.DRAIN,
 					event.onBehalfOf(), "" + event.getRadius());
-			final int id = RecordingTask.insertActionIntoDatabase(primaryAction);
+			final long id = RecordingTask.insertActionIntoDatabase(primaryAction);
 			if (id == 0) {
 				return;
 			}
@@ -63,7 +63,7 @@ public class PrismMiscEvents implements Listener {
 			// Create an entry for the rollback as a whole
 			final Handler primaryAction = ActionFactory.createPrismProcess("prism-process", PrismProcessType.EXTINGUISH,
 					event.onBehalfOf(), "" + event.getRadius());
-			final int id = RecordingTask.insertActionIntoDatabase(primaryAction);
+			final long id = RecordingTask.insertActionIntoDatabase(primaryAction);
 			if (id == 0) {
 				return;
 			}

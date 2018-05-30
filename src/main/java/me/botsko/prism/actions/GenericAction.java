@@ -49,7 +49,7 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected int id;
+	protected long id;
 
 	/**
 	 * 
@@ -146,7 +146,7 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getId()
 	 */
 	@Override
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
@@ -156,7 +156,7 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#setId(int)
 	 */
 	@Override
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

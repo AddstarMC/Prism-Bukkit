@@ -95,7 +95,7 @@ public class DeleteCommand implements SubHandler {
 		if (parameters.getFoundArgs().size() > 0) {
 
 			// Identify the minimum for chunking
-			final int minId = PurgeChunkingUtil.getMinimumPrimaryKey();
+			final long minId = PurgeChunkingUtil.getMinimumPrimaryKey();
 			if (minId == 0) {
 				call.getSender().sendMessage(
 						Prism.messenger.playerError("No minimum primary key could be found for purge chunking"));
@@ -103,7 +103,7 @@ public class DeleteCommand implements SubHandler {
 			}
 
 			// Identify the max id for chunking
-			final int maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
+			final long maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
 			if (maxId == 0) {
 				call.getSender().sendMessage(
 						Prism.messenger.playerError("No maximum primary key could be found for purge chunking"));

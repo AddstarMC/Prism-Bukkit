@@ -3,8 +3,8 @@ package me.botsko.prism.utils;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,9 +29,6 @@ public class MaterialAliases {
 	 * 
 	 * @param plugin
 	 */
-
-	protected EnumSet<Material> nonData = EnumSet.noneOf(Material.class);
-
 	public MaterialAliases() {
 
 		FileConfiguration items = null;
@@ -47,25 +44,18 @@ public class MaterialAliases {
 			Map<String, Object> itemaliases = items.getConfigurationSection("items").getValues(false);
 
 			// Cache the values for easier lookup
-			if (itemaliases != null) {
+			if (itemaliases != null)
 				for (Map.Entry<String, Object> entry : itemaliases.entrySet()) {
 					@SuppressWarnings("unchecked")
-					ArrayList<String> aliases = (ArrayList<String>) entry.getValue();
-					if (aliases.size() > 0) {
-						for (String alias : aliases) {
-							itemAliases.put(entry.getKey().toLowerCase(), alias);
-						}
-					}
+					List<String> aliases = (List<String>) entry.getValue();
+					
+					for (String alias : aliases)
+						itemAliases.put(entry.getKey().toLowerCase(), alias);
 				}
-			}
-		} else {
+			
+		}
+		else
 			System.out.println("ERROR: The Elixr library was unable to load an internal item alias list.");
-		}
-
-		for (Material material : Material.values()) {
-			if (!material.isBlock())
-				nonData.add(material);
-		}
 	}
 
 	public void initAllMaterials() {
@@ -122,11 +112,17 @@ public class MaterialAliases {
 
 		@SuppressWarnings("deprecation")
 		public MaterialData asData() {
-			return new MaterialData(material, Byte.parseByte(state));
+			if(!state.isEmpty())
+				return new MaterialData(material, Byte.parseByte(state));
+			
+			return new MaterialData(material);
 		}
 
 		public ItemStack asItem() {
-			return new ItemStack(material, 1, Short.parseShort(state));
+			if(!state.isEmpty())
+				return new ItemStack(material, 1, Short.parseShort(state));
+			
+			return new ItemStack(material, 1);
 		}
 	}
 
@@ -170,6 +166,9 @@ public class MaterialAliases {
 		}, () -> {
 			Material material;
 			try {
+				if(Prism.config.getBoolean("prism.simulate-113"))
+					throw new NoSuchMethodException(Material.class.getName() + ".getMaterial(int)");
+				
 				material = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, block_id);
 			} catch (Exception e) {
 				material = null;
@@ -241,6 +240,9 @@ public class MaterialAliases {
 			int block_id = 0;
 
 			try {
+				if(Prism.config.getBoolean("prism.simulate-113"))
+					throw new NoSuchMethodException(Material.class.getName() + ".getId()");
+				
 				block_id = (Integer) Material.class.getMethod("getId").invoke(material);
 				query.map(materialName, state, block_id, block_subid);
 				

@@ -1,5 +1,10 @@
 package me.botsko.prism;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import me.botsko.prism.settings.Settings;
 
 public class Updater {
@@ -7,7 +12,9 @@ public class Updater {
 	/**
 	 * 
 	 */
-	protected final int currentDbSchemaVersion = 5;
+	protected final int currentDbSchemaVersion = 6;
+	
+	private final ArrayList<Runnable> updates = new ArrayList<>(currentDbSchemaVersion);
 
 	/**
 	 * 
@@ -20,6 +27,56 @@ public class Updater {
 	 */
 	public Updater(Prism plugin) {
 		this.plugin = plugin;
+
+		updates.add(this::v1_to_v2);
+		updates.add(this::v2_to_v3);
+		updates.add(this::v3_to_v4);
+		updates.add(this::v4_to_v5);
+		updates.add(this::v5_to_v6);
+	}
+	
+	private void v1_to_v2() {
+	}
+	
+	private void v2_to_v3() {
+	}
+	
+	private void v3_to_v4() {
+	}
+	
+	private void v4_to_v5() {
+	}
+	
+	private void v5_to_v6() {
+		String prefix = Prism.config.getString("prism.mysql.prefix");
+		Connection conn = Prism.dbc();
+		PreparedStatement s = null;
+		
+		// Data table
+		try {
+			s = conn.prepareStatement("ALTER TABLE " + prefix + "data MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT");
+			s.executeUpdate();
+		}
+		catch(SQLException e) {
+			plugin.handleDatabaseException( e );
+		}
+		finally {
+			if(s != null) try { s.close(); } catch (SQLException e) {}
+			if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		}
+		
+		// Extra table
+		try {
+			s = conn.prepareStatement("ALTER TABLE " + prefix + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, data_id bigint(20) unsigned NOT NULL");
+			s.executeUpdate();
+		}
+		catch(SQLException e) {
+			plugin.handleDatabaseException( e );
+		}
+		finally {
+			if(s != null) try { s.close(); } catch (SQLException e) {}
+			if(conn != null) try { conn.close(); } catch (SQLException e) {}
+		}
 	}
 
 	/**
@@ -38,7 +95,16 @@ public class Updater {
 	 */
 	public void apply_updates() {
 
-		// int clientSchemaVer = getClientDbSchemaVersion();
+		int clientSchemaVer = getClientDbSchemaVersion();
+		
+		for(int i = clientSchemaVer; i < currentDbSchemaVersion; ++i) {
+			Runnable update = updates.get(i - 1);
+			
+			if(update != null) {
+				Prism.log("Updating prism schema v" + i +" to v" + (i + 1) + ". This make take a while.");
+				update.run();
+			}
+		}
 
 		// // Apply any updates for schema 1 -> 2
 		// if(clientSchemaVer < 2){

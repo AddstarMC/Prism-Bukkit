@@ -164,7 +164,7 @@ public class ActionsQuery {
 						// Set all shared values
 						baseHandler.setPlugin(plugin);
 						baseHandler.setType(actionType);
-						baseHandler.setId(rs.getInt(1));
+						baseHandler.setId(rs.getLong(1));
 						baseHandler.setUnixEpoch(rs.getString(2));
 						baseHandler.setNonPlayerName(rs.getString(4));
 						baseHandler.setWorldName(worldName);
@@ -251,9 +251,9 @@ public class ActionsQuery {
 	 * 
 	 * @param playername
 	 */
-	public int getUsersLastPrismProcessId(String playername) {
+	public long getUsersLastPrismProcessId(String playername) {
 		String prefix = plugin.getConfig().getString("prism.mysql.prefix");
-		int id = 0;
+		long id = 0;
 		Connection conn = null;
 		PreparedStatement s = null;
 		ResultSet rs = null;
@@ -272,7 +272,7 @@ public class ActionsQuery {
 				rs = s.executeQuery();
 
 				if (rs.first()) {
-					id = rs.getInt("id");
+					id = rs.getLong("id");
 				}
 			} else {
 				Prism.log("Prism database error. getUsersLastPrismProcessId cannot continue.");
@@ -303,7 +303,7 @@ public class ActionsQuery {
 	 * 
 	 * @param id
 	 */
-	public PrismProcessAction getPrismProcessRecord(int id) {
+	public PrismProcessAction getPrismProcessRecord(long id) {
 		String prefix = plugin.getConfig().getString("prism.mysql.prefix");
 		PrismProcessAction process = null;
 		Connection conn = null;
@@ -324,13 +324,13 @@ public class ActionsQuery {
 
 			if (conn != null && !conn.isClosed()) {
 				s = conn.prepareStatement(sql);
-				s.setInt(1, id);
+				s.setLong(1, id);
 				rs = s.executeQuery();
 
 				if (rs.first()) {
 					process = new PrismProcessAction();
 					// Set all shared values
-					process.setId(rs.getInt("id"));
+					process.setId(rs.getLong("id"));
 					process.setType(Prism.getActionRegistry().getAction(rs.getString("action")));
 					process.setUnixEpoch(rs.getString("epoch"));
 					process.setWorldName(rs.getString("world"));

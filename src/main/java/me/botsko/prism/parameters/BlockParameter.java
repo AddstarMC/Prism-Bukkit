@@ -48,27 +48,32 @@ public class BlockParameter extends SimplePrismParameterHandler {
 					if (TypeUtils.isNumeric(b)) {
 						query.addBlockFilter(Material.matchMaterial(b), (short) 0);
 					} else {
-
-						// Lookup the item name, get the ids
-						final MaterialAliases items = Prism.getItems();
-						final ArrayList<MaterialData> itemMaterials = items.getMaterialsByAlias(b);
-
-						if (itemMaterials.size() > 0) {
-							for (final MaterialData data : itemMaterials) {
-								// If we really care about the sub id
-								// because it's a whole different item
-								// TODO: 1.13
-								@SuppressWarnings("deprecation")
-								short d = data.getData();
-
-								if (ItemUtils.dataValueUsedForSubitems(data.getItemType())) {
-									query.addBlockFilter(data.getItemType(), d);
-								} else {
-									query.addBlockFilter(data.getItemType(), (short) 0);
+						Material mat = Material.matchMaterial(b);
+						if(mat != null)
+							query.addBlockFilter(mat, (short)0);
+						
+						else {
+							// Lookup the item name, get the ids
+							final MaterialAliases items = Prism.getItems();
+							final ArrayList<MaterialData> itemMaterials = items.getMaterialsByAlias(b);
+	
+							if (itemMaterials.size() > 0) {
+								for (final MaterialData data : itemMaterials) {
+									// If we really care about the sub id
+									// because it's a whole different item
+									// TODO: 1.13
+									@SuppressWarnings("deprecation")
+									short d = data.getData();
+	
+									if (ItemUtils.dataValueUsedForSubitems(data.getItemType())) {
+										query.addBlockFilter(data.getItemType(), d);
+									} else {
+										query.addBlockFilter(data.getItemType(), (short) 0);
+									}
 								}
+							} else {
+								throw new IllegalArgumentException("Invalid block name '" + b + "'. Try /pr ? for help");
 							}
-						} else {
-							throw new IllegalArgumentException("Invalid block name '" + b + "'. Try /pr ? for help");
 						}
 					}
 				}

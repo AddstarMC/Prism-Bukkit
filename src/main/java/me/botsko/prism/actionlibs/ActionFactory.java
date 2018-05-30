@@ -297,7 +297,7 @@ public class ActionFactory {
 	 * @param player
 	 */
 	public static Handler createPrismRollback(String action_type, BlockState oldblock, BlockState newBlock,
-			OfflinePlayer player, int parent_id) {
+			OfflinePlayer player, long parent_id) {
 		final PrismRollbackAction a = new PrismRollbackAction();
 		a.setActionType(action_type);
 		a.setPlayer(player);

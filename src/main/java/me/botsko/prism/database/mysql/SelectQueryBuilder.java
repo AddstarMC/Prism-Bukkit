@@ -88,14 +88,14 @@ public class SelectQueryBuilder extends QueryBuilder {
 	protected String where() {
 
 		// ID Condition overrides anything else
-		final int id = parameters.getId();
+		final long id = parameters.getId();
 		if (id > 0) {
 			return "WHERE " + tableNameData + ".id = " + id;
 		}
 
 		// id range conditions
-		final int minId = parameters.getMinPrimaryKey();
-		final int maxId = parameters.getMaxPrimaryKey();
+		final long minId = parameters.getMinPrimaryKey();
+		final long maxId = parameters.getMaxPrimaryKey();
 		if (minId > 0 && maxId > 0 && minId != maxId) {
 			addCondition(tableNameData + ".id >= " + minId);
 			addCondition(tableNameData + ".id < " + maxId);

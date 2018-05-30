@@ -56,7 +56,7 @@ public class TeleportCommand implements SubHandler {
 
 		// Determine result index to tp to - either an id, or the next/previous
 		// id
-		int record_id;
+		long record_id;
 		if (ident.equals("next") || ident.equals("prev")) {
 			// Get stored results
 			final QueryResult results = plugin.cachedQueries.get(keyName);
@@ -118,7 +118,7 @@ public class TeleportCommand implements SubHandler {
 				return;
 			}
 
-			final int key = (record_id - 1);
+			final int key = (int)(record_id - 1);
 
 			// Get the result index specified
 			destinationAction = results.getActionResults().get(key);

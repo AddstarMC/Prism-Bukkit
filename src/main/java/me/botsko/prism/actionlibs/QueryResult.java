@@ -45,7 +45,7 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected int lastTeleportIndex = 0;
+	protected long lastTeleportIndex = 0;
 
 	/**
 	 * 
@@ -127,14 +127,14 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	public int getLastTeleportIndex() {
+	public long getLastTeleportIndex() {
 		return lastTeleportIndex;
 	}
 
 	/**
 	 * 
 	 */
-	public int setLastTeleportIndex(int index) {
+	public long setLastTeleportIndex(long index) {
 		return lastTeleportIndex = index;
 	}
 
