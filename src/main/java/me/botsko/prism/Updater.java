@@ -1,8 +1,8 @@
 package me.botsko.prism;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.settings.Settings;
@@ -50,31 +50,36 @@ public class Updater {
 	private void v5_to_v6() {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
 		Connection conn = Prism.dbc();
-		PreparedStatement s = null;
+		Statement st = null;
+		String query;
 		
-		// Data table
 		try {
-			s = conn.prepareStatement("ALTER TABLE " + prefix + "data MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT");
-			s.executeUpdate();
+			st = conn.createStatement();
+			
+			// Key must be dropped before we can edit colum types
+			query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix
+					+ "data_extra_ibfk_1`;";
+			st.executeUpdate(query);
+			
+			query = "ALTER TABLE " + prefix + "data MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT";
+			st.executeUpdate(query);
+			
+			query = "ALTER TABLE " + prefix + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, MODIFY data_id bigint(20) unsigned NOT NULL";
+			st.executeUpdate(query);
+			
+			// return foreign key
+			/// BEGIN COPY PASTE Prism.setupDatabase()
+			query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
+					+ "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix
+					+ "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+			st.executeUpdate(query);
+			/// END COPY PASTE
 		}
 		catch(SQLException e) {
 			plugin.handleDatabaseException( e );
 		}
 		finally {
-			if(s != null) try { s.close(); } catch (SQLException e) {}
-			if(conn != null) try { conn.close(); } catch (SQLException e) {}
-		}
-		
-		// Extra table
-		try {
-			s = conn.prepareStatement("ALTER TABLE " + prefix + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, data_id bigint(20) unsigned NOT NULL");
-			s.executeUpdate();
-		}
-		catch(SQLException e) {
-			plugin.handleDatabaseException( e );
-		}
-		finally {
-			if(s != null) try { s.close(); } catch (SQLException e) {}
+			if(st != null) try { st.close(); } catch (SQLException e) {}
 			if(conn != null) try { conn.close(); } catch (SQLException e) {}
 		}
 	}
