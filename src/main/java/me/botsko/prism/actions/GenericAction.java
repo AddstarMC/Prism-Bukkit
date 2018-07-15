@@ -435,7 +435,7 @@ public class GenericAction implements Handler {
 		// we just force record the block as stationary.
 		// https://snowy-evening.com/botsko/prism/297/
 		if (this.type.getName().equals("block-place") && (material == Material.WATER || material == Material.LAVA)) {
-			material = (material == Material.WATER ? Material.STATIONARY_WATER : Material.STATIONARY_LAVA);
+			material = (material == Material.WATER ? Material.WATER : Material.LAVA);
 		}
 		this.block = material;
 	}

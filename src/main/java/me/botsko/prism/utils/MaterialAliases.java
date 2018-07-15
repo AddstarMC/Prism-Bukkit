@@ -286,18 +286,6 @@ public class MaterialAliases {
 		return itemAliases;
 	}
 
-	/**
-	 * Returns the proper name given an item type id, data/durability
-	 * 
-	 * @param typeid
-	 * @param subid
-	 * @return
-	 */
-	@Deprecated
-	public String getAlias(int typeid, int subid) {
-		return getAlias(Material.getMaterial(typeid), subid);
-	}
-
 	@SuppressWarnings("deprecation")
 	public String getAlias(Material material, int subid) {
 		String item_name = null;

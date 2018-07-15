@@ -133,7 +133,7 @@ public class PrismBlockEvents implements Listener {
 		// Some blocks will essentially never have attachments - not
 		// even worth spending time looking for them.
 		// SUGAR CANE is not a solid but does have top face attached
-		if (!block.getType().isSolid() && !block.getType().equals(Material.SUGAR_CANE_BLOCK)) {
+		if (!block.getType().isSolid() && !block.getType().equals(Material.SUGAR_CANE)) {
 			return;
 		}
 

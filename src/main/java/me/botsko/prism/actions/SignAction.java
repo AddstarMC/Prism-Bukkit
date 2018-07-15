@@ -129,7 +129,7 @@ public class SignAction extends GenericAction {
 		final Block block = getWorld().getBlockAt(getLoc());
 
 		// Ensure a sign exists there (and no other block)
-		if (block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN_POST)
+		if (block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN)
 				|| block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN)) {
 
 			if (block.getType().equals(Material.AIR)) {

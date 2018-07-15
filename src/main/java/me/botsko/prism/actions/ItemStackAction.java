@@ -20,6 +20,7 @@ import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
@@ -120,7 +121,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Skull Owner
-		else if (meta != null && item.getType().equals(Material.SKULL_ITEM)) {
+		else if (meta != null && item.getType().equals(Material.PLAYER_HEAD)) {
 			final SkullMeta skull = (SkullMeta) meta;
 			if (skull.hasOwner()) {
 				actionData.owner = skull.getOwningPlayer().getUniqueId().toString();
@@ -168,7 +169,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Fireworks
-		if (meta != null && block == Material.FIREWORK_CHARGE) {
+		if (meta != null && block == Material.FIREWORK_STAR) {
 			final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
 			if (fireworkMeta.hasEffect()) {
 				final FireworkEffect effect = fireworkMeta.getEffect();
@@ -245,13 +246,8 @@ public class ItemStackAction extends GenericAction {
 		if (actionData.enchs != null && actionData.enchs.length > 0) {
 			for (final String ench : actionData.enchs) {
 				final String[] enchArgs = ench.split(":");
-				Enchantment enchantment = Enchantment.getByName(enchArgs[0]);
-
-				if (enchantment == null) {
-					@SuppressWarnings("deprecation")
-					Enchantment e2 = Enchantment.getById(Integer.parseInt(enchArgs[0]));
-					enchantment = e2;
-				}
+				Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchArgs[0]));
+				
 				// Restore book enchantment
 				if (item.getType() == Material.ENCHANTED_BOOK) {
 					final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
@@ -272,7 +268,7 @@ public class ItemStackAction extends GenericAction {
 			item.setItemMeta(lam);
 		}
 		// Skulls
-		else if (item.getType().equals(Material.SKULL_ITEM) && actionData.owner != null) {
+		else if (item.getType().equals(Material.PLAYER_HEAD) && actionData.owner != null) {
 			final SkullMeta meta = (SkullMeta) item.getItemMeta();
 			meta.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf(actionData.owner)));
 			item.setItemMeta(meta);
@@ -287,7 +283,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Fireworks
-		if (block == Material.FIREWORK_CHARGE && actionData.effectColors != null
+		if (block == Material.FIREWORK_STAR && actionData.effectColors != null
 				&& actionData.effectColors.length > 0) {
 			final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			final Builder effect = FireworkEffect.builder();

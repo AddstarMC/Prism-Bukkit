@@ -30,9 +30,8 @@ public class ItemUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	private static EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.STATIONARY_WATER, Material.LAVA,
-			Material.STATIONARY_LAVA, Material.FIRE, Material.FLINT_AND_STEEL, Material.PORTAL, Material.ENDER_PORTAL,
-			Material.MONSTER_EGG);
+	private static EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.LAVA,
+			Material.FIRE, Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
 
 	public static boolean isAcceptableWand(Material material, byte sub_id) {
 		return !badWands.contains(material);
@@ -382,7 +381,7 @@ public class ItemUtils {
 		}
 
 		// Skull Owner
-		else if (item.getType().equals(Material.SKULL_ITEM)) {
+		else if (item.getType().equals(Material.PLAYER_HEAD)) {
 			SkullMeta skull = (SkullMeta) item.getItemMeta();
 			if (skull.hasOwner()) {
 				item_name += skull.getOwningPlayer().getName() + "'s ";
@@ -447,7 +446,7 @@ public class ItemUtils {
 		}
 
 		// Fireworks
-		if (item.getType() == Material.FIREWORK_CHARGE) {
+		if (item.getType() == Material.FIREWORK_STAR) {
 			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
 			if (fireworkMeta.hasEffect()) {
 				FireworkEffect effect = fireworkMeta.getEffect();
@@ -494,7 +493,7 @@ public class ItemUtils {
 	 * @param id
 	 * @return
 	 */
-	private static EnumSet<Material> dataMaterials = EnumSet.of(Material.STONE, Material.DIRT, Material.WOOD,
+	/*private static EnumSet<Material> dataMaterials = EnumSet.of(Material.STONE, Material.DIRT, Material.WOOD,
 			Material.SAPLING, Material.SAND, Material.LOG, Material.LEAVES, Material.SPONGE, Material.SANDSTONE,
 			Material.DIRT, Material.LONG_GRASS, Material.WOOL, Material.RED_ROSE, Material.DOUBLE_STEP, Material.STEP,
 			Material.SNOW, Material.STAINED_GLASS, Material.MONSTER_EGGS, Material.SMOOTH_BRICK, Material.SNOW,
@@ -504,10 +503,12 @@ public class ItemUtils {
 			Material.CONCRETE_POWDER,
 
 			Material.COAL, Material.GOLDEN_APPLE, Material.RAW_FISH, Material.COOKED_FISH, Material.INK_SACK,
-			Material.MAP, Material.POTION, Material.SKULL_ITEM);
+			Material.MAP, Material.POTION, Material.SKULL_ITEM);*/
 
+	// THANK YOU 1.13!
 	public static boolean dataValueUsedForSubitems(Material material) {
-		return dataMaterials.contains(material);
+		return false;
+		//return dataMaterials.contains(material);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,50 +95,48 @@ public class EntityUtils {
 	 * @return
 	 * @todo doesn't bukkit have this already?
 	 */
+	
 	public static boolean playerMayPassThrough(Material m) {
-		switch (m) {
+		// Close enough, pray you don't land in a portal
+		return m.isTransparent();
+		/*switch (m) {
 		case AIR:
 		case CARROT:
 		case DEAD_BUSH:
 		case DETECTOR_RAIL:
 		case POTATO:
-		case CROPS:
-		case DIODE:
-		case DIODE_BLOCK_OFF:
-		case DIODE_BLOCK_ON:
+		case SUGAR_CANE:
+		case REPEATER:
 		case FLOWER_POT:
 		case LEVER:
-		case LONG_GRASS:
+		case TALL_GRASS:
 		case MELON_STEM:
-		case NETHER_WARTS:
+		case NETHER_WART:
 		case POWERED_RAIL:
 		case PUMPKIN_STEM:
-		case RAILS:
+		case RAIL:
 		case RED_MUSHROOM:
-		case RED_ROSE:
 		case REDSTONE:
-		case REDSTONE_TORCH_OFF:
-		case REDSTONE_TORCH_ON:
+		case REDSTONE_TORCH:
 		case REDSTONE_WIRE:
-		case SAPLING:
 		case SIGN:
-		case SIGN_POST:
-		case SKULL:
 		case SNOW:
-		case SUGAR_CANE_BLOCK:
-		case STANDING_BANNER:
-		case STONE_PLATE:
+		case STONE_PRESSURE_PLATE:
 		case TORCH:
 		case TRIPWIRE:
-		case WALL_BANNER:
-		case WATER_LILY:
+		case LILY_PAD:
 		case WHEAT:
-		case WOOD_PLATE:
-		case WOODEN_DOOR:
-		case YELLOW_FLOWER:
+		case OAK_SAPLING:
+		case BIR
+			// flowers
+			//saplings
+			// pressure plates
+			// doors
+			// standing and wall banners
+			// skulls
 			return true;
 		default:
 			return false;
-		}
+		}*/
 	}
 }

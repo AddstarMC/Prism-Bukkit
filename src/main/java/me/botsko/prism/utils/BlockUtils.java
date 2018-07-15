@@ -22,15 +22,15 @@ public class BlockUtils {
 
 	// TODO: 1.13 material change
 	private static EnumSet<Material> replaceableMaterials = EnumSet.of(Material.AIR, Material.FIRE, Material.GRAVEL,
-			Material.LAVA, Material.LONG_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK,
-			Material.STATIONARY_LAVA, Material.STATIONARY_WATER, Material.WATER);
+			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK,
+			Material.WATER);
 
 	private static EnumSet<Material> fallingMaterials = EnumSet.of(Material.SAND, Material.GRAVEL, Material.ANVIL,
 			Material.DRAGON_EGG, Material.CONCRETE_POWDER);
 
 	private static EnumSet<Material> fallsOffWall = EnumSet.of(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
 			Material.PISTON_STICKY_BASE, Material.PISTON_BASE, Material.PISTON_EXTENSION, Material.PISTON_MOVING_PIECE,
-			Material.TORCH, Material.LADDER, Material.RAILS, Material.WALL_SIGN, Material.LEVER,
+			Material.TORCH, Material.LADDER, Material.RAIL, Material.WALL_SIGN, Material.LEVER,
 			Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.PORTAL,
 			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.WOOD_BUTTON, Material.ACTIVATOR_RAIL);
 
