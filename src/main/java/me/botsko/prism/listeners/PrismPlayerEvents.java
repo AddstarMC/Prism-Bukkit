@@ -7,14 +7,13 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.InventoryUtils;
+import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeSpecies;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
@@ -30,8 +29,6 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Colorable;
-import org.bukkit.material.Wood;
 
 import java.util.List;
 
@@ -56,11 +53,10 @@ public class PrismPlayerEvents implements Listener {
 	 * 
 	 * @param plugin
 	 */
-	@SuppressWarnings("unchecked")
 	public PrismPlayerEvents(Prism plugin) {
 		this.plugin = plugin;
-		illegalCommands = (List<String>) plugin.getConfig().getList("prism.alerts.illegal-commands.commands");
-		ignoreCommands = (List<String>) plugin.getConfig().getList("prism.do-not-track.commands");
+		illegalCommands = plugin.getConfig().getStringList("prism.alerts.illegal-commands.commands");
+		ignoreCommands = plugin.getConfig().getStringList("prism.do-not-track.commands");
 	}
 
 	/**
@@ -222,16 +218,30 @@ public class PrismPlayerEvents implements Listener {
 	public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event) {
 
 		final Player player = event.getPlayer();
-		final String cause = (event.getBucket() == Material.LAVA_BUCKET ? "lava-bucket" : "water-bucket");
+		final String cause;
+		final Material newMat;
+		final Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		
+		if(event.getBucket() == Material.LAVA_BUCKET) {
+			cause = "lava-bucket";
+			newMat = Material.LAVA;
+		}
+		
+		// TODO: Fish buckets fit somewhere in here
+		else if(event.getBucket() == Material.WATER_BUCKET) {
+			cause = "water-bucket";
+			newMat = Material.WATER;
+		}
+		
+		// Failsafe fallback
+		else {
+			cause = "unknown-bucket";
+			newMat = spot.getType();
+		}
 
 		if (!Prism.getIgnore().event(cause, player))
 			return;
 
-		final Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
-		final Material newMat = (cause.equals("lava-bucket") ? Material.STATIONARY_LAVA : Material.STATIONARY_WATER);
-
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte data = spot.getData();
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), data,
@@ -257,9 +267,9 @@ public class PrismPlayerEvents implements Listener {
 		final Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 
 		String liquid_type = "milk";
-		if (spot.getType() == Material.WATER || spot.getType() == Material.STATIONARY_WATER) {
+		if (spot.getType() == Material.WATER) {
 			liquid_type = "water";
-		} else if (spot.getType() == Material.LAVA || spot.getType() == Material.STATIONARY_LAVA) {
+		} else if (spot.getType() == Material.LAVA) {
 			liquid_type = "lava";
 		}
 
@@ -386,7 +396,7 @@ public class PrismPlayerEvents implements Listener {
 			case DISPENSER:
 			case CHEST:
 			case ENDER_CHEST:
-			case ENCHANTMENT_TABLE:
+			case ENCHANTING_TABLE:
 			case ANVIL:
 			case BREWING_STAND:
 			case TRAPPED_CHEST:
@@ -399,37 +409,57 @@ public class PrismPlayerEvents implements Listener {
 			case JUKEBOX:
 				recordDiscInsert(block, player);
 				break;
-			case CAKE_BLOCK:
+			case CAKE:
 				recordCakeEat(block, player);
 				break;
-			case WOODEN_DOOR:
+			case OAK_DOOR:
 			case ACACIA_DOOR:
 			case BIRCH_DOOR:
 			case DARK_OAK_DOOR:
 			case JUNGLE_DOOR:
 			case SPRUCE_DOOR:
-			case TRAP_DOOR:
-			case FENCE_GATE:
+			case OAK_TRAPDOOR:
+			case SPRUCE_TRAPDOOR:
+			case BIRCH_TRAPDOOR:
+			case JUNGLE_TRAPDOOR:
+			case ACACIA_TRAPDOOR:
+			case DARK_OAK_TRAPDOOR:
+			case OAK_FENCE_GATE:
+			case SPRUCE_FENCE_GATE:
+			case BIRCH_FENCE_GATE:
+			case JUNGLE_FENCE_GATE:
+			case ACACIA_FENCE_GATE:
+			case DARK_OAK_FENCE_GATE:
 			case LEVER:
 			case STONE_BUTTON:
-			case WOOD_BUTTON:
+			case OAK_BUTTON:
+			case SPRUCE_BUTTON:
+			case BIRCH_BUTTON:
+			case JUNGLE_BUTTON:
+			case ACACIA_BUTTON:
+			case DARK_OAK_BUTTON:
 				if (!Prism.getIgnore().event("block-use", player))
 					return;
 				RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
 				break;
-			case LOG:
+			case JUNGLE_LOG:
 				recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
 				break;
-			case CROPS:
+			case WHEAT:
 			case GRASS:
 			case MELON_STEM:
 			case PUMPKIN_STEM:
-			case SAPLING:
+			case OAK_SAPLING:
+			case SPRUCE_SAPLING:
+			case BIRCH_SAPLING:
+			case JUNGLE_SAPLING:
+			case ACACIA_SAPLING:
+			case DARK_OAK_SAPLING:
 			case CARROT:
 			case POTATO:
 				recordBonemealEvent(block, hand, event.getBlockFace(), player);
 				break;
-			case RAILS:
+			case RAIL:
 			case DETECTOR_RAIL:
 			case POWERED_RAIL:
 			case ACTIVATOR_RAIL:
@@ -448,18 +478,18 @@ public class PrismPlayerEvents implements Listener {
 			}
 
 			// if they're holding a spawner egg
-			if (hand.getType() == Material.MONSTER_EGG) {
+			if (MaterialTag.SPAWN_EGGS.isTagged(hand.getType())) {
 				recordMonsterEggUse(block, hand, player);
 			}
 
 			// if they're holding a rocket
-			if (hand.getType() == Material.FIREWORK) {
+			if (hand.getType() == Material.FIREWORK_ROCKET) {
 				recordRocketLaunch(block, hand, event.getBlockFace(), player);
 			}
 
 			// if they're holding a boat (why they hell can you put boats on
 			// anything...)
-			if (hand.getType() == Material.BOAT) {
+			if (MaterialTag.BOATS.isTagged(hand.getType())) {
 				coord_key = block.getX() + ":" + (block.getY() + 1) + ":" + block.getZ();
 				plugin.preplannedVehiclePlacement.put(coord_key, player.getUniqueId().toString());
 			}
@@ -477,7 +507,7 @@ public class PrismPlayerEvents implements Listener {
 			return;
 
 		if (block != null && event.getAction() == Action.PHYSICAL) {
-			if (block.getType() == Material.SOIL) { // They are stepping on
+			if (block.getType() == Material.FARMLAND) { // They are stepping on
 													// soil
 				if (!Prism.getIgnore().event("crop-trample", player))
 					return;
@@ -497,26 +527,21 @@ public class PrismPlayerEvents implements Listener {
 		if (!Prism.getIgnore().event("block-place", block))
 			return;
 
-		if (block.getType() == Material.LOG && inhand.getType() == Material.INK_SACK) {
-			Wood w = (Wood) block.getState().getData();
-			Colorable c = (Colorable) inhand.getData();
-
-			if (w.getSpecies() == TreeSpecies.JUNGLE && c.getColor() == DyeColor.BROWN) {
-				final Location newLoc = block.getRelative(clickedFace).getLocation();
-				final Block actualBlock = block.getWorld().getBlockAt(newLoc);
-				// This is a lame way to do this
-				final BlockAction action = new BlockAction();
-				action.setActionType("block-place");
-				action.setPlayer(player);
-				action.setUUID(player.getUniqueId());
-				action.setX(actualBlock.getX());
-				action.setY(actualBlock.getY());
-				action.setZ(actualBlock.getZ());
-				action.setWorldName(newLoc.getWorld().getName());
-				action.setBlock(Material.COCOA);
-				action.setBlockSubId((byte) 1);
-				RecordingQueue.addToQueue(action);
-			}
+		if (block.getType() == Material.JUNGLE_LOG && inhand.getType() == Material.COCOA_BEANS) {
+			final Location newLoc = block.getRelative(clickedFace).getLocation();
+			final Block actualBlock = block.getWorld().getBlockAt(newLoc);
+			// This is a lame way to do this
+			final BlockAction action = new BlockAction();
+			action.setActionType("block-place");
+			action.setPlayer(player);
+			action.setUUID(player.getUniqueId());
+			action.setX(actualBlock.getX());
+			action.setY(actualBlock.getY());
+			action.setZ(actualBlock.getZ());
+			action.setWorldName(newLoc.getWorld().getName());
+			action.setBlock(Material.COCOA);
+			action.setBlockSubId((byte) 1);
+			RecordingQueue.addToQueue(action);
 		}
 	}
 
@@ -528,7 +553,7 @@ public class PrismPlayerEvents implements Listener {
 	 * @param player
 	 */
 	protected void recordBonemealEvent(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
-		if (inhand.getType() == Material.INK_SACK && inhand.getDurability() == 15) {
+		if (inhand.getType() == Material.BONE_MEAL) {
 			if (!Prism.getIgnore().event("bonemeal-use", block))
 				return;
 			RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", "bonemeal", block, player));

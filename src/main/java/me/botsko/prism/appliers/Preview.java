@@ -157,8 +157,6 @@ public class Preview implements Previewable {
 				Location loc = u.getOriginalBlock().getLocation();
 				Material mat = u.getOriginalBlock().getType();
 
-				// TODO: 1.13
-				@SuppressWarnings("deprecation")
 				byte data = u.getOriginalBlock().getData().getData();
 
 				for (final CommandSender sharedPlayer : previewPlayers) {

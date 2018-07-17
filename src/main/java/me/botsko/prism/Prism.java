@@ -67,7 +67,7 @@ public class Prism extends JavaPlugin {
 	private static Logger log = Logger.getLogger("Minecraft");
 	private final ArrayList<String> enabledPlugins = new ArrayList<String>();
 	private static ActionRegistry actionRegistry;
-	private static HandlerRegistry<?> handlerRegistry;
+	private static HandlerRegistry handlerRegistry;
 	private static Ignore ignore;
 	protected static List<Material> illegalBlocks;
 	protected static List<EntityType> illegalEntities;
@@ -122,7 +122,6 @@ public class Prism extends JavaPlugin {
 	/**
 	 * Enables the plugin and activates our player listeners
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public void onEnable() {
 
@@ -791,7 +790,7 @@ public class Prism extends JavaPlugin {
 	 * 
 	 * @return
 	 */
-	public static HandlerRegistry<?> getHandlerRegistry() {
+	public static HandlerRegistry getHandlerRegistry() {
 		return handlerRegistry;
 	}
 

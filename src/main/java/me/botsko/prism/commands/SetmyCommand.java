@@ -120,8 +120,6 @@ public class SetmyCommand implements SubHandler {
 						final MaterialData data = itemMaterials.get(0);
 						setWand = data.getItemType();
 
-						// TODO: 1.13
-						@SuppressWarnings("deprecation")
 						byte d = data.getData();
 
 						setWandData = d;

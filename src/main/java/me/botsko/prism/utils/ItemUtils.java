@@ -41,10 +41,9 @@ public class ItemUtils {
 		if (stack != null) {
 			String result = stack.getType().name().toLowerCase();
 
-			@SuppressWarnings("deprecation")
-			byte data = stack.getData().getData();
-			if (data > 0)
-				result += ":" + data;
+			short durability = stack.getDurability();
+			if (durability > 0)
+				result += ":" + durability;
 			return result;
 		}
 		return null;
@@ -381,7 +380,7 @@ public class ItemUtils {
 		}
 
 		// Skull Owner
-		else if (item.getType().equals(Material.PLAYER_HEAD)) {
+		else if (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD) {
 			SkullMeta skull = (SkullMeta) item.getItemMeta();
 			if (skull.hasOwner()) {
 				item_name += skull.getOwningPlayer().getName() + "'s ";

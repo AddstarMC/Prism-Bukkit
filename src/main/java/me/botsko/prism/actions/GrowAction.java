@@ -10,9 +10,6 @@ public class GrowAction extends BlockAction {
 	 */
 	public void setBlock(BlockState state) {
 		if (state != null) {
-
-			// TODO: 1.13
-			@SuppressWarnings("deprecation")
 			byte data = state.getData().getData();
 
 			this.block = state.getType();

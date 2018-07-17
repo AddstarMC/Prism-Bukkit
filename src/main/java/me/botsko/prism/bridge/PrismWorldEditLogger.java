@@ -36,8 +36,6 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 		Location loc = BukkitUtil.toLocation(world, pt);
 		Block oldBlock = loc.getBlock();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte data = oldBlock.getData();
 
 		Material newMaterial = Material.matchMaterial(BlockType.fromID(newBlock.getId()).name());

@@ -6,9 +6,11 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 
 import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.utils.MaterialTag.MatchMode;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,56 +23,39 @@ import org.bukkit.material.Door;
 public class BlockUtils {
 
 	// TODO: 1.13 material change
-	private static EnumSet<Material> replaceableMaterials = EnumSet.of(Material.AIR, Material.FIRE, Material.GRAVEL,
+	private static MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.FIRE, Material.GRAVEL,
 			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK,
 			Material.WATER);
 
-	private static EnumSet<Material> fallingMaterials = EnumSet.of(Material.SAND, Material.GRAVEL, Material.ANVIL,
-			Material.DRAGON_EGG, Material.CONCRETE_POWDER);
+	private static MaterialTag fallingMaterials = new MaterialTag(Material.SAND, Material.GRAVEL, Material.ANVIL,
+			Material.DRAGON_EGG).append("_CONCRETE_POWDER", MatchMode.SUFFIX);
 
-	private static EnumSet<Material> fallsOffWall = EnumSet.of(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
-			Material.PISTON_STICKY_BASE, Material.PISTON_BASE, Material.PISTON_EXTENSION, Material.PISTON_MOVING_PIECE,
-			Material.TORCH, Material.LADDER, Material.RAIL, Material.WALL_SIGN, Material.LEVER,
-			Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.PORTAL,
-			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.WOOD_BUTTON, Material.ACTIVATOR_RAIL);
+	private static MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
+			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON,
+			Material.TORCH, Material.LADDER, Material.WALL_SIGN, Material.LEVER,
+			Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
+			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL)
+			.append(Tag.RAILS).append(Tag.BUTTONS).append(MaterialTag.WALL_BANNERS);
 
-	private static EnumSet<Material> fallsOffTop = EnumSet.of(Material.SAPLING, Material.POWERED_RAIL,
-			Material.DETECTOR_RAIL, Material.PISTON_STICKY_BASE, Material.LONG_GRASS, Material.DEAD_BUSH,
-			Material.PISTON_BASE, Material.PISTON_EXTENSION, Material.PISTON_MOVING_PIECE, Material.YELLOW_FLOWER,
-			Material.RED_ROSE, Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.TORCH, Material.REDSTONE,
-			Material.CROPS, Material.WOODEN_DOOR, Material.RAILS, Material.SIGN_POST, Material.LEVER,
-			Material.STONE_PLATE, Material.IRON_DOOR_BLOCK, Material.WOOD_PLATE, Material.REDSTONE_TORCH_OFF,
-			Material.REDSTONE_TORCH_ON, Material.STONE_BUTTON, Material.SNOW, Material.CACTUS,
-			Material.SUGAR_CANE_BLOCK, Material.PORTAL, Material.DIODE_BLOCK_OFF, Material.DIODE_BLOCK_ON,
-			Material.PUMPKIN_STEM, Material.MELON_STEM, Material.WATER_LILY, Material.NETHER_WARTS, Material.FLOWER_POT,
-			Material.CARROT, Material.POTATO, Material.WOOD_BUTTON, Material.GOLD_PLATE, Material.IRON_PLATE,
-			Material.REDSTONE_COMPARATOR_OFF, Material.REDSTONE_COMPARATOR_ON, Material.ACTIVATOR_RAIL, Material.CARPET,
-			Material.DOUBLE_PLANT, Material.STANDING_BANNER, Material.SPRUCE_DOOR, Material.BIRCH_DOOR,
-			Material.JUNGLE_DOOR, Material.ACACIA_DOOR, Material.DARK_OAK_DOOR, Material.BEETROOT_BLOCK);
+	private static MaterialTag fallsOffTop = new MaterialTag(
+			Material.STICKY_PISTON, Material.DEAD_BUSH, Material.PISTON,
+			Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
+			Material.REDSTONE, Material.WHEAT, Material.SIGN, Material.LEVER,
+			Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
+			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE,
+			Material.NETHER_PORTAL, Material.REPEATER, Material.PUMPKIN_STEM,
+			Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART,
+			Material.FLOWER_POT, Material.CARROTS, Material.POTATOES,
+			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
+			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.COMPARATOR)
+			
+			.append(Tag.DOORS).append(Tag.RAILS).append(Tag.SAPLINGS)
+			.append(MaterialTag.BANNERS).append(Tag.WOODEN_PRESSURE_PLATES)
+			.append(Tag.BUTTONS).append(Tag.CARPETS)
+			.append(MaterialTag.ALL_PLANTS);
 
 	private static EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
-			Material.STATIONARY_WATER, Material.LAVA, Material.STATIONARY_LAVA);
-
-	/**
-	 * There are some blocks that are broken in an "on" state. Rather than record
-	 * the on state we need to record the off state, something that is available to
-	 * players.
-	 * 
-	 * Example: Player breaks a furnce mid-smelt. The block broken is "Burning
-	 * Furance #62", which means we'll restore block 62 which was not meant to be
-	 * permanent.
-	 * 
-	 * 
-	 * @param block_id
-	 * @return
-	 */
-	public static Material blockIdMustRecordAs(Material material) {
-		// Burning Furnace -> Furnace
-		if (material == Material.BURNING_FURNACE) {
-			return Material.FURNACE;
-		}
-		return material;
-	}
+			Material.LAVA);
 
 	/**
 	 * /**
@@ -137,8 +122,7 @@ public class BlockUtils {
 	 * @param radius
 	 */
 	public static ArrayList<BlockStateChange> drain(Location loc, int radius) {
-		final Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA, Material.WATER,
-				Material.STATIONARY_WATER };
+		final Material[] materials = { Material.LAVA, Material.WATER };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 
@@ -149,7 +133,7 @@ public class BlockUtils {
 	 * @param radius
 	 */
 	public static ArrayList<BlockStateChange> drainlava(Location loc, int radius) {
-		final Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA };
+		final Material[] materials = { Material.LAVA };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 
@@ -160,7 +144,7 @@ public class BlockUtils {
 	 * @param radius
 	 */
 	public static ArrayList<BlockStateChange> drainwater(Location loc, int radius) {
-		final Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
+		final Material[] materials = { Material.WATER };
 		return removeMaterialsFromRadius(materials, loc, radius);
 	}
 
@@ -173,7 +157,7 @@ public class BlockUtils {
 	 * @return if the material is acceptable to replace
 	 */
 	public static boolean isAcceptableForBlockPlace(Material m) {
-		return replaceableMaterials.contains(m);
+		return replaceableMaterials.isTagged(m);
 	}
 
 	/**
@@ -211,7 +195,7 @@ public class BlockUtils {
 	 * @return whether the block is capable of falling
 	 */
 	public static boolean isFallingBlock(Block block) {
-		return fallingMaterials.contains(block.getType());
+		return fallingMaterials.isTagged(block.getType());
 	}
 
 	/**
@@ -286,7 +270,7 @@ public class BlockUtils {
 	 *         block
 	 */
 	public static boolean isSideFaceDetachableMaterial(Material m) {
-		return fallsOffWall.contains(m);
+		return fallsOffWall.isTagged(m);
 	}
 
 	/**
@@ -303,7 +287,7 @@ public class BlockUtils {
 		if (BlockUtils.isTopFaceDetachableMaterial(blockToCheck.getType())) {
 			detaching_blocks.add(blockToCheck);
 			if (blockToCheck.getType().equals(Material.CACTUS)
-					|| blockToCheck.getType().equals(Material.SUGAR_CANE_BLOCK)) {
+					|| blockToCheck.getType().equals(Material.SUGAR_CANE)) {
 				// For cactus and sugar cane, we can even have blocks above
 				ArrayList<Block> additionalBlocks = findTopFaceAttachedBlocks(blockToCheck);
 				if (!additionalBlocks.isEmpty()) {
@@ -327,7 +311,7 @@ public class BlockUtils {
 	 *         block
 	 */
 	public static boolean isTopFaceDetachableMaterial(Material m) {
-		return fallsOffTop.contains(m);
+		return fallsOffTop.isTagged(m);
 	}
 
 	/**
@@ -412,16 +396,15 @@ public class BlockUtils {
 		case BIRCH_DOOR:
 		case DARK_OAK_DOOR:
 		case JUNGLE_DOOR:
-		case IRON_DOOR_BLOCK:
+		case IRON_DOOR:
 		case SPRUCE_DOOR:
-		case WOODEN_DOOR:
+		case OAK_DOOR:
 			if (((Door) block.getState().getData()).isTopHalf()) {
 				return block.getRelative(BlockFace.DOWN);
 			}
 			break;
 		case DOUBLE_PLANT:
 			// TODO: 1.13
-			@SuppressWarnings("deprecation")
 			byte data = block.getData();
 			if (data == 10) {
 				return block.getRelative(BlockFace.DOWN);
@@ -607,10 +590,8 @@ public class BlockUtils {
 		case DARK_OAK_DOOR:
 		case JUNGLE_DOOR:
 		case IRON_DOOR:
-		case IRON_DOOR_BLOCK:
 		case SPRUCE_DOOR:
-		case WOOD_DOOR:
-		case WOODEN_DOOR:
+		case OAK_DOOR:
 			return true;
 		default:
 			return false;
@@ -861,7 +842,7 @@ public class BlockUtils {
 	}
 
 	// TODO: 1.13
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	public static void setData(Block block, int data) {
 		block.setData((byte) data);
 	}

@@ -1,6 +1,6 @@
 package me.botsko.prism.listeners;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
@@ -30,11 +30,10 @@ public class PrismCustomEvents implements Listener {
 	 * 
 	 * @param event
 	 */
-	@SuppressWarnings("unchecked")
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onCustomPlayerAction(final PrismCustomPlayerActionEvent event) {
-		final ArrayList<String> allowedPlugins = (ArrayList<String>) plugin.getConfig()
-				.getList("prism.tracking.api.allowed-plugins");
+		final List<String> allowedPlugins = plugin.getConfig()
+				.getStringList("prism.tracking.api.allowed-plugins");
 		if (allowedPlugins.contains(event.getPluginName())) {
 			RecordingQueue.addToQueue(
 					ActionFactory.createPlayer(event.getActionTypeName(), event.getPlayer(), event.getMessage()));

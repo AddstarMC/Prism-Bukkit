@@ -46,12 +46,11 @@ public class Ignore {
 	 * 
 	 * @param plugin
 	 */
-	@SuppressWarnings("unchecked")
 	public Ignore(Prism plugin) {
 		this.plugin = plugin;
-		ignore_players = (List<String>) plugin.getConfig().getList("prism.ignore.players");
+		ignore_players = plugin.getConfig().getStringList("prism.ignore.players");
 		ignore_players_whitelist = plugin.getConfig().getBoolean("prism.ignore.players_whitelist");
-		ignore_worlds = (List<String>) plugin.getConfig().getList("prism.ignore.worlds");
+		ignore_worlds = plugin.getConfig().getStringList("prism.ignore.worlds");
 		ignore_worlds_whitelist = plugin.getConfig().getBoolean("prism.ignore.worlds_whitelist");
 		ignore_creative = plugin.getConfig().getBoolean("prism.ignore.players-in-creative");
 	}

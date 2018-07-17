@@ -1,6 +1,5 @@
 package me.botsko.prism.monitors;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -21,12 +20,12 @@ public class UseMonitor {
 	/**
 	 * 
 	 */
-	protected final ArrayList<String> blocksToAlertOnPlace;
+	protected final List<String> blocksToAlertOnPlace;
 
 	/**
 	 * 
 	 */
-	protected final ArrayList<String> blocksToAlertOnBreak;
+	protected final List<String> blocksToAlertOnBreak;
 
 	/**
 	 * 
@@ -37,11 +36,10 @@ public class UseMonitor {
 	 * 
 	 * @param plugin
 	 */
-	@SuppressWarnings("unchecked")
 	public UseMonitor(Prism plugin) {
 		this.plugin = plugin;
-		blocksToAlertOnPlace = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-placement");
-		blocksToAlertOnBreak = (ArrayList<String>) plugin.getConfig().getList("prism.alerts.uses.item-break");
+		blocksToAlertOnPlace = plugin.getConfig().getStringList("prism.alerts.uses.item-placement");
+		blocksToAlertOnBreak = plugin.getConfig().getStringList("prism.alerts.uses.item-break");
 		resetEventsQueue();
 	}
 
@@ -112,8 +110,6 @@ public class UseMonitor {
 		final String playername = player.getName();
 		final String blockType = "" + block.getType();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte data = block.getData();
 
 		// Ensure we're tracking this block
@@ -137,8 +133,6 @@ public class UseMonitor {
 		final String playername = player.getName();
 		final String blockType = "" + block.getType();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte data = block.getData();
 
 		// Ensure we're tracking this block

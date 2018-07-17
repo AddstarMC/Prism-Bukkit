@@ -138,7 +138,7 @@ public class PrismBlockEvents implements Listener {
 		}
 
 		// if it's a piston, the base will break without a physics events
-		if (block.getType().equals(Material.PISTON_EXTENSION) || block.getType().equals(Material.PISTON_MOVING_PIECE)) {
+		if (block.getType().equals(Material.PISTON_HEAD) || block.getType().equals(Material.MOVING_PISTON)) {
 			final ArrayList<Block> pistonBases = BlockUtils.findSideFaceAttachedBlocks(block);
 			if (pistonBases.size() > 0) {
 				for (final Block p : pistonBases) {
@@ -219,7 +219,7 @@ public class PrismBlockEvents implements Listener {
 
 		// if obsidian, log portal blocks
 		if (block.getType().equals(Material.OBSIDIAN)) {
-			final ArrayList<Block> blocks = BlockUtils.findConnectedBlocksOfType(Material.PORTAL, block, null);
+			final ArrayList<Block> blocks = BlockUtils.findConnectedBlocksOfType(Material.NETHER_PORTAL, block, null);
 			if (!blocks.isEmpty()) {
 				// Only log 1 portal break, we don't need all 8
 				RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", blocks.get(0), player));
@@ -250,10 +250,7 @@ public class PrismBlockEvents implements Listener {
 
 		final BlockState s = event.getBlockReplacedState();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte oldData = s.getData().getData();
-		@SuppressWarnings("deprecation")
 		byte newData = block.getData();
 
 		// TODO: old and new appear flipped compared to other actions... check
@@ -287,10 +284,7 @@ public class PrismBlockEvents implements Listener {
 		final Block b = event.getBlock();
 		final BlockState s = event.getNewState();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte oldData = b.getData();
-		@SuppressWarnings("deprecation")
 		byte newData = s.getData().getData();
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange(type, b.getLocation(), b.getType(), oldData,
@@ -308,10 +302,7 @@ public class PrismBlockEvents implements Listener {
 		final Block b = event.getBlock();
 		final BlockState s = event.getNewState();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte oldData = b.getData();
-		@SuppressWarnings("deprecation")
 		byte newData = s.getData().getData();
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(), oldData,
@@ -331,10 +322,7 @@ public class PrismBlockEvents implements Listener {
 			return;
 		final BlockState s = event.getNewState();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte oldData = b.getData();
-		@SuppressWarnings("deprecation")
 		byte newData = s.getData().getData();
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(), oldData,
@@ -527,11 +515,11 @@ public class PrismBlockEvents implements Listener {
 
 		// Watch for blocks that the liquid can break
 		if (BlockUtils.canFlowBreakMaterial(to.getType())) {
-			if (from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER) {
+			if (from.getType() == Material.WATER) {
 				if (Prism.getIgnore().event("water-break", event.getBlock())) {
 					RecordingQueue.addToQueue(ActionFactory.createBlock("water-break", event.getToBlock(), "Water"));
 				}
-			} else if (from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA) {
+			} else if (from.getType() == Material.LAVA) {
 				if (Prism.getIgnore().event("lava-break", event.getBlock())) {
 					RecordingQueue.addToQueue(ActionFactory.createBlock("lava-break", event.getToBlock(), "Lava"));
 				}
@@ -539,85 +527,17 @@ public class PrismBlockEvents implements Listener {
 		}
 
 		// Record water flow
-		if (from.getType() == Material.STATIONARY_WATER || from.getType() == Material.WATER) {
+		if (from.getType() == Material.WATER) {
 			if (Prism.getIgnore().event("water-flow", event.getBlock())) {
 				RecordingQueue.addToQueue(ActionFactory.createBlock("water-flow", event.getBlock(), "Water"));
 			}
 		}
 
 		// Record lava flow
-		if (from.getType() == Material.STATIONARY_LAVA || from.getType() == Material.LAVA) {
+		if (from.getType() == Material.LAVA) {
 			if (Prism.getIgnore().event("lava-flow", event.getBlock())) {
 				RecordingQueue.addToQueue(ActionFactory.createBlock("lava-flow", event.getBlock(), "Lava"));
 			}
 		}
-
-		/**
-		 * Predict the forming of Stone, Obsidian, Cobblestone because of lava/water
-		 * flowing into each other. Boy, I wish bukkit used block_form for this.
-		 */
-		if (!Prism.getIgnore().event("block-form", event.getBlock()))
-			return;
-
-		// Lava flows to water. STONE forms
-		if (from.getType().equals(Material.STATIONARY_LAVA) && to.getType().equals(Material.STATIONARY_WATER)) {
-			final Block newTo = event.getToBlock();
-			newTo.setType(Material.STONE);
-			RecordingQueue.addToQueue(ActionFactory.createBlock("block-form", newTo, "Environment"));
-		}
-
-		// // int id = event.getBlock().getTypeId();
-		//
-		// // If moving to air
-		// Block b = event.getToBlock();
-		// if(b.getType().equals(Material.AIR)){
-		//
-		// // formed sat/lava = cobble
-		// // formed stationary_water = stone
-		//
-		// // Are we moving from a water block
-		// Material fromM = event.getBlock().getType();
-		// if(fromM.equals(Material.WATER) ||
-		// fromM.equals(Material.STATIONARY_WATER)){
-		// // Check all sides
-		// for(BlockFace face : BlockFace.values()){
-		// Block r = b.getRelative(face, 1);
-		// // If the side is lava, cobble shall form.
-		// // Note: if stationary_lava, stone will form. Seems to always be
-		// captured above.
-		// if(r.getType().equals(Material.LAVA) ||
-		// r.getType().equals(Material.STATIONARY_LAVA)){
-		// String coordsKey = r.getX()+":"+r.getY()+":"+r.getZ();
-		// if(coordsUsed.contains(coordsKey)) continue;
-		// coordsUsed.add(coordsKey);
-		// Prism.debug("COBBLE FORMED " + r.getType().name());
-		// // r.setType(Material.COBBLESTONE);
-		// plugin.actionsRecorder.addToQueue( new
-		// BlockAction(ActionType.BLOCK_FORM, r, "Environment") );
-		// }
-		// }
-		// }
-		// }
-		//
-		//
-		// // Water flowing into lava forms obsidian or cobble
-		// if ( from.getType().equals(Material.STATIONARY_WATER) &&
-		// to.getType().equals(Material.STATIONARY_LAVA) ) {
-		// Prism.debug("FROM WATER to " + to.getType().name());
-		// BlockState lower =
-		// event.getToBlock().getRelative(BlockFace.DOWN).getState();
-		// // Obsidian can form below
-		// if( lower.getType().equals(Material.OBSIDIAN) ){
-		// String coordsKey = lower.getX()+":"+lower.getY()+":"+lower.getZ();
-		// if(coordsUsed.contains(coordsKey)) return;
-		// // Add coords to list the event has already fired for
-		// coordsUsed.add(coordsKey);
-		// Prism.debug("COBBLE/OBY FORMED BELOW " + coordsKey);
-		// plugin.actionsRecorder.addToQueue( new
-		// BlockAction(ActionType.BLOCK_FORM, lower.getBlock(), "Environment")
-		// );
-		// }
-		//
-		// }
 	}
 }

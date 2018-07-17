@@ -62,7 +62,6 @@ public class BlockParameter extends SimplePrismParameterHandler {
 									// If we really care about the sub id
 									// because it's a whole different item
 									// TODO: 1.13
-									@SuppressWarnings("deprecation")
 									short d = data.getData();
 	
 									if (ItemUtils.dataValueUsedForSubitems(data.getItemType())) {

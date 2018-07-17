@@ -10,6 +10,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.utils.MaterialTag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,6 +22,8 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -49,23 +52,17 @@ public class BlockAction extends GenericAction {
 	public void setBlock(BlockState state) {
 		if (state != null) {
 
-			block = BlockUtils.blockIdMustRecordAs(state.getType());
+			block = state.getType();
 
-			// TODO: 1.13
-			@SuppressWarnings("deprecation")
 			byte d = state.getData().getData();
+			BlockData bd = state.getBlockData();
+			
+			bd.getAsString();
 
 			block_subid = d;
 
-			// Build an object for the specific details of this action
-			// TODO: clean this up
-			if (block == Material.SKULL || block == Material.SKULL_ITEM || block == Material.MOB_SPAWNER
-					|| block == Material.SIGN_POST || block == Material.WALL_SIGN) {
-				actionData = new BlockActionData();
-			}
-
 			// spawner
-			if (state.getType() == Material.MOB_SPAWNER) {
+			if (state.getType() == Material.SPAWNER) {
 				final SpawnerActionData spawnerActionData = new SpawnerActionData();
 				final CreatureSpawner s = (CreatureSpawner) state;
 				spawnerActionData.entity_type = s.getSpawnedType().name().toLowerCase();
@@ -74,7 +71,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// skulls
-			else if ((state.getType() == Material.SKULL || state.getType() == Material.SKULL_ITEM)) {
+			else if (state instanceof Skull) {
 				final SkullActionData skullActionData = new SkullActionData();
 				final Skull s = (Skull) state;
 				skullActionData.rotation = s.getRotation().name().toLowerCase();
@@ -84,7 +81,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// signs
-			else if ((state.getType() == Material.SIGN_POST || state.getType() == Material.WALL_SIGN)) {
+			else if ((state.getType() == Material.SIGN || state.getType() == Material.WALL_SIGN)) {
 				final SignActionData signActionData = new SignActionData();
 				final Sign s = (Sign) state;
 				signActionData.lines = s.getLines();
@@ -92,7 +89,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// command block
-			else if ((state.getType() == Material.COMMAND)) {
+			else if ((state.getType() == Material.COMMAND_BLOCK)) {
 				final CommandBlock cmdblock = (CommandBlock) state;
 				data = cmdblock.getCommand();
 			}
@@ -111,13 +108,13 @@ public class BlockAction extends GenericAction {
 	public void setData(String data) {
 		this.data = data;
 		if (data != null && data.startsWith("{")) {
-			if (block == Material.SKULL || block == Material.SKULL_ITEM) {
+			if (block == Material.PLAYER_HEAD || block == Material.PLAYER_WALL_HEAD) {
 				actionData = gson.fromJson(data, SkullActionData.class);
-			} else if (block == Material.MOB_SPAWNER) {
+			} else if (block == Material.SPAWNER) {
 				actionData = gson.fromJson(data, SpawnerActionData.class);
-			} else if (block == Material.SIGN_POST || block == Material.WALL_SIGN) {
+			} else if (block == Material.SIGN || block == Material.WALL_SIGN) {
 				actionData = gson.fromJson(data, SignActionData.class);
-			} else if (block == Material.COMMAND) {
+			} else if (block == Material.COMMAND_BLOCK) {
 				actionData = new BlockActionData();
 			} else {
 				// No longer used, was for pre-1.5 data formats
@@ -166,7 +163,7 @@ public class BlockAction extends GenericAction {
 			if (ad.lines != null && ad.lines.length > 0) {
 				name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
 			}
-		} else if (block == Material.COMMAND) {
+		} else if (block == Material.COMMAND_BLOCK) {
 			name += " (" + data + ")";
 		}
 		if (type.getName().equals("crop-trample") && block == Material.AIR) {
@@ -339,12 +336,11 @@ public class BlockAction extends GenericAction {
 
 			// If lilypad, check that block below is water. Be sure
 			// it's set to stationary water so the lilypad will sit
-			if (getBlock() == Material.WATER_LILY) {
+			if (getBlock() == Material.LILY_PAD) {
 
 				final Block below = block.getRelative(BlockFace.DOWN);
-				if (below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR)
-						|| below.getType().equals(Material.STATIONARY_WATER)) {
-					below.setType(Material.STATIONARY_WATER);
+				if (below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR)) {
+					below.setType(Material.WATER);
 				} else {
 					// Prism.debug("Lilypad skipped because no water exists below.");
 					return new ChangeResult(ChangeResultType.SKIPPED, null);
@@ -352,11 +348,11 @@ public class BlockAction extends GenericAction {
 			}
 
 			// If portal, we need to light the portal. seems to be the only way.
-			if (getBlock() == Material.PORTAL) {
+			if (getBlock() == Material.NETHER_PORTAL) {
 				final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(Material.OBSIDIAN, block.getLocation());
 				if (obsidian != null) {
 					final Block above = obsidian.getRelative(BlockFace.UP);
-					if (!(above.getType() == Material.PORTAL)) {
+					if (!(above.getType() == Material.NETHER_PORTAL)) {
 						above.setType(Material.FIRE);
 						return new ChangeResult(ChangeResultType.APPLIED, null);
 					}
@@ -378,26 +374,27 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Skulls
 			 */
-			if ((getBlock() == Material.SKULL || getBlock() == Material.SKULL_ITEM)
+			if ((getBlock() == Material.PLAYER_HEAD || getBlock() == Material.PLAYER_WALL_HEAD)
 					&& blockActionData instanceof SkullActionData) {
 
 				final SkullActionData s = (SkullActionData) blockActionData;
 
 				// Set skull data
-				final Skull skull = (Skull) block.getState();
-				skull.setRotation(s.getRotation());
-				skull.setSkullType(s.getSkullType());
+				final Directional direction = (Directional) block.getBlockData();
+				direction.setFacing(s.getRotation());
+				
 				if (!s.owner.isEmpty()) {
+					final Skull skull = (Skull) block.getState();
 					skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf((s.owner))));
+					skull.update();
 				}
-				skull.update();
 
 			}
 
 			/**
 			 * Spawner
 			 */
-			if (getBlock() == Material.MOB_SPAWNER && blockActionData instanceof SpawnerActionData) {
+			if (getBlock() == Material.SPAWNER && blockActionData instanceof SpawnerActionData) {
 
 				final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
@@ -412,7 +409,7 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Restoring command block
 			 */
-			if (getBlock() == Material.COMMAND) {
+			if (getBlock() == Material.COMMAND_BLOCK) {
 				final CommandBlock cmdblock = (CommandBlock) block.getState();
 				cmdblock.setCommand(data);
 				cmdblock.update();
@@ -422,7 +419,7 @@ public class BlockAction extends GenericAction {
 			 * Signs
 			 */
 			if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-					&& (getBlock() == Material.SIGN_POST || getBlock() == Material.WALL_SIGN)
+					&& (getBlock() == Material.SIGN || getBlock() == Material.WALL_SIGN)
 					&& blockActionData instanceof SignActionData) {
 
 				final SignActionData s = (SignActionData) blockActionData;
@@ -457,7 +454,7 @@ public class BlockAction extends GenericAction {
 				final Block below = block.getRelative(BlockFace.DOWN);
 				if (below.getType().equals(Material.DIRT) || below.getType().equals(Material.AIR)
 						|| below.getType().equals(Material.GRASS)) {
-					below.setType(Material.SOIL);
+					below.setType(Material.FARMLAND);
 				} else {
 					// System.out.print("Block skipped because there's no soil below.");
 					return new ChangeResult(ChangeResultType.SKIPPED, null);
@@ -475,11 +472,11 @@ public class BlockAction extends GenericAction {
 				BlockUtils.properlySetDoor(block, getBlock(), (byte) getBlockSubId());
 			}
 			// Or a bed
-			else if (m.equals(Material.BED_BLOCK)) {
+			else if (MaterialTag.BEDS.isTagged(m)) {
 				BlockUtils.properlySetBed(block, getBlock(), (byte) getBlockSubId());
 			}
 			// Or double plants
-			else if (m.equals(Material.DOUBLE_PLANT)) {
+			else if (MaterialTag.TALL_PLANTS.isTagged(m)) {
 				BlockUtils.properlySetDoublePlant(block, getBlock(), (byte) getBlockSubId());
 			}
 		} else {

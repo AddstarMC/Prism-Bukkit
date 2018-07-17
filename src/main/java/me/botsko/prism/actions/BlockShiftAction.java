@@ -27,9 +27,6 @@ public class BlockShiftAction extends GenericAction {
 
 		// Store information for the action
 		if (from != null) {
-
-			// TODO: 1.13
-			@SuppressWarnings("deprecation")
 			byte data = from.getData();
 
 			this.block = from.getType();

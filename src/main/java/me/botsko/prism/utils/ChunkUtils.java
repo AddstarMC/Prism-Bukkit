@@ -20,7 +20,6 @@ public class ChunkUtils {
 	public static void resetPreviewBoundaryBlocks(Player player, List<Block> blocks) {
 		for (Block block : blocks) {
 			// TODO: Check for non-deprecated method in future
-			@SuppressWarnings("deprecation")
 			byte data = block.getData();
 
 			EntityUtils.sendBlockChange(player, block.getLocation(), block.getType(), data);

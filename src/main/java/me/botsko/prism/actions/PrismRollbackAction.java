@@ -15,10 +15,7 @@ public class PrismRollbackAction extends BlockChangeAction {
 		this.data = String.valueOf(parent_id);
 		if (oldblock != null) {
 			// TODO: This... is all old block? What?
-			// TODO: 1.13
-			@SuppressWarnings("deprecation")
 			byte oldData = oldblock.getData().getData();
-			@SuppressWarnings("deprecation")
 			byte newData = oldblock.getData().getData();
 
 			this.old_block = oldblock.getType();

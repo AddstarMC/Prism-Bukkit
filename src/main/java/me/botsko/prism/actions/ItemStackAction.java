@@ -121,7 +121,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Skull Owner
-		else if (meta != null && item.getType().equals(Material.PLAYER_HEAD)) {
+		else if (meta != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
 			final SkullMeta skull = (SkullMeta) meta;
 			if (skull.hasOwner()) {
 				actionData.owner = skull.getOwningPlayer().getUniqueId().toString();
@@ -268,7 +268,7 @@ public class ItemStackAction extends GenericAction {
 			item.setItemMeta(lam);
 		}
 		// Skulls
-		else if (item.getType().equals(Material.PLAYER_HEAD) && actionData.owner != null) {
+		else if (actionData.owner != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
 			final SkullMeta meta = (SkullMeta) item.getItemMeta();
 			meta.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf(actionData.owner)));
 			item.setItemMeta(meta);

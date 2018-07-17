@@ -110,7 +110,6 @@ public class MaterialAliases {
 		public Material material;
 		public String state;
 
-		@SuppressWarnings("deprecation")
 		public MaterialData asData() {
 			if(!state.isEmpty())
 				return new MaterialData(material, Byte.parseByte(state));
@@ -286,7 +285,6 @@ public class MaterialAliases {
 		return itemAliases;
 	}
 
-	@SuppressWarnings("deprecation")
 	public String getAlias(Material material, int subid) {
 		String item_name = null;
 		if (!itemAliases.isEmpty()) {
@@ -336,7 +334,6 @@ public class MaterialAliases {
 	}
 
 	// TODO: Break this in 1.13. Woooo.
-	@SuppressWarnings("deprecation")
 	public ArrayList<MaterialData> getMaterialsByAlias(String alias) {
 		ArrayList<MaterialData> itemIds = new ArrayList<>();
 		if (!itemAliases.isEmpty()) {

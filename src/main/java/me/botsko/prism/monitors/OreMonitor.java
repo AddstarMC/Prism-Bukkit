@@ -161,8 +161,6 @@ public class OreMonitor {
 	 * @return
 	 */
 	protected boolean isWatched(Block block) {
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte data = block.getData();
 
 		return Prism.getAlertedOres().containsKey(block.getType() + ":" + data)

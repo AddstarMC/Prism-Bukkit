@@ -25,7 +25,7 @@ import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.exceptions.InvalidActionException;
 
-public class HandlerRegistry<H> {
+public class HandlerRegistry {
 
 	/**
 	 * 

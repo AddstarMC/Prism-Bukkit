@@ -9,7 +9,6 @@ import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,7 +47,6 @@ public class EntityUtils {
 	}
 
 	// TODO: 1.13
-	@SuppressWarnings("deprecation")
 	public static void sendBlockChange(Player p, Location loc, Material mat, int data) {
 		p.sendBlockChange(loc, mat, (byte) data);
 	}

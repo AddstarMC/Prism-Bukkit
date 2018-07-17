@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.utils.DeathUtils;
+import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -28,9 +29,11 @@ import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Door;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Collection;
@@ -92,23 +95,50 @@ public class PrismEntityEvents implements Listener {
 
 		// Mob Death
 		if (!(entity instanceof Player)) {
-			if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-
-				if (entity instanceof ChestedHorse) {
-					final ChestedHorse horse = (ChestedHorse) entity;
-					if (horse.isCarryingChest()) {
-						// Log item drops
-						if (Prism.getIgnore().event("item-drop", entity.getWorld())) {
-							for (final ItemStack i : horse.getInventory().getContents()) {
-								if (i == null)
-									continue;
-								RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
-										-1, null, entity.getLocation(), "horse"));
-							}
+			// Log item drops
+			if (Prism.getIgnore().event("item-drop", entity.getWorld())) {
+				String name = entity.getType().name().toLowerCase();
+				
+				// Inventory
+				if (entity instanceof InventoryHolder) {
+					final InventoryHolder holder = (InventoryHolder) entity;
+					
+					for (final ItemStack i : holder.getInventory().getContents()) {
+						if (i != null) {
+							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
+									-1, null, entity.getLocation(), name));
 						}
 					}
 				}
+				
+				// Equipment
+				if (entity instanceof LivingEntity) {
+					final LivingEntity living = (LivingEntity) entity;
+					
+					for (final ItemStack i : living.getEquipment().getArmorContents()) {
+						if (i != null) {
+							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
+									-1, null, entity.getLocation(), name));
+						}
+					}
+					
+					// Hand items not stored in "getArmorContents"
+					ItemStack main = living.getEquipment().getItemInMainHand();
+					ItemStack off = living.getEquipment().getItemInOffHand();
+					
+					if(main != null) {
+						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", main, main.getAmount(),
+								-1, null, entity.getLocation(), name));
+					}
 
+					if(off != null) {
+						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", off, off.getAmount(),
+								-1, null, entity.getLocation(), name));
+					}
+				}
+			}
+			
+			if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 				// Mob killed by player
 				final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
 						.getLastDamageCause();
@@ -122,13 +152,35 @@ public class PrismEntityEvents implements Listener {
 				// Mob shot by an arrow from a player
 				else if (entityDamageByEntityEvent.getDamager() instanceof Arrow) {
 					final Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
+					
 					if (arrow.getShooter() instanceof Player) {
-
 						final Player player = (Player) arrow.getShooter();
 						if (!Prism.getIgnore().event("player-kill", player))
 							return;
 						RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
 
+					}
+					else if (arrow.getShooter() instanceof LivingEntity) {
+						final Entity damager = (Entity) arrow.getShooter();
+						String name = "unknown";
+						if (damager != null) {
+							name = damager.getType().name().toLowerCase();
+						}
+
+						if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+							return;
+						RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
+					}
+					else if (arrow.getShooter() instanceof BlockProjectileSource) {
+
+						final Block damager = (Block) ((BlockProjectileSource)arrow.getShooter()).getBlock();
+
+						if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+							return;
+						
+						String name = "block:" + damager.getType().name().toLowerCase();
+						
+						RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
 					}
 				} else {
 					// Mob died by another mob
@@ -160,7 +212,8 @@ public class PrismEntityEvents implements Listener {
 				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, killer));
 
 			}
-		} else {
+		}
+		else {
 
 			// Determine who died and what the exact cause was
 			final Player p = (Player) event.getEntity();
@@ -276,7 +329,7 @@ public class PrismEntityEvents implements Listener {
 			if (!Prism.getIgnore().event("entity-dye", p))
 				return;
 			// Only track the event on sheep, when player holds dye
-			if (hand.getType() == Material.INK_SACK && e.getType() == EntityType.SHEEP) {
+			if (MaterialTag.DYES.isTagged(hand.getType()) && e.getType() == EntityType.SHEEP) {
 				final String newColor = Prism.getItems().getAlias(hand.getType(), (byte) hand.getDurability());
 				RecordingQueue.addToQueue(
 						ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer(), newColor));
@@ -534,10 +587,7 @@ public class PrismEntityEvents implements Listener {
 		final BlockState newState = event.getNewState();
 		final String entity = event.getEntity().getType().name().toLowerCase();
 
-		// TODO: 1.13
-		@SuppressWarnings("deprecation")
 		byte oldData = block.getData();
-		@SuppressWarnings("deprecation")
 		byte newData = newState.getData().getData();
 
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(), oldData,
