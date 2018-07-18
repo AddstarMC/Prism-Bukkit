@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.database.mysql.DeleteQueryBuilder;
 import me.botsko.prism.database.mysql.SelectQueryBuilder;
+import me.botsko.prism.utils.MaterialAliases.MaterialState;
 
 public class ActionsQuery {
 
@@ -172,13 +174,32 @@ public class ActionsQuery {
 						baseHandler.setY(rs.getInt(7));
 						baseHandler.setZ(rs.getInt(8));
 
-						ItemStack block = Prism.getItems().idsToMaterial(rs.getInt(9), rs.getInt(10)).asItem();
-						ItemStack oldBlock = Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12)).asItem();
+						MaterialState current = Prism.getItems().idsToMaterial(rs.getInt(9), rs.getInt(10));
+						ItemStack item = current.asItem();
+						BlockData block = current.asBlockData();
 
-						baseHandler.setBlock(block.getType());
-						baseHandler.setBlockSubId(block.getDurability());
-						baseHandler.setOldBlock(oldBlock.getType());
-						baseHandler.setOldBlockSubId(oldBlock.getDurability());
+						if(block != null) {
+							baseHandler.setBlock(block.getMaterial());
+							baseHandler.setBlockData(block);
+						}
+						else {
+							baseHandler.setBlock(item.getType());
+							baseHandler.setDurability(item.getDurability());
+						}
+						
+						MaterialState old =  Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
+						ItemStack oldItem = old.asItem();
+						BlockData oldBlock = old.asBlockData();
+						
+						if(oldBlock != null) {
+							baseHandler.setOldBlock(oldBlock.getMaterial());
+							baseHandler.setOldBlockData(oldBlock);
+						}
+						else {
+							baseHandler.setOldBlock(oldItem.getType());
+							baseHandler.setOldDurability(oldItem.getDurability());
+						}
+						
 						baseHandler.setData(rs.getString(13));
 						baseHandler.setMaterialAliases(Prism.getItems());
 

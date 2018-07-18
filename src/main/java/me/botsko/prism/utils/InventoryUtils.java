@@ -63,10 +63,10 @@ public class InventoryUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static int inventoryHasItem(Inventory inv, Material material, int sub_id) {
+	public static int inventoryHasItem(Inventory inv, Material material) {
 		int currentSlot = 0;
 		for (ItemStack item : inv.getContents()) {
-			if (item != null && item.getType() == material && item.getDurability() == sub_id) {
+			if (item != null && item.getType() == material) {
 				return currentSlot;
 			}
 			currentSlot++;
@@ -129,8 +129,8 @@ public class InventoryUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	public static boolean moveItemToHand(PlayerInventory inv, Material material, byte sub_id) {
-		int slot = inventoryHasItem(inv, material, sub_id);
+	public static boolean moveItemToHand(PlayerInventory inv, Material material) {
+		int slot = inventoryHasItem(inv, material);
 		if (slot > -1) {
 			ItemStack item = inv.getItem(slot);
 			inv.clear(slot);

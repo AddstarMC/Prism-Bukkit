@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
 import me.botsko.prism.utils.TypeUtils;
+import me.botsko.prism.utils.MaterialAliases.MaterialState;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -15,6 +16,7 @@ import me.botsko.prism.database.mysql.BlockReportQueryBuilder;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -267,9 +269,17 @@ public class ReportCommand implements SubHandler {
 									+ TypeUtils.padStringRight("Broken", colIntLen)));
 
 					while (rs.next()) {
-						ItemStack block = Prism.getItems().idsToMaterial(rs.getInt(1), 0).asItem();
+						MaterialState state = Prism.getItems().idsToMaterial(rs.getInt(1), 0);
+						BlockData block = state.asBlockData();
+						ItemStack item = state.asItem();
 
-						final String alias = Prism.getItems().getAlias(block.getType(), block.getDurability());
+						final String alias;
+						if(block != null) {
+							alias = Prism.getItems().getAlias(block.getMaterial(), block);
+						}
+						else {
+							alias = Prism.getItems().getAlias(item);
+						}
 
 						final int placed = rs.getInt(2);
 						final int broken = rs.getInt(3);

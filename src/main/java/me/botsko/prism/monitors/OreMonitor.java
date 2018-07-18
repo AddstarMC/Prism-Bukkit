@@ -161,10 +161,7 @@ public class OreMonitor {
 	 * @return
 	 */
 	protected boolean isWatched(Block block) {
-		byte data = block.getData();
-
-		return Prism.getAlertedOres().containsKey(block.getType() + ":" + data)
-				|| Prism.getAlertedOres().containsKey("" + block.getType());
+		return Prism.getAlertedOres().containsKey("" + block.getType().name());
 	}
 
 	/**

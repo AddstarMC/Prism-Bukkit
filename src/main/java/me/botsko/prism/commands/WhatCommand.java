@@ -40,8 +40,8 @@ public class WhatCommand extends Executor {
 				String line1 = ChatColor.WHITE + "Name: " + ChatColor.DARK_AQUA
 						+ item.getType().toString().toLowerCase();
 				line1 += ChatColor.WHITE + " Prism Alias: " + ChatColor.DARK_AQUA
-						+ Prism.getItems().getAlias(item.getType(), item.getDurability());
-				line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getType() + ":" + item.getDurability();
+						+ Prism.getItems().getAlias(item.getType(), null);
+				line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getType();
 
 				call.getPlayer().sendMessage(Prism.messenger.playerMsg(line1));
 				call.getPlayer().sendMessage(Prism.messenger.playerMsg(ChatColor.WHITE + "Full Display Name: "

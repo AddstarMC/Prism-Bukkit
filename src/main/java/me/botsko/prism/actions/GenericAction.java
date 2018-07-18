@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.entity.Player;
@@ -100,7 +102,9 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected int block_subid;
+	protected BlockData block_data;
+	
+	protected short durability;
 
 	/**
 	 * 
@@ -110,8 +114,10 @@ public class GenericAction implements Handler {
 	/**
 	 * 
 	 */
-	protected int old_block_subid;
+	protected BlockData old_block_data;
 
+	protected short old_durability;
+	
 	/**
 	 * 
 	 */
@@ -446,8 +452,13 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
 	 */
 	@Override
-	public void setBlockSubId(int id) {
-		this.block_subid = id;
+	public void setBlockData(BlockData data) {
+		this.block_data = data;
+	}
+	
+	@Override
+	public void setDurability(short durability) {
+		this.durability = durability;
 	}
 
 	@Override
@@ -461,8 +472,13 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getBlockSubId()
 	 */
 	@Override
-	public int getBlockSubId() {
-		return block_subid;
+	public BlockData getBlockData() {
+		return block_data;
+	}
+	
+	@Override
+	public short getDurability() {
+		return durability;
 	}
 
 	@Override
@@ -476,8 +492,13 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
 	 */
 	@Override
-	public void setOldBlockSubId(int id) {
-		this.old_block_subid = id;
+	public void setOldBlockData(BlockData data) {
+		this.old_block_data = data;
+	}
+	
+	@Override
+	public void setOldDurability(short durability) {
+		this.old_durability = durability;
 	}
 
 	@Override
@@ -491,8 +512,13 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
 	 */
 	@Override
-	public int getOldBlockSubId() {
-		return old_block_subid;
+	public BlockData getOldBlockData() {
+		return old_block_data;
+	}
+	
+	@Override
+	public short getOldDurability() {
+		return old_durability;
 	}
 
 	/*

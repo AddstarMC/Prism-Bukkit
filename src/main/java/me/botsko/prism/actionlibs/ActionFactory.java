@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Hanging;
@@ -96,22 +97,22 @@ public class ActionFactory {
 	 * @param action_type
 	 * @param player
 	 */
-	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, byte oldSubid,
-			Material newMat, byte newSubid, OfflinePlayer player) {
+	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, BlockData oldData,
+			Material newMat, BlockData newData, OfflinePlayer player) {
 		final BlockChangeAction a = new BlockChangeAction();
 		a.setActionType(action_type);
 		a.setBlock(newMat);
-		a.setBlockSubId(newSubid);
+		a.setBlockData(newData);
 		a.setOldBlock(oldMat);
-		a.setOldBlockSubId(oldSubid);
+		a.setOldBlockData(oldData);
 		a.setPlayer(player);
 		a.setLoc(loc);
 		return a;
 	}
 
-	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, byte oldSubid,
-			Material newMat, byte newSubid, String nonPlayer) {
-		final Handler a = createBlockChange(action_type, loc, oldMat, oldSubid, newMat, newSubid, (OfflinePlayer) null);
+	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, BlockData oldData,
+			Material newMat, BlockData newData, String nonPlayer) {
+		final Handler a = createBlockChange(action_type, loc, oldMat, oldData, newMat, newData, (OfflinePlayer) null);
 		a.setNonPlayerName(nonPlayer);
 		return a;
 	}

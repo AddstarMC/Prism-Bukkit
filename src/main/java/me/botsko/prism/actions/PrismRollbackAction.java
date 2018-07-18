@@ -14,14 +14,13 @@ public class PrismRollbackAction extends BlockChangeAction {
 		// TODO: Why string? Why?
 		this.data = String.valueOf(parent_id);
 		if (oldblock != null) {
-			// TODO: This... is all old block? What?
-			byte oldData = oldblock.getData().getData();
-			byte newData = oldblock.getData().getData();
-
 			this.old_block = oldblock.getType();
-			this.old_block_subid = oldData;
+			this.old_block_data = oldblock.getBlockData();
 			this.block = oldblock.getType();
-			this.block_subid = newData;
+			
+			// TODO: This is using oldblock when it looks like it should use newBlock,
+			// but this is how it was when I found it. Test later.
+			this.block_data = oldblock.getBlockData();
 		}
 	}
 

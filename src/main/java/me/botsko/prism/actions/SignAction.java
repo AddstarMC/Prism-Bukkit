@@ -8,9 +8,8 @@ import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Sign;
 
 public class SignAction extends GenericAction {
 
@@ -38,17 +37,15 @@ public class SignAction extends GenericAction {
 		if (block != null) {
 			actionData.sign_type = block.getType().name();
 
-			MaterialData md = block.getState().getData();
-
-			if (md instanceof Sign) {
-				Sign sign = (Sign) md;
-				actionData.facing = sign.getFacing();
-				this.block = block.getType();
-				this.world_name = block.getWorld().getName();
-				this.x = block.getX();
-				this.y = block.getY();
-				this.z = block.getZ();
+			if (block.getBlockData() instanceof Directional) {
+				actionData.facing = ((Directional)block.getBlockData()).getFacing();
 			}
+			
+			this.block = block.getType();
+			this.world_name = block.getWorld().getName();
+			this.x = block.getX();
+			this.y = block.getY();
+			this.z = block.getZ();
 		}
 		if (lines != null) {
 			actionData.lines = lines;
@@ -136,12 +133,11 @@ public class SignAction extends GenericAction {
 				block.setType(getSignType());
 			}
 
-			MaterialData md = block.getState().getData();
-
 			// Set the facing direction
-			if (md instanceof Sign) {
-				((Sign) md).setFacingDirection(getFacing());
+			if (block.getBlockData() instanceof Directional) {
+				((Directional)block.getBlockData()).setFacing(getFacing());
 			}
+			
 			// Set the content
 			if (block.getState() instanceof org.bukkit.block.Sign) {
 

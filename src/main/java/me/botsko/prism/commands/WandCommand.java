@@ -83,20 +83,16 @@ public class WandCommand implements SubHandler {
 		}
 
 		Material item_material = null;
-		byte item_subid = 0;
 
 		if (toolKey != null) {
-			final String[] toolKeys = toolKey.split(":");
-			item_material = Material.matchMaterial(toolKeys[0]);
-			if (toolKeys.length > 1)
-				item_subid = Byte.parseByte(toolKeys[1]);
+			item_material = Material.matchMaterial(toolKey);
 		}
 
 		String wandOn = "";
 		String item_name = "";
 		String parameters = "";
 		if (item_material != null) {
-			item_name = Prism.getItems().getAlias(item_material, item_subid);
+			item_name = Prism.getItems().getAlias(item_material, null);
 			wandOn += " on a " + item_name;
 		}
 
@@ -107,7 +103,7 @@ public class WandCommand implements SubHandler {
 			parameters += " " + call.getArg(i);
 		}
 
-		if (!ItemUtils.isAcceptableWand(item_material, item_subid)) {
+		if (!ItemUtils.isAcceptableWand(item_material)) {
 			call.getPlayer().sendMessage(
 					Prism.messenger.playerError("Sorry, but you may not use " + item_name + " for a wand."));
 			return;
@@ -216,17 +212,16 @@ public class WandCommand implements SubHandler {
 
 			wand.setWandMode(mode);
 			wand.setItem(item_material);
-			wand.setItemSubId(item_subid);
 
-			Prism.debug("Wand activated for player - mode: " + mode + " Item:" + item_material + ":" + item_subid);
+			Prism.debug("Wand activated for player - mode: " + mode + " Item:" + item_material);
 
 			// Move any existing item to the hand, otherwise give it to them
 			if (plugin.getConfig().getBoolean("prism.wands.auto-equip")) {
-				if (!InventoryUtils.moveItemToHand(inv, item_material, item_subid)) {
+				if (!InventoryUtils.moveItemToHand(inv, item_material)) {
 					// Store the item they're holding, if any
 					wand.setOriginallyHeldItem(inv.getItemInMainHand());
 					// They don't have the item, so we need to give them an item
-					if (InventoryUtils.handItemToPlayer(inv, new ItemStack(item_material, 1, item_subid))) {
+					if (InventoryUtils.handItemToPlayer(inv, new ItemStack(item_material, 1))) {
 						wand.setItemWasGiven(true);
 					} else {
 						call.getPlayer().sendMessage(

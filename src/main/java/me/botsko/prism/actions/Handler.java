@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -131,8 +132,9 @@ public interface Handler {
 	 * 
 	 * @param id
 	 */
-	// TODO: Safe until the flattening in 1.13
-	public abstract void setBlockSubId(int id);
+	public abstract void setBlockData(BlockData state);
+	
+	public abstract void setDurability(short durability);
 
 	/**
 	 * 
@@ -142,9 +144,10 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	// TODO: Safe until the flattening in 1.13
-	public abstract int getBlockSubId();
+	public abstract BlockData getBlockData();
 
+	public abstract short getDurability();
+	
 	/**
 	 * 
 	 * @param id
@@ -155,8 +158,9 @@ public interface Handler {
 	 * 
 	 * @param id
 	 */
-	// TODO: Safe until the flattening in 1.13
-	public abstract void setOldBlockSubId(int id);
+	public abstract void setOldBlockData(BlockData state);
+	
+	public abstract void setOldDurability(short durability);
 
 	/**
 	 * 
@@ -166,8 +170,9 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	// TODO: Safe until the flattening in 1.13
-	public abstract int getOldBlockSubId();
+	public abstract BlockData getOldBlockData();
+
+	public abstract short getOldDurability();
 
 	/**
 	 * @return the data

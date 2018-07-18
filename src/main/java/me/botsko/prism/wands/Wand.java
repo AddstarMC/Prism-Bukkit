@@ -49,33 +49,10 @@ public interface Wand {
 	 */
 	public String getWandMode();
 
-	/**
-	 * @return the item_id
-	 */
-	@Deprecated
-	public int getItemId();
-
 	public Material getItem();
 
-	/**
-	 * @param item_id
-	 *            the item_id to set
-	 */
-	@Deprecated
-	public void setItemId(int item_id);
 
 	public void setItem(Material material);
-
-	/**
-	 * @return the item_subid
-	 */
-	public byte getItemSubId();
-
-	/**
-	 * @param item_subid
-	 *            the item_subid to set
-	 */
-	public void setItemSubId(byte item_subid);
 
 	/**
 	 * 

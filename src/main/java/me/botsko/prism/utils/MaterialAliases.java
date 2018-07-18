@@ -9,11 +9,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.mysql.IdMapQuery;
@@ -110,16 +111,24 @@ public class MaterialAliases {
 		public Material material;
 		public String state;
 
-		public MaterialData asData() {
-			if(!state.isEmpty())
-				return new MaterialData(material, Byte.parseByte(state));
+		public BlockData asBlockData() {
+			if (material.isItem()) {
+				return null;
+			}
 			
-			return new MaterialData(material);
+			try {
+				return Bukkit.createBlockData(material, state);
+			}
+			catch(IllegalArgumentException e) {}
+			
+			return null;
 		}
 
 		public ItemStack asItem() {
-			if(!state.isEmpty())
+			if(!state.isEmpty()) {
+				
 				return new ItemStack(material, 1, Short.parseShort(state));
+			}
 			
 			return new ItemStack(material, 1);
 		}
@@ -285,18 +294,20 @@ public class MaterialAliases {
 		return itemAliases;
 	}
 
-	public String getAlias(Material material, int subid) {
+	public String getAlias(Material material, BlockData data) {
+		String dataString = "";
+		
+		if(data != null) {
+			dataString = data.getAsString();
+		}
+		
 		String item_name = null;
 		if (!itemAliases.isEmpty()) {
-			String key = material.name().toLowerCase() + ":" + subid;
+			String key = material.name().toLowerCase() + dataString;
 			item_name = itemAliases.get(key);
-			// TODO: Remove this for 1.13
-			if (item_name == null)
-				item_name = itemAliases.get(material.getId() + ":" + subid);
 		}
 		if (item_name == null) {
-			ItemStack i = new ItemStack(material, subid);
-			item_name = i.getType().name().toLowerCase().replace("_", " ");
+			item_name = material.name().toLowerCase().replace("_", " ") + dataString;
 		}
 		return item_name;
 	}
@@ -308,7 +319,7 @@ public class MaterialAliases {
 	 * @return
 	 */
 	public String getAlias(ItemStack i) {
-		return getAlias(i.getType(), i.getDurability());
+		return i.getType().name().toLowerCase().replace("_", " ");
 	}
 
 	/**
@@ -334,15 +345,12 @@ public class MaterialAliases {
 	}
 
 	// TODO: Break this in 1.13. Woooo.
-	public ArrayList<MaterialData> getMaterialsByAlias(String alias) {
-		ArrayList<MaterialData> itemIds = new ArrayList<>();
+	public ArrayList<Material> getMaterialsByAlias(String alias) {
+		ArrayList<Material> itemIds = new ArrayList<>();
 		if (!itemAliases.isEmpty()) {
 			for (Entry<String, String> entry : itemAliases.entrySet()) {
 				if (entry.getValue().equals(alias)) {
-					String[] _tmp = entry.getKey().split(":");
-					Material m = Material.matchMaterial(_tmp[0]);
-					byte b = Byte.parseByte(_tmp[1]);
-					itemIds.add(new MaterialData(m, b));
+					itemIds.add(Material.matchMaterial(entry.getKey()));
 				}
 			}
 		}

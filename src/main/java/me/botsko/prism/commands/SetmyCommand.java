@@ -8,7 +8,6 @@ import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.Wand;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.material.MaterialData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,23 +106,13 @@ public class SetmyCommand implements SubHandler {
 		if (setSubType != null && setSubType.equals("item")) {
 			if (call.getArgs().length >= 4) {
 				String wandString = call.getArg(3);
-				String[] parts = wandString.split(":");
-				Material setWand = Material.matchMaterial(parts[0]);
-				byte setWandData = 0;
-				if (parts.length > 1)
-					setWandData = Byte.valueOf(parts[1]);
+				Material setWand = Material.matchMaterial(wandString);
 
 				// If non-material, check for name
 				if (setWand == null) {
-					final ArrayList<MaterialData> itemMaterials = Prism.getItems().getMaterialsByAlias(wandString);
+					final ArrayList<Material> itemMaterials = Prism.getItems().getMaterialsByAlias(wandString);
 					if (itemMaterials.size() > 0) {
-						final MaterialData data = itemMaterials.get(0);
-						setWand = data.getItemType();
-
-						byte d = data.getData();
-
-						setWandData = d;
-						wandString = setWand + ":" + setWandData;
+						setWand = itemMaterials.get(0);
 					} else {
 						call.getPlayer()
 								.sendMessage(Prism.messenger.playerError("There's no item matching that name."));
@@ -131,7 +120,7 @@ public class SetmyCommand implements SubHandler {
 					}
 				}
 
-				if (!ItemUtils.isAcceptableWand(setWand, setWandData)) {
+				if (!ItemUtils.isAcceptableWand(setWand)) {
 					call.getPlayer().sendMessage(
 							Prism.messenger.playerError("Sorry, but you may not use " + wandString + " for a wand."));
 					return;

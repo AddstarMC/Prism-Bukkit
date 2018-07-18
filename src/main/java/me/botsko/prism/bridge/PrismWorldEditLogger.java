@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.blocks.BaseBlock;
@@ -36,11 +37,12 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 		Location loc = BukkitUtil.toLocation(world, pt);
 		Block oldBlock = loc.getBlock();
 
-		byte data = oldBlock.getData();
-
 		Material newMaterial = Material.matchMaterial(BlockType.fromID(newBlock.getId()).name());
+		
+		// TODO: When worldedit has some way of getting blockdata
+		BlockData newData = Bukkit.createBlockData(newMaterial);
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(), data,
-				newMaterial, (byte) newBlock.getData(), Bukkit.getPlayer(player.getUniqueId())));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(), oldBlock.getBlockData(),
+				newMaterial, newData, Bukkit.getPlayer(player.getUniqueId())));
 	}
 }

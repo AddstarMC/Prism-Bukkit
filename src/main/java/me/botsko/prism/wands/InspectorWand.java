@@ -106,11 +106,8 @@ public class InspectorWand extends QueryWandBase {
 				final ActionsQuery aq = new ActionsQuery(plugin);
 				final QueryResult results = aq.lookup(params, player);
 				if (!results.getActionResults().isEmpty()) {
-					// TODO: More use of data
-					@SuppressWarnings("deprecation")
-					byte data = block.getData();
 
-					final String blockname = Prism.getItems().getAlias(block.getType(), data);
+					final String blockname = Prism.getItems().getAlias(block.getType(), block.getBlockData());
 					player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Inspecting " + blockname
 							+ " at " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " ---"));
 					if (results.getActionResults().size() > 5) {

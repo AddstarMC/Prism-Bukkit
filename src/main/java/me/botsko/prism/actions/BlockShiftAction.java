@@ -27,10 +27,9 @@ public class BlockShiftAction extends GenericAction {
 
 		// Store information for the action
 		if (from != null) {
-			byte data = from.getData();
 
 			this.block = from.getType();
-			this.block_subid = data;
+			this.block_data = from.getBlockData();
 			actionData.x = from.getX();
 			actionData.y = from.getY();
 			actionData.z = from.getZ();
@@ -76,7 +75,7 @@ public class BlockShiftAction extends GenericAction {
 	 */
 	@Override
 	public String getNiceName() {
-		return this.materialAliases.getAlias(this.block, this.block_subid) + " from " + actionData.x + " "
+		return this.materialAliases.getAlias(this.block, this.block_data) + " from " + actionData.x + " "
 				+ actionData.z;
 	}
 }

@@ -100,7 +100,7 @@ public class ItemStackAction extends GenericAction {
 
 		// Set basics
 		this.block = item.getType();
-		this.block_subid = item.getDurability();
+		this.durability = item.getDurability();
 		actionData.amt = quantity;
 		if (slot >= 0) {
 			actionData.slot = slot;
@@ -146,7 +146,8 @@ public class ItemStackAction extends GenericAction {
 			final String[] enchs = new String[this.enchantments.size()];
 			int i = 0;
 			for (final Entry<Enchantment, Integer> ench : this.enchantments.entrySet()) {
-				enchs[i] = ench.getKey().getName() + ":" + ench.getValue();
+				// This is silly
+				enchs[i] = ench.getKey().getKey().getKey() + ":" + ench.getValue();
 				i++;
 			}
 			actionData.enchs = enchs;
@@ -160,7 +161,8 @@ public class ItemStackAction extends GenericAction {
 					final String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
 					int i = 0;
 					for (final Entry<Enchantment, Integer> ench : bookEnchantments.getStoredEnchants().entrySet()) {
-						enchs[i] = ench.getKey().getName() + ":" + ench.getValue();
+						// This is absolutely silly
+						enchs[i] = ench.getKey().getKey().getKey() + ":" + ench.getValue();
 						i++;
 					}
 					actionData.enchs = enchs;
@@ -239,8 +241,10 @@ public class ItemStackAction extends GenericAction {
 			return;
 
 		actionData = gson.fromJson(data, ItemStackActionData.class);
+		
+		short damage = durability;
 
-		item = new ItemStack(this.block, actionData.amt, (short) this.block_subid);
+		item = new ItemStack(this.block, actionData.amt, damage);
 
 		// Restore enchantment
 		if (actionData.enchs != null && actionData.enchs.length > 0) {
@@ -543,8 +547,7 @@ public class ItemStackAction extends GenericAction {
 					}
 					// If that failed we'll attempt to take it from anywhere
 					if (!removed) {
-						final int slot = InventoryUtils.inventoryHasItem(inventory, getItem().getType(),
-								getItem().getDurability());
+						final int slot = InventoryUtils.inventoryHasItem(inventory, getItem().getType());
 						if (slot > -1) {
 							inventory.removeItem(getItem());
 							result = ChangeResultType.APPLIED;

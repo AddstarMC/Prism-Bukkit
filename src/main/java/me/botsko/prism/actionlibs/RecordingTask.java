@@ -85,8 +85,8 @@ public class RecordingTask implements Runnable {
 			s.setInt(4, world_id);
 
 			// TODO Better state handling
-			int newIds[] = Prism.getItems().materialToIds(a.getBlock(), String.valueOf(a.getBlockSubId()));
-			int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), String.valueOf(a.getOldBlockSubId()));
+			int newIds[] = Prism.getItems().materialToIds(a.getBlock(), a.getBlockData().getAsString());
+			int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), a.getOldBlockData().getAsString());
 
 			s.setInt(5, newIds[0]);
 			s.setInt(6, newIds[1]);
@@ -233,10 +233,9 @@ public class RecordingTask implements Runnable {
 					s.setInt(4, world_id);
 
 					// TODO Better state handling
-					int newIds[] = Prism.getItems().materialToIds(a.getBlock(), String.valueOf(a.getBlockSubId()));
+					int newIds[] = Prism.getItems().materialToIds(a.getBlock(), a.getBlockData().getAsString());
 
-					int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(),
-							String.valueOf(a.getOldBlockSubId()));
+					int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), a.getOldBlockData().getAsString());
 
 					s.setInt(5, newIds[0]);
 					s.setInt(6, newIds[1]);

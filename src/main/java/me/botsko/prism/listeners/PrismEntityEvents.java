@@ -330,7 +330,7 @@ public class PrismEntityEvents implements Listener {
 				return;
 			// Only track the event on sheep, when player holds dye
 			if (MaterialTag.DYES.isTagged(hand.getType()) && e.getType() == EntityType.SHEEP) {
-				final String newColor = Prism.getItems().getAlias(hand.getType(), (byte) hand.getDurability());
+				final String newColor = Prism.getItems().getAlias(hand.getType(), null);
 				RecordingQueue.addToQueue(
 						ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer(), newColor));
 			}
@@ -587,11 +587,8 @@ public class PrismEntityEvents implements Listener {
 		final BlockState newState = event.getNewState();
 		final String entity = event.getEntity().getType().name().toLowerCase();
 
-		byte oldData = block.getData();
-		byte newData = newState.getData().getData();
-
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(), oldData,
-				newState.getType(), newData, entity));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(), block.getBlockData(),
+				newState.getType(), newState.getBlockData(), entity));
 	}
 
 	/**
@@ -661,7 +658,7 @@ public class PrismEntityEvents implements Listener {
 		for (Block block : event.blockList()) {
 
 			// don't bother record upper doors.
-			if (BlockUtils.isDoor(block.getType())) {
+			if (MaterialTag.DOORS.isTagged(block.getType())) {
 				if (((Door) block.getState().getData()).isTopHalf()) {
 					continue;
 				}

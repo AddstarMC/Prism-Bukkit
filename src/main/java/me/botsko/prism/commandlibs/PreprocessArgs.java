@@ -155,6 +155,7 @@ public class PreprocessArgs {
 			// can use the tab-complete
 			// feature of minecraft. Using p: prevents it.
 
+			@SuppressWarnings("deprecation")
 			final Player autoFillPlayer = plugin.getServer().getPlayer(arg);
 			if (autoFillPlayer != null) {
 				MatchRule match = MatchRule.INCLUDE;

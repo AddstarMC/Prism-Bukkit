@@ -19,9 +19,7 @@ public class WandUtils {
 				return false;
 
 			final Material item = wand.getItem();
-			final byte item_subid = wand.getItemSubId();
-			if (player.getInventory().getItemInMainHand().getType() == item
-					&& player.getInventory().getItemInMainHand().getDurability() == item_subid) {
+			if (player.getInventory().getItemInMainHand().getType() == item) {
 				// Left click is for current location
 				wand.playerLeftClick(player, loc);
 				return true;

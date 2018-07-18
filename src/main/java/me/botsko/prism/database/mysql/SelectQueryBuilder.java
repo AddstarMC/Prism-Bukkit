@@ -2,6 +2,7 @@ package me.botsko.prism.database.mysql;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map.Entry;
 
 import org.bukkit.Location;
@@ -211,14 +212,14 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
 	protected void blockCondition() {
 		// Blocks
-		final HashMap<Material, Short> blockfilters = parameters.getBlockFilters();
+		final HashSet<Material> blockfilters = parameters.getBlockFilters();
 		if (!blockfilters.isEmpty()) {
 			final String[] blockArr = new String[blockfilters.size()];
 			int i = 0;
-			for (final Entry<Material, Short> entry : blockfilters.entrySet()) {
+			for (Material m : blockfilters) {
 
 				// TODO Better state handling
-				int ids[] = Prism.getItems().materialToIdsWildcard(entry.getKey(), String.valueOf(entry.getValue()));
+				int ids[] = Prism.getItems().materialToIdsWildcard(m, "");
 
 				// 
 				if (ids[1] == MaterialAliases.SUBID_WILDCARD) {

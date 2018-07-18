@@ -33,7 +33,7 @@ public class ItemUtils {
 	private static EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.LAVA,
 			Material.FIRE, Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
 
-	public static boolean isAcceptableWand(Material material, byte sub_id) {
+	public static boolean isAcceptableWand(Material material) {
 		return !badWands.contains(material);
 	}
 
@@ -389,9 +389,9 @@ public class ItemUtils {
 
 		// Set the base item name
 		if (dataValueUsedForSubitems(item.getType())) {
-			item_name += Prism.getItems().getAlias(item.getType(), item.getDurability());
+			item_name += Prism.getItems().getAlias(item.getType(), null);
 		} else {
-			item_name += Prism.getItems().getAlias(item.getType(), 0);
+			item_name += Prism.getItems().getAlias(item.getType(), null);
 		}
 		if (item_name.isEmpty()) {
 			item_name += item.getType().toString().toLowerCase().replace("_", " ");

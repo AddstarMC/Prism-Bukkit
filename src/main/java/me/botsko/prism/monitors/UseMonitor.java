@@ -109,12 +109,10 @@ public class UseMonitor {
 
 		final String playername = player.getName();
 		final String blockType = "" + block.getType();
-
-		byte data = block.getData();
-
+		
 		// Ensure we're tracking this block
-		if (blocksToAlertOnPlace.contains(blockType) || blocksToAlertOnPlace.contains(block.getType() + ":" + data)) {
-			final String alias = Prism.getItems().getAlias(block.getType(), data);
+		if (blocksToAlertOnPlace.contains(blockType) || blocksToAlertOnPlace.contains(block.getType().name())) {
+			final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
 			incrementCount(playername, "placed " + alias);
 		}
 	}
@@ -133,11 +131,9 @@ public class UseMonitor {
 		final String playername = player.getName();
 		final String blockType = "" + block.getType();
 
-		byte data = block.getData();
-
 		// Ensure we're tracking this block
-		if (blocksToAlertOnBreak.contains(blockType) || blocksToAlertOnBreak.contains(block.getType() + ":" + data)) {
-			final String alias = Prism.getItems().getAlias(block.getType(), data);
+		if (blocksToAlertOnBreak.contains(blockType) || blocksToAlertOnBreak.contains(block.getType().name())) {
+			final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
 			incrementCount(playername, "broke " + alias);
 		}
 	}

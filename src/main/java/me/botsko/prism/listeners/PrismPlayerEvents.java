@@ -12,6 +12,7 @@ import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -242,10 +243,8 @@ public class PrismPlayerEvents implements Listener {
 		if (!Prism.getIgnore().event(cause, player))
 			return;
 
-		byte data = spot.getData();
-
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), data,
-				newMat, (byte) 0, player));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), spot.getBlockData(),
+				newMat, Bukkit.createBlockData(newMat), player));
 
 		if (plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET
 				&& !player.hasPermission("prism.alerts.use.lavabucket.ignore")
@@ -345,7 +344,6 @@ public class PrismPlayerEvents implements Listener {
 
 			// The wand will tell us what to use.
 			final Material item_mat = wand.getItem();
-			final byte item_subid = wand.getItemSubId();
 
 			// Prism.debug("Checking active wand for player, Mode: " +
 			// wand.getWandMode() + " Item:" + item_id + ":" + item_subid +
@@ -360,7 +358,7 @@ public class PrismPlayerEvents implements Listener {
 			}
 
 			// Does the player have such item?
-			if (hand.getType() == item_mat && itemInHandDurability == item_subid) {
+			if (hand.getType() == item_mat) {
 
 				// Left click is for current block
 				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
@@ -540,7 +538,7 @@ public class PrismPlayerEvents implements Listener {
 			action.setZ(actualBlock.getZ());
 			action.setWorldName(newLoc.getWorld().getName());
 			action.setBlock(Material.COCOA);
-			action.setBlockSubId((byte) 1);
+			action.setBlockData(block.getBlockData());
 			RecordingQueue.addToQueue(action);
 		}
 	}

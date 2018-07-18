@@ -15,10 +15,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Bed.Part;
+import org.bukkit.block.data.type.Chest;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.material.Bed;
-import org.bukkit.material.Door;
 
 public class BlockUtils {
 
@@ -373,6 +377,44 @@ public class BlockUtils {
 			return false;
 		}
 	}
+	
+	public static BlockFace getRelativeFaceLeft(BlockFace in) {
+		switch(in) {
+		case NORTH:
+			return BlockFace.WEST;
+			
+		case EAST:
+			return BlockFace.NORTH;
+			
+		case SOUTH:
+			return BlockFace.EAST;
+			
+		case WEST:
+			return BlockFace.SOUTH;
+		
+		default:
+			throw new IllegalArgumentException("Only cardinal directions are supported");
+		}
+	}
+	
+	public static BlockFace getRelativeFaceRight(BlockFace in) {
+		switch(in) {
+		case NORTH:
+			return BlockFace.EAST;
+			
+		case EAST:
+			return BlockFace.SOUTH;
+			
+		case SOUTH:
+			return BlockFace.WEST;
+			
+		case WEST:
+			return BlockFace.NORTH;
+		
+		default:
+			throw new IllegalArgumentException("Only cardinal directions are supported");
+		}
+	}
 
 	/**
 	 * Gets the other block that is part of a double length block
@@ -383,338 +425,65 @@ public class BlockUtils {
 	public static Block getSiblingForDoubleLengthBlock(Block block) {
 		/**
 		 * Handle special double-length blocks
-		 */
-		/*
-		 * MaterialData data = block.getState().getData();
-		 * 
-		 * if(data instanceof Door) { ((Door)data).isTopHalf(); return
-		 * block.getRelative(BlockFace.DOWN); } if(data instanceof )
-		 */
-
-		switch (block.getType()) {
-		case ACACIA_DOOR:
-		case BIRCH_DOOR:
-		case DARK_OAK_DOOR:
-		case JUNGLE_DOOR:
-		case IRON_DOOR:
-		case SPRUCE_DOOR:
-		case OAK_DOOR:
-			if (((Door) block.getState().getData()).isTopHalf()) {
+		 */		
+		BlockData data = block.getBlockData();
+		
+		if (data instanceof Chest) {
+			Chest chest = (Chest) data;
+			BlockFace facing = chest.getFacing();
+			
+			switch (chest.getType()) {
+			case LEFT:
+				return block.getRelative(getRelativeFaceRight(facing));
+				
+			case RIGHT:
+				return block.getRelative(getRelativeFaceLeft(facing));
+				
+			case SINGLE:
+				return null;
+			}
+		}
+		else if(data instanceof Bed) {
+			Bed bed = (Bed) data;
+			
+			if(bed.getPart() == Part.FOOT) {
+				return block.getRelative(bed.getFacing());
+			}
+			else {
+				return block.getRelative(bed.getFacing().getOppositeFace());
+			}
+		}
+		else if (data instanceof Bisected) {
+			Bisected bisected = (Bisected) data;
+			
+			if (bisected.getHalf() == Half.BOTTOM) {
+				return block.getRelative(BlockFace.UP);
+			}
+			else {
 				return block.getRelative(BlockFace.DOWN);
 			}
-			break;
-		case DOUBLE_PLANT:
-			// TODO: 1.13
-			byte data = block.getData();
-			if (data == 10) {
-				return block.getRelative(BlockFace.DOWN);
-			}
-			break;
-		case BED_BLOCK:
-			Bed b = (Bed) block.getState().getData();
-			if (b.isHeadOfBed()) {
-				return block.getRelative(b.getFacing().getOppositeFace());
-			}
-			break;
-		case CHEST:
-		case TRAPPED_CHEST:
-			return findFirstSurroundingBlockOfType(block, block.getType());
-		default:
-			break;
 		}
 
 		return null;
 	}
 
-	// /**
-	// *
-	// * @param mat
-	// * @param loc
-	// * @param radius
-	// */
-	// public static ArrayList<BlockStateChange> removeMaterialFromRadius(Material
-	// mat, Location loc, int radius){
-	// Material[] materials = { mat };
-	// return removeMaterialsFromRadius(materials, loc, radius);
-	// }
-	//
-	//
-	// /**
-	// *
-	// * @param mat
-	// * @param loc
-	// * @param radius
-	// */
-	// public static ArrayList<BlockStateChange>
-	// removeMaterialsFromRadius(Material[] materials, Location loc, int radius){
-	// ArrayList<BlockStateChange> blockStateChanges = new
-	// ArrayList<BlockStateChange>();
-	// if(loc != null && radius > 0 && materials != null && materials.length > 0){
-	// int x1 = loc.getBlockX();
-	// int y1 = loc.getBlockY();
-	// int z1 = loc.getBlockZ();
-	// World world = loc.getWorld();
-	// for(int x = x1-radius; x <= x1+radius; x++){
-	// for(int y = y1-radius; y <= y1+radius; y++){
-	// for(int z = z1-radius; z <= z1+radius; z++){
-	// loc = new Location(world, x, y, z);
-	// Block b = loc.getBlock();
-	// if(b.getType().equals(Material.AIR)) continue;
-	// if( Arrays.asList(materials).contains(loc.getBlock().getType()) ){
-	// BlockState originalBlock = loc.getBlock().getState();
-	// loc.getBlock().setType(Material.AIR);
-	// BlockState newBlock = loc.getBlock().getState();
-	// blockStateChanges.add(new BlockStateChange(originalBlock,newBlock));
-	// }
-	// }
-	// }
-	// }
-	// }
-	// return blockStateChanges;
-	// }
-	//
-	//
-	// /**
-	// * Extinguish all the fire in a radius
-	// * @param loc The location you want to extinguish around
-	// * @param radius The radius around the location you are extinguish
-	// */
-	// public static ArrayList<BlockStateChange> extinguish(Location loc, int
-	// radius){
-	// return removeMaterialFromRadius(Material.FIRE, loc, radius);
-	// }
-	//
-	//
-	// /**
-	// * Drains lava and water within (radius) around (loc).
-	// * @param loc
-	// * @param radius
-	// */
-	// public static ArrayList<BlockStateChange> drain(Location loc, int radius){
-	// Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA,
-	// Material.WATER, Material.STATIONARY_WATER };
-	// return removeMaterialsFromRadius(materials, loc, radius);
-	// }
-	//
-	//
-	// /**
-	// * Drains lava blocks (radius) around player's loc.
-	// * @param loc
-	// * @param radius
-	// */
-	// public static ArrayList<BlockStateChange> drainlava(Location loc, int
-	// radius){
-	// Material[] materials = { Material.LAVA, Material.STATIONARY_LAVA };
-	// return removeMaterialsFromRadius(materials, loc, radius);
-	// }
-	//
-	//
-	// /**
-	// * Drains water blocks (radius) around player's loc.
-	// * @param loc
-	// * @param radius
-	// */
-	// public static ArrayList<BlockStateChange> drainwater(Location loc, int
-	// radius){
-	// Material[] materials = { Material.WATER, Material.STATIONARY_WATER };
-	// return removeMaterialsFromRadius(materials, loc, radius);
-	// }
-
-	/**
-	 * Lower door halves get byte values based on which direction the front of the
-	 * door is facing.
-	 * 
-	 * 0 = West 1 = North 2 = East 3 = South
-	 * 
-	 * The upper halves of both door types always have a value of 8.
-	 * 
-	 * @param originalBlock
-	 * @param typeid
-	 * @param subid
-	 */
-	public static void properlySetDoor(Block originalBlock, Material typeid, byte subid) {
-		// Wood door upper or iron door upper
-		if (subid == 8 || subid == 9) { // 8 for single doors or left side of double, 9 for right side of double
-			Block aboveOrBelow = originalBlock.getRelative(BlockFace.DOWN);
-			aboveOrBelow.setType(typeid);
-			BlockUtils.setData(aboveOrBelow, 0); // we have no way to know which direction the lower half was facing
-		}
-		// Wood door lower or iron door lower
-		else {
-			Block aboveOrBelow = originalBlock.getRelative(BlockFace.UP);
-			// Determine the directing the bottom half is facing, then check
-			// it's left side for an existing door, because the subid changes
-			// if we're on the right.
-			Block left = null;
-			switch (subid) {
-			case 0:
-				// Back faces east
-				left = originalBlock.getRelative(BlockFace.NORTH);
-				break;
-			case 1:
-				// Back faces south
-				left = originalBlock.getRelative(BlockFace.EAST);
-				break;
-			case 2:
-				// Back faces west
-				left = originalBlock.getRelative(BlockFace.SOUTH);
-				break;
-			case 3:
-				// Back faces north
-				left = originalBlock.getRelative(BlockFace.WEST);
-				break;
-			}
-			if (aboveOrBelow != null) {
-				aboveOrBelow.setType(typeid);
-
-				if (left != null && isDoor(left.getType())) {
-					BlockUtils.setData(aboveOrBelow, 9);
-				} else {
-					BlockUtils.setData(aboveOrBelow, 8);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Checks if material given is the material of a door
-	 *
-	 * @param m
-	 *            the material to check for being a door material
-	 * @return whether the material is a door material
-	 */
-	public static boolean isDoor(Material m) {
-		switch (m) {
-		case ACACIA_DOOR:
-		case BIRCH_DOOR:
-		case DARK_OAK_DOOR:
-		case JUNGLE_DOOR:
-		case IRON_DOOR:
-		case SPRUCE_DOOR:
-		case OAK_DOOR:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	/**
-	 * Given the lower block of a bed, we translate that to the top half, figuring
-	 * out which direction and data value it gets.
-	 * 
-	 * @param originalBlock
-	 * @param typeid
-	 * @param subid
-	 */
-	public static void properlySetBed(Block originalBlock, Material typeid, byte subid) {
-		Block top = null;
-		int new_subid = 0;
-		switch (subid) {
-		case 3:
-			top = originalBlock.getRelative(BlockFace.EAST);
-			new_subid = 11;
-			break;
-		case 2:
-			top = originalBlock.getRelative(BlockFace.NORTH);
-			new_subid = 10;
-			break;
-		case 1:
-			top = originalBlock.getRelative(BlockFace.WEST);
-			new_subid = 9;
-			break;
-		case 0:
-			top = originalBlock.getRelative(BlockFace.SOUTH);
-			new_subid = 8;
-			break;
-		}
-		if (top != null) {
-			top.setType(typeid);
-			BlockUtils.setData(top, new_subid);
-		} else {
-			System.out.println("Error setting bed: block top location was illegal. Data value: " + subid
-					+ " New data value: " + new_subid);
-		}
-	}
-
-	/**
-	 * Properly sets the second-tier of a double-block tall plant.
-	 * 
-	 * @param originalBlock
-	 * @param typeid
-	 * @param subid
-	 */
-	public static void properlySetDoublePlant(Block originalBlock, Material typeid, byte subid) {
-		if (!originalBlock.getType().equals(Material.DOUBLE_PLANT))
-			return;
-		Block above = originalBlock.getRelative(BlockFace.UP);
-		if (!isAcceptableForBlockPlace(above.getType()))
-			return;
-		// choose an acceptable subid
-		if (typeid == Material.DOUBLE_PLANT && subid < 8)
-			subid = 8;
-		above.setType(typeid);
-		BlockUtils.setData(above, subid);
-	}
-
+	
+	private static final MaterialTag flowBreaks = new MaterialTag(
+			MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS, MaterialTag.CROPS, Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS).append(
+			Material.CACTUS, Material.REPEATER, Material.COMPARATOR, Material.REDSTONE,
+			Material.FLOWER_POT, Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH,
+			Material.SIGN, Material.WALL_SIGN, Material.STONE_PRESSURE_PLATE,
+			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
+			Material.SUGAR_CANE, Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE
+			);
+	
 	/**
 	 * 
 	 * @param m
 	 * @return
 	 */
 	public static boolean canFlowBreakMaterial(Material m) {
-		switch (m) {
-		case ACTIVATOR_RAIL:
-		case BROWN_MUSHROOM:
-		case CACTUS:
-		case CARROT:
-		case COCOA: // different from pop off list
-		case DEAD_BUSH:
-		case DETECTOR_RAIL:
-		case DOUBLE_PLANT:
-		case POTATO:
-		case CROPS:
-		case DIODE:
-		case DIODE_BLOCK_OFF:
-		case DIODE_BLOCK_ON:
-		case FLOWER_POT:
-		case IRON_DOOR:
-		case IRON_DOOR_BLOCK:
-		case LADDER: // different from pop off list
-		case LEVER:
-		case LONG_GRASS:
-		case MELON_STEM:
-		case NETHER_WARTS:
-		case POWERED_RAIL:
-		case PUMPKIN_STEM:
-		case RAILS:
-		case RED_MUSHROOM:
-		case RED_ROSE:
-		case REDSTONE:
-		case REDSTONE_COMPARATOR_OFF:
-		case REDSTONE_COMPARATOR_ON:
-		case REDSTONE_TORCH_OFF:
-		case REDSTONE_TORCH_ON:
-		case REDSTONE_WIRE:
-		case SAPLING:
-		case SIGN:
-		case SIGN_POST:
-		case SKULL:
-		case SUGAR_CANE_BLOCK:
-		case STONE_PLATE:
-		case TORCH:
-		case TRIPWIRE:
-		case TRIPWIRE_HOOK: // different from pop off list
-		case VINE: // different from pop off list
-		case WATER_LILY:
-		case WHEAT:
-		case WOOD_DOOR:
-		case WOOD_PLATE:
-		case WOODEN_DOOR:
-		case YELLOW_FLOWER:
-			return true;
-		default:
-			return false;
-		}
+		return flowBreaks.isTagged(m);
 	}
 
 	/**
@@ -724,12 +493,14 @@ public class BlockUtils {
 	 */
 	public static boolean materialRequiresSoil(Material m) {
 		switch (m) {
-		case CROPS:
 		case WHEAT:
-		case POTATO:
-		case CARROT:
+		case POTATOES:
+		case CARROTS:
+		case BEETROOTS:
 		case MELON_STEM:
+		case ATTACHED_MELON_STEM:
 		case PUMPKIN_STEM:
+		case ATTACHED_PUMPKIN_STEM:
 			return true;
 		default:
 			return false;
@@ -786,6 +557,9 @@ public class BlockUtils {
 		}
 		return null;
 	}
+	
+	private static final MaterialTag growableStructure = new MaterialTag(Tag.LEAVES, Tag.LOGS).append(
+			Material.RED_MUSHROOM_BLOCK, Material.BROWN_MUSHROOM_BLOCK, Material.MUSHROOM_STEM);
 
 	/**
 	 * 
@@ -793,15 +567,7 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean isGrowableStructure(Material m) {
-		switch (m) {
-		case LEAVES:
-		case LOG:
-		case HUGE_MUSHROOM_1:
-		case HUGE_MUSHROOM_2:
-			return true;
-		default:
-			return false;
-		}
+		return growableStructure.isTagged(m);
 	}
 
 	/**
@@ -818,15 +584,8 @@ public class BlockUtils {
 	 */
 	private static EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
 	static {
-		baseMaterials.put(Material.GRASS, Material.DIRT);
-		baseMaterials.put(Material.MYCEL, Material.DIRT);
-		baseMaterials.put(Material.STATIONARY_WATER, Material.WATER);
-		baseMaterials.put(Material.STATIONARY_LAVA, Material.LAVA);
-		baseMaterials.put(Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON);
-		baseMaterials.put(Material.DIODE_BLOCK_ON, Material.DIODE_BLOCK_OFF);
-		baseMaterials.put(Material.REDSTONE_LAMP_ON, Material.REDSTONE_LAMP_OFF);
-		baseMaterials.put(Material.BURNING_FURNACE, Material.FURNACE);
-		baseMaterials.put(Material.REDSTONE_COMPARATOR_ON, Material.REDSTONE_COMPARATOR_OFF);
+		baseMaterials.put(Material.GRASS_BLOCK, Material.DIRT);
+		baseMaterials.put(Material.MYCELIUM, Material.DIRT);
 	}
 
 	public static boolean areBlockIdsSameCoreItem(Material mat1, Material mat2) {
@@ -839,11 +598,5 @@ public class BlockUtils {
 		mat2 = baseMaterials.get(mat2);
 
 		return mat1 != null && mat1 == mat2;
-	}
-
-	// TODO: 1.13
-	@Deprecated
-	public static void setData(Block block, int data) {
-		block.setData((byte) data);
 	}
 }

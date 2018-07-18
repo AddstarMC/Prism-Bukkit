@@ -4,6 +4,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.MaterialTag;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -118,7 +120,7 @@ public class PrismBlockEvents implements Listener {
 
 	protected void relatedBlockCallback(Block block, Consumer<Block> breakCallback, Consumer<String> fallCallback) {
 
-		if (BlockUtils.isDoor(block.getType())) {
+		if (MaterialTag.DOORS.isTagged(block.getType())) {
 			return;
 		}
 
@@ -250,12 +252,9 @@ public class PrismBlockEvents implements Listener {
 
 		final BlockState s = event.getBlockReplacedState();
 
-		byte oldData = s.getData().getData();
-		byte newData = block.getData();
-
 		// TODO: old and new appear flipped compared to other actions... check
 		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-place", block.getLocation(), s.getType(),
-				oldData, block.getType(), newData, player));
+				s.getBlockData(), block.getType(), block.getBlockData(), player));
 
 		// Pass to the placement alerter
 		if (!player.hasPermission("prism.alerts.use.place.ignore") && !player.hasPermission("prism.alerts.ignore")) {
@@ -284,11 +283,8 @@ public class PrismBlockEvents implements Listener {
 		final Block b = event.getBlock();
 		final BlockState s = event.getNewState();
 
-		byte oldData = b.getData();
-		byte newData = s.getData().getData();
-
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange(type, b.getLocation(), b.getType(), oldData,
-				s.getType(), newData, "Environment"));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange(type, b.getLocation(), b.getType(), b.getBlockData(),
+				s.getType(), s.getBlockData(), "Environment"));
 	}
 
 	/**
@@ -302,11 +298,8 @@ public class PrismBlockEvents implements Listener {
 		final Block b = event.getBlock();
 		final BlockState s = event.getNewState();
 
-		byte oldData = b.getData();
-		byte newData = s.getData().getData();
-
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(), oldData,
-				s.getType(), newData, "Environment"));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(), b.getBlockData(),
+				s.getType(), s.getBlockData(), "Environment"));
 	}
 
 	/**
@@ -322,11 +315,8 @@ public class PrismBlockEvents implements Listener {
 			return;
 		final BlockState s = event.getNewState();
 
-		byte oldData = b.getData();
-		byte newData = s.getData().getData();
-
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(), oldData,
-				s.getType(), newData, "Environment"));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(), b.getBlockData(),
+				s.getType(), s.getBlockData(), "Environment"));
 	}
 
 	/**

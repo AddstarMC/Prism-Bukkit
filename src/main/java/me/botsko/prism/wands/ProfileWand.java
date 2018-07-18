@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
@@ -40,14 +41,12 @@ public class ProfileWand extends WandBase {
 		final Block block = loc.getBlock();
 
 		player.sendMessage(Prism.messenger.playerHeaderMsg("Location Profile"));
-
-		// TODO: More use of data
-		@SuppressWarnings("deprecation")
-		byte data = block.getData();
+		
+		BlockData data = block.getBlockData();
 
 		player.sendMessage(Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase()));
 		player.sendMessage(Prism.messenger.playerMsg("Alias: " + Prism.getItems().getAlias(block.getType(), data)));
-		player.sendMessage(Prism.messenger.playerMsg("ID: " + block.getType() + ":" + data));
+		player.sendMessage(Prism.messenger.playerMsg("ID: " + block.getType() + ":" + data.getAsString()));
 		player.sendMessage(
 				Prism.messenger.playerMsg("Coords: " + block.getX() + " " + block.getY() + " " + block.getZ()));
 

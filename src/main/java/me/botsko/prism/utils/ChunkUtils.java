@@ -19,10 +19,7 @@ public class ChunkUtils {
 	 */
 	public static void resetPreviewBoundaryBlocks(Player player, List<Block> blocks) {
 		for (Block block : blocks) {
-			// TODO: Check for non-deprecated method in future
-			byte data = block.getData();
-
-			EntityUtils.sendBlockChange(player, block.getLocation(), block.getType(), data);
+			EntityUtils.sendBlockChange(player, block.getLocation(), block.getBlockData());
 		}
 	}
 
@@ -34,7 +31,7 @@ public class ChunkUtils {
 	 */
 	public static void setPreviewBoundaryBlocks(Player player, List<Block> blocks, Material m) {
 		for (Block block : blocks) {
-			EntityUtils.sendBlockChange(player, block.getLocation(), m, 0);
+			EntityUtils.sendBlockChange(player, block.getLocation(), block.getBlockData());
 		}
 	}
 

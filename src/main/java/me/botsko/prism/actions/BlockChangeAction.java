@@ -9,35 +9,10 @@ import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 public class BlockChangeAction extends BlockAction {
-
-	/**
-	 * Used only for pre-1.5 data formats
-	 * 
-	 * @author botskonet
-	 * @deprecated
-	 */
-	@Deprecated
-	public class BlockChangeActionData extends BlockActionData {
-		public int old_id;
-		public byte old_subid;
-	}
-
-	/**
-	 * Used only for pre-1.5 data formats
-	 * 
-	 * @author botskonet
-	 * @deprecated
-	 */
-	@Deprecated
-	public class WorldEditActionData extends BlockActionData {
-		public int originalBlock_id;
-		public byte originalBlock_subid;
-		public int newBlock_id;
-		public byte newBlock_subid;
-	}
 
 	/**
 	 * 
@@ -47,9 +22,9 @@ public class BlockChangeAction extends BlockAction {
 	public String getNiceName() {
 		String name = "";
 		if (this.getType().getName().equals("block-fade")) {
-			name += materialAliases.getAlias(this.old_block, this.old_block_subid);
+			name += materialAliases.getAlias(this.old_block, this.old_block_data);
 		} else {
-			name += materialAliases.getAlias(this.block, this.block_subid);
+			name += materialAliases.getAlias(this.block, this.block_data);
 		}
 		return name;
 	}
@@ -60,8 +35,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
-				getBlock(), getBlockSubId(), block, false);
+		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
+				getBlock(), getBlockData(), block, false);
 	}
 
 	/**
@@ -70,8 +45,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
-				getBlock(), getBlockSubId(), block, false);
+		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
+				getBlock(), getBlockData(), block, false);
 	}
 
 	/**
@@ -80,8 +55,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
-				getBlock(), getBlockSubId(), block, false);
+		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
+				getBlock(), getBlockData(), block, false);
 	}
 
 	/**
@@ -90,8 +65,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockSubId(),
-				getBlock(), getBlockSubId(), block, true);
+		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
+				getBlock(), getBlockData(), block, true);
 	}
 
 	/**
@@ -106,7 +81,7 @@ public class BlockChangeAction extends BlockAction {
 	 * @return
 	 */
 	protected ChangeResult placeBlock(Player player, QueryParameters parameters, boolean is_preview, String type,
-			Material old_mat, int old_subid, Material new_mat, int new_subid, Block block, boolean is_deferred) {
+			Material old_mat, BlockData old_data, Material new_mat, BlockData new_data, Block block, boolean is_deferred) {
 
 		final BlockAction b = new BlockAction();
 		b.setActionType(type);
@@ -127,7 +102,7 @@ public class BlockChangeAction extends BlockAction {
 					|| BlockUtils.areBlockIdsSameCoreItem(block.getType(), new_mat) || is_preview
 					|| parameters.hasFlag(Flag.OVERWRITE)) {
 				b.setBlock(old_mat);
-				b.setBlockSubId(old_subid);
+				b.setBlockData(old_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 			} else {
 				// System.out.print("Block change skipped because new id doesn't match what's
@@ -147,7 +122,7 @@ public class BlockChangeAction extends BlockAction {
 					|| BlockUtils.areBlockIdsSameCoreItem(block.getType(), old_mat) || is_preview
 					|| parameters.hasFlag(Flag.OVERWRITE)) {
 				b.setBlock(new_mat);
-				b.setBlockSubId(new_subid);
+				b.setBlockData(new_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 			} else {
 				// System.out.print("Block change skipped because old id doesn't match what's
@@ -158,7 +133,7 @@ public class BlockChangeAction extends BlockAction {
 		}
 		if (parameters.getProcessType().equals(PrismProcessType.UNDO)) {
 			b.setBlock(old_mat);
-			b.setBlockSubId(old_subid);
+			b.setBlockData(old_data);
 			return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 		}
 		return new ChangeResult(ChangeResultType.SKIPPED, null);

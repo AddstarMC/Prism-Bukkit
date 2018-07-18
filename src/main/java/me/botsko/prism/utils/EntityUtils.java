@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
@@ -46,9 +47,8 @@ public class EntityUtils {
 		return null;
 	}
 
-	// TODO: 1.13
-	public static void sendBlockChange(Player p, Location loc, Material mat, int data) {
-		p.sendBlockChange(loc, mat, (byte) data);
+	public static void sendBlockChange(Player p, Location loc, BlockData data) {
+		p.sendBlockChange(loc, data);
 	}
 
 	/**

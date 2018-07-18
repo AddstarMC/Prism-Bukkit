@@ -152,6 +152,25 @@ public class MaterialTag implements Tag<Material> {
 			Material.SUNFLOWER, Material.LILAC, Material.ROSE_BUSH, Material.PEONY,
 			Material.TALL_GRASS, Material.LARGE_FERN, Material.TALL_SEAGRASS,
 			Material.KELP, Material.KELP_PLANT);
+
+	public static final MaterialTag CROPS = new MaterialTag(
+			Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS,
+			Material.MELON_STEM, Material.ATTACHED_MELON_STEM, Material.NETHER_WART,
+			Material.PUMPKIN_STEM, Material.ATTACHED_PUMPKIN_STEM);
+	
+	public static final MaterialTag SKULLS = new MaterialTag(
+			Material.SKELETON_SKULL,
+			Material.SKELETON_WALL_SKULL,
+			Material.WITHER_SKELETON_SKULL,
+			Material.WITHER_SKELETON_WALL_SKULL,
+			Material.CREEPER_HEAD,
+			Material.CREEPER_WALL_HEAD,
+			Material.DRAGON_HEAD,
+			Material.DRAGON_WALL_HEAD,
+			Material.PLAYER_HEAD,
+			Material.PLAYER_WALL_HEAD,
+			Material.ZOMBIE_HEAD,
+			Material.ZOMBIE_WALL_HEAD);
 	
 	public static final MaterialTag ALL_PLANTS = new MaterialTag(PLANTS).append(TALL_PLANTS);
 	

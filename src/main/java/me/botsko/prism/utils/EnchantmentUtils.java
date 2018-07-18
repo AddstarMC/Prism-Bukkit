@@ -129,7 +129,7 @@ public class EnchantmentUtils {
 			ench_name = "aqua affinity";
 		} else {
 			// can leave as-is: SILK_TOUCH, FIRE_ASPECT, KNOCKBACK, THORNS, LUCK, LURE
-			ench_name = ench.getName().toLowerCase().replace("_", " ");
+			ench_name = ench.getKey().getKey().toLowerCase().replace("_", " ");
 		}
 
 		if (level == 1) {

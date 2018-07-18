@@ -10,7 +10,6 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
-import me.botsko.prism.utils.MaterialTag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -22,7 +21,6 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
@@ -53,13 +51,7 @@ public class BlockAction extends GenericAction {
 		if (state != null) {
 
 			block = state.getType();
-
-			byte d = state.getData().getData();
-			BlockData bd = state.getBlockData();
-			
-			bd.getAsString();
-
-			block_subid = d;
+			block_data = state.getBlockData();
 
 			// spawner
 			if (state.getType() == Material.SPAWNER) {
@@ -74,9 +66,13 @@ public class BlockAction extends GenericAction {
 			else if (state instanceof Skull) {
 				final SkullActionData skullActionData = new SkullActionData();
 				final Skull s = (Skull) state;
-				skullActionData.rotation = s.getRotation().name().toLowerCase();
-				skullActionData.owner = s.getOwningPlayer().getUniqueId().toString();
-				skullActionData.skull_type = s.getSkullType().name().toLowerCase();
+				final Directional d = (Directional) state.getBlockData();
+				skullActionData.rotation = d.getFacing().name().toLowerCase();
+				
+				if(state.getType() == Material.PLAYER_HEAD || state.getType() == Material.PLAYER_WALL_HEAD) {
+					skullActionData.owner = s.getOwningPlayer().getUniqueId().toString();
+				}
+				
 				actionData = skullActionData;
 			}
 
@@ -157,7 +153,7 @@ public class BlockAction extends GenericAction {
 			final SpawnerActionData ad = (SpawnerActionData) blockActionData;
 			name += ad.entity_type + " ";
 		}
-		name += materialAliases.getAlias(this.block, this.block_subid);
+		name += materialAliases.getAlias(this.block, this.block_data);
 		if (blockActionData instanceof SignActionData) {
 			final SignActionData ad = (SignActionData) blockActionData;
 			if (ad.lines != null && ad.lines.length > 0) {
@@ -308,8 +304,7 @@ public class BlockAction extends GenericAction {
 	 */
 	protected ChangeResult placeBlock(Player player, QueryParameters parameters, boolean is_preview, Block block,
 			boolean is_deferred) {
-
-		final Material m = getBlock();
+		
 		BlockStateChange stateChange;
 
 		// Ensure block action is allowed to place a block here.
@@ -362,12 +357,15 @@ public class BlockAction extends GenericAction {
 			// Jukebox, never use the data val because
 			// it becomes unplayable
 			if (getBlock() == Material.JUKEBOX) {
-				block_subid = 0;
+				block_data = Bukkit.createBlockData(Material.JUKEBOX);
 			}
 
 			// Set the material
 			block.setType(getBlock());
-			BlockUtils.setData(block, getBlockSubId());
+			
+			BlockState state = block.getState();
+			state.setBlockData(getBlockData());
+			state.update();
 
 			BlockActionData blockActionData = getActionData();
 
@@ -466,19 +464,6 @@ public class BlockAction extends GenericAction {
 
 			// Store the state change
 			stateChange = new BlockStateChange(originalBlock, newBlock);
-
-			// If we're rolling back a door, we need to set it properly
-			if (BlockUtils.isDoor(m)) {
-				BlockUtils.properlySetDoor(block, getBlock(), (byte) getBlockSubId());
-			}
-			// Or a bed
-			else if (MaterialTag.BEDS.isTagged(m)) {
-				BlockUtils.properlySetBed(block, getBlock(), (byte) getBlockSubId());
-			}
-			// Or double plants
-			else if (MaterialTag.TALL_PLANTS.isTagged(m)) {
-				BlockUtils.properlySetDoublePlant(block, getBlock(), (byte) getBlockSubId());
-			}
 		} else {
 
 			// Otherwise, save the state so we can cancel if needed
@@ -488,13 +473,12 @@ public class BlockAction extends GenericAction {
 			stateChange = new BlockStateChange(originalBlock, originalBlock);
 
 			// Preview it
-			EntityUtils.sendBlockChange(player, block.getLocation(), getBlock(), getBlockSubId());
+			EntityUtils.sendBlockChange(player, block.getLocation(), getBlockData());
 
 			// Send preview to shared players
 			for (final CommandSender sharedPlayer : parameters.getSharedPlayers()) {
 				if (sharedPlayer instanceof Player) {
-					EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), getBlock(),
-							getBlockSubId());
+					EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), getBlockData());
 				}
 			}
 		}
@@ -542,12 +526,12 @@ public class BlockAction extends GenericAction {
 				stateChange = new BlockStateChange(originalBlock, originalBlock);
 
 				// Preview it
-				EntityUtils.sendBlockChange(player, block.getLocation(), Material.AIR, 0);
+				EntityUtils.sendBlockChange(player, block.getLocation(), Bukkit.createBlockData(Material.AIR));
 
 				// Send preview to shared players
 				for (final CommandSender sharedPlayer : parameters.getSharedPlayers()) {
 					if (sharedPlayer instanceof Player) {
-						EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), Material.AIR, 0);
+						EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), Bukkit.createBlockData(Material.AIR));
 					}
 				}
 			}

@@ -22,14 +22,7 @@ public abstract class WandBase implements Wand {
 	/**
 	 * 
 	 */
-	@Deprecated
-	protected int item_id = 0;
 	protected Material item = Material.AIR;
-
-	/**
-	 * 
-	 */
-	protected byte item_subid = 0;
 
 	/**
 	 * 
@@ -66,26 +59,10 @@ public abstract class WandBase implements Wand {
 		return wand_mode;
 	}
 
-	/**
-	 * @return the item_id
-	 */
-	@Deprecated
-	public int getItemId() {
-		return item_id;
-	}
 
 	@Override
 	public Material getItem() {
 		return item;
-	}
-
-	/**
-	 * @param item_id
-	 *            the item_id to set
-	 */
-	@Deprecated
-	public void setItemId(int item_id) {
-		this.item_id = item_id;
 	}
 
 	public void setItem(Material material) {
@@ -93,30 +70,11 @@ public abstract class WandBase implements Wand {
 	}
 
 	/**
-	 * @return the item_subid
-	 */
-	public byte getItemSubId() {
-		return item_subid;
-	}
-
-	/**
-	 * @param item_subid
-	 *            the item_subid to set
-	 */
-	public void setItemSubId(byte item_subid) {
-		this.item_subid = item_subid;
-	}
-
-	/**
 	 * 
 	 * @param key
 	 */
 	public void setItemFromKey(String key) {
-		if (key.contains(":")) {
-			final String[] toolKeys = key.split(":");
-			item_id = Integer.parseInt(toolKeys[0]);
-			item_subid = Byte.parseByte(toolKeys[1]);
-		}
+		item = Material.matchMaterial(key);
 	}
 
 	/**
@@ -137,10 +95,10 @@ public abstract class WandBase implements Wand {
 		if (itemWasGiven()) {
 			int itemSlot;
 			// Likely is what they're holding
-			if (inv.getItemInMainHand().getType() == item && inv.getItemInMainHand().getDurability() == item_subid) {
+			if (inv.getItemInMainHand().getType() == item) {
 				itemSlot = inv.getHeldItemSlot();
 			} else {
-				itemSlot = InventoryUtils.inventoryHasItem(inv, item, item_subid);
+				itemSlot = InventoryUtils.inventoryHasItem(inv, item);
 			}
 			if (itemSlot > -1) {
 				InventoryUtils.subtractAmountFromPlayerInvSlot(inv, itemSlot, 1);
@@ -148,7 +106,7 @@ public abstract class WandBase implements Wand {
 			}
 		}
 		if (original_item != null) {
-			InventoryUtils.moveItemToHand(inv, original_item.getType(), (byte) original_item.getDurability());
+			InventoryUtils.moveItemToHand(inv, original_item.getType());
 		}
 	}
 }
