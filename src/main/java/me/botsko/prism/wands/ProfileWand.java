@@ -1,6 +1,7 @@
 package me.botsko.prism.wands;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -46,7 +47,7 @@ public class ProfileWand extends WandBase {
 
 		player.sendMessage(Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase()));
 		player.sendMessage(Prism.messenger.playerMsg("Alias: " + Prism.getItems().getAlias(block.getType(), data)));
-		player.sendMessage(Prism.messenger.playerMsg("ID: " + block.getType() + ":" + data.getAsString()));
+		player.sendMessage(Prism.messenger.playerMsg("ID: " + block.getType() +  " " + BlockUtils.dataString(data)));
 		player.sendMessage(
 				Prism.messenger.playerMsg("Coords: " + block.getX() + " " + block.getY() + " " + block.getZ()));
 

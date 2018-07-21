@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Locale;
 
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.MaterialTag.MatchMode;
@@ -21,6 +22,8 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.Chest;
+import org.bukkit.block.data.type.Stairs;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -61,6 +64,16 @@ public class BlockUtils {
 	private static EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
 			Material.LAVA);
 
+	public static String dataString(BlockData data) {
+		if (data != null) {
+			return data.getAsString().replace("minecraft:"+data.getMaterial().name().toLowerCase(Locale.ENGLISH), "");
+		}
+		else {
+			// TODO: Shouldn't happen, investigate
+			return "";
+		}
+	}
+	
 	/**
 	 * /**
 	 * 
@@ -453,7 +466,7 @@ public class BlockUtils {
 				return block.getRelative(bed.getFacing().getOppositeFace());
 			}
 		}
-		else if (data instanceof Bisected) {
+		else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
 			Bisected bisected = (Bisected) data;
 			
 			if (bisected.getHalf() == Half.BOTTOM) {

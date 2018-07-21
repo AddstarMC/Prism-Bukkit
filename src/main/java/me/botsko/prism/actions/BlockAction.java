@@ -362,10 +362,6 @@ public class BlockAction extends GenericAction {
 
 			// Set the material
 			block.setType(getBlock());
-			
-			BlockState state = block.getState();
-			state.setBlockData(getBlockData());
-			state.update();
 
 			BlockActionData blockActionData = getActionData();
 
@@ -461,6 +457,15 @@ public class BlockAction extends GenericAction {
 
 			// Capture the new state
 			final BlockState newBlock = block.getState();
+			
+			Prism.log("stored data: " + getBlockData().getAsString());
+			
+			newBlock.setBlockData(getBlockData());
+			
+			Prism.log("now on block state?: " + newBlock.getBlockData().getAsString());
+			newBlock.update();
+			
+			Prism.log("now on block???: " + newBlock.getBlock().getBlockData().getAsString());
 
 			// Store the state change
 			stateChange = new BlockStateChange(originalBlock, newBlock);

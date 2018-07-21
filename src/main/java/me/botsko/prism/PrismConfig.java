@@ -61,8 +61,8 @@ public class PrismConfig extends ConfigBase {
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item,
 																// or block
-		config.addDefault("prism.wands.default-item-mode-id", "280:0");
-		config.addDefault("prism.wands.default-block-mode-id", "17:1");
+		config.addDefault("prism.wands.default-item-mode-id", "stick");
+		config.addDefault("prism.wands.default-block-mode-id", "spruce_log");
 		config.addDefault("prism.wands.auto-equip", true);
 		config.addDefault("prism.wands.allow-user-override", true);
 		final List<String> ignoreActionsForInspect = new ArrayList<String>();
@@ -126,11 +126,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.appliers.never-spawn-entity", illegalEntities);
 
 		// Illegal Block Rollbacks
-		final List<Integer> illegalBlocks = new ArrayList<Integer>();
-		illegalBlocks.add(10);
-		illegalBlocks.add(11);
-		illegalBlocks.add(46);
-		illegalBlocks.add(51);
+		final List<String> illegalBlocks = new ArrayList<String>();
+		illegalBlocks.add("water");
+		illegalBlocks.add("lava");
+		
 		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
 
 		// Tracking
@@ -234,11 +233,11 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.log-commands", Arrays.asList("examplecommand <alert>"));
 		// Ore blocks
 		final HashMap<String, String> oreBlocks = new HashMap<String, String>();
-		oreBlocks.put("14", "&6"); // iron
-		oreBlocks.put("15", "&7"); // gold
-		oreBlocks.put("21", "&9"); // lapis
-		oreBlocks.put("56", "&b"); // diamond
-		oreBlocks.put("129", "&a"); // emerald ore
+		oreBlocks.put("iron_ore", "&6"); // iron
+		oreBlocks.put("gold_ore", "&7"); // gold
+		oreBlocks.put("lapis_ore", "&9"); // lapis
+		oreBlocks.put("diamond_ore", "&b"); // diamond
+		oreBlocks.put("emerald_ore", "&a"); // emerald ore
 		config.addDefault("prism.alerts.ores.blocks", oreBlocks);
 
 		// Illegal Command Alerts
@@ -268,11 +267,10 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.uses.lava", true);
 
 		List<String> monitorItems = new ArrayList<String>();
-		monitorItems.add("7");
-		monitorItems.add("29");
-		monitorItems.add("46");
-		monitorItems.add("10");
-		monitorItems.add("11");
+		monitorItems.add("bedrock");
+		monitorItems.add("sticky_piston");
+		monitorItems.add("tnt");
+		monitorItems.add("lava");
 		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
 
 		monitorItems = new ArrayList<String>();

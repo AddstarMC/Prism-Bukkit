@@ -147,7 +147,7 @@ public class IdMapQuery {
 
 		String query = automap.replace("<prefix>", prefix);
 
-		if (state.equals("0"))
+		if (state.equals("0") || state.equals("[]"))
 			state = "";
 
 		try (Connection conn = Prism.dbc()) {

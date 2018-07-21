@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MaterialTag;
 
@@ -198,9 +199,18 @@ public class PrismBlockEvents implements Listener {
 			return;
 
 		// Change handling a bit if it's a long block
+		boolean debug = false;
+		if(block.getType() == Material.BRICK_STAIRS) {
+			debug = true;
+		}
+		
 		final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
 		if (sibling != null && !block.getType().equals(Material.CHEST)
 				&& !block.getType().equals(Material.TRAPPED_CHEST)) {
+			if(debug) {
+				Prism.log("Getting sibling? " + block);
+				Prism.log("  becomes " + sibling);
+			}
 			block = sibling;
 		}
 
@@ -213,8 +223,14 @@ public class PrismBlockEvents implements Listener {
 			RecordingQueue.addToQueue(
 					ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null, b2.getLocation(), player));
 		});
+		
+		Handler a = ActionFactory.createBlock("block-break", block, player);
+		
+		if(debug) {
+			Prism.log("mat: " + a.getBlock() + " state: " + BlockUtils.dataString(a.getBlockData()));
+		}
 
-		RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", block, player));
+		RecordingQueue.addToQueue(a);
 
 		// check for block relationships
 		logBlockRelationshipsForBlock(player, block);

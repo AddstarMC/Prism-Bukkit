@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -181,9 +182,12 @@ public class ActionsQuery {
 						if(block != null) {
 							baseHandler.setBlock(block.getMaterial());
 							baseHandler.setBlockData(block);
+							baseHandler.setDurability((short) 0);
 						}
 						else {
+							Prism.log("Null new block data!");
 							baseHandler.setBlock(item.getType());
+							baseHandler.setBlockData(Bukkit.createBlockData(item.getType()));
 							baseHandler.setDurability(item.getDurability());
 						}
 						
@@ -194,9 +198,12 @@ public class ActionsQuery {
 						if(oldBlock != null) {
 							baseHandler.setOldBlock(oldBlock.getMaterial());
 							baseHandler.setOldBlockData(oldBlock);
+							baseHandler.setOldDurability((short) 0);
 						}
 						else {
+							Prism.log("Null old block data!");
 							baseHandler.setOldBlock(oldItem.getType());
+							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
 							baseHandler.setOldDurability(oldItem.getDurability());
 						}
 						

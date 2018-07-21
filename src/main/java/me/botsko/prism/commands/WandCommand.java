@@ -209,6 +209,15 @@ public class WandCommand implements SubHandler {
 
 		final PlayerInventory inv = call.getPlayer().getInventory();
 		if (enabled) {
+			
+			if(item_material == null) {
+				if (mode == "block") {
+					item_material = Material.SPRUCE_LOG;
+				}
+				else {
+					item_material = Material.STICK;
+				}
+			}
 
 			wand.setWandMode(mode);
 			wand.setItem(item_material);

@@ -13,6 +13,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
+import me.botsko.prism.utils.BlockUtils;
 
 public class RecordingTask implements Runnable {
 
@@ -85,8 +86,8 @@ public class RecordingTask implements Runnable {
 			s.setInt(4, world_id);
 
 			// TODO Better state handling
-			int newIds[] = Prism.getItems().materialToIds(a.getBlock(), a.getBlockData().getAsString());
-			int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), a.getOldBlockData().getAsString());
+			int newIds[] = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
+			int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
 
 			s.setInt(5, newIds[0]);
 			s.setInt(6, newIds[1]);
@@ -233,9 +234,9 @@ public class RecordingTask implements Runnable {
 					s.setInt(4, world_id);
 
 					// TODO Better state handling
-					int newIds[] = Prism.getItems().materialToIds(a.getBlock(), a.getBlockData().getAsString());
+					int newIds[] = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
 
-					int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), a.getOldBlockData().getAsString());
+					int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
 
 					s.setInt(5, newIds[0]);
 					s.setInt(6, newIds[1]);

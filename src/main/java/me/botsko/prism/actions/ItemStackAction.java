@@ -107,13 +107,13 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Set additional data all items may have
-		final ItemMeta meta = item.getItemMeta();
+		final ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
 		if (meta != null && meta.getDisplayName() != null) {
 			actionData.name = meta.getDisplayName();
 		}
 
 		// Leather Coloring
-		if (meta != null && item.getType().name().contains("LEATHER_")) {
+		if (meta instanceof LeatherArmorMeta) {
 			final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
 			if (lam.getColor() != null) {
 				actionData.color = lam.getColor().asRGB();
@@ -121,7 +121,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Skull Owner
-		else if (meta != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
+		else if (meta instanceof SkullMeta) {
 			final SkullMeta skull = (SkullMeta) meta;
 			if (skull.hasOwner()) {
 				actionData.owner = skull.getOwningPlayer().getUniqueId().toString();
@@ -129,7 +129,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Written books
-		if (meta != null && meta instanceof BookMeta) {
+		if (meta instanceof BookMeta) {
 			final BookMeta bookMeta = (BookMeta) meta;
 			actionData.by = bookMeta.getAuthor();
 			actionData.title = bookMeta.getTitle();
@@ -137,7 +137,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Lore
-		if (meta != null && meta.getLore() != null) {
+		if (meta != null && meta.hasLore()) {
 			actionData.lore = meta.getLore().toArray(new String[0]);
 		}
 
@@ -154,7 +154,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Book enchantments
-		else if (meta != null && item.getType().equals(Material.ENCHANTED_BOOK)) {
+		else if (meta instanceof EnchantmentStorageMeta) {
 			final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
 			if (bookEnchantments.hasStoredEnchants()) {
 				if (bookEnchantments.getStoredEnchants().size() > 0) {
@@ -171,7 +171,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Fireworks
-		if (meta != null && block == Material.FIREWORK_STAR) {
+		if (meta instanceof FireworkEffectMeta) {
 			final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
 			if (fireworkMeta.hasEffect()) {
 				final FireworkEffect effect = fireworkMeta.getEffect();
@@ -264,22 +264,24 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
+		
+		ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
 
 		// Leather color
-		if (item.getType().name().contains("LEATHER_") && actionData.color > 0) {
-			final LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
+		if (meta instanceof LeatherArmorMeta && actionData.color > 0) {
+			final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
 			lam.setColor(Color.fromRGB(actionData.color));
 			item.setItemMeta(lam);
 		}
 		// Skulls
-		else if (actionData.owner != null && (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD)) {
-			final SkullMeta meta = (SkullMeta) item.getItemMeta();
-			meta.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf(actionData.owner)));
-			item.setItemMeta(meta);
+		else if (meta instanceof SkullMeta && actionData.owner != null) {
+			final SkullMeta skull = (SkullMeta) meta;
+			skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf(actionData.owner)));
+			item.setItemMeta(skull);
 		}
 		// Written books
-		else if (item.getItemMeta() instanceof BookMeta) {
-			final BookMeta bookMeta = (BookMeta) item.getItemMeta();
+		else if (meta instanceof BookMeta) {
+			final BookMeta bookMeta = (BookMeta) meta;
 			bookMeta.setAuthor(actionData.by);
 			bookMeta.setTitle(actionData.title);
 			bookMeta.setPages(actionData.content);
@@ -287,9 +289,9 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Fireworks
-		if (block == Material.FIREWORK_STAR && actionData.effectColors != null
+		if (meta instanceof FireworkEffectMeta && actionData.effectColors != null
 				&& actionData.effectColors.length > 0) {
-			final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+			final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
 			final Builder effect = FireworkEffect.builder();
 
 			for (int i = 0; i < actionData.effectColors.length; i++) {
@@ -314,14 +316,25 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Item display names
-		final ItemMeta meta = item.getItemMeta();
 		if (actionData.name != null) {
+			if(meta == null) {
+				meta = item.getItemMeta();
+			}
+			
 			meta.setDisplayName(actionData.name);
 		}
+		
 		if (actionData.lore != null) {
+			if(meta == null) {
+				meta = item.getItemMeta();
+			}
+			
 			meta.setLore(Arrays.asList(actionData.lore));
 		}
-		item.setItemMeta(meta);
+		
+		if(meta != null) {
+			item.setItemMeta(meta);
+		}
 	}
 
 	/**

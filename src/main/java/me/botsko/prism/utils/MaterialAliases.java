@@ -31,7 +31,6 @@ public class MaterialAliases {
 	 * @param plugin
 	 */
 	public MaterialAliases() {
-
 		FileConfiguration items = null;
 		InputStream defConfigStream = this.getClass().getResourceAsStream("/items.yml");
 		if (defConfigStream != null) {
@@ -68,37 +67,18 @@ public class MaterialAliases {
 
 		for (Material m : materials) {
 			String matName = m.name().toLowerCase(Locale.ENGLISH);
+			String dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
+			
+			query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> {
+				storeCache(m, dataString, i, d);
+			}, () -> {
+				int id = query.mapAutoId(matName, dataString);
 
-			int max = 1;
-			if (m.isBlock())
-				max = 16;
-
-			for (int x = 0; x < max; ++x) {
-				int fx = x;
-				String key = matName + ":" + x;
-
-				query.findIds(m.name().toLowerCase(Locale.ENGLISH), String.valueOf(x), (i, d) -> {
-					idCache.put(key, i + ":" + d);
-					matCache.put(i + ":" + d, key);
-				}, () -> {
-					int id = 0;
-					int data = fx;
-
-					try {
-						id = (Integer) Material.class.getMethod("getId").invoke(m);
-						query.map(matName, String.valueOf(fx), id, data);
-					} catch (Exception e) {
-						id = query.mapAutoId(matName, String.valueOf(fx));
-					}
-
-					idCache.put(key, id + ":" + data);
-					matCache.put(id + ":" + data, key);
-				});
-			}
+				storeCache(m, dataString, id, 0);
+			});
 		}
 	}
 
-	// TODO: org.bukkit.block.data.BlockData in 1.13
 	public static class MaterialState {
 		protected MaterialState() {
 		}
@@ -112,22 +92,26 @@ public class MaterialAliases {
 		public String state;
 
 		public BlockData asBlockData() {
-			if (material.isItem()) {
-				return null;
-			}
-			
 			try {
+				Prism.log("asBlockData("+material+", "+state+")");
 				return Bukkit.createBlockData(material, state);
 			}
-			catch(IllegalArgumentException e) {}
+			catch(IllegalArgumentException e) {
+				Prism.log("Block data creation error");
+			}
 			
 			return null;
 		}
 
 		public ItemStack asItem() {
 			if(!state.isEmpty()) {
+				short durability = 0;
+				try {
+					durability = Short.parseShort(state);
+				}
+				catch(NumberFormatException e) {}
 				
-				return new ItemStack(material, 1, Short.parseShort(state));
+				return new ItemStack(material, 1, durability);
 			}
 			
 			return new ItemStack(material, 1);
@@ -158,44 +142,37 @@ public class MaterialAliases {
 	}
 
 	public MaterialState idsToMaterial(int block_id, int block_subid) {
+		Prism.log("Searching for " + block_id + ":" + block_subid);
 		MaterialState cachedMaterial = fromCache(block_id, block_subid);
 
-		if (cachedMaterial != null)
+		if (cachedMaterial != null) {
+			Prism.log("Found in cache: " + cachedMaterial.material + cachedMaterial.state);
+			
+			BlockData bd = Bukkit.createBlockData(cachedMaterial.material, cachedMaterial.state);
+			
+			Prism.log("blockdata: " + (bd != null ? bd.getAsString() : "null"));
+			
 			return cachedMaterial;
+		}
 
 		MaterialState result = new MaterialState();
 		IdMapQuery query = new IdMapQuery();
+		
 
 		query.findMaterial(block_id, block_subid, (material, state) -> {
+			Prism.log("Found in query: " + material + state);
 			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
 			result.state = state;
 			
+			BlockData bd = Bukkit.createBlockData(result.material, result.state);
+			
+			Prism.log("blockdata: " + (bd != null ? bd.getAsString() : "null"));
+			
+			Prism.log("Got material: " + result.material);
+			
 			storeCache(result.material, result.state, block_id, block_subid);
 		}, () -> {
-			Material material;
-			try {
-				if(Prism.config.getBoolean("prism.simulate-113"))
-					throw new NoSuchMethodException(Material.class.getName() + ".getMaterial(int)");
-				
-				material = (Material) Material.class.getMethod("getMaterial", int.class).invoke(null, block_id);
-			} catch (Exception e) {
-				material = null;
-				e.printStackTrace();
-			}
-
-			if (material != null) {
-				String materialName = material.name().toLowerCase(Locale.ENGLISH);
-				String state = String.valueOf(block_subid);
-				
-				query.map(materialName, state, block_id, block_subid);
-
-				// TODO: Proper state handling 1.13
-				result.material = material;
-				result.state = state;
-				
-				storeCache(result.material, result.state, block_id, block_subid);
-			} else
-				Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
+			Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
 		});
 
 		if (result.material == null) {
@@ -219,6 +196,7 @@ public class MaterialAliases {
 	}
 
 	public int[] materialToIds(Material material, String state) {
+		Prism.log("Searching for " + material + ":" + state);
 		int block_subid;
 		
 		// For tools, where durability doesn't mean a different item (different cached value) but is still important
@@ -232,40 +210,30 @@ public class MaterialAliases {
 		
 		int[] cachedIds = fromCache(material, block_subid == 0 ? state : String.valueOf(block_subid));
 
-		if (cachedIds != null)
+		if (cachedIds != null) {
+			Prism.log("Found in cache: " + cachedIds[0] + ":" + cachedIds[1]);
 			return cachedIds;
+		}
 
 		int[] result = {0, 0};
 		IdMapQuery query = new IdMapQuery();
 		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
 		query.findIds(materialName, state, (query_id, query_subid) -> {
+			Prism.log("Found in query: " + query_id + ":" + query_subid);
 			result[0] = query_id;
 			result[1] = query_subid;
 			
 			storeCache(material, state, query_id, query_subid);
 		}, () -> {
-			int block_id = 0;
+			int block_id = query.mapAutoId(materialName, state);
 
-			try {
-				if(Prism.config.getBoolean("prism.simulate-113"))
-					throw new NoSuchMethodException(Material.class.getName() + ".getId()");
-				
-				block_id = (Integer) Material.class.getMethod("getId").invoke(material);
-				query.map(materialName, state, block_id, block_subid);
-				
-				result[0] = block_id;
-				result[1] = block_subid;
-				
-				storeCache(material, state, block_id, block_subid);
-			} catch (Exception e) {
-				block_id = query.mapAutoId(materialName, state);
-				
-				result[0] = block_id;
-				result[1] = 0;
-				
-				storeCache(material, state, block_id, 0);
-			}
+			Prism.log("auto-mapped: " + block_id);
+			
+			result[0] = block_id;
+			result[1] = 0;
+			
+			storeCache(material, state, block_id, 0);
 		});
 		
 		if(block_subid != durability)
@@ -298,7 +266,7 @@ public class MaterialAliases {
 		String dataString = "";
 		
 		if(data != null) {
-			dataString = data.getAsString();
+			dataString = BlockUtils.dataString(data);
 		}
 		
 		String item_name = null;
@@ -327,23 +295,6 @@ public class MaterialAliases {
 	 * @param alias
 	 * @return
 	 */
-	@Deprecated
-	public ArrayList<int[]> getIdsByAlias(String alias) {
-		ArrayList<int[]> itemIds = new ArrayList<int[]>();
-		if (!itemAliases.isEmpty()) {
-			for (Entry<String, String> entry : itemAliases.entrySet()) {
-				int[] ids = new int[2];
-				if (entry.getValue().equals(alias)) {
-					String[] _tmp = entry.getKey().split(":");
-					ids[0] = Integer.parseInt(_tmp[0]);
-					ids[1] = Integer.parseInt(_tmp[1]);
-					itemIds.add(ids);
-				}
-			}
-		}
-		return itemIds;
-	}
-
 	// TODO: Break this in 1.13. Woooo.
 	public ArrayList<Material> getMaterialsByAlias(String alias) {
 		ArrayList<Material> itemIds = new ArrayList<>();

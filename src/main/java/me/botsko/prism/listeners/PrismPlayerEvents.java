@@ -18,6 +18,8 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -220,31 +222,46 @@ public class PrismPlayerEvents implements Listener {
 
 		final Player player = event.getPlayer();
 		final String cause;
-		final Material newMat;
-		final Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		Material newMat;
+		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 		
 		if(event.getBucket() == Material.LAVA_BUCKET) {
 			cause = "lava-bucket";
 			newMat = Material.LAVA;
 		}
-		
-		// TODO: Fish buckets fit somewhere in here
-		else if(event.getBucket() == Material.WATER_BUCKET) {
+		else {
 			cause = "water-bucket";
 			newMat = Material.WATER;
-		}
-		
-		// Failsafe fallback
-		else {
-			cause = "unknown-bucket";
-			newMat = spot.getType();
+			
+			if(event.getBucket() != Material.WATER_BUCKET) {
+				// TODO: handle fish here maybe
+			}
 		}
 
 		if (!Prism.getIgnore().event(cause, player))
 			return;
+		
+		BlockData oldData = spot.getBlockData();
+		BlockData newData = Bukkit.createBlockData(newMat);
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), spot.getBlockData(),
-				newMat, Bukkit.createBlockData(newMat), player));
+		BlockData clickedData = event.getBlockClicked().getBlockData();
+		
+		// TODO If "Lavalogged" blocks become a thing, please revisit.
+		if(clickedData instanceof Waterlogged && event.getBucket() != Material.LAVA) {
+			Waterlogged wl = (Waterlogged) clickedData;
+			
+			if(!wl.isWaterlogged()) {
+				spot = event.getBlockClicked();
+				newMat = spot.getType();
+				oldData = wl;
+				
+				newData = wl.clone();
+				((Waterlogged)newData).setWaterlogged(true);
+			}
+		}
+
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), oldData,
+				newMat, newData, player));
 
 		if (plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET
 				&& !player.hasPermission("prism.alerts.use.lavabucket.ignore")
