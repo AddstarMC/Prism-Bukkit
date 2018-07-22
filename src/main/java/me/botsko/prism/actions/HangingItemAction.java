@@ -67,6 +67,11 @@ public class HangingItemAction extends GenericAction {
 	public String getHangingType() {
 		return this.actionData.type;
 	}
+	
+	@Override
+	public String getState() {
+		return "";
+	}
 
 	/**
 	 * 

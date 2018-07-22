@@ -94,47 +94,9 @@ public class EntityUtils {
 	 * @todo doesn't bukkit have this already?
 	 */
 	
+	@SuppressWarnings("deprecation")
 	public static boolean playerMayPassThrough(Material m) {
 		// Close enough, pray you don't land in a portal
 		return m.isTransparent();
-		/*switch (m) {
-		case AIR:
-		case CARROT:
-		case DEAD_BUSH:
-		case DETECTOR_RAIL:
-		case POTATO:
-		case SUGAR_CANE:
-		case REPEATER:
-		case FLOWER_POT:
-		case LEVER:
-		case TALL_GRASS:
-		case MELON_STEM:
-		case NETHER_WART:
-		case POWERED_RAIL:
-		case PUMPKIN_STEM:
-		case RAIL:
-		case RED_MUSHROOM:
-		case REDSTONE:
-		case REDSTONE_TORCH:
-		case REDSTONE_WIRE:
-		case SIGN:
-		case SNOW:
-		case STONE_PRESSURE_PLATE:
-		case TORCH:
-		case TRIPWIRE:
-		case LILY_PAD:
-		case WHEAT:
-		case OAK_SAPLING:
-		case BIR
-			// flowers
-			//saplings
-			// pressure plates
-			// doors
-			// standing and wall banners
-			// skulls
-			return true;
-		default:
-			return false;
-		}*/
 	}
 }

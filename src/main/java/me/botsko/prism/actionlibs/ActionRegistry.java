@@ -215,6 +215,7 @@ public class ActionRegistry {
 		registerAction(new ActionType("vehicle-place", true, false, false, "VehicleAction", "placed"));
 		registerAction(new ActionType("water-break", false, true, true, "BlockAction", "broke"));
 		registerAction(new ActionType("water-bucket", true, true, true, "BlockChangeAction", "poured"));
+		registerAction(new ActionType("waterlogged", true, true, true, "BlockChangeAction", "waterlogged"));
 		registerAction(new ActionType("water-flow", true, true, true, "BlockAction", "flowed into"));
 		registerAction(new ActionType("world-edit", true, true, true, "BlockChangeAction", "edited"));
 		registerAction(new ActionType("xp-pickup", false, false, false, "PlayerAction", "picked up"));

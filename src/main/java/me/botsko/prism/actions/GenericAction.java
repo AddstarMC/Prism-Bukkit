@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
+import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
@@ -103,8 +104,6 @@ public class GenericAction implements Handler {
 	 * 
 	 */
 	protected BlockData block_data;
-	
-	protected short durability;
 
 	/**
 	 * 
@@ -458,7 +457,6 @@ public class GenericAction implements Handler {
 	
 	@Override
 	public void setDurability(short durability) {
-		this.durability = durability;
 	}
 
 	@Override
@@ -478,7 +476,12 @@ public class GenericAction implements Handler {
 	
 	@Override
 	public short getDurability() {
-		return durability;
+		return 0;
+	}
+	
+	@Override
+	public String getState() {
+		return BlockUtils.dataString(getBlockData());
 	}
 
 	@Override

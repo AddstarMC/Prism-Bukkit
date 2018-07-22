@@ -185,7 +185,6 @@ public class ActionsQuery {
 							baseHandler.setDurability((short) 0);
 						}
 						else {
-							Prism.log("Null new block data!");
 							baseHandler.setBlock(item.getType());
 							baseHandler.setBlockData(Bukkit.createBlockData(item.getType()));
 							baseHandler.setDurability(item.getDurability());
@@ -201,7 +200,6 @@ public class ActionsQuery {
 							baseHandler.setOldDurability((short) 0);
 						}
 						else {
-							Prism.log("Null old block data!");
 							baseHandler.setOldBlock(oldItem.getType());
 							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
 							baseHandler.setOldDurability(oldItem.getDurability());

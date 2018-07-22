@@ -93,7 +93,7 @@ public class InventoryUtils {
 			ItemStack item = player.getInventory().getItem(slot);
 			if (item == null)
 				continue;
-			if (ItemUtils.equals(item, itemDefinition, true)) {
+			if (ItemUtils.equals(item, itemDefinition)) {
 
 				// check how many items we need
 				int diff = desiredQuantity - quantityFound;

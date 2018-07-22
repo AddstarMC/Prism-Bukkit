@@ -1,9 +1,11 @@
 package me.botsko.prism.utils;
 
 import java.util.EnumSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -19,7 +21,6 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.potion.PotionEffect;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.utils.EnchantmentUtils;
 
 public class ItemUtils {
@@ -80,21 +81,10 @@ public class ItemUtils {
 	 * 
 	 * @param a
 	 * @param b
-	 * @param checkDura
 	 * @return
 	 */
-	public static boolean isSameType(ItemStack a, ItemStack b, boolean checkDura) {
-
-		// Initial type check
-		if (!a.getType().equals(b.getType()))
-			return false;
-
-		// Durability check
-		if (checkDura && a.getDurability() != b.getDurability())
-			return false;
-
-		return true;
-
+	public static boolean isSameType(ItemStack a, ItemStack b) {
+		return a.getType().equals(b.getType());
 	}
 
 	/**
@@ -104,23 +94,12 @@ public class ItemUtils {
 	 * @return
 	 */
 	public static boolean equals(ItemStack a, ItemStack b) {
-		return equals(a, b, dataValueUsedForSubitems(a.getType()));
-	}
-
-	/**
-	 * 
-	 * @param a
-	 * @param b
-	 * @param checkDura
-	 * @return
-	 */
-	public static boolean equals(ItemStack a, ItemStack b, boolean checkDura) {
 
 		ItemMeta metaA = a.getItemMeta();
 		ItemMeta metaB = b.getItemMeta();
 
 		// Type/dura
-		if (!isSameType(a, b, checkDura))
+		if (!isSameType(a, b))
 			return false;
 
 		// Display name
@@ -369,54 +348,39 @@ public class ItemUtils {
 	 */
 	public static String getItemFullNiceName(ItemStack item) {
 
-		String item_name = "";
+		String item_name = item.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+		
+		ItemMeta meta = null;
+		
+		if(item.hasItemMeta()) {
+			meta = item.getItemMeta();
+		}
 
 		// Leather Coloring
-		if (item.getType().name().contains("LEATHER_")) {
-			LeatherArmorMeta lam = (LeatherArmorMeta) item.getItemMeta();
-			if (lam.getColor() != null) {
+		if (meta instanceof LeatherArmorMeta) {
+			LeatherArmorMeta lam = (LeatherArmorMeta) meta;
+			if (lam.getColor() != Bukkit.getItemFactory().getDefaultLeatherColor()) {
 				item_name += "dyed ";
 			}
 		}
 
 		// Skull Owner
-		else if (item.getType() == Material.PLAYER_HEAD || item.getType() == Material.PLAYER_WALL_HEAD) {
-			SkullMeta skull = (SkullMeta) item.getItemMeta();
+		else if (meta instanceof SkullMeta) {
+			SkullMeta skull = (SkullMeta) meta;
 			if (skull.hasOwner()) {
 				item_name += skull.getOwningPlayer().getName() + "'s ";
 			}
 		}
 
-		// Set the base item name
-		if (dataValueUsedForSubitems(item.getType())) {
-			item_name += Prism.getItems().getAlias(item.getType(), null);
-		} else {
-			item_name += Prism.getItems().getAlias(item.getType(), null);
-		}
-		if (item_name.isEmpty()) {
-			item_name += item.getType().toString().toLowerCase().replace("_", " ");
-		}
-
-		// Anvils
-		if (item.getType() == Material.ANVIL) {
-			if (item.getDurability() == 1) {
-				item_name = "slightly damaged anvil";
-			} else if (item.getDurability() == 2) {
-				item_name = "very damaged anvil";
-			}
-		}
-
 		// Written books
-		if (item.getType().equals(Material.WRITTEN_BOOK)) {
-			BookMeta meta = (BookMeta) item.getItemMeta();
-			if (meta != null) {
-				item_name += " '" + meta.getTitle() + "' by " + meta.getAuthor();
-			}
+		if (meta instanceof BookMeta) {
+			BookMeta book = (BookMeta) meta;
+			item_name += " '" + book.getTitle() + "' by " + book.getAuthor();
 		}
 
 		// Enchanted books
-		else if (item.getType().equals(Material.ENCHANTED_BOOK)) {
-			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
+		else if (meta instanceof EnchantmentStorageMeta) {
+			EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
 			if (bookEnchantments.hasStoredEnchants()) {
 				int i = 1;
 				Map<Enchantment, Integer> enchs = bookEnchantments.getStoredEnchants();
@@ -445,8 +409,8 @@ public class ItemUtils {
 		}
 
 		// Fireworks
-		if (item.getType() == Material.FIREWORK_STAR) {
-			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) item.getItemMeta();
+		if (meta instanceof FireworkEffectMeta) {
+			FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
 			if (fireworkMeta.hasEffect()) {
 				FireworkEffect effect = fireworkMeta.getEffect();
 				if (!effect.getColors().isEmpty()) {
@@ -473,11 +437,9 @@ public class ItemUtils {
 		}
 
 		// Custom item names
-		ItemMeta im = item.getItemMeta();
-		if (im != null) {
-			String displayName = im.getDisplayName();
-			if (displayName != null) {
-				item_name += ", named \"" + displayName + "\"";
+		if (meta != null) {
+			if (meta.hasDisplayName()) {
+				item_name += ", named \"" + meta.getDisplayName() + "\"";
 			}
 		}
 
@@ -492,22 +454,9 @@ public class ItemUtils {
 	 * @param id
 	 * @return
 	 */
-	/*private static EnumSet<Material> dataMaterials = EnumSet.of(Material.STONE, Material.DIRT, Material.WOOD,
-			Material.SAPLING, Material.SAND, Material.LOG, Material.LEAVES, Material.SPONGE, Material.SANDSTONE,
-			Material.DIRT, Material.LONG_GRASS, Material.WOOL, Material.RED_ROSE, Material.DOUBLE_STEP, Material.STEP,
-			Material.SNOW, Material.STAINED_GLASS, Material.MONSTER_EGGS, Material.SMOOTH_BRICK, Material.SNOW,
-			Material.WOOD_DOUBLE_STEP, Material.WOOD_STEP, Material.COBBLE_WALL, Material.SKULL, Material.ANVIL,
-			Material.QUARTZ_BLOCK, Material.HARD_CLAY, Material.STAINED_GLASS_PANE, Material.LEAVES_2, Material.LOG_2,
-			Material.PRISMARINE, Material.CARPET, Material.DOUBLE_PLANT, Material.RED_SANDSTONE, Material.CONCRETE,
-			Material.CONCRETE_POWDER,
-
-			Material.COAL, Material.GOLDEN_APPLE, Material.RAW_FISH, Material.COOKED_FISH, Material.INK_SACK,
-			Material.MAP, Material.POTION, Material.SKULL_ITEM);*/
-
 	// THANK YOU 1.13!
 	public static boolean dataValueUsedForSubitems(Material material) {
 		return false;
-		//return dataMaterials.contains(material);
 	}
 
 	/**

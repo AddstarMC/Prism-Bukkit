@@ -56,6 +56,7 @@ public class ItemStackAction extends GenericAction {
 		public int[] fadeColors;
 		public boolean hasFlicker;
 		public boolean hasTrail;
+		public short durability = 0;
 	}
 
 	/**
@@ -73,6 +74,28 @@ public class ItemStackAction extends GenericAction {
 	 * give us the item with the enchantments already on it.
 	 */
 	protected Map<Enchantment, Integer> enchantments;
+	
+	@Deprecated
+	private short tempDurability = -1;
+	
+	@Override
+	public void setDurability(short durability) {
+		if (actionData == null) {
+			tempDurability = durability;
+		}
+		else {
+			actionData.durability = durability;
+		}
+	}
+
+	@Override
+	public short getDurability() {
+		if (actionData != null) {
+			return actionData.durability;
+		}
+		
+		return 0;
+	}
 
 	/**
 	 * 
@@ -100,7 +123,13 @@ public class ItemStackAction extends GenericAction {
 
 		// Set basics
 		this.block = item.getType();
-		this.durability = item.getDurability();
+		actionData.durability = item.getDurability();
+		
+		if(tempDurability >= 0) {
+			actionData.durability = tempDurability;
+			tempDurability = -1;
+		}
+		
 		actionData.amt = quantity;
 		if (slot >= 0) {
 			actionData.slot = slot;
@@ -231,6 +260,11 @@ public class ItemStackAction extends GenericAction {
 	public void save() {
 		data = gson.toJson(actionData);
 	}
+	
+	@Override
+	public String getState() {
+		return "";
+	}
 
 	/**
 	 * 
@@ -242,7 +276,7 @@ public class ItemStackAction extends GenericAction {
 
 		actionData = gson.fromJson(data, ItemStackActionData.class);
 		
-		short damage = durability;
+		short damage = (short)actionData.durability;
 
 		item = new ItemStack(this.block, actionData.amt, damage);
 

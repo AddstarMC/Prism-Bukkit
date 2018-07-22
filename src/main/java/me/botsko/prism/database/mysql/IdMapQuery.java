@@ -5,17 +5,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Locale;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.Validate;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.utils.IntPair;
 
 public class IdMapQuery {
 	private String prefix;
 
 	private static final String toIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state=? LIMIT 1;";
+	private static final String toAllIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=?;";
+	private static final String partialToAllIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state LIKE ?";
 	private static final String toMat = "SELECT material, state FROM <prefix>id_map WHERE block_id=? AND block_subid=? LIMIT 1;";
 	private static final String map = "INSERT INTO <prefix>id_map(material, state, block_id, block_subid) VALUES (?, ?, ?, ?);";
 	private static final String automap = "INSERT INTO <prefix>id_map(material, state) VALUES (?, ?);";
@@ -74,11 +79,78 @@ public class IdMapQuery {
 
 		try (Connection conn = Prism.dbc()) {
 			try (PreparedStatement st = conn.prepareStatement(query)) {
-				st.setString(1, material.toLowerCase(Locale.ENGLISH));
-				st.setString(2, state.toLowerCase(Locale.ENGLISH));
+				st.setString(1, material);
+				st.setString(2, state);
 				try (ResultSet rs = st.executeQuery()) {
 					if (rs.next())
 						success.accept(rs.getInt(1), rs.getInt(2));
+					else
+						failure.run();
+				}
+			}
+		} catch (final SQLException e) {
+			Prism.log("Database connection error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	public void findAllIds(String material, Consumer<List<IntPair>> success) {
+		findAllIds(material, success, IdMapQuery::noop);
+	}
+	
+	public void findAllIds(String material, Consumer<List<IntPair>> success, Runnable failure) {
+		Validate.notNull(material, "Material cannot be null");
+		Validate.notNull(success, "Success callback cannot be null");
+		Validate.notNull(failure, "Failure callback cannot be null (use findAllIds(String, BiConsumer)");
+		
+		String query = toAllIds.replace("<prefix>", prefix);
+
+		try (Connection conn = Prism.dbc()) {
+			try (PreparedStatement st = conn.prepareStatement(query)) {
+				st.setString(1, material);
+				try (ResultSet rs = st.executeQuery()) {
+					List<IntPair> ids = new ArrayList<>();
+					
+					while(rs.next()) {
+						ids.add(new IntPair(rs.getInt(1), rs.getInt(2)));
+					}
+					
+					if (!ids.isEmpty())
+						success.accept(ids);
+					else
+						failure.run();
+				}
+			}
+		} catch (final SQLException e) {
+			Prism.log("Database connection error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success) {
+		findAllIdsPartial(material, stateLike, success, IdMapQuery::noop);
+	}
+	
+	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success, Runnable failure) {
+		Validate.notNull(material, "Material cannot be null");
+		Validate.notNull(success, "Success callback cannot be null");
+		Validate.notNull(failure, "Failure callback cannot be null (use findAllIds(String, BiConsumer)");
+		
+		String query = partialToAllIds.replace("<prefix>", prefix);
+
+		try (Connection conn = Prism.dbc()) {
+			try (PreparedStatement st = conn.prepareStatement(query)) {
+				st.setString(1, material);
+				st.setString(2, stateLike);
+				try (ResultSet rs = st.executeQuery()) {
+					List<IntPair> ids = new ArrayList<>();
+					
+					while(rs.next()) {
+						ids.add(new IntPair(rs.getInt(1), rs.getInt(2)));
+					}
+					
+					if (!ids.isEmpty())
+						success.accept(ids);
 					else
 						failure.run();
 				}
@@ -128,8 +200,8 @@ public class IdMapQuery {
 		} else
 			try (Connection conn = Prism.dbc()) {
 				try (PreparedStatement st = conn.prepareStatement(query)) {
-					st.setString(1, material.toLowerCase(Locale.ENGLISH));
-					st.setString(2, state.toLowerCase(Locale.ENGLISH));
+					st.setString(1, material);
+					st.setString(2, state);
 					st.setInt(3, block_id);
 					st.setInt(4, block_subid);
 
@@ -152,8 +224,8 @@ public class IdMapQuery {
 
 		try (Connection conn = Prism.dbc()) {
 			try (PreparedStatement st = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-				st.setString(1, material.toLowerCase(Locale.ENGLISH));
-				st.setString(2, state.toLowerCase(Locale.ENGLISH));
+				st.setString(1, material);
+				st.setString(2, state);
 
 				st.executeUpdate();
 

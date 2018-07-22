@@ -31,6 +31,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -221,7 +222,7 @@ public class PrismPlayerEvents implements Listener {
 	public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event) {
 
 		final Player player = event.getPlayer();
-		final String cause;
+		String cause;
 		Material newMat;
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
 		
@@ -257,6 +258,8 @@ public class PrismPlayerEvents implements Listener {
 				
 				newData = wl.clone();
 				((Waterlogged)newData).setWaterlogged(true);
+				
+				cause = "waterlogged";
 			}
 		}
 
@@ -378,13 +381,13 @@ public class PrismPlayerEvents implements Listener {
 			if (hand.getType() == item_mat) {
 
 				// Left click is for current block
-				if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
+				if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
 					wand.playerLeftClick(player, block.getLocation());
 				}
 				// Right click is for relative block on blockface
 				// except block placements - those will be handled by the
 				// blockplace.
-				if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+				if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
 					block = block.getRelative(event.getBlockFace());
 					wand.playerRightClick(player, block.getLocation());
 				}
@@ -491,6 +494,10 @@ public class PrismPlayerEvents implements Listener {
 			default:
 				break;
 			}
+			
+			Prism.log("Eggs: " + MaterialTag.SPAWN_EGGS);
+			Prism.log("hand: " + hand.getType());
+			Prism.log("isTagged: " + MaterialTag.SPAWN_EGGS.isTagged(hand.getType()));
 
 			// if they're holding a spawner egg
 			if (MaterialTag.SPAWN_EGGS.isTagged(hand.getType())) {

@@ -3,7 +3,6 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MaterialTag;
 
@@ -12,7 +11,10 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Jukebox;
+import org.bukkit.block.data.type.Chest;
+import org.bukkit.block.data.type.Chest.Type;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -81,7 +83,17 @@ public class PrismBlockEvents implements Listener {
 			return;
 		}
 		if (block.getState() instanceof InventoryHolder) {
-			final InventoryHolder container = (InventoryHolder) block.getState();
+			InventoryHolder container = (InventoryHolder) block.getState();
+			
+			if (container instanceof DoubleChest) {
+				if(((Chest)block.getBlockData()).getType() == Type.LEFT) {
+					container = ((DoubleChest)container).getLeftSide();
+				}
+				else {
+					container = ((DoubleChest)container).getRightSide();
+				}
+			}
+			
 			int slot = 0;
 			for (final ItemStack i : container.getInventory().getContents()) {
 				// when double chests are broken, they record *all* contents
@@ -185,7 +197,7 @@ public class PrismBlockEvents implements Listener {
 	public void onBlockBreak(final BlockBreakEvent event) {
 
 		final Player player = event.getPlayer();
-		Block block = event.getBlock();
+		final Block block = BlockUtils.getBaseBlock(event.getBlock());
 
 		if (block.getType().equals(Material.AIR))
 			return;
@@ -198,39 +210,25 @@ public class PrismBlockEvents implements Listener {
 		if (!Prism.getIgnore().event("block-break", player))
 			return;
 
-		// Change handling a bit if it's a long block
-		boolean debug = false;
-		if(block.getType() == Material.BRICK_STAIRS) {
-			debug = true;
-		}
-		
-		final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
-		if (sibling != null && !block.getType().equals(Material.CHEST)
-				&& !block.getType().equals(Material.TRAPPED_CHEST)) {
-			if(debug) {
-				Prism.log("Getting sibling? " + block);
-				Prism.log("  becomes " + sibling);
-			}
-			block = sibling;
-		}
-
 		// log items removed from container
 		// note: done before the container so a "rewind" for rollback will work
 		// properly
-		final Block b2 = block;
 		// logItemRemoveFromDestroyedContainer( player, block );
 		forEachItem(block, (i, s) -> {
 			RecordingQueue.addToQueue(
-					ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null, b2.getLocation(), player));
+					ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player));
 		});
-		
-		Handler a = ActionFactory.createBlock("block-break", block, player);
-		
-		if(debug) {
-			Prism.log("mat: " + a.getBlock() + " state: " + BlockUtils.dataString(a.getBlockData()));
-		}
 
-		RecordingQueue.addToQueue(a);
+		// Change handling a bit if it's a long block
+		/*final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+		
+		if (sibling != null && !block.getType().equals(Material.CHEST)
+				&& !block.getType().equals(Material.TRAPPED_CHEST)) {
+
+			block = sibling;
+		}*/
+
+		RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", block, player));
 
 		// check for block relationships
 		logBlockRelationshipsForBlock(player, block);

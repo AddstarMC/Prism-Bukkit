@@ -148,6 +148,8 @@ public interface Handler {
 
 	public abstract short getDurability();
 	
+	public abstract String getState();
+	
 	/**
 	 * 
 	 * @param id

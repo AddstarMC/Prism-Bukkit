@@ -52,14 +52,14 @@ public class BlockUtils {
 			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE,
 			Material.NETHER_PORTAL, Material.REPEATER, Material.PUMPKIN_STEM,
 			Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART,
-			Material.FLOWER_POT, Material.CARROTS, Material.POTATOES,
+			Material.CARROTS, Material.POTATOES,
 			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
 			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.COMPARATOR)
 			
 			.append(Tag.DOORS).append(Tag.RAILS).append(Tag.SAPLINGS)
 			.append(MaterialTag.BANNERS).append(Tag.WOODEN_PRESSURE_PLATES)
 			.append(Tag.BUTTONS).append(Tag.CARPETS)
-			.append(MaterialTag.ALL_PLANTS);
+			.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
 
 	private static EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
 			Material.LAVA);
@@ -436,6 +436,10 @@ public class BlockUtils {
 	 *            the block to get the sibling of
 	 */
 	public static Block getSiblingForDoubleLengthBlock(Block block) {
+		return getSiblingForDoubleLengthBlock(block.getState());
+	}
+	
+	public static Block getSiblingForDoubleLengthBlock(BlockState block) {
 		/**
 		 * Handle special double-length blocks
 		 */		
@@ -447,10 +451,10 @@ public class BlockUtils {
 			
 			switch (chest.getType()) {
 			case LEFT:
-				return block.getRelative(getRelativeFaceRight(facing));
+				return block.getBlock().getRelative(getRelativeFaceRight(facing));
 				
 			case RIGHT:
-				return block.getRelative(getRelativeFaceLeft(facing));
+				return block.getBlock().getRelative(getRelativeFaceLeft(facing));
 				
 			case SINGLE:
 				return null;
@@ -460,35 +464,63 @@ public class BlockUtils {
 			Bed bed = (Bed) data;
 			
 			if(bed.getPart() == Part.FOOT) {
-				return block.getRelative(bed.getFacing());
+				return block.getBlock().getRelative(bed.getFacing());
 			}
 			else {
-				return block.getRelative(bed.getFacing().getOppositeFace());
+				return block.getBlock().getRelative(bed.getFacing().getOppositeFace());
 			}
 		}
 		else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
 			Bisected bisected = (Bisected) data;
 			
 			if (bisected.getHalf() == Half.BOTTOM) {
-				return block.getRelative(BlockFace.UP);
+				return block.getBlock().getRelative(BlockFace.UP);
 			}
 			else {
-				return block.getRelative(BlockFace.DOWN);
+				return block.getBlock().getRelative(BlockFace.DOWN);
 			}
 		}
 
 		return null;
 	}
+	
+	/**
+	 * Gets the block to log when interacting with a connected block. If not a
+	 * double block, the passed block is returned
+	 *
+	 * @param block
+	 */
+	public static Block getBaseBlock(Block block) {
+		BlockData data = block.getBlockData();
+		
+		if(data instanceof Bed) {
+			Bed bed = (Bed) data;
+			
+			if(bed.getPart() == Part.HEAD) {
+				return block.getRelative(bed.getFacing().getOppositeFace());
+			}
+		}
+		else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
+			Bisected bisected = (Bisected) data;
+			
+			if (bisected.getHalf() == Half.TOP) {
+				return block.getRelative(BlockFace.DOWN);
+			}
+		}
+
+		return block;
+	}
 
 	
 	private static final MaterialTag flowBreaks = new MaterialTag(
-			MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS, MaterialTag.CROPS, Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS).append(
+			MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS, MaterialTag.CROPS,
+			Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS, Tag.FLOWER_POTS).append(
 			Material.CACTUS, Material.REPEATER, Material.COMPARATOR, Material.REDSTONE,
-			Material.FLOWER_POT, Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH,
+			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH,
 			Material.SIGN, Material.WALL_SIGN, Material.STONE_PRESSURE_PLATE,
 			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
-			Material.SUGAR_CANE, Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE
-			);
+			Material.SUGAR_CANE, Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK,
+			Material.VINE);
 	
 	/**
 	 * 
@@ -505,19 +537,7 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static boolean materialRequiresSoil(Material m) {
-		switch (m) {
-		case WHEAT:
-		case POTATOES:
-		case CARROTS:
-		case BEETROOTS:
-		case MELON_STEM:
-		case ATTACHED_MELON_STEM:
-		case PUMPKIN_STEM:
-		case ATTACHED_PUMPKIN_STEM:
-			return true;
-		default:
-			return false;
-		}
+		return MaterialTag.CROPS.isTagged(m);
 	}
 
 	/**

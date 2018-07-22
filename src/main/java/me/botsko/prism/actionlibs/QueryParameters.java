@@ -2,12 +2,15 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.utils.MaterialAliases.MaterialState;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -52,10 +55,11 @@ public class QueryParameters implements Cloneable {
 	 * Params that allow multiple values
 	 */
 	protected HashMap<String, MatchRule> actionTypeRules = new HashMap<>();
-	protected final HashSet<Material> block_filters = new HashSet<>();
+	protected final EnumSet<Material> block_filters = EnumSet.noneOf(Material.class);
+	protected final HashSet<MaterialState> blockData_filters = new HashSet<>();
 	protected final HashMap<String, MatchRule> entity_filters = new HashMap<>();
 	protected final HashMap<String, MatchRule> player_names = new HashMap<>();
-	protected final ArrayList<Flag> flags = new ArrayList<Flag>();
+	protected final EnumSet<Flag> flags = EnumSet.noneOf(Flag.class);
 	protected final ArrayList<CommandSender> shared_players = new ArrayList<>();
 
 	/**
@@ -137,8 +141,24 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * @return the block
 	 */
-	public HashSet<Material> getBlockFilters() {
+	public Set<Material> getBlockFilters() {
 		return block_filters;
+	}
+
+	/**
+	 * @param id
+	 *            the block to set
+	 */
+	public void addBlockDataFilter(MaterialState partialData) {
+		this.blockData_filters.add(partialData);
+	}
+
+
+	/**
+	 * @return the block
+	 */
+	public Set<MaterialState> getBlockDataFilters() {
+		return blockData_filters;
 	}
 
 	/**

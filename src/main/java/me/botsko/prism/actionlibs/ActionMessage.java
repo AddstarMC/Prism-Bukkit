@@ -1,6 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.Handler;
+import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.ChatColor;
 
@@ -59,7 +60,9 @@ public class ActionMessage {
 		msg.append(" #" + a.getId());
 		msg.append(" " + a.getPlayerName());
 		msg.append(" " + a.getType().getName());
-		msg.append(" " + a.getBlock() + a.getBlockData());
+		msg.append(" " + a.getBlock());
+		msg.append(BlockUtils.dataString(a.getBlockData()));
+		
 		if (a.getType().getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				msg.append(" (" + a.getNiceName() + ")");

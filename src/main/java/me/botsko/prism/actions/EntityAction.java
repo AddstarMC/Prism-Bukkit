@@ -93,9 +93,10 @@ public class EntityAction extends GenericAction {
 		if (entityType != null && !Prism.getIllegalEntities().contains(entityType)) {
 			if (!is_preview) {
 				final Location loc = getLoc().add(0.5, 0.0, 0.5);
-				final Entity entity = loc.getWorld().spawnEntity(loc, entityType);
-
-				serializer.deserialize(entity);
+				
+				loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> {
+					serializer.deserialize(entity);
+				});
 
 				return new ChangeResult(ChangeResultType.APPLIED, null);
 

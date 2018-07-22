@@ -129,6 +129,11 @@ public class MaterialTag implements Tag<Material> {
 	public boolean isTagged(Material material) {
 		return materials.contains(material);
 	}
+	
+	@Override
+	public String toString() {
+		return materials.toString();
+	}
 
 	public static final MaterialTag DYES = new MaterialTag(
 			Material.INK_SAC, Material.ROSE_RED, Material.CACTUS_GREEN,
@@ -157,6 +162,11 @@ public class MaterialTag implements Tag<Material> {
 			Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS,
 			Material.MELON_STEM, Material.ATTACHED_MELON_STEM, Material.NETHER_WART,
 			Material.PUMPKIN_STEM, Material.ATTACHED_PUMPKIN_STEM);
+
+	public static final MaterialTag SOIL_CANDIDATES = new MaterialTag(
+			Material.AIR, Material.WATER, Material.LAVA, Material.DIRT,
+			Material.GRASS, Material.PODZOL, Material.MYCELIUM,
+			Material.COARSE_DIRT);
 	
 	public static final MaterialTag SKULLS = new MaterialTag(
 			Material.SKELETON_SKULL,

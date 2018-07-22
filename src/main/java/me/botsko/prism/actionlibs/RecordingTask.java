@@ -14,6 +14,7 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.IntPair;
 
 public class RecordingTask implements Runnable {
 
@@ -86,13 +87,13 @@ public class RecordingTask implements Runnable {
 			s.setInt(4, world_id);
 
 			// TODO Better state handling
-			int newIds[] = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
-			int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
+			IntPair newIds = Prism.getItems().materialToIds(a.getBlock(), a.getState());
+			IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(), a.getState());
 
-			s.setInt(5, newIds[0]);
-			s.setInt(6, newIds[1]);
-			s.setInt(7, oldIds[0]);
-			s.setInt(8, oldIds[1]);
+			s.setInt(5, newIds.first);
+			s.setInt(6, newIds.second);
+			s.setInt(7, oldIds.first);
+			s.setInt(8, oldIds.second);
 			s.setInt(9, NumberConversions.floor(a.getX()));
 			s.setInt(10, NumberConversions.floor(a.getY()));
 			s.setInt(11, NumberConversions.floor(a.getZ()));
@@ -234,14 +235,14 @@ public class RecordingTask implements Runnable {
 					s.setInt(4, world_id);
 
 					// TODO Better state handling
-					int newIds[] = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
+					IntPair newIds = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
 
-					int oldIds[] = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
+					IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
 
-					s.setInt(5, newIds[0]);
-					s.setInt(6, newIds[1]);
-					s.setInt(7, oldIds[0]);
-					s.setInt(8, oldIds[1]);
+					s.setInt(5, newIds.first);
+					s.setInt(6, newIds.second);
+					s.setInt(7, oldIds.first);
+					s.setInt(8, oldIds.second);
 					s.setInt(9, NumberConversions.floor(a.getX()));
 					s.setInt(10, NumberConversions.floor(a.getY()));
 					s.setInt(11, NumberConversions.floor(a.getZ()));

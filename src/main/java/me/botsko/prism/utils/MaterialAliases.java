@@ -3,11 +3,14 @@ package me.botsko.prism.utils;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -93,11 +96,14 @@ public class MaterialAliases {
 
 		public BlockData asBlockData() {
 			try {
-				Prism.log("asBlockData("+material+", "+state+")");
-				return Bukkit.createBlockData(material, state);
+				BlockData data = Bukkit.createBlockData(material, state);
+				
+				// In the event that we tried to get BlockData for an item and it returned air
+				if(data.getMaterial() == material) {
+					return data;
+				}
 			}
 			catch(IllegalArgumentException e) {
-				Prism.log("Block data creation error");
 			}
 			
 			return null;
@@ -116,10 +122,37 @@ public class MaterialAliases {
 			
 			return new ItemStack(material, 1);
 		}
+		
+		@Override
+		public String toString() {
+			return material.name().toLowerCase(Locale.ENGLISH) + state;
+		}
+		
+		@Override
+		public int hashCode() {
+			return toString().hashCode();
+		}
 	}
 
-	private Map<String, String> matCache = new HashMap<>();
-	private Map<String, String> idCache = new HashMap<>();
+	private final Map<String, String> matCache = new HashMap<>();
+	private final Map<String, String> idCache = new HashMap<>();
+	private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
+	
+	private Set<IntPair> getIdsOf(Material material) {
+		Set<IntPair> ids = allIdsCache.get(material);
+		
+		if(ids != null) {
+			return ids;
+		}
+		
+		IdMapQuery query = new IdMapQuery();
+		
+		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> {
+			allIdsCache.put(material, new HashSet<>(list));
+		});
+		
+		return allIdsCache.get(material);
+	}
 	
 	private void storeCache(Material material, String state, int block_id, int block_subid) {
 		String matKey = material.name().toLowerCase(Locale.ENGLISH) + ":" + state;
@@ -127,6 +160,8 @@ public class MaterialAliases {
 		
 		matCache.put(idKey, matKey);
 		idCache.put(matKey, idKey);
+		
+		getIdsOf(material).add(new IntPair(block_id, block_subid));
 	}
 	
 	private MaterialState fromCache(int block_id, int block_subid) {
@@ -142,16 +177,9 @@ public class MaterialAliases {
 	}
 
 	public MaterialState idsToMaterial(int block_id, int block_subid) {
-		Prism.log("Searching for " + block_id + ":" + block_subid);
 		MaterialState cachedMaterial = fromCache(block_id, block_subid);
 
-		if (cachedMaterial != null) {
-			Prism.log("Found in cache: " + cachedMaterial.material + cachedMaterial.state);
-			
-			BlockData bd = Bukkit.createBlockData(cachedMaterial.material, cachedMaterial.state);
-			
-			Prism.log("blockdata: " + (bd != null ? bd.getAsString() : "null"));
-			
+		if (cachedMaterial != null) {			
 			return cachedMaterial;
 		}
 
@@ -160,15 +188,8 @@ public class MaterialAliases {
 		
 
 		query.findMaterial(block_id, block_subid, (material, state) -> {
-			Prism.log("Found in query: " + material + state);
 			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
 			result.state = state;
-			
-			BlockData bd = Bukkit.createBlockData(result.material, result.state);
-			
-			Prism.log("blockdata: " + (bd != null ? bd.getAsString() : "null"));
-			
-			Prism.log("Got material: " + result.material);
 			
 			storeCache(result.material, result.state, block_id, block_subid);
 		}, () -> {
@@ -182,21 +203,19 @@ public class MaterialAliases {
 		return result;
 	}
 	
-	private int[] fromCache(Material material, String state) {
+	private IntPair fromCache(Material material, String state) {
 		String value = idCache.get(material.name().toLowerCase(Locale.ENGLISH) + ":" + state);
 		
 		if(value != null) {
 			String[] parts = value.split(":", 2);
-			int[] ids = { Integer.parseInt(parts[0]), Integer.parseInt(parts[1]) };
 			
-			return ids;
+			return new IntPair(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
 		}
 		
 		return null;
 	}
 
-	public int[] materialToIds(Material material, String state) {
-		Prism.log("Searching for " + material + ":" + state);
+	public IntPair materialToIds(Material material, String state) {
 		int block_subid;
 		
 		// For tools, where durability doesn't mean a different item (different cached value) but is still important
@@ -208,47 +227,72 @@ public class MaterialAliases {
 		else
 			block_subid = durability;
 		
-		int[] cachedIds = fromCache(material, block_subid == 0 ? state : String.valueOf(block_subid));
+		IntPair cachedIds = fromCache(material, block_subid == 0 ? state : String.valueOf(block_subid));
 
 		if (cachedIds != null) {
-			Prism.log("Found in cache: " + cachedIds[0] + ":" + cachedIds[1]);
 			return cachedIds;
 		}
 
-		int[] result = {0, 0};
+		IntPair result = new IntPair(0, 0);
 		IdMapQuery query = new IdMapQuery();
 		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
 		query.findIds(materialName, state, (query_id, query_subid) -> {
-			Prism.log("Found in query: " + query_id + ":" + query_subid);
-			result[0] = query_id;
-			result[1] = query_subid;
+			result.first = query_id;
+			result.second = query_subid;
 			
 			storeCache(material, state, query_id, query_subid);
 		}, () -> {
 			int block_id = query.mapAutoId(materialName, state);
-
-			Prism.log("auto-mapped: " + block_id);
 			
-			result[0] = block_id;
-			result[1] = 0;
+			result.first = block_id;
 			
 			storeCache(material, state, block_id, 0);
 		});
 		
 		if(block_subid != durability)
-			result[1] = durability;
+			result.second = durability;
 		
 		return result;
 	}
 	
+	public Set<IntPair> materialToAllIds(Material material) {
+		return Collections.unmodifiableSet(getIdsOf(material));
+	}
+	
+	public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData) throws IllegalArgumentException {
+		String fullBlockData = BlockUtils.dataString(Bukkit.createBlockData(material, partialBlockData));
+		
+		String[] parts = fullBlockData.substring(1, fullBlockData.length() - 1).toLowerCase(Locale.ENGLISH).split(",");
+		
+		StringBuilder likeString = new StringBuilder("%");
+		
+		for(String string : parts) {
+			if(partialBlockData.contains(string)) {
+				likeString.append(string).append('%');
+			}
+		}
+		
+		String stateLike = likeString.toString();
+		
+		IdMapQuery query = new IdMapQuery();
+		
+		Set<IntPair> ids = new HashSet<>();
+		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, list -> {
+			ids.addAll(list);
+		});
+		
+		return ids;
+	}
+	
 	public static final int SUBID_WILDCARD = -1;
 	
-	public int[] materialToIdsWildcard(Material material, String state) {
-		int[] ids = materialToIds(material, state);
+	@Deprecated
+	public IntPair materialToIdsWildcard(Material material, String state) {
+		IntPair ids = materialToIds(material, state);
 		
 		if(material.getMaxDurability() > 0)
-			ids[1] = SUBID_WILDCARD;
+			ids.second = SUBID_WILDCARD;
 		
 		return ids;
 	}
@@ -275,7 +319,7 @@ public class MaterialAliases {
 			item_name = itemAliases.get(key);
 		}
 		if (item_name == null) {
-			item_name = material.name().toLowerCase().replace("_", " ") + dataString;
+			item_name = material.name().toLowerCase().replace("_", " ");
 		}
 		return item_name;
 	}

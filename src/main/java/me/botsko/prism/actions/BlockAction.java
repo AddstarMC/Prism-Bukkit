@@ -10,10 +10,10 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.utils.MaterialTag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.SkullType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -21,7 +21,12 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -216,17 +221,6 @@ public class BlockAction extends GenericAction {
 		 * 
 		 * @return
 		 */
-		public SkullType getSkullType() {
-			if (skull_type != null) {
-				return SkullType.valueOf(skull_type.toUpperCase());
-			}
-			return null;
-		}
-
-		/**
-		 * 
-		 * @return
-		 */
 		public BlockFace getRotation() {
 			if (rotation != null) {
 				return BlockFace.valueOf(rotation.toUpperCase());
@@ -306,14 +300,19 @@ public class BlockAction extends GenericAction {
 			boolean is_deferred) {
 		
 		BlockStateChange stateChange;
+		
+		BlockState state = block.getState();
 
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
-		if (!getType().requiresHandler("BlockChangeAction") && !getType().requiresHandler("PrismRollbackAction")) {
-			if (!BlockUtils.isAcceptableForBlockPlace(block.getType()) && !parameters.hasFlag(Flag.OVERWRITE)) {
-				// System.out.print("Block skipped due to being unaccaptable for block place.");
-				return new ChangeResult(ChangeResultType.SKIPPED, null);
-			}
+		
+		final boolean cancelIfBadPlace = !getType().requiresHandler("BlockChangeAction") &&
+				!getType().requiresHandler("PrismRollbackAction") &&
+				!parameters.hasFlag(Flag.OVERWRITE);
+		
+		if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(block.getType())) {
+			// System.out.print("Block skipped due to being unaccaptable for block place.");
+			return new ChangeResult(ChangeResultType.SKIPPED, null);
 		}
 
 		// On the blacklist (except an undo)
@@ -361,7 +360,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// Set the material
-			block.setType(getBlock());
+			state.setType(getBlock());
 
 			BlockActionData blockActionData = getActionData();
 
@@ -374,13 +373,12 @@ public class BlockAction extends GenericAction {
 				final SkullActionData s = (SkullActionData) blockActionData;
 
 				// Set skull data
-				final Directional direction = (Directional) block.getBlockData();
+				final Directional direction = (Directional) state.getBlockData();
 				direction.setFacing(s.getRotation());
 				
 				if (!s.owner.isEmpty()) {
-					final Skull skull = (Skull) block.getState();
+					final Skull skull = (Skull) state;
 					skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf((s.owner))));
-					skull.update();
 				}
 
 			}
@@ -393,10 +391,9 @@ public class BlockAction extends GenericAction {
 				final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
 				// Set spawner data
-				final CreatureSpawner spawner = (CreatureSpawner) block.getState();
+				final CreatureSpawner spawner = (CreatureSpawner) state;
 				spawner.setDelay(s.getDelay());
 				spawner.setSpawnedType(s.getEntityType());
-				spawner.update();
 
 			}
 
@@ -404,9 +401,8 @@ public class BlockAction extends GenericAction {
 			 * Restoring command block
 			 */
 			if (getBlock() == Material.COMMAND_BLOCK) {
-				final CommandBlock cmdblock = (CommandBlock) block.getState();
+				final CommandBlock cmdblock = (CommandBlock) state;
 				cmdblock.setCommand(data);
-				cmdblock.update();
 			}
 
 			/**
@@ -424,51 +420,78 @@ public class BlockAction extends GenericAction {
 				// org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
 				// cannot be cast to org.bukkit.block.Sign
 				// https://snowy-evening.com/botsko/prism/455/
-				if (block.getState() instanceof Sign) {
+				if (state instanceof Sign) {
 
 					// Set sign data
-					final Sign sign = (Sign) block.getState();
-					int i = 0;
-					if (s.lines != null && s.lines.length > 0) {
-						for (final String line : s.lines) {
-							sign.setLine(i, line);
-							i++;
+					final Sign sign = (Sign) state;
+					
+					if (s.lines != null) {
+						for(int i = 0; i < s.lines.length; ++i) {
+							sign.setLine(i, s.lines[i]);
 						}
 					}
-					sign.update();
 				}
 			}
+			
+			state.setBlockData(getBlockData());
+			
+			// -----------------------------
+			// Sibling logic marker
 
 			// If the material is a crop that needs soil, we must restore the
 			// soil
 			// This may need to go before setting the block, but I prefer the
 			// BlockUtil
 			// logic to use materials.
-			if (BlockUtils.materialRequiresSoil(block.getType())) {
-				final Block below = block.getRelative(BlockFace.DOWN);
-				if (below.getType().equals(Material.DIRT) || below.getType().equals(Material.AIR)
-						|| below.getType().equals(Material.GRASS)) {
-					below.setType(Material.FARMLAND);
-				} else {
-					// System.out.print("Block skipped because there's no soil below.");
+			BlockState sibling = null;
+			
+			if (BlockUtils.materialRequiresSoil(getBlock())) {
+				sibling = block.getRelative(BlockFace.DOWN).getState();
+				
+				if(cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
 					return new ChangeResult(ChangeResultType.SKIPPED, null);
 				}
+				
+				sibling.setType(Material.FARMLAND);
+			}
+			
+			// Chest sides can be broken independently, ignore them
+			if(state.getType() != Material.CHEST && state.getType() != Material.TRAPPED_CHEST) {
+				final Block s = BlockUtils.getSiblingForDoubleLengthBlock(state);
+				
+				if(s != null) {
+					sibling = s.getState();
+					
+					if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(sibling.getType())) {
+						// Upper half fail
+						return new ChangeResult(ChangeResultType.SKIPPED, null);
+					}
+					
+					sibling.setType(block.getType());
+					
+					BlockData siblingData = getBlockData().clone();
+					
+					if(siblingData instanceof Bed) {
+						// We always log the foot
+						((Bed)siblingData).setPart(Part.HEAD);
+					}
+					else if(siblingData instanceof Bisected) {
+						// We always log the bottom
+						((Bisected)siblingData).setHalf(Half.TOP);
+					}
+
+					sibling.setBlockData(siblingData);
+				}
+			}
+			
+			state.update(true, false);
+			
+			if(sibling != null) {
+				sibling.update(true, false);
 			}
 
-			// Capture the new state
-			final BlockState newBlock = block.getState();
-			
-			Prism.log("stored data: " + getBlockData().getAsString());
-			
-			newBlock.setBlockData(getBlockData());
-			
-			Prism.log("now on block state?: " + newBlock.getBlockData().getAsString());
-			newBlock.update();
-			
-			Prism.log("now on block???: " + newBlock.getBlock().getBlockData().getAsString());
-
 			// Store the state change
-			stateChange = new BlockStateChange(originalBlock, newBlock);
+			stateChange = new BlockStateChange(originalBlock, state);
 		} else {
 
 			// Otherwise, save the state so we can cancel if needed

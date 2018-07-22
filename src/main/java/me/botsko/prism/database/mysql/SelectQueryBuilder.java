@@ -2,14 +2,15 @@ package me.botsko.prism.database.mysql;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 
-import me.botsko.prism.utils.MaterialAliases;
+import me.botsko.prism.utils.IntPair;
+import me.botsko.prism.utils.MaterialAliases.MaterialState;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -212,25 +213,39 @@ public class SelectQueryBuilder extends QueryBuilder {
 	 */
 	protected void blockCondition() {
 		// Blocks
-		final HashSet<Material> blockfilters = parameters.getBlockFilters();
+		final Set<Material> blockfilters = parameters.getBlockFilters();
 		if (!blockfilters.isEmpty()) {
 			final String[] blockArr = new String[blockfilters.size()];
 			int i = 0;
 			for (Material m : blockfilters) {
 
-				// TODO Better state handling
-				int ids[] = Prism.getItems().materialToIdsWildcard(m, "");
-
-				// 
-				if (ids[1] == MaterialAliases.SUBID_WILDCARD) {
-					blockArr[i] = tableNameData + ".block_id = " + ids[0];
-				} else {
-					blockArr[i] = tableNameData + ".block_id = " + ids[0] + " AND " + tableNameData + ".block_subid = "
-							+ ids[1];
+				Set<IntPair> allIds = Prism.getItems().materialToAllIds(m);
+				
+				StringBuilder block_ids = new StringBuilder("(");
+				for(IntPair pair : allIds) {
+					block_ids.append(pair.first).append(',');
 				}
-				i++;
+				
+				String in = block_ids.append(')').toString().replace(",)", ")");
+				
+				blockArr[i++] = tableNameData + ".block_id IN " + in;
 			}
 			addCondition(buildGroupConditions(null, blockArr, "%s%s", "OR", null));
+		}
+		
+		Set<MaterialState> blockDataFilters = parameters.getBlockDataFilters();
+		
+		if(!blockDataFilters.isEmpty()) {
+			final ArrayList<String> blockArr = new ArrayList<>();
+			
+			for (MaterialState data : blockDataFilters) {
+				Set<IntPair> pairs = Prism.getItems().partialBlockDataIds(data.material, data.state);
+				
+				for(IntPair pair : pairs) {
+					blockArr.add(tableNameData + ".block_id = " + pair.first + " AND " + tableNameData + ".block_subid = " + pair.second);
+				}
+			}
+			addCondition(buildGroupConditions(null, blockArr.toArray(new String[blockArr.size()]), "%s%s", "OR", null));
 		}
 	}
 
