@@ -262,4 +262,8 @@ public interface Handler {
 	 */
 	public abstract ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
 
+	public String getCustomDesc();
+	
+	public void setCustomDesc(String description);
+
 }

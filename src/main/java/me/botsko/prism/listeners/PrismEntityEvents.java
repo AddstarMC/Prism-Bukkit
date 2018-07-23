@@ -21,7 +21,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
@@ -37,6 +36,7 @@ import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.UUID;
 
 public class PrismEntityEvents implements Listener {
@@ -138,10 +138,74 @@ public class PrismEntityEvents implements Listener {
 				}
 			}
 			
-			if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-				// Mob killed by player
+			EntityDamageEvent damageEvent = entity.getLastDamageCause();
+			
+			Entity entitySource = null;
+			Block blockSource = null;
+			
+			// Resolve source
+			if(!damageEvent.isCancelled()) {
+				if(damageEvent instanceof EntityDamageByEntityEvent) {
+					entitySource = ((EntityDamageByEntityEvent)damageEvent).getDamager();
+					
+					if(entitySource instanceof Projectile) {
+						ProjectileSource ps = ((Projectile)entitySource).getShooter();
+						
+						if(ps instanceof BlockProjectileSource) {
+							entitySource = null;
+							blockSource = ((BlockProjectileSource)ps).getBlock();
+						}
+						else {
+							entitySource = (Entity) ps;
+						}
+					}
+				}
+				else if(damageEvent instanceof EntityDamageByBlockEvent) {
+					blockSource = ((EntityDamageByBlockEvent)damageEvent).getDamager();
+				}
+			}
+			
+			// Create handlers
+			if(entitySource instanceof Player) {
+				Player player = (Player) entitySource;
+				
+				if (!Prism.getIgnore().event("player-kill", player))
+					return;
+				
+				RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
+			}
+			else if(entitySource != null) {
+				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+					return;
+				
+				String name = entitySource.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
+			}
+			else if(blockSource != null) {
+				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+					return;
+				
+				String name = "block:" + blockSource.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
+			}
+			else {
+				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
+					return;
+				
+				String name = "unknown";
+
+				if(!damageEvent.isCancelled())
+					name = damageEvent.getCause().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+				
+				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
+			}
+			
+			
+			/*if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
 				final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
 						.getLastDamageCause();
+				
+				// Mob killed by player
 				if (entityDamageByEntityEvent.getDamager() instanceof Player) {
 					final Player player = (Player) entityDamageByEntityEvent.getDamager();
 					if (!Prism.getIgnore().event("player-kill", player))
@@ -182,7 +246,8 @@ public class PrismEntityEvents implements Listener {
 						
 						RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
 					}
-				} else {
+				}
+				else {
 					// Mob died by another mob
 					final Entity damager = entityDamageByEntityEvent.getDamager();
 					String name = "unknown";
@@ -211,7 +276,7 @@ public class PrismEntityEvents implements Listener {
 				// Record the death as natural
 				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, killer));
 
-			}
+			}*/
 		}
 		else {
 

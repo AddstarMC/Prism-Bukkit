@@ -9,7 +9,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.ExperienceOrb;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +46,62 @@ public class EntityUtils {
 			return player.getUniqueId();
 		}
 
+		return null;
+	}
+	
+	private static HashMap<String, String> descriptionCache = new HashMap<>();
+	public static String getCustomProjectileDescription(Projectile source) {
+		String description = descriptionCache.get(source.getClass().getSimpleName());
+		
+		if(description == null) {
+			if (source instanceof org.bukkit.entity.Trident) {
+				description = "scewered";
+			}
+			else if(source instanceof org.bukkit.entity.Arrow) {
+				description = "shot";
+			}
+			else if(source instanceof org.bukkit.entity.Egg) {
+				description = "became the very best of";
+			}
+			else if (source instanceof org.bukkit.entity.EnderPearl) {
+				description = "vwooped";
+			}
+			// Before generic Fireball
+			else if (source instanceof org.bukkit.entity.SmallFireball) {
+				description = "ignited";
+			}
+			else if (source instanceof org.bukkit.entity.Fireball) {
+				description = "exploded";
+			}
+			else if (source instanceof org.bukkit.entity.FishHook) {
+				description = "hooked";
+			}
+			else if (source instanceof org.bukkit.entity.ThrownPotion) {
+				description = "doused";
+			}
+			else if (source instanceof org.bukkit.entity.LlamaSpit) {
+				description = "disrespected";
+			}
+			else if (source instanceof org.bukkit.entity.ShulkerBullet) {
+				description = "ascended";
+			}
+			else if (source instanceof org.bukkit.entity.Snowball) {
+				description = "iced";
+			}
+			else if (source instanceof org.bukkit.entity.ThrownExpBottle) {
+				description = "taught";
+			}
+			else {
+				description = "";
+			}
+			
+			descriptionCache.put(source.getClass().getSimpleName(), description);
+		}
+		
+		if(description.length() > 0) {
+			return description;
+		}
+		
 		return null;
 	}
 

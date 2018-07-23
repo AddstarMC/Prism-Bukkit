@@ -37,6 +37,15 @@ public class EntityAction extends GenericAction {
 			serializer.setNewColor(dyeUsed);
 		}
 	}
+	
+	@Override
+	public String getCustomDesc() {
+		if(serializer != null) {
+			return serializer.customDesc();
+		}
+		
+		return null;
+	}
 
 	/**
 	 * 

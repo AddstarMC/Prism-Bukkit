@@ -34,8 +34,6 @@ public class EntitySerializerFactory {
 		/*
 		 * TODO: Creeper charge, enderman block, magma cube size, shulker color, slime
 		 * size, rabbit color
-		 * 
-		 * all entities with armor ???
 		 */
 	}
 

@@ -126,6 +126,15 @@ public class GenericAction implements Handler {
 	 * 
 	 */
 	protected int aggregateCount = 0;
+	
+	@Override
+	public String getCustomDesc() {
+		return null;
+	}
+	
+	@Override
+	public void setCustomDesc(String description) {
+	}
 
 	/**
 	 * 

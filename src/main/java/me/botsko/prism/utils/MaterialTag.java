@@ -165,8 +165,8 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag SOIL_CANDIDATES = new MaterialTag(
 			Material.AIR, Material.WATER, Material.LAVA, Material.DIRT,
-			Material.GRASS, Material.PODZOL, Material.MYCELIUM,
-			Material.COARSE_DIRT);
+			Material.GRASS_BLOCK, Material.PODZOL, Material.MYCELIUM,
+			Material.COARSE_DIRT, Material.FARMLAND, Material.GRASS_PATH);
 	
 	public static final MaterialTag SKULLS = new MaterialTag(
 			Material.SKELETON_SKULL,

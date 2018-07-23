@@ -4,9 +4,12 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Sittable;
 import org.bukkit.entity.Tameable;
 import org.bukkit.entity.Zombie;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
@@ -18,9 +21,14 @@ public class EntitySerializer {
 	protected String custom_name = null;
 	protected String taming_owner = null;
 	protected String newColor = null;
+	protected String custom_desc = null;
 
 	public final String getEntityName() {
 		return entity_name;
+	}
+	
+	public final String customDesc() {
+		return custom_desc;
 	}
 
 	// Le sigh
@@ -51,6 +59,19 @@ public class EntitySerializer {
 		// Sitting
 		if (entity instanceof Sittable) {
 			sitting = ((Sittable) entity).isSitting();
+		}
+		
+		EntityDamageEvent damageEvent = entity.getLastDamageCause();
+		
+		// Saves us the null check
+		if(damageEvent instanceof EntityDamageByEntityEvent &&
+				!damageEvent.isCancelled() &&
+				damageEvent.getDamage() > ((LivingEntity)entity).getHealth()) {
+			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) damageEvent;
+			
+			if(e.getDamager() instanceof Projectile) {
+				custom_desc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
+			}
 		}
 
 		serializer(entity);
@@ -110,13 +131,13 @@ public class EntitySerializer {
 		if (Boolean.FALSE.equals(isAdult))
 			sb.append("baby ");
 
-		sb.append(MiscUtils.niceName(entity_name)).append(' ');
+		sb.append(MiscUtils.niceName(entity_name));
 
 		if (newColor != null)
-			sb.append(MiscUtils.niceName(newColor)).append(' ');
+			sb.append(' ').append(MiscUtils.niceName(newColor));
 
 		if (custom_name != null)
-			sb.append("named ").append(custom_name);
+			sb.append(" named").append(custom_name);
 
 		niceName(sb, index);
 		return sb.toString();

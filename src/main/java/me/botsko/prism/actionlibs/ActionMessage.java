@@ -109,9 +109,14 @@ public class ActionMessage {
 
 		// Who
 		line1 += highlight + a.getPlayerName();
+		
+		String description = a.getCustomDesc();
+		
+		if(description == null)
+			description = a.getType().getNiceDescription();
 
 		// Description of event
-		line1 += " " + ChatColor.WHITE + a.getType().getNiceDescription();
+		line1 += " " + ChatColor.WHITE + description;
 		if (a.getType().getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				line1 += " " + highlight + a.getNiceName();
