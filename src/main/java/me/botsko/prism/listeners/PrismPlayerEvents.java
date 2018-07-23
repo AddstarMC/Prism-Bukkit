@@ -35,6 +35,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PrismPlayerEvents implements Listener {
 
@@ -494,10 +495,6 @@ public class PrismPlayerEvents implements Listener {
 			default:
 				break;
 			}
-			
-			Prism.log("Eggs: " + MaterialTag.SPAWN_EGGS);
-			Prism.log("hand: " + hand.getType());
-			Prism.log("isTagged: " + MaterialTag.SPAWN_EGGS.isTagged(hand.getType()));
 
 			// if they're holding a spawner egg
 			if (MaterialTag.SPAWN_EGGS.isTagged(hand.getType())) {
@@ -591,7 +588,7 @@ public class PrismPlayerEvents implements Listener {
 	protected void recordMonsterEggUse(Block block, ItemStack inhand, Player player) {
 		if (!Prism.getIgnore().event("spawnegg-use", block))
 			return;
-		RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use", "monster egg", block, player));
+		RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use", inhand.getType().name().toLowerCase(Locale.ENGLISH), block, player));
 	}
 
 	/**
