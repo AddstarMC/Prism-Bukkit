@@ -47,7 +47,8 @@ public class DeathUtils {
 				if (source instanceof Player) {
 					killer = ((Player) source);
 				}
-			} else {
+			}
+			else {
 				killer = entityDamageByEntityEvent.getDamager();
 			}
 		}
@@ -73,17 +74,23 @@ public class DeathUtils {
 		// Causes of death for either entities or players
 		if (damageCause.equals(DamageCause.ENTITY_ATTACK)) {
 			return "mob";
-		} else if (damageCause.equals(DamageCause.PROJECTILE)) {
+		}
+		else if (damageCause.equals(DamageCause.PROJECTILE)) {
 			return "skeleton";
-		} else if (damageCause.equals(DamageCause.ENTITY_EXPLOSION)) {
+		}
+		else if (damageCause.equals(DamageCause.ENTITY_EXPLOSION)) {
 			return "creeper";
-		} else if (damageCause.equals(DamageCause.CONTACT)) {
+		}
+		else if (damageCause.equals(DamageCause.CONTACT)) {
 			return "cactus";
-		} else if (damageCause.equals(DamageCause.BLOCK_EXPLOSION)) {
+		}
+		else if (damageCause.equals(DamageCause.BLOCK_EXPLOSION)) {
 			return "tnt";
-		} else if (damageCause.equals(DamageCause.FIRE) || damageCause.equals(DamageCause.FIRE_TICK)) {
+		}
+		else if (damageCause.equals(DamageCause.FIRE) || damageCause.equals(DamageCause.FIRE_TICK)) {
 			return "fire";
-		} else if (damageCause.equals(DamageCause.MAGIC)) {
+		}
+		else if (damageCause.equals(DamageCause.MAGIC)) {
 			return "potion";
 		}
 		return damageCause.name().toLowerCase();
@@ -121,7 +128,8 @@ public class DeathUtils {
 			else if (killer instanceof Skeleton) {
 				if (killer instanceof WitherSkeleton) {
 					return "witherskeleton";
-				} else {
+				}
+				else {
 					return "skeleton";
 				}
 			}
@@ -135,13 +143,16 @@ public class DeathUtils {
 				if (wolf.isTamed()) {
 					if (wolf.getOwner() instanceof Player || wolf.getOwner() instanceof OfflinePlayer) {
 						return "pvpwolf";
-					} else {
+					}
+					else {
 						return "wolf";
 					}
-				} else {
+				}
+				else {
 					return "wolf";
 				}
-			} else {
+			}
+			else {
 				return killer.getType().name().toLowerCase();
 			}
 		}
@@ -159,14 +170,16 @@ public class DeathUtils {
 
 		if (victim instanceof Player) {
 			return ((Player) victim).getName();
-		} else {
+		}
+		else {
 
 			// Which skeleton type?
 			// TODO: Other skeleton types
 			if (victim instanceof Skeleton) {
 				if (victim instanceof WitherSkeleton) {
 					return "witherskeleton";
-				} else {
+				}
+				else {
 					return "skeleton";
 				}
 			}
@@ -180,13 +193,16 @@ public class DeathUtils {
 				if (wolf.isTamed()) {
 					if (wolf.getOwner() instanceof Player || wolf.getOwner() instanceof OfflinePlayer) {
 						return "pvpwolf";
-					} else {
+					}
+					else {
 						return "wolf";
 					}
-				} else {
+				}
+				else {
 					return "wolf";
 				}
-			} else {
+			}
+			else {
 				return victim.getType().name().toLowerCase();
 			}
 		}

@@ -24,8 +24,7 @@ public interface Handler {
 	public abstract long getId();
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public abstract void setId(long id);
 
@@ -45,8 +44,7 @@ public interface Handler {
 	public abstract String getDisplayTime();
 
 	/**
-	 * @param display_time
-	 *            the display_time to set
+	 * @param display_time the display_time to set
 	 */
 	public abstract void setUnixEpoch(String epoch);
 
@@ -73,8 +71,7 @@ public interface Handler {
 	public abstract String getWorldName();
 
 	/**
-	 * @param world_name
-	 *            the world_name to set
+	 * @param world_name the world_name to set
 	 */
 	public abstract void setWorldName(String world_name);
 
@@ -84,8 +81,7 @@ public interface Handler {
 	public abstract String getPlayerName();
 
 	/**
-	 * @param player_name
-	 *            the player_name to set
+	 * @param player_name the player_name to set
 	 */
 	public abstract void setNonPlayerName(String player_name);
 
@@ -95,8 +91,7 @@ public interface Handler {
 	public abstract double getX();
 
 	/**
-	 * @param x
-	 *            the x to set
+	 * @param x the x to set
 	 */
 	public abstract void setX(double x);
 
@@ -106,8 +101,7 @@ public interface Handler {
 	public abstract double getY();
 
 	/**
-	 * @param y
-	 *            the y to set
+	 * @param y the y to set
 	 */
 	public abstract void setY(double y);
 
@@ -117,8 +111,7 @@ public interface Handler {
 	public abstract double getZ();
 
 	/**
-	 * @param z
-	 *            the z to set
+	 * @param z the z to set
 	 */
 	public abstract void setZ(double z);
 
@@ -133,7 +126,7 @@ public interface Handler {
 	 * @param id
 	 */
 	public abstract void setBlockData(BlockData state);
-	
+
 	public abstract void setDurability(short durability);
 
 	/**
@@ -147,9 +140,9 @@ public interface Handler {
 	public abstract BlockData getBlockData();
 
 	public abstract short getDurability();
-	
+
 	public abstract String getState();
-	
+
 	/**
 	 * 
 	 * @param id
@@ -161,7 +154,7 @@ public interface Handler {
 	 * @param id
 	 */
 	public abstract void setOldBlockData(BlockData state);
-	
+
 	public abstract void setOldDurability(short durability);
 
 	/**
@@ -182,8 +175,7 @@ public interface Handler {
 	public abstract String getData();
 
 	/**
-	 * @param data
-	 *            the data to set
+	 * @param data the data to set
 	 */
 	public abstract void setData(String data);
 
@@ -263,7 +255,7 @@ public interface Handler {
 	public abstract ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
 
 	public String getCustomDesc();
-	
+
 	public void setCustomDesc(String description);
 
 }

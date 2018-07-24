@@ -129,7 +129,7 @@ public class PrismConfig extends ConfigBase {
 		final List<String> illegalBlocks = new ArrayList<String>();
 		illegalBlocks.add("water");
 		illegalBlocks.add("lava");
-		
+
 		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
 
 		// Tracking

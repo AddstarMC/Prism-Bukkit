@@ -154,8 +154,7 @@ public class Metrics {
 	 * to their own graphs on the metrics website. Plotters can be added to the
 	 * graph object returned.
 	 * 
-	 * @param name
-	 *            The name of the graph
+	 * @param name The name of the graph
 	 * @return Graph object created. Will never return NULL under normal
 	 *         circumstances unless bad parameters are given
 	 */
@@ -178,8 +177,7 @@ public class Metrics {
 	 * Add a Graph object to BukkitMetrics that represents data for the plugin that
 	 * should be sent to the backend
 	 * 
-	 * @param graph
-	 *            The name of the graph
+	 * @param graph The name of the graph
 	 */
 	public void addGraph(final Graph graph) {
 		if (graph == null) {
@@ -192,8 +190,7 @@ public class Metrics {
 	/**
 	 * Adds a custom data plotter to the default graph
 	 * 
-	 * @param plotter
-	 *            The plotter to use to plot custom data
+	 * @param plotter The plotter to use to plot custom data
 	 */
 	public void addCustomData(final Plotter plotter) {
 		if (plotter == null) {
@@ -260,7 +257,8 @@ public class Metrics {
 						// After the first post we set firstPost to false
 						// Each post thereafter will be a ping
 						firstPost = false;
-					} catch (final IOException e) {
+					}
+					catch (final IOException e) {
 						if (debug) {
 							Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
 						}
@@ -282,12 +280,14 @@ public class Metrics {
 			try {
 				// Reload the metrics file
 				configuration.load(getConfigFile());
-			} catch (final IOException ex) {
+			}
+			catch (final IOException ex) {
 				if (debug) {
 					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
 				return true;
-			} catch (final InvalidConfigurationException ex) {
+			}
+			catch (final InvalidConfigurationException ex) {
 				if (debug) {
 					Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
 				}
@@ -456,7 +456,8 @@ public class Metrics {
 		// It does not reroute POST requests so we need to go around it
 		if (isMineshafterPresent()) {
 			connection = url.openConnection(Proxy.NO_PROXY);
-		} else {
+		}
+		else {
 			connection = url.openConnection();
 		}
 
@@ -477,7 +478,8 @@ public class Metrics {
 
 		if (response == null || response.startsWith("ERR")) {
 			throw new IOException(response); // Throw the exception
-		} else {
+		}
+		else {
 			// Is this the first update this hour?
 			if (response.contains("OK This is your first update this hour")) {
 				synchronized (graphs) {
@@ -502,7 +504,8 @@ public class Metrics {
 		try {
 			Class.forName("mineshafter.MineServer");
 			return true;
-		} catch (final Exception e) {
+		}
+		catch (final Exception e) {
 			return false;
 		}
 	}
@@ -518,12 +521,9 @@ public class Metrics {
 	 * encodeDataPair(data, "version", description.getVersion());
 	 * </code>
 	 * 
-	 * @param buffer
-	 *            the stringbuilder to append the data pair onto
-	 * @param key
-	 *            the key value
-	 * @param value
-	 *            the value
+	 * @param buffer the stringbuilder to append the data pair onto
+	 * @param key the key value
+	 * @param value the value
 	 */
 	private static void encodeDataPair(final StringBuilder buffer, final String key, final String value)
 			throws UnsupportedEncodingException {
@@ -533,8 +533,7 @@ public class Metrics {
 	/**
 	 * Encode text as UTF-8
 	 * 
-	 * @param text
-	 *            the text to encode
+	 * @param text the text to encode
 	 * @return the encoded text, as UTF-8
 	 */
 	private static String encode(final String text) throws UnsupportedEncodingException {
@@ -572,8 +571,7 @@ public class Metrics {
 		/**
 		 * Add a plotter to the graph, which will be used to plot entries
 		 * 
-		 * @param plotter
-		 *            the plotter to add to the graph
+		 * @param plotter the plotter to add to the graph
 		 */
 		public void addPlotter(final Plotter plotter) {
 			plotters.add(plotter);
@@ -582,8 +580,7 @@ public class Metrics {
 		/**
 		 * Remove a plotter from the graph
 		 * 
-		 * @param plotter
-		 *            the plotter to remove from the graph
+		 * @param plotter the plotter to remove from the graph
 		 */
 		public void removePlotter(final Plotter plotter) {
 			plotters.remove(plotter);
@@ -641,8 +638,7 @@ public class Metrics {
 		/**
 		 * Construct a plotter with a specific plot name
 		 * 
-		 * @param name
-		 *            the name of the plotter to use, which will show up on the website
+		 * @param name the name of the plotter to use, which will show up on the website
 		 */
 		public Plotter(final String name) {
 			this.name = name;

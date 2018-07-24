@@ -38,9 +38,9 @@ public class SignAction extends GenericAction {
 			actionData.sign_type = block.getType().name();
 
 			if (block.getBlockData() instanceof Directional) {
-				actionData.facing = ((Directional)block.getBlockData()).getFacing();
+				actionData.facing = ((Directional) block.getBlockData()).getFacing();
 			}
-			
+
 			this.block = block.getType();
 			this.world_name = block.getWorld().getName();
 			this.x = block.getX();
@@ -110,7 +110,8 @@ public class SignAction extends GenericAction {
 		String name = "sign (";
 		if (actionData.lines != null && actionData.lines.length > 0) {
 			name += TypeUtils.join(actionData.lines, ", ");
-		} else {
+		}
+		else {
 			name += "no text";
 		}
 		name += ")";
@@ -135,9 +136,9 @@ public class SignAction extends GenericAction {
 
 			// Set the facing direction
 			if (block.getBlockData() instanceof Directional) {
-				((Directional)block.getBlockData()).setFacing(getFacing());
+				((Directional) block.getBlockData()).setFacing(getFacing());
 			}
-			
+
 			// Set the content
 			if (block.getState() instanceof org.bukkit.block.Sign) {
 
@@ -151,7 +152,7 @@ public class SignAction extends GenericAction {
 						i++;
 					}
 				}
-				sign.update();
+				sign.update(true, false);
 				return new ChangeResult(ChangeResultType.APPLIED, null);
 			}
 		}

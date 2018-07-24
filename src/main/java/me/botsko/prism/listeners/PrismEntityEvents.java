@@ -98,185 +98,166 @@ public class PrismEntityEvents implements Listener {
 			// Log item drops
 			if (Prism.getIgnore().event("item-drop", entity.getWorld())) {
 				String name = entity.getType().name().toLowerCase();
-				
+
 				// Inventory
 				if (entity instanceof InventoryHolder) {
 					final InventoryHolder holder = (InventoryHolder) entity;
-					
+
 					for (final ItemStack i : holder.getInventory().getContents()) {
 						if (i != null) {
-							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
-									-1, null, entity.getLocation(), name));
+							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
+									null, entity.getLocation(), name));
 						}
 					}
 				}
-				
+
 				// Equipment
 				if (entity instanceof LivingEntity) {
 					final LivingEntity living = (LivingEntity) entity;
-					
+
 					for (final ItemStack i : living.getEquipment().getArmorContents()) {
 						if (i != null) {
-							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(),
-									-1, null, entity.getLocation(), name));
+							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
+									null, entity.getLocation(), name));
 						}
 					}
-					
+
 					// Hand items not stored in "getArmorContents"
 					ItemStack main = living.getEquipment().getItemInMainHand();
 					ItemStack off = living.getEquipment().getItemInOffHand();
-					
-					if(main != null) {
-						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", main, main.getAmount(),
-								-1, null, entity.getLocation(), name));
+
+					if (main != null) {
+						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", main, main.getAmount(), -1,
+								null, entity.getLocation(), name));
 					}
 
-					if(off != null) {
-						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", off, off.getAmount(),
-								-1, null, entity.getLocation(), name));
+					if (off != null) {
+						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", off, off.getAmount(), -1,
+								null, entity.getLocation(), name));
 					}
 				}
 			}
-			
+
 			EntityDamageEvent damageEvent = entity.getLastDamageCause();
-			
+
 			Entity entitySource = null;
 			Block blockSource = null;
-			
+
 			// Resolve source
-			if(!damageEvent.isCancelled()) {
-				if(damageEvent instanceof EntityDamageByEntityEvent) {
-					entitySource = ((EntityDamageByEntityEvent)damageEvent).getDamager();
-					
-					if(entitySource instanceof Projectile) {
-						ProjectileSource ps = ((Projectile)entitySource).getShooter();
-						
-						if(ps instanceof BlockProjectileSource) {
+			if (!damageEvent.isCancelled()) {
+				if (damageEvent instanceof EntityDamageByEntityEvent) {
+					entitySource = ((EntityDamageByEntityEvent) damageEvent).getDamager();
+
+					if (entitySource instanceof Projectile) {
+						ProjectileSource ps = ((Projectile) entitySource).getShooter();
+
+						if (ps instanceof BlockProjectileSource) {
 							entitySource = null;
-							blockSource = ((BlockProjectileSource)ps).getBlock();
+							blockSource = ((BlockProjectileSource) ps).getBlock();
 						}
 						else {
 							entitySource = (Entity) ps;
 						}
 					}
 				}
-				else if(damageEvent instanceof EntityDamageByBlockEvent) {
-					blockSource = ((EntityDamageByBlockEvent)damageEvent).getDamager();
+				else if (damageEvent instanceof EntityDamageByBlockEvent) {
+					blockSource = ((EntityDamageByBlockEvent) damageEvent).getDamager();
 				}
 			}
-			
+
 			// Create handlers
-			if(entitySource instanceof Player) {
+			if (entitySource instanceof Player) {
 				Player player = (Player) entitySource;
-				
+
 				if (!Prism.getIgnore().event("player-kill", player))
 					return;
-				
+
 				RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
 			}
-			else if(entitySource != null) {
+			else if (entitySource != null) {
 				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
 					return;
-				
+
 				String name = entitySource.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
 				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
 			}
-			else if(blockSource != null) {
+			else if (blockSource != null) {
 				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
 					return;
-				
+
 				String name = "block:" + blockSource.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
 				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
 			}
 			else {
 				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
 					return;
-				
+
 				String name = "unknown";
 
-				if(!damageEvent.isCancelled())
+				if (!damageEvent.isCancelled())
 					name = damageEvent.getCause().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
-				
+
 				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
 			}
-			
-			
-			/*if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-				final EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
-						.getLastDamageCause();
-				
-				// Mob killed by player
-				if (entityDamageByEntityEvent.getDamager() instanceof Player) {
-					final Player player = (Player) entityDamageByEntityEvent.getDamager();
-					if (!Prism.getIgnore().event("player-kill", player))
-						return;
-					RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
 
-				}
-				// Mob shot by an arrow from a player
-				else if (entityDamageByEntityEvent.getDamager() instanceof Arrow) {
-					final Arrow arrow = (Arrow) entityDamageByEntityEvent.getDamager();
-					
-					if (arrow.getShooter() instanceof Player) {
-						final Player player = (Player) arrow.getShooter();
-						if (!Prism.getIgnore().event("player-kill", player))
-							return;
-						RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity, player));
-
-					}
-					else if (arrow.getShooter() instanceof LivingEntity) {
-						final Entity damager = (Entity) arrow.getShooter();
-						String name = "unknown";
-						if (damager != null) {
-							name = damager.getType().name().toLowerCase();
-						}
-
-						if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
-							return;
-						RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
-					}
-					else if (arrow.getShooter() instanceof BlockProjectileSource) {
-
-						final Block damager = (Block) ((BlockProjectileSource)arrow.getShooter()).getBlock();
-
-						if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
-							return;
-						
-						String name = "block:" + damager.getType().name().toLowerCase();
-						
-						RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
-					}
-				}
-				else {
-					// Mob died by another mob
-					final Entity damager = entityDamageByEntityEvent.getDamager();
-					String name = "unknown";
-					if (damager != null) {
-						name = damager.getType().name().toLowerCase();
-					}
-
-					if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
-						return;
-					RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
-				}
-			} else {
-
-				if (!Prism.getIgnore().event("entity-kill", entity.getWorld()))
-					return;
-
-				String killer = "unknown";
-				final EntityDamageEvent damage = entity.getLastDamageCause();
-				if (damage != null) {
-					final DamageCause cause = damage.getCause();
-					if (cause != null) {
-						killer = cause.name().toLowerCase();
-					}
-				}
-
-				// Record the death as natural
-				RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, killer));
-
-			}*/
+			/*
+			 * if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) { final
+			 * EntityDamageByEntityEvent entityDamageByEntityEvent =
+			 * (EntityDamageByEntityEvent) entity .getLastDamageCause();
+			 * 
+			 * // Mob killed by player if (entityDamageByEntityEvent.getDamager() instanceof
+			 * Player) { final Player player = (Player)
+			 * entityDamageByEntityEvent.getDamager(); if
+			 * (!Prism.getIgnore().event("player-kill", player)) return;
+			 * RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity,
+			 * player));
+			 * 
+			 * } // Mob shot by an arrow from a player else if
+			 * (entityDamageByEntityEvent.getDamager() instanceof Arrow) { final Arrow arrow
+			 * = (Arrow) entityDamageByEntityEvent.getDamager();
+			 * 
+			 * if (arrow.getShooter() instanceof Player) { final Player player = (Player)
+			 * arrow.getShooter(); if (!Prism.getIgnore().event("player-kill", player))
+			 * return; RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill",
+			 * entity, player));
+			 * 
+			 * } else if (arrow.getShooter() instanceof LivingEntity) { final Entity damager
+			 * = (Entity) arrow.getShooter(); String name = "unknown"; if (damager != null)
+			 * { name = damager.getType().name().toLowerCase(); }
+			 * 
+			 * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
+			 * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
+			 * name)); } else if (arrow.getShooter() instanceof BlockProjectileSource) {
+			 * 
+			 * final Block damager = (Block)
+			 * ((BlockProjectileSource)arrow.getShooter()).getBlock();
+			 * 
+			 * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
+			 * 
+			 * String name = "block:" + damager.getType().name().toLowerCase();
+			 * 
+			 * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
+			 * name)); } } else { // Mob died by another mob final Entity damager =
+			 * entityDamageByEntityEvent.getDamager(); String name = "unknown"; if (damager
+			 * != null) { name = damager.getType().name().toLowerCase(); }
+			 * 
+			 * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
+			 * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
+			 * name)); } } else {
+			 * 
+			 * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
+			 * 
+			 * String killer = "unknown"; final EntityDamageEvent damage =
+			 * entity.getLastDamageCause(); if (damage != null) { final DamageCause cause =
+			 * damage.getCause(); if (cause != null) { killer = cause.name().toLowerCase();
+			 * } }
+			 * 
+			 * // Record the death as natural
+			 * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
+			 * killer));
+			 * 
+			 * }
+			 */
 		}
 		else {
 
@@ -523,7 +504,8 @@ public class PrismEntityEvents implements Listener {
 		UUID uuid = null;
 		try {
 			uuid = UUID.fromString(value);
-		} catch (Exception e2) {
+		}
+		catch (Exception e2) {
 		}
 		final Player player = uuid != null ? Bukkit.getPlayer(uuid) : null;
 
@@ -614,14 +596,16 @@ public class PrismEntityEvents implements Listener {
 			if (!Prism.getIgnore().event("sheep-eat", event.getBlock()))
 				return;
 			RecordingQueue.addToQueue(ActionFactory.createBlock("sheep-eat", event.getBlock(), entity));
-		} else if (to == Material.AIR ^ from == Material.AIR && event.getEntity() instanceof Enderman) {
+		}
+		else if (to == Material.AIR ^ from == Material.AIR && event.getEntity() instanceof Enderman) {
 			if (from == Material.AIR) {
 				if (!Prism.getIgnore().event("enderman-place", event.getBlock()))
 					return;
 				BlockState state = event.getBlock().getState();
 				state.setType(to);
 				RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-place", state, entity));
-			} else {
+			}
+			else {
 				if (!Prism.getIgnore().event("enderman-pickup", event.getBlock()))
 					return;
 				final Enderman enderman = (Enderman) event.getEntity();
@@ -631,7 +615,8 @@ public class PrismEntityEvents implements Listener {
 					RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
 				}
 			}
-		} else if (to == Material.AIR && event.getEntity() instanceof Wither) {
+		}
+		else if (to == Material.AIR && event.getEntity() instanceof Wither) {
 			if (!Prism.getIgnore().event("entity-break", event.getBlock()))
 				return;
 			RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", event.getBlock(),
@@ -652,8 +637,8 @@ public class PrismEntityEvents implements Listener {
 		final BlockState newState = event.getNewState();
 		final String entity = event.getEntity().getType().name().toLowerCase();
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(), block.getBlockData(),
-				newState.getType(), newState.getBlockData(), entity));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(),
+				block.getBlockData(), newState.getType(), newState.getBlockData(), entity));
 	}
 
 	/**
@@ -674,18 +659,21 @@ public class PrismEntityEvents implements Listener {
 					return;
 				action = "creeper-explode";
 				name = "creeper";
-			} else if (event.getEntity() instanceof TNTPrimed) {
+			}
+			else if (event.getEntity() instanceof TNTPrimed) {
 				if (!Prism.getIgnore().event("tnt-explode", event.getEntity().getWorld()))
 					return;
 				action = "tnt-explode";
 				Entity source = ((TNTPrimed) event.getEntity()).getSource();
 				name = followTNTTrail(source);
-			} else if (event.getEntity() instanceof EnderDragon) {
+			}
+			else if (event.getEntity() instanceof EnderDragon) {
 				if (!Prism.getIgnore().event("dragon-eat", event.getEntity().getWorld()))
 					return;
 				action = "dragon-eat";
 				name = "enderdragon";
-			} else {
+			}
+			else {
 				if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()))
 					return;
 				try {
@@ -709,11 +697,13 @@ public class PrismEntityEvents implements Listener {
 																				// than
 																				// breaking
 																				// stuff.
-				} catch (final NullPointerException e) {
+				}
+				catch (final NullPointerException e) {
 					name = "unknown";
 				}
 			}
-		} else {
+		}
+		else {
 			if (!Prism.getIgnore().event("entity-explode", event.getLocation().getWorld()))
 				return;
 			name = "magic";
@@ -759,7 +749,8 @@ public class PrismEntityEvents implements Listener {
 		while (initial != null) {
 			if (initial instanceof Player) {
 				return ((Player) initial).getName();
-			} else if (initial instanceof TNTPrimed) {
+			}
+			else if (initial instanceof TNTPrimed) {
 				initial = (((TNTPrimed) initial).getSource());
 				if (counter < 0) {
 					Location last = initial.getLocation();
@@ -769,7 +760,8 @@ public class PrismEntityEvents implements Listener {
 					return "tnt";
 				}
 				counter--;
-			} else {
+			}
+			else {
 				return initial.getType().name();
 			}
 		}

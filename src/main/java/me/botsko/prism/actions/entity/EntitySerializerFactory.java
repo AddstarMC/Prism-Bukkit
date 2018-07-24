@@ -45,7 +45,8 @@ public class EntitySerializerFactory {
 		Class<? extends EntitySerializer> clazz = getSerlializingClass(type);
 		try {
 			return clazz.getConstructor().newInstance();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("No default constructor found for " + clazz.getName());
 		}

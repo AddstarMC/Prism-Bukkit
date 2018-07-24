@@ -23,7 +23,8 @@ public class BeforeParameter extends SimplePrismParameterHandler {
 		final Long date = DateUtil.translateTimeStringToDate(input);
 		if (date != null) {
 			query.setBeforeTime(date);
-		} else {
+		}
+		else {
 			throw new IllegalArgumentException(
 					"Date/time for 'before' parameter value not recognized. Try /pr ? for help");
 		}

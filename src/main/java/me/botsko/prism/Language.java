@@ -30,10 +30,12 @@ public class Language {
 			final String msg = lang.getString(key);
 			if (msg != null) {
 				return colorize(msg);
-			} else {
+			}
+			else {
 				// Prism.log("No language support found for " + key);
 			}
-		} else {
+		}
+		else {
 			// Prism.log("Language file configuration was not loaded correctly.");
 		}
 		return "";

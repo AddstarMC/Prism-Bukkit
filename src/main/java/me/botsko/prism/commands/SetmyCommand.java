@@ -113,7 +113,8 @@ public class SetmyCommand implements SubHandler {
 					final ArrayList<Material> itemMaterials = Prism.getItems().getMaterialsByAlias(wandString);
 					if (itemMaterials.size() > 0) {
 						setWand = itemMaterials.get(0);
-					} else {
+					}
+					else {
 						call.getPlayer()
 								.sendMessage(Prism.messenger.playerError("There's no item matching that name."));
 						return;

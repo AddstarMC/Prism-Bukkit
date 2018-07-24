@@ -65,13 +65,15 @@ public class TeleportCommand implements SubHandler {
 			if (record_id > 0) {
 				if (ident.equals("next")) {
 					record_id++;
-				} else {
+				}
+				else {
 					if (record_id > 1) {
 						record_id--;
 					}
 				}
 			}
-		} else {
+		}
+		else {
 			if (!TypeUtils.isNumeric(ident)) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerError("You must provide a numeric result number or record ID to teleport to."));
@@ -118,7 +120,7 @@ public class TeleportCommand implements SubHandler {
 				return;
 			}
 
-			final int key = (int)(record_id - 1);
+			final int key = (int) (record_id - 1);
 
 			// Get the result index specified
 			destinationAction = results.getActionResults().get(key);

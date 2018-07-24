@@ -226,41 +226,41 @@ public class PrismPlayerEvents implements Listener {
 		String cause;
 		Material newMat;
 		Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
-		
-		if(event.getBucket() == Material.LAVA_BUCKET) {
+
+		if (event.getBucket() == Material.LAVA_BUCKET) {
 			cause = "lava-bucket";
 			newMat = Material.LAVA;
 		}
 		else {
 			cause = "water-bucket";
 			newMat = Material.WATER;
-			
-			if(event.getBucket() != Material.WATER_BUCKET) {
+
+			if (event.getBucket() != Material.WATER_BUCKET) {
 				// TODO: handle fish here maybe
 			}
 		}
 
 		if (!Prism.getIgnore().event(cause, player))
 			return;
-		
+
 		BlockData oldData = spot.getBlockData();
 		BlockData newData = Bukkit.createBlockData(newMat);
 
 		BlockData clickedData = event.getBlockClicked().getBlockData();
-		
+
 		// TODO If "Lavalogged" blocks become a thing, please revisit.
-		if(clickedData instanceof Waterlogged && event.getBucket() != Material.LAVA) {
+		if (clickedData instanceof Waterlogged && event.getBucket() != Material.LAVA) {
 			Waterlogged wl = (Waterlogged) clickedData;
-			
-			if(!wl.isWaterlogged()) {
+
+			if (!wl.isWaterlogged()) {
 				spot = event.getBlockClicked();
 				newMat = spot.getType();
 				oldData = wl;
-				
+
 				newData = wl.clone();
-				((Waterlogged)newData).setWaterlogged(true);
-				
-				cause = "waterlogged";
+				((Waterlogged) newData).setWaterlogged(true);
+
+				cause = "water-bucket";
 			}
 		}
 
@@ -289,7 +289,8 @@ public class PrismPlayerEvents implements Listener {
 		String liquid_type = "milk";
 		if (spot.getType() == Material.WATER) {
 			liquid_type = "water";
-		} else if (spot.getType() == Material.LAVA) {
+		}
+		else if (spot.getType() == Material.LAVA) {
 			liquid_type = "lava";
 		}
 
@@ -411,89 +412,89 @@ public class PrismPlayerEvents implements Listener {
 
 			String coord_key;
 			switch (block.getType()) {
-			case FURNACE:
-			case DISPENSER:
-			case CHEST:
-			case ENDER_CHEST:
-			case ENCHANTING_TABLE:
-			case ANVIL:
-			case BREWING_STAND:
-			case TRAPPED_CHEST:
-			case HOPPER:
-			case DROPPER:
-				if (!Prism.getIgnore().event("container-access", player))
-					return;
-				RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
-				break;
-			case JUKEBOX:
-				recordDiscInsert(block, player);
-				break;
-			case CAKE:
-				recordCakeEat(block, player);
-				break;
-			case OAK_DOOR:
-			case ACACIA_DOOR:
-			case BIRCH_DOOR:
-			case DARK_OAK_DOOR:
-			case JUNGLE_DOOR:
-			case SPRUCE_DOOR:
-			case OAK_TRAPDOOR:
-			case SPRUCE_TRAPDOOR:
-			case BIRCH_TRAPDOOR:
-			case JUNGLE_TRAPDOOR:
-			case ACACIA_TRAPDOOR:
-			case DARK_OAK_TRAPDOOR:
-			case OAK_FENCE_GATE:
-			case SPRUCE_FENCE_GATE:
-			case BIRCH_FENCE_GATE:
-			case JUNGLE_FENCE_GATE:
-			case ACACIA_FENCE_GATE:
-			case DARK_OAK_FENCE_GATE:
-			case LEVER:
-			case STONE_BUTTON:
-			case OAK_BUTTON:
-			case SPRUCE_BUTTON:
-			case BIRCH_BUTTON:
-			case JUNGLE_BUTTON:
-			case ACACIA_BUTTON:
-			case DARK_OAK_BUTTON:
-				if (!Prism.getIgnore().event("block-use", player))
-					return;
-				RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
-				break;
-			case JUNGLE_LOG:
-				recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
-				break;
-			case WHEAT:
-			case GRASS:
-			case MELON_STEM:
-			case PUMPKIN_STEM:
-			case OAK_SAPLING:
-			case SPRUCE_SAPLING:
-			case BIRCH_SAPLING:
-			case JUNGLE_SAPLING:
-			case ACACIA_SAPLING:
-			case DARK_OAK_SAPLING:
-			case CARROT:
-			case POTATO:
-				recordBonemealEvent(block, hand, event.getBlockFace(), player);
-				break;
-			case RAIL:
-			case DETECTOR_RAIL:
-			case POWERED_RAIL:
-			case ACTIVATOR_RAIL:
-				coord_key = block.getX() + ":" + block.getY() + ":" + block.getZ();
-				plugin.preplannedVehiclePlacement.put(coord_key, player.getUniqueId().toString());
-				break;
-			case TNT:
-				if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
-					if (!Prism.getIgnore().event("tnt-prime", player))
+				case FURNACE:
+				case DISPENSER:
+				case CHEST:
+				case ENDER_CHEST:
+				case ENCHANTING_TABLE:
+				case ANVIL:
+				case BREWING_STAND:
+				case TRAPPED_CHEST:
+				case HOPPER:
+				case DROPPER:
+					if (!Prism.getIgnore().event("container-access", player))
 						return;
-					RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", "tnt", block, player));
-				}
-				break;
-			default:
-				break;
+					RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
+					break;
+				case JUKEBOX:
+					recordDiscInsert(block, player);
+					break;
+				case CAKE:
+					recordCakeEat(block, player);
+					break;
+				case OAK_DOOR:
+				case ACACIA_DOOR:
+				case BIRCH_DOOR:
+				case DARK_OAK_DOOR:
+				case JUNGLE_DOOR:
+				case SPRUCE_DOOR:
+				case OAK_TRAPDOOR:
+				case SPRUCE_TRAPDOOR:
+				case BIRCH_TRAPDOOR:
+				case JUNGLE_TRAPDOOR:
+				case ACACIA_TRAPDOOR:
+				case DARK_OAK_TRAPDOOR:
+				case OAK_FENCE_GATE:
+				case SPRUCE_FENCE_GATE:
+				case BIRCH_FENCE_GATE:
+				case JUNGLE_FENCE_GATE:
+				case ACACIA_FENCE_GATE:
+				case DARK_OAK_FENCE_GATE:
+				case LEVER:
+				case STONE_BUTTON:
+				case OAK_BUTTON:
+				case SPRUCE_BUTTON:
+				case BIRCH_BUTTON:
+				case JUNGLE_BUTTON:
+				case ACACIA_BUTTON:
+				case DARK_OAK_BUTTON:
+					if (!Prism.getIgnore().event("block-use", player))
+						return;
+					RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
+					break;
+				case JUNGLE_LOG:
+					recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
+					break;
+				case WHEAT:
+				case GRASS:
+				case MELON_STEM:
+				case PUMPKIN_STEM:
+				case OAK_SAPLING:
+				case SPRUCE_SAPLING:
+				case BIRCH_SAPLING:
+				case JUNGLE_SAPLING:
+				case ACACIA_SAPLING:
+				case DARK_OAK_SAPLING:
+				case CARROT:
+				case POTATO:
+					recordBonemealEvent(block, hand, event.getBlockFace(), player);
+					break;
+				case RAIL:
+				case DETECTOR_RAIL:
+				case POWERED_RAIL:
+				case ACTIVATOR_RAIL:
+					coord_key = block.getX() + ":" + block.getY() + ":" + block.getZ();
+					plugin.preplannedVehiclePlacement.put(coord_key, player.getUniqueId().toString());
+					break;
+				case TNT:
+					if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
+						if (!Prism.getIgnore().event("tnt-prime", player))
+							return;
+						RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", "tnt", block, player));
+					}
+					break;
+				default:
+					break;
 			}
 
 			// if they're holding a spawner egg
@@ -527,7 +528,7 @@ public class PrismPlayerEvents implements Listener {
 
 		if (block != null && event.getAction() == Action.PHYSICAL) {
 			if (block.getType() == Material.FARMLAND) { // They are stepping on
-													// soil
+				// soil
 				if (!Prism.getIgnore().event("crop-trample", player))
 					return;
 				RecordingQueue
@@ -588,7 +589,8 @@ public class PrismPlayerEvents implements Listener {
 	protected void recordMonsterEggUse(Block block, ItemStack inhand, Player player) {
 		if (!Prism.getIgnore().event("spawnegg-use", block))
 			return;
-		RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use", inhand.getType().name().toLowerCase(Locale.ENGLISH), block, player));
+		RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use",
+				inhand.getType().name().toLowerCase(Locale.ENGLISH), block, player));
 	}
 
 	/**
@@ -637,7 +639,8 @@ public class PrismPlayerEvents implements Listener {
 			RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
 					block.getLocation(), player));
 
-		} else {
+		}
+		else {
 
 			// Record the insert
 			RecordingQueue.addToQueue(

@@ -21,7 +21,8 @@ public class TypeUtils {
 	public static boolean isNumeric(String str) {
 		try {
 			Long.parseLong(str);
-		} catch (NumberFormatException nfe) {
+		}
+		catch (NumberFormatException nfe) {
 			return false;
 		}
 		return true;
@@ -96,10 +97,8 @@ public class TypeUtils {
 	 * Method to join array elements of type string
 	 * 
 	 * @author Hendrik Will, imwill.com, bug fixes by viveleroi
-	 * @param inputArray
-	 *            Array which contains strings
-	 * @param glueString
-	 *            String between each array element
+	 * @param inputArray Array which contains strings
+	 * @param glueString String between each array element
 	 * @return String containing all array elements separated by glue string
 	 */
 	public static String join(String[] inputArray, String glueString) {

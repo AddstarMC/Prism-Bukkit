@@ -32,49 +32,71 @@ public class EnchantmentUtils {
 	public static Enchantment getEnchantmentFromCommonName(String name) {
 		if (name.equalsIgnoreCase("aquaaffinity")) {
 			return Enchantment.WATER_WORKER;
-		} else if (name.equalsIgnoreCase("bane")) {
+		}
+		else if (name.equalsIgnoreCase("bane")) {
 			return Enchantment.DAMAGE_ARTHROPODS;
-		} else if (name.equalsIgnoreCase("efficiency")) {
+		}
+		else if (name.equalsIgnoreCase("efficiency")) {
 			return Enchantment.DIG_SPEED;
-		} else if (name.equalsIgnoreCase("explosion")) {
+		}
+		else if (name.equalsIgnoreCase("explosion")) {
 			return Enchantment.PROTECTION_EXPLOSIONS;
-		} else if (name.equalsIgnoreCase("fall")) {
+		}
+		else if (name.equalsIgnoreCase("fall")) {
 			return Enchantment.PROTECTION_FALL;
-		} else if (name.equalsIgnoreCase("fire")) {
+		}
+		else if (name.equalsIgnoreCase("fire")) {
 			return Enchantment.PROTECTION_FIRE;
-		} else if (name.equalsIgnoreCase("fireaspect")) {
+		}
+		else if (name.equalsIgnoreCase("fireaspect")) {
 			return Enchantment.FIRE_ASPECT;
-		} else if (name.equalsIgnoreCase("flame")) {
+		}
+		else if (name.equalsIgnoreCase("flame")) {
 			return Enchantment.ARROW_FIRE;
-		} else if (name.equalsIgnoreCase("fortune")) {
+		}
+		else if (name.equalsIgnoreCase("fortune")) {
 			return Enchantment.LOOT_BONUS_BLOCKS;
-		} else if (name.equalsIgnoreCase("infinity")) {
+		}
+		else if (name.equalsIgnoreCase("infinity")) {
 			return Enchantment.ARROW_INFINITE;
-		} else if (name.equalsIgnoreCase("knockback")) {
+		}
+		else if (name.equalsIgnoreCase("knockback")) {
 			return Enchantment.KNOCKBACK;
-		} else if (name.equalsIgnoreCase("looting")) {
+		}
+		else if (name.equalsIgnoreCase("looting")) {
 			return Enchantment.LOOT_BONUS_MOBS;
-		} else if (name.equalsIgnoreCase("lure")) {
+		}
+		else if (name.equalsIgnoreCase("lure")) {
 			return Enchantment.LURE;
-		} else if (name.equalsIgnoreCase("luck")) {
+		}
+		else if (name.equalsIgnoreCase("luck")) {
 			return Enchantment.LUCK;
-		} else if (name.equalsIgnoreCase("power")) {
+		}
+		else if (name.equalsIgnoreCase("power")) {
 			return Enchantment.ARROW_DAMAGE;
-		} else if (name.equalsIgnoreCase("projectile")) {
+		}
+		else if (name.equalsIgnoreCase("projectile")) {
 			return Enchantment.PROTECTION_PROJECTILE;
-		} else if (name.equalsIgnoreCase("protection")) {
+		}
+		else if (name.equalsIgnoreCase("protection")) {
 			return Enchantment.PROTECTION_ENVIRONMENTAL;
-		} else if (name.equalsIgnoreCase("punch")) {
+		}
+		else if (name.equalsIgnoreCase("punch")) {
 			return Enchantment.ARROW_KNOCKBACK;
-		} else if (name.equalsIgnoreCase("respiration")) {
+		}
+		else if (name.equalsIgnoreCase("respiration")) {
 			return Enchantment.OXYGEN;
-		} else if (name.equalsIgnoreCase("sharpness")) {
+		}
+		else if (name.equalsIgnoreCase("sharpness")) {
 			return Enchantment.DAMAGE_ALL;
-		} else if (name.equalsIgnoreCase("silktouch")) {
+		}
+		else if (name.equalsIgnoreCase("silktouch")) {
 			return Enchantment.SILK_TOUCH;
-		} else if (name.equalsIgnoreCase("smite")) {
+		}
+		else if (name.equalsIgnoreCase("smite")) {
 			return Enchantment.DAMAGE_UNDEAD;
-		} else if (name.equalsIgnoreCase("unbreaking")) {
+		}
+		else if (name.equalsIgnoreCase("unbreaking")) {
 			return Enchantment.DURABILITY;
 		}
 		return null;
@@ -93,54 +115,76 @@ public class EnchantmentUtils {
 
 		if (ench.equals(Enchantment.ARROW_DAMAGE)) {
 			ench_name = "power";
-		} else if (ench.equals(Enchantment.ARROW_FIRE)) {
+		}
+		else if (ench.equals(Enchantment.ARROW_FIRE)) {
 			ench_name = "flame";
-		} else if (ench.equals(Enchantment.ARROW_INFINITE)) {
+		}
+		else if (ench.equals(Enchantment.ARROW_INFINITE)) {
 			ench_name = "infinity";
-		} else if (ench.equals(Enchantment.ARROW_KNOCKBACK)) {
+		}
+		else if (ench.equals(Enchantment.ARROW_KNOCKBACK)) {
 			ench_name = "punch";
-		} else if (ench.equals(Enchantment.DAMAGE_ALL)) {
+		}
+		else if (ench.equals(Enchantment.DAMAGE_ALL)) {
 			ench_name = "sharpness";
-		} else if (ench.equals(Enchantment.DAMAGE_ARTHROPODS)) {
+		}
+		else if (ench.equals(Enchantment.DAMAGE_ARTHROPODS)) {
 			ench_name = "bane of anthropods";
-		} else if (ench.equals(Enchantment.DAMAGE_UNDEAD)) {
+		}
+		else if (ench.equals(Enchantment.DAMAGE_UNDEAD)) {
 			ench_name = "damage undead";
-		} else if (ench.equals(Enchantment.DIG_SPEED)) {
+		}
+		else if (ench.equals(Enchantment.DIG_SPEED)) {
 			ench_name = "efficiency";
-		} else if (ench.equals(Enchantment.DURABILITY)) {
+		}
+		else if (ench.equals(Enchantment.DURABILITY)) {
 			ench_name = "unbreaking";
-		} else if (ench.equals(Enchantment.LOOT_BONUS_BLOCKS)) {
+		}
+		else if (ench.equals(Enchantment.LOOT_BONUS_BLOCKS)) {
 			ench_name = "fortune";
-		} else if (ench.equals(Enchantment.LOOT_BONUS_MOBS)) {
+		}
+		else if (ench.equals(Enchantment.LOOT_BONUS_MOBS)) {
 			ench_name = "looting";
-		} else if (ench.equals(Enchantment.OXYGEN)) {
+		}
+		else if (ench.equals(Enchantment.OXYGEN)) {
 			ench_name = "respiration";
-		} else if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
+		}
+		else if (ench.equals(Enchantment.PROTECTION_ENVIRONMENTAL)) {
 			ench_name = "protection";
-		} else if (ench.equals(Enchantment.PROTECTION_EXPLOSIONS)) {
+		}
+		else if (ench.equals(Enchantment.PROTECTION_EXPLOSIONS)) {
 			ench_name = "blast protection";
-		} else if (ench.equals(Enchantment.PROTECTION_FALL)) {
+		}
+		else if (ench.equals(Enchantment.PROTECTION_FALL)) {
 			ench_name = "feather falling";
-		} else if (ench.equals(Enchantment.PROTECTION_FIRE)) {
+		}
+		else if (ench.equals(Enchantment.PROTECTION_FIRE)) {
 			ench_name = "fire protection";
-		} else if (ench.equals(Enchantment.PROTECTION_PROJECTILE)) {
+		}
+		else if (ench.equals(Enchantment.PROTECTION_PROJECTILE)) {
 			ench_name = "projectile protection";
-		} else if (ench.equals(Enchantment.WATER_WORKER)) {
+		}
+		else if (ench.equals(Enchantment.WATER_WORKER)) {
 			ench_name = "aqua affinity";
-		} else {
+		}
+		else {
 			// can leave as-is: SILK_TOUCH, FIRE_ASPECT, KNOCKBACK, THORNS, LUCK, LURE
 			ench_name = ench.getKey().getKey().toLowerCase().replace("_", " ");
 		}
 
 		if (level == 1) {
 			ench_name += " I";
-		} else if (level == 2) {
+		}
+		else if (level == 2) {
 			ench_name += " II";
-		} else if (level == 3) {
+		}
+		else if (level == 3) {
 			ench_name += " III";
-		} else if (level == 4) {
+		}
+		else if (level == 4) {
 			ench_name += " IV";
-		} else if (level == 5) {
+		}
+		else if (level == 5) {
 			ench_name += " V";
 		}
 

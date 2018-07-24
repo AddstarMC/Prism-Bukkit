@@ -37,13 +37,13 @@ public class EntityAction extends GenericAction {
 			serializer.setNewColor(dyeUsed);
 		}
 	}
-	
+
 	@Override
 	public String getCustomDesc() {
-		if(serializer != null) {
+		if (serializer != null) {
 			return serializer.customDesc();
 		}
-		
+
 		return null;
 	}
 
@@ -76,7 +76,8 @@ public class EntityAction extends GenericAction {
 			if (e != null) {
 				return e;
 			}
-		} catch (final IllegalArgumentException e) {
+		}
+		catch (final IllegalArgumentException e) {
 			// In pre-RC builds we logged the wrong name of entities, sometimes
 			// the names
 			// don't match the enum.
@@ -90,7 +91,11 @@ public class EntityAction extends GenericAction {
 	 */
 	@Override
 	public String getNiceName() {
-		return serializer.toString();
+		if(serializer != null) {
+			return serializer.toString();
+		}
+		
+		return "unknown";
 	}
 
 	/**
@@ -98,20 +103,26 @@ public class EntityAction extends GenericAction {
 	 */
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
+		if(serializer == null) {
+			return new ChangeResult(ChangeResultType.SKIPPED, null);
+		}
+		
 		EntityType entityType = getEntityType(serializer.getEntityName());
 		if (entityType != null && !Prism.getIllegalEntities().contains(entityType)) {
 			if (!is_preview) {
 				final Location loc = getLoc().add(0.5, 0.0, 0.5);
-				
+
 				loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> {
 					serializer.deserialize(entity);
 				});
 
 				return new ChangeResult(ChangeResultType.APPLIED, null);
 
-			} else
+			}
+			else
 				return new ChangeResult(ChangeResultType.PLANNED, null);
-		} else
+		}
+		else
 			return new ChangeResult(ChangeResultType.SKIPPED, null);
 	}
 }

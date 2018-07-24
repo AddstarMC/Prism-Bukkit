@@ -139,7 +139,8 @@ public class Prism extends JavaPlugin {
 			try {
 				final Metrics metrics = new Metrics(this);
 				metrics.start();
-			} catch (final IOException e) {
+			}
+			catch (final IOException e) {
 				log("MCStats submission failed.");
 			}
 		}
@@ -158,7 +159,8 @@ public class Prism extends JavaPlugin {
 		if (test_conn != null) {
 			try {
 				test_conn.close();
-			} catch (final SQLException e) {
+			}
+			catch (final SQLException e) {
 				handleDatabaseException(e);
 			}
 		}
@@ -296,7 +298,8 @@ public class Prism extends JavaPlugin {
 		illegalEntities = getConfig().getStringList("prism.appliers.never-spawn-entity").stream().map(s -> {
 			try {
 				return EntityType.valueOf(s.toUpperCase());
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 			}
 
 			return null;
@@ -374,7 +377,8 @@ public class Prism extends JavaPlugin {
 		Connection con = null;
 		try {
 			con = pool.getConnection();
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			log("Database connection failed. " + e.getMessage());
 			if (!e.getMessage().contains("Pool empty")) {
 				e.printStackTrace();
@@ -412,7 +416,8 @@ public class Prism extends JavaPlugin {
 			if (attemptToRescueConnection(e)) {
 				return;
 			}
-		} catch (final SQLException e1) {
+		}
+		catch (final SQLException e1) {
 		}
 		log("Database connection error: " + e.getMessage());
 		if (e.getMessage().contains("marked as crashed")) {
@@ -513,19 +518,23 @@ public class Prism extends JavaPlugin {
 					+ "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
 					+ "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 			st.executeUpdate(query);
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (st != null)
 				try {
 					st.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 		}
 	}
@@ -552,23 +561,28 @@ public class Prism extends JavaPlugin {
 
 			debug("Loaded " + prismActions.size() + " actions into the cache.");
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 		}
 	}
@@ -597,26 +611,32 @@ public class Prism extends JavaPlugin {
 			if (rs.next()) {
 				Prism.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
 				prismActions.put(actionName, rs.getInt(1));
-			} else {
+			}
+			else {
 				throw new SQLException("Insert statement failed - no generated key obtained.");
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 		}
 	}
@@ -640,23 +660,28 @@ public class Prism extends JavaPlugin {
 				prismWorlds.put(rs.getString(2), rs.getInt(1));
 			}
 			debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 		}
 	}
@@ -685,26 +710,32 @@ public class Prism extends JavaPlugin {
 			if (rs.next()) {
 				Prism.log("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
 				prismWorlds.put(worldName, rs.getInt(1));
-			} else {
+			}
+			else {
 				throw new SQLException("Insert statement failed - no generated key obtained.");
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 				}
 		}
 	}
@@ -731,11 +762,13 @@ public class Prism extends JavaPlugin {
 			try {
 				WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
 				log("WorldEdit found. Associated features enabled.");
-			} catch (Throwable error) {
+			}
+			catch (Throwable error) {
 				log("Required WorldEdit version is 6.0.0 or greater! Certain optional features of Prism disabled.");
 			}
 
-		} else {
+		}
+		else {
 			log("WorldEdit not found. Certain optional features of Prism disabled.");
 		}
 	}

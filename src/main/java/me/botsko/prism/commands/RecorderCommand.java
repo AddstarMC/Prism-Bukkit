@@ -54,7 +54,8 @@ public class RecorderCommand implements SubHandler {
 				call.getSender().sendMessage(Prism.messenger.playerMsg("Current recording task has been canceled."));
 				call.getSender().sendMessage(Prism.messenger
 						.playerError("WARNING: Actions will collect until queue until recorder restarted manually."));
-			} else {
+			}
+			else {
 				call.getSender().sendMessage(Prism.messenger.playerError("No recording task is currently running."));
 			}
 			return;
@@ -65,7 +66,8 @@ public class RecorderCommand implements SubHandler {
 			if (recorderActive) {
 				call.getSender().sendMessage(
 						Prism.messenger.playerError("Recording tasks are currently running. Cannot start."));
-			} else {
+			}
+			else {
 
 				// Run db tests...
 				call.getSender().sendMessage(Prism.messenger.playerMsg("Validating database connections..."));
@@ -86,13 +88,16 @@ public class RecorderCommand implements SubHandler {
 					call.getSender().sendMessage(Prism.messenger.playerMsg("Restarting recordering tasks..."));
 					plugin.actionRecorderTask();
 
-				} catch (final Exception e) {
+				}
+				catch (final Exception e) {
 					e.printStackTrace();
-				} finally {
+				}
+				finally {
 					if (conn != null)
 						try {
 							conn.close();
-						} catch (final Exception ignored) {
+						}
+						catch (final Exception ignored) {
 						}
 					;
 				}

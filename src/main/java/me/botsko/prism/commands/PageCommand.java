@@ -59,7 +59,8 @@ public class PageCommand implements SubHandler {
 		int page;
 		if (TypeUtils.isNumeric(call.getArg(1))) {
 			page = Integer.parseInt(call.getArg(1));
-		} else {
+		}
+		else {
 
 			// Next page
 			if (call.getArg(1).equals("next") || call.getArg(1).equals("n")) {
@@ -72,7 +73,8 @@ public class PageCommand implements SubHandler {
 					return;
 				}
 				page = results.getPage() - 1;
-			} else {
+			}
+			else {
 				call.getSender().sendMessage(Prism.messenger
 						.playerError("Page numbers need to actually be numbers, or next/prev. Like /prism page 2"));
 				return;

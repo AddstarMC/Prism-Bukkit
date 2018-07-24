@@ -75,7 +75,11 @@ public class BlockShiftAction extends GenericAction {
 	 */
 	@Override
 	public String getNiceName() {
-		return this.materialAliases.getAlias(this.block, this.block_data) + " from " + actionData.x + " "
-				+ actionData.z;
+		String location = "unknown";
+		if(actionData != null) {
+			location = actionData.x + " " + actionData.y + " " + actionData.z;
+		}
+		
+		return this.materialAliases.getAlias(this.block, this.block_data) + " from " + location;
 	}
 }

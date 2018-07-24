@@ -62,7 +62,8 @@ public class Executor implements CommandExecutor, TabCompleter {
 		String subcommandName;
 		if (mode.equals("subcommand") && args.length > 0) {
 			subcommandName = args[0].toLowerCase();
-		} else {
+		}
+		else {
 			subcommandName = cmd.getName();
 		}
 
@@ -74,7 +75,8 @@ public class Executor implements CommandExecutor, TabCompleter {
 			if (sub == null) {
 				sender.sendMessage("Invalid command");
 				return true;
-			} else {
+			}
+			else {
 				// The default is used, we must switch back to command mode
 				currentMode = "command";
 			}
@@ -177,7 +179,8 @@ public class Executor implements CommandExecutor, TabCompleter {
 			// Complete subcommand
 			if (args.length == 1)
 				return MiscUtils.getStartingWith(subcommandName, subcommands.keySet());
-		} else {
+		}
+		else {
 			subcommandName = cmd.getName();
 		}
 
@@ -189,7 +192,8 @@ public class Executor implements CommandExecutor, TabCompleter {
 			if (sub == null) {
 				sender.sendMessage("Invalid command");
 				return null;
-			} else {
+			}
+			else {
 				// The default is used, we must switch back to command mode
 				currentMode = "command";
 			}

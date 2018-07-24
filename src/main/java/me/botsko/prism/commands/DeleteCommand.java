@@ -54,7 +54,8 @@ public class DeleteCommand implements SubHandler {
 			if (plugin.getPurgeManager().deleteTask != null) {
 				plugin.getPurgeManager().deleteTask.cancel();
 				call.getSender().sendMessage(Prism.messenger.playerMsg("Current purge tasks have been canceled."));
-			} else {
+			}
+			else {
 				call.getSender().sendMessage(Prism.messenger.playerError("No purge task is currently running."));
 			}
 			return;
@@ -68,7 +69,8 @@ public class DeleteCommand implements SubHandler {
 						+ RecordingQueue.getQueue().size() + " events lost.");
 				RecordingQueue.getQueue().clear();
 				call.getSender().sendMessage(Prism.messenger.playerSuccess("Unwritten data in queue cleared."));
-			} else {
+			}
+			else {
 				call.getSender().sendMessage(Prism.messenger.playerError("Event queue is empty, nothing to wipe."));
 			}
 			return;
@@ -133,7 +135,8 @@ public class DeleteCommand implements SubHandler {
 			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
 					new PurgeTask(plugin, paramList, purge_tick_delay, minId, maxId, callback));
 
-		} else {
+		}
+		else {
 			call.getSender().sendMessage(Prism.messenger.playerError("You must supply at least one parameter."));
 		}
 	}

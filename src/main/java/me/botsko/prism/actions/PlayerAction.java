@@ -11,11 +11,14 @@ public class PlayerAction extends GenericAction {
 		if (this.data != null && !this.data.isEmpty()) {
 			if (this.type.getName().equals("player-join")) {
 				return "from " + this.data;
-			} else if (this.type.getName().equals("xp-pickup")) {
+			}
+			else if (this.type.getName().equals("xp-pickup")) {
 				return this.data + " xp";
-			} else if (this.type.getName().equals("bucket-fill")) {
+			}
+			else if (this.type.getName().equals("bucket-fill")) {
 				return "a " + this.data + " bucket";
-			} else {
+			}
+			else {
 				return this.data;
 			}
 		}

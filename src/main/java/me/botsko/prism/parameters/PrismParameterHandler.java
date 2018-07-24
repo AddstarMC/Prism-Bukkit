@@ -21,10 +21,8 @@ public interface PrismParameterHandler {
 	/**
 	 * Complete a param after the `:`
 	 * 
-	 * @param partialParameter
-	 *            The partial parameter
-	 * @param sender
-	 *            The sender
+	 * @param partialParameter The partial parameter
+	 * @param sender The sender
 	 * @return List of strings with suggestions or null if not applicable
 	 */
 	public List<String> tabComplete(String partialParameter, CommandSender sender);

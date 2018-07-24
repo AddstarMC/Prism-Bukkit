@@ -76,8 +76,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
 	public void setId(long id) {
 		this.id = id;
@@ -123,16 +122,14 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param entity
-	 *            the entity to set
+	 * @param entity the entity to set
 	 */
 	public void addEntity(String entity) {
 		addEntity(entity, MatchRule.INCLUDE);
 	}
 
 	/**
-	 * @param entity
-	 *            the entity to set
+	 * @param entity the entity to set
 	 */
 	public void addEntity(String entity, MatchRule match) {
 		this.entity_filters.put(entity, match);
@@ -146,13 +143,11 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param id
-	 *            the block to set
+	 * @param id the block to set
 	 */
 	public void addBlockDataFilter(MaterialState partialData) {
 		this.blockData_filters.add(partialData);
 	}
-
 
 	/**
 	 * @return the block
@@ -162,8 +157,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param id
-	 *            the block to set
+	 * @param id the block to set
 	 */
 	public void addBlockFilter(Material mat) {
 		this.block_filters.add(mat);
@@ -185,8 +179,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param loc
-	 *            the loc to set
+	 * @param loc the loc to set
 	 */
 	public void addSpecificBlockLocation(Location loc) {
 		this.specific_block_locations.add(loc);
@@ -259,8 +252,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param radius
-	 *            the radius to set
+	 * @param radius the radius to set
 	 */
 	public void setRadius(int radius) {
 		this.radius = radius;
@@ -274,8 +266,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param allow_no_radius
-	 *            the allow_no_radius to set
+	 * @param allow_no_radius the allow_no_radius to set
 	 */
 	public void setAllowNoRadius(boolean allow_no_radius) {
 		this.allow_no_radius = allow_no_radius;
@@ -289,16 +280,14 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param player
-	 *            the player to set
+	 * @param player the player to set
 	 */
 	public void addPlayerName(String player) {
 		addPlayerName(player, MatchRule.INCLUDE);
 	}
 
 	/**
-	 * @param player
-	 *            the player to set
+	 * @param player the player to set
 	 */
 	public void addPlayerName(String player, MatchRule match) {
 		this.player_names.put(player, match);
@@ -312,8 +301,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param world
-	 *            the world to set
+	 * @param world the world to set
 	 */
 	public void setWorld(String world) {
 		this.world = world;
@@ -327,8 +315,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param keyword
-	 *            the world to set
+	 * @param keyword the world to set
 	 */
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
@@ -349,16 +336,14 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param action_type
-	 *            the action_type to set
+	 * @param action_type the action_type to set
 	 */
 	public void addActionType(String action_type) {
 		addActionType(action_type, MatchRule.INCLUDE);
 	}
 
 	/**
-	 * @param action_type
-	 *            the action_type to set
+	 * @param action_type the action_type to set
 	 */
 	public void addActionType(String action_type, MatchRule match) {
 		this.actionTypeRules.put(action_type, match);
@@ -386,8 +371,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param time
-	 *            the time to set
+	 * @param time the time to set
 	 */
 	public void setBeforeTime(Long epoch) {
 		this.before_time = epoch;
@@ -401,8 +385,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param time
-	 *            the time to set
+	 * @param time the time to set
 	 */
 	public void setSinceTime(Long epoch) {
 		this.since_time = epoch;
@@ -416,8 +399,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param limit
-	 *            the limit to set
+	 * @param limit the limit to set
 	 */
 	public void setLimit(int limit) {
 		this.limit = limit;
@@ -431,8 +413,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param lookup_type
-	 *            the lookup_type to set
+	 * @param lookup_type the lookup_type to set
 	 */
 	public void setProcessType(PrismProcessType lookup_type) {
 		this.processType = lookup_type;
@@ -446,8 +427,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param foundArgs
-	 *            the foundArgs to set
+	 * @param foundArgs the foundArgs to set
 	 */
 	public void setFoundArgs(Set<String> foundArgs) {
 		this.foundArgs = foundArgs;

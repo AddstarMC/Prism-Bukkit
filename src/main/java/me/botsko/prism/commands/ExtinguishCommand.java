@@ -41,15 +41,18 @@ public class ExtinguishCommand implements SubHandler {
 					if (_tmp_radius > plugin.getConfig().getInt("prism.ex.max-radius")) {
 						call.getPlayer().sendMessage(Prism.messenger.playerError("Radius exceeds max set in config."));
 						return;
-					} else {
+					}
+					else {
 						radius = _tmp_radius;
 					}
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger.playerError(
 							"Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help."));
 					return;
 				}
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(Prism.messenger.playerError(
 						"Radius must be a number. Or leave it off to use the default. Use /prism ? for help."));
 				return;
@@ -67,7 +70,8 @@ public class ExtinguishCommand implements SubHandler {
 					radius);
 			plugin.getServer().getPluginManager().callEvent(event);
 
-		} else {
+		}
+		else {
 			call.getPlayer()
 					.sendMessage(Prism.messenger.playerError("No fires found within that radius to extinguish."));
 		}

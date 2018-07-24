@@ -51,7 +51,6 @@ public interface Wand {
 
 	public Material getItem();
 
-
 	public void setItem(Material material);
 
 	/**

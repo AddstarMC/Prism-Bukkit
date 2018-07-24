@@ -51,7 +51,8 @@ public class UndoCommand implements SubHandler {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("Record ID must be greater than zero."));
 					return;
 				}
-			} else {
+			}
+			else {
 				if (call.getArg(1).equals("last")) {
 					record_id = aq.getUsersLastPrismProcessId(call.getPlayer().getName());
 				}
@@ -97,12 +98,14 @@ public class UndoCommand implements SubHandler {
 						new PrismApplierCallback());
 				rb.apply();
 
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(
 						Prism.messenger.playerError("Nothing found to undo. Must be a problem with Prism."));
 			}
 
-		} else {
+		}
+		else {
 
 			// Show the list
 			// Process and validate all of the arguments
@@ -130,11 +133,13 @@ public class UndoCommand implements SubHandler {
 						}
 						call.getPlayer().sendMessage(Prism.messenger.playerMsg(am.getMessage()));
 					}
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger
 							.playerError("Pagination can't find anything. Do you have the right page number?"));
 				}
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(Prism.messenger.playerError(
 						"Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are."));
 			}

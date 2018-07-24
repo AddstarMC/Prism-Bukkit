@@ -84,16 +84,16 @@ public class PrismBlockEvents implements Listener {
 		}
 		if (block.getState() instanceof InventoryHolder) {
 			InventoryHolder container = (InventoryHolder) block.getState();
-			
+
 			if (container instanceof DoubleChest) {
-				if(((Chest)block.getBlockData()).getType() == Type.LEFT) {
-					container = ((DoubleChest)container).getLeftSide();
+				if (((Chest) block.getBlockData()).getType() == Type.LEFT) {
+					container = ((DoubleChest) container).getLeftSide();
 				}
 				else {
-					container = ((DoubleChest)container).getRightSide();
+					container = ((DoubleChest) container).getRightSide();
 				}
 			}
-			
+
 			int slot = 0;
 			for (final ItemStack i : container.getInventory().getContents()) {
 				// when double chests are broken, they record *all* contents
@@ -215,18 +215,19 @@ public class PrismBlockEvents implements Listener {
 		// properly
 		// logItemRemoveFromDestroyedContainer( player, block );
 		forEachItem(block, (i, s) -> {
-			RecordingQueue.addToQueue(
-					ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null, block.getLocation(), player));
+			RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+					block.getLocation(), player));
 		});
 
 		// Change handling a bit if it's a long block
-		/*final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
-		
-		if (sibling != null && !block.getType().equals(Material.CHEST)
-				&& !block.getType().equals(Material.TRAPPED_CHEST)) {
-
-			block = sibling;
-		}*/
+		/*
+		 * final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+		 * 
+		 * if (sibling != null && !block.getType().equals(Material.CHEST) &&
+		 * !block.getType().equals(Material.TRAPPED_CHEST)) {
+		 * 
+		 * block = sibling; }
+		 */
 
 		RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", block, player));
 
@@ -289,7 +290,8 @@ public class PrismBlockEvents implements Listener {
 			if (!Prism.getIgnore().event("fire-spread"))
 				return;
 			type = "fire-spread";
-		} else {
+		}
+		else {
 			if (!Prism.getIgnore().event("block-spread", event.getBlock()))
 				return;
 		}
@@ -312,8 +314,8 @@ public class PrismBlockEvents implements Listener {
 		final Block b = event.getBlock();
 		final BlockState s = event.getNewState();
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(), b.getBlockData(),
-				s.getType(), s.getBlockData(), "Environment"));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(),
+				b.getBlockData(), s.getType(), s.getBlockData(), "Environment"));
 	}
 
 	/**
@@ -329,8 +331,8 @@ public class PrismBlockEvents implements Listener {
 			return;
 		final BlockState s = event.getNewState();
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(), b.getBlockData(),
-				s.getType(), s.getBlockData(), "Environment"));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(),
+				b.getBlockData(), s.getType(), s.getBlockData(), "Environment"));
 	}
 
 	/**
@@ -390,19 +392,19 @@ public class PrismBlockEvents implements Listener {
 
 		String cause = null;
 		switch (event.getCause()) {
-		case FIREBALL:
-			cause = "fireball";
-			break;
-		case FLINT_AND_STEEL:
-			cause = "lighter";
-			break;
-		case LAVA:
-			cause = "lava-ignite";
-			break;
-		case LIGHTNING:
-			cause = "lightning";
-			break;
-		default:
+			case FIREBALL:
+				cause = "fireball";
+				break;
+			case FLINT_AND_STEEL:
+				cause = "lighter";
+				break;
+			case LAVA:
+				cause = "lava-ignite";
+				break;
+			case LIGHTNING:
+				cause = "lightning";
+				break;
+			default:
 		}
 		if (cause != null) {
 
@@ -523,7 +525,8 @@ public class PrismBlockEvents implements Listener {
 				if (Prism.getIgnore().event("water-break", event.getBlock())) {
 					RecordingQueue.addToQueue(ActionFactory.createBlock("water-break", event.getToBlock(), "Water"));
 				}
-			} else if (from.getType() == Material.LAVA) {
+			}
+			else if (from.getType() == Material.LAVA) {
 				if (Prism.getIgnore().event("lava-break", event.getBlock())) {
 					RecordingQueue.addToQueue(ActionFactory.createBlock("lava-break", event.getToBlock(), "Lava"));
 				}

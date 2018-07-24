@@ -93,7 +93,8 @@ public class PreprocessArgs {
 			try {
 				final PrismParameterHandler handler = matchedParam.getHandler();
 				handler.process(parameters, matchedParam.getArg(), sender);
-			} catch (final IllegalArgumentException e) {
+			}
+			catch (final IllegalArgumentException e) {
 				if (sender != null)
 					sender.sendMessage(Prism.messenger.playerError(e.getMessage()));
 				return null;
@@ -168,17 +169,18 @@ public class PreprocessArgs {
 		}
 
 		switch (result) {
-		case NotFound:
-			if (sender != null)
-				sender.sendMessage(
-						Prism.messenger.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
-			break;
-		case NoPermission:
-			if (sender != null)
-				sender.sendMessage(Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
-			break;
-		default:
-			break;
+			case NotFound:
+				if (sender != null)
+					sender.sendMessage(Prism.messenger
+							.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
+				break;
+			case NoPermission:
+				if (sender != null)
+					sender.sendMessage(
+							Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
+				break;
+			default:
+				break;
 		}
 		return result;
 	}
@@ -259,6 +261,8 @@ public class PreprocessArgs {
 	 *
 	 */
 	private enum ParseResult {
-		NotFound, NoPermission, Found
+		NotFound,
+		NoPermission,
+		Found
 	}
 }

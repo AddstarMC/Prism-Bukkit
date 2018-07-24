@@ -65,8 +65,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
 	}
 
 	/**
-	 * @param permission
-	 *            the permission required to use this parameter.
+	 * @param permission the permission required to use this parameter.
 	 */
 	protected void setPermission(String permission) {
 		this.permission = permission;

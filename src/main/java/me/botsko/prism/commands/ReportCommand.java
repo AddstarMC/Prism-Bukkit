@@ -169,7 +169,8 @@ public class ReportCommand implements SubHandler {
 
 		if (recorderActive) {
 			sender.sendMessage(Prism.messenger.playerSuccess("Recorder is currently queued or running!"));
-		} else {
+		}
+		else {
 			sender.sendMessage(
 					Prism.messenger.playerError("Recorder stopped running! DB conn problems? Try /pr recorder start"));
 		}
@@ -182,19 +183,24 @@ public class ReportCommand implements SubHandler {
 			conn = Prism.dbc();
 			if (conn == null) {
 				sender.sendMessage(Prism.messenger.playerError("Pool returned NULL instead of a valid connection."));
-			} else if (conn.isClosed()) {
+			}
+			else if (conn.isClosed()) {
 				sender.sendMessage(Prism.messenger.playerError("Pool returned an already closed connection."));
-			} else if (conn.isValid(5)) {
+			}
+			else if (conn.isValid(5)) {
 				sender.sendMessage(Prism.messenger.playerSuccess("Pool returned valid connection!"));
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			sender.sendMessage(Prism.messenger.playerError("Error: " + e.getMessage()));
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 	}
@@ -274,7 +280,7 @@ public class ReportCommand implements SubHandler {
 						ItemStack item = state.asItem();
 
 						final String alias;
-						if(block != null) {
+						if (block != null) {
 							alias = Prism.getItems().getAlias(block.getMaterial(), block);
 						}
 						else {
@@ -292,23 +298,28 @@ public class ReportCommand implements SubHandler {
 								+ ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
 
 					}
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 					e.printStackTrace();
-				} finally {
+				}
+				finally {
 					if (rs != null)
 						try {
 							rs.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 					if (s != null)
 						try {
 							s.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 					if (conn != null)
 						try {
 							conn.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 				}
 			}
@@ -391,23 +402,28 @@ public class ReportCommand implements SubHandler {
 								.playerMsg(ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced));
 
 					}
-				} catch (final SQLException e) {
+				}
+				catch (final SQLException e) {
 					e.printStackTrace();
-				} finally {
+				}
+				finally {
 					if (rs != null)
 						try {
 							rs.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 					if (s != null)
 						try {
 							s.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 					if (conn != null)
 						try {
 							conn.close();
-						} catch (final SQLException ignored) {
+						}
+						catch (final SQLException ignored) {
 						}
 				}
 			}

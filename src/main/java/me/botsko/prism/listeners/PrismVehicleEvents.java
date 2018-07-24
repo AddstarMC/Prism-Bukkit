@@ -51,7 +51,8 @@ public class PrismVehicleEvents implements Listener {
 		UUID uuid = null;
 		try {
 			uuid = UUID.fromString(value);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 		final OfflinePlayer player = uuid != null ? Bukkit.getOfflinePlayer(uuid) : null;
 		if (player != null) {
@@ -77,13 +78,15 @@ public class PrismVehicleEvents implements Listener {
 				if (!Prism.getIgnore().event("vehicle-break", ((Player) attacker)))
 					return;
 				RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-break", vehicle, (Player) attacker));
-			} else {
+			}
+			else {
 				if (!Prism.getIgnore().event("vehicle-break", attacker.getWorld()))
 					return;
 				RecordingQueue.addToQueue(
 						ActionFactory.createVehicle("vehicle-break", vehicle, attacker.getType().name().toLowerCase()));
 			}
-		} else {
+		}
+		else {
 
 			// Otherwise its driver was reckless
 			final List<Entity> passengers = vehicle.getPassengers();
@@ -110,7 +113,8 @@ public class PrismVehicleEvents implements Listener {
 			if (!Prism.getIgnore().event("vehicle-enter", ((Player) entity)))
 				return;
 			RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-enter", vehicle, (Player) entity));
-		} else {
+		}
+		else {
 			if (!Prism.getIgnore().event("vehicle-enter", entity.getWorld()))
 				return;
 			RecordingQueue.addToQueue(
@@ -132,7 +136,8 @@ public class PrismVehicleEvents implements Listener {
 			if (!Prism.getIgnore().event("vehicle-enter", ((Player) entity)))
 				return;
 			RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-exit", vehicle, (Player) entity));
-		} else {
+		}
+		else {
 			if (!Prism.getIgnore().event("vehicle-enter", entity.getWorld()))
 				return;
 			RecordingQueue.addToQueue(

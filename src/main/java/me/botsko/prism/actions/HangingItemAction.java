@@ -65,9 +65,9 @@ public class HangingItemAction extends GenericAction {
 	 * @return
 	 */
 	public String getHangingType() {
-		return this.actionData.type;
+		return actionData.type;
 	}
-	
+
 	@Override
 	public String getState() {
 		return "";
@@ -113,6 +113,10 @@ public class HangingItemAction extends GenericAction {
 	 * 
 	 */
 	public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
+		
+		if(actionData == null) {
+			return new ChangeResult(ChangeResultType.SKIPPED, null);
+		}
 
 		final BlockFace attachedFace = getDirection();
 
@@ -129,12 +133,14 @@ public class HangingItemAction extends GenericAction {
 				final Hanging hangingItem = getWorld().spawn(loc, ItemFrame.class);
 				hangingItem.setFacingDirection(attachedFace, true);
 				return new ChangeResult(ChangeResultType.APPLIED, null);
-			} else if (getHangingType().equals("painting")) {
+			}
+			else if (getHangingType().equals("painting")) {
 				final Hanging hangingItem = getWorld().spawn(loc, Painting.class);
 				hangingItem.setFacingDirection(getDirection(), true);
 				return new ChangeResult(ChangeResultType.APPLIED, null);
 			}
-		} catch (final IllegalArgumentException e) {
+		}
+		catch (final IllegalArgumentException e) {
 			// Something interfered with being able to place the painting
 		}
 		return new ChangeResult(ChangeResultType.SKIPPED, null);

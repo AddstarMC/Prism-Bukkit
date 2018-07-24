@@ -56,7 +56,8 @@ public class IdMapQuery {
 						failure.run();
 				}
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			Prism.log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -88,21 +89,22 @@ public class IdMapQuery {
 						failure.run();
 				}
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			Prism.log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void findAllIds(String material, Consumer<List<IntPair>> success) {
 		findAllIds(material, success, IdMapQuery::noop);
 	}
-	
+
 	public void findAllIds(String material, Consumer<List<IntPair>> success, Runnable failure) {
 		Validate.notNull(material, "Material cannot be null");
 		Validate.notNull(success, "Success callback cannot be null");
 		Validate.notNull(failure, "Failure callback cannot be null (use findAllIds(String, BiConsumer)");
-		
+
 		String query = toAllIds.replace("<prefix>", prefix);
 
 		try (Connection conn = Prism.dbc()) {
@@ -110,32 +112,34 @@ public class IdMapQuery {
 				st.setString(1, material);
 				try (ResultSet rs = st.executeQuery()) {
 					List<IntPair> ids = new ArrayList<>();
-					
-					while(rs.next()) {
+
+					while (rs.next()) {
 						ids.add(new IntPair(rs.getInt(1), rs.getInt(2)));
 					}
-					
+
 					if (!ids.isEmpty())
 						success.accept(ids);
 					else
 						failure.run();
 				}
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			Prism.log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success) {
 		findAllIdsPartial(material, stateLike, success, IdMapQuery::noop);
 	}
-	
-	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success, Runnable failure) {
+
+	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success,
+			Runnable failure) {
 		Validate.notNull(material, "Material cannot be null");
 		Validate.notNull(success, "Success callback cannot be null");
 		Validate.notNull(failure, "Failure callback cannot be null (use findAllIds(String, BiConsumer)");
-		
+
 		String query = partialToAllIds.replace("<prefix>", prefix);
 
 		try (Connection conn = Prism.dbc()) {
@@ -144,18 +148,19 @@ public class IdMapQuery {
 				st.setString(2, stateLike);
 				try (ResultSet rs = st.executeQuery()) {
 					List<IntPair> ids = new ArrayList<>();
-					
-					while(rs.next()) {
+
+					while (rs.next()) {
 						ids.add(new IntPair(rs.getInt(1), rs.getInt(2)));
 					}
-					
+
 					if (!ids.isEmpty())
 						success.accept(ids);
 					else
 						failure.run();
 				}
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			Prism.log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}
@@ -193,11 +198,13 @@ public class IdMapQuery {
 
 					st.executeUpdate();
 				}
-			} catch (final SQLException e) {
+			}
+			catch (final SQLException e) {
 				Prism.log("Database connection error: " + e.getMessage());
 				e.printStackTrace();
 			}
-		} else
+		}
+		else
 			try (Connection conn = Prism.dbc()) {
 				try (PreparedStatement st = conn.prepareStatement(query)) {
 					st.setString(1, material);
@@ -207,7 +214,8 @@ public class IdMapQuery {
 
 					st.executeUpdate();
 				}
-			} catch (final SQLException e) {
+			}
+			catch (final SQLException e) {
 				Prism.log("Database connection error: " + e.getMessage());
 				e.printStackTrace();
 			}
@@ -233,7 +241,8 @@ public class IdMapQuery {
 				if (rs.next())
 					return rs.getInt(1);
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			Prism.log("Database connection error: " + e.getMessage());
 			e.printStackTrace();
 		}

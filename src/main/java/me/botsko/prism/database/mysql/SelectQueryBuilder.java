@@ -50,7 +50,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 			columns.add("AVG(x)");
 			columns.add("AVG(y)");
 			columns.add("AVG(z)");
-		} else {
+		}
+		else {
 			columns.add("x");
 			columns.add("y");
 			columns.add("z");
@@ -166,7 +167,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 			if (excludeIds.size() > 0) {
 				addCondition("action_id NOT IN (" + TypeUtils.join(excludeIds, ",") + ")");
 			}
-		} else {
+		}
+		else {
 			// exclude internal stuff
 			if (!containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE)) {
 				addCondition("action_id NOT IN (" + TypeUtils.join(prismActionIds, ",") + ")");
@@ -220,29 +222,30 @@ public class SelectQueryBuilder extends QueryBuilder {
 			for (Material m : blockfilters) {
 
 				Set<IntPair> allIds = Prism.getItems().materialToAllIds(m);
-				
+
 				StringBuilder block_ids = new StringBuilder("(");
-				for(IntPair pair : allIds) {
+				for (IntPair pair : allIds) {
 					block_ids.append(pair.first).append(',');
 				}
-				
+
 				String in = block_ids.append(')').toString().replace(",)", ")");
-				
+
 				blockArr[i++] = tableNameData + ".block_id IN " + in;
 			}
 			addCondition(buildGroupConditions(null, blockArr, "%s%s", "OR", null));
 		}
-		
+
 		Set<MaterialState> blockDataFilters = parameters.getBlockDataFilters();
-		
-		if(!blockDataFilters.isEmpty()) {
+
+		if (!blockDataFilters.isEmpty()) {
 			final ArrayList<String> blockArr = new ArrayList<>();
-			
+
 			for (MaterialState data : blockDataFilters) {
 				Set<IntPair> pairs = Prism.getItems().partialBlockDataIds(data.material, data.state);
-				
-				for(IntPair pair : pairs) {
-					blockArr.add(tableNameData + ".block_id = " + pair.first + " AND " + tableNameData + ".block_subid = " + pair.second);
+
+				for (IntPair pair : pairs) {
+					blockArr.add(tableNameData + ".block_id = " + pair.first + " AND " + tableNameData
+							+ ".block_subid = " + pair.second);
 				}
 			}
 			addCondition(buildGroupConditions(null, blockArr.toArray(new String[blockArr.size()]), "%s%s", "OR", null));
@@ -325,7 +328,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 			for (final String cond : conditions) {
 				if (condCount == 1) {
 					query += " WHERE ";
-				} else {
+				}
+				else {
 					query += " AND ";
 				}
 				query += cond;
@@ -391,9 +395,11 @@ public class SelectQueryBuilder extends QueryBuilder {
 			for (final Entry<String, MatchRule> entry : origValues.entrySet()) {
 				if (entry.getValue().equals(MatchRule.EXCLUDE)) {
 					whereNot.add(entry.getKey());
-				} else if (entry.getValue().equals(MatchRule.PARTIAL)) {
+				}
+				else if (entry.getValue().equals(MatchRule.PARTIAL)) {
 					whereIsLike.add(entry.getKey());
-				} else {
+				}
+				else {
 					whereIs.add(entry.getKey());
 				}
 			}
@@ -403,7 +409,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 				whereValues = whereIs.toArray(whereValues);
 				if (format == null) {
 					query += buildGroupConditions(field_name, whereValues, "%s = '%s'", "OR", null);
-				} else {
+				}
+				else {
 					query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
 				}
 			}
@@ -420,7 +427,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 
 				if (format == null) {
 					query += buildGroupConditions(field_name, whereNotValues, "%s != '%s'", null, null);
-				} else {
+				}
+				else {
 					query += buildGroupConditions(field_name, whereNotValues, "%s NOT LIKE '%%%s%%'", null, format);
 				}
 			}
@@ -481,7 +489,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 		if (dateFrom != null) {
 			if (equation == null) {
 				addCondition(tableNameData + ".epoch >= " + (dateFrom / 1000) + "");
-			} else {
+			}
+			else {
 				addCondition(tableNameData + ".epoch " + equation + " '" + (dateFrom / 1000) + "'");
 			}
 		}

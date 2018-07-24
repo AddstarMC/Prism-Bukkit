@@ -70,7 +70,8 @@ public class WandCommand implements SubHandler {
 		String toolKey = null;
 		if (mode.equals("item")) {
 			toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
-		} else if (mode.equals("block")) {
+		}
+		else if (mode.equals("block")) {
 			toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
 		}
 
@@ -124,7 +125,8 @@ public class WandCommand implements SubHandler {
 			if (oldwand != null && oldwand instanceof InspectorWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
-			} else {
+			}
+			else {
 				wand = new InspectorWand(plugin);
 				call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Inspection wand " + ChatColor.GREEN
 						+ "enabled" + ChatColor.WHITE + wandOn + parameters + "."));
@@ -144,7 +146,8 @@ public class WandCommand implements SubHandler {
 			if (oldwand != null && oldwand instanceof ProfileWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
-			} else {
+			}
+			else {
 				wand = new ProfileWand();
 				call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
 						"Profile wand " + ChatColor.GREEN + "enabled" + ChatColor.WHITE + wandOn + "."));
@@ -164,7 +167,8 @@ public class WandCommand implements SubHandler {
 			if (oldwand != null && oldwand instanceof RollbackWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
-			} else {
+			}
+			else {
 				wand = new RollbackWand(plugin);
 				call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
 						"Rollback wand " + ChatColor.GREEN + "enabled" + ChatColor.WHITE + wandOn + parameters + "."));
@@ -185,7 +189,8 @@ public class WandCommand implements SubHandler {
 			if (oldwand != null && oldwand instanceof RestoreWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
-			} else {
+			}
+			else {
 				wand = new RestoreWand(plugin);
 				call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
 						"Restore wand " + ChatColor.GREEN + "enabled" + ChatColor.WHITE + wandOn + parameters + "."));
@@ -209,8 +214,8 @@ public class WandCommand implements SubHandler {
 
 		final PlayerInventory inv = call.getPlayer().getInventory();
 		if (enabled) {
-			
-			if(item_material == null) {
+
+			if (item_material == null) {
 				if (mode == "block") {
 					item_material = Material.SPRUCE_LOG;
 				}
@@ -232,7 +237,8 @@ public class WandCommand implements SubHandler {
 					// They don't have the item, so we need to give them an item
 					if (InventoryUtils.handItemToPlayer(inv, new ItemStack(item_material, 1))) {
 						wand.setItemWasGiven(true);
-					} else {
+					}
+					else {
 						call.getPlayer().sendMessage(
 								Prism.messenger.playerError("Can't fit the wand item into your inventory."));
 					}
@@ -254,7 +260,8 @@ public class WandCommand implements SubHandler {
 
 			// Store
 			Prism.playersWithActiveTools.put(call.getPlayer().getName(), wand);
-		} else {
+		}
+		else {
 			if (oldwand != null) {
 				oldwand.disable(call.getPlayer());
 			}

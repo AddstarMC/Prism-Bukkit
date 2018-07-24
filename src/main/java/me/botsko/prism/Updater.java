@@ -13,7 +13,7 @@ public class Updater {
 	 * 
 	 */
 	protected final int currentDbSchemaVersion = 6;
-	
+
 	private final ArrayList<Runnable> updates = new ArrayList<>(currentDbSchemaVersion);
 
 	/**
@@ -34,39 +34,39 @@ public class Updater {
 		updates.add(this::v4_to_v5);
 		updates.add(this::v5_to_v6);
 	}
-	
+
 	private void v1_to_v2() {
 	}
-	
+
 	private void v2_to_v3() {
 	}
-	
+
 	private void v3_to_v4() {
 	}
-	
+
 	private void v4_to_v5() {
 	}
-	
+
 	private void v5_to_v6() {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
 		Connection conn = Prism.dbc();
 		Statement st = null;
 		String query;
-		
+
 		try {
 			st = conn.createStatement();
-			
+
 			// Key must be dropped before we can edit colum types
-			query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix
-					+ "data_extra_ibfk_1`;";
+			query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix + "data_extra_ibfk_1`;";
 			st.executeUpdate(query);
-			
+
 			query = "ALTER TABLE " + prefix + "data MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT";
 			st.executeUpdate(query);
-			
-			query = "ALTER TABLE " + prefix + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, MODIFY data_id bigint(20) unsigned NOT NULL";
+
+			query = "ALTER TABLE " + prefix
+					+ "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, MODIFY data_id bigint(20) unsigned NOT NULL";
 			st.executeUpdate(query);
-			
+
 			// return foreign key
 			/// BEGIN COPY PASTE Prism.setupDatabase()
 			query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
@@ -75,12 +75,22 @@ public class Updater {
 			st.executeUpdate(query);
 			/// END COPY PASTE
 		}
-		catch(SQLException e) {
-			plugin.handleDatabaseException( e );
+		catch (SQLException e) {
+			plugin.handleDatabaseException(e);
 		}
 		finally {
-			if(st != null) try { st.close(); } catch (SQLException e) {}
-			if(conn != null) try { conn.close(); } catch (SQLException e) {}
+			if (st != null)
+				try {
+					st.close();
+				}
+				catch (SQLException e) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {
+				}
 		}
 	}
 
@@ -101,16 +111,15 @@ public class Updater {
 	public void apply_updates() {
 
 		int clientSchemaVer = getClientDbSchemaVersion();
-		
-		for(int i = clientSchemaVer; i < currentDbSchemaVersion; ++i) {
+
+		for (int i = clientSchemaVer; i < currentDbSchemaVersion; ++i) {
 			Runnable update = updates.get(i - 1);
-			
-			if(update != null) {
-				Prism.log("Updating prism schema v" + i +" to v" + (i + 1) + ". This make take a while.");
+
+			if (update != null) {
+				Prism.log("Updating prism schema v" + i + " to v" + (i + 1) + ". This make take a while.");
 				update.run();
 			}
 		}
-		
 
 		// // Apply any updates for schema 1 -> 2
 		// if(clientSchemaVer < 2){

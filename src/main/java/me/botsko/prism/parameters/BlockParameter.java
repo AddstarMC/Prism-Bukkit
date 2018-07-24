@@ -26,80 +26,82 @@ public class BlockParameter extends SimplePrismParameterHandler {
 	@Override
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		final String[] inputs = input.split(",");
-		
+
 		boolean fusing = false;
 		int index = 0;
-		for(String block : inputs) {
+		for (String block : inputs) {
 			boolean start = block.contains("[");
 			boolean end = block.contains("]");
-			
-			if(fusing) {
+
+			if (fusing) {
 				inputs[index] += ("," + block);
 			}
 			else {
 				inputs[index++] = block;
 			}
-			
-			if(start && !end) {
+
+			if (start && !end) {
 				fusing = true;
 				--index;
 			}
-			else if(!start && end) {
+			else if (!start && end) {
 				fusing = false;
 				++index;
 			}
 		}
-		
+
 		final String[] blocks = Arrays.copyOfRange(inputs, 0, index);
 
 		if (blocks.length > 0) {
 			for (final String b : blocks) {
 
 				// if user provided id:subid
-				/*if (b.contains(":") && b.length() >= 3) {
-					final String[] ids = b.split(":");
-					Material mat = Material.matchMaterial(ids[0]);
-					if (ids.length == 2 && mat != null && TypeUtils.isNumeric(ids[1])) {
-						query.addBlockFilter(mat);
-					} else {
-						throw new IllegalArgumentException("Invalid block name '" + b + "'. Try /pr ? for help");
-					}
-				} else*/ {
+				/*
+				 * if (b.contains(":") && b.length() >= 3) { final String[] ids = b.split(":");
+				 * Material mat = Material.matchMaterial(ids[0]); if (ids.length == 2 && mat !=
+				 * null && TypeUtils.isNumeric(ids[1])) { query.addBlockFilter(mat); } else {
+				 * throw new IllegalArgumentException("Invalid block name '" + b +
+				 * "'. Try /pr ? for help"); } } else
+				 */ {
 					String[] parts = b.split("\\[", 2);
 					String part1 = parts[0];
-					
-					if(part1.indexOf(':') != -1) {
+
+					if (part1.indexOf(':') != -1) {
 						// Trailing colon, ie 'stone_slab:' or 'stone_slab:[half=top]'
-						sender.sendMessage(Prism.messenger.playerError("Skipping removed block format 'block:data' used in '" + b + "'"));
-					
+						sender.sendMessage(Prism.messenger
+								.playerError("Skipping removed block format 'block:data' used in '" + b + "'"));
+
 						continue;
 					}
-					
+
 					Material mat = Material.matchMaterial(part1);
-					if(mat != null) {
-						if(parts.length == 1) {
+					if (mat != null) {
+						if (parts.length == 1) {
 							query.addBlockFilter(mat);
 						}
 						else {
-							String part2  ='[' + parts[1];
-							
+							String part2 = '[' + parts[1];
+
 							try {
 								Bukkit.createBlockData(mat, part2);
 								query.addBlockDataFilter(new MaterialState(mat, part2));
 							}
-							catch(IllegalArgumentException e) {
-								sender.sendMessage(Prism.messenger.playerError("Skipping invalid block data '" + part2 + "' for material '" + part1 + "'"));
+							catch (IllegalArgumentException e) {
+								sender.sendMessage(Prism.messenger.playerError(
+										"Skipping invalid block data '" + part2 + "' for material '" + part1 + "'"));
 							}
 						}
 					}
-					
+
 					else {
 						try {
 							Integer.parseInt(part1);
-							sender.sendMessage(Prism.messenger.playerError("Skipping numeric id '" + part1 + "', please use materials instead"));
+							sender.sendMessage(Prism.messenger
+									.playerError("Skipping numeric id '" + part1 + "', please use materials instead"));
 						}
-						catch(NumberFormatException e) {
-							sender.sendMessage(Prism.messenger.playerError("Skipping unknown material '" + part1 + "'"));
+						catch (NumberFormatException e) {
+							sender.sendMessage(
+									Prism.messenger.playerError("Skipping unknown material '" + part1 + "'"));
 						}
 					}
 				}

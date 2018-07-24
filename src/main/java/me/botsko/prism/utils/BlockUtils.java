@@ -31,49 +31,42 @@ public class BlockUtils {
 
 	// TODO: 1.13 material change
 	private static MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.FIRE, Material.GRAVEL,
-			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK,
-			Material.WATER);
+			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK, Material.WATER);
 
 	private static MaterialTag fallingMaterials = new MaterialTag(Material.SAND, Material.GRAVEL, Material.ANVIL,
 			Material.DRAGON_EGG).append("_CONCRETE_POWDER", MatchMode.SUFFIX);
 
 	private static MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
-			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON,
-			Material.TORCH, Material.LADDER, Material.WALL_SIGN, Material.LEVER,
-			Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
-			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL)
-			.append(Tag.RAILS).append(Tag.BUTTONS).append(MaterialTag.WALL_BANNERS);
+			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
+			Material.LADDER, Material.WALL_SIGN, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
+			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL).append(Tag.RAILS)
+					.append(Tag.BUTTONS).append(MaterialTag.WALL_BANNERS);
 
-	private static MaterialTag fallsOffTop = new MaterialTag(
-			Material.STICKY_PISTON, Material.DEAD_BUSH, Material.PISTON,
-			Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
-			Material.REDSTONE, Material.WHEAT, Material.SIGN, Material.LEVER,
-			Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
-			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE,
-			Material.NETHER_PORTAL, Material.REPEATER, Material.PUMPKIN_STEM,
-			Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART,
-			Material.CARROTS, Material.POTATOES,
-			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
+	private static MaterialTag fallsOffTop = new MaterialTag(Material.STICKY_PISTON, Material.DEAD_BUSH,
+			Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH, Material.REDSTONE,
+			Material.WHEAT, Material.SIGN, Material.LEVER, Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
+			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE, Material.NETHER_PORTAL, Material.REPEATER,
+			Material.PUMPKIN_STEM, Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART, Material.CARROTS,
+			Material.POTATOES, Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
 			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.COMPARATOR)
-			
-			.append(Tag.DOORS).append(Tag.RAILS).append(Tag.SAPLINGS)
-			.append(MaterialTag.BANNERS).append(Tag.WOODEN_PRESSURE_PLATES)
-			.append(Tag.BUTTONS).append(Tag.CARPETS)
-			.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
+
+					.append(Tag.DOORS).append(Tag.RAILS).append(Tag.SAPLINGS).append(MaterialTag.BANNERS)
+					.append(Tag.WOODEN_PRESSURE_PLATES).append(Tag.BUTTONS).append(Tag.CARPETS)
+					.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
 
 	private static EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
 			Material.LAVA);
 
 	public static String dataString(BlockData data) {
 		if (data != null) {
-			return data.getAsString().replace("minecraft:"+data.getMaterial().name().toLowerCase(Locale.ENGLISH), "");
+			return data.getAsString().replace("minecraft:" + data.getMaterial().name().toLowerCase(Locale.ENGLISH), "");
 		}
 		else {
 			// TODO: Shouldn't happen, investigate
 			return "";
 		}
 	}
-	
+
 	/**
 	 * /**
 	 * 
@@ -123,10 +116,8 @@ public class BlockUtils {
 	/**
 	 * Extinguish all the fire in a radius
 	 * 
-	 * @param loc
-	 *            The location you want to extinguish around
-	 * @param radius
-	 *            The radius around the location you are extinguish
+	 * @param loc The location you want to extinguish around
+	 * @param radius The radius around the location you are extinguish
 	 */
 	public static ArrayList<BlockStateChange> extinguish(Location loc, int radius) {
 		return removeMaterialFromRadius(Material.FIRE, loc, radius);
@@ -169,8 +160,7 @@ public class BlockUtils {
 	 * Determines if the material of an existing block at a location is something
 	 * that's commonly acceptable to replace.
 	 * 
-	 * @param m
-	 *            the material of the block
+	 * @param m the material of the block
 	 * @return if the material is acceptable to replace
 	 */
 	public static boolean isAcceptableForBlockPlace(Material m) {
@@ -181,8 +171,7 @@ public class BlockUtils {
 	 * Recursively grabs a list of all blocks directly above Block that are
 	 * anticipated to fall.
 	 * 
-	 * @param block
-	 *            the block to fetch blocks above
+	 * @param block the block to fetch blocks above
 	 * @return the list of blocks directly above the block
 	 */
 	public static ArrayList<Block> findFallingBlocksAboveBlock(final Block block) {
@@ -207,8 +196,7 @@ public class BlockUtils {
 	 * 
 	 * Seems like there's got to be another way to do this...
 	 * 
-	 * @param block
-	 *            the block to check for the ability to fall
+	 * @param block the block to check for the ability to fall
 	 * @return whether the block is capable of falling
 	 */
 	public static boolean isFallingBlock(Block block) {
@@ -218,8 +206,7 @@ public class BlockUtils {
 	/**
 	 * Searches for detachable blocks on the four acceptable sides of a block.
 	 * 
-	 * @param block
-	 *            the block to check the sides of
+	 * @param block the block to check the sides of
 	 * @return the list of detachable block on the sides of the block
 	 */
 	public static ArrayList<Block> findSideFaceAttachedBlocks(final Block block) {
@@ -251,10 +238,8 @@ public class BlockUtils {
 	/**
 	 * Searches around a block for the first block of the given material
 	 *
-	 * @param block
-	 *            the block to search around
-	 * @param m
-	 *            the material of the surrounding block to look for
+	 * @param block the block to search around
+	 * @param m the material of the surrounding block to look for
 	 * @return the first surrounding block of the given material found
 	 */
 	public static Block findFirstSurroundingBlockOfType(Block block, Material m) {
@@ -281,8 +266,7 @@ public class BlockUtils {
 	 * Determine whether or not a block using the given material is going to detach
 	 * from the side of a block.
 	 *
-	 * @param m
-	 *            the material to check for detaching
+	 * @param m the material to check for detaching
 	 * @return whether a block with a given material will detach from the side of a
 	 *         block
 	 */
@@ -303,8 +287,7 @@ public class BlockUtils {
 		Block blockToCheck = block.getRelative(BlockFace.UP);
 		if (BlockUtils.isTopFaceDetachableMaterial(blockToCheck.getType())) {
 			detaching_blocks.add(blockToCheck);
-			if (blockToCheck.getType().equals(Material.CACTUS)
-					|| blockToCheck.getType().equals(Material.SUGAR_CANE)) {
+			if (blockToCheck.getType().equals(Material.CACTUS) || blockToCheck.getType().equals(Material.SUGAR_CANE)) {
 				// For cactus and sugar cane, we can even have blocks above
 				ArrayList<Block> additionalBlocks = findTopFaceAttachedBlocks(blockToCheck);
 				if (!additionalBlocks.isEmpty()) {
@@ -322,8 +305,7 @@ public class BlockUtils {
 	/**
 	 * Determine whether or not a block is going to detach from the top of a block.
 	 *
-	 * @param m
-	 *            the material to check for detaching
+	 * @param m the material to check for detaching
 	 * @return whether a block with a given material will detach from the top of a
 	 *         block
 	 */
@@ -375,95 +357,93 @@ public class BlockUtils {
 	/**
 	 * Is an entity a hanging type, attachable to a block.
 	 * 
-	 * @param entity
-	 *            the entity to check for being a hanging type
+	 * @param entity the entity to check for being a hanging type
 	 * @return if an entity is a hanging type attachable to a block
 	 */
 	public static boolean isHangingEntity(Entity entity) {
 		EntityType type = entity.getType();
 
 		switch (type) {
-		case ITEM_FRAME:
-		case PAINTING:
-			return true;
-		default:
-			return false;
+			case ITEM_FRAME:
+			case PAINTING:
+				return true;
+			default:
+				return false;
 		}
 	}
-	
+
 	public static BlockFace getRelativeFaceLeft(BlockFace in) {
-		switch(in) {
-		case NORTH:
-			return BlockFace.WEST;
-			
-		case EAST:
-			return BlockFace.NORTH;
-			
-		case SOUTH:
-			return BlockFace.EAST;
-			
-		case WEST:
-			return BlockFace.SOUTH;
-		
-		default:
-			throw new IllegalArgumentException("Only cardinal directions are supported");
+		switch (in) {
+			case NORTH:
+				return BlockFace.WEST;
+
+			case EAST:
+				return BlockFace.NORTH;
+
+			case SOUTH:
+				return BlockFace.EAST;
+
+			case WEST:
+				return BlockFace.SOUTH;
+
+			default:
+				throw new IllegalArgumentException("Only cardinal directions are supported");
 		}
 	}
-	
+
 	public static BlockFace getRelativeFaceRight(BlockFace in) {
-		switch(in) {
-		case NORTH:
-			return BlockFace.EAST;
-			
-		case EAST:
-			return BlockFace.SOUTH;
-			
-		case SOUTH:
-			return BlockFace.WEST;
-			
-		case WEST:
-			return BlockFace.NORTH;
-		
-		default:
-			throw new IllegalArgumentException("Only cardinal directions are supported");
+		switch (in) {
+			case NORTH:
+				return BlockFace.EAST;
+
+			case EAST:
+				return BlockFace.SOUTH;
+
+			case SOUTH:
+				return BlockFace.WEST;
+
+			case WEST:
+				return BlockFace.NORTH;
+
+			default:
+				throw new IllegalArgumentException("Only cardinal directions are supported");
 		}
 	}
 
 	/**
 	 * Gets the other block that is part of a double length block
 	 *
-	 * @param block
-	 *            the block to get the sibling of
+	 * @param block the block to get the sibling of
 	 */
 	public static Block getSiblingForDoubleLengthBlock(Block block) {
 		return getSiblingForDoubleLengthBlock(block.getState());
 	}
-	
+
 	public static Block getSiblingForDoubleLengthBlock(BlockState block) {
 		/**
 		 * Handle special double-length blocks
-		 */		
+		 */
 		BlockData data = block.getBlockData();
-		
+
 		if (data instanceof Chest) {
 			Chest chest = (Chest) data;
 			BlockFace facing = chest.getFacing();
-			
+
 			switch (chest.getType()) {
-			case LEFT:
-				return block.getBlock().getRelative(getRelativeFaceRight(facing));
-				
-			case RIGHT:
-				return block.getBlock().getRelative(getRelativeFaceLeft(facing));
-				
-			case SINGLE:
-				return null;
+				case LEFT:
+					return block.getBlock().getRelative(getRelativeFaceRight(facing));
+
+				case RIGHT:
+					return block.getBlock().getRelative(getRelativeFaceLeft(facing));
+
+				case SINGLE:
+					return null;
 			}
 		}
-		else if(data instanceof Bed) {
+		else if (data instanceof Bed) {
 			Bed bed = (Bed) data;
-			
-			if(bed.getPart() == Part.FOOT) {
+
+			if (bed.getPart() == Part.FOOT) {
 				return block.getBlock().getRelative(bed.getFacing());
 			}
 			else {
@@ -472,7 +452,7 @@ public class BlockUtils {
 		}
 		else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
 			Bisected bisected = (Bisected) data;
-			
+
 			if (bisected.getHalf() == Half.BOTTOM) {
 				return block.getBlock().getRelative(BlockFace.UP);
 			}
@@ -483,7 +463,7 @@ public class BlockUtils {
 
 		return null;
 	}
-	
+
 	/**
 	 * Gets the block to log when interacting with a connected block. If not a
 	 * double block, the passed block is returned
@@ -492,17 +472,17 @@ public class BlockUtils {
 	 */
 	public static Block getBaseBlock(Block block) {
 		BlockData data = block.getBlockData();
-		
-		if(data instanceof Bed) {
+
+		if (data instanceof Bed) {
 			Bed bed = (Bed) data;
-			
-			if(bed.getPart() == Part.HEAD) {
+
+			if (bed.getPart() == Part.HEAD) {
 				return block.getRelative(bed.getFacing().getOppositeFace());
 			}
 		}
 		else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
 			Bisected bisected = (Bisected) data;
-			
+
 			if (bisected.getHalf() == Half.TOP) {
 				return block.getRelative(BlockFace.DOWN);
 			}
@@ -511,17 +491,13 @@ public class BlockUtils {
 		return block;
 	}
 
-	
-	private static final MaterialTag flowBreaks = new MaterialTag(
-			MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS, MaterialTag.CROPS,
-			Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS, Tag.FLOWER_POTS).append(
-			Material.CACTUS, Material.REPEATER, Material.COMPARATOR, Material.REDSTONE,
-			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH,
-			Material.SIGN, Material.WALL_SIGN, Material.STONE_PRESSURE_PLATE,
-			Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
-			Material.SUGAR_CANE, Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK,
-			Material.VINE);
-	
+	private static final MaterialTag flowBreaks = new MaterialTag(MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS,
+			MaterialTag.CROPS, Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS, Tag.FLOWER_POTS).append(Material.CACTUS,
+					Material.REPEATER, Material.COMPARATOR, Material.REDSTONE, Material.LADDER, Material.LEVER,
+					Material.REDSTONE_TORCH, Material.SIGN, Material.WALL_SIGN, Material.STONE_PRESSURE_PLATE,
+					Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.SUGAR_CANE,
+					Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE);
+
 	/**
 	 * 
 	 * @param m
@@ -590,9 +566,9 @@ public class BlockUtils {
 		}
 		return null;
 	}
-	
-	private static final MaterialTag growableStructure = new MaterialTag(Tag.LEAVES, Tag.LOGS).append(
-			Material.RED_MUSHROOM_BLOCK, Material.BROWN_MUSHROOM_BLOCK, Material.MUSHROOM_STEM);
+
+	private static final MaterialTag growableStructure = new MaterialTag(Tag.LEAVES, Tag.LOGS)
+			.append(Material.RED_MUSHROOM_BLOCK, Material.BROWN_MUSHROOM_BLOCK, Material.MUSHROOM_STEM);
 
 	/**
 	 * 

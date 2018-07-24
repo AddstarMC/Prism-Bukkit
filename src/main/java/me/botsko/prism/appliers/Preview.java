@@ -118,7 +118,8 @@ public class Preview implements Previewable {
 
 		if (sender instanceof Player) {
 			this.player = (Player) sender;
-		} else {
+		}
+		else {
 			this.player = null;
 		}
 
@@ -338,7 +339,8 @@ public class Preview implements Previewable {
 							if (!is_preview) {
 								iterator.remove();
 							}
-						} catch (final Exception e) {
+						}
+						catch (final Exception e) {
 
 							// Something caused an exception. We *have* to catch
 							// this
@@ -349,7 +351,14 @@ public class Preview implements Previewable {
 							// log files in the GB.
 
 							// Log the error so they have something to report
-							Prism.log("Applier error: " + e.getMessage());
+							String line = "Applier error:";
+							String message = e.getMessage();
+							
+							if(message != null) {
+								line += (' ' + message);
+							}
+							
+							Prism.log(line);
 							e.printStackTrace();
 
 							// Count as skipped, remove from queue
@@ -365,7 +374,8 @@ public class Preview implements Previewable {
 					plugin.getServer().getScheduler().cancelTask(worldChangeQueueTaskId);
 					if (is_preview) {
 						postProcessPreview();
-					} else {
+					}
+					else {
 						postProcess();
 					}
 				}

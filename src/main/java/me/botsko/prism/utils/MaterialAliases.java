@@ -51,11 +51,11 @@ public class MaterialAliases {
 				for (Map.Entry<String, Object> entry : itemaliases.entrySet()) {
 					@SuppressWarnings("unchecked")
 					List<String> aliases = (List<String>) entry.getValue();
-					
+
 					for (String alias : aliases)
 						itemAliases.put(entry.getKey().toLowerCase(), alias);
 				}
-			
+
 		}
 		else
 			System.out.println("ERROR: The Elixr library was unable to load an internal item alias list.");
@@ -71,7 +71,7 @@ public class MaterialAliases {
 		for (Material m : materials) {
 			String matName = m.name().toLowerCase(Locale.ENGLISH);
 			String dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
-			
+
 			query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> {
 				storeCache(m, dataString, i, d);
 			}, () -> {
@@ -97,37 +97,38 @@ public class MaterialAliases {
 		public BlockData asBlockData() {
 			try {
 				BlockData data = Bukkit.createBlockData(material, state);
-				
+
 				// In the event that we tried to get BlockData for an item and it returned air
-				if(data.getMaterial() == material) {
+				if (data.getMaterial() == material) {
 					return data;
 				}
 			}
-			catch(IllegalArgumentException e) {
+			catch (IllegalArgumentException e) {
 			}
-			
+
 			return null;
 		}
 
 		public ItemStack asItem() {
-			if(!state.isEmpty()) {
+			if (!state.isEmpty()) {
 				short durability = 0;
 				try {
 					durability = Short.parseShort(state);
 				}
-				catch(NumberFormatException e) {}
-				
+				catch (NumberFormatException e) {
+				}
+
 				return new ItemStack(material, 1, durability);
 			}
-			
+
 			return new ItemStack(material, 1);
 		}
-		
+
 		@Override
 		public String toString() {
 			return material.name().toLowerCase(Locale.ENGLISH) + state;
 		}
-		
+
 		@Override
 		public int hashCode() {
 			return toString().hashCode();
@@ -137,60 +138,59 @@ public class MaterialAliases {
 	private final Map<String, String> matCache = new HashMap<>();
 	private final Map<String, String> idCache = new HashMap<>();
 	private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
-	
+
 	private Set<IntPair> getIdsOf(Material material) {
 		Set<IntPair> ids = allIdsCache.get(material);
-		
-		if(ids != null) {
+
+		if (ids != null) {
 			return ids;
 		}
-		
+
 		IdMapQuery query = new IdMapQuery();
-		
+
 		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> {
 			allIdsCache.put(material, new HashSet<>(list));
 		});
-		
+
 		return allIdsCache.get(material);
 	}
-	
+
 	private void storeCache(Material material, String state, int block_id, int block_subid) {
 		String matKey = material.name().toLowerCase(Locale.ENGLISH) + ":" + state;
 		String idKey = block_id + ":" + block_subid;
-		
+
 		matCache.put(idKey, matKey);
 		idCache.put(matKey, idKey);
-		
+
 		getIdsOf(material).add(new IntPair(block_id, block_subid));
 	}
-	
+
 	private MaterialState fromCache(int block_id, int block_subid) {
 		String value = matCache.get(block_id + ":" + block_subid);
-		
-		if(value != null) {
+
+		if (value != null) {
 			String[] parts = value.split(":", 2);
-			
+
 			return new MaterialState(Material.matchMaterial(parts[0]), parts[1]);
 		}
-		
+
 		return null;
 	}
 
 	public MaterialState idsToMaterial(int block_id, int block_subid) {
 		MaterialState cachedMaterial = fromCache(block_id, block_subid);
 
-		if (cachedMaterial != null) {			
+		if (cachedMaterial != null) {
 			return cachedMaterial;
 		}
 
 		MaterialState result = new MaterialState();
 		IdMapQuery query = new IdMapQuery();
-		
 
 		query.findMaterial(block_id, block_subid, (material, state) -> {
 			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
 			result.state = state;
-			
+
 			storeCache(result.material, result.state, block_id, block_subid);
 		}, () -> {
 			Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
@@ -202,31 +202,36 @@ public class MaterialAliases {
 
 		return result;
 	}
-	
+
 	private IntPair fromCache(Material material, String state) {
 		String value = idCache.get(material.name().toLowerCase(Locale.ENGLISH) + ":" + state);
-		
-		if(value != null) {
+
+		if (value != null) {
 			String[] parts = value.split(":", 2);
-			
+
 			return new IntPair(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
 		}
-		
+
 		return null;
 	}
 
 	public IntPair materialToIds(Material material, String state) {
 		int block_subid;
-		
-		// For tools, where durability doesn't mean a different item (different cached value) but is still important
+
+		// For tools, where durability doesn't mean a different item (different cached
+		// value) but is still important
 		int durability = 0;
-		try { durability = Integer.parseInt(state); } catch(NumberFormatException e) {}
-		
-		if(material.getMaxDurability() > 0)
+		try {
+			durability = Integer.parseInt(state);
+		}
+		catch (NumberFormatException e) {
+		}
+
+		if (material.getMaxDurability() > 0)
 			block_subid = 0;
 		else
 			block_subid = durability;
-		
+
 		IntPair cachedIds = fromCache(material, block_subid == 0 ? state : String.valueOf(block_subid));
 
 		if (cachedIds != null) {
@@ -240,60 +245,61 @@ public class MaterialAliases {
 		query.findIds(materialName, state, (query_id, query_subid) -> {
 			result.first = query_id;
 			result.second = query_subid;
-			
+
 			storeCache(material, state, query_id, query_subid);
 		}, () -> {
 			int block_id = query.mapAutoId(materialName, state);
-			
+
 			result.first = block_id;
-			
+
 			storeCache(material, state, block_id, 0);
 		});
-		
-		if(block_subid != durability)
+
+		if (block_subid != durability)
 			result.second = durability;
-		
+
 		return result;
 	}
-	
+
 	public Set<IntPair> materialToAllIds(Material material) {
 		return Collections.unmodifiableSet(getIdsOf(material));
 	}
-	
-	public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData) throws IllegalArgumentException {
+
+	public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData)
+			throws IllegalArgumentException {
 		String fullBlockData = BlockUtils.dataString(Bukkit.createBlockData(material, partialBlockData));
-		
+
 		String[] parts = fullBlockData.substring(1, fullBlockData.length() - 1).toLowerCase(Locale.ENGLISH).split(",");
-		
+
 		StringBuilder likeString = new StringBuilder("%");
-		
-		for(String string : parts) {
-			if(partialBlockData.contains(string)) {
+
+		for (String string : parts) {
+			if (partialBlockData.contains(string)) {
 				likeString.append(string).append('%');
 			}
 		}
-		
+
 		String stateLike = likeString.toString();
-		
+
 		IdMapQuery query = new IdMapQuery();
-		
+
 		Set<IntPair> ids = new HashSet<>();
 		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, list -> {
 			ids.addAll(list);
 		});
-		
+
 		return ids;
 	}
-	
+
 	public static final int SUBID_WILDCARD = -1;
-	
+
 	@Deprecated
 	public IntPair materialToIdsWildcard(Material material, String state) {
 		IntPair ids = materialToIds(material, state);
-		
-		if(material.getMaxDurability() > 0)
+
+		if (material.getMaxDurability() > 0)
 			ids.second = SUBID_WILDCARD;
-		
+
 		return ids;
 	}
 
@@ -308,11 +314,11 @@ public class MaterialAliases {
 
 	public String getAlias(Material material, BlockData data) {
 		String dataString = "";
-		
-		if(data != null) {
+
+		if (data != null) {
 			dataString = BlockUtils.dataString(data);
 		}
-		
+
 		String item_name = null;
 		if (!itemAliases.isEmpty()) {
 			String key = material.name().toLowerCase() + dataString;

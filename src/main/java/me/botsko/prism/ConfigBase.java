@@ -84,7 +84,8 @@ public class ConfigBase {
 		final File file = getFilename(filename);
 		if (file.exists()) {
 			return YamlConfiguration.loadConfiguration(file);
-		} else {
+		}
+		else {
 			// Look for defaults in the jar
 			final InputStream defConfigStream = plugin.getResource(default_folder + filename + ".yml");
 			if (defConfigStream != null) {
@@ -102,7 +103,8 @@ public class ConfigBase {
 		final File file = getFilename(filename);
 		try {
 			config.save(file);
-		} catch (final IOException e) {
+		}
+		catch (final IOException e) {
 			// Prism.log("Could not save the configuration file to "+file);
 			// Throw exception
 		}
@@ -117,7 +119,8 @@ public class ConfigBase {
 			saveConfig(filename, config);
 			bw.flush();
 			bw.close();
-		} catch (final IOException ignored) {
+		}
+		catch (final IOException ignored) {
 
 		}
 	}

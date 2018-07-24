@@ -111,7 +111,8 @@ public class ActionsQuery {
 					sender.sendMessage(
 							Prism.messenger.playerError("Database connection was closed, please wait and try again."));
 					return new QueryResult(actions, parameters);
-				} else {
+				}
+				else {
 					RecordingManager.failedDbConnectionCount = 0;
 				}
 
@@ -179,7 +180,7 @@ public class ActionsQuery {
 						ItemStack item = current.asItem();
 						BlockData block = current.asBlockData();
 
-						if(block != null) {
+						if (block != null) {
 							baseHandler.setBlock(block.getMaterial());
 							baseHandler.setBlockData(block);
 							baseHandler.setDurability((short) 0);
@@ -189,12 +190,12 @@ public class ActionsQuery {
 							baseHandler.setBlockData(Bukkit.createBlockData(item.getType()));
 							baseHandler.setDurability(item.getDurability());
 						}
-						
-						MaterialState old =  Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
+
+						MaterialState old = Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
 						ItemStack oldItem = old.asItem();
 						BlockData oldBlock = old.asBlockData();
-						
-						if(oldBlock != null) {
+
+						if (oldBlock != null) {
 							baseHandler.setOldBlock(oldBlock.getMaterial());
 							baseHandler.setOldBlockData(oldBlock);
 							baseHandler.setOldDurability((short) 0);
@@ -204,7 +205,7 @@ public class ActionsQuery {
 							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
 							baseHandler.setOldDurability(oldItem.getDurability());
 						}
-						
+
 						baseHandler.setData(rs.getString(13));
 						baseHandler.setMaterialAliases(Prism.getItems());
 
@@ -217,30 +218,36 @@ public class ActionsQuery {
 
 						actions.add(baseHandler);
 
-					} catch (final SQLException e) {
+					}
+					catch (final SQLException e) {
 						if (!rs.isClosed()) {
 							Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:");
 						}
 						e.printStackTrace();
 					}
 				}
-			} catch (final SQLException e) {
+			}
+			catch (final SQLException e) {
 				plugin.handleDatabaseException(e);
-			} finally {
+			}
+			finally {
 				if (rs != null)
 					try {
 						rs.close();
-					} catch (final SQLException ignored) {
+					}
+					catch (final SQLException ignored) {
 					}
 				if (s != null)
 					try {
 						s.close();
-					} catch (final SQLException ignored) {
+					}
+					catch (final SQLException ignored) {
 					}
 				if (conn != null)
 					try {
 						conn.close();
-					} catch (final SQLException ignored) {
+					}
+					catch (final SQLException ignored) {
 					}
 			}
 		}
@@ -300,26 +307,32 @@ public class ActionsQuery {
 				if (rs.first()) {
 					id = rs.getLong("id");
 				}
-			} else {
+			}
+			else {
 				Prism.log("Prism database error. getUsersLastPrismProcessId cannot continue.");
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			plugin.handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return id;
@@ -367,26 +380,32 @@ public class ActionsQuery {
 					process.setZ(rs.getInt("z"));
 					process.setData(rs.getString("data"));
 				}
-			} else {
+			}
+			else {
 				Prism.log("Prism database error. getPrismProcessRecord cannot continue.");
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			plugin.handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return process;
@@ -409,21 +428,26 @@ public class ActionsQuery {
 				s = conn.createStatement();
 				cycle_rows_affected = s.executeUpdate(query);
 				total_rows_affected += cycle_rows_affected;
-			} else {
+			}
+			else {
 				Prism.log("Prism database error. Purge cannot continue.");
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			plugin.handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return total_rows_affected;

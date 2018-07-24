@@ -61,7 +61,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 					}
 					coordsLoc = (new Location(player.getWorld(), Integer.parseInt(coordinates[0]),
 							Integer.parseInt(coordinates[1]), Integer.parseInt(coordinates[2])));
-				} else {
+				}
+				else {
 					// Try to find an online player
 					@SuppressWarnings("deprecation")
 					Player p2 = Bukkit.getServer().getPlayer(radiusLocOrPlayer);
@@ -70,7 +71,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 								+ "'. Perhaps they are not online or you misspelled their name?");
 					player = p2;
 				}
-			} else {
+			}
+			else {
 				desiredRadius = Integer.parseInt(inputValue);
 			}
 			if (desiredRadius <= 0) {
@@ -110,11 +112,13 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 																			// it
 																			// won't
 																			// work.
-				} else {
+				}
+				else {
 					query.setMinMaxVectorsFromPlayerLocation(player.getLocation());
 				}
 			}
-		} else {
+		}
+		else {
 
 			// If neither sender or a named player found, die here
 			if (player == null) {
@@ -128,7 +132,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 				if (Prism.plugin_worldEdit == null) {
 					throw new IllegalArgumentException(
 							"This feature is disabled because Prism couldn't find WorldEdit.");
-				} else {
+				}
+				else {
 
 					// Load a selection from world edit as our area.
 					final Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
@@ -189,7 +194,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 				query.setWorld(null);
 				query.setAllowNoRadius(true);
 
-			} else {
+			}
+			else {
 				throw new IllegalArgumentException(
 						"Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.");
 			}
@@ -206,7 +212,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 		if (sender != null && sender instanceof Player) {
 			if (query.allowsNoRadius()) {
 				// We'll allow no radius.
-			} else {
+			}
+			else {
 				final FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 				query.setRadius(config.getInt("prism.queries.default-radius"));
 				query.addDefaultUsed("r:" + query.getRadius());

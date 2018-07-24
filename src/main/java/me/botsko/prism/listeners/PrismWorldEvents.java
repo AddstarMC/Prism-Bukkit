@@ -31,7 +31,8 @@ public class PrismWorldEvents implements Listener {
 			if (BlockUtils.isGrowableStructure(block.getType())) {
 				if (event.getPlayer() != null) {
 					RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, event.getPlayer()));
-				} else
+				}
+				else
 					RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, "Environment"));
 			}
 		}

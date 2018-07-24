@@ -109,7 +109,7 @@ public class UseMonitor {
 
 		final String playername = player.getName();
 		final String blockType = "" + block.getType();
-		
+
 		// Ensure we're tracking this block
 		if (blocksToAlertOnPlace.contains(blockType) || blocksToAlertOnPlace.contains(block.getType().name())) {
 			final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());

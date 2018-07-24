@@ -57,14 +57,16 @@ public class MiscUtils {
 			}
 			// Otherwise non-player
 			return desiredRadius;
-		} else if (!processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius) {
+		}
+		else if (!processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius) {
 			// If player does not have permission to override the max
 			if (player != null && !player.hasPermission("prism.override-max-applier-radius")) {
 				return max_applier_radius;
 			}
 			// Otherwise non-player
 			return desiredRadius;
-		} else {
+		}
+		else {
 			// Otherwise, the radius is valid and is not exceeding max
 			return desiredRadius;
 		}
@@ -75,7 +77,8 @@ public class MiscUtils {
 		if (from != null)
 			try {
 				return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase());
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
 			}
 		return fallback;
 	}
@@ -121,7 +124,8 @@ public class MiscUtils {
 			return Prism.messenger.playerSuccess(
 					"Successfully pasted results: " + prismWebUrl + "#/" + response.getResults().getSlug());
 
-		} catch (final Exception up) {
+		}
+		catch (final Exception up) {
 			Prism.debug(up.toString());
 			return Prism.messenger.playerError(
 					"Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
@@ -135,7 +139,8 @@ public class MiscUtils {
 				if (option.startsWith(start))
 					result.add(option);
 			}
-		} else {
+		}
+		else {
 			start = start.toLowerCase();
 			for (final String option : options) {
 				if (option.toLowerCase().startsWith(start))

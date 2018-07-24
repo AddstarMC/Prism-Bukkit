@@ -39,20 +39,24 @@ public class DrainCommand implements SubHandler {
 		if (call.getArgs().length == 3) {
 			if (call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava")) {
 				drain_type = call.getArg(1);
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(
 						Prism.messenger.playerError("Invalid drain type. Must be lava, water, or left out."));
 				return;
 			}
 			// Validate radius
 			radius = validateRadius(call, call.getArg(2));
-		} else if (call.getArgs().length == 2) {
+		}
+		else if (call.getArgs().length == 2) {
 			if (TypeUtils.isNumeric(call.getArg(1))) {
 				radius = validateRadius(call, call.getArg(1));
-			} else {
+			}
+			else {
 				if (call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava")) {
 					drain_type = call.getArg(1);
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(
 							Prism.messenger.playerError("Invalid drain type. Must be lava, water, or left out."));
 					return;
@@ -67,7 +71,8 @@ public class DrainCommand implements SubHandler {
 		String msg = "Looking for " + drain_type + " within " + radius + " blocks.";
 		if (drain_type.equals("water")) {
 			msg += ChatColor.GRAY + " It's just too wet.";
-		} else if (drain_type.equals("lava")) {
+		}
+		else if (drain_type.equals("lava")) {
 			msg += ChatColor.GRAY + " It's getting hot in here.";
 		}
 		call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(msg));
@@ -75,9 +80,11 @@ public class DrainCommand implements SubHandler {
 		ArrayList<BlockStateChange> blockStateChanges = null;
 		if (drain_type.isEmpty()) {
 			blockStateChanges = BlockUtils.drain(call.getPlayer().getLocation(), radius);
-		} else if (drain_type.equals("water")) {
+		}
+		else if (drain_type.equals("water")) {
 			blockStateChanges = BlockUtils.drainwater(call.getPlayer().getLocation(), radius);
-		} else if (drain_type.equals("lava")) {
+		}
+		else if (drain_type.equals("lava")) {
 			blockStateChanges = BlockUtils.drainlava(call.getPlayer().getLocation(), radius);
 		}
 
@@ -92,7 +99,8 @@ public class DrainCommand implements SubHandler {
 			final PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
 			plugin.getServer().getPluginManager().callEvent(event);
 
-		} else {
+		}
+		else {
 			call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to drain within that radius."));
 		}
 	}
@@ -114,15 +122,18 @@ public class DrainCommand implements SubHandler {
 				if (_tmp_radius > plugin.getConfig().getInt("prism.drain.max-radius")) {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("Radius exceeds max set in config."));
 					return 0;
-				} else {
+				}
+				else {
 					return _tmp_radius;
 				}
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(Prism.messenger.playerError(
 						"Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help."));
 				return 0;
 			}
-		} else {
+		}
+		else {
 			call.getPlayer().sendMessage(Prism.messenger.playerError(
 					"Radius must be a number. Or leave it off to use the default. Use /prism ? for help."));
 			return 0;

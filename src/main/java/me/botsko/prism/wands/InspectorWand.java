@@ -67,7 +67,8 @@ public class InspectorWand extends QueryWandBase {
 
 				try {
 					params = parameters.clone();
-				} catch (final CloneNotSupportedException ex) {
+				}
+				catch (final CloneNotSupportedException ex) {
 					params = new QueryParameters();
 					player.sendMessage(Prism.messenger
 							.playerError("Error retrieving parameters. Checking with default parameters."));
@@ -122,7 +123,8 @@ public class InspectorWand extends QueryWandBase {
 						}
 						player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
 					}
-				} else {
+				}
+				else {
 					final String space_name = (block.getType().equals(Material.AIR) ? "space"
 							: block.getType().toString().replaceAll("_", " ").toLowerCase()
 									+ (block.getType().toString().endsWith("BLOCK") ? "" : " block"));

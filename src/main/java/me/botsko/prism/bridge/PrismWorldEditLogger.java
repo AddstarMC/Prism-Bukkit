@@ -38,11 +38,11 @@ public class PrismWorldEditLogger extends AbstractLoggingExtent {
 		Block oldBlock = loc.getBlock();
 
 		Material newMaterial = Material.matchMaterial(BlockType.fromID(newBlock.getId()).name());
-		
+
 		// TODO: When worldedit has some way of getting blockdata
 		BlockData newData = Bukkit.createBlockData(newMaterial);
 
-		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(), oldBlock.getBlockData(),
-				newMaterial, newData, Bukkit.getPlayer(player.getUniqueId())));
+		RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(),
+				oldBlock.getBlockData(), newMaterial, newData, Bukkit.getPlayer(player.getUniqueId())));
 	}
 }

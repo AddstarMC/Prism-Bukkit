@@ -88,7 +88,8 @@ final public class PurgeManager implements Runnable {
 						purge_tick_delay);
 
 			}
-		} else {
+		}
+		else {
 			Prism.log("Purge rules are empty, not purging anything.");
 		}
 	}

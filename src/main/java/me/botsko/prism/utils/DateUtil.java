@@ -31,15 +31,20 @@ public class DateUtil {
 
 						if (tfFormat.equals("w")) {
 							cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
-						} else if (tfFormat.equals("d")) {
+						}
+						else if (tfFormat.equals("d")) {
 							cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
-						} else if (tfFormat.equals("h")) {
+						}
+						else if (tfFormat.equals("h")) {
 							cal.add(Calendar.HOUR, -1 * tfValue);
-						} else if (tfFormat.equals("m")) {
+						}
+						else if (tfFormat.equals("m")) {
 							cal.add(Calendar.MINUTE, -1 * tfValue);
-						} else if (tfFormat.equals("s")) {
+						}
+						else if (tfFormat.equals("s")) {
 							cal.add(Calendar.SECOND, -1 * tfValue);
-						} else {
+						}
+						else {
 							return null;
 						}
 					}

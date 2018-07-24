@@ -85,7 +85,8 @@ public class LookupCommand implements SubHandler {
 						player.sendMessage(Prism.messenger
 								.playerHeaderMsg(ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName()
 										+ ChatColor.GOLD + " shared these Prism lookup logs with you:"));
-					} else if (!sharingWithPlayers.isEmpty()) {
+					}
+					else if (!sharingWithPlayers.isEmpty()) {
 						player.sendMessage(
 								Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "Sharing results with players: "
 										+ ChatColor.YELLOW + "" + ChatColor.ITALIC + sharingWithPlayers));
@@ -110,7 +111,8 @@ public class LookupCommand implements SubHandler {
 								player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
 								result_count++;
 							}
-						} else {
+						}
+						else {
 							player.sendMessage(Prism.messenger
 									.playerError("Pagination can't find anything. Do you have the right page number?"));
 						}
@@ -121,7 +123,8 @@ public class LookupCommand implements SubHandler {
 							}
 							player.sendMessage(MiscUtils.paste_results(plugin, paste));
 						}
-					} else {
+					}
+					else {
 						if (!defaultsReminder.isEmpty()) {
 							if (isSender) {
 								player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(defaultsReminder));

@@ -34,7 +34,8 @@ public class EntityTravelAction extends GenericAction {
 		if (entity != null) {
 			if (entity instanceof Player) {
 				setPlayer((Player) entity);
-			} else {
+			}
+			else {
 				setNonPlayerName(entity.getType().name().toLowerCase());
 			}
 		}

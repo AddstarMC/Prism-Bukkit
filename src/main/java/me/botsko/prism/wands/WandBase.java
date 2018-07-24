@@ -59,7 +59,6 @@ public abstract class WandBase implements Wand {
 		return wand_mode;
 	}
 
-
 	@Override
 	public Material getItem() {
 		return item;
@@ -97,7 +96,8 @@ public abstract class WandBase implements Wand {
 			// Likely is what they're holding
 			if (inv.getItemInMainHand().getType() == item) {
 				itemSlot = inv.getHeldItemSlot();
-			} else {
+			}
+			else {
 				itemSlot = InventoryUtils.inventoryHasItem(inv, item);
 			}
 			if (itemSlot > -1) {

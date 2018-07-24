@@ -23,7 +23,8 @@ public class BlockChangeAction extends BlockAction {
 		String name = "";
 		if (this.getType().getName().equals("block-fade")) {
 			name += materialAliases.getAlias(this.old_block, this.old_block_data);
-		} else {
+		}
+		else {
 			name += materialAliases.getAlias(this.block, this.block_data);
 		}
 		return name;
@@ -81,7 +82,8 @@ public class BlockChangeAction extends BlockAction {
 	 * @return
 	 */
 	protected ChangeResult placeBlock(Player player, QueryParameters parameters, boolean is_preview, String type,
-			Material old_mat, BlockData old_data, Material new_mat, BlockData new_data, Block block, boolean is_deferred) {
+			Material old_mat, BlockData old_data, Material new_mat, BlockData new_data, Block block,
+			boolean is_deferred) {
 
 		final BlockAction b = new BlockAction();
 		b.setActionType(type);
@@ -104,13 +106,15 @@ public class BlockChangeAction extends BlockAction {
 				b.setBlock(old_mat);
 				b.setBlockData(old_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
-			} else {
+			}
+			else {
 				// System.out.print("Block change skipped because new id doesn't match what's
 				// there now. There now: "
 				// + block.getTypeId() + " vs " + new_id);
 				return new ChangeResult(ChangeResultType.SKIPPED, null);
 			}
-		} else if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
+		}
+		else if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
 			// Run verification for no-overwrite. Only reapply a change
 			// if the opposite state is what's present now.
 			// We skip this check because if we're in preview mode the block may
@@ -124,7 +128,8 @@ public class BlockChangeAction extends BlockAction {
 				b.setBlock(new_mat);
 				b.setBlockData(new_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
-			} else {
+			}
+			else {
 				// System.out.print("Block change skipped because old id doesn't match what's
 				// there now. There now: "
 				// + block.getTypeId() + " vs " + old_id);

@@ -29,23 +29,28 @@ public class PurgeChunkingUtil {
 				id = rs.getLong(1);
 			}
 
-		} catch (final SQLException ignored) {
+		}
+		catch (final SQLException ignored) {
 
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return id;
@@ -71,23 +76,28 @@ public class PurgeChunkingUtil {
 				id = rs.getLong(1);
 			}
 
-		} catch (final SQLException ignored) {
+		}
+		catch (final SQLException ignored) {
 
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return id;

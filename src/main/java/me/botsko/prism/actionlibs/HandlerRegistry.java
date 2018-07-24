@@ -83,7 +83,8 @@ public class HandlerRegistry {
 				try {
 					final Class<? extends Handler> handlerClass = registeredHandlers.get(name);
 					return new HandlerFactory<Handler>(handlerClass).create();
-				} catch (final Exception e) {
+				}
+				catch (final Exception e) {
 					e.printStackTrace();
 				}
 			}

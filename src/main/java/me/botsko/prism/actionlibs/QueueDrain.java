@@ -35,7 +35,8 @@ public class QueueDrain {
 			// run insert
 			try {
 				recorderTask.insertActionsIntoDatabase();
-			} catch (final Exception e) {
+			}
+			catch (final Exception e) {
 				e.printStackTrace();
 				Prism.log("Stopping queue drain due to caught exception. Queue items lost: "
 						+ RecordingQueue.getQueue().size());

@@ -226,26 +226,32 @@ public class PlayerIdentification {
 						+ ") into the cache.");
 				Prism.prismPlayers.put(player.getUniqueId(),
 						new PrismPlayer(rs.getInt(1), player.getUniqueId(), player.getName()));
-			} else {
+			}
+			else {
 				throw new SQLException("Insert statement failed - no generated key obtained.");
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 		return prismPlayer;
@@ -280,26 +286,32 @@ public class PlayerIdentification {
 				fakePlayer.setId(rs.getInt(1));
 				Prism.debug("Saved and loaded fake player " + fakePlayer.getName() + " into the cache.");
 				Prism.prismPlayers.put(fakePlayer.getUUID(), fakePlayer);
-			} else {
+			}
+			else {
 				throw new SQLException("Insert statement failed - no generated key obtained.");
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 		return fakePlayer;
@@ -324,18 +336,22 @@ public class PlayerIdentification {
 			s.setInt(3, prismPlayer.getId());
 			s.executeUpdate();
 
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 	}
@@ -360,23 +376,28 @@ public class PlayerIdentification {
 			if (rs.next()) {
 				prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)), rs.getString(2));
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 		return prismPlayer;
@@ -402,23 +423,28 @@ public class PlayerIdentification {
 			if (rs.next()) {
 				prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)), rs.getString(2));
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 		return prismPlayer;
@@ -455,23 +481,28 @@ public class PlayerIdentification {
 				Prism.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
 				Prism.prismPlayers.put(UUID.fromString(rs.getString(2)), prismPlayer);
 			}
-		} catch (SQLException e) {
+		}
+		catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (SQLException e) {
+				}
+				catch (SQLException e) {
 				}
 		}
 	}

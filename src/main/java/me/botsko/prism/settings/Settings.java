@@ -49,18 +49,22 @@ public class Settings {
 			s.setString(1, finalKey);
 			s.executeUpdate();
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			// plugin.logDbError( e );
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 	}
@@ -103,23 +107,28 @@ public class Settings {
 			s2.setString(2, value);
 			s2.executeUpdate();
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			// plugin.logDbError( e );
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s2 != null)
 				try {
 					s2.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 	}
@@ -160,23 +169,28 @@ public class Settings {
 				value = rs.getString("v");
 			}
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			// plugin.logDbError( e );
-		} finally {
+		}
+		finally {
 			if (rs != null)
 				try {
 					rs.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 		return value;

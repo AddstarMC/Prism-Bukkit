@@ -52,7 +52,8 @@ public class ViewCommand implements SubHandler {
 				call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Reset your current view."));
 				plugin.playerActiveViews.remove(playerName);
 
-			} else {
+			}
+			else {
 
 				// Get bounding blocks
 				final ArrayList<Block> blocks = ChunkUtils.getBoundingBlocksAtY(

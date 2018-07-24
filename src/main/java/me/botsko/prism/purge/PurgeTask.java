@@ -116,7 +116,8 @@ public class PurgeTask implements Runnable {
 		if (!cycle_complete) {
 			plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
 					new PurgeTask(plugin, paramList, purge_tick_delay, newMinId, maxId, callback), purge_tick_delay);
-		} else {
+		}
+		else {
 
 			// reset counts
 			plugin.total_records_affected = 0;

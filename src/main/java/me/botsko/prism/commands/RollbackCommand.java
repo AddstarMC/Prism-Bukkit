@@ -80,7 +80,8 @@ public class RollbackCommand implements SubHandler {
 						}
 					});
 
-				} else {
+				}
+				else {
 					call.getSender().sendMessage(
 							Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first."));
 				}

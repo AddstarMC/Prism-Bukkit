@@ -28,7 +28,8 @@ public class WorldEditBridge {
 					Prism.plugin_worldEdit.getWorldEdit().getServer(), player);
 			final World lw = lp.getWorld();
 			region = Prism.plugin_worldEdit.getWorldEdit().getSessionManager().getIfPresent(lp).getSelection(lw);
-		} catch (final IncompleteRegionException e) {
+		}
+		catch (final IncompleteRegionException e) {
 			return false;
 		}
 
@@ -53,7 +54,8 @@ public class WorldEditBridge {
 		if (maxRadius != 0 && (lRadius > maxRadius || wRadius > maxRadius || hRadius > maxRadius)
 				&& !player.hasPermission("prism.override-max-" + procType + "-radius")) {
 			return false;
-		} else {
+		}
+		else {
 
 			parameters.setWorld(region.getWorld().getName());
 			parameters.setMinLocation(minLoc);

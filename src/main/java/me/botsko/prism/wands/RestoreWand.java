@@ -60,7 +60,8 @@ public class RestoreWand extends QueryWandBase {
 		QueryParameters params;
 		try {
 			params = parameters.clone();
-		} catch (final CloneNotSupportedException ex) {
+		}
+		catch (final CloneNotSupportedException ex) {
 			params = new QueryParameters();
 			player.sendMessage(
 					Prism.messenger.playerError("Error retrieving parameters. Checking with default parameters."));
@@ -87,7 +88,8 @@ public class RestoreWand extends QueryWandBase {
 			final Restore rb = new Restore(plugin, player, results.getActionResults(), params,
 					new PrismApplierCallback());
 			rb.apply();
-		} else {
+		}
+		else {
 			final String space_name = (block.getType().equals(Material.AIR) ? "space"
 					: block.getType().toString().replaceAll("_", " ").toLowerCase()
 							+ (block.getType().toString().endsWith("BLOCK") ? "" : " block"));

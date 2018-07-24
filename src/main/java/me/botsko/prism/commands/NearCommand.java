@@ -47,12 +47,14 @@ public class NearCommand implements SubHandler {
 				final int _tmp_radius = Integer.parseInt(call.getArg(1));
 				if (_tmp_radius > 0) {
 					radius = _tmp_radius;
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger.playerError(
 							"Radius must be greater than zero. Or leave it off to use the default. Use /prism ? for help."));
 					return;
 				}
-			} else {
+			}
+			else {
 				call.getPlayer().sendMessage(Prism.messenger.playerError(
 						"Radius must be a number. Or leave it off to use the default. Use /prism ? for help."));
 				return;
@@ -95,11 +97,13 @@ public class NearCommand implements SubHandler {
 						// Flush timed data
 						plugin.eventTimer.printTimeRecord();
 
-					} else {
+					}
+					else {
 						call.getPlayer().sendMessage(Prism.messenger
 								.playerError("Pagination can't find anything. Do you have the right page number?"));
 					}
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("Couldn't find anything."));
 				}
 			}

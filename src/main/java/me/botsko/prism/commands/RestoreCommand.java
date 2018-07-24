@@ -88,7 +88,8 @@ public class RestoreCommand implements SubHandler {
 						}
 					});
 
-				} else {
+				}
+				else {
 					call.getSender().sendMessage(
 							Prism.messenger.playerError("Nothing found to restore. Try using /prism l (args) first."));
 				}

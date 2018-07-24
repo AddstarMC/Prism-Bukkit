@@ -62,17 +62,19 @@ public class ActionMessage {
 		msg.append(" " + a.getType().getName());
 		msg.append(" " + a.getBlock());
 		msg.append(BlockUtils.dataString(a.getBlockData()));
-		
+
 		if (a.getType().getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				msg.append(" (" + a.getNiceName() + ")");
-		} else {
+		}
+		else {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
 			if (a.getType().getName().equals("lava-bucket")) {
 				msg.append(" (lava)");
-			} else if (a.getType().getName().equals("water-bucket")) {
+			}
+			else if (a.getType().getName().equals("water-bucket")) {
 				msg.append(" (water)");
 			}
 		}
@@ -109,10 +111,10 @@ public class ActionMessage {
 
 		// Who
 		line1 += highlight + a.getPlayerName();
-		
+
 		String description = a.getCustomDesc();
-		
-		if(description == null)
+
+		if (description == null)
 			description = a.getType().getNiceDescription();
 
 		// Description of event
@@ -120,13 +122,15 @@ public class ActionMessage {
 		if (a.getType().getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				line1 += " " + highlight + a.getNiceName();
-		} else {
+		}
+		else {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
 			if (a.getType().getName().equals("lava-bucket")) {
 				line1 += " " + highlight + "lava";
-			} else if (a.getType().getName().equals("water-bucket")) {
+			}
+			else if (a.getType().getName().equals("water-bucket")) {
 				line1 += " " + highlight + "water";
 			}
 		}
@@ -179,7 +183,8 @@ public class ActionMessage {
 		if (a.getType().doesCreateBlock() || a.getType().getName().equals("item-insert")
 				|| a.getType().getName().equals("sign-change")) {
 			return ChatColor.GREEN + " + " + ChatColor.WHITE;
-		} else {
+		}
+		else {
 			return ChatColor.RED + " - " + ChatColor.WHITE;
 		}
 	}

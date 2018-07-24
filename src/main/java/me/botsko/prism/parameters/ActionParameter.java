@@ -71,15 +71,18 @@ public class ActionParameter extends SimplePrismParameterHandler {
 						String message = "Ignoring action '" + action + "' because you don't have permission for ";
 						if (noPermission.size() != 1) {
 							message += "any of " + Joiner.on(',').join(noPermission) + ".";
-						} else if (noPermission.get(0).equals(action)) {
+						}
+						else if (noPermission.get(0).equals(action)) {
 							message += "it.";
-						} else {
+						}
+						else {
 							message += noPermission.get(0) + ".";
 						}
 						sender.sendMessage(Prism.messenger.playerError(message));
 					}
 
-				} else {
+				}
+				else {
 					if (sender != null) {
 						sender.sendMessage(Prism.messenger.playerError("Ignoring action '" + action.replace("!", "")
 								+ "' because it's unrecognized. Did you mean '"

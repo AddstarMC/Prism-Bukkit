@@ -116,7 +116,7 @@ public class GenericAction implements Handler {
 	protected BlockData old_block_data;
 
 	protected short old_durability;
-	
+
 	/**
 	 * 
 	 */
@@ -126,12 +126,12 @@ public class GenericAction implements Handler {
 	 * 
 	 */
 	protected int aggregateCount = 0;
-	
+
 	@Override
 	public String getCustomDesc() {
 		return null;
 	}
-	
+
 	@Override
 	public void setCustomDesc(String description) {
 	}
@@ -463,7 +463,7 @@ public class GenericAction implements Handler {
 	public void setBlockData(BlockData data) {
 		this.block_data = data;
 	}
-	
+
 	@Override
 	public void setDurability(short durability) {
 	}
@@ -482,12 +482,12 @@ public class GenericAction implements Handler {
 	public BlockData getBlockData() {
 		return block_data;
 	}
-	
+
 	@Override
 	public short getDurability() {
 		return 0;
 	}
-	
+
 	@Override
 	public String getState() {
 		return BlockUtils.dataString(getBlockData());
@@ -507,7 +507,7 @@ public class GenericAction implements Handler {
 	public void setOldBlockData(BlockData data) {
 		this.old_block_data = data;
 	}
-	
+
 	@Override
 	public void setOldDurability(short durability) {
 		this.old_durability = durability;
@@ -527,7 +527,7 @@ public class GenericAction implements Handler {
 	public BlockData getOldBlockData() {
 		return old_block_data;
 	}
-	
+
 	@Override
 	public short getOldDurability() {
 		return old_durability;

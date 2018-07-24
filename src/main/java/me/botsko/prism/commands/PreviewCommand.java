@@ -53,7 +53,8 @@ public class PreviewCommand implements SubHandler {
 					final PreviewSession previewSession = plugin.playerActivePreviews.get(call.getPlayer().getName());
 					previewSession.getPreviewer().apply_preview();
 					plugin.playerActivePreviews.remove(call.getPlayer().getName());
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
 				}
 				return;
@@ -67,7 +68,8 @@ public class PreviewCommand implements SubHandler {
 					final PreviewSession previewSession = plugin.playerActivePreviews.get(call.getPlayer().getName());
 					previewSession.getPreviewer().cancel_preview();
 					plugin.playerActivePreviews.remove(call.getPlayer().getName());
-				} else {
+				}
+				else {
 					call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
 				}
 				return;
@@ -141,7 +143,8 @@ public class PreviewCommand implements SubHandler {
 										rs.preview();
 									}
 								});
-							} else {
+							}
+							else {
 								call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
 							}
 						}
@@ -161,7 +164,8 @@ public class PreviewCommand implements SubHandler {
 										rs.preview();
 									}
 								});
-							} else {
+							}
+							else {
 								call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
 							}
 						}

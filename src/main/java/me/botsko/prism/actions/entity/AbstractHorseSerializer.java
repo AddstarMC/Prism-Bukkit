@@ -33,11 +33,13 @@ public class AbstractHorseSerializer extends EntitySerializer {
 			style = horse.getStyle().name();
 			saddle = ItemUtils.smallString(horse.getInventory().getSaddle());
 			armor = ItemUtils.smallString(horse.getInventory().getArmor());
-		} else if (entity.getType() == EntityType.LLAMA) {
+		}
+		else if (entity.getType() == EntityType.LLAMA) {
 			Llama llama = (Llama) h;
 			hColor = llama.getColor().name();
 			saddle = ItemUtils.smallString(llama.getInventory().getDecor());
-		} else if (entity.getType() == EntityType.MULE || entity.getType() == EntityType.DONKEY
+		}
+		else if (entity.getType() == EntityType.MULE || entity.getType() == EntityType.DONKEY
 				|| entity.getType() == EntityType.ZOMBIE_HORSE || entity.getType() == EntityType.SKELETON_HORSE) {
 			// Actually a saddle
 			saddle = ItemUtils.smallString(h.getInventory().getItem(0));
@@ -64,12 +66,14 @@ public class AbstractHorseSerializer extends EntitySerializer {
 			horse.setStyle(vstyle);
 			horse.getInventory().setSaddle(ItemUtils.itemOf(saddle));
 			horse.getInventory().setArmor(ItemUtils.itemOf(armor));
-		} else if (entity.getType() == EntityType.LLAMA) {
+		}
+		else if (entity.getType() == EntityType.LLAMA) {
 			Llama llama = (Llama) h;
 			Llama.Color color = MiscUtils.getEnum(hColor, Llama.Color.CREAMY);
 			llama.setColor(color);
 			llama.getInventory().setDecor(ItemUtils.itemOf(saddle));
-		} else if (entity.getType() == EntityType.DONKEY || entity.getType() == EntityType.MULE
+		}
+		else if (entity.getType() == EntityType.DONKEY || entity.getType() == EntityType.MULE
 				|| entity.getType() == EntityType.ZOMBIE_HORSE || entity.getType() == EntityType.SKELETON_HORSE) {
 			h.getInventory().setItem(0, ItemUtils.itemOf(saddle));
 		}

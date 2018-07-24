@@ -26,11 +26,13 @@ public class SinceParameter extends SimplePrismParameterHandler {
 	public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 		if (input.equalsIgnoreCase("none")) {
 			query.setIgnoreTime(true);
-		} else {
+		}
+		else {
 			final Long date = DateUtil.translateTimeStringToDate(input);
 			if (date != null) {
 				query.setSinceTime(date);
-			} else {
+			}
+			else {
 				throw new IllegalArgumentException(
 						"Date/time for 'since' parameter value not recognized. Try /pr ? for help");
 			}

@@ -26,7 +26,7 @@ public class EntitySerializer {
 	public final String getEntityName() {
 		return entity_name;
 	}
-	
+
 	public final String customDesc() {
 		return custom_desc;
 	}
@@ -45,7 +45,8 @@ public class EntitySerializer {
 		// Get animal age
 		if (entity instanceof Ageable) {
 			isAdult = ((Ageable) entity).isAdult();
-		} else if (entity instanceof Zombie) {
+		}
+		else if (entity instanceof Zombie) {
 			isAdult = !((Zombie) entity).isBaby();
 		}
 
@@ -60,16 +61,15 @@ public class EntitySerializer {
 		if (entity instanceof Sittable) {
 			sitting = ((Sittable) entity).isSitting();
 		}
-		
+
 		EntityDamageEvent damageEvent = entity.getLastDamageCause();
-		
+
 		// Saves us the null check
-		if(damageEvent instanceof EntityDamageByEntityEvent &&
-				!damageEvent.isCancelled() &&
-				damageEvent.getDamage() > ((LivingEntity)entity).getHealth()) {
+		if (damageEvent instanceof EntityDamageByEntityEvent && !damageEvent.isCancelled()
+				&& damageEvent.getDamage() > ((LivingEntity) entity).getHealth()) {
 			EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) damageEvent;
-			
-			if(e.getDamager() instanceof Projectile) {
+
+			if (e.getDamager() instanceof Projectile) {
 				custom_desc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
 			}
 		}
@@ -92,10 +92,12 @@ public class EntitySerializer {
 			final Ageable age = (Ageable) entity;
 			if (Boolean.FALSE.equals(isAdult)) {
 				age.setBaby();
-			} else {
+			}
+			else {
 				age.setAdult();
 			}
-		} else if (entity instanceof Zombie) {
+		}
+		else if (entity instanceof Zombie) {
 			((Zombie) entity).setBaby(Boolean.FALSE.equals(isAdult));
 		}
 

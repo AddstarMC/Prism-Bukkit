@@ -31,8 +31,8 @@ public class ItemUtils {
 	 * @param sub_id
 	 * @return
 	 */
-	private static EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.LAVA,
-			Material.FIRE, Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
+	private static EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.LAVA, Material.FIRE,
+			Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
 
 	public static boolean isAcceptableWand(Material material) {
 		return !badWands.contains(material);
@@ -59,7 +59,8 @@ public class ItemUtils {
 				if (parts.length > 1)
 					try {
 						return new ItemStack(mat, 1, Short.valueOf(parts[1]));
-					} catch (NumberFormatException e) {
+					}
+					catch (NumberFormatException e) {
 					}
 
 				return new ItemStack(mat, 1);
@@ -106,7 +107,8 @@ public class ItemUtils {
 		if (metaA.getDisplayName() != null) {
 			if (!metaA.getDisplayName().equals(metaB.getDisplayName()))
 				return false;
-		} else {
+		}
+		else {
 			if (metaB.getDisplayName() != null)
 				return false;
 		}
@@ -127,7 +129,8 @@ public class ItemUtils {
 				if (!metaB.getLore().contains(lore))
 					return false;
 			}
-		} else if (!(metaA.getLore() == null && metaB.getLore() == null))
+		}
+		else if (!(metaA.getLore() == null && metaB.getLore() == null))
 			return false;
 
 		// Enchants
@@ -349,10 +352,10 @@ public class ItemUtils {
 	public static String getItemFullNiceName(ItemStack item) {
 
 		String item_name = item.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
-		
+
 		ItemMeta meta = null;
-		
-		if(item.hasItemMeta()) {
+
+		if (item.hasItemMeta()) {
 			meta = item.getItemMeta();
 		}
 
@@ -481,10 +484,8 @@ public class ItemUtils {
 	/**
 	 * Drop an item at a given location.
 	 *
-	 * @param location
-	 *            The location to drop the item at
-	 * @param itemStack
-	 *            The item to drop
+	 * @param location The location to drop the item at
+	 * @param itemStack The item to drop
 	 */
 	public static void dropItem(Location location, ItemStack itemStack) {
 		location.getWorld().dropItemNaturally(location, itemStack);
@@ -493,12 +494,9 @@ public class ItemUtils {
 	/**
 	 * Drop items at a given location.
 	 *
-	 * @param location
-	 *            The location to drop the items at
-	 * @param is
-	 *            The items to drop
-	 * @param quantity
-	 *            The amount of items to drop
+	 * @param location The location to drop the items at
+	 * @param is The items to drop
+	 * @param quantity The amount of items to drop
 	 */
 	public static void dropItem(Location location, ItemStack is, int quantity) {
 		for (int i = 0; i < quantity; i++) {

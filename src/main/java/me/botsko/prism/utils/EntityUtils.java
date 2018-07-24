@@ -22,7 +22,8 @@ public class EntityUtils {
 			OfflinePlayer result;
 			try {
 				result = Bukkit.getOfflinePlayer(UUID.fromString(uuidOrName));
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
 				@SuppressWarnings("deprecation")
 				OfflinePlayer player = Bukkit.getOfflinePlayer(uuidOrName);
 				result = player;
@@ -38,7 +39,8 @@ public class EntityUtils {
 		if (uuidOrName != null) {
 			try {
 				return UUID.fromString(uuidOrName);
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
 			}
 
 			@SuppressWarnings("deprecation")
@@ -48,19 +50,20 @@ public class EntityUtils {
 
 		return null;
 	}
-	
+
 	private static HashMap<String, String> descriptionCache = new HashMap<>();
+
 	public static String getCustomProjectileDescription(Projectile source) {
 		String description = descriptionCache.get(source.getClass().getSimpleName());
-		
-		if(description == null) {
+
+		if (description == null) {
 			if (source instanceof org.bukkit.entity.Trident) {
 				description = "scewered";
 			}
-			else if(source instanceof org.bukkit.entity.Arrow) {
+			else if (source instanceof org.bukkit.entity.Arrow) {
 				description = "shot";
 			}
-			else if(source instanceof org.bukkit.entity.Egg) {
+			else if (source instanceof org.bukkit.entity.Egg) {
 				description = "became the very best of";
 			}
 			else if (source instanceof org.bukkit.entity.EnderPearl) {
@@ -94,14 +97,14 @@ public class EntityUtils {
 			else {
 				description = "";
 			}
-			
+
 			descriptionCache.put(source.getClass().getSimpleName(), description);
 		}
-		
-		if(description.length() > 0) {
+
+		if (description.length() > 0) {
 			return description;
 		}
-		
+
 		return null;
 	}
 
@@ -151,7 +154,7 @@ public class EntityUtils {
 	 * @return
 	 * @todo doesn't bukkit have this already?
 	 */
-	
+
 	@SuppressWarnings("deprecation")
 	public static boolean playerMayPassThrough(Material m) {
 		// Close enough, pray you don't land in a portal

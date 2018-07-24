@@ -141,7 +141,8 @@ public class OreMonitor {
 	protected String getOreColor(Block block) {
 		if (isWatched(block)) {
 			return Prism.getAlertedOres().get("" + block.getType());
-		} else {
+		}
+		else {
 			return "&f";
 		}
 	}

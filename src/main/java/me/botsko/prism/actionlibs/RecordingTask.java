@@ -113,27 +113,33 @@ public class RecordingTask implements Runnable {
 					s2.setString(2, a.getData());
 					s2.executeUpdate();
 
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			}
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			// plugin.handleDatabaseException( e );
-		} finally {
+		}
+		finally {
 			if (generatedKeys != null)
 				try {
 					generatedKeys.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 
@@ -178,7 +184,8 @@ public class RecordingTask implements Runnable {
 					}
 					Prism.debug("Database connection still missing, incrementing count.");
 					return;
-				} else {
+				}
+				else {
 					RecordingManager.failedDbConnectionCount = 0;
 				}
 
@@ -235,9 +242,11 @@ public class RecordingTask implements Runnable {
 					s.setInt(4, world_id);
 
 					// TODO Better state handling
-					IntPair newIds = Prism.getItems().materialToIds(a.getBlock(), BlockUtils.dataString(a.getBlockData()));
+					IntPair newIds = Prism.getItems().materialToIds(a.getBlock(),
+							BlockUtils.dataString(a.getBlockData()));
 
-					IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(), BlockUtils.dataString(a.getOldBlockData()));
+					IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(),
+							BlockUtils.dataString(a.getOldBlockData()));
 
 					s.setInt(5, newIds.first);
 					s.setInt(6, newIds.second);
@@ -264,7 +273,8 @@ public class RecordingTask implements Runnable {
 				if (conn.isClosed()) {
 					Prism.log(
 							"Prism database error. We have to bail in the middle of building primary bulk insert query.");
-				} else {
+				}
+				else {
 					conn.commit();
 					Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
 				}
@@ -276,19 +286,23 @@ public class RecordingTask implements Runnable {
 				insertExtraData(extraDataQueue, s.getGeneratedKeys());
 
 			}
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			e.printStackTrace();
 			plugin.handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 		}
 	}
@@ -347,22 +361,27 @@ public class RecordingTask implements Runnable {
 			if (conn.isClosed()) {
 				Prism.log(
 						"Prism database error. We have to bail in the middle of building extra data bulk insert query.");
-			} else {
+			}
+			else {
 				conn.commit();
 			}
 
-		} catch (final SQLException e) {
+		}
+		catch (final SQLException e) {
 			e.printStackTrace();
 			plugin.handleDatabaseException(e);
-		} finally {
+		}
+		finally {
 			if (s != null)
 				try {
 					s.close();
-				} catch (final SQLException ignored) {
+				}
+				catch (final SQLException ignored) {
 				}
 			try {
 				conn.close();
-			} catch (final SQLException ignored) {
+			}
+			catch (final SQLException ignored) {
 			}
 		}
 	}

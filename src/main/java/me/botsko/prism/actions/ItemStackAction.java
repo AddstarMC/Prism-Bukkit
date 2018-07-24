@@ -1,12 +1,10 @@
 package me.botsko.prism.actions;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import me.botsko.prism.utils.EntityUtils;
-import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -74,10 +72,10 @@ public class ItemStackAction extends GenericAction {
 	 * give us the item with the enchantments already on it.
 	 */
 	protected Map<Enchantment, Integer> enchantments;
-	
+
 	@Deprecated
 	private short tempDurability = -1;
-	
+
 	@Override
 	public void setDurability(short durability) {
 		if (actionData == null) {
@@ -93,7 +91,7 @@ public class ItemStackAction extends GenericAction {
 		if (actionData != null) {
 			return actionData.durability;
 		}
-		
+
 		return 0;
 	}
 
@@ -124,12 +122,12 @@ public class ItemStackAction extends GenericAction {
 		// Set basics
 		this.block = item.getType();
 		actionData.durability = item.getDurability();
-		
-		if(tempDurability >= 0) {
+
+		if (tempDurability >= 0) {
 			actionData.durability = tempDurability;
 			tempDurability = -1;
 		}
-		
+
 		actionData.amt = quantity;
 		if (slot >= 0) {
 			actionData.slot = slot;
@@ -238,6 +236,10 @@ public class ItemStackAction extends GenericAction {
 	public void setData(String data) {
 		this.data = data;
 		setItemStackFromData();
+		
+		if(getActionData() == null) {
+			Prism.log("ERROR: Action data null after setData! Given: " + data);
+		}
 	}
 
 	/**
@@ -260,7 +262,7 @@ public class ItemStackAction extends GenericAction {
 	public void save() {
 		data = gson.toJson(actionData);
 	}
-	
+
 	@Override
 	public String getState() {
 		return "";
@@ -275,8 +277,8 @@ public class ItemStackAction extends GenericAction {
 			return;
 
 		actionData = gson.fromJson(data, ItemStackActionData.class);
-		
-		short damage = (short)actionData.durability;
+
+		short damage = (short) actionData.durability;
 
 		item = new ItemStack(this.block, actionData.amt, damage);
 
@@ -285,7 +287,7 @@ public class ItemStackAction extends GenericAction {
 			for (final String ench : actionData.enchs) {
 				final String[] enchArgs = ench.split(":");
 				Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(enchArgs[0]));
-				
+
 				// Restore book enchantment
 				if (item.getType() == Material.ENCHANTED_BOOK) {
 					final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) item.getItemMeta();
@@ -298,7 +300,7 @@ public class ItemStackAction extends GenericAction {
 				}
 			}
 		}
-		
+
 		ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
 
 		// Leather color
@@ -351,22 +353,22 @@ public class ItemStackAction extends GenericAction {
 
 		// Item display names
 		if (actionData.name != null) {
-			if(meta == null) {
+			if (meta == null) {
 				meta = item.getItemMeta();
 			}
-			
+
 			meta.setDisplayName(actionData.name);
 		}
-		
+
 		if (actionData.lore != null) {
-			if(meta == null) {
+			if (meta == null) {
 				meta = item.getItemMeta();
 			}
-			
+
 			meta.setLore(Arrays.asList(actionData.lore));
 		}
-		
-		if(meta != null) {
+
+		if (meta != null) {
 			item.setItemMeta(meta);
 		}
 	}
@@ -421,6 +423,10 @@ public class ItemStackAction extends GenericAction {
 	 * @return
 	 */
 	protected ChangeResult placeItems(Player player, QueryParameters parameters, boolean is_preview) {
+		
+		if(actionData == null) {
+			return new ChangeResult(ChangeResultType.SKIPPED, null);
+		}
 
 		ChangeResultType result = null;
 
@@ -440,20 +446,24 @@ public class ItemStackAction extends GenericAction {
 				final Player onlinePlayer = Bukkit.getServer().getPlayer(getUUID());
 				if (onlinePlayer != null) {
 					inventory = onlinePlayer.getInventory();
-				} else {
+				}
+				else {
 					// Skip if the player isn't online
 					Prism.debug("Skipping inventory process because player is offline");
 					return new ChangeResult(ChangeResultType.SKIPPED, null);
 				}
-			} else {
+			}
+			else {
 				if (block.getType().equals(Material.JUKEBOX)) {
 					final Jukebox jukebox = (Jukebox) block.getState();
 					jukebox.setPlaying(item.getType());
 					jukebox.update();
-				} else if (block.getState() instanceof InventoryHolder) {
+				}
+				else if (block.getState() instanceof InventoryHolder) {
 					final InventoryHolder ih = (InventoryHolder) block.getState();
 					inventory = ih.getInventory();
-				} else {
+				}
+				else {
 
 					Entity[] foundEntities = block.getChunk().getEntities();
 
@@ -489,7 +499,8 @@ public class ItemStackAction extends GenericAction {
 									result = ChangeResultType.APPLIED;
 									break;
 								}
-							} else if (frame.getItem().getType() != Material.AIR) {
+							}
+							else if (frame.getItem().getType() != Material.AIR) {
 								frame.setItem(null);
 								result = ChangeResultType.APPLIED;
 								break;
@@ -524,26 +535,38 @@ public class ItemStackAction extends GenericAction {
 						// https://snowy-evening.com/botsko/prism/450/
 						if (getActionData().slot < inventory.getSize()) {
 							final ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
-							// Make sure nothing's there.
-							if (currentSlotItem == null) {
+							int amount = 0;
+							ItemStack item = getItem().clone();
+							int max = item.getType().getMaxStackSize();
+							
+							if (currentSlotItem == null || currentSlotItem.getType() == Material.AIR) {
+								amount = item.getAmount();
+							}
+							else if(currentSlotItem.isSimilar(item)) {
+								amount = Math.min(currentSlotItem.getAmount() + item.getAmount(), max);
+							}
+							
+							if(amount > 0) {
 								result = ChangeResultType.APPLIED;
+								item.setAmount(amount);
 								added = true;
-								inventory.setItem(getActionData().slot, getItem());
+								inventory.setItem(getActionData().slot, item);
 							}
 						}
 					}
 					// If that failed we'll attempt to put it anywhere
-					if (!added) {
+					/*if (!added) {
 						final HashMap<Integer, ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory,
 								getItem());
 						if (leftovers.size() > 0) {
 							Prism.debug("Skipping adding items because there are leftovers");
 							result = ChangeResultType.SKIPPED;
-						} else {
+						}
+						else {
 							result = ChangeResultType.APPLIED;
 							added = true;
 						}
-					}
+					}*/
 
 					// Item was added to the inv, we need to remove the entity
 					if (added && (n.equals("item-drop") || n.equals("item-pickup"))) {
@@ -581,29 +604,33 @@ public class ItemStackAction extends GenericAction {
 
 						if (getActionData().slot > inventory.getContents().length) {
 							inventory.addItem(getItem());
-						} else {
+						}
+						else {
 							final ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
-							// Make sure something's there.
-							if (currentSlotItem != null) {
-								currentSlotItem.setAmount(currentSlotItem.getAmount() - getItem().getAmount());
+							ItemStack item = getItem().clone();
+							
+							if(item.isSimilar(currentSlotItem)) {
+								int amount = Math.max(currentSlotItem.getAmount() - item.getAmount(), 0);
+								item.setAmount(amount);
 								result = ChangeResultType.APPLIED;
 								removed = true;
-								inventory.setItem(getActionData().slot, currentSlotItem);
+								inventory.setItem(getActionData().slot, amount > 0 ? item : null);
 							}
 						}
 					}
 					// If that failed we'll attempt to take it from anywhere
-					if (!removed) {
+					/*if (!removed) {
 						final int slot = InventoryUtils.inventoryHasItem(inventory, getItem().getType());
 						if (slot > -1) {
 							inventory.removeItem(getItem());
 							result = ChangeResultType.APPLIED;
 							removed = true;
-						} else {
+						}
+						else {
 							Prism.debug("Item removal from container skipped because it's not currently inside.");
 							result = ChangeResultType.SKIPPED;
 						}
-					}
+					}*/
 
 					// If the item was removed and it's a drop type, re-drop it
 					if (removed && (n.equals("item-drop") || n.equals("item-pickup"))) {

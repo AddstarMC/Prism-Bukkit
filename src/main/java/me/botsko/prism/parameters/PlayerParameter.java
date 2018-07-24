@@ -28,7 +28,8 @@ public class PlayerParameter extends SimplePrismParameterHandler {
 		if (input.startsWith("!")) {
 			match = MatchRule.EXCLUDE;
 			input = input.replace("!", "");
-		} else if (input.startsWith("~")) {
+		}
+		else if (input.startsWith("~")) {
 			match = MatchRule.PARTIAL;
 			input = input.replace("~", "");
 		}

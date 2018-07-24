@@ -38,12 +38,9 @@ public abstract class QueryWandBase extends WandBase {
 	 * Set the field {@link #parameters} with the parameters here. This will be
 	 * using the stuff in <code>/prism params</code>
 	 * 
-	 * @param sender
-	 *            The sender of the command.
-	 * @param args
-	 *            The arguments from <code>/prism params</code>.
-	 * @param argStart
-	 *            What argument to start on.
+	 * @param sender The sender of the command.
+	 * @param args The arguments from <code>/prism params</code>.
+	 * @param argStart What argument to start on.
 	 */
 	public boolean setParameters(Player sender, String[] args, int argStart) {
 		final PrismProcessType processType = this instanceof RollbackWand ? PrismProcessType.ROLLBACK
@@ -52,7 +49,8 @@ public abstract class QueryWandBase extends WandBase {
 		final QueryParameters params = PreprocessArgs.process(plugin, sender, args, processType, argStart, false, true);
 		if (params == null) {
 			return false;
-		} else {
+		}
+		else {
 			params.resetMinMaxVectors();
 			this.parameters = params;
 			return true;

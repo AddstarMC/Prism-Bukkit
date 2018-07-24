@@ -47,7 +47,8 @@ public class FlagParameter implements PrismParameterHandler {
 		Flag flag;
 		try {
 			flag = Flag.valueOf(flagComponents[0].replace("-", "_").toUpperCase());
-		} catch (final IllegalArgumentException ex) {
+		}
+		catch (final IllegalArgumentException ex) {
 			throw new IllegalArgumentException("Flag -" + flagComponents[0] + " not found", ex);
 		}
 		if (!(query.hasFlag(flag))) {
@@ -59,11 +60,13 @@ public class FlagParameter implements PrismParameterHandler {
 				if (flag.equals(Flag.PER_PAGE)) {
 					if (TypeUtils.isNumeric(flagComponents[1])) {
 						query.setPerPage(Integer.parseInt(flagComponents[1]));
-					} else {
+					}
+					else {
 						throw new IllegalArgumentException(
 								"Per-page flag value must be a number. Use /prism ? for help.");
 					}
-				} else if (flag.equals(Flag.SHARE)) {
+				}
+				else if (flag.equals(Flag.SHARE)) {
 					for (final String sharePlayer : flagComponents[1].split(",")) {
 						if (sharePlayer.equals(sender.getName())) {
 							throw new IllegalArgumentException("You can't share lookup results with yourself!");
@@ -72,7 +75,8 @@ public class FlagParameter implements PrismParameterHandler {
 						final Player shareWith = Bukkit.getServer().getPlayer(sharePlayer);
 						if (shareWith != null) {
 							query.addSharedPlayer(shareWith);
-						} else {
+						}
+						else {
 							throw new IllegalArgumentException(
 									"Can't share with " + sharePlayer + ". Are they online?");
 						}
@@ -97,7 +101,8 @@ public class FlagParameter implements PrismParameterHandler {
 		final String name = flagComponents[0].replace("-", "_").toUpperCase();
 		try {
 			flag = Flag.valueOf(name);
-		} catch (final IllegalArgumentException ex) {
+		}
+		catch (final IllegalArgumentException ex) {
 			final List<String> completions = new ArrayList<String>();
 			for (final Flag possibleFlag : Flag.values()) {
 				final String flagName = possibleFlag.toString();
@@ -139,7 +144,8 @@ public class FlagParameter implements PrismParameterHandler {
 		Flag flag;
 		try {
 			flag = Flag.valueOf(flagComponents[0].replace("-", "_").toUpperCase());
-		} catch (final IllegalArgumentException ex) {
+		}
+		catch (final IllegalArgumentException ex) {
 			return false;
 		}
 		return flag.hasPermission(permissible);

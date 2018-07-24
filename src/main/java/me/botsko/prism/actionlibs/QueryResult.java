@@ -148,8 +148,7 @@ public class QueryResult {
 	}
 
 	/**
-	 * @param per_page
-	 *            the per_page to set
+	 * @param per_page the per_page to set
 	 */
 	public void setPerPage(int per_page) {
 		this.per_page = per_page;
@@ -164,8 +163,7 @@ public class QueryResult {
 	}
 
 	/**
-	 * @param page
-	 *            the page to set
+	 * @param page the page to set
 	 */
 	public void setPage(int page) {
 		this.page = page;

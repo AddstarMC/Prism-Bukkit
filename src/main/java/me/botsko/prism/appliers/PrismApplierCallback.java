@@ -44,7 +44,8 @@ public class PrismApplierCallback implements ApplierCallback {
 				}
 				sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
 
-			} else {
+			}
+			else {
 
 				// Build the results message
 				String msg = "At least " + result.getChangesPlanned() + " planned reversals.";
@@ -78,7 +79,8 @@ public class PrismApplierCallback implements ApplierCallback {
 				}
 				sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
 
-			} else {
+			}
+			else {
 
 				// Build the results message
 				String msg = result.getChangesPlanned() + " planned restorations.";

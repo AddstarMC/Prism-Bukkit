@@ -25,15 +25,20 @@ public class VehicleAction extends GenericAction {
 
 		if (vehicle instanceof PoweredMinecart) {
 			this.data = "powered minecart";
-		} else if (vehicle instanceof HopperMinecart) {
+		}
+		else if (vehicle instanceof HopperMinecart) {
 			this.data = "minecart hopper";
-		} else if (vehicle instanceof SpawnerMinecart) {
+		}
+		else if (vehicle instanceof SpawnerMinecart) {
 			this.data = "spawner minecart";
-		} else if (vehicle instanceof ExplosiveMinecart) {
+		}
+		else if (vehicle instanceof ExplosiveMinecart) {
 			this.data = "tnt minecart";
-		} else if (vehicle instanceof StorageMinecart) {
+		}
+		else if (vehicle instanceof StorageMinecart) {
 			this.data = "storage minecart";
-		} else {
+		}
+		else {
 			this.data = vehicle.getType().name().toLowerCase();
 		}
 	}
@@ -56,17 +61,23 @@ public class VehicleAction extends GenericAction {
 		Entity vehicle = null;
 		if (this.data.equals("powered minecart")) {
 			vehicle = getWorld().spawn(getLoc(), PoweredMinecart.class);
-		} else if (this.data.equals("storage minecart")) {
+		}
+		else if (this.data.equals("storage minecart")) {
 			vehicle = getWorld().spawn(getLoc(), StorageMinecart.class);
-		} else if (this.data.equals("tnt minecart")) {
+		}
+		else if (this.data.equals("tnt minecart")) {
 			vehicle = getWorld().spawn(getLoc(), ExplosiveMinecart.class);
-		} else if (this.data.equals("spawner minecart")) {
+		}
+		else if (this.data.equals("spawner minecart")) {
 			vehicle = getWorld().spawn(getLoc(), SpawnerMinecart.class);
-		} else if (this.data.equals("minecart hopper")) {
+		}
+		else if (this.data.equals("minecart hopper")) {
 			vehicle = getWorld().spawn(getLoc(), HopperMinecart.class);
-		} else if (this.data.equals("minecart")) {
+		}
+		else if (this.data.equals("minecart")) {
 			vehicle = getWorld().spawn(getLoc(), Minecart.class);
-		} else if (this.data.equals("boat")) {
+		}
+		else if (this.data.equals("boat")) {
 			vehicle = getWorld().spawn(getLoc(), Boat.class);
 		}
 		if (vehicle != null) {
