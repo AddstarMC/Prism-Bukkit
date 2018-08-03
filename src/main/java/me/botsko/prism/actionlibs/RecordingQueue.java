@@ -28,10 +28,8 @@ public class RecordingQueue {
 			return;
 
 		// some basic sanity checks
-		if (a.getPlayerName().trim().isEmpty())
+		if (a.getSourceName().trim().isEmpty())
 			return;
-
-		a.save();
 
 		queue.add(a);
 

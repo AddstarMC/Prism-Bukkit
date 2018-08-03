@@ -35,7 +35,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Locale;
 
 public class PrismPlayerEvents implements Listener {
 
@@ -490,7 +489,7 @@ public class PrismPlayerEvents implements Listener {
 					if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
 						if (!Prism.getIgnore().event("tnt-prime", player))
 							return;
-						RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", "tnt", block, player));
+						RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", hand.getType(), block, player));
 					}
 					break;
 				default:
@@ -555,11 +554,8 @@ public class PrismPlayerEvents implements Listener {
 			action.setActionType("block-place");
 			action.setPlayer(player);
 			action.setUUID(player.getUniqueId());
-			action.setX(actualBlock.getX());
-			action.setY(actualBlock.getY());
-			action.setZ(actualBlock.getZ());
-			action.setWorldName(newLoc.getWorld().getName());
-			action.setBlock(Material.COCOA);
+			action.setLoc(actualBlock.getLocation());
+			action.setMaterial(Material.COCOA);
 			action.setBlockData(block.getBlockData());
 			RecordingQueue.addToQueue(action);
 		}
@@ -576,7 +572,7 @@ public class PrismPlayerEvents implements Listener {
 		if (inhand.getType() == Material.BONE_MEAL) {
 			if (!Prism.getIgnore().event("bonemeal-use", block))
 				return;
-			RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", "bonemeal", block, player));
+			RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", inhand.getType(), block, player));
 		}
 	}
 
@@ -590,7 +586,7 @@ public class PrismPlayerEvents implements Listener {
 		if (!Prism.getIgnore().event("spawnegg-use", block))
 			return;
 		RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use",
-				inhand.getType().name().toLowerCase(Locale.ENGLISH), block, player));
+				inhand.getType(), block, player));
 	}
 
 	/**
@@ -615,7 +611,7 @@ public class PrismPlayerEvents implements Listener {
 	protected void recordCakeEat(Block block, Player player) {
 		if (!Prism.getIgnore().event("cake-eat", block))
 			return;
-		RecordingQueue.addToQueue(ActionFactory.createUse("cake-eat", "cake", block, player));
+		RecordingQueue.addToQueue(ActionFactory.createUse("cake-eat", Material.CAKE, block, player));
 	}
 
 	/**

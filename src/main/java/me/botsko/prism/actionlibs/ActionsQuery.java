@@ -153,7 +153,7 @@ public class ActionsQuery {
 
 					try {
 
-						final Handler baseHandler = Prism.getHandlerRegistry().getHandler(actionType.getHandler());
+						final Handler baseHandler = Prism.getHandlerRegistry().create(actionType.getHandler());
 
 						// Convert world ID to name
 						// Performance-wise this is typically a lot faster than
@@ -166,12 +166,11 @@ public class ActionsQuery {
 						}
 
 						// Set all shared values
-						baseHandler.setPlugin(plugin);
-						baseHandler.setType(actionType);
+						baseHandler.setActionType(actionType);
 						baseHandler.setId(rs.getLong(1));
-						baseHandler.setUnixEpoch(rs.getString(2));
-						baseHandler.setNonPlayerName(rs.getString(4));
-						baseHandler.setWorldName(worldName);
+						baseHandler.setUnixEpoch(rs.getLong(2));
+						baseHandler.setSourceName(rs.getString(4));
+						baseHandler.setWorld(Bukkit.getWorld(worldName));
 						baseHandler.setX(rs.getInt(6));
 						baseHandler.setY(rs.getInt(7));
 						baseHandler.setZ(rs.getInt(8));
@@ -181,12 +180,12 @@ public class ActionsQuery {
 						BlockData block = current.asBlockData();
 
 						if (block != null) {
-							baseHandler.setBlock(block.getMaterial());
+							baseHandler.setMaterial(block.getMaterial());
 							baseHandler.setBlockData(block);
 							baseHandler.setDurability((short) 0);
 						}
 						else {
-							baseHandler.setBlock(item.getType());
+							baseHandler.setMaterial(item.getType());
 							baseHandler.setBlockData(Bukkit.createBlockData(item.getType()));
 							baseHandler.setDurability(item.getDurability());
 						}
@@ -196,18 +195,17 @@ public class ActionsQuery {
 						BlockData oldBlock = old.asBlockData();
 
 						if (oldBlock != null) {
-							baseHandler.setOldBlock(oldBlock.getMaterial());
+							baseHandler.setOldMaterial(oldBlock.getMaterial());
 							baseHandler.setOldBlockData(oldBlock);
 							baseHandler.setOldDurability((short) 0);
 						}
 						else {
-							baseHandler.setOldBlock(oldItem.getType());
+							baseHandler.setOldMaterial(oldItem.getType());
 							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
 							baseHandler.setOldDurability(oldItem.getDurability());
 						}
 
-						baseHandler.setData(rs.getString(13));
-						baseHandler.setMaterialAliases(Prism.getItems());
+						baseHandler.deserialize(rs.getString(13));
 
 						// Set aggregate counts if a lookup
 						int aggregated = 0;
@@ -370,15 +368,15 @@ public class ActionsQuery {
 					process = new PrismProcessAction();
 					// Set all shared values
 					process.setId(rs.getLong("id"));
-					process.setType(Prism.getActionRegistry().getAction(rs.getString("action")));
-					process.setUnixEpoch(rs.getString("epoch"));
-					process.setWorldName(rs.getString("world"));
-					process.setNonPlayerName(rs.getString("player"));
+					process.setActionType(rs.getString("action"));
+					process.setUnixEpoch(rs.getLong("epoch"));
+					process.setWorld(Bukkit.getWorld(rs.getString("world")));
+					process.setSourceName(rs.getString("player"));
 					process.setUUID(UUID.fromString(rs.getString("player_uuid")));
 					process.setX(rs.getInt("x"));
 					process.setY(rs.getInt("y"));
 					process.setZ(rs.getInt("z"));
-					process.setData(rs.getString("data"));
+					process.deserialize(rs.getString("data"));
 				}
 			}
 			else {

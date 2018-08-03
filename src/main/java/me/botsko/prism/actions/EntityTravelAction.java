@@ -36,7 +36,7 @@ public class EntityTravelAction extends GenericAction {
 				setPlayer((Player) entity);
 			}
 			else {
-				setNonPlayerName(entity.getType().name().toLowerCase());
+				setSourceName(entity.getType().name().toLowerCase());
 			}
 		}
 	}
@@ -62,24 +62,17 @@ public class EntityTravelAction extends GenericAction {
 			actionData.cause = cause.name().toLowerCase();
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
-		if (data != null && data.startsWith("{")) {
-			actionData = gson.fromJson(data, EntityTravelActionData.class);
-		}
+	public String serialize() {
+		return gson().toJson(actionData);
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(actionData);
+	public void deserialize(String data) {
+		if (data != null && data.startsWith("{")) {
+			actionData = gson().fromJson(data, EntityTravelActionData.class);
+		}
 	}
 
 	/**

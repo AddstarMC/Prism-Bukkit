@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.bukkit.util.NumberConversions;
+import org.bukkit.Location;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
@@ -52,26 +52,26 @@ public class RecordingTask implements Runnable {
 		ResultSet generatedKeys = null;
 		try {
 
-			// prepare to save to the db
-			a.save();
-
 			conn = Prism.dbc();
 			if (conn == null) {
 				Prism.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
 			}
+			
+			String serialData = a.serialize();
 
 			int world_id = 0;
-			if (Prism.prismWorlds.containsKey(a.getWorldName())) {
-				world_id = Prism.prismWorlds.get(a.getWorldName());
+			String worldName = a.getLoc().getWorld().getName();
+			if (Prism.prismWorlds.containsKey(worldName)) {
+				world_id = Prism.prismWorlds.get(worldName);
 			}
 
 			int action_id = 0;
-			if (Prism.prismActions.containsKey(a.getType().getName())) {
-				action_id = Prism.prismActions.get(a.getType().getName());
+			if (Prism.prismActions.containsKey(a.getActionType().getName())) {
+				action_id = Prism.prismActions.get(a.getActionType().getName());
 			}
 
-			PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getPlayerName());
+			PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getSourceName());
 			int player_id = prismPlayer.getId();
 
 			if (world_id == 0 || action_id == 0 || player_id == 0) {
@@ -81,22 +81,24 @@ public class RecordingTask implements Runnable {
 			s = conn.prepareStatement("INSERT INTO " + prefix
 					+ "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
 					Statement.RETURN_GENERATED_KEYS);
-			s.setLong(1, System.currentTimeMillis() / 1000L);
+			s.setLong(1, a.getUnixEpoch());
 			s.setInt(2, action_id);
 			s.setInt(3, player_id);
 			s.setInt(4, world_id);
 
 			// TODO Better state handling
-			IntPair newIds = Prism.getItems().materialToIds(a.getBlock(), a.getState());
-			IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(), a.getState());
+			IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(), BlockUtils.dataString(a.getBlockData()));
+			IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(), BlockUtils.dataString(a.getOldBlockData()));
+			
+			Location l = a.getLoc();
 
 			s.setInt(5, newIds.first);
 			s.setInt(6, newIds.second);
 			s.setInt(7, oldIds.first);
 			s.setInt(8, oldIds.second);
-			s.setInt(9, NumberConversions.floor(a.getX()));
-			s.setInt(10, NumberConversions.floor(a.getY()));
-			s.setInt(11, NumberConversions.floor(a.getZ()));
+			s.setInt(9, l.getBlockX());
+			s.setInt(10, l.getBlockY());
+			s.setInt(11, l.getBlockZ());
 			s.executeUpdate();
 
 			generatedKeys = s.getGeneratedKeys();
@@ -105,12 +107,12 @@ public class RecordingTask implements Runnable {
 			}
 
 			// Add insert query for extra data if needed
-			if (a.getData() != null && !a.getData().isEmpty()) {
+			if (serialData != null && !serialData.isEmpty()) {
 
 				try (PreparedStatement s2 = conn
 						.prepareStatement("INSERT INTO " + prefix + "data_extra (data_id, data) VALUES (?, ?)")) {
 					s2.setLong(1, id);
-					s2.setString(2, a.getData());
+					s2.setString(2, serialData);
 					s2.executeUpdate();
 
 				}
@@ -210,23 +212,24 @@ public class RecordingTask implements Runnable {
 						break;
 
 					int world_id = 0;
-					if (Prism.prismWorlds.containsKey(a.getWorldName())) {
-						world_id = Prism.prismWorlds.get(a.getWorldName());
+					String worldName = a.getLoc().getWorld().getName();
+					if (Prism.prismWorlds.containsKey(worldName)) {
+						world_id = Prism.prismWorlds.get(worldName);
 					}
 
 					int action_id = 0;
-					if (Prism.prismActions.containsKey(a.getType().getName())) {
-						action_id = Prism.prismActions.get(a.getType().getName());
+					if (Prism.prismActions.containsKey(a.getActionType().getName())) {
+						action_id = Prism.prismActions.get(a.getActionType().getName());
 					}
 
-					PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getPlayerName());
+					PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getSourceName());
 					int player_id = prismPlayer.getId();
 
 					if (world_id == 0 || action_id == 0 || player_id == 0) {
 						// @todo do something, error here
 						Prism.log("Cache data was empty. Please report to developer: world_id:" + world_id + "/"
-								+ a.getWorldName() + " action_id:" + action_id + "/" + a.getType().getName()
-								+ " player_id:" + player_id + "/" + a.getPlayerName());
+								+ worldName + " action_id:" + action_id + "/" + a.getActionType().getName()
+								+ " player_id:" + player_id + "/" + a.getSourceName());
 						Prism.log("HOWEVER, this likely means you have a broken prism database installation.");
 						continue;
 					}
@@ -236,25 +239,26 @@ public class RecordingTask implements Runnable {
 
 					actionsRecorded++;
 
-					s.setLong(1, System.currentTimeMillis() / 1000L);
+					s.setLong(1, a.getUnixEpoch());
 					s.setInt(2, action_id);
 					s.setInt(3, player_id);
 					s.setInt(4, world_id);
 
 					// TODO Better state handling
-					IntPair newIds = Prism.getItems().materialToIds(a.getBlock(),
+					IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
 							BlockUtils.dataString(a.getBlockData()));
 
-					IntPair oldIds = Prism.getItems().materialToIds(a.getOldBlock(),
+					IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(),
 							BlockUtils.dataString(a.getOldBlockData()));
+					Location l = a.getLoc();
 
 					s.setInt(5, newIds.first);
 					s.setInt(6, newIds.second);
 					s.setInt(7, oldIds.first);
 					s.setInt(8, oldIds.second);
-					s.setInt(9, NumberConversions.floor(a.getX()));
-					s.setInt(10, NumberConversions.floor(a.getY()));
-					s.setInt(11, NumberConversions.floor(a.getZ()));
+					s.setInt(9, l.getBlockX());
+					s.setInt(10, l.getBlockY());
+					s.setInt(11, l.getBlockZ());
 					s.addBatch();
 
 					extraDataQueue.add(a);
@@ -268,6 +272,7 @@ public class RecordingTask implements Runnable {
 					i++;
 				}
 
+				// The main delay is here
 				s.executeBatch();
 
 				if (conn.isClosed()) {
@@ -346,16 +351,20 @@ public class RecordingTask implements Runnable {
 				}
 
 				final Handler a = extraDataQueue.get(i);
+				
+				String serialData = a.serialize();
 
-				if (a.getData() != null && !a.getData().isEmpty()) {
+				if (serialData != null && !serialData.isEmpty()) {
 					s.setLong(1, keys.getLong(1));
-					s.setString(2, a.getData());
+					s.setString(2, serialData);
 					s.addBatch();
 				}
 
 				i++;
 
 			}
+			
+			// The main delay is here
 			s.executeBatch();
 
 			if (conn.isClosed()) {
@@ -427,6 +436,6 @@ public class RecordingTask implements Runnable {
 			return;
 		}
 		plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
-				new RecordingTask(plugin), getTickDelayForNextBatch());
+				this, getTickDelayForNextBatch());
 	}
 }

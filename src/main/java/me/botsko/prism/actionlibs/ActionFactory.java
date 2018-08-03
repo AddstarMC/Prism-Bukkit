@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import java.util.Locale;
 import java.util.Map;
 
 import me.botsko.prism.actions.BlockAction;
@@ -24,6 +25,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
@@ -32,6 +34,7 @@ import org.bukkit.entity.Hanging;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 public class ActionFactory {
@@ -66,7 +69,7 @@ public class ActionFactory {
 
 	public static Handler createBlock(String action_type, Block block, String nonPlayer) {
 		final Handler a = createBlock(action_type, block, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -87,7 +90,7 @@ public class ActionFactory {
 
 	public static Handler createBlock(String action_type, BlockState block, String nonPlayer) {
 		final Handler a = createBlock(action_type, block, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -101,9 +104,9 @@ public class ActionFactory {
 			Material newMat, BlockData newData, OfflinePlayer player) {
 		final BlockChangeAction a = new BlockChangeAction();
 		a.setActionType(action_type);
-		a.setBlock(newMat);
+		a.setMaterial(newMat);
 		a.setBlockData(newData);
-		a.setOldBlock(oldMat);
+		a.setOldMaterial(oldMat);
 		a.setOldBlockData(oldData);
 		a.setPlayer(player);
 		a.setLoc(loc);
@@ -113,7 +116,7 @@ public class ActionFactory {
 	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, BlockData oldData,
 			Material newMat, BlockData newData, String nonPlayer) {
 		final Handler a = createBlockChange(action_type, loc, oldMat, oldData, newMat, newData, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -127,8 +130,8 @@ public class ActionFactory {
 		final BlockShiftAction a = new BlockShiftAction();
 		a.setActionType(action_type);
 		a.setBlock(from);
-		a.setNonPlayerName(nonPlayer);
-		a.setToLocation(to);
+		a.setSourceName(nonPlayer);
+		a.setLoc(to);
 		return a;
 	}
 
@@ -156,7 +159,7 @@ public class ActionFactory {
 
 	public static Handler createEntity(String action_type, Entity entity, String nonPlayer, String dyeUsed) {
 		final Handler a = createEntity(action_type, entity, (OfflinePlayer) null, dyeUsed);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -192,7 +195,7 @@ public class ActionFactory {
 
 	public static Handler createGrow(String action_type, BlockState blockstate, String nonPlayer) {
 		final Handler a = createGrow(action_type, blockstate, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -212,7 +215,7 @@ public class ActionFactory {
 
 	public static Handler createHangingItem(String action_type, Hanging hanging, String nonPlayer) {
 		final Handler a = createHangingItem(action_type, hanging, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 
@@ -229,18 +232,46 @@ public class ActionFactory {
 
 	public static Handler createItemStack(String action_type, ItemStack item, int quantity, int slot,
 			Map<Enchantment, Integer> enchantments, Location loc, OfflinePlayer player) {
-		final ItemStackAction a = new ItemStackAction();
-		a.setActionType(action_type);
-		a.setLoc(loc);
-		a.setPlayer(player);
-		a.setItem(item, quantity, slot, enchantments);
+		final ItemStackAction a = createItemStack(action_type, item, quantity, enchantments, loc, player);
+		a.setSlot(String.valueOf(slot));
+		
+		return a;
+	}
+
+	public static Handler createItemStack(String action_type, ItemStack item, int quantity, BlockFace slot,
+			Map<Enchantment, Integer> enchantments, Location loc, OfflinePlayer player) {
+		final ItemStackAction a = createItemStack(action_type, item, quantity, enchantments, loc, player);
+		a.setSlot(slot.name().toLowerCase(Locale.ENGLISH));
+		
 		return a;
 	}
 
 	public static Handler createItemStack(String action_type, ItemStack item, int quantity, int slot,
-			Map<Enchantment, Integer> enchantments, Location loc, String nonPlayer) {
-		final Handler a = createItemStack(action_type, item, quantity, slot, enchantments, loc, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+			Map<Enchantment, Integer> enchantments, Location loc, String sourceName) {
+		final ItemStackAction a = new ItemStackAction();
+		a.setActionType(action_type);
+		a.setLoc(loc);
+		a.setSourceName(sourceName);
+		a.setItem(item, quantity, enchantments);
+		a.setSlot(String.valueOf(slot));
+		return a;
+	}
+
+	public static Handler createItemStack(String action_type, ItemStack item, int quantity, EquipmentSlot slot,
+			Map<Enchantment, Integer> enchantments, Location loc, OfflinePlayer player) {
+		final ItemStackAction a = createItemStack(action_type, item, quantity, enchantments, loc, player);
+		a.setSlot(slot.name().toLowerCase(Locale.ENGLISH));
+		
+		return a;
+	}
+	
+	private static ItemStackAction createItemStack(String action_type, ItemStack item, int quantity,
+			Map<Enchantment, Integer> enchantments, Location loc, OfflinePlayer player) {
+		final ItemStackAction a = new ItemStackAction();
+		a.setActionType(action_type);
+		a.setLoc(loc);
+		a.setPlayer(player);
+		a.setItem(item, quantity, enchantments);
 		return a;
 	}
 
@@ -255,7 +286,7 @@ public class ActionFactory {
 		a.setActionType(action_type);
 		a.setPlayer(player);
 		a.setLoc(player.getLocation());
-		a.setData(additionalInfo);
+		a.deserialize(additionalInfo);
 		return a;
 	}
 
@@ -329,12 +360,12 @@ public class ActionFactory {
 	 * @param block
 	 * @param player
 	 */
-	public static Handler createUse(String action_type, String item_used, Block block, OfflinePlayer player) {
+	public static Handler createUse(String action_type, Material item, Block block, OfflinePlayer player) {
 		final UseAction a = new UseAction();
 		a.setActionType(action_type);
 		a.setPlayer(player);
 		a.setLoc(block.getLocation());
-		a.setData(item_used);
+		a.setMaterial(item);
 		return a;
 	}
 
@@ -355,7 +386,7 @@ public class ActionFactory {
 
 	public static Handler createVehicle(String action_type, Vehicle vehicle, String nonPlayer) {
 		final Handler a = createVehicle(action_type, vehicle, (OfflinePlayer) null);
-		a.setNonPlayerName(nonPlayer);
+		a.setSourceName(nonPlayer);
 		return a;
 	}
 

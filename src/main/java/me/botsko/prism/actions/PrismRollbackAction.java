@@ -4,6 +4,7 @@ import org.bukkit.block.BlockState;
 
 public class PrismRollbackAction extends BlockChangeAction {
 
+	private long parent_id;
 	/**
 	 * 
 	 * @param oldblock
@@ -12,22 +13,31 @@ public class PrismRollbackAction extends BlockChangeAction {
 	 */
 	public void setBlockChange(BlockState oldblock, BlockState newBlock, long parent_id) {
 		// TODO: Why string? Why?
-		this.data = String.valueOf(parent_id);
+		this.parent_id = parent_id;
 		if (oldblock != null) {
-			this.old_block = oldblock.getType();
-			this.old_block_data = oldblock.getBlockData();
-			this.block = oldblock.getType();
+			setOldMaterial(oldblock.getType());
+			setOldBlockData(oldblock.getBlockData());
 
 			// TODO: This is using oldblock when it looks like it should use newBlock,
 			// but this is how it was when I found it. Test later.
-			this.block_data = oldblock.getBlockData();
+			setMaterial(oldblock.getType());
+			setBlockData(oldblock.getBlockData());
 		}
 	}
+	
+	@Override
+	public String serialize() {
+		return String.valueOf(parent_id);
+	}
 
+	@Override
+	public void deserialize(String data) {
+		parent_id = Long.valueOf(data);
+	}
 	/**
 	 * @return the parent_id
 	 */
 	public long getParentId() {
-		return Long.parseLong(this.data);
+		return parent_id;
 	}
 }

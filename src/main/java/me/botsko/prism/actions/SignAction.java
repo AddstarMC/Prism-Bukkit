@@ -41,34 +41,24 @@ public class SignAction extends GenericAction {
 				actionData.facing = ((Directional) block.getBlockData()).getFacing();
 			}
 
-			this.block = block.getType();
-			this.world_name = block.getWorld().getName();
-			this.x = block.getX();
-			this.y = block.getY();
-			this.z = block.getZ();
+			setMaterial(block.getType());
+			setLoc(block.getLocation());
 		}
 		if (lines != null) {
 			actionData.lines = lines;
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
-		if (data != null && !this.data.isEmpty()) {
-			actionData = gson.fromJson(data, SignChangeActionData.class);
+	public void deserialize(String data) {
+		if (data != null && !data.isEmpty()) {
+			actionData = gson().fromJson(data, SignChangeActionData.class);
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(actionData);
+	public String serialize() {
+		return gson().toJson(actionData);
 	}
 
 	/**

@@ -31,10 +31,10 @@ public class PlayerDeathAction extends GenericAction {
 	/**
 	 * 
 	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
-		if (cause == null && data != null) {
+	public void deserialize(String data) {
+		if (data != null) {
 			final String[] dataArr = data.split(":");
 			cause = dataArr[0];
 			if (dataArr.length > 1) {
@@ -42,15 +42,19 @@ public class PlayerDeathAction extends GenericAction {
 			}
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		if (data == null && cause != null) {
-			data = cause + ":" + attacker;
+	public String serialize() {
+		if(cause != null) {
+			if(attacker != null) {
+				return cause + ":" + attacker;
+			}
+			else {
+				return cause;
+			}
 		}
+		
+		return "";
 	}
 
 	/**

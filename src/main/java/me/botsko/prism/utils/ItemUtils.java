@@ -441,8 +441,9 @@ public class ItemUtils {
 
 		// Custom item names
 		if (meta != null) {
-			if (meta.hasDisplayName()) {
-				item_name += ", named \"" + meta.getDisplayName() + "\"";
+			// TODO: API fail here, report and check later
+			if (meta.hasDisplayName() && meta.getDisplayName().length() > 0) {
+				item_name += " named \"" + meta.getDisplayName() + "\"";
 			}
 		}
 

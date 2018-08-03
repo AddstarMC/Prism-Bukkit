@@ -1,10 +1,13 @@
 package me.botsko.prism.utils;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -39,6 +42,90 @@ public class InventoryUtils {
 				return false;
 		}
 		return true;
+	}
+	
+	public static ItemStack getEquipment(EntityEquipment equipment, EquipmentSlot slot) {
+		switch(slot) {
+			case HAND:
+				return equipment.getItemInMainHand();
+			case OFF_HAND:
+				return equipment.getItemInOffHand();
+			case FEET:
+				return equipment.getBoots();
+			case LEGS:
+				return equipment.getLeggings();
+			case CHEST:
+				return equipment.getChestplate();
+		    case HEAD:
+				return equipment.getHelmet();
+		}
+		
+		throw new IllegalArgumentException("EquipmentSlot " + slot.name() + " not recognised");
+	}
+	
+	public static void setEquipment(EntityEquipment equipment, EquipmentSlot slot, ItemStack item) {
+		switch(slot) {
+			case HAND:
+				equipment.setItemInMainHand(item);
+				break;
+			case OFF_HAND:
+				equipment.setItemInOffHand(item);
+				break;
+			case FEET:
+				equipment.setBoots(item);
+				break;
+			case LEGS:
+				equipment.setLeggings(item);
+				break;
+			case CHEST:
+				equipment.setChestplate(item);
+				break;
+		    case HEAD:
+		    	equipment.setHelmet(item);
+				break;
+		}
+	}
+	
+
+	
+	private static final EnumMap<Material, EquipmentSlot> slots = new EnumMap<>(Material.class);
+	static {
+		slots.put(Material.LEATHER_BOOTS, EquipmentSlot.FEET);
+		slots.put(Material.CHAINMAIL_BOOTS, EquipmentSlot.FEET);
+		slots.put(Material.IRON_BOOTS, EquipmentSlot.FEET);
+		slots.put(Material.GOLDEN_BOOTS, EquipmentSlot.FEET);
+		slots.put(Material.DIAMOND_BOOTS, EquipmentSlot.FEET);
+
+		slots.put(Material.LEATHER_LEGGINGS, EquipmentSlot.LEGS);
+		slots.put(Material.CHAINMAIL_LEGGINGS, EquipmentSlot.LEGS);
+		slots.put(Material.IRON_LEGGINGS, EquipmentSlot.LEGS);
+		slots.put(Material.GOLDEN_LEGGINGS, EquipmentSlot.LEGS);
+		slots.put(Material.DIAMOND_LEGGINGS, EquipmentSlot.LEGS);
+
+		slots.put(Material.LEATHER_CHESTPLATE, EquipmentSlot.CHEST);
+		slots.put(Material.CHAINMAIL_CHESTPLATE, EquipmentSlot.CHEST);
+		slots.put(Material.IRON_CHESTPLATE, EquipmentSlot.CHEST);
+		slots.put(Material.GOLDEN_CHESTPLATE, EquipmentSlot.CHEST);
+		slots.put(Material.DIAMOND_CHESTPLATE, EquipmentSlot.CHEST);
+
+		slots.put(Material.LEATHER_HELMET, EquipmentSlot.HEAD);
+		slots.put(Material.CHAINMAIL_HELMET, EquipmentSlot.HEAD);
+		slots.put(Material.IRON_HELMET, EquipmentSlot.HEAD);
+		slots.put(Material.GOLDEN_HELMET, EquipmentSlot.HEAD);
+		slots.put(Material.DIAMOND_HELMET, EquipmentSlot.HEAD);
+
+		slots.put(Material.SKELETON_SKULL, EquipmentSlot.HEAD);
+		slots.put(Material.WITHER_SKELETON_SKULL, EquipmentSlot.HEAD);
+		slots.put(Material.CREEPER_HEAD, EquipmentSlot.HEAD);
+		slots.put(Material.DRAGON_HEAD, EquipmentSlot.HEAD);
+		slots.put(Material.PLAYER_HEAD, EquipmentSlot.HEAD);
+		slots.put(Material.ZOMBIE_HEAD, EquipmentSlot.HEAD);
+		slots.put(Material.CARVED_PUMPKIN, EquipmentSlot.HEAD);
+		slots.put(Material.TURTLE_HELMET, EquipmentSlot.HEAD);
+		
+	}
+	public static EquipmentSlot getTargetArmorSlot(Material material) {
+		return slots.getOrDefault(material, EquipmentSlot.HAND);
 	}
 
 	/**

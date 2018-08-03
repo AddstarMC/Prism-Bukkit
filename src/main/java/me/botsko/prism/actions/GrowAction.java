@@ -10,12 +10,9 @@ public class GrowAction extends BlockAction {
 	 */
 	public void setBlock(BlockState state) {
 		if (state != null) {
-			this.block = state.getType();
-			this.block_data = state.getBlockData();
-			this.world_name = state.getWorld().getName();
-			this.x = state.getLocation().getBlockX();
-			this.y = state.getLocation().getBlockY();
-			this.z = state.getLocation().getBlockZ();
+			setMaterial(state.getType());
+			setBlockData(state.getBlockData());
+			setLoc(state.getLocation());
 		}
 	}
 }

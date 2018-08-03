@@ -1,6 +1,7 @@
 package me.botsko.prism.listeners;
 
 import me.botsko.prism.utils.DeathUtils;
+import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
@@ -14,7 +15,19 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Enderman;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Wither;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,15 +38,18 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.hanging.HangingBreakEvent.RemoveCause;
 import org.bukkit.event.hanging.HangingPlaceEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Door;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.Locale;
@@ -78,7 +94,7 @@ public class PrismEntityEvents implements Listener {
 			// Frame is empty but an item is held
 			if (!frame.getItem().getType().equals(Material.AIR)) {
 				if (Prism.getIgnore().event("item-remove", player)) {
-					RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(), 1, 0, null,
+					RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(), 1, frame.getAttachedFace(), null,
 							entity.getLocation(), player));
 				}
 			}
@@ -331,6 +347,77 @@ public class PrismEntityEvents implements Listener {
 	 * @param event
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void interactAtVariant(final PlayerInteractAtEntityEvent event) {
+
+		final Player p = event.getPlayer();
+		final Entity e = event.getRightClicked();
+		final ItemStack hand = p.getInventory().getItemInMainHand();
+		// @todo right clicks should technically follow blockface
+		// Cancel the event if a wand is in use
+		if (WandUtils.playerUsesWandOnClick(p, e.getLocation())) {
+			event.setCancelled(true);
+			return;
+		}
+		
+		if(e instanceof ArmorStand && event instanceof PlayerInteractAtEntityEvent) {
+			Vector at = ((PlayerInteractAtEntityEvent)event).getClickedPosition();
+			ArmorStand stand = (ArmorStand) e;
+
+			if(hand.getType() != Material.AIR) {
+				EquipmentSlot target = InventoryUtils.getTargetArmorSlot(hand.getType());
+				
+				if(stand.hasArms() || target != EquipmentSlot.HAND) {
+					ItemStack atSlot = InventoryUtils.getEquipment(stand.getEquipment(), target);
+					
+					if(atSlot.getType() != Material.AIR) {
+						RecordingQueue.addToQueue(
+								ActionFactory.createItemStack("item-remove", atSlot, 1, target, null, e.getLocation(), p));
+						RecordingQueue.addToQueue(
+								ActionFactory.createItemStack("item-insert", hand, 1, target, null, e.getLocation(), p));
+					}
+					else {
+						RecordingQueue.addToQueue(
+								ActionFactory.createItemStack("item-insert", hand, 1, target, null, e.getLocation(), p));
+					}
+				}
+			}
+			else {
+				double elevation = at.getY();
+				
+				EquipmentSlot slot;
+				boolean hasChestplate;
+				{
+					ItemStack chestplate = stand.getEquipment().getChestplate();
+					hasChestplate = chestplate != null && chestplate.getType() != Material.AIR;
+				}
+				
+				if(elevation >= 1.6) {
+					slot = EquipmentSlot.HEAD;
+				}
+				else if(hasChestplate && elevation >= 0.9) {
+					slot = EquipmentSlot.CHEST;
+				}
+				else if(!hasChestplate && elevation >= 1.2) {
+					slot = EquipmentSlot.HAND;
+				}
+				else if(elevation >= 0.55) {
+					slot = EquipmentSlot.LEGS;
+				}
+				else {
+					slot = EquipmentSlot.FEET;
+				}
+				
+				ItemStack atSlot = InventoryUtils.getEquipment(stand.getEquipment(), slot);
+				
+				if(atSlot.getType() != Material.AIR) {
+					RecordingQueue.addToQueue(
+							ActionFactory.createItemStack("item-remove", atSlot, 1, slot, null, e.getLocation(), p));
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onPlayerInteractEntityEvent(final PlayerInteractEntityEvent event) {
 
 		final Player p = event.getPlayer();
@@ -344,7 +431,6 @@ public class PrismEntityEvents implements Listener {
 		}
 
 		if (e instanceof ItemFrame) {
-
 			final ItemFrame frame = (ItemFrame) e;
 
 			// If held item doesn't equal existing item frame object type
@@ -357,7 +443,7 @@ public class PrismEntityEvents implements Listener {
 			if (frame.getItem().getType().equals(Material.AIR) && hand != null) {
 				if (Prism.getIgnore().event("item-insert", p)) {
 					RecordingQueue.addToQueue(
-							ActionFactory.createItemStack("item-insert", hand, 1, 0, null, e.getLocation(), p));
+							ActionFactory.createItemStack("item-insert", hand, 1, frame.getFacing(), null, e.getLocation(), p));
 				}
 			}
 		}
@@ -581,6 +667,9 @@ public class PrismEntityEvents implements Listener {
 	 * 
 	 * @param event
 	 */
+	
+	// TODO: This is a mess. Please, for the love of god, revisit and fix.
+	@Deprecated
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityChangeBlock(final EntityChangeBlockEvent event) {
 		final String entity = MiscUtils.getEntityName(event.getEntity());
@@ -608,12 +697,10 @@ public class PrismEntityEvents implements Listener {
 			else {
 				if (!Prism.getIgnore().event("enderman-pickup", event.getBlock()))
 					return;
-				final Enderman enderman = (Enderman) event.getEntity();
-				if (enderman.getCarriedMaterial() != null) {
-					BlockState state = event.getBlock().getState();
-					state.setData(enderman.getCarriedMaterial());
-					RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
-				}
+				
+				BlockState state = event.getBlock().getState();
+				state.setBlockData(event.getBlockData());
+				RecordingQueue.addToQueue(ActionFactory.createBlock("enderman-pickup", state, entity));
 			}
 		}
 		else if (to == Material.AIR && event.getEntity() instanceof Wither) {

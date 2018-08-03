@@ -1,7 +1,8 @@
 package me.botsko.prism.actions;
 
-import org.bukkit.Location;
 import org.bukkit.block.Block;
+
+import me.botsko.prism.Prism;
 
 public class BlockShiftAction extends GenericAction {
 
@@ -28,44 +29,24 @@ public class BlockShiftAction extends GenericAction {
 		// Store information for the action
 		if (from != null) {
 
-			this.block = from.getType();
-			this.block_data = from.getBlockData();
+			setMaterial(from.getType());
+			setBlockData(from.getBlockData());
 			actionData.x = from.getX();
 			actionData.y = from.getY();
 			actionData.z = from.getZ();
-			this.world_name = from.getWorld().getName();
 
 		}
 	}
-
-	/**
-	 * 
-	 * @param to
-	 */
-	public void setToLocation(Location to) {
-		if (to != null) {
-			this.x = to.getBlockX();
-			this.y = to.getBlockY();
-			this.z = to.getBlockZ();
-		}
-	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(actionData);
+	public String serialize() {
+		return gson().toJson(actionData);
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
+	public void deserialize(String data) {
 		if (data != null && data.startsWith("{")) {
-			actionData = gson.fromJson(data, BlockShiftActionData.class);
+			actionData = gson().fromJson(data, BlockShiftActionData.class);
 		}
 	}
 
@@ -80,6 +61,6 @@ public class BlockShiftAction extends GenericAction {
 			location = actionData.x + " " + actionData.y + " " + actionData.z;
 		}
 		
-		return this.materialAliases.getAlias(this.block, this.block_data) + " from " + location;
+		return Prism.getItems().getAlias(getMaterial(), getBlockData()) + " from " + location;
 	}
 }

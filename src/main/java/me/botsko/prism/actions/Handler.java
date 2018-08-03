@@ -1,23 +1,16 @@
 package me.botsko.prism.actions;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
 public interface Handler {
-
-	/**
-	 * 
-	 * @param pl
-	 */
-	public abstract void setPlugin(Plugin pl);
-
 	/**
 	 * @return the id
 	 */
@@ -31,7 +24,7 @@ public interface Handler {
 	/**
 	 * @return the action_time
 	 */
-	public abstract String getUnixEpoch();
+	public abstract long getUnixEpoch();
 
 	/**
 	 * @return the display_date
@@ -46,7 +39,7 @@ public interface Handler {
 	/**
 	 * @param display_time the display_time to set
 	 */
-	public abstract void setUnixEpoch(String epoch);
+	public abstract void setUnixEpoch(long epoch);
 
 	/**
 	 * 
@@ -57,38 +50,31 @@ public interface Handler {
 	/**
 	 * @return the action_type
 	 */
-	public abstract ActionType getType();
+	public abstract ActionType getActionType();
 
 	/**
 	 * 
 	 * @param type
 	 */
-	public abstract void setType(ActionType type);
+	public abstract void setActionType(ActionType type);
 
 	/**
-	 * @return the world_name
+	 * @param world the world to set
 	 */
-	public abstract String getWorldName();
+	public abstract void setWorld(World world);
+	
+	public abstract Location getLoc();
 
 	/**
-	 * @param world_name the world_name to set
+	 * @return the name of the event cause
 	 */
-	public abstract void setWorldName(String world_name);
+	public abstract String getSourceName();
 
 	/**
-	 * @return the player_name
+	 * @param name the custom name for the event cause
 	 */
-	public abstract String getPlayerName();
+	public abstract void setSourceName(String name);
 
-	/**
-	 * @param player_name the player_name to set
-	 */
-	public abstract void setNonPlayerName(String player_name);
-
-	/**
-	 * @return the x
-	 */
-	public abstract double getX();
 
 	/**
 	 * @param x the x to set
@@ -96,19 +82,9 @@ public interface Handler {
 	public abstract void setX(double x);
 
 	/**
-	 * @return the y
-	 */
-	public abstract double getY();
-
-	/**
 	 * @param y the y to set
 	 */
 	public abstract void setY(double y);
-
-	/**
-	 * @return the z
-	 */
-	public abstract double getZ();
 
 	/**
 	 * @param z the z to set
@@ -119,7 +95,7 @@ public interface Handler {
 	 * 
 	 * @param id
 	 */
-	public abstract void setBlock(Material material);
+	public abstract void setMaterial(Material material);
 
 	/**
 	 * 
@@ -132,7 +108,7 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	public abstract Material getBlock();
+	public abstract Material getMaterial();
 
 	/**
 	 * 
@@ -140,14 +116,16 @@ public interface Handler {
 	public abstract BlockData getBlockData();
 
 	public abstract short getDurability();
-
-	public abstract String getState();
+	
+	public abstract String serialize();
+	
+	public abstract void deserialize(String data);
 
 	/**
 	 * 
 	 * @param id
 	 */
-	public abstract void setOldBlock(Material material);
+	public abstract void setOldMaterial(Material material);
 
 	/**
 	 * 
@@ -160,7 +138,7 @@ public interface Handler {
 	/**
 	 * 
 	 */
-	public abstract Material getOldBlock();
+	public abstract Material getOldMaterial();
 
 	/**
 	 * 
@@ -168,22 +146,6 @@ public interface Handler {
 	public abstract BlockData getOldBlockData();
 
 	public abstract short getOldDurability();
-
-	/**
-	 * @return the data
-	 */
-	public abstract String getData();
-
-	/**
-	 * @param data the data to set
-	 */
-	public abstract void setData(String data);
-
-	/**
-	 * 
-	 * @param m
-	 */
-	public abstract void setMaterialAliases(MaterialAliases m);
 
 	/**
 	 * 
@@ -201,11 +163,6 @@ public interface Handler {
 	 * 
 	 */
 	public abstract String getNiceName();
-
-	/**
-	 * 
-	 */
-	public abstract void save();
 
 	/**
 	 *

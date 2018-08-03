@@ -56,8 +56,8 @@ public class BlockAction extends GenericAction {
 	public void setBlock(BlockState state) {
 		if (state != null) {
 
-			block = state.getType();
-			block_data = state.getBlockData();
+			setMaterial(state.getType());
+			setBlockData(state.getBlockData());
 
 			// spawner
 			if (state.getType() == Material.SPAWNER) {
@@ -93,49 +93,40 @@ public class BlockAction extends GenericAction {
 			// command block
 			else if ((state.getType() == Material.COMMAND_BLOCK)) {
 				final CommandBlock cmdblock = (CommandBlock) state;
-				data = cmdblock.getCommand();
+				final CommandActionData commandActionData = new CommandActionData();
+				commandActionData.command = cmdblock.getCommand();
+				
+				actionData = commandActionData;
 			}
 
-			this.world_name = state.getWorld().getName();
-			this.x = state.getLocation().getBlockX();
-			this.y = state.getLocation().getBlockY();
-			this.z = state.getLocation().getBlockZ();
+			setLoc(state.getLocation());
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
+	public String serialize() {
+		return gson().toJson(actionData);
+	}
+	
+	@Override
+	public void deserialize(String data) {
 		if (data != null && data.startsWith("{")) {
-			if (block == Material.PLAYER_HEAD || block == Material.PLAYER_WALL_HEAD) {
-				actionData = gson.fromJson(data, SkullActionData.class);
+			if (getMaterial() == Material.PLAYER_HEAD || getMaterial() == Material.PLAYER_WALL_HEAD) {
+				actionData = gson().fromJson(data, SkullActionData.class);
 			}
-			else if (block == Material.SPAWNER) {
-				actionData = gson.fromJson(data, SpawnerActionData.class);
+			else if (getMaterial() == Material.SPAWNER) {
+				actionData = gson().fromJson(data, SpawnerActionData.class);
 			}
-			else if (block == Material.SIGN || block == Material.WALL_SIGN) {
-				actionData = gson.fromJson(data, SignActionData.class);
+			else if (getMaterial() == Material.SIGN || getMaterial() == Material.WALL_SIGN) {
+				actionData = gson().fromJson(data, SignActionData.class);
 			}
-			else if (block == Material.COMMAND_BLOCK) {
-				actionData = new BlockActionData();
+			else if (getMaterial() == Material.COMMAND_BLOCK) {
+				actionData = new CommandActionData();
+				((CommandActionData)actionData).command = data;
 			}
 			else {
 				// No longer used, was for pre-1.5 data formats
 			}
-		}
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void save() {
-		// Only for the blocks we store meta data for
-		if (actionData != null) {
-			data = gson.toJson(actionData);
 		}
 	}
 
@@ -164,17 +155,18 @@ public class BlockAction extends GenericAction {
 			final SpawnerActionData ad = (SpawnerActionData) blockActionData;
 			name += ad.entity_type + " ";
 		}
-		name += materialAliases.getAlias(this.block, this.block_data);
+		name += Prism.getItems().getAlias(getMaterial(), getBlockData());
 		if (blockActionData instanceof SignActionData) {
 			final SignActionData ad = (SignActionData) blockActionData;
 			if (ad.lines != null && ad.lines.length > 0) {
 				name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
 			}
 		}
-		else if (block == Material.COMMAND_BLOCK) {
-			name += " (" + data + ")";
+		else if (blockActionData instanceof CommandActionData) {
+			final CommandActionData ad = (CommandActionData) blockActionData;
+			name += " (" + ad.command + ")";
 		}
-		if (type.getName().equals("crop-trample") && block == Material.AIR) {
+		if (getActionType().getName().equals("crop-trample") && getMaterial() == Material.AIR) {
 			return "empty soil";
 		}
 		return name;
@@ -182,7 +174,7 @@ public class BlockAction extends GenericAction {
 
 	@Override
 	public String getCustomDesc() {
-		if (type.getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
+		if (getActionType().getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
 			return "waterlogged";
 		}
 
@@ -195,6 +187,10 @@ public class BlockAction extends GenericAction {
 	 * 
 	 */
 	public class BlockActionData {
+	}
+	
+	public class CommandActionData extends BlockActionData {
+		public String command;
 	}
 
 	/**
@@ -262,7 +258,7 @@ public class BlockAction extends GenericAction {
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		if (getType().doesCreateBlock()) {
+		if (getActionType().doesCreateBlock()) {
 			return removeBlock(player, parameters, is_preview, block);
 		}
 		else {
@@ -276,7 +272,7 @@ public class BlockAction extends GenericAction {
 	@Override
 	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		if (getType().doesCreateBlock()) {
+		if (getActionType().doesCreateBlock()) {
 			return placeBlock(player, parameters, is_preview, block, false);
 		}
 		else {
@@ -324,8 +320,8 @@ public class BlockAction extends GenericAction {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 
-		final boolean cancelIfBadPlace = !getType().requiresHandler("BlockChangeAction")
-				&& !getType().requiresHandler("PrismRollbackAction") && !parameters.hasFlag(Flag.OVERWRITE);
+		final boolean cancelIfBadPlace = !getActionType().requiresHandler("BlockChangeAction")
+				&& !getActionType().requiresHandler("PrismRollbackAction") && !parameters.hasFlag(Flag.OVERWRITE);
 
 		if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(block.getType())) {
 			// System.out.print("Block skipped due to being unaccaptable for block place.");
@@ -333,7 +329,7 @@ public class BlockAction extends GenericAction {
 		}
 
 		// On the blacklist (except an undo)
-		if (Prism.getIllegalBlocks().contains(getBlock())
+		if (Prism.getIllegalBlocks().contains(getMaterial())
 				&& !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
 			// System.out.print("Block skipped because it's not allowed to be placed.");
 			return new ChangeResult(ChangeResultType.SKIPPED, null);
@@ -347,7 +343,7 @@ public class BlockAction extends GenericAction {
 
 			// If lilypad, check that block below is water. Be sure
 			// it's set to stationary water so the lilypad will sit
-			if (getBlock() == Material.LILY_PAD) {
+			if (getMaterial() == Material.LILY_PAD) {
 
 				final Block below = block.getRelative(BlockFace.DOWN);
 				if (below.getType().equals(Material.WATER) || below.getType().equals(Material.AIR)) {
@@ -360,7 +356,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// If portal, we need to light the portal. seems to be the only way.
-			if (getBlock() == Material.NETHER_PORTAL) {
+			if (getMaterial() == Material.NETHER_PORTAL) {
 				final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(Material.OBSIDIAN, block.getLocation());
 				if (obsidian != null) {
 					final Block above = obsidian.getRelative(BlockFace.UP);
@@ -373,19 +369,19 @@ public class BlockAction extends GenericAction {
 
 			// Jukebox, never use the data val because
 			// it becomes unplayable
-			if (getBlock() == Material.JUKEBOX) {
-				block_data = Bukkit.createBlockData(Material.JUKEBOX);
+			if (getMaterial() == Material.JUKEBOX) {
+				setBlockData(Bukkit.createBlockData(Material.JUKEBOX));
 			}
 
 			// Set the material
-			state.setType(getBlock());
+			state.setType(getMaterial());
 
 			BlockActionData blockActionData = getActionData();
 
 			/**
 			 * Skulls
 			 */
-			if ((getBlock() == Material.PLAYER_HEAD || getBlock() == Material.PLAYER_WALL_HEAD)
+			if ((getMaterial() == Material.PLAYER_HEAD || getMaterial() == Material.PLAYER_WALL_HEAD)
 					&& blockActionData instanceof SkullActionData) {
 
 				final SkullActionData s = (SkullActionData) blockActionData;
@@ -404,7 +400,7 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Spawner
 			 */
-			if (getBlock() == Material.SPAWNER && blockActionData instanceof SpawnerActionData) {
+			if (getMaterial() == Material.SPAWNER && blockActionData instanceof SpawnerActionData) {
 
 				final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
@@ -418,16 +414,18 @@ public class BlockAction extends GenericAction {
 			/**
 			 * Restoring command block
 			 */
-			if (getBlock() == Material.COMMAND_BLOCK) {
+			if (getMaterial() == Material.COMMAND_BLOCK
+					&& blockActionData instanceof CommandActionData) {
 				final CommandBlock cmdblock = (CommandBlock) state;
-				cmdblock.setCommand(data);
+				final CommandActionData c = (CommandActionData) blockActionData;
+				cmdblock.setCommand(c.command);
 			}
 
 			/**
 			 * Signs
 			 */
 			if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-					&& (getBlock() == Material.SIGN || getBlock() == Material.WALL_SIGN)
+					&& (getMaterial() == Material.SIGN || getMaterial() == Material.WALL_SIGN)
 					&& blockActionData instanceof SignActionData) {
 
 				final SignActionData s = (SignActionData) blockActionData;
@@ -463,7 +461,7 @@ public class BlockAction extends GenericAction {
 			// logic to use materials.
 			BlockState sibling = null;
 
-			if (BlockUtils.materialRequiresSoil(getBlock())) {
+			if (BlockUtils.materialRequiresSoil(getMaterial())) {
 				sibling = block.getRelative(BlockFace.DOWN).getState();
 
 				if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
@@ -545,7 +543,7 @@ public class BlockAction extends GenericAction {
 
 			// Ensure it's acceptable to remove the current block
 			if (!BlockUtils.isAcceptableForBlockPlace(block.getType())
-					&& !BlockUtils.areBlockIdsSameCoreItem(block.getType(), getBlock())
+					&& !BlockUtils.areBlockIdsSameCoreItem(block.getType(), getMaterial())
 					&& !parameters.hasFlag(Flag.OVERWRITE)) {
 				return new ChangeResult(ChangeResultType.SKIPPED, null);
 			}

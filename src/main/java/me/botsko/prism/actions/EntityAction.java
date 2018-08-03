@@ -27,10 +27,7 @@ public class EntityAction extends GenericAction {
 
 		// Build an object for the specific details of this action
 		if (entity != null && entity.getType() != null && entity.getType().name() != null) {
-			this.world_name = entity.getWorld().getName();
-			this.x = entity.getLocation().getBlockX();
-			this.y = entity.getLocation().getBlockY();
-			this.z = entity.getLocation().getBlockZ();
+			setLoc(entity.getLocation());
 
 			serializer = EntitySerializerFactory.getSerializer(entity.getType());
 			serializer.serialize(entity);
@@ -46,23 +43,17 @@ public class EntityAction extends GenericAction {
 
 		return null;
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(serializer);
+	public String serialize() {
+		return gson().toJson(serializer);
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
+	public void deserialize(String data) {
 		if (data != null && data.startsWith("{")) {
-			String entity_name = gson.fromJson(data, JsonObject.class).get("entity_name").getAsString();
-			serializer = gson.fromJson(data, EntitySerializerFactory.getSerlializingClass(getEntityType(entity_name)));
+			String entity_name = gson().fromJson(data, JsonObject.class).get("entity_name").getAsString();
+			serializer = gson().fromJson(data, EntitySerializerFactory.getSerlializingClass(getEntityType(entity_name)));
 		}
 	}
 

@@ -9,7 +9,6 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -133,19 +132,18 @@ public class TeleportCommand implements SubHandler {
 		}
 
 		if (destinationAction != null) {
-			final World world = plugin.getServer().getWorld(destinationAction.getWorldName());
+			final World world = destinationAction.getLoc().getWorld();
 			if (world == null) {
 				call.getPlayer().sendMessage(
 						Prism.messenger.playerError("Action record occurred in world we can't find anymore."));
 				return;
 			}
-			final Location loc = new Location(world, destinationAction.getX(), destinationAction.getY(),
-					destinationAction.getZ());
-			call.getPlayer().teleport(loc);
+			
+			call.getPlayer().teleport(destinationAction.getLoc());
 			call.getPlayer()
 					.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-							"Teleporting... " + ChatColor.WHITE + destinationAction.getType().getName() + ChatColor.GRAY
-									+ " by " + ChatColor.WHITE + destinationAction.getPlayerName() + ChatColor.GRAY
+							"Teleporting... " + ChatColor.WHITE + destinationAction.getActionType().getName() + ChatColor.GRAY
+									+ " by " + ChatColor.WHITE + destinationAction.getSourceName() + ChatColor.GRAY
 									+ ", " + ChatColor.WHITE + destinationAction.getTimeSince()));
 		}
 	}

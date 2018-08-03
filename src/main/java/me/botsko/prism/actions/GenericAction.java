@@ -1,16 +1,14 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
-import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -20,112 +18,76 @@ import org.bukkit.block.data.BlockData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-public class GenericAction implements Handler {
-
-	/**
-	 * 
-	 */
-	protected Plugin plugin;
+public abstract class GenericAction implements Handler {
+	private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
+	private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
 
 	/**
 	 * 
 	 */
-	protected boolean canceled = false;
+	private boolean canceled = false;
 
 	/**
 	 * 
 	 */
-	protected final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+	private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
 	/**
 	 * 
 	 */
-	protected ActionType type;
+	private ActionType type;
 
 	/**
 	 * 
 	 */
-	protected MaterialAliases materialAliases;
+	private long id;
 
 	/**
 	 * 
 	 */
-	protected long id;
+	private long epoch;
+	
+	/**
+	 * 
+	 */
+	private String sourceName;
+	private UUID playerUUID;
+	
+	private Location location;
 
 	/**
 	 * 
 	 */
-	protected String epoch;
+	private Material material = Material.AIR;
 
 	/**
 	 * 
 	 */
-	protected String display_date;
+	private BlockData blockData;
 
 	/**
 	 * 
 	 */
-	protected String display_time;
+	private Material oldBlock = Material.AIR;
 
 	/**
 	 * 
 	 */
-	protected String world_name;
+	private BlockData oldBlockData;
 
 	/**
 	 * 
 	 */
-	protected String player_name;
-	protected UUID player_uuid;
-
-	/**
-	 * 
-	 */
-	protected double x;
-
-	/**
-	 * 
-	 */
-	protected double y;
-
-	/**
-	 * 
-	 */
-	protected double z;
-
-	/**
-	 * 
-	 */
-	protected Material block = Material.AIR;
-
-	/**
-	 * 
-	 */
-	protected BlockData block_data;
-
-	/**
-	 * 
-	 */
-	protected Material old_block = Material.AIR;
-
-	/**
-	 * 
-	 */
-	protected BlockData old_block_data;
-
-	protected short old_durability;
-
-	/**
-	 * 
-	 */
-	protected String data;
-
-	/**
-	 * 
-	 */
-	protected int aggregateCount = 0;
+	private int aggregateCount = 0;
+	
+	public GenericAction() {
+		epoch = System.currentTimeMillis() / 1000;
+	}
+	
+	protected final Gson gson() {
+		return gson;
+	}
 
 	@Override
 	public String getCustomDesc() {
@@ -138,19 +100,11 @@ public class GenericAction implements Handler {
 
 	/**
 	 * 
-	 */
-	@Override
-	public void setPlugin(Plugin plugin) {
-		this.plugin = plugin;
-	}
-
-	/**
-	 * 
 	 * @param action_type
 	 */
 	public void setActionType(String action_type) {
 		if (action_type != null) {
-			this.type = Prism.getActionRegistry().getAction(action_type);
+			setActionType(Prism.getActionRegistry().getAction(action_type));
 		}
 	}
 
@@ -180,7 +134,7 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getActionTime()
 	 */
 	@Override
-	public String getUnixEpoch() {
+	public long getUnixEpoch() {
 		return epoch;
 	}
 
@@ -191,7 +145,7 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public String getDisplayDate() {
-		return display_date;
+		return date.format(epoch * 1000);
 	}
 
 	/*
@@ -200,18 +154,8 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
 	 */
 	@Override
-	public void setUnixEpoch(String epoch) {
-
+	public void setUnixEpoch(long epoch) {
 		this.epoch = epoch;
-
-		final Date action_time = new Date(Long.parseLong(epoch) * 1000);
-
-		final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
-		this.display_date = date.format(action_time);
-
-		final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
-		this.display_time = time.format(action_time);
-
 	}
 
 	/*
@@ -221,7 +165,7 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public String getDisplayTime() {
-		return display_time;
+		return time.format(epoch * 1000);
 	}
 
 	/*
@@ -231,41 +175,37 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public String getTimeSince() {
-
-		String time_ago = "";
-
-		final Date start = new Date(Long.parseLong(this.epoch) * 1000);
-		final Date end = new Date();
-
-		long diffInSeconds = (end.getTime() - start.getTime()) / 1000;
-
-		final long diff[] = new long[] { 0, 0, 0, 0 };
-		/* sec */diff[3] = (diffInSeconds >= 60 ? diffInSeconds % 60 : diffInSeconds);
-		/* min */diff[2] = (diffInSeconds = (diffInSeconds / 60)) >= 60 ? diffInSeconds % 60 : diffInSeconds;
-		/* hours */diff[1] = (diffInSeconds = (diffInSeconds / 60)) >= 24 ? diffInSeconds % 24 : diffInSeconds;
-		/* days */diff[0] = (diffInSeconds / 24);
-
-		// Only show days if more than 1
-		if (diff[0] >= 1) {
-			time_ago += diff[0] + "d";
+		long diffInSeconds = System.currentTimeMillis() / 1000 - epoch;
+		
+		if(diffInSeconds < 60) {
+			return "just now";
 		}
-		// Only show hours if > 1
-		if (diff[1] >= 1) {
-			time_ago += diff[1] + "h";
-		}
-		// Only show minutes if > 1 and less than 60
-		if (diff[2] > 1 && diff[2] < 60) {
-			time_ago += diff[2] + "m";
-		}
-		if (!time_ago.isEmpty()) {
-			time_ago += " ago";
-		}
+		
+		long period = 24 * 60 * 60;
+		
+		final long diff[] = {
+				diffInSeconds / period, // days
+				(diffInSeconds / (period /= 24)) % 24, // hours
+				(diffInSeconds / (period /= 60)) % 60, // minutes
+		};
+		
+		StringBuilder time_ago = new StringBuilder();
 
-		if (diff[0] == 0 && diff[1] == 0 && diff[2] <= 1) {
-			time_ago = "just now";
+		if (diff[0] > 0) {
+			time_ago.append(diff[0]).append('d');
 		}
-
-		return time_ago;
+		
+		if (diff[1] > 0) {
+			time_ago.append(diff[1]).append('h');
+		}
+		
+		if (diff[2] > 0) {
+			time_ago.append(diff[2]).append('m');
+		}
+		
+		// 'time_ago' will have something at this point, because if all 'diff's
+		// were 0, the first if check would have caught and returned "just now"
+		return time_ago.append(" ago").toString();
 
 	}
 
@@ -275,7 +215,7 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getType()
 	 */
 	@Override
-	public ActionType getType() {
+	public ActionType getActionType() {
 		return type;
 	}
 
@@ -287,28 +227,25 @@ public class GenericAction implements Handler {
 	 * )
 	 */
 	@Override
-	public void setType(ActionType type) {
+	public void setActionType(ActionType type) {
 		this.type = type;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see me.botsko.prism.actions.Handler#getWorldName()
+	 * @see me.botsko.prism.actions.Handler#setWorld(org.bukkit.World)
 	 */
 	@Override
-	public String getWorldName() {
-		return world_name;
+	public void setWorld(World world) {
+		createWorldIfNull();
+		location.setWorld(world);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#setWorldName(java.lang.String)
-	 */
-	@Override
-	public void setWorldName(String world_name) {
-		this.world_name = world_name;
+	
+	private void createWorldIfNull() {
+		if(location == null) {
+			location = Bukkit.getWorlds().get(0).getSpawnLocation();
+		}
 	}
 
 	/**
@@ -317,13 +254,13 @@ public class GenericAction implements Handler {
 	 */
 	public void setPlayer(OfflinePlayer player) {
 		if (player != null) {
-			this.player_name = player.getName();
-			this.player_uuid = player.getUniqueId();
+			setUUID(player.getUniqueId());
 		}
 	}
 
 	public void setUUID(UUID uuid) {
-		this.player_uuid = uuid;
+		this.playerUUID = uuid;
+		this.sourceName = null;
 	}
 
 	/*
@@ -332,12 +269,16 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#getPlayerName()
 	 */
 	@Override
-	public String getPlayerName() {
-		return player_name;
+	public String getSourceName() {
+		if(sourceName != null) {
+			return sourceName;
+		}
+		
+		return Bukkit.getOfflinePlayer(playerUUID).getName();
 	}
 
 	public UUID getUUID() {
-		return player_uuid;
+		return playerUUID;
 	}
 
 	/*
@@ -346,19 +287,9 @@ public class GenericAction implements Handler {
 	 * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
 	 */
 	@Override
-	public void setNonPlayerName(String player_name) {
-		this.player_name = player_name;
-		this.player_uuid = null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#getX()
-	 */
-	@Override
-	public double getX() {
-		return x;
+	public void setSourceName(String source_name) {
+		this.sourceName = source_name;
+		this.playerUUID = null;
 	}
 
 	/*
@@ -368,17 +299,8 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public void setX(double x) {
-		this.x = x;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#getY()
-	 */
-	@Override
-	public double getY() {
-		return y;
+		createWorldIfNull();
+		location.setX(x);
 	}
 
 	/*
@@ -388,17 +310,8 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public void setY(double y) {
-		this.y = y;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#getZ()
-	 */
-	@Override
-	public double getZ() {
-		return z;
+		createWorldIfNull();
+		location.setY(y);
 	}
 
 	/*
@@ -408,7 +321,8 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public void setZ(double z) {
-		this.z = z;
+		createWorldIfNull();
+		location.setZ(z);
 	}
 
 	/**
@@ -417,10 +331,10 @@ public class GenericAction implements Handler {
 	 */
 	public void setLoc(Location loc) {
 		if (loc != null) {
-			this.world_name = loc.getWorld().getName();
-			this.x = loc.getX();
-			this.y = loc.getY();
-			this.z = loc.getZ();
+			location = loc.clone();
+		}
+		else {
+			location = null;
 		}
 	}
 
@@ -429,7 +343,11 @@ public class GenericAction implements Handler {
 	 * @return
 	 */
 	public World getWorld() {
-		return plugin.getServer().getWorld(getWorldName());
+		if(location != null) {
+			return location.getWorld();
+		}
+		
+		return null;
 	}
 
 	/**
@@ -437,21 +355,12 @@ public class GenericAction implements Handler {
 	 * @return
 	 */
 	public Location getLoc() {
-		return new Location(getWorld(), getX(), getY(), getZ());
+		return location;
 	}
 
 	@Override
-	public void setBlock(Material material) {
-		// Water/Lava placement always turns into stationary blocks, and a
-		// rollback would
-		// fail because we wouldn't detect the same block placed on rollback.
-		// So,
-		// we just force record the block as stationary.
-		// https://snowy-evening.com/botsko/prism/297/
-		if (this.type.getName().equals("block-place") && (material == Material.WATER || material == Material.LAVA)) {
-			material = (material == Material.WATER ? Material.WATER : Material.LAVA);
-		}
-		this.block = material;
+	public void setMaterial(Material material) {
+		this.material = material;
 	}
 
 	/*
@@ -461,7 +370,7 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public void setBlockData(BlockData data) {
-		this.block_data = data;
+		this.blockData = data;
 	}
 
 	@Override
@@ -469,8 +378,8 @@ public class GenericAction implements Handler {
 	}
 
 	@Override
-	public Material getBlock() {
-		return block;
+	public Material getMaterial() {
+		return material;
 	}
 
 	/*
@@ -480,7 +389,7 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public BlockData getBlockData() {
-		return block_data;
+		return blockData;
 	}
 
 	@Override
@@ -489,13 +398,8 @@ public class GenericAction implements Handler {
 	}
 
 	@Override
-	public String getState() {
-		return BlockUtils.dataString(getBlockData());
-	}
-
-	@Override
-	public void setOldBlock(Material material) {
-		this.old_block = material;
+	public void setOldMaterial(Material material) {
+		this.oldBlock = material;
 	}
 
 	/*
@@ -505,17 +409,16 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public void setOldBlockData(BlockData data) {
-		this.old_block_data = data;
+		this.oldBlockData = data;
 	}
 
 	@Override
 	public void setOldDurability(short durability) {
-		this.old_durability = durability;
 	}
 
 	@Override
-	public Material getOldBlock() {
-		return old_block;
+	public Material getOldMaterial() {
+		return oldBlock;
 	}
 
 	/*
@@ -525,43 +428,12 @@ public class GenericAction implements Handler {
 	 */
 	@Override
 	public BlockData getOldBlockData() {
-		return old_block_data;
+		return oldBlockData;
 	}
 
 	@Override
 	public short getOldDurability() {
-		return old_durability;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#getData()
-	 */
-	@Override
-	public String getData() {
-		return data;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#setData(java.lang.String)
-	 */
-	@Override
-	public void setData(String data) {
-		this.data = data;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#setMaterialAliases(me.botsko.prism.
-	 * MaterialAliases)
-	 */
-	@Override
-	public void setMaterialAliases(MaterialAliases m) {
-		this.materialAliases = m;
+		return 0;
 	}
 
 	/*
@@ -584,16 +456,6 @@ public class GenericAction implements Handler {
 		return aggregateCount;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see me.botsko.prism.actions.Handler#getNiceName()
-	 */
-	@Override
-	public String getNiceName() {
-		return "something";
-	}
-
 	/**
 	 * 
 	 */
@@ -608,15 +470,6 @@ public class GenericAction implements Handler {
 	@Override
 	public void setCanceled(boolean cancel) {
 		this.canceled = cancel;
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void save() {
-		// data is already set - anything not encoding a json
-		// object is already ready.
 	}
 
 	/**

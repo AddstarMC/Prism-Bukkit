@@ -1,10 +1,12 @@
 package me.botsko.prism.actions;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -20,13 +22,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +53,7 @@ public class ItemStackAction extends GenericAction {
 		public String title;
 		public String[] lore;
 		public String[] content;
-		public int slot = -1;
+		public String slot = "-1";
 		public int[] effectColors;
 		public int[] fadeColors;
 		public boolean hasFlicker;
@@ -101,7 +105,7 @@ public class ItemStackAction extends GenericAction {
 	 * @param block
 	 * @param player
 	 */
-	public void setItem(ItemStack item, int quantity, int slot, Map<Enchantment, Integer> enchantments) {
+	public void setItem(ItemStack item, int quantity, Map<Enchantment, Integer> enchantments) {
 
 		actionData = new ItemStackActionData();
 
@@ -120,7 +124,7 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		// Set basics
-		this.block = item.getType();
+		setMaterial(item.getType());
 		actionData.durability = item.getDurability();
 
 		if (tempDurability >= 0) {
@@ -129,9 +133,6 @@ public class ItemStackAction extends GenericAction {
 		}
 
 		actionData.amt = quantity;
-		if (slot >= 0) {
-			actionData.slot = slot;
-		}
 
 		// Set additional data all items may have
 		final ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
@@ -228,59 +229,26 @@ public class ItemStackAction extends GenericAction {
 			}
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
+	public void setSlot(String slot) {
+		actionData.slot = slot;
+	}
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
-		setItemStackFromData();
-		
-		if(getActionData() == null) {
-			Prism.log("ERROR: Action data null after setData! Given: " + data);
-		}
+	public String serialize() {
+		return gson().toJson(actionData);
 	}
-
-	/**
-	 * Prism began tracking very little data about an item stack and we felt that an
-	 * object wasn't necessary. That soon became a bad decision because we kept
-	 * piling on data to an existing string. Now we have a lot of old data that
-	 * won't work with the new object, so we must keep around the old parsing
-	 * methods.
-	 */
-	protected void setItemStackFromData() {
-		if (item == null && data != null) {
-			setItemStackFromNewDataFormat();
-		}
-	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(actionData);
-	}
-
-	@Override
-	public String getState() {
-		return "";
-	}
-
-	/**
-	 * 
-	 */
-	protected void setItemStackFromNewDataFormat() {
-
+	public void deserialize(String data) {
 		if (data == null || !data.startsWith("{"))
 			return;
 
-		actionData = gson.fromJson(data, ItemStackActionData.class);
+		actionData = gson().fromJson(data, ItemStackActionData.class);
 
 		short damage = (short) actionData.durability;
 
-		item = new ItemStack(this.block, actionData.amt, damage);
+		item = new ItemStack(getMaterial(), actionData.amt, damage);
 
 		// Restore enchantment
 		if (actionData.enchs != null && actionData.enchs.length > 0) {
@@ -434,13 +402,13 @@ public class ItemStackAction extends GenericAction {
 			return new ChangeResult(ChangeResultType.PLANNED, null);
 		}
 
-		if (plugin.getConfig().getBoolean("prism.appliers.allow-rollback-items-removed-from-container")) {
+		if (Prism.config.getBoolean("prism.appliers.allow-rollback-items-removed-from-container")) {
 
 			final Block block = getWorld().getBlockAt(getLoc());
 			Inventory inventory = null;
 
 			// Item drop/pickup from player inventories
-			if (getType().getName().equals("item-drop") || getType().getName().equals("item-pickup")) {
+			if (getActionType().getName().equals("item-drop") || getActionType().getName().equals("item-pickup")) {
 
 				// Is player online?
 				final Player onlinePlayer = Bukkit.getServer().getPlayer(getUUID());
@@ -464,20 +432,25 @@ public class ItemStackAction extends GenericAction {
 					inventory = ih.getInventory();
 				}
 				else {
-
+					String slot = getActionData().slot.toUpperCase(Locale.ENGLISH);
+					EquipmentSlot eSlot = null;
+					Prism.log("Slot found: " + slot);
+					try {
+						eSlot = EquipmentSlot.valueOf(slot);
+					}
+					catch(IllegalArgumentException e) {}
+					Prism.log("   eSlot: " + eSlot);
+					
+					BlockFace fSlot = null;
+					try {
+						fSlot = BlockFace.valueOf(slot);
+					}
+					catch(IllegalArgumentException e) {}
+					Prism.log("   fSlot: " + fSlot);
+					
 					Entity[] foundEntities = block.getChunk().getEntities();
 
 					for (Entity e : foundEntities) {
-						if (!e.getType().equals(EntityType.ITEM_FRAME))
-							continue;
-						// Some modded servers seems to list entities in the chunk
-						// that exists in other worlds. No idea why but we can at
-						// least check for it.
-						// https://snowy-evening.com/botsko/prism/318/
-						if (!block.getWorld().equals(e.getWorld()))
-							continue;
-						// Let's limit this to only entities within 1 block of the current.
-
 						// Get the block location for better comparisons
 						Location loc = e.getLocation();
 						loc.setX(loc.getBlockX());
@@ -486,26 +459,69 @@ public class ItemStackAction extends GenericAction {
 
 						Prism.debug(block.getLocation());
 						Prism.debug(loc);
+						
+						// Some modded servers seems to list entities in the chunk
+						// that exists in other worlds. No idea why but we can at
+						// least check for it.
+						// https://snowy-evening.com/botsko/prism/318/
+						if (!block.getWorld().equals(e.getWorld()))
+							continue;
 
+						// Let's limit this to only entities within 1 block of the current.
 						if (block.getLocation().distanceSquared(loc) < 0.25) {
-							final ItemFrame frame = (ItemFrame) e;
-
-							if ((getType().getName().equals("item-remove")
-									&& parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
-									|| (getType().getName().equals("item-insert")
-											&& parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
-								if (frame.getItem().getType() == Material.AIR) {
-									frame.setItem(item);
+							if(e instanceof ItemFrame) {
+								final ItemFrame frame = (ItemFrame) e;
+								
+								// if we have a pseudo-slot try to use that
+								if(fSlot != null && fSlot != frame.getFacing()) {
+									Prism.log("Skipping frame: " + frame.getFacing());
+									continue;
+								}
+								Prism.log("Using frame: " + frame.getFacing());
+	
+								if ((getActionType().getName().equals("item-remove")
+										&& parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
+										|| (getActionType().getName().equals("item-insert")
+												&& parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
+									if (frame.getItem().getType() == Material.AIR) {
+										frame.setItem(item);
+										result = ChangeResultType.APPLIED;
+										break;
+									}
+								}
+								else if (frame.getItem().getType() != Material.AIR) {
+									frame.setItem(null);
 									result = ChangeResultType.APPLIED;
 									break;
 								}
 							}
-							else if (frame.getItem().getType() != Material.AIR) {
-								frame.setItem(null);
-								result = ChangeResultType.APPLIED;
-								break;
+							else if(e instanceof ArmorStand) {
+								final ArmorStand stand = (ArmorStand) e;
+								
+								EquipmentSlot actualSlot = eSlot;
+								
+								if(actualSlot == null) {
+									actualSlot = InventoryUtils.getTargetArmorSlot(item.getType());
+								}
+								
+								ItemStack atPoint = InventoryUtils.getEquipment(stand.getEquipment(), eSlot);
+								
+								if ((getActionType().getName().equals("item-remove")
+										&& parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
+										|| (getActionType().getName().equals("item-insert")
+												&& parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
+									if (atPoint.getType() == Material.AIR) {
+										InventoryUtils.setEquipment(stand.getEquipment(), eSlot, item);
+										result = ChangeResultType.APPLIED;
+										break;
+									}
+								}
+								else if (atPoint.getType() != Material.AIR) {
+									InventoryUtils.setEquipment(stand.getEquipment(), eSlot, null);
+									result = ChangeResultType.APPLIED;
+									break;
+								}
 							}
-
 						}
 					}
 				}
@@ -514,7 +530,14 @@ public class ItemStackAction extends GenericAction {
 			if (inventory != null) {
 
 				final PrismProcessType pt = parameters.getProcessType();
-				final String n = getType().getName();
+				final String n = getActionType().getName();
+				
+				int iSlot = -1;
+
+				try {
+					iSlot = Integer.parseInt(getActionData().slot);
+				}
+				catch(IllegalArgumentException e) {}
 
 				// Rolling back a:remove or a:drop should place the item into
 				// the inventory
@@ -527,14 +550,14 @@ public class ItemStackAction extends GenericAction {
 					boolean added = false;
 
 					// We'll attempt to put it back in the same slot
-					if (getActionData().slot >= 0) {
+					if (iSlot >= 0) {
 						// Ensure slot exists in this inventory
 						// I'm not sure why this happens but sometimes
 						// a slot larger than the contents size is recorded
 						// and triggers ArrayIndexOutOfBounds
 						// https://snowy-evening.com/botsko/prism/450/
-						if (getActionData().slot < inventory.getSize()) {
-							final ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
+						if (iSlot < inventory.getSize()) {
+							final ItemStack currentSlotItem = inventory.getItem(iSlot);
 							int amount = 0;
 							ItemStack item = getItem().clone();
 							int max = item.getType().getMaxStackSize();
@@ -550,7 +573,7 @@ public class ItemStackAction extends GenericAction {
 								result = ChangeResultType.APPLIED;
 								item.setAmount(amount);
 								added = true;
-								inventory.setItem(getActionData().slot, item);
+								inventory.setItem(iSlot, item);
 							}
 						}
 					}
@@ -600,13 +623,13 @@ public class ItemStackAction extends GenericAction {
 					boolean removed = false;
 
 					// We'll attempt to take it from the same slot
-					if (getActionData().slot >= 0) {
+					if (iSlot >= 0) {
 
-						if (getActionData().slot > inventory.getContents().length) {
+						if (iSlot > inventory.getContents().length) {
 							inventory.addItem(getItem());
 						}
 						else {
-							final ItemStack currentSlotItem = inventory.getItem(getActionData().slot);
+							final ItemStack currentSlotItem = inventory.getItem(iSlot);
 							ItemStack item = getItem().clone();
 							
 							if(item.isSimilar(currentSlotItem)) {
@@ -614,7 +637,7 @@ public class ItemStackAction extends GenericAction {
 								item.setAmount(amount);
 								result = ChangeResultType.APPLIED;
 								removed = true;
-								inventory.setItem(getActionData().slot, amount > 0 ? item : null);
+								inventory.setItem(iSlot, amount > 0 ? item : null);
 							}
 						}
 					}

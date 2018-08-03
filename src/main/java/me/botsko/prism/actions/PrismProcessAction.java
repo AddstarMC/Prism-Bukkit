@@ -29,24 +29,17 @@ public class PrismProcessAction extends GenericAction {
 			actionData.processType = processType.name().toLowerCase();
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
-		if (data != null && !this.data.isEmpty()) {
-			actionData = gson.fromJson(data, PrismProcessActionData.class);
-		}
+	public String serialize() {
+		return gson().toJson(actionData);
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void save() {
-		data = gson.toJson(actionData);
+	public void deserialize(String data) {
+		if (data != null && !data.isEmpty()) {
+			actionData = gson().fromJson(data, PrismProcessActionData.class);
+		}
 	}
 
 	/**

@@ -34,30 +34,21 @@ public class HangingItemAction extends GenericAction {
 			if (hanging.getAttachedFace() != null) {
 				this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
 			}
-			this.world_name = hanging.getWorld().getName();
-			this.x = hanging.getLocation().getBlockX();
-			this.y = hanging.getLocation().getBlockY();
-			this.z = hanging.getLocation().getBlockZ();
+			
+			setLoc(hanging.getLocation().getBlock().getLocation());
 		}
 	}
-
-	/**
-	 * 
-	 */
+	
 	@Override
-	public void setData(String data) {
-		this.data = data;
+	public String serialize() {
+		return gson().toJson(actionData);
+	}
+	
+	@Override
+	public void deserialize(String data) {
 		if (data != null && data.startsWith("{")) {
-			actionData = gson.fromJson(data, HangingItemActionData.class);
+			actionData = gson().fromJson(data, HangingItemActionData.class);
 		}
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public void save() {
-		data = gson.toJson(actionData);
 	}
 
 	/**
@@ -66,11 +57,6 @@ public class HangingItemAction extends GenericAction {
 	 */
 	public String getHangingType() {
 		return actionData.type;
-	}
-
-	@Override
-	public String getState() {
-		return "";
 	}
 
 	/**
@@ -90,7 +76,7 @@ public class HangingItemAction extends GenericAction {
 	 */
 	@Override
 	public String getNiceName() {
-		return this.actionData.type != null ? this.actionData.type : data.toLowerCase();
+		return this.actionData.type != null ? this.actionData.type : "unknown";
 	}
 
 	/**
@@ -120,7 +106,7 @@ public class HangingItemAction extends GenericAction {
 
 		final BlockFace attachedFace = getDirection();
 
-		final Location loc = new Location(getWorld(), getX(), getY(), getZ()).getBlock().getRelative(getDirection())
+		final Location loc = getLoc().getBlock().getRelative(getDirection())
 				.getLocation();
 
 		// Ensure there's a block at this location that accepts an attachment

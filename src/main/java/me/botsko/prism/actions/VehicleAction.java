@@ -16,6 +16,7 @@ import org.bukkit.entity.minecart.SpawnerMinecart;
 import org.bukkit.entity.minecart.StorageMinecart;
 
 public class VehicleAction extends GenericAction {
+	private String vehicleName;
 
 	/**
 	 * 
@@ -24,22 +25,22 @@ public class VehicleAction extends GenericAction {
 	public void setVehicle(Vehicle vehicle) {
 
 		if (vehicle instanceof PoweredMinecart) {
-			this.data = "powered minecart";
+			vehicleName = "powered minecart";
 		}
 		else if (vehicle instanceof HopperMinecart) {
-			this.data = "minecart hopper";
+			vehicleName = "minecart hopper";
 		}
 		else if (vehicle instanceof SpawnerMinecart) {
-			this.data = "spawner minecart";
+			vehicleName = "spawner minecart";
 		}
 		else if (vehicle instanceof ExplosiveMinecart) {
-			this.data = "tnt minecart";
+			vehicleName = "tnt minecart";
 		}
 		else if (vehicle instanceof StorageMinecart) {
-			this.data = "storage minecart";
+			vehicleName = "storage minecart";
 		}
 		else {
-			this.data = vehicle.getType().name().toLowerCase();
+			vehicleName = vehicle.getType().name().toLowerCase();
 		}
 	}
 
@@ -49,35 +50,44 @@ public class VehicleAction extends GenericAction {
 	 */
 	@Override
 	public String getNiceName() {
-		return this.data;
+		return vehicleName;
 	}
 
+	@Override
+	public String serialize() {
+		return vehicleName;
+	}
+	
+	@Override
+	public void deserialize(String data) {
+		vehicleName = data;
+	}
+	
 	/**
 	 * 
 	 */
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
-
 		Entity vehicle = null;
-		if (this.data.equals("powered minecart")) {
+		if (vehicleName.equals("powered minecart")) {
 			vehicle = getWorld().spawn(getLoc(), PoweredMinecart.class);
 		}
-		else if (this.data.equals("storage minecart")) {
+		else if (vehicleName.equals("storage minecart")) {
 			vehicle = getWorld().spawn(getLoc(), StorageMinecart.class);
 		}
-		else if (this.data.equals("tnt minecart")) {
+		else if (vehicleName.equals("tnt minecart")) {
 			vehicle = getWorld().spawn(getLoc(), ExplosiveMinecart.class);
 		}
-		else if (this.data.equals("spawner minecart")) {
+		else if (vehicleName.equals("spawner minecart")) {
 			vehicle = getWorld().spawn(getLoc(), SpawnerMinecart.class);
 		}
-		else if (this.data.equals("minecart hopper")) {
+		else if (vehicleName.equals("minecart hopper")) {
 			vehicle = getWorld().spawn(getLoc(), HopperMinecart.class);
 		}
-		else if (this.data.equals("minecart")) {
+		else if (vehicleName.equals("minecart")) {
 			vehicle = getWorld().spawn(getLoc(), Minecart.class);
 		}
-		else if (this.data.equals("boat")) {
+		else if (vehicleName.equals("boat")) {
 			vehicle = getWorld().spawn(getLoc(), Boat.class);
 		}
 		if (vehicle != null) {

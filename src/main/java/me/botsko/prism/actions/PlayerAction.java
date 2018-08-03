@@ -2,26 +2,39 @@ package me.botsko.prism.actions;
 
 public class PlayerAction extends GenericAction {
 
+	private String extraInfo;
 	/**
 	 * 
 	 * @return
 	 */
 	@Override
 	public String getNiceName() {
-		if (this.data != null && !this.data.isEmpty()) {
-			if (this.type.getName().equals("player-join")) {
-				return "from " + this.data;
-			}
-			else if (this.type.getName().equals("xp-pickup")) {
-				return this.data + " xp";
-			}
-			else if (this.type.getName().equals("bucket-fill")) {
-				return "a " + this.data + " bucket";
-			}
-			else {
-				return this.data;
+		if (extraInfo != null && !extraInfo.isEmpty()) {
+			switch(getActionType().getName()) {
+				case "player-join":
+					return "from " + extraInfo;
+					
+				case "xp-pickup":
+					return extraInfo + " xp";
+					
+				case "bucket-fill":
+					return "a " + extraInfo + " bucket";
+					
+				default:
+					return extraInfo;
 			}
 		}
+		
 		return "";
+	}
+	
+	@Override
+	public String serialize() {
+		return extraInfo;
+	}
+	
+	@Override
+	public void deserialize(String data) {
+		extraInfo = data;
 	}
 }

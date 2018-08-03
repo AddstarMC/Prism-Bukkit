@@ -1,5 +1,7 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.actions.Handler;
+
 public class ActionType {
 
 	/**
@@ -8,7 +10,7 @@ public class ActionType {
 	private final boolean doesCreateBlock;
 	private final boolean canRollback;
 	private final boolean canRestore;
-	private final String handler;
+	private final Class<? extends Handler> handler;
 	private final String niceDescription;
 	private final String name;
 
@@ -18,7 +20,7 @@ public class ActionType {
 	 * @param handler
 	 * @param niceDescription
 	 */
-	public ActionType(String name, String handler, String niceDescription) {
+	public ActionType(String name, Class<? extends Handler> handler, String niceDescription) {
 		this(name, false, false, false, handler, niceDescription);
 	}
 
@@ -30,8 +32,8 @@ public class ActionType {
 	 * @param canRestore
 	 * @param niceDescription
 	 */
-	public ActionType(String name, boolean doesCreateBlock, boolean canRollback, boolean canRestore, String handler,
-			String niceDescription) {
+	public ActionType(String name, boolean doesCreateBlock, boolean canRollback, boolean canRestore,
+			Class<? extends Handler> handler, String niceDescription) {
 		this.doesCreateBlock = doesCreateBlock;
 		this.canRollback = canRollback;
 		this.canRestore = canRestore;
@@ -57,7 +59,7 @@ public class ActionType {
 	/**
 	 * @return the niceDescription
 	 */
-	public String getHandler() {
+	public Class<? extends Handler> getHandler() {
 		return handler;
 	}
 

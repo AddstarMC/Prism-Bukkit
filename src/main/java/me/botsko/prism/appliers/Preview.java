@@ -279,14 +279,14 @@ public class Preview implements Previewable {
 
 						// No sense in trying to rollback
 						// when the type doesn't support it.
-						if (processType.equals(PrismProcessType.ROLLBACK) && !a.getType().canRollback()) {
+						if (processType.equals(PrismProcessType.ROLLBACK) && !a.getActionType().canRollback()) {
 							iterator.remove();
 							continue;
 						}
 
 						// No sense in trying to restore
 						// when the type doesn't support it.
-						if (processType.equals(PrismProcessType.RESTORE) && !a.getType().canRestore()) {
+						if (processType.equals(PrismProcessType.RESTORE) && !a.getActionType().canRestore()) {
 							iterator.remove();
 							continue;
 						}

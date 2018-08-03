@@ -4,6 +4,7 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 
 public class ActionMessage {
 
@@ -55,15 +56,17 @@ public class ActionMessage {
 	 */
 	public String getRawMessage() {
 		final StringBuilder msg = new StringBuilder();
-		msg.append((a.getType().doesCreateBlock() || a.getType().getName().equals("item-insert")
-				|| a.getType().getName().equals("sign-change")) ? "+" : "-");
+		ActionType action = a.getActionType();
+		
+		msg.append((action.doesCreateBlock() || action.getName().equals("item-insert")
+				|| action.getName().equals("sign-change")) ? "+" : "-");
 		msg.append(" #" + a.getId());
-		msg.append(" " + a.getPlayerName());
-		msg.append(" " + a.getType().getName());
-		msg.append(" " + a.getBlock());
+		msg.append(" " + a.getSourceName());
+		msg.append(" " + action.getName());
+		msg.append(" " + a.getMaterial());
 		msg.append(BlockUtils.dataString(a.getBlockData()));
 
-		if (a.getType().getHandler() != null) {
+		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				msg.append(" (" + a.getNiceName() + ")");
 		}
@@ -71,10 +74,10 @@ public class ActionMessage {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
-			if (a.getType().getName().equals("lava-bucket")) {
+			if (action.getName().equals("lava-bucket")) {
 				msg.append(" (lava)");
 			}
-			else if (a.getType().getName().equals("water-bucket")) {
+			else if (action.getName().equals("water-bucket")) {
 				msg.append(" (water)");
 			}
 		}
@@ -83,7 +86,8 @@ public class ActionMessage {
 		}
 		msg.append(" " + a.getDisplayDate());
 		msg.append(" " + a.getDisplayTime().toLowerCase());
-		msg.append(" - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ());
+		Location l = a.getLoc();
+		msg.append(" - " + l.getWorld().getName() + " @ " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ());
 		return msg.toString();
 	}
 
@@ -110,16 +114,17 @@ public class ActionMessage {
 		}
 
 		// Who
-		line1 += highlight + a.getPlayerName();
+		line1 += highlight + a.getSourceName();
 
 		String description = a.getCustomDesc();
+		ActionType action = a.getActionType();
 
 		if (description == null)
-			description = a.getType().getNiceDescription();
+			description = action.getNiceDescription();
 
 		// Description of event
 		line1 += " " + ChatColor.WHITE + description;
-		if (a.getType().getHandler() != null) {
+		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				line1 += " " + highlight + a.getNiceName();
 		}
@@ -127,16 +132,16 @@ public class ActionMessage {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
-			if (a.getType().getName().equals("lava-bucket")) {
+			if (action.getName().equals("lava-bucket")) {
 				line1 += " " + highlight + "lava";
 			}
-			else if (a.getType().getName().equals("water-bucket")) {
+			else if (action.getName().equals("water-bucket")) {
 				line1 += " " + highlight + "water";
 			}
 		}
 
 		if (showExtended) {
-			line1 += " " + a.getBlock() + a.getBlockData();
+			line1 += " " + a.getMaterial() + a.getBlockData();
 		}
 
 		// Aggregate count
@@ -150,7 +155,7 @@ public class ActionMessage {
 		}
 
 		// Action type reminder
-		line1 += " " + ChatColor.GRAY + "(a:" + a.getType().getShortName() + ")";
+		line1 += " " + ChatColor.GRAY + "(a:" + action.getShortName() + ")";
 
 		// Line 2
 		String line2 = ChatColor.GRAY + " --";
@@ -161,8 +166,8 @@ public class ActionMessage {
 		if (showExtended) {
 			line2 += ChatColor.GRAY + a.getDisplayDate();
 			line2 += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
-
-			line2 += " - " + a.getWorldName() + " @ " + a.getX() + " " + a.getY() + " " + a.getZ() + " ";
+			Location l = a.getLoc();
+			line2 += " - " + l.getWorld().getName() + " @ " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " ";
 		}
 
 		msg[0] = line1;
@@ -180,8 +185,8 @@ public class ActionMessage {
 	 */
 	protected String getPosNegPrefix() {
 
-		if (a.getType().doesCreateBlock() || a.getType().getName().equals("item-insert")
-				|| a.getType().getName().equals("sign-change")) {
+		if (a.getActionType().doesCreateBlock() || a.getActionType().getName().equals("item-insert")
+				|| a.getActionType().getName().equals("sign-change")) {
 			return ChatColor.GREEN + " + " + ChatColor.WHITE;
 		}
 		else {

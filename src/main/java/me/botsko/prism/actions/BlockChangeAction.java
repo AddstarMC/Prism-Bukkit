@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -21,11 +22,11 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public String getNiceName() {
 		String name = "";
-		if (this.getType().getName().equals("block-fade")) {
-			name += materialAliases.getAlias(this.old_block, this.old_block_data);
+		if (this.getActionType().getName().equals("block-fade")) {
+			name += Prism.getItems().getAlias(getOldMaterial(), getOldBlockData());
 		}
 		else {
-			name += materialAliases.getAlias(this.block, this.block_data);
+			name += Prism.getItems().getAlias(getMaterial(), getBlockData());
 		}
 		return name;
 	}
@@ -36,8 +37,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
-				getBlock(), getBlockData(), block, false);
+		return placeBlock(player, parameters, is_preview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+				getMaterial(), getBlockData(), block, false);
 	}
 
 	/**
@@ -46,8 +47,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
-				getBlock(), getBlockData(), block, false);
+		return placeBlock(player, parameters, is_preview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+				getMaterial(), getBlockData(), block, false);
 	}
 
 	/**
@@ -56,8 +57,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
-				getBlock(), getBlockData(), block, false);
+		return placeBlock(player, parameters, is_preview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+				getMaterial(), getBlockData(), block, false);
 	}
 
 	/**
@@ -66,8 +67,8 @@ public class BlockChangeAction extends BlockAction {
 	@Override
 	public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, getType().getName(), getOldBlock(), getOldBlockData(),
-				getBlock(), getBlockData(), block, true);
+		return placeBlock(player, parameters, is_preview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+				getMaterial(), getBlockData(), block, true);
 	}
 
 	/**
@@ -87,11 +88,7 @@ public class BlockChangeAction extends BlockAction {
 
 		final BlockAction b = new BlockAction();
 		b.setActionType(type);
-		b.setPlugin(plugin);
-		b.setWorldName(getWorldName());
-		b.setX(getX());
-		b.setY(getY());
-		b.setZ(getZ());
+		b.setLoc(getLoc());
 		if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) {
 			// Run verification for no-overwrite. Only reverse a change
 			// if the opposite state is what's present now.
@@ -103,7 +100,7 @@ public class BlockChangeAction extends BlockAction {
 			if (BlockUtils.isAcceptableForBlockPlace(block.getType())
 					|| BlockUtils.areBlockIdsSameCoreItem(block.getType(), new_mat) || is_preview
 					|| parameters.hasFlag(Flag.OVERWRITE)) {
-				b.setBlock(old_mat);
+				b.setMaterial(old_mat);
 				b.setBlockData(old_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 			}
@@ -125,7 +122,7 @@ public class BlockChangeAction extends BlockAction {
 			if (BlockUtils.isAcceptableForBlockPlace(block.getType())
 					|| BlockUtils.areBlockIdsSameCoreItem(block.getType(), old_mat) || is_preview
 					|| parameters.hasFlag(Flag.OVERWRITE)) {
-				b.setBlock(new_mat);
+				b.setMaterial(new_mat);
 				b.setBlockData(new_data);
 				return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 			}
@@ -137,7 +134,7 @@ public class BlockChangeAction extends BlockAction {
 			}
 		}
 		if (parameters.getProcessType().equals(PrismProcessType.UNDO)) {
-			b.setBlock(old_mat);
+			b.setMaterial(old_mat);
 			b.setBlockData(old_data);
 			return b.placeBlock(player, parameters, is_preview, block, is_deferred);
 		}
