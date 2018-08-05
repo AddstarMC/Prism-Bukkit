@@ -141,7 +141,7 @@ public class ActionMessage {
 		}
 
 		if (showExtended) {
-			line1 += " " + a.getMaterial() + a.getBlockData();
+			line1 += " " + a.getMaterial() + BlockUtils.dataString(a.getBlockData());
 		}
 
 		// Aggregate count

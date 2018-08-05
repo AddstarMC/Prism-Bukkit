@@ -186,7 +186,17 @@ public class ActionsQuery {
 						}
 						else {
 							baseHandler.setMaterial(item.getType());
-							baseHandler.setBlockData(Bukkit.createBlockData(item.getType()));
+							
+							BlockData newData;
+							
+							try {
+								newData = Bukkit.createBlockData(item.getType());
+							}
+							catch(IllegalArgumentException e) {
+								newData = null;
+							}
+							
+							baseHandler.setBlockData(newData);
 							baseHandler.setDurability(item.getDurability());
 						}
 

@@ -70,7 +70,14 @@ public class MaterialAliases {
 
 		for (Material m : materials) {
 			String matName = m.name().toLowerCase(Locale.ENGLISH);
-			String dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
+			String dataString;
+			
+			try {
+				dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
+			}
+			catch(IllegalArgumentException e) {
+				continue;
+			}
 
 			query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> {
 				storeCache(m, dataString, i, d);

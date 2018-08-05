@@ -61,10 +61,8 @@ public class BlockUtils {
 		if (data != null) {
 			return data.getAsString().replace("minecraft:" + data.getMaterial().name().toLowerCase(Locale.ENGLISH), "");
 		}
-		else {
-			// TODO: Shouldn't happen, investigate
-			return "";
-		}
+		
+		return "";
 	}
 
 	/**
