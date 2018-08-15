@@ -53,8 +53,10 @@ public class EntitySerializer {
 		// Owner
 		if (entity instanceof Tameable) {
 			final Tameable mob = (Tameable) entity;
-			if (mob.isTamed())
+			if (mob.getOwner() != null)
 				taming_owner = mob.getOwner().getUniqueId().toString();
+			else if (mob.isTamed())
+				taming_owner = "-none-";
 		}
 
 		// Sitting
@@ -122,6 +124,7 @@ public class EntitySerializer {
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
 		if (taming_owner != null) {
+			
 			OfflinePlayer player = EntityUtils.offlineOf(taming_owner);
 			if (player != null) {
 				String str = player.getName() + "'s ";

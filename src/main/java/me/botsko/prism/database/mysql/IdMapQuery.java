@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -235,11 +236,36 @@ public class IdMapQuery {
 				st.setString(1, material);
 				st.setString(2, state);
 
-				st.executeUpdate();
+				boolean success = st.executeUpdate() > 0;
+				
+				SQLWarning warning = st.getWarnings();
+				
+				while(warning != null) {
+					Prism.log("SQL Warning: " + warning.getMessage());
+					warning = warning.getNextWarning();
+				}
 
 				ResultSet rs = st.getGeneratedKeys();
-				if (rs.next())
-					return rs.getInt(1);
+				if (rs.next()) {
+					int autoInc = rs.getInt(1);
+					
+					if(!success) {
+						Prism.log("Failed id map: material=" + material + ", " + "state=" + state);
+					}
+					
+					return autoInc;
+					
+					/*if(success) {
+						return autoInc;
+					}
+					else {
+						
+						try (PreparedStatement undoInc = conn.prepareStatement(unauto.replace("<prefix>", prefix))) {
+							st.setInt(1, autoInc - 1);
+							st.executeUpdate();
+						}
+					}*/
+				}
 			}
 		}
 		catch (final SQLException e) {

@@ -249,18 +249,20 @@ public class MaterialAliases {
 		IdMapQuery query = new IdMapQuery();
 		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
-		query.findIds(materialName, state, (query_id, query_subid) -> {
-			result.first = query_id;
-			result.second = query_subid;
-
-			storeCache(material, state, query_id, query_subid);
-		}, () -> {
-			int block_id = query.mapAutoId(materialName, state);
-
-			result.first = block_id;
-
-			storeCache(material, state, block_id, 0);
-		});
+		synchronized (this) {
+			query.findIds(materialName, state, (query_id, query_subid) -> {
+				result.first = query_id;
+				result.second = query_subid;
+	
+				storeCache(material, state, query_id, query_subid);
+			}, () -> {
+				int block_id = query.mapAutoId(materialName, state);
+	
+				result.first = block_id;
+	
+				storeCache(material, state, block_id, 0);
+			});
+		}
 
 		if (block_subid != durability)
 			result.second = durability;
@@ -320,11 +322,7 @@ public class MaterialAliases {
 	}
 
 	public String getAlias(Material material, BlockData data) {
-		String dataString = "";
-
-		if (data != null) {
-			dataString = BlockUtils.dataString(data);
-		}
+		String dataString = BlockUtils.dataString(data);
 
 		String item_name = null;
 		if (!itemAliases.isEmpty()) {

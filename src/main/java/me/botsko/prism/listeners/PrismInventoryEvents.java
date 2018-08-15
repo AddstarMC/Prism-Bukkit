@@ -192,12 +192,12 @@ public class PrismInventoryEvents implements Listener {
 				if (isTopInv) {
 					ItemStack swapItem = player.getInventory().getItem(event.getHotbarButton());
 
-					if (slotItem.getType() != Material.AIR) {
+					if (slotItem != null && slotItem.getType() != Material.AIR) {
 						RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem, slotItem.getAmount(),
 								slot, null, containerLoc, player));
 					}
 
-					if (swapItem.getType() != Material.AIR) {
+					if (swapItem != null && swapItem.getType() != Material.AIR) {
 						RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, swapItem, swapItem.getAmount(),
 								slot, null, containerLoc, player));
 					}
