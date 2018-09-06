@@ -23,6 +23,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.database.mysql.DeleteQueryBuilder;
 import me.botsko.prism.database.mysql.SelectQueryBuilder;
+import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
 
 public class ActionsQuery {
@@ -197,7 +198,7 @@ public class ActionsQuery {
 							}
 							
 							baseHandler.setBlockData(newData);
-							baseHandler.setDurability(item.getDurability());
+							baseHandler.setDurability((short) ItemUtils.getItemDamage(item));
 						}
 
 						MaterialState old = Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
@@ -212,7 +213,7 @@ public class ActionsQuery {
 						else {
 							baseHandler.setOldMaterial(oldItem.getType());
 							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
-							baseHandler.setOldDurability(oldItem.getDurability());
+							baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
 						}
 
 						baseHandler.deserialize(rs.getString(13));

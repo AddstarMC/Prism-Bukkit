@@ -117,18 +117,17 @@ public class MaterialAliases {
 		}
 
 		public ItemStack asItem() {
+			ItemStack item = new ItemStack(material, 1);
+			
 			if (!state.isEmpty()) {
-				short durability = 0;
 				try {
-					durability = Short.parseShort(state);
+					ItemUtils.setItemDamage(item, Short.parseShort(state));
 				}
 				catch (NumberFormatException e) {
 				}
-
-				return new ItemStack(material, 1, durability);
 			}
 
-			return new ItemStack(material, 1);
+			return item;
 		}
 
 		@Override

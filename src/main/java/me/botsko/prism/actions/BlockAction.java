@@ -320,8 +320,8 @@ public class BlockAction extends GenericAction {
 		// Ensure block action is allowed to place a block here.
 		// (essentially liquid/air).
 
-		final boolean cancelIfBadPlace = !getActionType().requiresHandler("BlockChangeAction")
-				&& !getActionType().requiresHandler("PrismRollbackAction") && !parameters.hasFlag(Flag.OVERWRITE);
+		final boolean cancelIfBadPlace = !getActionType().requiresHandler(BlockChangeAction.class)
+				&& !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
 		if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(block.getType())) {
 			// System.out.print("Block skipped due to being unaccaptable for block place.");

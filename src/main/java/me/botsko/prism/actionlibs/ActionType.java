@@ -75,7 +75,7 @@ public class ActionType {
 	 * @param handler
 	 * @return
 	 */
-	public boolean requiresHandler(String handler) {
+	public boolean requiresHandler(Class<? extends Handler> handler) {
 		return (getHandler() != null && getHandler().equals(handler));
 	}
 

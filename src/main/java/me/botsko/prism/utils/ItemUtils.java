@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -42,12 +43,35 @@ public class ItemUtils {
 		if (stack != null) {
 			String result = stack.getType().name().toLowerCase();
 
-			short durability = stack.getDurability();
+			short durability = (short) getItemDamage(stack);
 			if (durability > 0)
 				result += ":" + durability;
 			return result;
 		}
 		return null;
+	}
+	
+	public static void setItemDamage(ItemStack stack, int damage) {
+		ItemMeta meta = Bukkit.getItemFactory().getItemMeta(stack.getType());
+		
+		if(meta instanceof Damageable) {
+			Damageable d = (Damageable) meta;
+			
+			d.setDamage(damage);
+			stack.setItemMeta(meta);
+		}
+	}
+	
+	public static int getItemDamage(ItemStack stack) {
+		ItemMeta meta = Bukkit.getItemFactory().getItemMeta(stack.getType());
+		
+		if(meta instanceof Damageable) {
+			Damageable d = (Damageable) meta;
+			
+			return d.getDamage();
+		}
+		
+		return 0;
 	}
 
 	public static ItemStack itemOf(String smallString) {
@@ -58,7 +82,10 @@ public class ItemUtils {
 			if (mat != null) {
 				if (parts.length > 1)
 					try {
-						return new ItemStack(mat, 1, Short.valueOf(parts[1]));
+						ItemStack stack = new ItemStack(mat, 1);
+						setItemDamage(stack, Short.valueOf(parts[1]));
+
+						return stack;
 					}
 					catch (NumberFormatException e) {
 					}
@@ -311,7 +338,7 @@ public class ItemUtils {
 	 */
 	public static String getUsedDurabilityPercentage(ItemStack item) {
 
-		short dura = item.getDurability();
+		short dura = (short) getItemDamage(item);
 		short max_dura = item.getType().getMaxDurability();
 		if (dura > 0 && max_dura > 0 && dura != max_dura) {
 			double diff = ((dura / max_dura) * 100);
@@ -330,7 +357,7 @@ public class ItemUtils {
 	 */
 	public static String getDurabilityPercentage(ItemStack item) {
 
-		short dura = item.getDurability();
+		short dura = (short) getItemDamage(item);
 		short max_dura = item.getType().getMaxDurability();
 		if (dura > 0 && max_dura > 0 && dura != max_dura) {
 			double diff = max_dura - dura;

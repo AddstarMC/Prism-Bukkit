@@ -125,7 +125,7 @@ public class ItemStackAction extends GenericAction {
 
 		// Set basics
 		setMaterial(item.getType());
-		actionData.durability = item.getDurability();
+		actionData.durability = (short) ItemUtils.getItemDamage(item);
 
 		if (tempDurability >= 0) {
 			actionData.durability = tempDurability;
@@ -246,9 +246,9 @@ public class ItemStackAction extends GenericAction {
 
 		actionData = gson().fromJson(data, ItemStackActionData.class);
 
-		short damage = (short) actionData.durability;
-
-		item = new ItemStack(getMaterial(), actionData.amt, damage);
+		item = new ItemStack(getMaterial(), actionData.amt);
+		
+		ItemUtils.setItemDamage(item, actionData.durability);
 
 		// Restore enchantment
 		if (actionData.enchs != null && actionData.enchs.length > 0) {

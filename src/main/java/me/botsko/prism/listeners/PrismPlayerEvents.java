@@ -366,18 +366,6 @@ public class PrismPlayerEvents implements Listener {
 			// The wand will tell us what to use.
 			final Material item_mat = wand.getItem();
 
-			// Prism.debug("Checking active wand for player, Mode: " +
-			// wand.getWandMode() + " Item:" + item_id + ":" + item_subid +
-			// " Item in hand:" + player.getItemInHand().getTypeId() + ":" +
-			// player.getItemInHand().getDurability());
-
-			// In Spigot 1.10 and newer, the durability value of an ItemStack representing
-			// an empty hand is 0 instead of -1.
-			short itemInHandDurability = hand.getDurability();
-			if (hand.getType() == Material.AIR && itemInHandDurability == 0) {
-				itemInHandDurability = -1;
-			}
-
 			// Does the player have such item?
 			if (hand.getType() == item_mat) {
 
