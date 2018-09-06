@@ -499,11 +499,13 @@ public class BlockAction extends GenericAction {
 					sibling.setBlockData(siblingData);
 				}
 			}
+			
+			boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
 
-			state.update(true, false);
+			state.update(true, physics);
 
 			if (sibling != null) {
-				sibling.update(true, false);
+				sibling.update(true, physics);
 			}
 
 			// Store the state change

@@ -479,6 +479,7 @@ permissions:
             prism.parameters.flag.overwrite: true
             prism.parameters.flag.share: true
             prism.parameters.flag.paste: true
+            prism.parameters.flag.no-phys: true
     prism.parameters.flag.drain:
         default: op
     prism.parameters.flag.drain-lava:
@@ -500,4 +501,6 @@ permissions:
     prism.parameters.flag.share:
         default: op
     prism.parameters.flag.paste:
+        default: op
+    prism.parameters.flag.no-phys:
         default: op
