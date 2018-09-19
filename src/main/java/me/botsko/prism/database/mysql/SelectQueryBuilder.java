@@ -62,6 +62,8 @@ public class SelectQueryBuilder extends QueryBuilder {
 		columns.add("old_block_id");
 		columns.add("old_block_subid");
 		columns.add("data");
+		
+		columns.add("player_uuid");
 
 		if (shouldGroup) {
 			columns.add("COUNT(*) counted");

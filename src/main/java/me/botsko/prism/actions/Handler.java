@@ -1,5 +1,7 @@
 package me.botsko.prism.actions;
 
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -163,6 +165,9 @@ public interface Handler {
 	 * 
 	 */
 	public abstract String getNiceName();
+	
+	void setUUID(UUID uuid);
+	UUID getUUID();
 
 	/**
 	 *

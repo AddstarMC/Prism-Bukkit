@@ -6,11 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -121,6 +124,12 @@ public class ActionsQuery {
 				rs = s.executeQuery();
 
 				plugin.eventTimer.recordTimedEvent("query returned, building results");
+				
+				Map<Integer, String> worldsInverse = new HashMap<>();
+				
+				for (final Entry<String, Integer> entry : Prism.prismWorlds.entrySet()) {
+					worldsInverse.put(entry.getValue(), entry.getKey());
+				}
 
 				while (rs.next()) {
 
@@ -159,18 +168,12 @@ public class ActionsQuery {
 						// Convert world ID to name
 						// Performance-wise this is typically a lot faster than
 						// table joins
-						String worldName = "";
-						for (final Entry<String, Integer> entry : Prism.prismWorlds.entrySet()) {
-							if (entry.getValue() == rs.getInt(5)) {
-								worldName = entry.getKey();
-							}
-						}
+						String worldName = worldsInverse.getOrDefault(rs.getInt(5), "");
 
 						// Set all shared values
 						baseHandler.setActionType(actionType);
 						baseHandler.setId(rs.getLong(1));
 						baseHandler.setUnixEpoch(rs.getLong(2));
-						baseHandler.setSourceName(rs.getString(4));
 						baseHandler.setWorld(Bukkit.getWorld(worldName));
 						baseHandler.setX(rs.getInt(6));
 						baseHandler.setY(rs.getInt(7));
@@ -216,7 +219,24 @@ public class ActionsQuery {
 							baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
 						}
 
+						// data
 						baseHandler.deserialize(rs.getString(13));
+						
+						// player
+						baseHandler.setSourceName(rs.getString(4));
+						
+						// player_uuid
+						try {
+							OfflinePlayer offline = Bukkit.getOfflinePlayer(UUID.fromString(rs.getString(14)));
+							
+							// Fake player
+							if(offline.hasPlayedBefore()) {
+								baseHandler.setUUID(offline.getUniqueId());
+							}
+						}
+						catch(IllegalArgumentException | NullPointerException e) {
+							// Not a valid uuid
+						}
 
 						// Set aggregate counts if a lookup
 						int aggregated = 0;

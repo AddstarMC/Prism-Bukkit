@@ -29,7 +29,6 @@ public class PrismConfig extends ConfigBase {
 		// set defaults
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.preload-materials", false);
-		config.addDefault("prism.simulate-113", false);
 		// config.addDefault("prism.language", "en-us");
 
 		config.addDefault("prism.allow-metrics", true);
@@ -40,7 +39,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.database.max-idle-connections", 10);
 		config.addDefault("prism.database.max-wait", 30000);
 		config.addDefault("prism.database.max-failures-before-wait", 5);
-		config.addDefault("prism.database.actions-per-insert-batch", 1000);
+		config.addDefault("prism.database.actions-per-insert-batch", 300);
 
 		// queue
 		config.addDefault("prism.database.force-write-queue-on-shutdown", true);
@@ -111,7 +110,7 @@ public class PrismConfig extends ConfigBase {
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
 		config.addDefault("prism.purge.batch-tick-delay", 60);
-		config.addDefault("prism.purge.records-per-batch", 500000);
+		config.addDefault("prism.purge.records-per-batch", 5000);
 
 		// Appliers
 		config.addDefault("prism.appliers.allow-rollback-items-removed-from-container", true);
@@ -233,11 +232,11 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.log-commands", Arrays.asList("examplecommand <alert>"));
 		// Ore blocks
 		final HashMap<String, String> oreBlocks = new HashMap<String, String>();
-		oreBlocks.put("iron_ore", "&6"); // iron
-		oreBlocks.put("gold_ore", "&7"); // gold
-		oreBlocks.put("lapis_ore", "&9"); // lapis
-		oreBlocks.put("diamond_ore", "&b"); // diamond
-		oreBlocks.put("emerald_ore", "&a"); // emerald ore
+		oreBlocks.put("iron_ore", "&6");
+		oreBlocks.put("gold_ore", "&7");
+		oreBlocks.put("lapis_ore", "&9");
+		oreBlocks.put("diamond_ore", "&b");
+		oreBlocks.put("emerald_ore", "&a");
 		config.addDefault("prism.alerts.ores.blocks", oreBlocks);
 
 		// Illegal Command Alerts

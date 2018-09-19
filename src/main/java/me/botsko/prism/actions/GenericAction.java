@@ -258,6 +258,7 @@ public abstract class GenericAction implements Handler {
 		}
 	}
 
+	@Override
 	public void setUUID(UUID uuid) {
 		this.playerUUID = uuid;
 		this.sourceName = null;
@@ -277,6 +278,7 @@ public abstract class GenericAction implements Handler {
 		return Bukkit.getOfflinePlayer(playerUUID).getName();
 	}
 
+	@Override
 	public UUID getUUID() {
 		return playerUUID;
 	}
