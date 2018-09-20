@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -396,7 +397,7 @@ public class ItemStackAction extends GenericAction {
 			return new ChangeResult(ChangeResultType.SKIPPED, null);
 		}
 
-		ChangeResultType result = null;
+		ChangeResultType result = ChangeResultType.SKIPPED;
 
 		if (is_preview) {
 			return new ChangeResult(ChangeResultType.PLANNED, null);
@@ -434,19 +435,19 @@ public class ItemStackAction extends GenericAction {
 				else {
 					String slot = getActionData().slot.toUpperCase(Locale.ENGLISH);
 					EquipmentSlot eSlot = null;
-					Prism.log("Slot found: " + slot);
+					// Prism.log("Slot found: " + slot);
 					try {
 						eSlot = EquipmentSlot.valueOf(slot);
 					}
 					catch(IllegalArgumentException e) {}
-					Prism.log("   eSlot: " + eSlot);
+					// Prism.log("   eSlot: " + eSlot);
 					
 					BlockFace fSlot = null;
 					try {
 						fSlot = BlockFace.valueOf(slot);
 					}
 					catch(IllegalArgumentException e) {}
-					Prism.log("   fSlot: " + fSlot);
+					// Prism.log("   fSlot: " + fSlot);
 					
 					Entity[] foundEntities = block.getChunk().getEntities();
 
@@ -473,11 +474,11 @@ public class ItemStackAction extends GenericAction {
 								final ItemFrame frame = (ItemFrame) e;
 								
 								// if we have a pseudo-slot try to use that
-								if(fSlot != null && fSlot != frame.getFacing()) {
-									Prism.log("Skipping frame: " + frame.getFacing());
+								if(fSlot != null && fSlot != frame.getAttachedFace()) {
+									// Prism.log("Skipping frame: " + frame.getFacing());
 									continue;
 								}
-								Prism.log("Using frame: " + frame.getFacing());
+								// Prism.log("Using frame: " + frame.getFacing());
 	
 								if ((getActionType().getName().equals("item-remove")
 										&& parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
@@ -578,7 +579,8 @@ public class ItemStackAction extends GenericAction {
 						}
 					}
 					// If that failed we'll attempt to put it anywhere
-					/*if (!added) {
+					if (!added) {
+						// TODO: Skip is actually "partially applied"
 						final HashMap<Integer, ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory,
 								getItem());
 						if (leftovers.size() > 0) {
@@ -589,7 +591,7 @@ public class ItemStackAction extends GenericAction {
 							result = ChangeResultType.APPLIED;
 							added = true;
 						}
-					}*/
+					}
 
 					// Item was added to the inv, we need to remove the entity
 					if (added && (n.equals("item-drop") || n.equals("item-pickup"))) {

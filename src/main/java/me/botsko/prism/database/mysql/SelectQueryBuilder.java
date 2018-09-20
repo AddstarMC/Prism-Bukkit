@@ -63,7 +63,7 @@ public class SelectQueryBuilder extends QueryBuilder {
 		columns.add("old_block_subid");
 		columns.add("data");
 		
-		columns.add("player_uuid");
+		columns.add("HEX(player_uuid) AS uuid");
 
 		if (shouldGroup) {
 			columns.add("COUNT(*) counted");

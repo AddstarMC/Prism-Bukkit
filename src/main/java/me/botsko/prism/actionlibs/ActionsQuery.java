@@ -26,6 +26,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.database.mysql.DeleteQueryBuilder;
 import me.botsko.prism.database.mysql.SelectQueryBuilder;
+import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
 
@@ -227,7 +228,9 @@ public class ActionsQuery {
 						
 						// player_uuid
 						try {
-							OfflinePlayer offline = Bukkit.getOfflinePlayer(UUID.fromString(rs.getString(14)));
+							// Calls UUID.fromString, must handle potential exceptions
+							OfflinePlayer offline = Bukkit.getOfflinePlayer(
+									PlayerIdentification.uuidFromDbString(rs.getString(14)));
 							
 							// Fake player
 							if(offline.hasPlayedBefore()) {
@@ -241,7 +244,7 @@ public class ActionsQuery {
 						// Set aggregate counts if a lookup
 						int aggregated = 0;
 						if (shouldGroup) {
-							aggregated = rs.getInt(14);
+							aggregated = rs.getInt(15);
 						}
 						baseHandler.setAggregateCount(aggregated);
 

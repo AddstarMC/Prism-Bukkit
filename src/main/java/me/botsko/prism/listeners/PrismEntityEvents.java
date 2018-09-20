@@ -443,7 +443,7 @@ public class PrismEntityEvents implements Listener {
 			if (frame.getItem().getType().equals(Material.AIR) && hand != null) {
 				if (Prism.getIgnore().event("item-insert", p)) {
 					RecordingQueue.addToQueue(
-							ActionFactory.createItemStack("item-insert", hand, 1, frame.getFacing(), null, e.getLocation(), p));
+							ActionFactory.createItemStack("item-insert", hand, 1, frame.getAttachedFace(), null, e.getLocation(), p));
 				}
 			}
 		}
@@ -587,13 +587,17 @@ public class PrismEntityEvents implements Listener {
 				+ e.getLocation().getBlockZ();
 
 		String value = plugin.preplannedBlockFalls.remove(coord_key);
-		UUID uuid = null;
+		
+		if(value == null) {
+			value = "unknown";
+		}
+		
+		Player player = null;
 		try {
-			uuid = UUID.fromString(value);
+			player = Bukkit.getPlayer(UUID.fromString(value));
 		}
 		catch (Exception e2) {
 		}
-		final Player player = uuid != null ? Bukkit.getPlayer(uuid) : null;
 
 		// Track the hanging item break
 		if (player != null)

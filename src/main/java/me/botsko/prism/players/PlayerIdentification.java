@@ -176,7 +176,7 @@ public class PlayerIdentification {
 	 * 
 	 * @param player
 	 */
-	protected static String uuidToDbString(UUID id) {
+	public static String uuidToDbString(UUID id) {
 		return id.toString().replace("-", "");
 	}
 
@@ -185,7 +185,7 @@ public class PlayerIdentification {
 	 * 
 	 * @param player
 	 */
-	protected static UUID uuidFromDbString(String uuid) {
+	public static UUID uuidFromDbString(String uuid) {
 		// Positions need to be -2
 		String completeUuid = uuid.substring(0, 8);
 		completeUuid += "-" + uuid.substring(8, 12);
