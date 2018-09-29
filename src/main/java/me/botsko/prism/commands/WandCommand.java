@@ -219,8 +219,11 @@ public class WandCommand implements SubHandler {
 				if (mode == "block") {
 					item_material = Material.SPRUCE_LOG;
 				}
-				else {
+				else if (mode == "item"){
 					item_material = Material.STICK;
+				}
+				else {
+					item_material = Material.AIR;
 				}
 			}
 

@@ -40,11 +40,11 @@ public class SelectQueryBuilder extends QueryBuilder {
 
 		query += "SELECT ";
 
-		columns.add("id");
-		columns.add("epoch");
-		columns.add("action_id");
-		columns.add("player");
-		columns.add("world_id");
+		columns.add("any_value(id) id");
+		columns.add("any_value(epoch) epoch");
+		columns.add("any_value(action_id) action_id");
+		columns.add("any_value(player) player");
+		columns.add("any_value(world_id) world_id");
 
 		if (shouldGroup) {
 			columns.add("AVG(x)");
@@ -57,13 +57,13 @@ public class SelectQueryBuilder extends QueryBuilder {
 			columns.add("z");
 		}
 
-		columns.add("block_id");
-		columns.add("block_subid");
-		columns.add("old_block_id");
-		columns.add("old_block_subid");
-		columns.add("data");
+		columns.add("any_value(block_id) block_id");
+		columns.add("any_value(block_subid) block_subid");
+		columns.add("any_value(old_block_id) old_block_id");
+		columns.add("any_value(old_block_subid) old_block_subid");
+		columns.add("any_value(data) data");
 		
-		columns.add("HEX(player_uuid) AS uuid");
+		columns.add("any_value(HEX(player_uuid)) AS uuid");
 
 		if (shouldGroup) {
 			columns.add("COUNT(*) counted");
@@ -363,6 +363,11 @@ public class SelectQueryBuilder extends QueryBuilder {
 	@Override
 	protected String order() {
 		final String sort_dir = parameters.getSortDirection();
+		
+		if(shouldGroup) {
+			return " ORDER BY MAX(" + tableNameData + ".epoch) " + sort_dir + ", AVG(x) ASC, AVG(z) ASC, AVG(y) ASC, any_value(id) " + sort_dir;
+		}
+		
 		return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", x ASC, z ASC, y ASC, id " + sort_dir;
 	}
 
