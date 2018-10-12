@@ -321,7 +321,12 @@ public class Prism extends JavaPlugin {
         DataSource pool = null;
 
         final String dns = "jdbc:mysql://" + config.getString( "prism.mysql.hostname" ) + ":"
-                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
+                + config.getString( "prism.mysql.port" ) + "/" + config.getString( "prism.mysql.database" ) 
+                + "?useUnicode=true" 
+                + "&characterEncoding=UTF-8" 
+                + "&verifyServerCertificate=" + ( config.getBoolean( "prism.mysql.verify-server-certificate" ) ? "true" : "false")
+                + "&useSSL=" + ( config.getBoolean( "prism.mysql.use-ssl" ) ? "true" : "false")
+                + "&useCursorFetch=" + ( config.getBoolean( "prism.mysql.use-cursor-fetch" ) ? "true" : "false");;
         pool = new DataSource();
         pool.setDriverClassName( "com.mysql.jdbc.Driver" );
         pool.setUrl( dns );
@@ -925,8 +930,8 @@ public class Prism extends JavaPlugin {
      */
     public void alertPlayers(Player player, String msg) {
         for ( final Player p : getServer().getOnlinePlayers() ) {
-            if( (!p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self") &&
-                    p.hasPermission( "prism.alerts" ) ) ) {
+            if( (!p.equals( player ) || getConfig().getBoolean( "prism.alerts.alert-player-about-self") ) &&
+                    p.hasPermission( "prism.alerts" ) ) {
                     p.sendMessage( messenger.playerMsg( ChatColor.RED + "[!] " + msg ) );
             }
         }

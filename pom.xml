@@ -20,60 +20,71 @@
         </license>
     </licenses>
 
-    <developers>
-        <!-- Original developer of Prism -->
-        <developer>
-            <name>Mike Botsko</name>
-            <email>botsko@gmail.com</email>
-            <url>https://github.com/viveleroi</url>
-        </developer>
-        <!-- Updater for 1.9 and 1.10 -->
-        <developer>
-            <name>Jikoo</name>
-            <email>Jikoo.Games@gmail.com</email>
-            <url>https://github.com/Jikoo</url>
-        </developer>
-        <!-- Provided hand fixes -->
-        <developer>
-            <name>Siggi88</name>
-            <url>https://github.com/siggi88</url>
-        </developer>
-        <!-- Provided MySQL utf-8 fix -->
-        <developer>
-            <name>Pavel M</name>
-            <email>p.mikhaylov@gmail.com</email>
-            <url>https://github.com/paulmory</url>
-        </developer>
-        <!-- Provided item frame fixes -->
-        <developer>
-            <name>Josh</name>
-            <email>javw.phanatic@gmail.com</email>
-            <url>https://github.com/PhanaticD</url>
-        </developer>
-        <!-- Helped update to 1.12 -->
-        <developer>
-            <name>Mark Vainomaa</name>
-            <email>mikroskeem@mikroskeem.eu</email>
-            <url>https://github.com/mikroskeem</url>
-        </developer>
-        <!-- Current maintainer of GPrism fork -->
-        <developer>
-            <name>Roy Curtis</name>
-            <email>roy.adrian.curtis+github@gmail.com</email>
-            <url>https://github.com/RoyCurtis</url>
-        </developer>
-        <!-- Addstar Fork Maintainer-->
-        <developer>
-            <id>AddstarMC</id>
-            <name>AddstarMC</name>
-            <url>http://github.com/AddstarMC</url>
-            <roles>
-                <role>developer</role>
-                <role>maintainer</role>
-            </roles>
-            <timezone>10</timezone>
-        </developer>
-    </developers>
+  <developers>
+    <!-- Original developer of Prism -->
+    <developer>
+      <name>Mike Botsko</name>
+      <email>botsko@gmail.com</email>
+      <url>https://github.com/viveleroi</url>
+    </developer>
+    <!-- Updater for 1.9 and 1.10 -->
+    <developer>
+      <name>Jikoo</name>
+      <email>Jikoo.Games@gmail.com</email>
+      <url>https://github.com/Jikoo</url>
+    </developer>
+    <!-- Provided hand fixes -->
+    <developer>
+      <name>Siggi88</name>
+      <url>https://github.com/siggi88</url>
+    </developer>
+    <!-- Provided MySQL utf-8 fix -->
+    <developer>
+      <name>Pavel M</name>
+      <email>p.mikhaylov@gmail.com</email>
+      <url>https://github.com/paulmory</url>
+    </developer>
+    <!-- Provided item frame fixes -->
+    <developer>
+      <name>Josh</name>
+      <email>javw.phanatic@gmail.com</email>
+      <url>https://github.com/PhanaticD</url>
+    </developer>
+    <!-- Helped update to 1.12 -->
+    <developer>
+      <name>Mark Vainomaa</name>
+      <email>mikroskeem@mikroskeem.eu</email>
+      <url>https://github.com/mikroskeem</url>
+    </developer>
+    <!-- Code and javadoc cleanup, purge cycle enhancements -->
+    <developer>
+      <name>Narimm</name>
+      <url>https://github.com/Narimm</url>
+    </developer>
+    <!-- Alert fixes -->
+    <developer>
+      <name>vcdf</name>
+      <url>https://github.com/vcdf</url>
+    </developer>
+    <!-- SSL fixes and bug reporting -->
+    <developer>
+      <name>Pugabyte</name>
+      <email>pugabyte@bear-nation.net</email>
+      <url>https://github.com/pugabyte</url>
+    </developer>
+    <!-- Formatting improvements and fixes -->
+    <developer>
+      <name>syokkendesuyo</name>
+      <email>syokkendesuyo@gmail.com</email>
+      <url>https://github.com/syokkendesuyo</url>
+    </developer>
+    <!-- Current maintainer of GPrism fork -->
+    <developer>
+      <name>Roy Curtis</name>
+      <email>roy.adrian.curtis+github@gmail.com</email>
+      <url>https://github.com/RoyCurtis</url>
+    </developer>
+  </developers>
 
     <!-- Project dependencies -->
 
@@ -146,7 +157,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12-pre2-SNAPSHOT</version>
+            <version>1.12-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
