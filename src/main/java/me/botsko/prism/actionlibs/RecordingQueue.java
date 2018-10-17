@@ -6,42 +6,40 @@ import me.botsko.prism.actions.Handler;
 
 public class RecordingQueue {
 
-    /**
+	/**
 	 * 
 	 */
-    private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<>();
+	private static final LinkedBlockingQueue<Handler> queue = new LinkedBlockingQueue<Handler>();
 
-    /**
+	/**
 	 * 
 	 */
-    public static int getQueueSize() {
-        return queue.size();
-    }
+	public static int getQueueSize() {
+		return queue.size();
+	}
 
-    /**
-     * 
-     * @param a
-     */
-    public static void addToQueue(final Handler a) {
+	/**
+	 * 
+	 * @param a
+	 */
+	public static void addToQueue(final Handler a) {
 
-        if( a == null )
-            return;
+		if (a == null)
+			return;
 
-        // some basic sanity checks
-        if( a.getPlayerName().trim().isEmpty() )
-            return;
+		// some basic sanity checks
+		if (a.getSourceName().trim().isEmpty())
+			return;
 
-        a.save();
+		queue.add(a);
 
-        queue.add( a );
+	}
 
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public static LinkedBlockingQueue<Handler> getQueue() {
-        return queue;
-    }
+	/**
+	 * 
+	 * @return
+	 */
+	public static LinkedBlockingQueue<Handler> getQueue() {
+		return queue;
+	}
 }

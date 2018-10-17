@@ -1,11 +1,11 @@
-name:        ${project.name}
-version:     ${project.version}
-description: ${project.description}
-authors:     [viveleroi, Jikoo, Siggi88, PavelM, PhanaticD, RoyCurtis]
-website:     https://github.com/Gamealition/GPrism
-main:        me.botsko.prism.Prism
-softdepend:  [WorldEdit,HeroChat]
-
+name: Prism
+main: me.botsko.prism.Prism
+version: ${pom.version}-${env.BUILD_NUMBER}
+softdepend: [WorldEdit,HeroChat]
+author: viveleroi
+authors: [ezeiger92]
+website: http://discover-prism.com
+api-version: 1.13
 commands:
    prism:
       description: Base command for everything Prism
@@ -15,7 +15,6 @@ commands:
       description: Identifies the held item according to the prism profiling system
       usage: /what
       aliases: [wtfisthis]
-
 permissions:
     prism.help:
         default: op
@@ -480,6 +479,7 @@ permissions:
             prism.parameters.flag.overwrite: true
             prism.parameters.flag.share: true
             prism.parameters.flag.paste: true
+            prism.parameters.flag.no-phys: true
     prism.parameters.flag.drain:
         default: op
     prism.parameters.flag.drain-lava:
@@ -501,4 +501,6 @@ permissions:
     prism.parameters.flag.share:
         default: op
     prism.parameters.flag.paste:
+        default: op
+    prism.parameters.flag.no-phys:
         default: op

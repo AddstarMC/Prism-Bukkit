@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 import org.bukkit.plugin.Plugin;
 
@@ -11,7 +11,6 @@ import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
 import me.botsko.prism.actions.EntityAction;
 import me.botsko.prism.actions.EntityTravelAction;
-import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.actions.GrowAction;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.HangingItemAction;
@@ -25,94 +24,73 @@ import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.exceptions.InvalidActionException;
 
-public class HandlerRegistry<H> {
+public class HandlerRegistry {
 
-    /**
+	/**
 	 * 
 	 */
-    private final HashMap<String, Class<? extends Handler>> registeredHandlers = new HashMap<>();
+	private final HashSet<Class<? extends Handler>> registeredHandlers = new HashSet<>();
 
-    /**
+	/**
 	 * 
 	 */
-    public HandlerRegistry() {
-        registerPrismDefaultHandlers();
-    }
+	public HandlerRegistry() {
+		registerPrismDefaultHandlers();
+	}
 
-    /**
-     * Register a new action type for event recording, lookups, etc.
-     * 
-     * @param handlerClass
-     */
-    protected void registerHandler(Class<? extends Handler> handlerClass) {
-        final String[] names = handlerClass.getName().split( "\\." );
-        if( names.length > 0 ) {
-            registeredHandlers.put( names[names.length - 1], handlerClass );
-        }
-    }
+	/**
+	 * Register a new action type for event recording, lookups, etc.
+	 * 
+	 * @param apiPlugin
+	 * @param handlerClass
+	 * @throws InvalidActionException
+	 */
+	public void registerCustomHandler(Plugin apiPlugin, Class<? extends Handler> handlerClass)
+			throws InvalidActionException {
+		// Is plugin allowed?
+		final List<String> allowedPlugins = Prism.config.getStringList("prism.tracking.api.allowed-plugins");
+		if (!allowedPlugins.contains(apiPlugin.getName())) {
+			throw new InvalidActionException("Registering action type not allowed. Plugin '" + apiPlugin.getName()
+					+ "' is not in list of allowed plugins.");
+		}
+		
+		final String[] names = handlerClass.getName().split("\\.");
+		if (names.length > 0) {
+			registeredHandlers.add(handlerClass);
+		}
+	}
+	
+	public <T extends Handler> T create(Class<T> handlerClazz) {
+		try {
+			return handlerClazz.getDeclaredConstructor().newInstance();
+		}
+		catch(Exception e) {
+			throw new IllegalArgumentException("Failed to construct handler for " + handlerClazz.getSimpleName(), e);
+		}
+	}
 
-    /**
-     * Register a new action type for event recording, lookups, etc.
-     * 
-     * @param apiPlugin
-     * @param handlerClass
-     * @throws InvalidActionException
-     */
-    public void registerCustomHandler(Plugin apiPlugin, Class<? extends Handler> handlerClass)
-            throws InvalidActionException {
-        // Is plugin allowed?
-        @SuppressWarnings("unchecked")
-        final ArrayList<String> allowedPlugins = (ArrayList<String>) Prism.config
-                .getList( "prism.tracking.api.allowed-plugins" );
-        if( !allowedPlugins.contains( apiPlugin.getName() ) ) { throw new InvalidActionException(
-                "Registering action type not allowed. Plugin '" + apiPlugin.getName()
-                        + "' is not in list of allowed plugins." ); }
-        final String[] names = handlerClass.getName().split( "\\." );
-        if( names.length > 0 ) {
-            registeredHandlers.put( names[names.length - 1], handlerClass );
-        }
-    }
-
-    /**
-     * 
-     * @param name
-     * @return
-     */
-    public Handler getHandler(String name) {
-        if( name != null && registeredHandlers.containsKey( name )) {
-                try {
-                    final Class<? extends Handler> handlerClass = registeredHandlers.get( name );
-                    return new HandlerFactory<Handler>( handlerClass ).create();
-                } catch ( final InstantiationException e ) {
-                    e.printStackTrace();
-                } catch ( final IllegalAccessException e ) {
-                    e.printStackTrace();
-                }
-        }
-        return new GenericAction();
-    }
-
-    /**
+	/**
 	 * 
 	 */
-    private void registerPrismDefaultHandlers() {
+	private void registerPrismDefaultHandlers() {
 
-        registerHandler( GenericAction.class );
-        registerHandler( BlockAction.class );
-        registerHandler( BlockChangeAction.class );
-        registerHandler( BlockShiftAction.class );
-        registerHandler( EntityAction.class );
-        registerHandler( EntityTravelAction.class );
-        registerHandler( GrowAction.class );
-        registerHandler( HangingItemAction.class );
-        registerHandler( ItemStackAction.class );
-        registerHandler( PlayerAction.class );
-        registerHandler( PlayerDeathAction.class );
-        registerHandler( PrismProcessAction.class );
-        registerHandler( PrismRollbackAction.class );
-        registerHandler( SignAction.class );
-        registerHandler( UseAction.class );
-        registerHandler( VehicleAction.class );
-
-    }
+		registeredHandlers.add(BlockAction.class);
+		registeredHandlers.add(BlockChangeAction.class);
+		registeredHandlers.add(BlockShiftAction.class);
+		registeredHandlers.add(EntityAction.class);
+		registeredHandlers.add(EntityTravelAction.class);
+		registeredHandlers.add(GrowAction.class);
+		registeredHandlers.add(HangingItemAction.class);
+		registeredHandlers.add(ItemStackAction.class);
+		registeredHandlers.add(PlayerAction.class);
+		registeredHandlers.add(PlayerDeathAction.class);
+		registeredHandlers.add(PrismProcessAction.class);
+		registeredHandlers.add(PrismRollbackAction.class);
+		registeredHandlers.add(SignAction.class);
+		registeredHandlers.add(UseAction.class);
+		registeredHandlers.add(VehicleAction.class);
+		
+		
+		// registerHandler(GenericAction.class);
+	}
 }

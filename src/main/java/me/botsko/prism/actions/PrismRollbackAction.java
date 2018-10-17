@@ -4,26 +4,40 @@ import org.bukkit.block.BlockState;
 
 public class PrismRollbackAction extends BlockChangeAction {
 
-    /**
-     * 
-     * @param oldblock
-     * @param newBlock
-     * @param parent_id
-     */
-    public void setBlockChange(BlockState oldblock, BlockState newBlock, int parent_id) {
-        this.data = "" + parent_id;
-        if( oldblock != null ) {
-            this.old_block_id = oldblock.getTypeId();
-            this.old_block_subid = oldblock.getRawData();
-            this.block_id = oldblock.getTypeId();
-            this.block_subid = oldblock.getRawData();
-        }
-    }
+	private long parent_id;
+	/**
+	 * 
+	 * @param oldblock
+	 * @param newBlock
+	 * @param parent_id
+	 */
+	public void setBlockChange(BlockState oldblock, BlockState newBlock, long parent_id) {
+		// TODO: Why string? Why?
+		this.parent_id = parent_id;
+		if (oldblock != null) {
+			setOldMaterial(oldblock.getType());
+			setOldBlockData(oldblock.getBlockData());
 
-    /**
-     * @return the parent_id
-     */
-    public int getParentId() {
-        return Integer.parseInt( this.data );
-    }
+			// TODO: This is using oldblock when it looks like it should use newBlock,
+			// but this is how it was when I found it. Test later.
+			setMaterial(oldblock.getType());
+			setBlockData(oldblock.getBlockData());
+		}
+	}
+	
+	@Override
+	public String serialize() {
+		return String.valueOf(parent_id);
+	}
+
+	@Override
+	public void deserialize(String data) {
+		parent_id = Long.valueOf(data);
+	}
+	/**
+	 * @return the parent_id
+	 */
+	public long getParentId() {
+		return parent_id;
+	}
 }

@@ -1,603 +1,508 @@
 package me.botsko.prism.actions;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.UUID;
 
-import com.helion3.prism.libs.elixr.MaterialAliases;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.data.BlockData;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
-public class GenericAction implements Handler {
+public abstract class GenericAction implements Handler {
+	private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
+	private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
 
-    /**
+	/**
 	 * 
 	 */
-    protected Plugin plugin;
+	private boolean canceled = false;
 
-    /**
+	/**
 	 * 
 	 */
-    protected boolean canceled = false;
+	private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
 
-    /**
+	/**
 	 * 
 	 */
-    protected final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+	private ActionType type;
 
-    /**
+	/**
 	 * 
 	 */
-    protected ActionType type;
+	private long id;
 
-    /**
+	/**
 	 * 
 	 */
-    protected MaterialAliases materialAliases;
-
-    /**
+	private long epoch;
+	
+	/**
 	 * 
 	 */
-    protected int id;
+	private String sourceName;
+	private UUID playerUUID;
+	
+	private Location location;
 
-    /**
+	/**
 	 * 
 	 */
-    protected String epoch;
+	private Material material = Material.AIR;
 
-    /**
+	/**
 	 * 
 	 */
-    protected String display_date;
+	private BlockData blockData;
 
-    /**
+	/**
 	 * 
 	 */
-    protected String display_time;
+	private Material oldBlock = Material.AIR;
 
-    /**
+	/**
 	 * 
 	 */
-    protected String world_name;
+	private BlockData oldBlockData;
 
-    /**
+	/**
 	 * 
 	 */
-    protected String player_name;
-
-    /**
-	 * 
-	 */
-    protected double x;
-
-    /**
-	 * 
-	 */
-    protected double y;
-
-    /**
-	 * 
-	 */
-    protected double z;
-
-    /**
-	 * 
-	 */
-    protected int block_id;
-
-    /**
-	 * 
-	 */
-    protected int block_subid;
-
-    /**
-	 * 
-	 */
-    protected int old_block_id;
-
-    /**
-	 * 
-	 */
-    protected int old_block_subid;
-
-    /**
-	 * 
-	 */
-    protected String data;
-
-    /**
-	 * 
-	 */
-    protected int rollback;
-
-    /**
-	 * 
-	 */
-    protected int aggregateCount = 0;
-
-    /**
-	 * 
-	 */
-    @Override
-    public void setPlugin(Plugin plugin) {
-        this.plugin = plugin;
-    }
-
-    /**
-     * 
-     * @param action_type
-     */
-    public void setActionType(String action_type) {
-        if( action_type != null ) {
-            this.type = Prism.getActionRegistry().getAction( action_type );
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getId()
-     */
-    @Override
-    public int getId() {
-        return id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setId(int)
-     */
-    @Override
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getActionTime()
-     */
-    @Override
-    public String getUnixEpoch() {
-        return epoch;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getDisplayDate()
-     */
-    @Override
-    public String getDisplayDate() {
-        return display_date;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
-     */
-    @Override
-    public void setUnixEpoch(String epoch) {
-
-        this.epoch = epoch;
-
-        final Date action_time = new Date( Long.parseLong( epoch ) * 1000 );
-
-        final SimpleDateFormat date = new SimpleDateFormat( "yy/MM/dd" );
-        this.display_date = date.format( action_time );
-
-        final SimpleDateFormat time = new SimpleDateFormat( "hh:mm:ssa" );
-        this.display_time = time.format( action_time );
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getDisplayTime()
-     */
-    @Override
-    public String getDisplayTime() {
-        return display_time;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getTimeSince()
-     */
-    @Override
-    public String getTimeSince() {
-
-        String time_ago = "";
-
-        final Date start = new Date( Long.parseLong( this.epoch ) * 1000 );
-        final Date end = new Date();
-
-        long diffInSeconds = ( end.getTime() - start.getTime() ) / 1000;
-
-        final long diff[] = new long[] { 0, 0, 0, 0 };
-        /* sec */diff[3] = ( diffInSeconds >= 60 ? diffInSeconds % 60 : diffInSeconds );
-        /* min */diff[2] = ( diffInSeconds = ( diffInSeconds / 60 ) ) >= 60 ? diffInSeconds % 60 : diffInSeconds;
-        /* hours */diff[1] = ( diffInSeconds = ( diffInSeconds / 60 ) ) >= 24 ? diffInSeconds % 24 : diffInSeconds;
-        /* days */diff[0] = ( diffInSeconds = ( diffInSeconds / 24 ) );
-
-        // Only show days if more than 1
-        if( diff[0] >= 1 ) {
-            time_ago += diff[0] + "d";
-        }
-        // Only show hours if > 1
-        if( diff[1] >= 1 ) {
-            time_ago += diff[1] + "h";
-        }
-        // Only show minutes if > 1 and less than 60
-        if( diff[2] > 1 && diff[2] < 60 ) {
-            time_ago += diff[2] + "m";
-        }
-        if( !time_ago.isEmpty() ) {
-            time_ago += " ago";
-        }
-
-        if( diff[0] == 0 && diff[1] == 0 && diff[2] <= 1 ) {
-            time_ago = "just now";
-        }
-
-        return time_ago;
-
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getType()
-     */
-    @Override
-    public ActionType getType() {
-        return type;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see
-     * me.botsko.prism.actions.Handler#setType(me.botsko.prism.actionlibs.ActionType
-     * )
-     */
-    @Override
-    public void setType(ActionType type) {
-        this.type = type;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getWorldName()
-     */
-    @Override
-    public String getWorldName() {
-        return world_name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setWorldName(java.lang.String)
-     */
-    @Override
-    public void setWorldName(String world_name) {
-        this.world_name = world_name;
-    }
-
-    /**
-     * 
-     * @param player
-     */
-    public void setPlayerName(Player player) {
-        if( player != null ) {
-            this.player_name = player.getName();
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getPlayerName()
-     */
-    @Override
-    public String getPlayerName() {
-        return player_name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
-     */
-    @Override
-    public void setPlayerName(String player_name) {
-        this.player_name = player_name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getX()
-     */
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setX(double)
-     */
-    @Override
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getY()
-     */
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setY(double)
-     */
-    @Override
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getZ()
-     */
-    @Override
-    public double getZ() {
-        return z;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setZ(double)
-     */
-    @Override
-    public void setZ(double z) {
-        this.z = z;
-    }
-
-    /**
-     * 
-     * @param loc
-     */
-    public void setLoc(Location loc) {
-        if( loc != null ) {
-            this.world_name = loc.getWorld().getName();
-            this.x = loc.getBlockX();
-            this.y = loc.getBlockY();
-            this.z = loc.getBlockZ();
-        }
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public World getWorld() {
-        return plugin.getServer().getWorld( getWorldName() );
-    }
-
-    /**
-     * 
-     * @return
-     */
-    public Location getLoc() {
-        return new Location( getWorld(), getX(), getY(), getZ() );
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setBlockId(int)
-     */
-    @Override
-    public void setBlockId(int id) {
-        // Water/Lava placement always turns into stationary blocks, and a
-        // rollback would
-        // fail because we wouldn't detect the same block placed on rollback.
-        // So,
-        // we just force record the block as stationary.
-        // https://snowy-evening.com/botsko/prism/297/
-        if( this.type.getName().equals( "block-place" ) && ( id == 8 || id == 10 ) ) {
-            id = ( id == 8 ? 9 : 11 );
-        }
-        this.block_id = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
-     */
-    @Override
-    public void setBlockSubId(int id) {
-        this.block_subid = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getBlockId()
-     */
-    @Override
-    public int getBlockId() {
-        return block_id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getBlockSubId()
-     */
-    @Override
-    public int getBlockSubId() {
-        return block_subid;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setOldBlockId(int)
-     */
-    @Override
-    public void setOldBlockId(int id) {
-        this.old_block_id = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
-     */
-    @Override
-    public void setOldBlockSubId(int id) {
-        this.old_block_subid = id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getOldBlockId()
-     */
-    @Override
-    public int getOldBlockId() {
-        return old_block_id;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
-     */
-    @Override
-    public int getOldBlockSubId() {
-        return old_block_subid;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getData()
-     */
-    @Override
-    public String getData() {
-        return data;
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setData(java.lang.String)
-     */
-    @Override
-    public void setData(String data) {
-        this.data = data;
-    }
-
-	@Override
-	public void setWasRollback(int rollback) {
-	    this.rollback = rollback;
+	private int aggregateCount = 0;
+	
+	public GenericAction() {
+		epoch = System.currentTimeMillis() / 1000;
+	}
+	
+	protected final Gson gson() {
+		return gson;
 	}
 
 	@Override
-	public int getWasRollback() {
-	    return rollback;
+	public String getCustomDesc() {
+		return null;
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setMaterialAliases(me.botsko.prism.
-     * MaterialAliases)
-     */
-    @Override
-    public void setMaterialAliases(MaterialAliases m) {
-        this.materialAliases = m;
-    }
+	@Override
+	public void setCustomDesc(String description) {
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
-     */
-    @Override
-    public void setAggregateCount(int aggregateCount) {
-        this.aggregateCount = aggregateCount;
-    }
+	/**
+	 * 
+	 * @param action_type
+	 */
+	public void setActionType(String action_type) {
+		if (action_type != null) {
+			setActionType(Prism.getActionRegistry().getAction(action_type));
+		}
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getAggregateCount()
-     */
-    @Override
-    public int getAggregateCount() {
-        return aggregateCount;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getId()
+	 */
+	@Override
+	public long getId() {
+		return id;
+	}
 
-    /*
-     * (non-Javadoc)
-     * @see me.botsko.prism.actions.Handler#getNiceName()
-     */
-    @Override
-    public String getNiceName() {
-        return "something";
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setId(int)
+	 */
+	@Override
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    /**
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getActionTime()
+	 */
+	@Override
+	public long getUnixEpoch() {
+		return epoch;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getDisplayDate()
+	 */
+	@Override
+	public String getDisplayDate() {
+		return date.format(epoch * 1000);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
+	 */
+	@Override
+	public void setUnixEpoch(long epoch) {
+		this.epoch = epoch;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getDisplayTime()
+	 */
+	@Override
+	public String getDisplayTime() {
+		return time.format(epoch * 1000);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getTimeSince()
+	 */
+	@Override
+	public String getTimeSince() {
+		long diffInSeconds = System.currentTimeMillis() / 1000 - epoch;
+		
+		if(diffInSeconds < 60) {
+			return "just now";
+		}
+		
+		long period = 24 * 60 * 60;
+		
+		final long diff[] = {
+				diffInSeconds / period, // days
+				(diffInSeconds / (period /= 24)) % 24, // hours
+				(diffInSeconds / (period /= 60)) % 60, // minutes
+		};
+		
+		StringBuilder time_ago = new StringBuilder();
+
+		if (diff[0] > 0) {
+			time_ago.append(diff[0]).append('d');
+		}
+		
+		if (diff[1] > 0) {
+			time_ago.append(diff[1]).append('h');
+		}
+		
+		if (diff[2] > 0) {
+			time_ago.append(diff[2]).append('m');
+		}
+		
+		// 'time_ago' will have something at this point, because if all 'diff's
+		// were 0, the first if check would have caught and returned "just now"
+		return time_ago.append(" ago").toString();
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getType()
+	 */
+	@Override
+	public ActionType getActionType() {
+		return type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * me.botsko.prism.actions.Handler#setType(me.botsko.prism.actionlibs.ActionType
+	 * )
+	 */
+	@Override
+	public void setActionType(ActionType type) {
+		this.type = type;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setWorld(org.bukkit.World)
+	 */
+	@Override
+	public void setWorld(World world) {
+		createWorldIfNull();
+		location.setWorld(world);
+	}
+	
+	private void createWorldIfNull() {
+		if(location == null) {
+			location = Bukkit.getWorlds().get(0).getSpawnLocation();
+		}
+	}
+
+	/**
+	 * 
+	 * @param player
+	 */
+	public void setPlayer(OfflinePlayer player) {
+		if (player != null) {
+			setUUID(player.getUniqueId());
+		}
+	}
+
+	@Override
+	public void setUUID(UUID uuid) {
+		this.playerUUID = uuid;
+		this.sourceName = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getPlayerName()
+	 */
+	@Override
+	public String getSourceName() {
+		if(sourceName != null) {
+			return sourceName;
+		}
+		
+		return Bukkit.getOfflinePlayer(playerUUID).getName();
+	}
+
+	@Override
+	public UUID getUUID() {
+		return playerUUID;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
+	 */
+	@Override
+	public void setSourceName(String source_name) {
+		this.sourceName = source_name;
+		this.playerUUID = null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setX(double)
+	 */
+	@Override
+	public void setX(double x) {
+		createWorldIfNull();
+		location.setX(x);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setY(double)
+	 */
+	@Override
+	public void setY(double y) {
+		createWorldIfNull();
+		location.setY(y);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setZ(double)
+	 */
+	@Override
+	public void setZ(double z) {
+		createWorldIfNull();
+		location.setZ(z);
+	}
+
+	/**
+	 * 
+	 * @param loc
+	 */
+	public void setLoc(Location loc) {
+		if (loc != null) {
+			location = loc.clone();
+		}
+		else {
+			location = null;
+		}
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public World getWorld() {
+		if(location != null) {
+			return location.getWorld();
+		}
+		
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public Location getLoc() {
+		return location;
+	}
+
+	@Override
+	public void setMaterial(Material material) {
+		this.material = material;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
+	 */
+	@Override
+	public void setBlockData(BlockData data) {
+		this.blockData = data;
+	}
+
+	@Override
+	public void setDurability(short durability) {
+	}
+
+	@Override
+	public Material getMaterial() {
+		return material;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getBlockSubId()
+	 */
+	@Override
+	public BlockData getBlockData() {
+		return blockData;
+	}
+
+	@Override
+	public short getDurability() {
+		return 0;
+	}
+
+	@Override
+	public void setOldMaterial(Material material) {
+		this.oldBlock = material;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
+	 */
+	@Override
+	public void setOldBlockData(BlockData data) {
+		this.oldBlockData = data;
+	}
+
+	@Override
+	public void setOldDurability(short durability) {
+	}
+
+	@Override
+	public Material getOldMaterial() {
+		return oldBlock;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
+	 */
+	@Override
+	public BlockData getOldBlockData() {
+		return oldBlockData;
+	}
+
+	@Override
+	public short getOldDurability() {
+		return 0;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
+	 */
+	@Override
+	public void setAggregateCount(int aggregateCount) {
+		this.aggregateCount = aggregateCount;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see me.botsko.prism.actions.Handler#getAggregateCount()
+	 */
+	@Override
+	public int getAggregateCount() {
+		return aggregateCount;
+	}
+
+	/**
 	 * 
 	 */
-    @Override
-    public boolean isCanceled() {
-        return canceled;
-    }
+	@Override
+	public boolean isCanceled() {
+		return canceled;
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public void setCanceled(boolean cancel) {
-        this.canceled = cancel;
-    }
+	@Override
+	public void setCanceled(boolean cancel) {
+		this.canceled = cancel;
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public void save() {
-        // data is already set - anything not encoding a json
-        // object is already ready.
-    }
+	@Override
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
+		return null;
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
-        return null;
-    }
+	@Override
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
+		return null;
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
-        return null;
-    }
+	@Override
+	public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
+		return null;
+	}
 
-    /**
+	/**
 	 * 
 	 */
-    @Override
-    public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
-        return null;
-    }
-
-    /**
-	 * 
-	 */
-    @Override
-    public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
-        return null;
-    }
+	@Override
+	public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
+		return null;
+	}
 }

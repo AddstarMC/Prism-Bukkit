@@ -9,77 +9,97 @@ import me.botsko.prism.Prism;
 
 public class PurgeChunkingUtil {
 
+	/**
+	 * 
+	 * @param playername
+	 */
+	public static long getMinimumPrimaryKey() {
+		String prefix = Prism.config.getString("prism.mysql.prefix");
+		long id = 0;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
 
-    public static int getMinimumPrimaryKey() {
-        String prefix = Prism.config.getString("prism.mysql.prefix");
-        int id = 0;
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
+			conn = Prism.dbc();
+			s = conn.prepareStatement("SELECT MIN(id) FROM " + prefix + "data");
+			rs = s.executeQuery();
 
-            conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT MIN(id) FROM " + prefix + "data" );
-            s.executeQuery();
-            rs = s.getResultSet();
+			if (rs.first()) {
+				id = rs.getLong(1);
+			}
 
-            if( rs.first() ) {
-                id = rs.getInt( 1 );
-            }
+		}
+		catch (final SQLException ignored) {
 
-        } catch ( final SQLException ignored ) {
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (final SQLException ignored) {
+				}
+		}
+		return id;
+	}
 
-        } finally {
-            if( rs != null )
-                try {
-                    rs.close();
-                } catch ( final SQLException ignored ) {}
-            if( s != null )
-                try {
-                    s.close();
-                } catch ( final SQLException ignored ) {}
-            if( conn != null )
-                try {
-                    conn.close();
-                } catch ( final SQLException ignored ) {}
-        }
-        return id;
-    }
+	/**
+	 * 
+	 * @param playername
+	 */
+	public static long getMaximumPrimaryKey() {
+		String prefix = Prism.config.getString("prism.mysql.prefix");
+		long id = 0;
+		Connection conn = null;
+		PreparedStatement s = null;
+		ResultSet rs = null;
+		try {
 
+			conn = Prism.dbc();
+			s = conn.prepareStatement("SELECT id FROM " + prefix + "data ORDER BY id DESC LIMIT 1;");
+			rs = s.executeQuery();
 
-    public static int getMaximumPrimaryKey() {
-        String prefix = Prism.config.getString("prism.mysql.prefix");
-        int id = 0;
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
+			if (rs.first()) {
+				id = rs.getLong(1);
+			}
 
-            conn = Prism.dbc();
-            s = conn.prepareStatement( "SELECT id FROM " + prefix + "data ORDER BY id DESC LIMIT 1;" );
-            s.executeQuery();
-            rs = s.getResultSet();
+		}
+		catch (final SQLException ignored) {
 
-            if( rs.first() ) {
-                id = rs.getInt( 1 );
-            }
-
-        } catch ( final SQLException ignored ) {
-
-        } finally {
-            if( rs != null )
-                try {
-                    rs.close();
-                } catch ( final SQLException ignored ) {}
-            if( s != null )
-                try {
-                    s.close();
-                } catch ( final SQLException ignored ) {}
-            if( conn != null )
-                try {
-                    conn.close();
-                } catch ( final SQLException ignored ) {}
-        }
-        return id;
-    }
+		}
+		finally {
+			if (rs != null)
+				try {
+					rs.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (final SQLException ignored) {
+				}
+		}
+		return id;
+	}
 }
