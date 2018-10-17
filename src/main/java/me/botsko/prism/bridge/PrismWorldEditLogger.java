@@ -1,5 +1,6 @@
 package me.botsko.prism.bridge;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -13,9 +14,7 @@ import org.bukkit.block.data.BlockData;
 
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.WorldEditException;
-import com.sk89q.worldedit.blocks.BaseBlock;
-import com.sk89q.worldedit.blocks.BlockType;
-import com.sk89q.worldedit.bukkit.BukkitUtil;
+import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.AbstractDelegateExtent;
 import com.sk89q.worldedit.extent.Extent;
@@ -31,16 +30,12 @@ public class PrismWorldEditLogger extends AbstractDelegateExtent {
 	}
 
 	@Override
-	public boolean setBlock(Vector pt, BaseBlock newBlock) throws WorldEditException {
+    public boolean setBlock(Vector pt, BlockStateHolder newBlock) throws WorldEditException {
 		if (Prism.config.getBoolean("prism.tracking.world-edit")) {
-			Location loc = BukkitUtil.toLocation(world, pt);
+            Location loc = BukkitAdapter.adapt(world, pt);
 			Block oldBlock = loc.getBlock();
-	
-			Material newMaterial = Material.matchMaterial(BlockType.fromID(newBlock.getId()).name());
-	
-			// TODO: When worldedit has some way of getting blockdata
-			BlockData newData = Bukkit.createBlockData(newMaterial);
-	
+            Material newMaterial = BukkitAdapter.adapt(newBlock.getBlockType());
+            BlockData newData = BukkitAdapter.adapt(newBlock);
 			RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(),
 					oldBlock.getBlockData(), newMaterial, newData, Bukkit.getPlayer(player.getUniqueId())));
 		}

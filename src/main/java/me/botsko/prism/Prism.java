@@ -73,6 +73,11 @@ public class Prism extends JavaPlugin {
 	protected static List<EntityType> illegalEntities;
 	protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
 	private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
+	
+	public ScheduledThreadPoolExecutor getSchedulePool() {
+		return schedulePool;
+	}
+	
 	private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
 	private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
 	// private ScheduledFuture<?> scheduledPurgeExecutor;
