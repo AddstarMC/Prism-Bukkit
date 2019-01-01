@@ -12,7 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 
-import com.sk89q.worldedit.Vector;
+import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -30,7 +30,7 @@ public class PrismWorldEditLogger extends AbstractDelegateExtent {
 	}
 
 	@Override
-    public boolean setBlock(Vector pt, BlockStateHolder newBlock) throws WorldEditException {
+    public boolean setBlock(BlockVector3 pt, BlockStateHolder newBlock) throws WorldEditException {
 		if (Prism.config.getBoolean("prism.tracking.world-edit")) {
             Location loc = BukkitAdapter.adapt(world, pt);
 			Block oldBlock = loc.getBlock();
