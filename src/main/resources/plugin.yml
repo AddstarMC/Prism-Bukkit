@@ -14,7 +14,7 @@ commands:
    what:
       description: Identifies the held item according to the prism profiling system
       usage: /what
-      aliases: [wtfisthis]
+      aliases: [whatisthis]
 permissions:
     prism.help:
         default: op
