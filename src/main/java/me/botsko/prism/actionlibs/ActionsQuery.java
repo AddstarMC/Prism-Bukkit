@@ -181,43 +181,46 @@ public class ActionsQuery {
 						baseHandler.setZ(rs.getInt(8));
 
 						MaterialState current = Prism.getItems().idsToMaterial(rs.getInt(9), rs.getInt(10));
-						ItemStack item = current.asItem();
-						BlockData block = current.asBlockData();
+						if (current != null) {
+							ItemStack item = current.asItem();
+							BlockData block = current.asBlockData();
 
-						if (block != null) {
-							baseHandler.setMaterial(block.getMaterial());
-							baseHandler.setBlockData(block);
-							baseHandler.setDurability((short) 0);
-						}
-						else {
-							baseHandler.setMaterial(item.getType());
-							
-							BlockData newData;
-							
-							try {
-								newData = Bukkit.createBlockData(item.getType());
+							if (block != null) {
+								baseHandler.setMaterial(block.getMaterial());
+								baseHandler.setBlockData(block);
+								baseHandler.setDurability((short) 0);
+							} else if (item != null) {
+								baseHandler.setMaterial(item.getType());
+
+								BlockData newData;
+
+								try {
+									newData = Bukkit.createBlockData(item.getType());
+								} catch (IllegalArgumentException e) {
+									newData = null;
+								}
+
+								baseHandler.setBlockData(newData);
+								baseHandler.setDurability((short) ItemUtils.getItemDamage(item));
 							}
-							catch(IllegalArgumentException e) {
-								newData = null;
-							}
-							
-							baseHandler.setBlockData(newData);
-							baseHandler.setDurability((short) ItemUtils.getItemDamage(item));
 						}
 
 						MaterialState old = Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
-						ItemStack oldItem = old.asItem();
-						BlockData oldBlock = old.asBlockData();
 
-						if (oldBlock != null) {
-							baseHandler.setOldMaterial(oldBlock.getMaterial());
-							baseHandler.setOldBlockData(oldBlock);
-							baseHandler.setOldDurability((short) 0);
-						}
-						else {
-							baseHandler.setOldMaterial(oldItem.getType());
-							baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
-							baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
+						if (old != null) {
+							ItemStack oldItem = old.asItem();
+							BlockData oldBlock = old.asBlockData();
+
+							if (oldBlock != null) {
+								baseHandler.setOldMaterial(oldBlock.getMaterial());
+								baseHandler.setOldBlockData(oldBlock);
+								baseHandler.setOldDurability((short) 0);
+							}
+							else {
+								baseHandler.setOldMaterial(oldItem.getType());
+								baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
+								baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
+							}
 						}
 
 						// data
