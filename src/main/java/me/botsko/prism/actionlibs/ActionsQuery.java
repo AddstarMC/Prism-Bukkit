@@ -140,14 +140,16 @@ public class ActionsQuery {
 					// Convert action ID to name
 					// Performance-wise this is a lot faster than table joins
 					// and the cache data should always be available
+					int actionId = rs.getInt(3);
+
 					String actionName = "";
 					for (final Entry<String, Integer> entry : Prism.prismActions.entrySet()) {
-						if (entry.getValue() == rs.getInt(3)) {
+						if (entry.getValue() == actionId) {
 							actionName = entry.getKey();
 						}
 					}
 					if (actionName.isEmpty()) {
-						Prism.log("Record contains action ID that doesn't exist in cache: " + rs.getInt(3));
+						Prism.warn("Record contains action ID that doesn't exist in cache: " + actionId + ", cacheSize=" + Prism.prismActions.size());
 						continue;
 					}
 
@@ -162,6 +164,8 @@ public class ActionsQuery {
 					// "' has no official handling class, will be shown as generic."
 					// );
 
+					long rowId = 0;
+
 					try {
 
 						final Handler baseHandler = Prism.getHandlerRegistry().create(actionType.getHandler());
@@ -171,25 +175,42 @@ public class ActionsQuery {
 						// table joins
 						String worldName = worldsInverse.getOrDefault(rs.getInt(5), "");
 
+						rowId = rs.getLong(1);
+
 						// Set all shared values
 						baseHandler.setActionType(actionType);
-						baseHandler.setId(rs.getLong(1));
+						baseHandler.setId(rowId);
 						baseHandler.setUnixEpoch(rs.getLong(2));
 						baseHandler.setWorld(Bukkit.getWorld(worldName));
 						baseHandler.setX(rs.getInt(6));
 						baseHandler.setY(rs.getInt(7));
 						baseHandler.setZ(rs.getInt(8));
 
-						MaterialState current = Prism.getItems().idsToMaterial(rs.getInt(9), rs.getInt(10));
+						int blockId = rs.getInt(9);
+						int blockSubId = rs.getInt(10);
+
+						int oldBlockId = rs.getInt(11);
+						int oldBlockSubId = rs.getInt(12);
+
+						String itemMetadata = rs.getString(13);
+
+						Boolean validBlockId = false;
+						Boolean validOldBlockId = false;
+
+						MaterialState current = Prism.getItems().idsToMaterial(blockId, blockSubId, false);
+
 						if (current != null) {
 							ItemStack item = current.asItem();
 							BlockData block = current.asBlockData();
 
 							if (block != null) {
+								validBlockId = true;
 								baseHandler.setMaterial(block.getMaterial());
 								baseHandler.setBlockData(block);
 								baseHandler.setDurability((short) 0);
+
 							} else if (item != null) {
+								validBlockId = true;
 								baseHandler.setMaterial(item.getType());
 
 								BlockData newData;
@@ -197,6 +218,8 @@ public class ActionsQuery {
 								try {
 									newData = Bukkit.createBlockData(item.getType());
 								} catch (IllegalArgumentException e) {
+									// This exception occurs, for example, with "ItemStack{DIAMOND_LEGGINGS x 1}"
+									Prism.debug("IllegalArgumentException for record #" + rowId + " calling createBlockData for " + item.toString());
 									newData = null;
 								}
 
@@ -205,26 +228,61 @@ public class ActionsQuery {
 							}
 						}
 
-						MaterialState old = Prism.getItems().idsToMaterial(rs.getInt(11), rs.getInt(12));
+						MaterialState old = Prism.getItems().idsToMaterial(oldBlockId, oldBlockSubId, false);
 
 						if (old != null) {
 							ItemStack oldItem = old.asItem();
 							BlockData oldBlock = old.asBlockData();
 
 							if (oldBlock != null) {
+								validOldBlockId = true;
 								baseHandler.setOldMaterial(oldBlock.getMaterial());
 								baseHandler.setOldBlockData(oldBlock);
 								baseHandler.setOldDurability((short) 0);
 							}
 							else {
+								validOldBlockId = true;
 								baseHandler.setOldMaterial(oldItem.getType());
 								baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
 								baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
 							}
 						}
 
+						if (!validBlockId && !validOldBlockId) {
+							// Entry could not be converted to a block or an item
+
+							Boolean logWarning;
+							if (blockId == 0 && oldBlockId == 0 && itemMetadata != null && itemMetadata.contains("entity_name")) {
+								// The current item is likely a spawn or death event for an entity, for example, a cow or horse
+								logWarning = false;
+							} else {
+								logWarning = true;
+							}
+
+							if (logWarning) {
+								String itemMetadataDesc;
+
+								if (itemMetadata == null) {
+									itemMetadataDesc = "";
+								} else {
+									itemMetadataDesc = ", metadata=" + itemMetadata;
+								}
+
+								if (blockId > 0) {
+									Prism.warn("Unable to convert record #" + rowId + " to material: " +
+											"block_id=" + blockId + ", block_subid=" + blockSubId + itemMetadataDesc);
+								} else if (oldBlockId > 0) {
+									Prism.warn("Unable to convert record #" + rowId + " to material: " +
+											"old_block_id=" + oldBlockId + ", old_block_subid=" + oldBlockSubId + itemMetadataDesc);
+								} else {
+									Prism.warn("Unable to convert record #" + rowId + " to material: " +
+											"block_id=0, old_block_id=0" + itemMetadataDesc);
+								}
+							}
+						}
+
 						// data
-						baseHandler.deserialize(rs.getString(13));
+						baseHandler.deserialize(itemMetadata);
 						
 						// player
 						baseHandler.setSourceName(rs.getString(4));
@@ -255,9 +313,7 @@ public class ActionsQuery {
 
 					}
 					catch (final SQLException e) {
-						if (!rs.isClosed()) {
-							Prism.log("Ignoring data from record #" + rs.getInt(1) + " because it caused an error:");
-						}
+						Prism.warn("Ignoring data from record #" + rowId + " because it caused an error:");
 						e.printStackTrace();
 					}
 				}

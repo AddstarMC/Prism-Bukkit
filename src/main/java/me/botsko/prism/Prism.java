@@ -1050,7 +1050,15 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Log a warning
+	 * @param message
+	 */
+	public static void warn(String message) {
+		log.warning("[" + getPrismName() + "]: " + message);
+	}
+
+	/**
+	 * Log a series of messages, precedent by a header
 	 * @param messages
 	 */
 	public static void logSection(String[] messages) {

@@ -181,7 +181,7 @@ public class MaterialAliases {
 		return null;
 	}
 
-	public MaterialState idsToMaterial(int block_id, int block_subid) {
+	public MaterialState idsToMaterial(int block_id, int block_subid, Boolean logMaterialErrors) {
 		MaterialState cachedMaterial = fromCache(block_id, block_subid);
 
 		if (cachedMaterial != null) {
@@ -197,7 +197,8 @@ public class MaterialAliases {
 
 			storeCache(result.material, result.state, block_id, block_subid);
 		}, () -> {
-			Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
+			if (logMaterialErrors)
+				Prism.log("matError: [" + block_id + ", " + block_subid + "] -> ???");
 		});
 
 		if (result.material == null) {
