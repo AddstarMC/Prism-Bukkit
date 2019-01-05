@@ -30,8 +30,6 @@ public class MaterialAliases {
 
 	/**
 	 * Load the yml file and save config to hashmap
-	 * 
-	 * @param plugin
 	 */
 	public MaterialAliases() {
 		FileConfiguration items = null;

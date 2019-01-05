@@ -207,7 +207,7 @@ public class ReportCommand implements SubHandler {
 
 	/**
 	 * 
-	 * @param sender
+	 * @param call Sender
 	 */
 	protected void blockSumReports(final CallInfo call) {
 
@@ -328,7 +328,7 @@ public class ReportCommand implements SubHandler {
 
 	/**
 	 * 
-	 * @param sender
+	 * @param call  Sender
 	 */
 	protected void actionTypeCountReport(final CallInfo call) {
 

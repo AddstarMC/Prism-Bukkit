@@ -989,7 +989,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Inform the player of missing arguments
 	 * @return
 	 */
 	public String msgMissingArguments() {
@@ -997,7 +997,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Inform the player of invalid arguments
 	 * @return
 	 */
 	public String msgInvalidArguments() {
@@ -1005,7 +1005,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Inform the player of an invalid command
 	 * @return
 	 */
 	public String msgInvalidSubcommand() {
@@ -1013,7 +1013,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Inform the player of a missing permission
 	 * @return
 	 */
 	public String msgNoPermission() {
@@ -1021,7 +1021,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Report nearby players
 	 * @param player
 	 * @param msg
 	 */
@@ -1042,7 +1042,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Log a message
 	 * @param message
 	 */
 	public static void log(String message) {
@@ -1064,7 +1064,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Log a debug message if config.yml has debug: true
 	 * @param message
 	 */
 	public static void debug(String message) {
@@ -1074,7 +1074,7 @@ public class Prism extends JavaPlugin {
 	}
 
 	/**
-	 * 
+	 * Log the current location as a debug message
 	 * @param loc
 	 */
 	public static void debug(Location loc) {
