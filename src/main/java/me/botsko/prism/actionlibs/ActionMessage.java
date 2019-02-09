@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import me.botsko.prism.actions.Handler;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 public class ActionMessage {
 
@@ -124,7 +125,7 @@ public class ActionMessage {
             }
         }
 
-        if( showExtended ) {
+        if( showExtended && (a.getBlock() != Material.AIR) ) {
             line1 += " " + a.getBlock() + ":" + a.getBlockSubId();
         }
 

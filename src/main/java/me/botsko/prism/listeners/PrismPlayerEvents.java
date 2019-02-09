@@ -29,6 +29,7 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 import org.bukkit.material.Wood;
@@ -323,7 +324,7 @@ public class PrismPlayerEvents implements Listener {
 
         final Player player = event.getPlayer();
         Block block = event.getClickedBlock();
-        
+
         ItemStack hand = player.getInventory().getItemInMainHand();
 
         // Are they using a wand (or do we always allow it)
@@ -358,7 +359,7 @@ public class PrismPlayerEvents implements Listener {
                 // Right click is for relative block on blockface
                 // except block placements - those will be handled by the
                 // blockplace.
-                if( event.getAction() == Action.RIGHT_CLICK_BLOCK ) {
+                if( event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND ) {
                     block = block.getRelative( event.getBlockFace() );
                     wand.playerRightClick( player, block.getLocation() );
                 }
