@@ -1,6 +1,6 @@
 name: Prism
 main: me.botsko.prism.Prism
-version: ${pom.version}-${env.BUILD_NUMBER}
+version: ${pom.version}
 softdepend: [WorldEdit,HeroChat]
 author: viveleroi
 authors: [ezeiger92]
