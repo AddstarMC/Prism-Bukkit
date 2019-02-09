@@ -65,6 +65,8 @@ public class PurgeTask implements Runnable {
 
         if( paramList.isEmpty() )
             return;
+        
+        long start_time = System.nanoTime();
 
         final ActionsQuery aq = new ActionsQuery( plugin );
 
@@ -93,6 +95,8 @@ public class PurgeTask implements Runnable {
             paramList.remove( param );
             cycle_complete = true;
         }
+        
+        long cycle_time = (System.nanoTime() - start_time) / 1000000L; // msec
 
         Prism.debug( "------------------- " + param.getOriginalCommand() );
         Prism.debug( "minId: " + minId );
@@ -104,7 +108,7 @@ public class PurgeTask implements Runnable {
         Prism.debug( "-------------------" );
 
         // Send cycle to callback
-        callback.cycle( param, cycle_rows_affected, plugin.total_records_affected, cycle_complete );
+        callback.cycle( param, cycle_rows_affected, plugin.total_records_affected, cycle_complete, cycle_time );
 
         if( !plugin.isEnabled() ) {
             Prism.log( "Can't schedule new purge tasks as plugin is now disabled. If you're shutting down the server, ignore me." );

@@ -372,6 +372,7 @@ public class ActionsQuery {
             final String query = dqb.getQuery( parameters, shouldGroup );
             conn = Prism.dbc();
             if( conn != null && !conn.isClosed() ) {
+                conn.setAutoCommit(true); // ***** RES ***** Should not be needed
                 s = conn.createStatement();
                 cycle_rows_affected = s.executeUpdate( query );
                 total_rows_affected += cycle_rows_affected;
