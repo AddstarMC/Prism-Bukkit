@@ -48,8 +48,10 @@ public class EntitySerializer {
         // Owner
         if(entity instanceof Tameable) {
         	final Tameable mob = (Tameable) entity;
-        	if(mob.isTamed())
+        	if(mob.getOwner() != null)
         		taming_owner = mob.getOwner().getUniqueId().toString();
+            else if (mob.isTamed())
+                taming_owner = "-none-";
         }
         
         // Sitting
