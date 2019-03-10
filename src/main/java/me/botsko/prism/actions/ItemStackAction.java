@@ -387,7 +387,12 @@ public class ItemStackAction extends GenericAction {
             if( getType().getName().equals( "item-drop" ) || getType().getName().equals( "item-pickup" ) ) {
 
                 // Is player online?
-                final Player onlinePlayer = Bukkit.getServer().getPlayer( getUUID() );
+                
+                // revert change from Jan 26, 2018 commit 4d19146
+                //final Player onlinePlayer = Bukkit.getServer().getPlayer( getUUID() );
+                final String playerName = getPlayerName();
+                final Player onlinePlayer = Bukkit.getServer().getPlayer( playerName );
+                
                 if( onlinePlayer != null ) {
                     inventory = onlinePlayer.getInventory();
                 } else {
