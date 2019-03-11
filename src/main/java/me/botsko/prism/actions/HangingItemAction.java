@@ -1,5 +1,6 @@
 package me.botsko.prism.actions;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
@@ -108,26 +109,30 @@ public class HangingItemAction extends GenericAction {
     public ChangeResult hangItem(Player player, QueryParameters parameters, boolean is_preview) {
 
         final BlockFace attachedFace = getDirection();
+        
+        final Location hangLoc = new Location( getWorld(), getX(), getY(), getZ() );
 
         final Location loc = new Location( getWorld(), getX(), getY(), getZ() ).getBlock().getRelative( getDirection() )
                 .getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if( BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) { return new ChangeResult(
-                ChangeResultType.SKIPPED, null ); }
+        if( BlockUtils.materialMeansBlockDetachment( loc.getBlock().getType() ) ) {
+            return new ChangeResult( ChangeResultType.SKIPPED, null );
+        }
 
         try {
             if( getHangingType().equals( "item_frame" ) ) {
-                final Hanging hangingItem = getWorld().spawn( loc, ItemFrame.class );
-                hangingItem.setFacingDirection( attachedFace, true );
+                final Hanging hangingItem = getWorld().spawn( hangLoc, ItemFrame.class );
+                hangingItem.setFacingDirection( attachedFace.getOppositeFace(), true );
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             } else if( getHangingType().equals( "painting" ) ) {
-                final Hanging hangingItem = getWorld().spawn( loc, Painting.class );
-                hangingItem.setFacingDirection( getDirection(), true );
+                final Hanging hangingItem = getWorld().spawn( hangLoc, Painting.class );
+                hangingItem.setFacingDirection( getDirection().getOppositeFace(), true );
                 return new ChangeResult( ChangeResultType.APPLIED, null );
             }
         } catch ( final IllegalArgumentException e ) {
             // Something interfered with being able to place the painting
+            // e.printStackTrace();
         }
         return new ChangeResult( ChangeResultType.SKIPPED, null );
     }
