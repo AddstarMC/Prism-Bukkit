@@ -9,10 +9,7 @@ import me.botsko.prism.Prism;
 
 public class PurgeChunkingUtil {
 
-	/**
-	 * 
-	 * @param playername
-	 */
+
 	public static long getMinimumPrimaryKey() {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
 		long id = 0;
@@ -56,10 +53,7 @@ public class PurgeChunkingUtil {
 		return id;
 	}
 
-	/**
-	 * 
-	 * @param playername
-	 */
+
 	public static long getMaximumPrimaryKey() {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
 		long id = 0;
@@ -69,9 +63,8 @@ public class PurgeChunkingUtil {
 		try {
 
 			conn = Prism.dbc();
-			s = conn.prepareStatement("SELECT id FROM " + prefix + "data ORDER BY id DESC LIMIT 1;");
+			s = conn.prepareStatement("SELECT max(id) FROM " + prefix + "data");
 			rs = s.executeQuery();
-
 			if (rs.first()) {
 				id = rs.getLong(1);
 			}

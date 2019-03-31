@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import me.botsko.prism.database.mysql.SelectIDQueryBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.BlockData;
@@ -501,7 +502,93 @@ public class ActionsQuery {
 		}
 		return process;
 	}
+	/**
+	 * Returns the minimum id found that meets the parameters
+	 * @return
+	 */
+	public int getMinIDForQuery(QueryParameters parameters){
+		Connection conn = null;
+		Statement s = null;
+		int result = 0;
+		try{
+			final SelectIDQueryBuilder idQ = new SelectIDQueryBuilder(plugin);
+			idQ.setMin();
+			parameters.setMinPrimaryKey(0);
+			parameters.setMaxPrimaryKey(0);
+			String query = idQ.getQuery(parameters,false);
+			conn = Prism.dbc();
+			if (conn != null && !conn.isClosed()) {
+				s = conn.createStatement();
+				ResultSet set  = s.executeQuery(query);
+				result = set.getInt(1);
+			}
+			else {
+				Prism.log("Prism database error. Purge cannot continue.");
+			}
+		}
+		catch (final SQLException e) {
+			plugin.handleDatabaseException(e);
+		}
+		finally {
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (final SQLException ignored) {
+				}
+		}
+		return result;
+	}
 
+	/**
+	 * Returns the maximum id found that meets the parameters
+	 * @return
+	 */
+	public int getMaxIDForQuery(QueryParameters parameters){
+		Connection conn = null;
+		Statement s = null;
+		int result = 0;
+		try{
+		final SelectIDQueryBuilder idQ = new SelectIDQueryBuilder(plugin);
+		idQ.setMax();
+		parameters.setMinPrimaryKey(0);
+		parameters.setMaxPrimaryKey(0);
+		String query = idQ.getQuery(parameters,false);
+			conn = Prism.dbc();
+			if (conn != null && !conn.isClosed()) {
+				s = conn.createStatement();
+				ResultSet set  = s.executeQuery(query);
+				result = set.getInt(1);
+			}
+			else {
+				Prism.log("Prism database error. Purge cannot continue.");
+			}
+		}
+		catch (final SQLException e) {
+			plugin.handleDatabaseException(e);
+		}
+		finally {
+			if (s != null)
+				try {
+					s.close();
+				}
+				catch (final SQLException ignored) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (final SQLException ignored) {
+				}
+		}
+		return result;
+	}
 	/**
 	 * 
 	 * @return

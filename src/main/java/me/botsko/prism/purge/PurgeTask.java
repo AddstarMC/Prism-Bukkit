@@ -44,6 +44,21 @@ public class PurgeTask implements Runnable {
 	private final PurgeCallback callback;
 
 	/**
+	 * Used when we dont know the min max
+	 *
+	 * @param plugin
+	 * @param paramList
+	 * @param purge_tick_delay
+	 * @param callback
+	 */
+	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay,
+					 PurgeCallback callback) {
+		this.plugin = plugin;
+		this.paramList = paramList;
+		this.purge_tick_delay = purge_tick_delay;
+		this.callback = callback;
+	}
+	/**
 	 * 
 	 * @param plugin
 	 */
@@ -70,7 +85,11 @@ public class PurgeTask implements Runnable {
 
 		// Pull the next-in-line purge param
 		final QueryParameters param = paramList.get(0);
-
+		if(minId == 0 && maxId == 0){
+			//Suspect first run set the min and max
+			minId = aq.getMinIDForQuery(param);
+			maxId = aq.getMaxIDForQuery(param);
+		}
 		boolean cycle_complete = false;
 
 		// We're chunking by IDs instead of using LIMIT because
