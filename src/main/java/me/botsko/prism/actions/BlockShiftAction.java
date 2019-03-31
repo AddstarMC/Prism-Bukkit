@@ -37,7 +37,12 @@ public class BlockShiftAction extends GenericAction {
 
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);

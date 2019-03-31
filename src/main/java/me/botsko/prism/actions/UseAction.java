@@ -27,7 +27,12 @@ public class UseAction extends GenericAction {
 		
 		return customName;
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return false;
+	}
+
 	@Override
 	public String serialize() {
 		return null;

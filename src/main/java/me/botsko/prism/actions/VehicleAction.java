@@ -54,6 +54,11 @@ public class VehicleAction extends GenericAction {
 	}
 
 	@Override
+	public boolean hasExtraData() {
+		return vehicleName != null;
+	}
+
+	@Override
 	public String serialize() {
 		return vehicleName;
 	}

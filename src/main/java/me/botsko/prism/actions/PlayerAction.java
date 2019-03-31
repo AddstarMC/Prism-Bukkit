@@ -27,7 +27,12 @@ public class PlayerAction extends GenericAction {
 		
 		return "";
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return extraInfo !=null;
+	}
+
 	@Override
 	public String serialize() {
 		return extraInfo;

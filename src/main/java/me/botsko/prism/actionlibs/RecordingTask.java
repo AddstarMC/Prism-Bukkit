@@ -351,7 +351,7 @@ public class RecordingTask implements Runnable {
 				}
 
 				final Handler a = extraDataQueue.get(i);
-				if(a != null) {
+				if(a.hasExtraData()) {
 					String serialData = a.serialize();
 
 					if (serialData != null && !serialData.isEmpty()) {

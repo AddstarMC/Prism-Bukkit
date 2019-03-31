@@ -82,6 +82,11 @@ public class ItemStackAction extends GenericAction {
 	private short tempDurability = -1;
 
 	@Override
+	public boolean hasExtraData() {
+		return actionData !=null;
+	}
+
+	@Override
 	public void setDurability(short durability) {
 		if (actionData == null) {
 			tempDurability = durability;
@@ -102,9 +107,9 @@ public class ItemStackAction extends GenericAction {
 
 	/**
 	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param item
+	 * @param quantity
+	 * @param enchantments
 	 */
 	public void setItem(ItemStack item, int quantity, Map<Enchantment, Integer> enchantments) {
 

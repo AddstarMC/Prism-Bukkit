@@ -43,6 +43,7 @@ public interface Handler {
 	 */
 	public abstract void setUnixEpoch(long epoch);
 
+	public boolean hasExtraData();
 	/**
 	 * 
 	 * @return

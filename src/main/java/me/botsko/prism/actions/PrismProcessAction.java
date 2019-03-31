@@ -29,7 +29,12 @@ public class PrismProcessAction extends GenericAction {
 			actionData.processType = processType.name().toLowerCase();
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);
