@@ -5,10 +5,16 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 
 public class MaterialTag implements Tag<Material> {
 	private final EnumSet<Material> materials;
+	private final NamespacedKey key = null;
+	@Override
+	public NamespacedKey getKey() {
+		return key;
+	}
 
 	public enum MatchMode {
 		PREFIX,
