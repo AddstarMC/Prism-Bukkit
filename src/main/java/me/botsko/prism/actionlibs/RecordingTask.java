@@ -351,13 +351,17 @@ public class RecordingTask implements Runnable {
 				}
 
 				final Handler a = extraDataQueue.get(i);
-				
-				String serialData = a.serialize();
+				if(a != null) {
+					String serialData = a.serialize();
 
-				if (serialData != null && !serialData.isEmpty()) {
-					s.setLong(1, keys.getLong(1));
-					s.setString(2, serialData);
-					s.addBatch();
+					if (serialData != null && !serialData.isEmpty()) {
+						s.setLong(1, keys.getLong(1));
+						s.setString(2, serialData);
+						s.addBatch();
+					}
+				} else {
+					Prism.debug("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
+							+ " because the queue doesn't have data for it.");
 				}
 
 				i++;
