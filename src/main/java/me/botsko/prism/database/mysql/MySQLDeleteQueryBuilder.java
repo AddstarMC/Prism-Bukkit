@@ -1,14 +1,15 @@
 package me.botsko.prism.database.mysql;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.database.DeleteQuery;
 
-public class DeleteQueryBuilder extends SelectQueryBuilder {
+public class MySQLDeleteQueryBuilder extends MySQLSelectQueryBuilder implements DeleteQuery {
 
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public DeleteQueryBuilder(Prism plugin) {
+	public MySQLDeleteQueryBuilder(Prism plugin) {
 		super(plugin);
 	}
 
@@ -16,7 +17,7 @@ public class DeleteQueryBuilder extends SelectQueryBuilder {
 	 * 
 	 */
 	@Override
-	public String select() {
+	protected String select() {
 		return "DELETE FROM " + tableNameData + " USING " + tableNameData + " LEFT JOIN " + tableNameDataExtra
 				+ " ex ON (" + tableNameData + ".id = ex.data_id) ";
 	}

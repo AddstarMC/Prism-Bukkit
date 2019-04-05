@@ -14,7 +14,6 @@ public class InternalAffairs implements Runnable {
 
 	/**
 	 * 
-	 * @param prism
 	 */
 	public InternalAffairs(Prism plugin) {
 		Prism.debug("[InternalAffairs] Keeping watch over the watchers.");
@@ -46,7 +45,7 @@ public class InternalAffairs implements Runnable {
 		Connection conn = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn == null) {
 				Prism.log("[InternalAffairs] Pool returned NULL instead of a valid connection.");
 			}

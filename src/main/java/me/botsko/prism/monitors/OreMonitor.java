@@ -166,8 +166,9 @@ public class OreMonitor {
 	}
 
 	/**
+	 * @param type
 	 * @param currBlock
-	 * @param toBeFelled
+	 * @param matchingBlocks
 	 */
 	private ArrayList<Block> findNeighborBlocks(Material type, Block currBlock, ArrayList<Block> matchingBlocks) {
 

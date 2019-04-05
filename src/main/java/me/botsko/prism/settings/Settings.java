@@ -44,7 +44,7 @@ public class Settings {
 				finalKey = getPlayerKey(player, key);
 			}
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("DELETE FROM " + prefix + "meta WHERE k = ?");
 			s.setString(1, finalKey);
 			s.executeUpdate();
@@ -97,7 +97,7 @@ public class Settings {
 				finalKey = getPlayerKey(player, key);
 			}
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("DELETE FROM " + prefix + "meta WHERE k = ?");
 			s.setString(1, finalKey);
 			s.executeUpdate();
@@ -160,7 +160,7 @@ public class Settings {
 				finalKey = getPlayerKey(player, key);
 			}
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("SELECT v FROM " + prefix + "meta WHERE k = ? LIMIT 0,1");
 			s.setString(1, finalKey);
 			rs = s.executeQuery();

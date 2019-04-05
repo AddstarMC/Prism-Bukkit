@@ -1,6 +1,7 @@
 package me.botsko.prism.database.mysql;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.database.SelectIDQuery;
 
 /**
  * THis Class will return an id set for a specific query OR it can return the min and max ID's
@@ -8,12 +9,12 @@ import me.botsko.prism.Prism;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 31/03/2019.
  */
-public abstract class SelectIDQueryBuilder extends SelectQueryBuilder {
+public class MysqlSelectIDQueryBuilder extends MySQLSelectQueryBuilder implements SelectIDQuery {
     /**
      * @param plugin
      */
     private String select = "";
-    public SelectIDQueryBuilder(Prism plugin) {
+    public MysqlSelectIDQueryBuilder(Prism plugin) {
         super(plugin);
         setMin();
     }
@@ -23,8 +24,12 @@ public abstract class SelectIDQueryBuilder extends SelectQueryBuilder {
         return select;
     }
 
-    public abstract void setMax();
+    public void setMax(){
+        select  = "SELECT max(id) FROM "+tableNameData+ " ";
+    }
 
-    public abstract void setMin();
+    public void setMin(){
+        select  = "SELECT min(id) FROM "+tableNameData + " ";
+    }
 
 }

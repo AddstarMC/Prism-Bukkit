@@ -50,7 +50,6 @@ public class PrismBlockEvents implements Listener {
 	 * It's important we record this *after* the block break so the log shows what
 	 * really happened.
 	 * 
-	 * @param player
 	 * @param block
 	 */
 	/*

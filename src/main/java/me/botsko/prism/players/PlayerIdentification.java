@@ -212,7 +212,7 @@ public class PlayerIdentification {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("INSERT INTO " + prefix + "players (player,player_uuid) VALUES (?,UNHEX(?))",
 					Statement.RETURN_GENERATED_KEYS);
 			s.setString(1, player.getName());
@@ -274,7 +274,7 @@ public class PlayerIdentification {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("INSERT INTO " + prefix + "players (player,player_uuid) VALUES (?,UNHEX(?))",
 					Statement.RETURN_GENERATED_KEYS);
 			s.setString(1, fakePlayer.getName());
@@ -328,7 +328,7 @@ public class PlayerIdentification {
 		PreparedStatement s = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement(
 					"UPDATE " + prefix + "players SET player = ?, player_uuid = UNHEX(?) WHERE player_id = ?");
 			s.setString(1, prismPlayer.getName());
@@ -367,7 +367,7 @@ public class PlayerIdentification {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement(
 					"SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player = ?");
 			s.setString(1, playerName);
@@ -414,7 +414,7 @@ public class PlayerIdentification {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("SELECT player_id, player, HEX(player_uuid) FROM " + prefix
 					+ "players WHERE player_uuid = UNHEX(?)");
 			s.setString(1, uuidToDbString(uuid));
@@ -469,7 +469,7 @@ public class PlayerIdentification {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement(
 					"SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player IN (?)");
 			s.setString(1, "'" + TypeUtils.join(playerNames, "','") + "'");

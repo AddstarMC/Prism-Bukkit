@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -33,24 +35,23 @@ public class PrismConfig extends ConfigBase {
 
 		config.addDefault("prism.allow-metrics", true);
 
-		// Database
-		config.addDefault("prism.database.max-pool-connections", 20);
-		config.addDefault("prism.database.pool-initial-size", 10);
-		config.addDefault("prism.database.max-idle-connections", 10);
-		config.addDefault("prism.database.max-wait", 30000);
-		config.addDefault("prism.database.max-failures-before-wait", 5);
-		config.addDefault("prism.database.actions-per-insert-batch", 300);
-
-		// queue
-		config.addDefault("prism.database.force-write-queue-on-shutdown", true);
-
 		// Mysql
-		config.addDefault("prism.mysql.hostname", "127.0.0.1");
-		config.addDefault("prism.mysql.username", "root");
-		config.addDefault("prism.mysql.password", "");
-		config.addDefault("prism.mysql.database", "minecraft");
-		config.addDefault("prism.mysql.prefix", "prism_");
-		config.addDefault("prism.mysql.port", "3306");
+		ConfigurationSection section = config.createSection("prism.mysql");
+		section.addDefault("hostname", "127.0.0.1");
+		section.addDefault("username", "root");
+		section.addDefault("password", "");
+		section.addDefault("database", "minecraft");
+		section.addDefault("prefix", "prism_");
+		section.addDefault("port", "3306");
+		// JDBC Tomcat Database
+		section.addDefault("database.max-pool-connections", 20);
+		section.addDefault("database.pool-initial-size", 10);
+		section.addDefault("database.max-idle-connections", 10);
+		section.addDefault("database.max-wait", 30000);
+		section.addDefault("database.max-failures-before-wait", 5);
+		section.addDefault("database.actions-per-insert-batch", 300);
+		// queue
+		section.addDefault("database.force-write-queue-on-shutdown", true);
 
 		// pste.me sharing.
 		config.addDefault("prism.paste.enable", false);

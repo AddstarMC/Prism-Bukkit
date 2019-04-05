@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.mysql.SelectIDQueryBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -25,8 +28,6 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.database.mysql.DeleteQueryBuilder;
-import me.botsko.prism.database.mysql.SelectQueryBuilder;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
@@ -41,7 +42,7 @@ public class ActionsQuery {
 	/**
 	 * 
 	 */
-	private final SelectQueryBuilder qb;
+	private final SelectQuery qb;
 
 	/**
 	 * 
@@ -55,7 +56,7 @@ public class ActionsQuery {
 	 */
 	public ActionsQuery(Prism plugin) {
 		this.plugin = plugin;
-		this.qb = new SelectQueryBuilder(plugin);
+		this.qb = Prism.getPrismDataSource().createSelectQuery(plugin);
 	}
 
 	/**
@@ -105,7 +106,7 @@ public class ActionsQuery {
 
 				plugin.eventTimer.recordTimedEvent("query started");
 
-				conn = Prism.dbc();
+				conn = Prism.getPrismDataSource().getConnection();
 
 				// Handle dead connections
 				if (conn == null || conn.isClosed()) {
@@ -320,7 +321,7 @@ public class ActionsQuery {
 				}
 			}
 			catch (final SQLException e) {
-				plugin.handleDatabaseException(e);
+				Prism.getPrismDataSource().handleDataSourceException(e);
 			}
 			finally {
 				if (rs != null)
@@ -386,7 +387,7 @@ public class ActionsQuery {
 
 			final int action_id = Prism.prismActions.get("prism-process");
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 
 			if (conn != null && !conn.isClosed()) {
 				s = conn.prepareStatement(
@@ -405,7 +406,7 @@ public class ActionsQuery {
 			}
 		}
 		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (rs != null)
@@ -451,7 +452,7 @@ public class ActionsQuery {
 			sql += " LEFT JOIN " + prefix + "data_extra ex ON ex.data_id = d.id ";
 			sql += " WHERE d.id = ?";
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 
 			if (conn != null && !conn.isClosed()) {
 				s = conn.prepareStatement(sql);
@@ -478,7 +479,7 @@ public class ActionsQuery {
 			}
 		}
 		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (rs != null)
@@ -511,12 +512,12 @@ public class ActionsQuery {
 		Statement s = null;
 		int result = 0;
 		try{
-			final SelectIDQueryBuilder idQ = new SelectIDQueryBuilder(plugin);
+			final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery(plugin);
 			idQ.setMin();
 			parameters.setMinPrimaryKey(0);
 			parameters.setMaxPrimaryKey(0);
 			String query = idQ.getQuery(parameters,false);
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn != null && !conn.isClosed()) {
 				s = conn.createStatement();
 				ResultSet set  = s.executeQuery(query);
@@ -527,7 +528,7 @@ public class ActionsQuery {
 			}
 		}
 		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (s != null)
@@ -555,12 +556,12 @@ public class ActionsQuery {
 		Statement s = null;
 		int result = 0;
 		try{
-		final SelectIDQueryBuilder idQ = new SelectIDQueryBuilder(plugin);
+		final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery(plugin);
 		idQ.setMax();
 		parameters.setMinPrimaryKey(0);
 		parameters.setMaxPrimaryKey(0);
 		String query = idQ.getQuery(parameters,false);
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn != null && !conn.isClosed()) {
 				s = conn.createStatement();
 				ResultSet set  = s.executeQuery(query);
@@ -571,7 +572,7 @@ public class ActionsQuery {
 			}
 		}
 		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (s != null)
@@ -598,10 +599,10 @@ public class ActionsQuery {
 		Connection conn = null;
 		Statement s = null;
 		try {
-			final DeleteQueryBuilder dqb = new DeleteQueryBuilder(plugin);
+			final DeleteQuery dqb =  Prism.getPrismDataSource().createDeleteQuery(plugin);
 			// Build conditions based off final args
 			final String query = dqb.getQuery(parameters, shouldGroup);
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn != null && !conn.isClosed()) {
 				s = conn.createStatement();
 				cycle_rows_affected = s.executeUpdate(query);
@@ -612,7 +613,7 @@ public class ActionsQuery {
 			}
 		}
 		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (s != null)

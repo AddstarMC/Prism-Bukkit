@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.database.BlockReportQuery;
 
-public class BlockReportQueryBuilder extends SelectQueryBuilder {
+public class MySQLBlockReportQueryBuilder extends MySQLSelectQueryBuilder implements BlockReportQuery {
 
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public BlockReportQueryBuilder(Prism plugin) {
+	public MySQLBlockReportQueryBuilder(Prism plugin) {
 		super(plugin);
 	}
 
@@ -47,7 +48,7 @@ public class BlockReportQueryBuilder extends SelectQueryBuilder {
 	 * 
 	 */
 	@Override
-	public String select() {
+	protected String select() {
 		String prefix = Prism.config.getString("prism.mysql.prefix");
 
 		parameters.addActionType("block-place");

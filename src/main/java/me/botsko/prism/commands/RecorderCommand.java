@@ -76,7 +76,7 @@ public class RecorderCommand implements SubHandler {
 				Connection conn = null;
 				try {
 
-					conn = Prism.dbc();
+					conn = Prism.getPrismDataSource().getConnection();
 					if (conn == null || conn.isClosed()) {
 						call.getSender().sendMessage(Prism.messenger.playerError(
 								"Valid database connection could not be found. Check the db/console and try again."));

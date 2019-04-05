@@ -11,12 +11,13 @@ import java.util.function.Consumer;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.botsko.prism.database.IdMapQuery;
 import org.apache.commons.lang.Validate;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.IntPair;
 
-public class IdMapQuery {
+public class MySQLIdMapQuery implements IdMapQuery {
 	private String prefix;
 
 	private static final String toIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state=? LIMIT 1;";
@@ -28,7 +29,7 @@ public class IdMapQuery {
 	private static final String repair = "UPDATE <prefix>id_map SET block_id=?, block_subid=? WHERE block_id=?;";
 	private static final String unauto = "ALTER TABLE <prefix>id_map AUTO_INCREMENT=?;";
 
-	public IdMapQuery() {
+	public MySQLIdMapQuery() {
 		prefix = Prism.config.getString("prism.mysql.prefix");
 	}
 
@@ -37,7 +38,7 @@ public class IdMapQuery {
 	}
 
 	public void findMaterial(int block_id, int block_subid, BiConsumer<String, String> success) {
-		findMaterial(block_id, block_subid, success, IdMapQuery::noop);
+		findMaterial(block_id, block_subid, success, MySQLIdMapQuery::noop);
 	}
 
 	public void findMaterial(int block_id, int block_subid, BiConsumer<String, String> success, Runnable failure) {
@@ -46,7 +47,7 @@ public class IdMapQuery {
 
 		String query = toMat.replace("<prefix>", prefix);
 
-		try (Connection conn = Prism.dbc()) {
+		try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 			try (PreparedStatement st = conn.prepareStatement(query)) {
 				st.setInt(1, block_id);
 				st.setInt(2, block_subid);
@@ -65,7 +66,7 @@ public class IdMapQuery {
 	}
 
 	public void findIds(String material, String state, BiConsumer<Integer, Integer> success) {
-		findIds(material, state, success, IdMapQuery::noop);
+		findIds(material, state, success, MySQLIdMapQuery::noop);
 	}
 
 	public void findIds(String material, String state, BiConsumer<Integer, Integer> success, Runnable failure) {
@@ -79,7 +80,7 @@ public class IdMapQuery {
 		if (state.equals("0"))
 			state = "";
 
-		try (Connection conn = Prism.dbc()) {
+		try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 			try (PreparedStatement st = conn.prepareStatement(query)) {
 				st.setString(1, material);
 				st.setString(2, state);
@@ -98,7 +99,7 @@ public class IdMapQuery {
 	}
 
 	public void findAllIds(String material, Consumer<List<IntPair>> success) {
-		findAllIds(material, success, IdMapQuery::noop);
+		findAllIds(material, success, MySQLIdMapQuery::noop);
 	}
 
 	public void findAllIds(String material, Consumer<List<IntPair>> success, Runnable failure) {
@@ -108,7 +109,7 @@ public class IdMapQuery {
 
 		String query = toAllIds.replace("<prefix>", prefix);
 
-		try (Connection conn = Prism.dbc()) {
+		try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 			try (PreparedStatement st = conn.prepareStatement(query)) {
 				st.setString(1, material);
 				try (ResultSet rs = st.executeQuery()) {
@@ -132,7 +133,7 @@ public class IdMapQuery {
 	}
 
 	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success) {
-		findAllIdsPartial(material, stateLike, success, IdMapQuery::noop);
+		findAllIdsPartial(material, stateLike, success, MySQLIdMapQuery::noop);
 	}
 
 	public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success,
@@ -143,7 +144,7 @@ public class IdMapQuery {
 
 		String query = partialToAllIds.replace("<prefix>", prefix);
 
-		try (Connection conn = Prism.dbc()) {
+		try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 			try (PreparedStatement st = conn.prepareStatement(query)) {
 				st.setString(1, material);
 				st.setString(2, stateLike);
@@ -182,7 +183,7 @@ public class IdMapQuery {
 			query = repair.replace("<prefix>", prefix);
 			int auto_id = mapAutoId(material, state);
 
-			try (Connection conn = Prism.dbc()) {
+			try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 				try (PreparedStatement st = conn.prepareStatement(query)) {
 					st.setInt(1, block_id);
 					st.setInt(2, block_subid);
@@ -206,7 +207,7 @@ public class IdMapQuery {
 			}
 		}
 		else
-			try (Connection conn = Prism.dbc()) {
+			try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 				try (PreparedStatement st = conn.prepareStatement(query)) {
 					st.setString(1, material);
 					st.setString(2, state);
@@ -231,7 +232,7 @@ public class IdMapQuery {
 		if (state.equals("0") || state.equals("[]"))
 			state = "";
 
-		try (Connection conn = Prism.dbc()) {
+		try (Connection conn = Prism.getPrismDataSource().getConnection()) {
 			try (PreparedStatement st = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
 				st.setString(1, material);
 				st.setString(2, state);

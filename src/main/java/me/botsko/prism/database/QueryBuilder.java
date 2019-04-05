@@ -12,22 +12,22 @@ abstract public class QueryBuilder {
 	 * 
 	 */
 	protected final Prism plugin;
-	protected List<String> columns = new ArrayList<String>();
-	protected List<String> conditions = new ArrayList<String>();
+	protected List<String> columns = new ArrayList<>();
+	protected List<String> conditions = new ArrayList<>();
 
 	protected final String tableNameData;
 	protected final String tableNameDataExtra;
 
 	protected QueryParameters parameters;
 	protected boolean shouldGroup;
-
+	protected String prefix;
 	/**
 	 * 
 	 * @param plugin
 	 */
 	public QueryBuilder(Prism plugin) {
 		this.plugin = plugin;
-		String prefix = plugin.getConfig().getString("prism.mysql.prefix");
+		prefix = Prism.getPrismDataSource().getPrefix();
 		tableNameData = prefix + "data";
 		tableNameDataExtra = prefix + "data_extra";
 	}

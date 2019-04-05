@@ -70,7 +70,7 @@ public class ActionRegistry {
 		}
 
 		// Register custom action type with the db
-		Prism.addActionName(actionType.getName());
+		Prism.getPrismDataSource().addActionName(actionType.getName());
 
 		registeredActions.put(actionType.getName(), actionType);
 

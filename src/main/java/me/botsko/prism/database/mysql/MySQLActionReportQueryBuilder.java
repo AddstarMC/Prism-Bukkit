@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.database.ActionReportQuery;
 
-public class ActionReportQueryBuilder extends SelectQueryBuilder {
+public class MySQLActionReportQueryBuilder extends MySQLSelectQueryBuilder implements ActionReportQuery {
 
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public ActionReportQueryBuilder(Prism plugin) {
+	public MySQLActionReportQueryBuilder(Prism plugin) {
 		super(plugin);
 	}
 

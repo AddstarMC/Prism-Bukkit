@@ -52,7 +52,7 @@ public class RecordingTask implements Runnable {
 		ResultSet generatedKeys = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn == null) {
 				Prism.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
 				return 0;
@@ -170,7 +170,7 @@ public class RecordingTask implements Runnable {
 				Prism.debug("Beginning batch insert from queue. " + System.currentTimeMillis());
 
 				final ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
-				conn = Prism.dbc();
+				conn = Prism.getPrismDataSource().getConnection();
 
 				// Handle dead connections
 				if (conn == null || conn.isClosed()) {
@@ -294,7 +294,7 @@ public class RecordingTask implements Runnable {
 		}
 		catch (final SQLException e) {
 			e.printStackTrace();
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (s != null)
@@ -324,7 +324,7 @@ public class RecordingTask implements Runnable {
 			return;
 
 		PreparedStatement s = null;
-		final Connection conn = Prism.dbc();
+		final Connection conn = Prism.getPrismDataSource().getConnection();
 
 		if (conn == null || conn.isClosed()) {
 			Prism.log("Prism database error. Skipping extra data queue insertion.");
@@ -382,7 +382,7 @@ public class RecordingTask implements Runnable {
 		}
 		catch (final SQLException e) {
 			e.printStackTrace();
-			plugin.handleDatabaseException(e);
+			Prism.getPrismDataSource().handleDataSourceException(e);
 		}
 		finally {
 			if (s != null)
@@ -405,7 +405,7 @@ public class RecordingTask implements Runnable {
 	@Override
 	public void run() {
 		if (RecordingManager.failedDbConnectionCount > 5) {
-			plugin.rebuildPool(); // force rebuild pool after several failures
+			Prism.getPrismDataSource().rebuildDataSource(); // force rebuild pool after several failures
 		}
 		save();
 		scheduleNextRecording();

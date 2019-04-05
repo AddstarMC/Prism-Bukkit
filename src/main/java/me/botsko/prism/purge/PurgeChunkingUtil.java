@@ -18,7 +18,7 @@ public class PurgeChunkingUtil {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("SELECT MIN(id) FROM " + prefix + "data");
 			rs = s.executeQuery();
 
@@ -62,7 +62,7 @@ public class PurgeChunkingUtil {
 		ResultSet rs = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			s = conn.prepareStatement("SELECT max(id) FROM " + prefix + "data");
 			rs = s.executeQuery();
 			if (rs.first()) {

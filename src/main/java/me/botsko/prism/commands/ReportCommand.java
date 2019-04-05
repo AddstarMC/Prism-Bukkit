@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
 import me.botsko.prism.Prism;
@@ -11,9 +13,10 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.database.mysql.ActionReportQueryBuilder;
-import me.botsko.prism.database.mysql.BlockReportQueryBuilder;
+import me.botsko.prism.database.mysql.MySQLActionReportQueryBuilder;
+import me.botsko.prism.database.mysql.MySQLBlockReportQueryBuilder;
 import me.botsko.prism.utils.MiscUtils;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.block.data.BlockData;
@@ -151,13 +154,15 @@ public class ReportCommand implements SubHandler {
 				.playerMsg("Active Failure Count: " + ChatColor.WHITE + RecordingManager.failedDbConnectionCount));
 		sender.sendMessage(
 				Prism.messenger.playerMsg("Actions in queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize()));
-		sender.sendMessage(Prism.messenger.playerMsg("Pool active: " + ChatColor.WHITE + Prism.getPool().getActive()));
-		sender.sendMessage(Prism.messenger.playerMsg("Pool idle: " + ChatColor.WHITE + Prism.getPool().getIdle()));
-		sender.sendMessage(
-				Prism.messenger.playerMsg("Pool active count: " + ChatColor.WHITE + Prism.getPool().getNumActive()));
-		sender.sendMessage(
-				Prism.messenger.playerMsg("Pool idle count: " + ChatColor.WHITE + Prism.getPool().getNumIdle()));
-
+		if(Prism.getPrismDataSource().getDataSource() instanceof org.apache.tomcat.jdbc.pool.DataSource) {
+			org.apache.tomcat.jdbc.pool.DataSource pool = (DataSource) Prism.getPrismDataSource().getDataSource();
+			sender.sendMessage(Prism.messenger.playerMsg("Pool active: " + ChatColor.WHITE + pool.getActive()));
+			sender.sendMessage(Prism.messenger.playerMsg("Pool idle: " + ChatColor.WHITE + pool.getIdle()));
+			sender.sendMessage(
+					Prism.messenger.playerMsg("Pool active count: " + ChatColor.WHITE +pool.getNumActive()));
+			sender.sendMessage(
+					Prism.messenger.playerMsg("Pool idle count: " + ChatColor.WHITE + pool.getNumIdle()));
+		}
 		boolean recorderActive = false;
 		if (plugin.recordingTask != null) {
 			final int taskId = plugin.recordingTask.getTaskId();
@@ -180,7 +185,7 @@ public class ReportCommand implements SubHandler {
 		Connection conn = null;
 		try {
 
-			conn = Prism.dbc();
+			conn = Prism.getPrismDataSource().getConnection();
 			if (conn == null) {
 				sender.sendMessage(Prism.messenger.playerError("Pool returned NULL instead of a valid connection."));
 			}
@@ -241,7 +246,7 @@ public class ReportCommand implements SubHandler {
 		}
 		final String playerName = tempName;
 
-		final BlockReportQueryBuilder reportQuery = new BlockReportQueryBuilder(plugin);
+		final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery(plugin);
 		final String sql = reportQuery.getQuery(parameters, false);
 
 		final int colTextLen = 20;
@@ -263,7 +268,7 @@ public class ReportCommand implements SubHandler {
 				ResultSet rs = null;
 				try {
 
-					conn = Prism.dbc();
+					conn = Prism.getPrismDataSource().getConnection();
 					s = conn.prepareStatement(sql);
 					rs = s.executeQuery();
 
@@ -368,7 +373,7 @@ public class ReportCommand implements SubHandler {
 		}
 		final String playerName = tempName;
 
-		final ActionReportQueryBuilder reportQuery = new ActionReportQueryBuilder(plugin);
+		final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery(plugin);
 		final String sql = reportQuery.getQuery(parameters, false);
 
 		final int colTextLen = 16;
@@ -390,7 +395,7 @@ public class ReportCommand implements SubHandler {
 				ResultSet rs = null;
 				try {
 
-					conn = Prism.dbc();
+					conn = Prism.getPrismDataSource().getConnection();
 					s = conn.prepareStatement(sql);
 					rs = s.executeQuery();
 
