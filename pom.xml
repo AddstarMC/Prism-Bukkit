@@ -5,6 +5,11 @@
 	<artifactId>prism</artifactId>
 	<version>2.1.0</version>
 	<name>prism</name>
+	<developers>
+		<developer>
+			<email>benjicharlton@gmail.com</email>
+		</developer>
+	</developers>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
