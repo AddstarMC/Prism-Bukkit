@@ -6,7 +6,7 @@ import org.bukkit.entity.Villager.Profession;
 
 import me.botsko.prism.utils.MiscUtils;
 
-public class ZombieVillagerSerlializer extends EntitySerializer {
+public class git ZombieVillagerSerlializer extends EntitySerializer {
 	protected String profession = null;
 
 	@Override
