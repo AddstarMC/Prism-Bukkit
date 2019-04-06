@@ -35,16 +35,18 @@ public interface PrismDataSource {
 
     void dispose();
 
-    SelectQuery createSelectQuery(Prism plugin);
+    SelectQuery createSelectQuery();
 
-    SelectIDQuery createSelectIDQuery(Prism plugin);
+    SelectIDQuery createSelectIDQuery();
 
-    DeleteQuery createDeleteQuery(Prism plugin);
+    DeleteQuery createDeleteQuery();
 
-    BlockReportQuery createBlockReportQuery(Prism plugin);
+    BlockReportQuery createBlockReportQuery();
 
-    ActionReportQuery createActionReportQuery(Prism plugin);
+    ActionReportQuery createActionReportQuery();
 
     SettingsQuery createSettingsQuery();
+
+    SelectProcessActionQuery createProcessQuery();
 
 }

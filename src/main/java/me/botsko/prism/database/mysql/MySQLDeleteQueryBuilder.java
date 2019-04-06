@@ -3,14 +3,18 @@ package me.botsko.prism.database.mysql;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.DeleteQuery;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class MySQLDeleteQueryBuilder extends MySQLSelectQueryBuilder implements DeleteQuery {
 
 	/**
 	 * 
-	 * @param plugin
 	 */
-	public MySQLDeleteQueryBuilder(Prism plugin) {
-		super(plugin);
+	public MySQLDeleteQueryBuilder() {
+		super();
 	}
 
 	/**
@@ -44,5 +48,21 @@ public class MySQLDeleteQueryBuilder extends MySQLSelectQueryBuilder implements 
 	@Override
 	protected String limit() {
 		return "";
+	}
+
+	@Override
+	public int execute() {
+		int total_rows_affected = 0;
+		int cycle_rows_affected = 0;
+		try(
+				Connection connection = Prism.getPrismDataSource().getDataSource().getConnection();
+				Statement s = connection.createStatement();
+				){
+			cycle_rows_affected = s.executeUpdate(getQuery(parameters,shouldGroup));
+			total_rows_affected += cycle_rows_affected;
+		} catch (final SQLException e) {
+			Prism.getPrismDataSource().handleDataSourceException(e);
+		}
+		return total_rows_affected;
 	}
 }

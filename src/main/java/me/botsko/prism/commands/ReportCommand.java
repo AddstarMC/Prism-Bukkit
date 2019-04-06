@@ -224,34 +224,20 @@ public class ReportCommand implements SubHandler {
 					.sendMessage(Prism.messenger.playerError("You must specify parameters, at least one player."));
 			return;
 		}
-
 		// No actions
 		if (!parameters.getActionTypes().isEmpty()) {
 			call.getSender()
 					.sendMessage(Prism.messenger.playerError("You may not specify any action types for this report."));
 			return;
 		}
-
 		// Verify single player name for now
 		final HashMap<String, MatchRule> players = parameters.getPlayerNames();
 		if (players.size() != 1) {
 			call.getSender().sendMessage(Prism.messenger.playerError("You must provide only a single player name."));
 			return;
 		}
-		// Get single playername
-		String tempName = "";
-		for (final String player : players.keySet()) {
-			tempName = player;
-			break;
-		}
-		final String playerName = tempName;
 
-		final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery(plugin);
-		final String sql = reportQuery.getQuery(parameters, false);
-
-		final int colTextLen = 20;
-		final int colIntLen = 12;
-
+		final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery();
 		/**
 		 * Run the lookup itself in an async task so the lookup query isn't done on the
 		 * main thread
@@ -259,82 +245,7 @@ public class ReportCommand implements SubHandler {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
-
-				call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-						"Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "..."));
-
-				Connection conn = null;
-				PreparedStatement s = null;
-				ResultSet rs = null;
-				try {
-
-					conn = Prism.getPrismDataSource().getConnection();
-					s = conn.prepareStatement(sql);
-					rs = s.executeQuery();
-
-					call.getSender().sendMessage(Prism.messenger
-							.playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName));
-					call.getSender().sendMessage(
-							Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Block", colTextLen)
-									+ TypeUtils.padStringRight("Placed", colIntLen)
-									+ TypeUtils.padStringRight("Broken", colIntLen)));
-
-					while (rs.next()) {
-						int blockId = rs.getInt(1);
-						MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
-
-						final String alias;
-						if (state == null) {
-							alias = "UnknownMaterial_BlockId_" + blockId;
-						} else {
-
-							BlockData block = state.asBlockData();
-							ItemStack item = state.asItem();
-
-							if (block != null) {
-								alias = Prism.getItems().getAlias(block.getMaterial(), block);
-							} else if (item != null) {
-								alias = Prism.getItems().getAlias(item);
-							} else {
-								alias = "InvalidState_" + state + "_BlockId_" + blockId;
-							}
-						}
-
-						final int placed = rs.getInt(2);
-						final int broken = rs.getInt(3);
-
-						final String colAlias = TypeUtils.padStringRight(alias, colTextLen);
-						final String colPlaced = TypeUtils.padStringRight("" + placed, colIntLen);
-						final String colBroken = TypeUtils.padStringRight("" + broken, colIntLen);
-
-						call.getSender().sendMessage(Prism.messenger.playerMsg(ChatColor.DARK_AQUA + colAlias
-								+ ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
-
-					}
-				}
-				catch (final SQLException e) {
-					e.printStackTrace();
-				}
-				finally {
-					if (rs != null)
-						try {
-							rs.close();
-						}
-						catch (final SQLException ignored) {
-						}
-					if (s != null)
-						try {
-							s.close();
-						}
-						catch (final SQLException ignored) {
-						}
-					if (conn != null)
-						try {
-							conn.close();
-						}
-						catch (final SQLException ignored) {
-						}
-				}
+				reportQuery.report(call.getSender());
 			}
 		});
 	}
@@ -365,19 +276,9 @@ public class ReportCommand implements SubHandler {
 			call.getSender().sendMessage(Prism.messenger.playerError("You must provide only a single player name."));
 			return;
 		}
-		// Get single playername
-		String tempName = "";
-		for (final String player : players.keySet()) {
-			tempName = player;
-			break;
-		}
-		final String playerName = tempName;
 
-		final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery(plugin);
-		final String sql = reportQuery.getQuery(parameters, false);
+		final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery();
 
-		final int colTextLen = 16;
-		final int colIntLen = 12;
 
 		/**
 		 * Run the lookup itself in an async task so the lookup query isn't done on the
@@ -386,59 +287,7 @@ public class ReportCommand implements SubHandler {
 		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
-
-				call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-						"Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "..."));
-
-				Connection conn = null;
-				PreparedStatement s = null;
-				ResultSet rs = null;
-				try {
-
-					conn = Prism.getPrismDataSource().getConnection();
-					s = conn.prepareStatement(sql);
-					rs = s.executeQuery();
-
-					call.getSender().sendMessage(
-							Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Action", colTextLen)
-									+ TypeUtils.padStringRight("Count", colIntLen)));
-
-					while (rs.next()) {
-
-						final String action = rs.getString(2);
-						final int count = rs.getInt(1);
-
-						final String colAlias = TypeUtils.padStringRight(action, colTextLen);
-						final String colPlaced = TypeUtils.padStringRight("" + count, colIntLen);
-
-						call.getSender().sendMessage(Prism.messenger
-								.playerMsg(ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced));
-
-					}
-				}
-				catch (final SQLException e) {
-					e.printStackTrace();
-				}
-				finally {
-					if (rs != null)
-						try {
-							rs.close();
-						}
-						catch (final SQLException ignored) {
-						}
-					if (s != null)
-						try {
-							s.close();
-						}
-						catch (final SQLException ignored) {
-						}
-					if (conn != null)
-						try {
-							conn.close();
-						}
-						catch (final SQLException ignored) {
-						}
-				}
+				reportQuery.report(call.getSender());
 			}
 		});
 	}

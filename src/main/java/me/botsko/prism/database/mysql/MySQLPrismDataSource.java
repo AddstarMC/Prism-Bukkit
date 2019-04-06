@@ -424,28 +424,28 @@ public class MySQLPrismDataSource implements PrismDataSource {
     }
 
     @Override
-    public SelectQuery createSelectQuery(Prism plugin) {
-        return new MySQLSelectQueryBuilder(plugin);
+    public SelectQuery createSelectQuery() {
+        return new MySQLSelectQueryBuilder();
     }
 
     @Override
-    public SelectIDQuery createSelectIDQuery(Prism plugin) {
-        return new MysqlSelectIDQueryBuilder(plugin);
+    public SelectIDQuery createSelectIDQuery() {
+        return new MysqlSelectIDQueryBuilder();
     }
 
     @Override
-    public DeleteQuery createDeleteQuery(Prism plugin) {
-        return new MySQLDeleteQueryBuilder(plugin);
+    public DeleteQuery createDeleteQuery() {
+        return new MySQLDeleteQueryBuilder();
     }
 
     @Override
-    public BlockReportQuery createBlockReportQuery(Prism plugin) {
-        return new MySQLBlockReportQueryBuilder(plugin);
+    public BlockReportQuery createBlockReportQuery() {
+        return new MySQLBlockReportQueryBuilder();
     }
 
     @Override
-    public ActionReportQuery createActionReportQuery(Prism plugin) {
-        return new MySQLActionReportQueryBuilder(plugin);
+    public ActionReportQuery createActionReportQuery() {
+        return new MySQLActionReportQueryBuilder();
     }
 
     @Override
@@ -453,5 +453,10 @@ public class MySQLPrismDataSource implements PrismDataSource {
         if(settingsQuery == null)
             return new MySQLSettingsQuery(this);
         else return settingsQuery;
+    }
+
+    @Override
+    public SelectProcessActionQuery createProcessQuery() {
+        return new MySQLSelectProcessQuery();
     }
 }

@@ -2,6 +2,8 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.measurement.TimeTaken;
 
 import java.util.HashMap;
 
@@ -12,8 +14,10 @@ import java.util.HashMap;
  */
 public interface SelectQuery {
     String getQuery(QueryParameters parameters, boolean shouldGroup);
-
-/*    These methods should exist in a selectQuery and it should extend QueryBuilder
+    void setParameters(QueryParameters parameters);
+    void setShouldGroup(boolean shouldGroup);
+    QueryResult executeSelect(TimeTaken eventTimer);
+    /*    These methods should exist in a selectQuery and it should extend QueryBuilder
     String select();
     String where() ;
     void worldCondition() ;
