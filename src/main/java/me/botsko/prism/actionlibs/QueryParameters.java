@@ -92,7 +92,6 @@ public class QueryParameters implements Cloneable {
 
 	/**
 	 * 
-	 * @param minId
 	 */
 	public long getMinPrimaryKey() {
 		return this.minId;
@@ -100,7 +99,6 @@ public class QueryParameters implements Cloneable {
 
 	/**
 	 * 
-	 * @param maxId
 	 */
 	public void setMaxPrimaryKey(long maxId) {
 		this.maxId = maxId;
@@ -108,7 +106,6 @@ public class QueryParameters implements Cloneable {
 
 	/**
 	 * 
-	 * @param minId
 	 */
 	public long getMaxPrimaryKey() {
 		return this.maxId;
@@ -143,7 +140,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param id the block to set
+	 * @param partialData the block to set
 	 */
 	public void addBlockDataFilter(MaterialState partialData) {
 		this.blockData_filters.add(partialData);
@@ -157,7 +154,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param id the block to set
+	 * @param mat the material of block to set
 	 */
 	public void addBlockFilter(Material mat) {
 		this.block_filters.add(mat);
@@ -371,7 +368,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param time the time to set
+	 * @param epoch the time to set
 	 */
 	public void setBeforeTime(Long epoch) {
 		this.before_time = epoch;
@@ -385,7 +382,7 @@ public class QueryParameters implements Cloneable {
 	}
 
 	/**
-	 * @param time the time to set
+	 * @param epoch the time to set
 	 */
 	public void setSinceTime(Long epoch) {
 		this.since_time = epoch;

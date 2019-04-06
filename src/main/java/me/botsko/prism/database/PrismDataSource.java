@@ -2,9 +2,6 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -16,29 +13,38 @@ import java.util.HashMap;
  * Created by benjamincharlton on 5/04/2019.
  */
 public interface PrismDataSource {
-    public String getPrefix();
-    public PrismDataSource createDataSource();
+    String getPrefix();
 
-    public void setupDatabase(ActionRegistry actionRegistry);
+    PrismDataSource createDataSource();
 
-    public Connection getConnection();
+    void setupDatabase(ActionRegistry actionRegistry);
 
-    public void rebuildDataSource();
+    Connection getConnection();
 
-    public DataSource getDataSource();
+    void rebuildDataSource();
 
-    public void handleDataSourceException(SQLException e);
+    DataSource getDataSource();
 
-    public void cacheWorldPrimaryKeys(HashMap prismWorlds);
+    void handleDataSourceException(SQLException e);
 
-    public void addWorldName(String worldName);
-    public void addActionName(String actionName);
-    public void dispose();
+    void cacheWorldPrimaryKeys(HashMap prismWorlds);
 
-    public SelectQuery createSelectQuery(Prism plugin);
-    public SelectIDQuery createSelectIDQuery(Prism plugin);
-    public DeleteQuery createDeleteQuery(Prism plugin);
-    public BlockReportQuery createBlockReportQuery(Prism plugin);
-    public ActionReportQuery createActionReportQuery(Prism plugin);
+    void addWorldName(String worldName);
+
+    void addActionName(String actionName);
+
+    void dispose();
+
+    SelectQuery createSelectQuery(Prism plugin);
+
+    SelectIDQuery createSelectIDQuery(Prism plugin);
+
+    DeleteQuery createDeleteQuery(Prism plugin);
+
+    BlockReportQuery createBlockReportQuery(Prism plugin);
+
+    ActionReportQuery createActionReportQuery(Prism plugin);
+
+    SettingsQuery createSettingsQuery();
 
 }

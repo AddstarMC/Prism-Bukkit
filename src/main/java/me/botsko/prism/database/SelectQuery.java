@@ -2,7 +2,6 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
-import org.bukkit.util.Vector;
 
 import java.util.HashMap;
 
@@ -13,7 +12,8 @@ import java.util.HashMap;
  */
 public interface SelectQuery {
     String getQuery(QueryParameters parameters, boolean shouldGroup);
-    /**
+
+/*    These methods should exist in a selectQuery and it should extend QueryBuilder
     String select();
     String where() ;
     void worldCondition() ;
@@ -33,6 +33,6 @@ public interface SelectQuery {
     String buildGroupConditions(String fieldname, String[] arg_values, String matchFormat, String matchType,
                                                    String dataFormat) ;
     void buildRadiusCondition(Vector minLoc, Vector maxLoc) ;
-    String buildTimeCondition(Long dateFrom, String equation) ;**/
+    String buildTimeCondition(Long dateFrom, String equation) ;*/
 }
 

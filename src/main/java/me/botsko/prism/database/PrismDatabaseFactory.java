@@ -14,7 +14,6 @@ import java.sql.Connection;
 public class PrismDatabaseFactory {
 
     private static PrismDataSource database = null;
-    private static ConfigurationSection section;
 
     public static PrismDataSource createDataSource(Configuration  configuration) {
         if(configuration == null) return null;

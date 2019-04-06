@@ -18,7 +18,7 @@ public class MySQLPrismDataSource implements PrismDataSource {
 
     private static org.apache.tomcat.jdbc.pool.DataSource database = null;
     private static ConfigurationSection section;
-
+    private SettingsQuery settingsQuery;
     public String getPrefix() {
         return prefix;
     }
@@ -446,5 +446,12 @@ public class MySQLPrismDataSource implements PrismDataSource {
     @Override
     public ActionReportQuery createActionReportQuery(Prism plugin) {
         return new MySQLActionReportQueryBuilder(plugin);
+    }
+
+    @Override
+    public SettingsQuery createSettingsQuery() {
+        if(settingsQuery == null)
+            return new MySQLSettingsQuery(this);
+        else return settingsQuery;
     }
 }
