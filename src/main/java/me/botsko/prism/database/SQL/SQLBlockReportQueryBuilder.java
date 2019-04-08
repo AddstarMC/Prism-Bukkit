@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.BlockReportQuery;
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.ChatColor;
@@ -18,8 +19,8 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
     /**
      *
      */
-    public SQLBlockReportQueryBuilder() {
-        super();
+    public SQLBlockReportQueryBuilder(PrismDataSource dataSource) {
+        super(dataSource);
     }
 
     /**
@@ -41,10 +42,7 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
 
         query += ";";
 
-        if (Prism.config.getBoolean("prism.debug")) {
-            Prism.debug(query);
-        }
-
+        dataSource.getLog().debug(query);
         return query;
 
     }
@@ -54,8 +52,6 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
      */
     @Override
     protected String select() {
-        String prefix = Prism.config.getString("prism.mysql.prefix");
-
         parameters.addActionType("block-place");
 
         // block-place query
@@ -87,7 +83,7 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
         final int colTextLen = 20;
         final int colIntLen = 12;
         try (
-                Connection conn = Prism.getPrismDataSource().getDataSource().getConnection();
+                Connection conn = dataSource.getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery();
 
@@ -130,7 +126,7 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
 
             }
         } catch (SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            dataSource.handleDataSourceException(e);
         }
     }
 }

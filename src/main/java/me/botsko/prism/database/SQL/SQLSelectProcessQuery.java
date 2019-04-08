@@ -3,6 +3,7 @@ package me.botsko.prism.database.SQL;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.measurement.TimeTaken;
 import org.bukkit.Bukkit;
@@ -16,6 +17,13 @@ import java.util.UUID;
  */
 public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements SelectProcessActionQuery {
     private boolean getLastID;
+
+    /**
+     * @param dataSource
+     */
+    public SQLSelectProcessQuery(PrismDataSource dataSource) {
+        super(dataSource);
+    }
 
     @Override
     public void setShouldGroup(boolean shouldGroup) {
@@ -86,7 +94,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
         final String query = getQuery(parameters, false);
         PrismProcessAction process = null;
         try (
-                Connection conn = Prism.getPrismDataSource().getDataSource().getConnection();
+                Connection conn = dataSource.getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(query);
                 ResultSet rs = s.executeQuery();
         ) {
@@ -105,7 +113,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
                 process.deserialize(rs.getString("data"));
             }
         } catch (SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            dataSource.handleDataSourceException(e);
         }
         return process;
     }
@@ -116,7 +124,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
             long id = 0;
             final String query = getQuery(parameters, false);
             try (
-                    Connection conn = Prism.getPrismDataSource().getDataSource().getConnection();
+                    Connection conn = dataSource.getDataSource().getConnection();
                     PreparedStatement s = conn.prepareStatement(query);
                     ResultSet rs = s.executeQuery();
             ) {
@@ -124,7 +132,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
                     id = rs.getLong("id");
                 }
             } catch (SQLException e) {
-                Prism.getPrismDataSource().handleDataSourceException(e);
+                dataSource.handleDataSourceException(e);
 
             }
             return id;

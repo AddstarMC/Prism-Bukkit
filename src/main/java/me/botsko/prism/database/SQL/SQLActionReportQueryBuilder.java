@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -18,8 +19,8 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
     /**
      *
      **/
-    public SQLActionReportQueryBuilder() {
-        super();
+    public SQLActionReportQueryBuilder(PrismDataSource dataSource) {
+        super(dataSource);
     }
 
     /**
@@ -41,9 +42,7 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
 
         query += ";";
 
-        if (Prism.config.getBoolean("prism.debug")) {
-            Prism.debug(query);
-        }
+        dataSource.getLog().debug(query);
 
         return query;
 
@@ -54,8 +53,6 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
      */
     @Override
     public String select() {
-        String prefix = Prism.config.getString("prism.mysql.prefix");
-
         final String sql = "SELECT COUNT(*), a.action " + "FROM " + prefix + "data " + "INNER JOIN " + prefix
                 + "actions a ON a.action_id = " + prefix + "data.action_id " + where() + " " + "GROUP BY a.action_id "
                 + "ORDER BY COUNT(*) DESC";
@@ -77,7 +74,7 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
         sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
                 "Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "..."));
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery();
         ) {
@@ -95,7 +92,7 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
 
             }
         } catch (final SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            dataSource.handleDataSourceException(e);
         }
     }
 }

@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PrismDataSource;
 import org.apache.commons.lang.Validate;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.utils.IntPair;
 
 public class SQLIdMapQuery implements IdMapQuery {
     private String prefix;
-
+    private PrismDataSource dataSource;
     private static final String toIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state=? LIMIT 1;";
     private static final String toAllIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=?;";
     private static final String partialToAllIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state LIKE ?";
@@ -29,8 +29,10 @@ public class SQLIdMapQuery implements IdMapQuery {
     private static final String repair = "UPDATE <prefix>id_map SET block_id=?, block_subid=? WHERE block_id=?;";
     private static final String unauto = "ALTER TABLE <prefix>id_map AUTO_INCREMENT=?;";
 
-    public SQLIdMapQuery() {
-        prefix = Prism.config.getString("prism.mysql.prefix");
+    public SQLIdMapQuery(PrismDataSource dataSource) {
+        this.dataSource = dataSource;
+        prefix = dataSource.getPrefix();
+
     }
 
     // hehehehehehehe
@@ -47,7 +49,7 @@ public class SQLIdMapQuery implements IdMapQuery {
 
         String query = toMat.replace("<prefix>", prefix);
 
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement st = conn.prepareStatement(query)) {
                 st.setInt(1, block_id);
                 st.setInt(2, block_subid);
@@ -59,8 +61,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            Prism.log("Database connection error: " + e.getMessage());
-            e.printStackTrace();
+            dataSource.getLog().error("Database connection error: ", e);
         }
     }
 
@@ -79,7 +80,7 @@ public class SQLIdMapQuery implements IdMapQuery {
         if (state.equals("0"))
             state = "";
 
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement st = conn.prepareStatement(query)) {
                 st.setString(1, material);
                 st.setString(2, state);
@@ -91,8 +92,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            Prism.log("Database connection error: " + e.getMessage());
-            e.printStackTrace();
+            dataSource.getLog().error("Database connection error: ", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class SQLIdMapQuery implements IdMapQuery {
 
         String query = toAllIds.replace("<prefix>", prefix);
 
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement st = conn.prepareStatement(query)) {
                 st.setString(1, material);
                 try (ResultSet rs = st.executeQuery()) {
@@ -124,7 +124,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            Prism.log("Database connection error: " + e.getMessage());
+            dataSource.getLog().error("Database connection error: ", e);
             e.printStackTrace();
         }
     }
@@ -141,7 +141,7 @@ public class SQLIdMapQuery implements IdMapQuery {
 
         String query = partialToAllIds.replace("<prefix>", prefix);
 
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement st = conn.prepareStatement(query)) {
                 st.setString(1, material);
                 st.setString(2, stateLike);
@@ -159,7 +159,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            Prism.log("Database connection error: " + e.getMessage());
+            dataSource.getLog().error("Database connection error: ", e);
             e.printStackTrace();
         }
     }
@@ -179,7 +179,7 @@ public class SQLIdMapQuery implements IdMapQuery {
             query = repair.replace("<prefix>", prefix);
             int auto_id = mapAutoId(material, state);
 
-            try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+            try (Connection conn = dataSource.getConnection()) {
                 try (PreparedStatement st = conn.prepareStatement(query)) {
                     st.setInt(1, block_id);
                     st.setInt(2, block_subid);
@@ -197,11 +197,11 @@ public class SQLIdMapQuery implements IdMapQuery {
                     st.executeUpdate();
                 }
             } catch (final SQLException e) {
-                Prism.log("Database connection error: " + e.getMessage());
+                dataSource.getLog().error("Database connection error: ", e);
                 e.printStackTrace();
             }
         } else
-            try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+            try (Connection conn = dataSource.getConnection()) {
                 try (PreparedStatement st = conn.prepareStatement(query)) {
                     st.setString(1, material);
                     st.setString(2, state);
@@ -211,7 +211,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                     st.executeUpdate();
                 }
             } catch (final SQLException e) {
-                Prism.log("Database connection error: " + e.getMessage());
+                dataSource.getLog().error("Database connection error: ", e);
                 e.printStackTrace();
             }
     }
@@ -225,7 +225,7 @@ public class SQLIdMapQuery implements IdMapQuery {
         if (state.equals("0") || state.equals("[]"))
             state = "";
 
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
+        try (Connection conn = dataSource.getConnection()) {
             try (PreparedStatement st = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 st.setString(1, material);
                 st.setString(2, state);
@@ -235,7 +235,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 SQLWarning warning = st.getWarnings();
 
                 while (warning != null) {
-                    Prism.log("SQL Warning: " + warning.getMessage());
+                    dataSource.getLog().warn("SQL Warning: " + warning.getMessage());
                     warning = warning.getNextWarning();
                 }
 
@@ -244,7 +244,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                     int autoInc = rs.getInt(1);
 
                     if (!success) {
-                        Prism.log("Failed id map: material=" + material + ", " + "state=" + state);
+                        dataSource.getLog().info("Failed id map: material=" + material + ", " + "state=" + state);
                     }
 
                     return autoInc;
@@ -262,7 +262,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            Prism.log("Database connection error: " + e.getMessage());
+            dataSource.getLog().error("Database connection error: ", e);
             e.printStackTrace();
         }
 

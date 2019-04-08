@@ -13,16 +13,21 @@ import java.io.File;
  */
 public class DerbyPrismDataSource extends SQLPrismDataSource {
 
+    private File derby;
+
     public DerbyPrismDataSource(ConfigurationSection section) {
         super(section);
+    }
+
+    public void setFile() {
+        String path = Bukkit.getServer().getPluginManager().getPlugin("Prism").getDataFolder().getAbsolutePath();
+        String fileName = this.section.getString("filePath", "prism");
+        derby = new File(path, fileName);
     }
 
     @Override
     public DerbyPrismDataSource createDataSource() {
         org.apache.tomcat.jdbc.pool.DataSource pool;
-        String path = Bukkit.getServer().getPluginManager().getPlugin("Prism").getDataFolder().getAbsolutePath();
-        String fileName = this.section.getString("filePath", "prism");
-        File derby = new File(path, fileName);
         final String dns = "jdbc:derby:" + derby;
         pool = new org.apache.tomcat.jdbc.pool.DataSource();
         pool.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");

@@ -1,15 +1,7 @@
 package me.botsko.prism.database.mysql;
 
-import com.sun.media.jfxmedia.logging.Logger;
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.*;
 import me.botsko.prism.database.SQL.*;
 import org.bukkit.configuration.ConfigurationSection;
-
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.HashMap;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -45,5 +37,10 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         database = pool;
         createSettingsQuery();
         return this;
+    }
+
+    @Override
+    public void setFile() {
+        //not required here.
     }
 }

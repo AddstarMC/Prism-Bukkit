@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import me.botsko.prism.database.PrismDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -39,6 +40,7 @@ public class MaterialAliases {
 			items = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
 		}
 
+
 		if (items != null) {
 
 			// Load all item ids/aliases
@@ -56,7 +58,7 @@ public class MaterialAliases {
 
 		}
 		else
-			System.out.println("ERROR: The Elixr library was unable to load an internal item alias list.");
+			Prism.getPrismDataSource().getLog().error("ERROR: The Elixr library was unable to load an internal item alias list.");
 	}
 
 	public void initAllMaterials() {
@@ -64,7 +66,7 @@ public class MaterialAliases {
 	}
 
 	public void initMaterials(Material... materials) {
-        SQLIdMapQuery query = new SQLIdMapQuery();
+		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
 		for (Material m : materials) {
 			String matName = m.name().toLowerCase(Locale.ENGLISH);
@@ -138,19 +140,17 @@ public class MaterialAliases {
 			return toString().hashCode();
 		}
 	}
-
 	private final Map<String, String> matCache = new HashMap<>();
 	private final Map<String, String> idCache = new HashMap<>();
 	private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
 
 	private Set<IntPair> getIdsOf(Material material) {
 		Set<IntPair> ids = allIdsCache.get(material);
-
 		if (ids != null) {
 			return ids;
 		}
 
-        SQLIdMapQuery query = new SQLIdMapQuery();
+		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
 		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> {
 			allIdsCache.put(material, new HashSet<>(list));
@@ -189,7 +189,7 @@ public class MaterialAliases {
 		}
 
 		MaterialState result = new MaterialState();
-        SQLIdMapQuery query = new SQLIdMapQuery();
+		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
 		query.findMaterial(block_id, block_subid, (material, state) -> {
 			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
@@ -244,7 +244,7 @@ public class MaterialAliases {
 		}
 
 		IntPair result = new IntPair(0, 0);
-        SQLIdMapQuery query = new SQLIdMapQuery();
+		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
 		synchronized (this) {
@@ -288,7 +288,7 @@ public class MaterialAliases {
 
 		String stateLike = likeString.toString();
 
-        SQLIdMapQuery query = new SQLIdMapQuery();
+		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
 		Set<IntPair> ids = new HashSet<>();
 		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, list -> {

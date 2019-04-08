@@ -9,7 +9,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import javax.annotation.Nullable;
 
 abstract public class QueryBuilder {
-
+	protected PrismDataSource dataSource;
 	protected List<String> columns = new ArrayList<>();
 	protected List<String> conditions = new ArrayList<>();
 
@@ -27,11 +27,13 @@ abstract public class QueryBuilder {
 	protected QueryParameters parameters;
 	protected boolean shouldGroup;
 	protected String prefix;
+
 	/**
 	 * 
 	 */
-	public QueryBuilder() {
-		prefix = Prism.getPrismDataSource().getPrefix();
+	public QueryBuilder(PrismDataSource dataSource) {
+		this.dataSource = dataSource;
+		prefix = this.dataSource.getPrefix();
 		tableNameData = prefix + "data";
 		tableNameDataExtra = prefix + "data_extra";
 	}
@@ -48,17 +50,13 @@ abstract public class QueryBuilder {
 		this.shouldGroup = shouldGroup;
 
 		// Reset
-		columns = new ArrayList<String>();
-		conditions = new ArrayList<String>();
+		columns = new ArrayList<>();
+		conditions = new ArrayList<>();
 
 		String query = select() + where() + group() + order() + limit();
 
 		query += ";";
-
-		if (Prism.config.getBoolean("prism.debug")) {
-			Prism.debug(query);
-		}
-
+		dataSource.getLog().debug(query);
 		return query;
 
 	}

@@ -1,7 +1,6 @@
 package me.botsko.prism.database.sqlite;
 
 import me.botsko.prism.database.SQL.SQLPrismDataSource;
-import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -13,17 +12,22 @@ import java.io.File;
  */
 public class SQLitePrismDataSource extends SQLPrismDataSource {
 
+    private File sqLiteFile;
+
     public SQLitePrismDataSource(ConfigurationSection section) {
         super(section);
+    }
+
+    public void setFile() {
+        File dataFolder = Bukkit.getServer().getPluginManager().getPlugin("Prism").getDataFolder();
+        String fileName = this.section.getString("filePath", "prism.db");
+        sqLiteFile = new File(dataFolder, fileName);
     }
 
     @Override
     public SQLitePrismDataSource createDataSource() {
         org.apache.tomcat.jdbc.pool.DataSource pool;
-        File dataFolder = Bukkit.getServer().getPluginManager().getPlugin("Prism").getDataFolder();
-        String fileName = this.section.getString("filePath", "prism.db");
-        File db = new File(dataFolder, fileName);
-        final String dns = "jdbc:sqlite:" + db;
+        final String dns = "jdbc:sqlite:" + sqLiteFile;
         pool = new org.apache.tomcat.jdbc.pool.DataSource();
         pool.setDriverClassName("org.sqlite.JDBC");
         pool.setUrl(dns);

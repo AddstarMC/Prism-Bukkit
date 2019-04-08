@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.measurement.TimeTaken;
@@ -37,8 +38,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
     /**
      *
      */
-    public SQLSelectQueryBuilder() {
-        super();
+    public SQLSelectQueryBuilder(PrismDataSource dataSource) {
+        super(dataSource);
     }
 
     /**

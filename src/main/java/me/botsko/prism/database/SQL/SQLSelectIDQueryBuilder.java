@@ -1,6 +1,6 @@
 package me.botsko.prism.database.SQL;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectIDQuery;
 
 import java.sql.Connection;
@@ -20,8 +20,8 @@ public class SQLSelectIDQueryBuilder extends SQLSelectQueryBuilder implements Se
      */
     private String select = "";
 
-    public SQLSelectIDQueryBuilder() {
-        super();
+    public SQLSelectIDQueryBuilder(PrismDataSource dataSource) {
+        super(dataSource);
         setMin();
     }
 
@@ -42,7 +42,7 @@ public class SQLSelectIDQueryBuilder extends SQLSelectQueryBuilder implements Se
     public long execute() {
         long id = 0;
         try (
-                Connection connection = Prism.getPrismDataSource().getDataSource().getConnection();
+                Connection connection = dataSource.getDataSource().getConnection();
                 PreparedStatement s = connection.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery();
         ) {
@@ -50,7 +50,7 @@ public class SQLSelectIDQueryBuilder extends SQLSelectQueryBuilder implements Se
                 id = rs.getLong(1);
             }
         } catch (final SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            dataSource.handleDataSourceException(e);
         }
         return id;
     }

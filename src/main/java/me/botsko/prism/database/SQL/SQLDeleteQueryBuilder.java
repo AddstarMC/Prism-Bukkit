@@ -1,7 +1,7 @@
 package me.botsko.prism.database.SQL;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.PrismDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,8 +12,8 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
     /**
      *
      */
-    public SQLDeleteQueryBuilder() {
-        super();
+    public SQLDeleteQueryBuilder(PrismDataSource dataSource) {
+        super(dataSource);
     }
 
     /**
@@ -54,13 +54,13 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
         int total_rows_affected = 0;
         int cycle_rows_affected = 0;
         try (
-                Connection connection = Prism.getPrismDataSource().getDataSource().getConnection();
+                Connection connection = dataSource.getDataSource().getConnection();
                 Statement s = connection.createStatement();
         ) {
             cycle_rows_affected = s.executeUpdate(getQuery(parameters, shouldGroup));
             total_rows_affected += cycle_rows_affected;
         } catch (final SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            dataSource.handleDataSourceException(e);
         }
         return total_rows_affected;
     }

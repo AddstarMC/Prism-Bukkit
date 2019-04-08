@@ -1,9 +1,10 @@
 package me.botsko.prism.database.SQL;
 
-import com.sun.media.jfxmedia.logging.Logger;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.*;
+import org.apache.juli.logging.Log;
+import org.apache.juli.logging.LogFactory;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
@@ -15,7 +16,6 @@ import java.util.HashMap;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.HashMap;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -23,14 +23,23 @@ import java.util.HashMap;
  */
 public abstract class SQLPrismDataSource implements PrismDataSource {
 
+
+    private Log log;
     protected static org.apache.tomcat.jdbc.pool.DataSource database = null;
     private SettingsQuery settingsQuery = null;
     protected ConfigurationSection section;
 
     public SQLPrismDataSource(ConfigurationSection section) {
+        log = LogFactory.getLog("Prism");
         this.section = section;
         setPrefix(section.getString("prefix"));
+        setFile();
         createDataSource();
+    }
+
+    @Override
+    public Log getLog() {
+        return log;
     }
 
     public void setPrefix(String prefix) {
@@ -51,7 +60,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (database != null)
                 return database.getConnection();
         } catch (SQLException e) {
-            Logger.logMsg(3, "Could not retreive a connection");
+            log.info("Could not retreive a connection");
             return null;
         }
         return null;
@@ -98,7 +107,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             }
         } catch (final SQLException e1) {
         }
-        Prism.log("Database connection error: " + e.getMessage());
+        log.error("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
@@ -228,7 +237,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
             rs = s.getGeneratedKeys();
             if (rs.next()) {
-                Prism.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
+                log.info("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
                 Prism.prismActions.put(actionName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -264,7 +273,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             rs = s.executeQuery();
 
             while (rs.next()) {
-                Prism.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+                log.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
                 Prism.prismActions.put(rs.getString(2), rs.getInt(1));
             }
 
@@ -348,7 +357,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
             rs = s.getGeneratedKeys();
             if (rs.next()) {
-                Prism.log("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
+                log.info("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
                 Prism.prismWorlds.put(worldName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -382,27 +391,27 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public SelectQuery createSelectQuery() {
-        return new SQLSelectQueryBuilder();
+        return new SQLSelectQueryBuilder(this);
     }
 
     @Override
     public SelectIDQuery createSelectIDQuery() {
-        return new SQLSelectIDQueryBuilder();
+        return new SQLSelectIDQueryBuilder(this);
     }
 
     @Override
     public DeleteQuery createDeleteQuery() {
-        return new SQLDeleteQueryBuilder();
+        return new SQLDeleteQueryBuilder(this);
     }
 
     @Override
     public BlockReportQuery createBlockReportQuery() {
-        return new SQLBlockReportQueryBuilder();
+        return new SQLBlockReportQueryBuilder(this);
     }
 
     @Override
     public ActionReportQuery createActionReportQuery() {
-        return new SQLActionReportQueryBuilder();
+        return new SQLActionReportQueryBuilder(this);
     }
 
     @Override
@@ -415,6 +424,6 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public SelectProcessActionQuery createProcessQuery() {
-        return new SQLSelectProcessQuery();
+        return new SQLSelectProcessQuery(this);
     }
 }
