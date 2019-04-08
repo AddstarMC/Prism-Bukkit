@@ -27,7 +27,7 @@ public class PrismConfig extends ConfigBase {
 	public FileConfiguration getConfig() {
 
 		config = plugin.getConfig();
-
+        config.addDefault("datasource", "mysql");
 		// set defaults
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.preload-materials", false);

@@ -13,7 +13,6 @@ import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.listeners.*;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
-import me.botsko.prism.measurement.Metrics;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
@@ -24,6 +23,7 @@ import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.wands.Wand;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -146,18 +146,22 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 
 		if (getConfig().getBoolean("prism.allow-metrics")) {
-			try {
-				final Metrics metrics = new Metrics(this);
-				metrics.start();
-			}
-			catch (final IOException e) {
-				log("MCStats submission failed.");
-			}
+            Metrics metrics = new Metrics(this);
 		}
 
 		// init db
 		prismDataSource = PrismDatabaseFactory.createDataSource(config);
-		final Connection test_conn = prismDataSource.getConnection();
+        Connection test_conn = null;
+        if (prismDataSource != null) {
+            test_conn = prismDataSource.getConnection();
+            if (test_conn != null) {
+                try {
+                    test_conn.close();
+                } catch (final SQLException e) {
+                    prismDataSource.handleDataSourceException(e);
+                }
+            }
+        }
 		if (prismDataSource == null || test_conn == null) {
 			final String[] dbDisabled = new String[3];
 			dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
@@ -165,14 +169,6 @@ public class Prism extends JavaPlugin {
 			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
 			logSection(dbDisabled);
 			disablePlugin();
-		}
-		if (test_conn != null) {
-			try {
-				test_conn.close();
-			}
-			catch (final SQLException e) {
-				prismDataSource.handleDataSourceException(e);
-			}
 		}
 
 		if (isEnabled()) {

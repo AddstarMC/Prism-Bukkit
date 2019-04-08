@@ -20,7 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.database.mysql.MySQLIdMapQuery;
+import me.botsko.prism.database.SQL.SQLIdMapQuery;
 
 public class MaterialAliases {
 	/**
@@ -64,7 +64,7 @@ public class MaterialAliases {
 	}
 
 	public void initMaterials(Material... materials) {
-		MySQLIdMapQuery query = new MySQLIdMapQuery();
+        SQLIdMapQuery query = new SQLIdMapQuery();
 
 		for (Material m : materials) {
 			String matName = m.name().toLowerCase(Locale.ENGLISH);
@@ -150,7 +150,7 @@ public class MaterialAliases {
 			return ids;
 		}
 
-		MySQLIdMapQuery query = new MySQLIdMapQuery();
+        SQLIdMapQuery query = new SQLIdMapQuery();
 
 		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> {
 			allIdsCache.put(material, new HashSet<>(list));
@@ -189,7 +189,7 @@ public class MaterialAliases {
 		}
 
 		MaterialState result = new MaterialState();
-		MySQLIdMapQuery query = new MySQLIdMapQuery();
+        SQLIdMapQuery query = new SQLIdMapQuery();
 
 		query.findMaterial(block_id, block_subid, (material, state) -> {
 			result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
@@ -244,7 +244,7 @@ public class MaterialAliases {
 		}
 
 		IntPair result = new IntPair(0, 0);
-		MySQLIdMapQuery query = new MySQLIdMapQuery();
+        SQLIdMapQuery query = new SQLIdMapQuery();
 		String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
 		synchronized (this) {
@@ -288,7 +288,7 @@ public class MaterialAliases {
 
 		String stateLike = likeString.toString();
 
-		MySQLIdMapQuery query = new MySQLIdMapQuery();
+        SQLIdMapQuery query = new SQLIdMapQuery();
 
 		Set<IntPair> ids = new HashSet<>();
 		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, list -> {
