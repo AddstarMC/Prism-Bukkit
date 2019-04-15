@@ -1,6 +1,7 @@
 package me.botsko.prism.database.mysql;
 
 import me.botsko.prism.database.SQL.*;
+import me.botsko.prism.database.SelectQuery;
 import org.bukkit.configuration.ConfigurationSection;
 
 /**
@@ -9,8 +10,11 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class MySQLPrismDataSource extends SQLPrismDataSource {
 
+    private boolean nonStandardSQL;
+
     public MySQLPrismDataSource(ConfigurationSection section) {
         super(section);
+        nonStandardSQL = this.section.getBoolean("useNonStandardSql", true);
     }
 
 
@@ -42,5 +46,15 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
     @Override
     public void setFile() {
         //not required here.
+    }
+
+    @Override
+    public SelectQuery createSelectQuery() {
+        if (nonStandardSQL) {
+            return new MySQLSelectQueryBuilder(this);
+        } else {
+            return new SQLSelectQueryBuilder(this);
+        }
+
     }
 }
