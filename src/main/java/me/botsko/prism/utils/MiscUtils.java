@@ -4,11 +4,14 @@ import com.google.common.base.CaseFormat;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
-import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.appliers.PrismProcessType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -173,4 +176,37 @@ public class MiscUtils {
 			return ((Player) entity).getName();
 		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
 	}
+
+    public static TextComponent getPreviousButton() {
+        TextComponent textComponent = new TextComponent(" [<< Prev]");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
+                new TextComponent("Click to view the previous page")}));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
+        return textComponent;
+    }
+
+    public static BaseComponent getNextButton() {
+        TextComponent textComponent = new TextComponent("           ");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
+    private static BaseComponent getNextButtonComponent() {
+        TextComponent textComponent = new TextComponent("[Next >>]");
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
+                new TextComponent("Click to view the next page")}));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
+        return textComponent;
+    }
+
+    public static BaseComponent getPrevNextButtons() {
+        TextComponent textComponent = new TextComponent();
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getPreviousButton());
+        textComponent.addExtra(" | ");
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
 }
