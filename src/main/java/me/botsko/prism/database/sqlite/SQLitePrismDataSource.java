@@ -24,6 +24,12 @@ public class SQLitePrismDataSource extends SQLPrismDataSource {
         sqLiteFile = new File(dataFolder, fileName);
     }
 
+    public static void updateDefaultConfig(ConfigurationSection section) {
+        section.addDefault("username", "root");
+        section.addDefault("password", "");
+        section.addDefault("filePath", "prism.db");
+    }
+
     @Override
     public SQLitePrismDataSource createDataSource() {
         org.apache.tomcat.jdbc.pool.DataSource pool;

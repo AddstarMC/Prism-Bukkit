@@ -19,6 +19,11 @@ public class DerbyPrismDataSource extends SQLPrismDataSource {
         super(section);
     }
 
+    public static void updateDefaultConfig(ConfigurationSection section) {
+        section.addDefault("username", "root");
+        section.addDefault("password", "");
+        section.addDefault("filePath", "prism");
+    }
     public void setFile() {
         String path = Bukkit.getServer().getPluginManager().getPlugin("Prism").getDataFolder().getAbsolutePath();
         String fileName = this.section.getString("filePath", "prism");
@@ -34,6 +39,7 @@ public class DerbyPrismDataSource extends SQLPrismDataSource {
         pool.setUrl(dns);
         pool.setUsername(this.section.getString("username"));
         pool.setPassword(this.section.getString("password"));
+        //JDBC
         pool.setInitialSize(this.section.getInt("database.pool-initial-size"));
         pool.setMaxActive(this.section.getInt("database.max-pool-connections"));
         pool.setMaxIdle(this.section.getInt("database.max-idle-connections"));

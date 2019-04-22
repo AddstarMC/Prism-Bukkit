@@ -1,11 +1,13 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.database.SQL.SQLPrismDataSource;
 import me.botsko.prism.database.derby.DerbyPrismDataSource;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import me.botsko.prism.database.SQL.SQLPrismDataSourceUpdater;
 import me.botsko.prism.database.sqlite.SQLitePrismDataSource;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
 
@@ -17,6 +19,28 @@ public class PrismDatabaseFactory {
 
     private static PrismDataSource database = null;
 
+    public static void createDefaultConfig(Configuration configuration) {
+        ConfigurationSection mysql = configuration.createSection("prism.mysql");
+        MySQLPrismDataSource.updateDefaultConfig(mysql);
+        addTomcatJDBCDefaults(mysql);
+        ConfigurationSection derby = configuration.createSection("prism.derby");
+        DerbyPrismDataSource.updateDefaultConfig(derby);
+        addTomcatJDBCDefaults(derby);
+        ConfigurationSection sqlite = configuration.createSection("prism.sqlite");
+        SQLitePrismDataSource.updateDefaultConfig(sqlite);
+        addTomcatJDBCDefaults(sqlite);
+    }
+
+    private static void addTomcatJDBCDefaults(ConfigurationSection section) {
+        section.addDefault("database.max-pool-connections", 20);
+        section.addDefault("database.pool-initial-size", 10);
+        section.addDefault("database.max-idle-connections", 10);
+        section.addDefault("database.max-wait", 30000);
+        section.addDefault("database.max-failures-before-wait", 5);
+        section.addDefault("database.actions-per-insert-batch", 300);
+        // queue
+        section.addDefault("database.force-write-queue-on-shutdown", true);
+    }
     public static PrismDataSource createDataSource(Configuration  configuration) {
         if(configuration == null) return null;
         String dataSource = configuration.getString("dataSource","mysql");

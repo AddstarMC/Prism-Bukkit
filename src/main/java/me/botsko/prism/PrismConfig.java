@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import me.botsko.prism.database.PrismDatabaseFactory;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -35,23 +36,8 @@ public class PrismConfig extends ConfigBase {
 
 		config.addDefault("prism.allow-metrics", true);
 
-		// Mysql
-		ConfigurationSection section = config.createSection("prism.mysql");
-		section.addDefault("hostname", "127.0.0.1");
-		section.addDefault("username", "root");
-		section.addDefault("password", "");
-		section.addDefault("database", "minecraft");
-		section.addDefault("prefix", "prism_");
-		section.addDefault("port", "3306");
-		// JDBC Tomcat Database
-		section.addDefault("database.max-pool-connections", 20);
-		section.addDefault("database.pool-initial-size", 10);
-		section.addDefault("database.max-idle-connections", 10);
-		section.addDefault("database.max-wait", 30000);
-		section.addDefault("database.max-failures-before-wait", 5);
-		section.addDefault("database.actions-per-insert-batch", 300);
-		// queue
-		section.addDefault("database.force-write-queue-on-shutdown", true);
+		// Database
+		PrismDatabaseFactory.createDefaultConfig(config);
 
 		// pste.me sharing.
 		config.addDefault("prism.paste.enable", false);

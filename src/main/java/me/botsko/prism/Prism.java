@@ -321,7 +321,7 @@ public class Prism extends JavaPlugin {
 		// Load language files
 		// language = new Language( mc.getLang() );
 		// Load items db
-		items = new MaterialAliases(prismDataSource);
+		items = new MaterialAliases();
 	}
 
 	/**
