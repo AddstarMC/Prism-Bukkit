@@ -454,7 +454,8 @@ public class ActionsQuery {
 		try {
 			final DeleteQueryBuilder dqb = new DeleteQueryBuilder(plugin);
 			// Build conditions based off final args
-			final String query = dqb.getQuery(parameters, shouldGroup);
+			// shouldGroup does nothing for DeleteQueryBuilder, just use 'false' for clarity
+			final String query = dqb.getQuery(parameters, false);
 			conn = Prism.dbc();
 			if (conn != null && !conn.isClosed()) {
 				s = conn.createStatement();
