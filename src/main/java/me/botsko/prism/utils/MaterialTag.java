@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
 
 public class MaterialTag implements Tag<Material> {
@@ -135,9 +136,9 @@ public class MaterialTag implements Tag<Material> {
 		return materials.toString();
 	}
 
-	public static final MaterialTag DYES = new MaterialTag(Material.INK_SAC, Material.ROSE_RED, Material.CACTUS_GREEN,
+	public static final MaterialTag DYES = new MaterialTag(Material.INK_SAC, Material.RED_DYE, Material.GREEN_DYE,
 			Material.COCOA_BEANS, Material.LAPIS_LAZULI, Material.PURPLE_DYE, Material.CYAN_DYE,
-			Material.LIGHT_GRAY_DYE, Material.GRAY_DYE, Material.PINK_DYE, Material.LIME_DYE, Material.DANDELION_YELLOW,
+			Material.LIGHT_GRAY_DYE, Material.GRAY_DYE, Material.PINK_DYE, Material.LIME_DYE, Material.YELLOW_DYE,
 			Material.LIGHT_BLUE_DYE, Material.MAGENTA_DYE, Material.ORANGE_DYE, Material.BONE_MEAL);
 
 	public static final MaterialTag PLANTS = new MaterialTag(Material.GRASS, Material.FERN, Material.DEAD_BUSH,
@@ -177,5 +178,11 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag WALL_BANNERS = new MaterialTag(Tag.BANNERS).exclude(BANNERS);
 
-	public static final MaterialTag BEDS = new MaterialTag("_BED", MatchMode.SUFFIX);
+	public static final MaterialTag BEDS = new MaterialTag(Tag.BEDS);
+
+	@Override
+	public NamespacedKey getKey() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

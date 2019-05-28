@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Updater {
 		updates.add(this::v3_to_v4);
 		updates.add(this::v4_to_v5);
 		updates.add(this::v5_to_v6);
+		updates.add(this::v6_to_v7);
 	}
 
 	private void v1_to_v2() {
@@ -92,6 +94,51 @@ public class Updater {
 				catch (SQLException e) {
 				}
 		}
+	}
+	
+	private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
+		// this "backwards" insert matches the order in the prepared statement
+		st.setString(1, after);
+		st.setString(2, before);
+		st.addBatch();
+	}
+	
+	private void v6_to_v7() {
+
+		String prefix = Prism.config.getString("prism.mysql.prefix");
+		Connection conn = Prism.dbc();
+		PreparedStatement st = null;
+		
+		try {
+			st = conn.prepareStatement("UPDATE `" + prefix + " SET material = ? WHERE material = ?");
+
+			// old -> new
+			v7_batch_material(st, "CACTUS_GREEN", "GREEN_DYE");
+			v7_batch_material(st, "DANDELION_YELLOW", "YELLOW_DYE");
+			v7_batch_material(st, "ROSE_RED", "RED_DYE");
+			v7_batch_material(st, "SIGN", "OAK_SIGN");
+			v7_batch_material(st, "WALL_SIGN", "OAK_WALL_SIGN");
+			
+			st.executeBatch();
+		}
+		catch (SQLException e) {
+			plugin.handleDatabaseException(e);
+		}
+		finally {
+			if (st != null)
+				try {
+					st.close();
+				}
+				catch (SQLException e) {
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				}
+				catch (SQLException e) {
+				}
+		}
+
 	}
 
 	/**
