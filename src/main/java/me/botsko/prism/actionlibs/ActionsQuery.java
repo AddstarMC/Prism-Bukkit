@@ -154,45 +154,7 @@ public class ActionsQuery {
 	public int delete(QueryParameters parameters) {
 			final DeleteQuery dqb =  Prism.getPrismDataSource().createDeleteQuery();
 			dqb.setParameters(parameters);
-			dqb.setShouldGroup(shouldGroup);
+			dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
 			return dqb.execute();
 	}
-	/*public int delete(QueryParameters parameters) {
-		int total_rows_affected = 0, cycle_rows_affected;
-		Connection conn = null;
-		Statement s = null;
-		try {
-			final DeleteQueryBuilder dqb = new DeleteQueryBuilder(plugin);
-			// Build conditions based off final args
-			// shouldGroup does nothing for DeleteQueryBuilder, just use 'false' for clarity
-			final String query = dqb.getQuery(parameters, false);
-			conn = Prism.dbc();
-			if (conn != null && !conn.isClosed()) {
-				s = conn.createStatement();
-				cycle_rows_affected = s.executeUpdate(query);
-				total_rows_affected += cycle_rows_affected;
-			}
-			else {
-				Prism.log("Prism database error. Purge cannot continue.");
-			}
-		}
-		catch (final SQLException e) {
-			plugin.handleDatabaseException(e);
-		}
-		finally {
-			if (s != null)
-				try {
-					s.close();
-				}
-				catch (final SQLException ignored) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				}
-				catch (final SQLException ignored) {
-				}
-		}
-		return total_rows_affected;
-	}*/
 }

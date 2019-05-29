@@ -1,9 +1,11 @@
 package me.botsko.prism.database.SQL;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -71,5 +73,50 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
                 } catch (SQLException e) {
                 }
         }
+    }
+    private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
+        // this "backwards" insert matches the order in the prepared statement
+        st.setString(1, after);
+        st.setString(2, before);
+        st.addBatch();
+    }
+
+    @Override
+    public void v6_to_v7() {
+
+        Connection conn = dataSource.getConnection();
+        String prefix = dataSource.getPrefix();
+        PreparedStatement st = null;
+
+        try {
+            st = conn.prepareStatement("UPDATE `" + prefix + " SET material = ? WHERE material = ?");
+
+            // old -> new
+            v7_batch_material(st, "CACTUS_GREEN", "GREEN_DYE");
+            v7_batch_material(st, "DANDELION_YELLOW", "YELLOW_DYE");
+            v7_batch_material(st, "ROSE_RED", "RED_DYE");
+            v7_batch_material(st, "SIGN", "OAK_SIGN");
+            v7_batch_material(st, "WALL_SIGN", "OAK_WALL_SIGN");
+
+            st.executeBatch();
+        }
+        catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
+        }
+        finally {
+            if (st != null)
+                try {
+                    st.close();
+                }
+                catch (SQLException e) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                }
+                catch (SQLException e) {
+                }
+        }
+
     }
 }
