@@ -4,15 +4,25 @@ import com.google.common.base.CaseFormat;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
+import io.papermc.lib.PaperLib;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionMessage;
+import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PrismProcessType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import javax.xml.soap.Text;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,6 +140,45 @@ public class MiscUtils {
 					"Unable to paste results (" + ChatColor.YELLOW + up.getMessage() + ChatColor.RED + ").");
 		}
 	}
+	public static void sendClickableTPRecord(ActionMessage a, CommandSender player){
+		if(PaperLib.isPaper() || Bukkit.getServer().getName().equalsIgnoreCase("spigot")) {
+			String[] message = Prism.messenger.playerMsg(a.getMessage());
+			//line 1 holds the index so we set that as the highlighted for command click
+			TextComponent[] toSend = new TextComponent[message.length];
+			int i = 0;
+			for (String m : message) {
+				toSend[i] = new TextComponent(m);
+				i++;
+			}
+			toSend[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
+					new TextComponent("Click to  Teleport")}));
+			toSend[0].setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp " + a.getIndex()));
+			if(PaperLib.isPaper()) {
+				player.sendMessage(toSend);
+			}else{
+				player.spigot().sendMessage(toSend);
+			}
+		}else{
+			player.sendMessage(Prism.messenger.playerMsg(a.getMessage()));
+		}
+	}
+	public static void sendPageButtons(QueryResult results, CommandSender player){
+		if(PaperLib.isPaper()) {
+			if (results.getPage() == 1)
+				player.sendMessage(MiscUtils.getNextButton());
+			else if (results.getPage() < results.getTotal_pages())
+				player.sendMessage(MiscUtils.getPrevNextButtons());
+			else if (results.getPage() == results.getTotal_pages())
+				player.sendMessage(MiscUtils.getPreviousButton());
+		}else{
+			if (results.getPage() == 1)
+				player.spigot().sendMessage(MiscUtils.getNextButton());
+			else if (results.getPage() < results.getTotal_pages())
+				player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
+			else if (results.getPage() == results.getTotal_pages())
+				player.spigot().sendMessage(MiscUtils.getPreviousButton());
+		}
+	}
 
 	public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
 		final List<String> result = new ArrayList<String>();
@@ -169,7 +218,41 @@ public class MiscUtils {
 		if (entity == null)
 			return "unknown";
 		if (entity.getType() == EntityType.PLAYER)
-			return ((Player) entity).getName();
+			return entity.getName();
 		return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
 	}
+
+    public static TextComponent getPreviousButton() {
+        TextComponent textComponent = new TextComponent(" [<< Prev]");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
+				new TextComponent("Click to view the previous page")}));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
+        return textComponent;
+
+    }
+
+    public static TextComponent getNextButton() {
+        TextComponent textComponent = new TextComponent("           ");
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
+
+    private static BaseComponent getNextButtonComponent() {
+        TextComponent textComponent = new TextComponent("[Next >>]");
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
+                new TextComponent("Click to view the next page")}));
+        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
+        return textComponent;
+    }
+
+    public static BaseComponent getPrevNextButtons() {
+        TextComponent textComponent = new TextComponent();
+        textComponent.setColor(ChatColor.GRAY);
+        textComponent.addExtra(getPreviousButton());
+        textComponent.addExtra(" | ");
+        textComponent.addExtra(getNextButtonComponent());
+        return textComponent;
+    }
 }

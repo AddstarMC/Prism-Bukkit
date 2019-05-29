@@ -18,6 +18,10 @@ public class ActionMessage {
 	 */
 	private boolean showExtended = false;
 
+	public final int getIndex() {
+		return index;
+	}
+
 	/**
 	 * 
 	 */

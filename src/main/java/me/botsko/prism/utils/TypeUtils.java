@@ -40,10 +40,9 @@ public class TypeUtils {
 	/**
 	 * Replaces string template placeholders with values in a Hashtable. Text should
 	 * be formatted with %(key) type placeholders.
-	 * 
-	 * @param key
-	 * @param replacer
-	 * @return
+	 * @param msg the message
+	 * @param replacer the replacement Map
+	 * @return a String
 	 */
 	public static String getStringFromTemplate(String msg, Hashtable<String, String> replacer) {
 		if (msg != null && !replacer.isEmpty()) {

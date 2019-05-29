@@ -86,11 +86,12 @@ public class Prism extends JavaPlugin {
 	private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
 	// private ScheduledFuture<?> scheduledPurgeExecutor;
 	private PurgeManager purgeManager;
+	
+	private static Prism instance;
 
 	/**
 	 * Public
 	 */
-	public Prism prism;
 	public static Messenger messenger;
 	public static FileConfiguration config;
 	public static WorldEditPlugin plugin_worldEdit = null;
@@ -127,6 +128,10 @@ public class Prism extends JavaPlugin {
 	 * for boats
 	 */
 	public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+	
+	public Prism() {
+		instance = this;
+	}
 
 	/**
 	 * Enables the plugin and activates our player listeners
@@ -136,8 +141,6 @@ public class Prism extends JavaPlugin {
 
 		plugin_name = this.getDescription().getName();
 		plugin_version = this.getDescription().getVersion();
-
-		prism = this;
 
 		log("Initializing Prism " + plugin_version + ". By Viveleroi.");
 
@@ -530,7 +533,7 @@ public class Prism extends JavaPlugin {
 			recorder_tick_delay = 3;
 		}
 		// we schedule it once, it will reschedule itself
-		recordingTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new RecordingTask(prism),
+		recordingTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new RecordingTask(this),
 				recorder_tick_delay);
 	}
 
@@ -666,6 +669,10 @@ public class Prism extends JavaPlugin {
 	 */
 	public static void debug(Location loc) {
 		debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
+	}
+	
+	public static Prism getInstance() {
+		return instance;
 	}
 
 	/**

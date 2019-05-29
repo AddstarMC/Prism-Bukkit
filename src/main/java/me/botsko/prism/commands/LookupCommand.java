@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import io.papermc.lib.PaperLib;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -108,9 +109,10 @@ public class LookupCommand implements SubHandler {
 									am.showExtended();
 								}
 								am.setResultIndex(result_count);
-								player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
+								MiscUtils.sendClickableTPRecord(am,player);
 								result_count++;
 							}
+							MiscUtils.sendPageButtons(results,player);
 						}
 						else {
 							player.sendMessage(Prism.messenger

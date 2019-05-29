@@ -14,6 +14,7 @@ import me.botsko.prism.utils.MaterialTag;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -83,7 +84,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// signs
-			else if ((state.getType() == Material.SIGN || state.getType() == Material.WALL_SIGN)) {
+			else if (Tag.SIGNS.isTagged(state.getType())) {
 				final SignActionData signActionData = new SignActionData();
 				final Sign s = (Sign) state;
 				signActionData.lines = s.getLines();
@@ -91,7 +92,7 @@ public class BlockAction extends GenericAction {
 			}
 
 			// command block
-			else if ((state.getType() == Material.COMMAND_BLOCK)) {
+			else if (state.getType() == Material.COMMAND_BLOCK) {
 				final CommandBlock cmdblock = (CommandBlock) state;
 				final CommandActionData commandActionData = new CommandActionData();
 				commandActionData.command = cmdblock.getCommand();
@@ -122,7 +123,7 @@ public class BlockAction extends GenericAction {
 			else if (getMaterial() == Material.SPAWNER) {
 				actionData = gson().fromJson(data, SpawnerActionData.class);
 			}
-			else if (getMaterial() == Material.SIGN || getMaterial() == Material.WALL_SIGN) {
+			else if (Tag.SIGNS.isTagged(getMaterial())) {
 				actionData = gson().fromJson(data, SignActionData.class);
 			}
 			else if (getMaterial() == Material.COMMAND_BLOCK) {
@@ -430,7 +431,7 @@ public class BlockAction extends GenericAction {
 			 * Signs
 			 */
 			if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-					&& (getMaterial() == Material.SIGN || getMaterial() == Material.WALL_SIGN)
+					&& Tag.SIGNS.isTagged(getMaterial())
 					&& blockActionData instanceof SignActionData) {
 
 				final SignActionData s = (SignActionData) blockActionData;

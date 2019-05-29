@@ -38,19 +38,19 @@ public class BlockUtils {
 
 	private static MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
 			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
-			Material.LADDER, Material.WALL_SIGN, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
+			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
 			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL).append(Tag.RAILS)
-					.append(Tag.BUTTONS).append(MaterialTag.WALL_BANNERS);
+					.append(Tag.BUTTONS, MaterialTag.WALL_BANNERS, Tag.WALL_SIGNS);
 
 	private static MaterialTag fallsOffTop = new MaterialTag(Material.STICKY_PISTON, Material.DEAD_BUSH,
 			Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH, Material.REDSTONE,
-			Material.WHEAT, Material.SIGN, Material.LEVER, Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
+			Material.WHEAT, Material.LEVER, Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
 			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE, Material.NETHER_PORTAL, Material.REPEATER,
 			Material.PUMPKIN_STEM, Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART, Material.CARROTS,
 			Material.POTATOES, Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
 			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.COMPARATOR)
 
-					.append(Tag.DOORS).append(Tag.RAILS).append(Tag.SAPLINGS).append(MaterialTag.BANNERS)
+					.append(Tag.DOORS, Tag.RAILS, Tag.SAPLINGS, MaterialTag.BANNERS, Tag.STANDING_SIGNS)
 					.append(Tag.WOODEN_PRESSURE_PLATES).append(Tag.BUTTONS).append(Tag.CARPETS)
 					.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
 
@@ -492,9 +492,10 @@ public class BlockUtils {
 	private static final MaterialTag flowBreaks = new MaterialTag(MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS,
 			MaterialTag.CROPS, Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS, Tag.FLOWER_POTS).append(Material.CACTUS,
 					Material.REPEATER, Material.COMPARATOR, Material.REDSTONE, Material.LADDER, Material.LEVER,
-					Material.REDSTONE_TORCH, Material.SIGN, Material.WALL_SIGN, Material.STONE_PRESSURE_PLATE,
+					Material.REDSTONE_TORCH, Material.STONE_PRESSURE_PLATE,
 					Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.SUGAR_CANE,
-					Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE);
+					Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE)
+			.append(Tag.SIGNS);
 
 	/**
 	 * 

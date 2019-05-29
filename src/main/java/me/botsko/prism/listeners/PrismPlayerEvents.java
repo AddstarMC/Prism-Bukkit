@@ -22,6 +22,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Waterlogged;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -390,7 +391,7 @@ public class PrismPlayerEvents implements Listener {
 			}
 		}
 
-		if (event.isCancelled())
+		if (event.useInteractedBlock() == Result.DENY)
 			return;
 
 		// Doors, buttons, containers, etc may only be opened with a right-click

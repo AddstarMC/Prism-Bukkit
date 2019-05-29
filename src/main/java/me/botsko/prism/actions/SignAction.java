@@ -6,6 +6,7 @@ import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
@@ -80,12 +81,19 @@ public class SignAction extends GenericAction {
 	 */
 	public Material getSignType() {
 		if (actionData.sign_type != null) {
-			final Material m = Material.valueOf(actionData.sign_type);
+			final Material m = Material.matchMaterial(actionData.sign_type);
 			if (m != null) {
 				return m;
 			}
 		}
-		return Material.SIGN;
+
+		// Could be legacy (x - 1.13) wall sign
+		if(actionData.sign_type == "WALL_SIGN") {
+			return Material.OAK_WALL_SIGN;
+		}
+
+		// Either was legacy standing sign or unknown/invalid. Default standing sign.
+		return Material.OAK_SIGN;
 	}
 
 	/**
@@ -122,8 +130,7 @@ public class SignAction extends GenericAction {
 		final Block block = getWorld().getBlockAt(getLoc());
 
 		// Ensure a sign exists there (and no other block)
-		if (block.getType().equals(Material.AIR) || block.getType().equals(Material.SIGN)
-				|| block.getType().equals(Material.SIGN) || block.getType().equals(Material.WALL_SIGN)) {
+		if (block.getType().equals(Material.AIR) || Tag.SIGNS.isTagged(block.getType())) {
 
 			if (block.getType().equals(Material.AIR)) {
 				block.setType(getSignType());
