@@ -43,7 +43,12 @@ public class EntityAction extends GenericAction {
 
 		return null;
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return serializer != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(serializer);

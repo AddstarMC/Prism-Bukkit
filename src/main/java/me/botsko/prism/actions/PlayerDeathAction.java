@@ -42,7 +42,12 @@ public class PlayerDeathAction extends GenericAction {
 			}
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return cause!=null;
+	}
+
 	@Override
 	public String serialize() {
 		if(cause != null) {

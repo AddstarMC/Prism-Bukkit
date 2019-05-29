@@ -207,7 +207,7 @@ public class ReportCommand implements SubHandler {
 
 	/**
 	 * 
-	 * @param sender
+	 * @param call Sender
 	 */
 	protected void blockSumReports(final CallInfo call) {
 
@@ -275,16 +275,24 @@ public class ReportCommand implements SubHandler {
 									+ TypeUtils.padStringRight("Broken", colIntLen)));
 
 					while (rs.next()) {
-						MaterialState state = Prism.getItems().idsToMaterial(rs.getInt(1), 0);
-						BlockData block = state.asBlockData();
-						ItemStack item = state.asItem();
+						int blockId = rs.getInt(1);
+						MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
 
 						final String alias;
-						if (block != null) {
-							alias = Prism.getItems().getAlias(block.getMaterial(), block);
-						}
-						else {
-							alias = Prism.getItems().getAlias(item);
+						if (state == null) {
+							alias = "UnknownMaterial_BlockId_" + blockId;
+						} else {
+
+							BlockData block = state.asBlockData();
+							ItemStack item = state.asItem();
+
+							if (block != null) {
+								alias = Prism.getItems().getAlias(block.getMaterial(), block);
+							} else if (item != null) {
+								alias = Prism.getItems().getAlias(item);
+							} else {
+								alias = "InvalidState_" + state + "_BlockId_" + blockId;
+							}
 						}
 
 						final int placed = rs.getInt(2);
@@ -328,7 +336,7 @@ public class ReportCommand implements SubHandler {
 
 	/**
 	 * 
-	 * @param sender
+	 * @param call  Sender
 	 */
 	protected void actionTypeCountReport(final CallInfo call) {
 

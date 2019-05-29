@@ -56,7 +56,12 @@ public class SignAction extends GenericAction {
 			actionData = gson().fromJson(data, SignChangeActionData.class);
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);

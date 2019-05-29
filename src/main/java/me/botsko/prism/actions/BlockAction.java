@@ -103,7 +103,12 @@ public class BlockAction extends GenericAction {
 			setLoc(state.getLocation());
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);

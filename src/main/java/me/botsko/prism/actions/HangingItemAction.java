@@ -38,7 +38,12 @@ public class HangingItemAction extends GenericAction {
 			setLoc(hanging.getLocation().getBlock().getLocation());
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);

@@ -39,10 +39,11 @@ public interface Handler {
 	public abstract String getDisplayTime();
 
 	/**
-	 * @param display_time the display_time to set
+	 * @param epoch the display_time to set
 	 */
 	public abstract void setUnixEpoch(long epoch);
 
+	public boolean hasExtraData();
 	/**
 	 * 
 	 * @return
@@ -95,13 +96,13 @@ public interface Handler {
 
 	/**
 	 * 
-	 * @param id
+	 * @param material
 	 */
 	public abstract void setMaterial(Material material);
 
 	/**
 	 * 
-	 * @param id
+	 * @param state
 	 */
 	public abstract void setBlockData(BlockData state);
 
@@ -125,13 +126,13 @@ public interface Handler {
 
 	/**
 	 * 
-	 * @param id
+	 * @param material
 	 */
 	public abstract void setOldMaterial(Material material);
 
 	/**
 	 * 
-	 * @param id
+	 * @param state
 	 */
 	public abstract void setOldBlockData(BlockData state);
 

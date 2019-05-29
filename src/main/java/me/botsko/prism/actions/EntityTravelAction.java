@@ -62,7 +62,12 @@ public class EntityTravelAction extends GenericAction {
 			actionData.cause = cause.name().toLowerCase();
 		}
 	}
-	
+
+	@Override
+	public boolean hasExtraData() {
+		return actionData != null;
+	}
+
 	@Override
 	public String serialize() {
 		return gson().toJson(actionData);
