@@ -184,6 +184,8 @@ public class PrismPlayerEvents implements Listener {
 	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		if (!Prism.getIgnore().event("item-drop", event.getPlayer()))
 			return;
+		if(event.getItemDrop().getItemStack().getType() == Material.AIR)
+			return;
 		RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", event.getItemDrop().getItemStack(),
 				event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(),
 				event.getPlayer()));
