@@ -185,9 +185,4 @@ public class MaterialTag implements Tag<Material> {
 
 	public static final MaterialTag BEDS = new MaterialTag(Tag.BEDS);
 
-	@Override
-	public NamespacedKey getKey() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
