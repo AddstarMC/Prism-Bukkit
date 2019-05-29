@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import io.papermc.lib.PaperLib;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -15,6 +16,7 @@ import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,9 +110,10 @@ public class LookupCommand implements SubHandler {
 									am.showExtended();
 								}
 								am.setResultIndex(result_count);
-								player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
+								MiscUtils.sendClickableTPRecord(am,player);
 								result_count++;
 							}
+							MiscUtils.sendPageButtons(results,player);
 						}
 						else {
 							player.sendMessage(Prism.messenger
