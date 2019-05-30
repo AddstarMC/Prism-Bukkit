@@ -100,7 +100,9 @@ public class PrismEntityEvents implements Listener {
 			}
 		}
 	}
-
+	private boolean checkNotNullorAir(ItemStack stack){
+		return (stack == null || stack.getType().equals(Material.AIR));
+	}
 	/**
 	 * 
 	 * @param event
@@ -120,7 +122,7 @@ public class PrismEntityEvents implements Listener {
 					final InventoryHolder holder = (InventoryHolder) entity;
 
 					for (final ItemStack i : holder.getInventory().getContents()) {
-						if (i != null) {
+						if (checkNotNullorAir(i)) {
 							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
 									null, entity.getLocation(), name));
 						}
@@ -132,7 +134,7 @@ public class PrismEntityEvents implements Listener {
 					final LivingEntity living = (LivingEntity) entity;
 
 					for (final ItemStack i : living.getEquipment().getArmorContents()) {
-						if (i != null) {
+						if (checkNotNullorAir(i)) {
 							RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1,
 									null, entity.getLocation(), name));
 						}
@@ -142,12 +144,12 @@ public class PrismEntityEvents implements Listener {
 					ItemStack main = living.getEquipment().getItemInMainHand();
 					ItemStack off = living.getEquipment().getItemInOffHand();
 
-					if (main != null) {
+					if (checkNotNullorAir(main)) {
 						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", main, main.getAmount(), -1,
 								null, entity.getLocation(), name));
 					}
 
-					if (off != null) {
+					if (checkNotNullorAir(off)) {
 						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", off, off.getAmount(), -1,
 								null, entity.getLocation(), name));
 					}

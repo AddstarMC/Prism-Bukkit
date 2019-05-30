@@ -8,11 +8,7 @@ import me.botsko.prism.utils.MaterialTag;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.DoubleChest;
-import org.bukkit.block.Jukebox;
+import org.bukkit.block.*;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Chest.Type;
 import org.bukkit.entity.Entity;
@@ -23,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Sign;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +44,7 @@ public class PrismBlockEvents implements Listener {
 	 * If this is a container we need to trigger item removal for everything in it.
 	 * It's important we record this *after* the block break so the log shows what
 	 * really happened.
-	 * 
+	 * @param  callback A Consumer of itemstacks
 	 * @param block
 	 */
 	/*
@@ -376,7 +371,7 @@ public class PrismBlockEvents implements Listener {
 	public void onSignChange(final SignChangeEvent event) {
 		if (!Prism.getIgnore().event("sign-change", event.getPlayer()))
 			return;
-		if (event.getBlock().getState().getData() instanceof Sign) {
+		if (event.getBlock().getState() instanceof Sign) {
 			RecordingQueue.addToQueue(
 					ActionFactory.createSign("sign-change", event.getBlock(), event.getLines(), event.getPlayer()));
 		}
