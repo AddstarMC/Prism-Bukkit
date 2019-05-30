@@ -101,7 +101,7 @@ public class PrismEntityEvents implements Listener {
 		}
 	}
 	private boolean checkNotNullorAir(ItemStack stack){
-		return (stack == null || stack.getType().equals(Material.AIR));
+        return !(stack == null || stack.getType().equals(Material.AIR));
 	}
 	/**
 	 * 
