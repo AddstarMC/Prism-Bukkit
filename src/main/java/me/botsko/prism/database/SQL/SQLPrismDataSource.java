@@ -14,6 +14,8 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.*;
 
@@ -23,7 +25,7 @@ import java.sql.*;
  */
 public abstract class SQLPrismDataSource implements PrismDataSource {
 
-
+    protected String name = "unconfigured";
     private Log log;
     protected static org.apache.tomcat.jdbc.pool.DataSource database = null;
     private SettingsQuery settingsQuery = null;
@@ -36,7 +38,10 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
         setFile();
         createDataSource();
     }
-
+    @Nonnull
+    public String getName(){
+        return name;
+    }
     @Override
     public Log getLog() {
         return log;

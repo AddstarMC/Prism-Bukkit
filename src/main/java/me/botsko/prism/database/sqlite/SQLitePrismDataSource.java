@@ -16,6 +16,7 @@ public class SQLitePrismDataSource extends SQLPrismDataSource {
 
     public SQLitePrismDataSource(ConfigurationSection section) {
         super(section);
+        name = "sqlite";
     }
 
     public void setFile() {

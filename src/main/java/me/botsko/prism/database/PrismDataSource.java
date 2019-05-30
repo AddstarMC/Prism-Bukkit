@@ -15,6 +15,9 @@ import java.util.HashMap;
  * Created by benjamincharlton on 5/04/2019.
  */
 public interface PrismDataSource {
+
+    String getName();
+
     String getPrefix();
 
     PrismDataSource createDataSource();

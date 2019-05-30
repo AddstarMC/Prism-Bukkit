@@ -6,6 +6,7 @@ import me.botsko.prism.database.derby.DerbyPrismDataSource;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import me.botsko.prism.database.SQL.SQLPrismDataSourceUpdater;
 import me.botsko.prism.database.sqlite.SQLitePrismDataSource;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -80,6 +81,7 @@ public class PrismDatabaseFactory {
                 Prism.log("Attempting to configure datasource as " + null);
                 return null;
         }
+
     }
     public static PrismDataSourceUpdater createUpdater(Configuration configuration){
         if(configuration == null) return null;

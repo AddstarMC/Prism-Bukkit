@@ -15,6 +15,7 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
     public MySQLPrismDataSource(ConfigurationSection section) {
         super(section);
         nonStandardSQL = this.section.getBoolean("useNonStandardSql", true);
+        name = "mysql";
     }
 
     public static void updateDefaultConfig(ConfigurationSection section) {

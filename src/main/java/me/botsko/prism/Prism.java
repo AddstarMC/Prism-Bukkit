@@ -24,10 +24,7 @@ import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.wands.Wand;
 
 import org.bstats.bukkit.Metrics;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -44,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +67,7 @@ public class Prism extends JavaPlugin {
 	private static MaterialAliases items;
 	// private Language language = null;
 	private static Logger log = Logger.getLogger("Minecraft");
-	private final ArrayList<String> enabledPlugins = new ArrayList<String>();
+	private final ArrayList<String> enabledPlugins = new ArrayList<>();
 	private static ActionRegistry actionRegistry;
 	private static HandlerRegistry handlerRegistry;
 	private static Ignore ignore;
@@ -148,133 +146,138 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 
 		if (getConfig().getBoolean("prism.allow-metrics")) {
-            Metrics metrics = new Metrics(this);
+			Metrics metrics = new Metrics(this);
 		}
 
-		// init db
-		prismDataSource = PrismDatabaseFactory.createDataSource(config);
-        Connection test_conn = null;
-        if (prismDataSource != null) {
-            test_conn = prismDataSource.getConnection();
-            if (test_conn != null) {
-                try {
-                    test_conn.close();
-                } catch (final SQLException e) {
-                    prismDataSource.handleDataSourceException(e);
-                }
-            }
-        }
-		if (prismDataSource == null || test_conn == null) {
-			final String[] dbDisabled = new String[3];
-			dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
-			dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
-			dbDisabled[2] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
-			logSection(dbDisabled);
-			disablePlugin();
-		}
-
-		if (isEnabled()) {
-
-			// Info needed for setup, init these here
-			handlerRegistry = new HandlerRegistry();
-			actionRegistry = new ActionRegistry();
-
-			// Setup databases
-			prismDataSource.setupDatabase(actionRegistry);
-
-			// Cache world IDs
-			prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-			PlayerIdentification.cacheOnlinePlayerPrimaryKeys();
-
-			// ensure current worlds are added
-			for (final World w : getServer().getWorlds()) {
-				if (!Prism.prismWorlds.containsKey(w.getName())) {
-					prismDataSource.addWorldName(w.getName());
+		// init db async then call back to complete enable.
+		Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+			prismDataSource = PrismDatabaseFactory.createDataSource(config);
+			Connection test_conn = null;
+			if (prismDataSource != null) {
+				test_conn = prismDataSource.getConnection();
+				if (test_conn != null) {
+					try {
+						test_conn.close();
+					} catch (final SQLException e) {
+						prismDataSource.handleDataSourceException(e);
+					}
 				}
 			}
-
-			// Apply any updates
-			final Updater up = new Updater(this);
-			up.apply_updates();
-
-			eventTimer = new TimeTaken(this);
-			queueStats = new QueueStats();
-			ignore = new Ignore(this);
-
-			// Plugins we use
-			checkPluginDependancies();
-
-			// Assign event listeners
-			getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
-			getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
-			getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
-			getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
-			getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
-			getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
-
-			// InventoryMoveItem
-			if (getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert")) {
-				getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
+			if (prismDataSource == null || test_conn == null) {
+				final String[] dbDisabled = new String[4];
+				dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
+				dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
+				dbDisabled[2] = "If you're using Derby, you will need to ensure the library is on the servers Classpath.";
+				dbDisabled[3] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
+				logSection(dbDisabled);
+				Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
 			}
+			Bukkit.getScheduler().runTask(instance, ()-> instance.enabled());
+		});
+	}
+	private void enabled(){
+			if (isEnabled()) {
 
-			if (getConfig().getBoolean("prism.tracking.api.enabled")) {
-				getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
+				// Info needed for setup, init these here
+				handlerRegistry = new HandlerRegistry();
+				actionRegistry = new ActionRegistry();
+
+				// Setup databases
+				prismDataSource.setupDatabase(actionRegistry);
+
+				// Cache world IDs
+				prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
+				PlayerIdentification.cacheOnlinePlayerPrimaryKeys();
+
+				// ensure current worlds are added
+				for (final World w : getServer().getWorlds()) {
+					if (!Prism.prismWorlds.containsKey(w.getName())) {
+						prismDataSource.addWorldName(w.getName());
+					}
+				}
+
+				// Apply any updates
+				final Updater up = new Updater(this);
+				up.apply_updates();
+
+				eventTimer = new TimeTaken(this);
+				queueStats = new QueueStats();
+				ignore = new Ignore(this);
+
+				// Plugins we use
+				checkPluginDependancies();
+
+				// Assign event listeners
+				getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
+				getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+				getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
+
+				// InventoryMoveItem
+				if (getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert")) {
+					getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
+				}
+
+				if (getConfig().getBoolean("prism.tracking.api.enabled")) {
+					getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
+				}
+
+				// Assign listeners to our own events
+				// getServer().getPluginManager().registerEvents(new
+				// PrismRollbackEvents(), this);
+				getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
+
+				// Add commands
+				getCommand("prism").setExecutor(new PrismCommands(this));
+				getCommand("prism").setTabCompleter(new PrismCommands(this));
+				getCommand("what").setExecutor(new WhatCommand(this));
+
+				// Register official parameters
+				registerParameter(new ActionParameter());
+				registerParameter(new BeforeParameter());
+				registerParameter(new BlockParameter());
+				registerParameter(new EntityParameter());
+				registerParameter(new FlagParameter());
+				registerParameter(new IdParameter());
+				registerParameter(new KeywordParameter());
+				registerParameter(new PlayerParameter());
+				registerParameter(new RadiusParameter());
+				registerParameter(new SinceParameter());
+				registerParameter(new WorldParameter());
+
+				// Init re-used classes
+				messenger = new Messenger(plugin_name);
+				actionsQuery = new ActionsQuery(instance);
+				oreMonitor = new OreMonitor(instance);
+				useMonitor = new UseMonitor(instance);
+
+				// Init async tasks
+				actionRecorderTask();
+
+				// Init scheduled events
+				endExpiredQueryCaches();
+				endExpiredPreviews();
+				removeExpiredLocations();
+
+				// Delete old data based on config
+				launchScheduledPurgeManager();
+
+				// Keep watch on db connections, other sanity
+				launchInternalAffairs();
+
+				if (config.getBoolean("prism.preload-materials")) {
+					config.set("prism.preload-materials", false);
+					saveConfig();
+					Prism.log("Preloading materials - This will take a while!");
+
+					items.initAllMaterials();
+					Prism.log("Preloading complete!");
+				}
+
+				items.initMaterials(Material.AIR);
 			}
-
-			// Assign listeners to our own events
-			// getServer().getPluginManager().registerEvents(new
-			// PrismRollbackEvents(), this);
-			getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
-
-			// Add commands
-			getCommand("prism").setExecutor(new PrismCommands(this));
-			getCommand("prism").setTabCompleter(new PrismCommands(this));
-			getCommand("what").setExecutor(new WhatCommand(this));
-
-			// Register official parameters
-			registerParameter(new ActionParameter());
-			registerParameter(new BeforeParameter());
-			registerParameter(new BlockParameter());
-			registerParameter(new EntityParameter());
-			registerParameter(new FlagParameter());
-			registerParameter(new IdParameter());
-			registerParameter(new KeywordParameter());
-			registerParameter(new PlayerParameter());
-			registerParameter(new RadiusParameter());
-			registerParameter(new SinceParameter());
-			registerParameter(new WorldParameter());
-
-			// Init re-used classes
-			messenger = new Messenger(plugin_name);
-			actionsQuery = new ActionsQuery(this);
-			oreMonitor = new OreMonitor(this);
-			useMonitor = new UseMonitor(this);
-
-			// Init async tasks
-			actionRecorderTask();
-
-			// Init scheduled events
-			endExpiredQueryCaches();
-			endExpiredPreviews();
-			removeExpiredLocations();
-
-			// Delete old data based on config
-			launchScheduledPurgeManager();
-
-			// Keep watch on db connections, other sanity
-			launchInternalAffairs();
-
-			if (config.getBoolean("prism.preload-materials")) {
-				config.set("prism.preload-materials", false);
-				saveConfig();
-				Prism.log("Preloading materials - This will take a while!");
-
-				items.initAllMaterials();
-				Prism.log("Preloading complete!");
-			}
-
-			items.initMaterials(Material.AIR);
-		}
 	}
 
 	/**
@@ -344,7 +347,7 @@ public class Prism extends JavaPlugin {
 		final Plugin we = getServer().getPluginManager().getPlugin("WorldEdit");
 		if (we != null) {
 			plugin_worldEdit = (WorldEditPlugin) we;
-
+			enabledPlugins.add(we.getName());
 			// Easier and foolproof way.
 			try {
 				WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());

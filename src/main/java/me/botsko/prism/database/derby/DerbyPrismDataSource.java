@@ -1,5 +1,6 @@
 package me.botsko.prism.database.derby;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.SQL.SQLPrismDataSource;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import org.bukkit.Bukkit;
@@ -17,6 +18,7 @@ public class DerbyPrismDataSource extends SQLPrismDataSource {
 
     public DerbyPrismDataSource(ConfigurationSection section) {
         super(section);
+        name = "derby";
     }
 
     public static void updateDefaultConfig(ConfigurationSection section) {

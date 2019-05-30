@@ -33,13 +33,11 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
     }
 
     public void v5_to_v6() {
-        Connection conn = dataSource.getConnection();
         String prefix = dataSource.getPrefix();
-        Statement st = null;
         String query;
-
-        try {
-            st = conn.createStatement();
+        try (  Connection conn = dataSource.getConnection();
+                Statement st = conn.createStatement(); )
+        {
 
             // Key must be dropped before we can edit colum types
             query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix + "data_extra_ibfk_1`;";
@@ -61,17 +59,6 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
             /// END COPY PASTE
         } catch (SQLException e) {
             dataSource.handleDataSourceException(e);
-        } finally {
-            if (st != null)
-                try {
-                    st.close();
-                } catch (SQLException e) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                }
         }
     }
     private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
@@ -84,39 +71,21 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
     @Override
     public void v6_to_v7() {
 
-        Connection conn = dataSource.getConnection();
         String prefix = dataSource.getPrefix();
-        PreparedStatement st = null;
-
-        try {
-            st = conn.prepareStatement("UPDATE `" + prefix + "id_map SET material = ? WHERE material = ?");
-
-            // old -> new
+        String query = "UPDATE `" + prefix + "id_map` SET material = ? WHERE material = ?";
+        try(
+                Connection conn = dataSource.getConnection();
+                PreparedStatement st = conn.prepareStatement(query)
+        ) {
             v7_batch_material(st, "CACTUS_GREEN", "GREEN_DYE");
             v7_batch_material(st, "DANDELION_YELLOW", "YELLOW_DYE");
             v7_batch_material(st, "ROSE_RED", "RED_DYE");
             v7_batch_material(st, "SIGN", "OAK_SIGN");
             v7_batch_material(st, "WALL_SIGN", "OAK_WALL_SIGN");
-
             st.executeBatch();
         }
         catch (SQLException e) {
             dataSource.handleDataSourceException(e);
         }
-        finally {
-            if (st != null)
-                try {
-                    st.close();
-                }
-                catch (SQLException e) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                }
-                catch (SQLException e) {
-                }
-        }
-
     }
 }
