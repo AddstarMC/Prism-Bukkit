@@ -467,6 +467,22 @@ public class PrismPlayerEvents implements Listener {
 				case DARK_OAK_SAPLING:
 				case CARROT:
 				case POTATO:
+                case BEETROOT:
+                case BAMBOO_SAPLING:
+                case KELP:
+                case SWEET_BERRY_BUSH:
+                case SUGAR_CANE:
+                case TALL_GRASS:
+                case DANDELION:
+                case SUNFLOWER:
+                case PEONY:
+                case LILAC:
+                case ROSE_BUSH:
+                case ALLIUM:
+                case BLUE_ORCHID:
+                case ORANGE_TULIP:
+                case RED_TULIP:
+                case WHITE_TULIP:
 					recordBonemealEvent(block, hand, event.getBlockFace(), player);
 					break;
 				case RAIL:
