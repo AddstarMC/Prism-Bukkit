@@ -14,7 +14,7 @@ public class Updater {
 	/**
 	 * 
 	 */
-	protected final int currentDbSchemaVersion = 6;
+	protected final int currentDbSchemaVersion = 7;
 
 	private final ArrayList<Runnable> updates = new ArrayList<>(currentDbSchemaVersion);
 

@@ -171,6 +171,7 @@ public class Prism extends JavaPlugin {
 				dbDisabled[3] = "For help - try http://discover-prism.com/wiki/view/troubleshooting/";
 				logSection(dbDisabled);
 				Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+				return;
 			}
 			Bukkit.getScheduler().runTask(instance, ()-> instance.enabled());
 		});
@@ -690,18 +691,17 @@ public class Prism extends JavaPlugin {
 	 */
 	@Override
 	public void onDisable() {
-
 		if (getConfig().getBoolean("prism.database.force-write-queue-on-shutdown")) {
 			final QueueDrain drainer = new QueueDrain(this);
 			drainer.forceDrainQueue();
 		}
-
+		Bukkit.getScheduler().cancelTasks(this);
 		// Close prismDataSource connections when plugin disables
 		if (prismDataSource != null) {
 			prismDataSource.dispose();
 		}
 
 		log("Closing plugin.");
-
+		super.onDisable();
 	}
 }

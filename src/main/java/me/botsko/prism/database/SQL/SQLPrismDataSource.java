@@ -14,7 +14,6 @@ import java.sql.Statement;
 import java.util.HashMap;
 
 
-import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.*;
@@ -348,18 +347,14 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
         if (Prism.prismWorlds.containsKey(worldName))
             return;
-
-        Connection conn = null;
-        PreparedStatement s = null;
+        String query = "INSERT INTO `" + getPrefix() + "worlds` (world) VALUES (?)";
         ResultSet rs = null;
-        try {
-
-            conn = database.getConnection();
-            s = conn.prepareStatement("INSERT INTO " + getPrefix() + "worlds (world) VALUES (?)",
-                    Statement.RETURN_GENERATED_KEYS);
+        try (
+                Connection conn = database.getConnection();
+                PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+        ) {
             s.setString(1, worldName);
             s.executeUpdate();
-
             rs = s.getGeneratedKeys();
             if (rs.next()) {
                 log.info("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
@@ -367,30 +362,21 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
-        } catch (final SQLException e) {
+        } catch (final SQLException ignored) {
 
         } finally {
             if (rs != null)
                 try {
                     rs.close();
-                } catch (final SQLException e) {
-                }
-            if (s != null)
-                try {
-                    s.close();
-                } catch (final SQLException e) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
         }
     }
 
     @Override
     public void dispose() {
-        database.close();
+        if (database != null)
+            database.close();
         database = null;
     }
 
