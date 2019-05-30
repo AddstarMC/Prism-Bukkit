@@ -87,6 +87,8 @@ public class PrismDatabaseFactory {
         if(dataSource == null)return null;
         switch (dataSource) {
             case "mysql":
+            case "derby":
+            case "sqlite":
                 return new SQLPrismDataSourceUpdater((MySQLPrismDataSource) database);
             default:
                 return null;
