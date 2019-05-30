@@ -89,7 +89,7 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
         PreparedStatement st = null;
 
         try {
-            st = conn.prepareStatement("UPDATE `" + prefix + " SET material = ? WHERE material = ?");
+            st = conn.prepareStatement("UPDATE `" + prefix + "id_map SET material = ? WHERE material = ?");
 
             // old -> new
             v7_batch_material(st, "CACTUS_GREEN", "GREEN_DYE");

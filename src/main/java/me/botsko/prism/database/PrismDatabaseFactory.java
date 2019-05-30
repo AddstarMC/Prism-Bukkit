@@ -20,13 +20,31 @@ public class PrismDatabaseFactory {
     private static PrismDataSource database = null;
 
     public static void createDefaultConfig(Configuration configuration) {
-        ConfigurationSection mysql = configuration.createSection("prism.mysql");
+        ConfigurationSection mysql;
+        if(configuration.contains("prism.mysql"))
+        {
+            mysql = configuration.getConfigurationSection("prism.mysql");
+        }else {
+            mysql = configuration.createSection("prism.mysql");
+        }
         MySQLPrismDataSource.updateDefaultConfig(mysql);
         addTomcatJDBCDefaults(mysql);
-        ConfigurationSection derby = configuration.createSection("prism.derby");
+        ConfigurationSection derby;
+        if(configuration.contains("prism.derby"))
+        {
+            derby = configuration.getConfigurationSection("prism.derby");
+        }else {
+            derby = configuration.createSection("prism.derby");
+        }
         DerbyPrismDataSource.updateDefaultConfig(derby);
         addTomcatJDBCDefaults(derby);
-        ConfigurationSection sqlite = configuration.createSection("prism.sqlite");
+        ConfigurationSection sqlite;
+        if(configuration.contains("prism.sqlite"))
+        {
+            sqlite = configuration.getConfigurationSection("prism.sqlite");
+        }else {
+            sqlite = configuration.createSection("prism.sqlite");
+        }
         SQLitePrismDataSource.updateDefaultConfig(sqlite);
         addTomcatJDBCDefaults(sqlite);
     }
