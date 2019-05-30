@@ -86,8 +86,7 @@ public class ItemUtils {
 						setItemDamage(stack, Short.valueOf(parts[1]));
 
 						return stack;
-					}
-					catch (NumberFormatException e) {
+					} catch (NumberFormatException ignored) {
 					}
 
 				return new ItemStack(mat, 1);
@@ -294,8 +293,7 @@ public class ItemUtils {
 
 			if (effectA.hasFlicker() != effectB.hasFlicker())
 				return false;
-			if (effectA.hasTrail() != effectB.hasTrail())
-				return false;
+			return effectA.hasTrail() == effectB.hasTrail();
 
 		}
 
@@ -378,7 +376,7 @@ public class ItemUtils {
 	 */
 	public static String getItemFullNiceName(ItemStack item) {
 
-		String item_name = item.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' ');
+		StringBuilder item_name = new StringBuilder(item.getType().name().toLowerCase(Locale.ENGLISH).replace('_', ' '));
 
 		ItemMeta meta = null;
 
@@ -390,7 +388,7 @@ public class ItemUtils {
 		if (meta instanceof LeatherArmorMeta) {
 			LeatherArmorMeta lam = (LeatherArmorMeta) meta;
 			if (lam.getColor() != Bukkit.getItemFactory().getDefaultLeatherColor()) {
-				item_name += "dyed ";
+				item_name.append("dyed ");
 			}
 		}
 
@@ -398,14 +396,14 @@ public class ItemUtils {
 		else if (meta instanceof SkullMeta) {
 			SkullMeta skull = (SkullMeta) meta;
 			if (skull.hasOwner()) {
-				item_name += skull.getOwningPlayer().getName() + "'s ";
+				item_name.append(skull.getOwningPlayer().getName()).append("'s ");
 			}
 		}
 
 		// Written books
 		if (meta instanceof BookMeta) {
 			BookMeta book = (BookMeta) meta;
-			item_name += " '" + book.getTitle() + "' by " + book.getAuthor();
+			item_name.append(" '").append(book.getTitle()).append("' by ").append(book.getAuthor());
 		}
 
 		// Enchanted books
@@ -415,11 +413,10 @@ public class ItemUtils {
 				int i = 1;
 				Map<Enchantment, Integer> enchs = bookEnchantments.getStoredEnchants();
 				if (enchs.size() > 0) {
-					item_name += " with";
+					item_name.append(" with");
 					for (Map.Entry<Enchantment, Integer> ench : enchs.entrySet()) {
-						item_name += " "
-								+ EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue());
-						item_name += (i < enchs.size() ? ", " : "");
+						item_name.append(" ").append(EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue()));
+						item_name.append(i < enchs.size() ? ", " : "");
 						i++;
 					}
 				}
@@ -430,10 +427,10 @@ public class ItemUtils {
 		int i = 1;
 		Map<Enchantment, Integer> enchs = item.getEnchantments();
 		if (enchs.size() > 0) {
-			item_name += " with";
+			item_name.append(" with");
 			for (Map.Entry<Enchantment, Integer> ench : enchs.entrySet()) {
-				item_name += " " + EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue());
-				item_name += (i < enchs.size() ? ", " : "");
+				item_name.append(" ").append(EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue()));
+				item_name.append(i < enchs.size() ? ", " : "");
 				i++;
 			}
 		}
@@ -444,24 +441,24 @@ public class ItemUtils {
 			if (fireworkMeta.hasEffect()) {
 				FireworkEffect effect = fireworkMeta.getEffect();
 				if (!effect.getColors().isEmpty()) {
-					item_name += " " + effect.getColors().size() + " colors";
+					item_name.append(" ").append(effect.getColors().size()).append(" colors");
 					// int[] effectColors = new int[ effect.getColors().size() ];
 					// for (Color effectColor : effect.getColors()){
 					//// item_name += effectColor.
 					// }
 				}
 				if (!effect.getFadeColors().isEmpty()) {
-					item_name += " " + effect.getFadeColors().size() + " fade colors";
+					item_name.append(" ").append(effect.getFadeColors().size()).append(" fade colors");
 					// int[] fadeColors = new int[ effect.getColors().size() ];
 					// for (Color fadeColor : effect.getFadeColors()){
 					//// item_name += fadeColor.asRGB();
 					// };
 				}
 				if (effect.hasFlicker()) {
-					item_name += " flickering";
+					item_name.append(" flickering");
 				}
 				if (effect.hasTrail()) {
-					item_name += " with trail";
+					item_name.append(" with trail");
 				}
 			}
 		}
@@ -470,11 +467,11 @@ public class ItemUtils {
 		if (meta != null) {
 			// TODO: API fail here, report and check later
 			if (meta.hasDisplayName() && meta.getDisplayName().length() > 0) {
-				item_name += " named \"" + meta.getDisplayName() + "\"";
+				item_name.append(" named \"").append(meta.getDisplayName()).append("\"");
 			}
 		}
 
-		return item_name;
+		return item_name.toString();
 
 	}
 
@@ -482,7 +479,6 @@ public class ItemUtils {
 	 * Returns true if an item uses its damage value for something other than
 	 * durability.
 	 *
-	 * @param id
 	 * @return
 	 */
 	// THANK YOU 1.13!
@@ -503,10 +499,7 @@ public class ItemUtils {
 		}
 		// Has meta
 		ItemMeta im = item.getItemMeta();
-		if (im.hasDisplayName() || im.hasEnchants() || im.hasLore()) {
-			return false;
-		}
-		return true;
+		return !im.hasDisplayName() && !im.hasEnchants() && !im.hasLore();
 	}
 
 	/**

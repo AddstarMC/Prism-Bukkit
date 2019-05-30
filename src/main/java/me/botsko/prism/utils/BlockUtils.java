@@ -30,19 +30,19 @@ import org.bukkit.entity.EntityType;
 public class BlockUtils {
 
 	// TODO: 1.13 material change
-	private static MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.FIRE, Material.GRAVEL,
+	private static final MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.FIRE, Material.GRAVEL,
 			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK, Material.WATER);
 
-	private static MaterialTag fallingMaterials = new MaterialTag(Material.SAND, Material.GRAVEL, Material.ANVIL,
+	private static final MaterialTag fallingMaterials = new MaterialTag(Material.SAND, Material.GRAVEL, Material.ANVIL,
 			Material.DRAGON_EGG).append("_CONCRETE_POWDER", MatchMode.SUFFIX);
 
-	private static MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
+	private static final MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
 			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
 			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
 			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL).append(Tag.RAILS)
 					.append(Tag.BUTTONS, MaterialTag.WALL_BANNERS, Tag.WALL_SIGNS);
 
-	private static MaterialTag fallsOffTop = new MaterialTag(Material.STICKY_PISTON, Material.DEAD_BUSH,
+	private static final MaterialTag fallsOffTop = new MaterialTag(Material.STICKY_PISTON, Material.DEAD_BUSH,
 			Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH, Material.REDSTONE,
 			Material.WHEAT, Material.LEVER, Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
 			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE, Material.NETHER_PORTAL, Material.REPEATER,
@@ -54,7 +54,7 @@ public class BlockUtils {
 					.append(Tag.WOODEN_PRESSURE_PLATES).append(Tag.BUTTONS).append(Tag.CARPETS)
 					.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
 
-	private static EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
+	private static final EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
 			Material.LAVA);
 
 	public static String dataString(BlockData data) {
@@ -85,7 +85,7 @@ public class BlockUtils {
 	 */
 	public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, Location loc,
 			int radius) {
-		final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<BlockStateChange>();
+		final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
 		if (loc != null && radius > 0 && materials != null && materials.length > 0) {
 			final int x1 = loc.getBlockX();
 			final int y1 = loc.getBlockY();
@@ -173,7 +173,7 @@ public class BlockUtils {
 	 * @return the list of blocks directly above the block
 	 */
 	public static ArrayList<Block> findFallingBlocksAboveBlock(final Block block) {
-		ArrayList<Block> falling_blocks = new ArrayList<Block>();
+		ArrayList<Block> falling_blocks = new ArrayList<>();
 
 		// Get block above
 		Block above = block.getRelative(BlockFace.UP);
@@ -181,9 +181,7 @@ public class BlockUtils {
 			falling_blocks.add(above);
 			ArrayList<Block> fallingBlocksAbove = findFallingBlocksAboveBlock(above);
 			if (fallingBlocksAbove.size() > 0) {
-				for (Block _temp : fallingBlocksAbove) {
-					falling_blocks.add(_temp);
-				}
+				falling_blocks.addAll(fallingBlocksAbove);
 			}
 		}
 		return falling_blocks;
@@ -209,7 +207,7 @@ public class BlockUtils {
 	 */
 	public static ArrayList<Block> findSideFaceAttachedBlocks(final Block block) {
 
-		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
+		ArrayList<Block> detaching_blocks = new ArrayList<>();
 
 		// Check each of the four sides
 		Block blockToCheck = block.getRelative(BlockFace.EAST);
@@ -279,7 +277,7 @@ public class BlockUtils {
 	 * @return
 	 */
 	public static ArrayList<Block> findTopFaceAttachedBlocks(final Block block) {
-		ArrayList<Block> detaching_blocks = new ArrayList<Block>();
+		ArrayList<Block> detaching_blocks = new ArrayList<>();
 
 		// Find any block on top of this that will detach
 		Block blockToCheck = block.getRelative(BlockFace.UP);
@@ -289,9 +287,7 @@ public class BlockUtils {
 				// For cactus and sugar cane, we can even have blocks above
 				ArrayList<Block> additionalBlocks = findTopFaceAttachedBlocks(blockToCheck);
 				if (!additionalBlocks.isEmpty()) {
-					for (Block _temp : additionalBlocks) {
-						detaching_blocks.add(_temp);
-					}
+					detaching_blocks.addAll(additionalBlocks);
 				}
 			}
 		}
@@ -330,7 +326,7 @@ public class BlockUtils {
 	 */
 	public static ArrayList<Entity> findHangingEntities(final Block block) {
 
-		ArrayList<Entity> entities = new ArrayList<Entity>();
+		ArrayList<Entity> entities = new ArrayList<>();
 
 		Entity[] foundEntities = block.getChunk().getEntities();
 		if (foundEntities.length > 0) {
@@ -418,8 +414,8 @@ public class BlockUtils {
 	}
 
 	public static Block getSiblingForDoubleLengthBlock(BlockState block) {
-		/**
-		 * Handle special double-length blocks
+		/*
+		  Handle special double-length blocks
 		 */
 		BlockData data = block.getBlockData();
 
@@ -517,15 +513,14 @@ public class BlockUtils {
 
 	/**
 	 * @param currBlock
-	 * @param toBeFelled
 	 */
 	public static ArrayList<Block> findConnectedBlocksOfType(Material type, Block currBlock,
 			ArrayList<Location> foundLocations) {
 
-		ArrayList<Block> foundBlocks = new ArrayList<Block>();
+		ArrayList<Block> foundBlocks = new ArrayList<>();
 
 		if (foundLocations == null) {
-			foundLocations = new ArrayList<Location>();
+			foundLocations = new ArrayList<>();
 		}
 
 		foundLocations.add(currBlock.getLocation());
@@ -590,7 +585,7 @@ public class BlockUtils {
 	 * @param id2
 	 * @return
 	 */
-	private static EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
+	private static final EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
 	static {
 		baseMaterials.put(Material.GRASS_BLOCK, Material.DIRT);
 		baseMaterials.put(Material.MYCELIUM, Material.DIRT);

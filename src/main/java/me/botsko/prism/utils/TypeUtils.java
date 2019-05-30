@@ -82,7 +82,7 @@ public class TypeUtils {
 	 * @return
 	 */
 	public static String join(List<String> s, String delimiter) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator<?> iter = s.iterator();
 		while (iter.hasNext()) {
 			buffer.append(iter.next());

@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 public class PrismCustomBlockEvent extends Event {
 
@@ -68,6 +69,7 @@ public class PrismCustomBlockEvent extends Event {
     /**
      * Required by bukkit for proper event handling.
      */
+    @NotNull
     @Override
     public HandlerList getHandlers() {
         return handlers;

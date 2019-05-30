@@ -1,6 +1,5 @@
 package me.botsko.prism.database.SQL;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 
@@ -35,8 +34,8 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
     public void v5_to_v6() {
         String prefix = dataSource.getPrefix();
         String query;
-        try (  Connection conn = dataSource.getConnection();
-                Statement st = conn.createStatement(); )
+        try (Connection conn = dataSource.getConnection();
+             Statement st = conn.createStatement())
         {
 
             // Key must be dropped before we can edit colum types

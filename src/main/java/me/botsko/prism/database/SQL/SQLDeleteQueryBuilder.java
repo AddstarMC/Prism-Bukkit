@@ -55,7 +55,7 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
         int cycle_rows_affected = 0;
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
-                Statement s = connection.createStatement();
+                Statement s = connection.createStatement()
         ) {
             cycle_rows_affected = s.executeUpdate(getQuery(parameters, shouldGroup));
             total_rows_affected += cycle_rows_affected;

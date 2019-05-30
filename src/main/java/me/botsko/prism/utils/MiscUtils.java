@@ -21,8 +21,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
-import javax.xml.soap.Text;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,14 +84,13 @@ public class MiscUtils {
 		if (from != null)
 			try {
 				return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase());
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException ignored) {
 			}
 		return fallback;
 	}
 
 	public static String niceName(String in) {
-		String parts[] = in.replace('_', ' ').trim().split("", 2);
+		String[] parts = in.replace('_', ' ').trim().split("", 2);
 		return parts[0].toUpperCase() + parts[1].toLowerCase();
 	}
 
@@ -163,25 +160,27 @@ public class MiscUtils {
 		}
 	}
 	public static void sendPageButtons(QueryResult results, CommandSender player){
-		if(PaperLib.isPaper()) {
-			if (results.getPage() == 1)
-				player.sendMessage(MiscUtils.getNextButton());
-			else if (results.getPage() < results.getTotal_pages())
-				player.sendMessage(MiscUtils.getPrevNextButtons());
-			else if (results.getPage() == results.getTotal_pages())
-				player.sendMessage(MiscUtils.getPreviousButton());
-		}else{
-			if (results.getPage() == 1)
-				player.spigot().sendMessage(MiscUtils.getNextButton());
-			else if (results.getPage() < results.getTotal_pages())
-				player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
-			else if (results.getPage() == results.getTotal_pages())
-				player.spigot().sendMessage(MiscUtils.getPreviousButton());
+		if (player instanceof Player) {
+			if (PaperLib.isPaper()) {
+				if (results.getPage() == 1)
+					player.sendMessage(MiscUtils.getNextButton());
+				else if (results.getPage() < results.getTotal_pages())
+					player.sendMessage(MiscUtils.getPrevNextButtons());
+				else if (results.getPage() == results.getTotal_pages())
+					player.sendMessage(MiscUtils.getPreviousButton());
+			} else {
+				if (results.getPage() == 1)
+					player.spigot().sendMessage(MiscUtils.getNextButton());
+				else if (results.getPage() < results.getTotal_pages())
+					player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
+				else if (results.getPage() == results.getTotal_pages())
+					player.spigot().sendMessage(MiscUtils.getPreviousButton());
+			}
 		}
 	}
 
 	public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
-		final List<String> result = new ArrayList<String>();
+		final List<String> result = new ArrayList<>();
 		if (caseSensitive) {
 			for (final String option : options) {
 				if (option.startsWith(start))

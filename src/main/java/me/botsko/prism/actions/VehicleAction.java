@@ -74,26 +74,28 @@ public class VehicleAction extends GenericAction {
 	@Override
 	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
 		Entity vehicle = null;
-		if (vehicleName.equals("powered minecart")) {
-			vehicle = getWorld().spawn(getLoc(), PoweredMinecart.class);
-		}
-		else if (vehicleName.equals("storage minecart")) {
-			vehicle = getWorld().spawn(getLoc(), StorageMinecart.class);
-		}
-		else if (vehicleName.equals("tnt minecart")) {
-			vehicle = getWorld().spawn(getLoc(), ExplosiveMinecart.class);
-		}
-		else if (vehicleName.equals("spawner minecart")) {
-			vehicle = getWorld().spawn(getLoc(), SpawnerMinecart.class);
-		}
-		else if (vehicleName.equals("minecart hopper")) {
-			vehicle = getWorld().spawn(getLoc(), HopperMinecart.class);
-		}
-		else if (vehicleName.equals("minecart")) {
-			vehicle = getWorld().spawn(getLoc(), Minecart.class);
-		}
-		else if (vehicleName.equals("boat")) {
-			vehicle = getWorld().spawn(getLoc(), Boat.class);
+		switch (vehicleName) {
+			case "powered minecart":
+				vehicle = getWorld().spawn(getLoc(), PoweredMinecart.class);
+				break;
+			case "storage minecart":
+				vehicle = getWorld().spawn(getLoc(), StorageMinecart.class);
+				break;
+			case "tnt minecart":
+				vehicle = getWorld().spawn(getLoc(), ExplosiveMinecart.class);
+				break;
+			case "spawner minecart":
+				vehicle = getWorld().spawn(getLoc(), SpawnerMinecart.class);
+				break;
+			case "minecart hopper":
+				vehicle = getWorld().spawn(getLoc(), HopperMinecart.class);
+				break;
+			case "minecart":
+				vehicle = getWorld().spawn(getLoc(), Minecart.class);
+				break;
+			case "boat":
+				vehicle = getWorld().spawn(getLoc(), Boat.class);
+				break;
 		}
 		if (vehicle != null) {
 			return new ChangeResult(ChangeResultType.APPLIED, null);

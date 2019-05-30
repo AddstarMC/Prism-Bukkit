@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
+import java.util.Objects;
 
 public class WandCommand implements SubHandler {
 
@@ -91,17 +92,17 @@ public class WandCommand implements SubHandler {
 
 		String wandOn = "";
 		String item_name = "";
-		String parameters = "";
+		StringBuilder parameters = new StringBuilder();
 		if (item_material != null) {
 			item_name = Prism.getItems().getAlias(item_material, null);
 			wandOn += " on a " + item_name;
 		}
 
 		for (int i = (isInspect ? 1 : 2); i < call.getArgs().length; i++) {
-			if (parameters.isEmpty()) {
-				parameters += " using:" + ChatColor.GRAY;
+			if (parameters.length() == 0) {
+				parameters.append(" using:" + ChatColor.GRAY);
 			}
-			parameters += " " + call.getArg(i);
+			parameters.append(" ").append(call.getArg(i));
 		}
 
 		if (!ItemUtils.isAcceptableWand(item_material)) {
@@ -113,8 +114,8 @@ public class WandCommand implements SubHandler {
 		boolean enabled = false;
 		Wand wand = null;
 
-		/**
-		 * Inspector wand
+		/*
+		  Inspector wand
 		 */
 		if (type.equalsIgnoreCase("i") || type.equalsIgnoreCase("inspect")) {
 			if (!call.getPlayer().hasPermission("prism.lookup")
@@ -122,7 +123,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
 				return;
 			}
-			if (oldwand != null && oldwand instanceof InspectorWand) {
+			if (oldwand instanceof InspectorWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Inspection wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
 			}
@@ -134,8 +135,8 @@ public class WandCommand implements SubHandler {
 			}
 		}
 
-		/**
-		 * Profile wand
+		/*
+		  Profile wand
 		 */
 		else if (type.equalsIgnoreCase("p") || type.equalsIgnoreCase("profile")) {
 			if (!call.getPlayer().hasPermission("prism.lookup")
@@ -143,7 +144,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
 				return;
 			}
-			if (oldwand != null && oldwand instanceof ProfileWand) {
+			if (oldwand instanceof ProfileWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Profile wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
 			}
@@ -155,8 +156,8 @@ public class WandCommand implements SubHandler {
 			}
 		}
 
-		/**
-		 * Rollback wand
+		/*
+		  Rollback wand
 		 */
 		else if (type.equalsIgnoreCase("rollback") || type.equalsIgnoreCase("rb")) {
 			if (!call.getPlayer().hasPermission("prism.rollback")
@@ -164,7 +165,7 @@ public class WandCommand implements SubHandler {
 				call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
 				return;
 			}
-			if (oldwand != null && oldwand instanceof RollbackWand) {
+			if (oldwand instanceof RollbackWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Rollback wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
 			}
@@ -176,8 +177,8 @@ public class WandCommand implements SubHandler {
 			}
 		}
 
-		/**
-		 * Restore wand
+		/*
+		  Restore wand
 		 */
 		else if (type.equalsIgnoreCase("restore") || type.equalsIgnoreCase("rs")) {
 			if (!call.getPlayer().hasPermission("prism.restore")
@@ -186,7 +187,7 @@ public class WandCommand implements SubHandler {
 				return;
 			}
 			// If disabling this one
-			if (oldwand != null && oldwand instanceof RestoreWand) {
+			if (oldwand instanceof RestoreWand) {
 				call.getPlayer().sendMessage(Prism.messenger
 						.playerHeaderMsg("Restore wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
 			}
@@ -198,8 +199,8 @@ public class WandCommand implements SubHandler {
 			}
 		}
 
-		/**
-		 * Off
+		/*
+		  Off
 		 */
 		else if (type.equalsIgnoreCase("off")) {
 			call.getPlayer().sendMessage(Prism.messenger
@@ -216,10 +217,9 @@ public class WandCommand implements SubHandler {
 		if (enabled) {
 
 			if (item_material == null) {
-				if (mode == "block") {
+				if (Objects.equals(mode, "block")) {
 					item_material = Material.SPRUCE_LOG;
-				}
-				else if (mode == "item"){
+				} else if (Objects.equals(mode, "item")) {
 					item_material = Material.STICK;
 				}
 				else {

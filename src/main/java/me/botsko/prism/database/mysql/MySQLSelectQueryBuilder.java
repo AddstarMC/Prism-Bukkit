@@ -1,36 +1,8 @@
 package me.botsko.prism.database.mysql;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionType;
-import me.botsko.prism.actionlibs.MatchRule;
-import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actionlibs.RecordingManager;
-import me.botsko.prism.actions.Handler;
-import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.QueryBuilder;
 import me.botsko.prism.database.SQL.SQLSelectQueryBuilder;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.measurement.TimeTaken;
-import me.botsko.prism.players.PlayerIdentification;
-import me.botsko.prism.utils.IntPair;
-import me.botsko.prism.utils.ItemUtils;
-import me.botsko.prism.utils.MaterialAliases.MaterialState;
 import me.botsko.prism.utils.TypeUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class MySQLSelectQueryBuilder extends SQLSelectQueryBuilder {
 

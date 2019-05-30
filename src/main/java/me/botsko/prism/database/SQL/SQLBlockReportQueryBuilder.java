@@ -35,8 +35,8 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
         this.shouldGroup = shouldGroup;
 
         // Reset
-        columns = new ArrayList<String>();
-        conditions = new ArrayList<String>();
+        columns = new ArrayList<>();
+        conditions = new ArrayList<>();
 
         String query = select();
 
@@ -85,7 +85,7 @@ public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements
         try (
                 Connection conn = dataSource.getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
-                ResultSet rs = s.executeQuery();
+                ResultSet rs = s.executeQuery()
 
         ) {
             sender.sendMessage(Prism.messenger

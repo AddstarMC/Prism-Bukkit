@@ -7,8 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.Objects;
 
 /**
  * Created for the Ark: Survival Evolved.
@@ -34,7 +33,7 @@ public class PurgeCommand implements SubHandler {
             call.getSender().sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg("Pool String: " + ChatColor.WHITE + plugin.getSchedulePool().toString()));
         }else{
-            if (call.getArgs()[0] == "execute"){
+            if (Objects.equals(call.getArgs()[0], "execute")) {
                 call.getSender().sendMessage(
                         Prism.messenger.playerHeaderMsg("Prism"  + ChatColor.GRAY + " Executing Purge Run"));
                 Bukkit.getScheduler().runTaskAsynchronously(plugin,plugin.getPurgeManager());

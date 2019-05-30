@@ -71,7 +71,6 @@ public class FlagParameter implements PrismParameterHandler {
 						if (sharePlayer.equals(sender.getName())) {
 							throw new IllegalArgumentException("You can't share lookup results with yourself!");
 						}
-						@SuppressWarnings("deprecation")
 						final Player shareWith = Bukkit.getServer().getPlayer(sharePlayer);
 						if (shareWith != null) {
 							query.addSharedPlayer(shareWith);
@@ -103,7 +102,7 @@ public class FlagParameter implements PrismParameterHandler {
 			flag = Flag.valueOf(name);
 		}
 		catch (final IllegalArgumentException ex) {
-			final List<String> completions = new ArrayList<String>();
+			final List<String> completions = new ArrayList<>();
 			for (final Flag possibleFlag : Flag.values()) {
 				final String flagName = possibleFlag.toString();
 				if (flagName.startsWith(name)) {
@@ -128,7 +127,7 @@ public class FlagParameter implements PrismParameterHandler {
 				prefix = prefix + value.substring(0, end) + ",";
 			}
 			partialName = partialName.toLowerCase();
-			final List<String> completions = new ArrayList<String>();
+			final List<String> completions = new ArrayList<>();
 			for (final Player player : Bukkit.getOnlinePlayers()) {
 				if (player.getName().toLowerCase().startsWith(partialName))
 					completions.add(prefix + player.getName());

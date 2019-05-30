@@ -10,7 +10,7 @@ public class QueryResult {
 	/**
 	 * 
 	 */
-	protected List<Handler> actionResults = new ArrayList<Handler>();
+	protected List<Handler> actionResults = new ArrayList<>();
 
 	/**
 	 * 

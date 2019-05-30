@@ -39,8 +39,7 @@ public class EntityUtils {
 		if (uuidOrName != null) {
 			try {
 				return UUID.fromString(uuidOrName);
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException ignored) {
 			}
 
 			@SuppressWarnings("deprecation")

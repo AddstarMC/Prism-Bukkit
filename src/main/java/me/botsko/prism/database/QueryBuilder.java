@@ -3,7 +3,6 @@ package me.botsko.prism.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 import javax.annotation.Nullable;

@@ -149,15 +149,11 @@ public class PrismPlayerEvents implements Listener {
 		RecordingQueue.addToQueue(ActionFactory.createPlayer("player-quit", event.getPlayer(), null));
 
 		// Remove any active wands for this player
-		if (Prism.playersWithActiveTools.containsKey(event.getPlayer().getName())) {
-			Prism.playersWithActiveTools.remove(event.getPlayer().getName());
-		}
+		Prism.playersWithActiveTools.remove(event.getPlayer().getName());
 		// Remove any active previews for this player, even though they would
 		// expire
 		// naturally.
-		if (plugin.playerActivePreviews.containsKey(event.getPlayer().getName())) {
-			plugin.playerActivePreviews.remove(event.getPlayer().getName());
-		}
+		plugin.playerActivePreviews.remove(event.getPlayer().getName());
 	}
 
 	/**
@@ -667,7 +663,7 @@ public class PrismPlayerEvents implements Listener {
 
 			// Pull the wand in use
 			final Wand wand = Prism.playersWithActiveTools.get(player.getName());
-			if (wand != null && wand instanceof ProfileWand) {
+			if (wand instanceof ProfileWand) {
 
 				wand.playerRightClick(player, entity);
 

@@ -1,11 +1,8 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.measurement.TimeTaken;
-
-import java.util.HashMap;
 
 /**
  * A Select Query returns a query that selects a data set.

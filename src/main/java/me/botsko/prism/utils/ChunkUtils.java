@@ -74,7 +74,7 @@ public class ChunkUtils {
 		int blockMaxX = blockMinX + 15;
 		int blockMaxZ = blockMinZ + 15;
 
-		ArrayList<Block> blocks = new ArrayList<Block>();
+		ArrayList<Block> blocks = new ArrayList<>();
 
 		// MinX -> MinZ
 		for (int x = blockMinX; x < blockMaxX; x++) {

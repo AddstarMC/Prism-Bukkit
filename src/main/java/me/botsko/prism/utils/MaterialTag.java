@@ -7,10 +7,13 @@ import java.util.Set;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.jetbrains.annotations.NotNull;
 
 public class MaterialTag implements Tag<Material> {
 	private final EnumSet<Material> materials;
 	private final NamespacedKey key = null;
+
+	@NotNull
 	@Override
 	public NamespacedKey getKey() {
 		return key;
@@ -126,13 +129,14 @@ public class MaterialTag implements Tag<Material> {
 		return this;
 	}
 
+	@NotNull
 	@Override
 	public Set<Material> getValues() {
 		return materials;
 	}
 
 	@Override
-	public boolean isTagged(Material material) {
+	public boolean isTagged(@NotNull Material material) {
 		return materials.contains(material);
 	}
 

@@ -29,7 +29,7 @@ public class PreprocessArgs {
 
 		// Check for player or sender
 		Player player = null;
-		if (sender != null && sender instanceof Player) {
+		if (sender instanceof Player) {
 			player = (Player) sender;
 		}
 
@@ -47,8 +47,8 @@ public class PreprocessArgs {
 		final HashMap<String, PrismParameterHandler> registeredParams = Prism.getParameters();
 
 		// Store names of matched params/handlers
-		final Set<String> foundArgsNames = new HashSet<String>();
-		final List<MatchedParam> foundArgsList = new ArrayList<MatchedParam>();
+		final Set<String> foundArgsNames = new HashSet<>();
+		final List<MatchedParam> foundArgsList = new ArrayList<>();
 
 		// Iterate all command arguments
 		if (args == null) {
@@ -75,8 +75,8 @@ public class PreprocessArgs {
 			return null;
 		}
 
-		/**
-		 * Call default method for handlers *not* used
+		/*
+		  Call default method for handlers *not* used
 		 */
 		if (useDefaults) {
 			for (final Entry<String, PrismParameterHandler> entry : registeredParams.entrySet()) {
@@ -86,8 +86,8 @@ public class PreprocessArgs {
 			}
 		}
 
-		/**
-		 * Send arguments to parameter handlers
+		/*
+		  Send arguments to parameter handlers
 		 */
 		for (final MatchedParam matchedParam : foundArgsList) {
 			try {
@@ -156,7 +156,6 @@ public class PreprocessArgs {
 			// can use the tab-complete
 			// feature of minecraft. Using p: prevents it.
 
-			@SuppressWarnings("deprecation")
 			final Player autoFillPlayer = plugin.getServer().getPlayer(arg);
 			if (autoFillPlayer != null) {
 				MatchRule match = MatchRule.INCLUDE;

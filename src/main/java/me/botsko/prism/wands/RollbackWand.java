@@ -48,7 +48,6 @@ public class RollbackWand extends QueryWandBase {
 	/**
 	 * 
 	 * @param player
-	 * @param block
 	 */
 	protected void rollback(Player player, Location loc) {
 

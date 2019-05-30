@@ -1,10 +1,5 @@
 package me.botsko.prism.purge;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectIDQuery;
 

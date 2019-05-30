@@ -71,7 +71,7 @@ public class OreMonitor {
 			threshold = 1;
 
 			// identify all ore blocks on same Y axis in x/z direction
-			final ArrayList<Block> matchingBlocks = new ArrayList<Block>();
+			final ArrayList<Block> matchingBlocks = new ArrayList<>();
 			final ArrayList<Block> foundores = findNeighborBlocks(block.getType(), block, matchingBlocks);
 			if (!foundores.isEmpty()) {
 
@@ -90,43 +90,40 @@ public class OreMonitor {
 				final String msg = getOreColor(block) + player.getName() + " found " + count + " "
 						+ getOreNiceName(block) + " " + light + "% light";
 
-				/**
-				 * Run the lookup itself in an async task so the lookup query isn't done on the
-				 * main thread
+				/*
+				  Run the lookup itself in an async task so the lookup query isn't done on the
+				  main thread
 				 */
-				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-					@Override
-					public void run() {
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
-						// check if block placed
-						boolean wasplaced = false;
+					// check if block placed
+					boolean wasplaced = false;
 
-						// Build params
-						final QueryParameters params = new QueryParameters();
-						params.setWorld(player.getWorld().getName());
-						params.addSpecificBlockLocation(block.getLocation());
-						params.addActionType("block-place");
+					// Build params
+					final QueryParameters params = new QueryParameters();
+					params.setWorld(player.getWorld().getName());
+					params.addSpecificBlockLocation(block.getLocation());
+					params.addActionType("block-place");
 
-						final ActionsQuery aq = new ActionsQuery(plugin);
-						final QueryResult results = aq.lookup(params, player);
-						if (!results.getActionResults().isEmpty()) {
-							wasplaced = true;
+					final ActionsQuery aq = new ActionsQuery(plugin);
+					final QueryResult results = aq.lookup(params, player);
+					if (!results.getActionResults().isEmpty()) {
+						wasplaced = true;
+					}
+
+					if (!wasplaced) {
+
+						// Alert staff
+						plugin.alertPlayers(null, TypeUtils.colorize(msg));
+
+						// Log to console
+						if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
+							Prism.log(msg);
 						}
 
-						if (!wasplaced) {
-
-							// Alert staff
-							plugin.alertPlayers(null, TypeUtils.colorize(msg));
-
-							// Log to console
-							if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
-								Prism.log(msg);
-							}
-
-							// Log to commands
-							List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
-							MiscUtils.dispatchAlert(msg, commands);
-						}
+						// Log to commands
+						List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
+						MiscUtils.dispatchAlert(msg, commands);
 					}
 				});
 			}

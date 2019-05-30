@@ -30,7 +30,7 @@ public class UseMonitor {
 	/**
 	 * 
 	 */
-	private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<String, Integer>();
+	private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<>();
 
 	/**
 	 * 
@@ -90,10 +90,7 @@ public class UseMonitor {
 			return false;
 
 		// Ignore certain ranks
-		if (player.hasPermission("prism.bypass-use-alerts"))
-			return false;
-
-		return true;
+		return !player.hasPermission("prism.bypass-use-alerts");
 	}
 
 	/**
@@ -174,11 +171,6 @@ public class UseMonitor {
 	 * counts too early but that just means staff will see extra warnings.
 	 */
 	public void resetEventsQueue() {
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
-			@Override
-			public void run() {
-				countedEvents = new ConcurrentHashMap<String, Integer>();
-			}
-		}, 7000L, 7000L);
+		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> countedEvents = new ConcurrentHashMap<>(), 7000L, 7000L);
 	}
 }

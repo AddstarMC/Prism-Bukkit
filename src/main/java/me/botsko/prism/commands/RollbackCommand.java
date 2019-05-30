@@ -46,45 +46,38 @@ public class RollbackCommand implements SubHandler {
 
 		// determine if defaults were used
 		final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-		String defaultsReminder = "";
+		StringBuilder defaultsReminder = new StringBuilder();
 		if (!defaultsUsed.isEmpty()) {
-			defaultsReminder += " using defaults:";
+			defaultsReminder.append(" using defaults:");
 			for (final String d : defaultsUsed) {
-				defaultsReminder += " " + d;
+				defaultsReminder.append(" ").append(d);
 			}
 		}
 
 		call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
 
-		/**
-		 * Run the query itself in an async task so the lookup query isn't done on the
-		 * main thread
+		/*
+		  Run the query itself in an async task so the lookup query isn't done on the
+		  main thread
 		 */
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-			@Override
-			public void run() {
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
-				final ActionsQuery aq = new ActionsQuery(plugin);
-				final QueryResult results = aq.lookup(parameters, call.getSender());
-				if (!results.getActionResults().isEmpty()) {
+			final ActionsQuery aq = new ActionsQuery(plugin);
+			final QueryResult results = aq.lookup(parameters, call.getSender());
+			if (!results.getActionResults().isEmpty()) {
 
-					call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Beginning rollback..."));
+				call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Beginning rollback..."));
 
-					// Perform rollback on the main thread
-					plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-						@Override
-						public void run() {
-							final Rollback rb = new Rollback(plugin, call.getSender(), results.getActionResults(),
-									parameters, new PrismApplierCallback());
-							rb.apply();
-						}
-					});
+				// Perform rollback on the main thread
+				plugin.getServer().getScheduler().runTask(plugin, () -> {
+					final Rollback rb = new Rollback(plugin, call.getSender(), results.getActionResults(),
+							parameters, new PrismApplierCallback());
+					rb.apply();
+				});
 
-				}
-				else {
-					call.getSender().sendMessage(
-							Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first."));
-				}
+			} else {
+				call.getSender().sendMessage(
+						Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first."));
 			}
 		});
 	}

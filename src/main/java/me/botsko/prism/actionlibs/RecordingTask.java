@@ -169,7 +169,7 @@ public class RecordingTask implements Runnable {
 
 				Prism.debug("Beginning batch insert from queue. " + System.currentTimeMillis());
 
-				final ArrayList<Handler> extraDataQueue = new ArrayList<Handler>();
+				final ArrayList<Handler> extraDataQueue = new ArrayList<>();
 				conn = Prism.getPrismDataSource().getConnection();
 
 				// Handle dead connections

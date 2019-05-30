@@ -36,7 +36,7 @@ final public class PurgeManager implements Runnable {
 
 		if (!purgeRules.isEmpty()) {
 
-			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
+			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
 
 			for (final String purgeArgs : purgeRules) {
 
@@ -63,10 +63,10 @@ final public class PurgeManager implements Runnable {
 					purge_tick_delay = 20;
 				}
 
-				/**
-				 * We're going to cycle through the param rules, one rule at a time in a single
-				 * async task. This task will reschedule itself when each purge cycle has
-				 * completed and records remain
+				/*
+				  We're going to cycle through the param rules, one rule at a time in a single
+				  async task. This task will reschedule itself when each purge cycle has
+				  completed and records remain
 				 */
 				Prism.log(
 						"Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");

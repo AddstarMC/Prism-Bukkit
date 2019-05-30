@@ -1,5 +1,6 @@
 package me.botsko.prism.commandlibs;
 
+import org.jetbrains.annotations.NotNull;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -33,7 +34,7 @@ public class Executor implements CommandExecutor, TabCompleter {
 	/**
 	 * 
 	 */
-	public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<String, SubCommand>();
+	public final java.util.Map<String, SubCommand> subcommands = new LinkedHashMap<>();
 
 	/**
 	 * 
@@ -50,7 +51,7 @@ public class Executor implements CommandExecutor, TabCompleter {
 	 * 
 	 */
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String commandLabel, @NotNull String[] args) {
 
 		// Set player
 		Player player = null;
@@ -165,7 +166,7 @@ public class Executor implements CommandExecutor, TabCompleter {
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command cmd, String s, String[] args) {
+	public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String s, @NotNull String[] args) {
 		// Set player
 		Player player = null;
 		if (sender instanceof Player) {

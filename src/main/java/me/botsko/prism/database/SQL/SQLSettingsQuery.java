@@ -1,12 +1,9 @@
 package me.botsko.prism.database.SQL;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.database.AbstractSettingsQuery;
 import me.botsko.prism.database.SettingsQuery;
-import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import org.bukkit.entity.Player;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

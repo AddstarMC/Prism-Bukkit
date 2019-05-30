@@ -7,10 +7,6 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 
 
@@ -89,9 +85,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             rebuildDataSource();
             if (database != null) {
                 final Connection conn = createDataSource().getConnection();
-                if (conn != null && !conn.isClosed()) {
-                    return true;
-                }
+                return conn != null && !conn.isClosed();
             }
         }
         return false;
@@ -109,7 +103,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (attemptToRescueConnection(e)) {
                 return;
             }
-        } catch (final SQLException e1) {
+        } catch (final SQLException ignored) {
         }
         log.error("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
@@ -213,12 +207,12 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (st != null)
                 try {
                     st.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (conn != null)
                 try {
                     conn.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
         }
     }
@@ -246,23 +240,23 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
-        } catch (final SQLException e) {
+        } catch (final SQLException ignored) {
 
         } finally {
             if (rs != null)
                 try {
                     rs.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (s != null)
                 try {
                     s.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (conn != null)
                 try {
                     conn.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
         }
     }
@@ -289,17 +283,17 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (rs != null)
                 try {
                     rs.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (s != null)
                 try {
                     s.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (conn != null)
                 try {
                     conn.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
         }
     }
@@ -325,17 +319,17 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (rs != null)
                 try {
                     rs.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (s != null)
                 try {
                     s.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
             if (conn != null)
                 try {
                     conn.close();
-                } catch (final SQLException e) {
+                } catch (final SQLException ignored) {
                 }
         }
     }
@@ -351,7 +345,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
         ResultSet rs = null;
         try (
                 Connection conn = database.getConnection();
-                PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+                PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, worldName);
             s.executeUpdate();

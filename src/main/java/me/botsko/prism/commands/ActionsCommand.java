@@ -38,7 +38,7 @@ public class ActionsCommand implements SubHandler {
 		sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Actions List ---"));
 
 		// Build short list
-		final ArrayList<String> shortNames = new ArrayList<String>();
+		final ArrayList<String> shortNames = new ArrayList<>();
 		final TreeMap<String, ActionType> actions = Prism.getActionRegistry().getRegisteredAction();
 		for (final Entry<String, ActionType> entry : actions.entrySet()) {
 			if (entry.getKey().contains("prism"))
@@ -51,22 +51,22 @@ public class ActionsCommand implements SubHandler {
 		Collections.sort(shortNames);
 
 		// Build display of shortname list
-		String actionList = "";
+		StringBuilder actionList = new StringBuilder();
 		int i = 1;
 		for (final String shortName : shortNames) {
-			actionList += shortName + (i < shortNames.size() ? ", " : "");
+			actionList.append(shortName).append(i < shortNames.size() ? ", " : "");
 			i++;
 		}
 		sender.sendMessage(Prism.messenger
 				.playerMsg(ChatColor.LIGHT_PURPLE + "Action Aliases:" + ChatColor.WHITE + " " + actionList));
 
 		// Build display of full actions
-		actionList = "";
+		actionList = new StringBuilder();
 		i = 1;
 		for (final Entry<String, ActionType> entry : actions.entrySet()) {
 			if (entry.getKey().contains("prism"))
 				continue;
-			actionList += entry.getKey() + (i < actions.size() ? ", " : "");
+			actionList.append(entry.getKey()).append(i < actions.size() ? ", " : "");
 			i++;
 		}
 		sender.sendMessage(Prism.messenger

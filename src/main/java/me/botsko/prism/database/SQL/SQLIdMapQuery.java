@@ -36,7 +36,7 @@ public class SQLIdMapQuery implements IdMapQuery {
     }
 
     // hehehehehehehe
-    private static final void noop() {
+    private static void noop() {
     }
 
     public void findMaterial(int block_id, int block_subid, BiConsumer<String, String> success) {

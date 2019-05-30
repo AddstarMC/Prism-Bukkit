@@ -109,7 +109,7 @@ public class PrismEntityEvents implements Listener {
 	 */
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
 	public void onEntityDeath(final EntityDeathEvent event) {
-		final Entity entity = event.getEntity();
+		final LivingEntity entity = event.getEntity();
 
 		// Mob Death
 		if (!(entity instanceof Player)) {
@@ -130,8 +130,7 @@ public class PrismEntityEvents implements Listener {
 				}
 
 				// Equipment
-				if (entity instanceof LivingEntity) {
-					final LivingEntity living = (LivingEntity) entity;
+				final LivingEntity living = entity;
 
 					for (final ItemStack i : living.getEquipment().getArmorContents()) {
 						if (checkNotNullorAir(i)) {
@@ -153,7 +152,7 @@ public class PrismEntityEvents implements Listener {
 						RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", off, off.getAmount(), -1,
 								null, entity.getLocation(), name));
 					}
-				}
+
 			}
 
 			EntityDamageEvent damageEvent = entity.getLastDamageCause();
@@ -362,7 +361,7 @@ public class PrismEntityEvents implements Listener {
 		}
 		
 		if(e instanceof ArmorStand && event instanceof PlayerInteractAtEntityEvent) {
-			Vector at = ((PlayerInteractAtEntityEvent)event).getClickedPosition();
+			Vector at = event.getClickedPosition();
 			ArmorStand stand = (ArmorStand) e;
 
 			if(hand.getType() != Material.AIR) {
@@ -597,8 +596,7 @@ public class PrismEntityEvents implements Listener {
 		Player player = null;
 		try {
 			player = Bukkit.getPlayer(UUID.fromString(value));
-		}
-		catch (Exception e2) {
+		} catch (Exception ignored) {
 		}
 
 		// Track the hanging item break
@@ -824,10 +822,8 @@ public class PrismEntityEvents implements Listener {
 			// work properly
 			final Block b2 = block;
 			final String source = name;
-			be.forEachItem(block, (i, s) -> {
-				RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
-						b2.getLocation(), source));
-			});
+			be.forEachItem(block, (i, s) -> RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+					b2.getLocation(), source)));
 			// be.logItemRemoveFromDestroyedContainer( name, block );
 			RecordingQueue.addToQueue(ActionFactory.createBlock(action, block, source));
 			// look for relationships
@@ -841,7 +837,7 @@ public class PrismEntityEvents implements Listener {
 
 		while (initial != null) {
 			if (initial instanceof Player) {
-				return ((Player) initial).getName();
+				return initial.getName();
 			}
 			else if (initial instanceof TNTPrimed) {
 				initial = (((TNTPrimed) initial).getSource());

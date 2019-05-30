@@ -12,6 +12,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 
+import java.util.Objects;
+
 public class SignAction extends GenericAction {
 
 	public class SignChangeActionData {
@@ -88,7 +90,7 @@ public class SignAction extends GenericAction {
 		}
 
 		// Could be legacy (x - 1.13) wall sign
-		if(actionData.sign_type == "WALL_SIGN") {
+		if (Objects.equals(actionData.sign_type, "WALL_SIGN")) {
 			return Material.OAK_WALL_SIGN;
 		}
 

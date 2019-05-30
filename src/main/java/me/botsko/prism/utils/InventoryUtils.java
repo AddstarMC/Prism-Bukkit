@@ -25,7 +25,6 @@ public class InventoryUtils {
 	 * 
 	 * @param p
 	 */
-	@SuppressWarnings("deprecation")
 	public static void updateInventory(Player p) {
 		p.updateInventory();
 	}
@@ -146,8 +145,6 @@ public class InventoryUtils {
 	 * Returns the slot id of a specific item type, or -1 if none
 	 * 
 	 * @param inv
-	 * @param item_id
-	 * @param sub_id
 	 * @return
 	 */
 	public static int inventoryHasItem(Inventory inv, Material material) {
@@ -212,8 +209,6 @@ public class InventoryUtils {
 	 * exist in the inventory
 	 * 
 	 * @param inv
-	 * @param item_id
-	 * @param sub_id
 	 * @return
 	 */
 	public static boolean moveItemToHand(PlayerInventory inv, Material material) {
@@ -243,16 +238,14 @@ public class InventoryUtils {
 
 	/**
 	 * Adds an item to the inventory, returns a hashmap of leftovers
-	 * 
-	 * @param player
+	 *
 	 */
 	public static HashMap<Integer, ItemStack> addItemToInventory(Inventory inv, ItemStack item) {
 		return inv.addItem(item);
 	}
 
 	/**
-	 * 
-	 * @param player
+	 *
 	 */
 	public static boolean handItemToPlayer(PlayerInventory inv, ItemStack item) {
 		// Ensure there's at least one empty inv spot
@@ -328,9 +321,9 @@ public class InventoryUtils {
 		return !ret;
 	}
 
-	/**
-	 * 
-	 * @param player
+	/*
+
+	  @param player
 	 * @param target
 	 * @return
 	 * @throws Exception
@@ -343,9 +336,9 @@ public class InventoryUtils {
 	 * throw new Exception("Target container is full."); } }
 	 */
 
-	/**
-	 * 
-	 * @param player
+	/*
+
+	  @param player
 	 * @param target
 	 * @return
 	 * @throws Exception
@@ -357,9 +350,9 @@ public class InventoryUtils {
 	 * container.getInventory(), inv, false, filters ); }
 	 */
 
-	/**
-	 * 
-	 * @param player
+	/*
+
+	  @param player
 	 * @param chest
 	 * @param fullFlag
 	 * @return
@@ -388,9 +381,9 @@ public class InventoryUtils {
 	 * } } return true; } return false; }
 	 */
 
-	/**
-	 * 
-	 * @param stack
+	/*
+
+	  @param stack
 	 * @param player
 	 * @return
 	 */
@@ -399,9 +392,9 @@ public class InventoryUtils {
 	 * return sortItemStack(stack, 0, stack.length, player); }
 	 */
 
-	/**
-	 * 
-	 * @param stack
+	/*
+
+	  @param stack
 	 * @param start
 	 * @param end
 	 * @param player
@@ -413,9 +406,9 @@ public class InventoryUtils {
 	 * recQuickSort(stack, start, end - 1); return stack; }
 	 */
 
-	/**
-	 * 
-	 * @param items
+	/*
+
+	  @param items
 	 * @param start
 	 * @param end
 	 * @return
@@ -447,9 +440,9 @@ public class InventoryUtils {
 	 * item.getAmount(); items[j].setType(Material.AIR); } } } } } return items; }
 	 */
 
-	/**
-	 * 
-	 * @param list
+	/*
+
+	  @param list
 	 * @param first
 	 * @param second
 	 */
@@ -458,9 +451,9 @@ public class InventoryUtils {
 	 * temp; temp = list[first]; list[first] = list[second]; list[second] = temp; }
 	 */
 
-	/**
-	 * 
-	 * @param list
+	/*
+
+	  @param list
 	 * @param first
 	 * @param last
 	 * @return
@@ -487,9 +480,9 @@ public class InventoryUtils {
 	 * }
 	 */
 
-	/**
-	 * 
-	 * @param list
+	/*
+
+	  @param list
 	 * @param first
 	 * @param last
 	 */

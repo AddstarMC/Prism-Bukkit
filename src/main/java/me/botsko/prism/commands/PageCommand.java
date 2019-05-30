@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
@@ -118,9 +119,11 @@ public class PageCommand implements SubHandler {
 				am.showExtended();
 			}
 			am.setResultIndex(result_count);
-			call.getSender().sendMessage(Prism.messenger.playerMsg(am.getMessage()));
+			MiscUtils.sendClickableTPRecord(am, call.getSender());
 			result_count++;
 		}
+		MiscUtils.sendPageButtons(results, call.getSender());
+
 	}
 
 	@Override

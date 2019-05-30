@@ -1,8 +1,5 @@
 package me.botsko.prism;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.database.PrismDataSourceUpdater;
@@ -67,7 +64,7 @@ public class Updater {
 
 		// Save current version
 		saveCurrentSchemaVersion();
-		Prism.log("Update complete: Schema v" + currentDbSchemaVersion);
+		Prism.log("Update check complete: Schema v" + currentDbSchemaVersion);
 	}
 
 	/**

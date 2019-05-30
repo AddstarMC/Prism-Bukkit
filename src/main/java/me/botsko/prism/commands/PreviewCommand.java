@@ -29,7 +29,7 @@ public class PreviewCommand implements SubHandler {
 	 */
 	public PreviewCommand(Prism plugin) {
 		this.plugin = plugin;
-		secondaries = new ArrayList<String>();
+		secondaries = new ArrayList<>();
 		secondaries.add("apply");
 		secondaries.add("cancel");
 		secondaries.add("rollback");
@@ -45,8 +45,8 @@ public class PreviewCommand implements SubHandler {
 	public void handle(final CallInfo call) {
 		if (call.getArgs().length >= 2) {
 
-			/**
-			 * Apply previous preview changes
+			/*
+			  Apply previous preview changes
 			 */
 			if (call.getArg(1).equalsIgnoreCase("apply")) {
 				if (plugin.playerActivePreviews.containsKey(call.getPlayer().getName())) {
@@ -60,8 +60,8 @@ public class PreviewCommand implements SubHandler {
 				return;
 			}
 
-			/**
-			 * Cancel preview
+			/*
+			  Cancel preview
 			 */
 			if (call.getArg(1).equalsIgnoreCase("cancel")) {
 				if (plugin.playerActivePreviews.containsKey(call.getPlayer().getName())) {
@@ -82,8 +82,8 @@ public class PreviewCommand implements SubHandler {
 				return;
 			}
 
-			/**
-			 * Begin a rollback or restore preview
+			/*
+			  Begin a rollback or restore preview
 			 */
 			if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore")
 					|| call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs")) {
@@ -104,70 +104,59 @@ public class PreviewCommand implements SubHandler {
 
 				// determine if defaults were used
 				final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-				String defaultsReminder = "";
+				StringBuilder defaultsReminder = new StringBuilder();
 				if (!defaultsUsed.isEmpty()) {
-					defaultsReminder += " using defaults:";
+					defaultsReminder.append(" using defaults:");
 					for (final String d : defaultsUsed) {
-						defaultsReminder += " " + d;
+						defaultsReminder.append(" ").append(d);
 					}
 				}
 
 				call.getPlayer()
 						.sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
 
-				/**
-				 * Run the query itself in an async task so the lookup query isn't done on the
-				 * main thread
+				/*
+				  Run the query itself in an async task so the lookup query isn't done on the
+				  main thread
 				 */
-				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-					@Override
-					public void run() {
+				plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
-						// Perform preview
-						final ActionsQuery aq = new ActionsQuery(plugin);
-						final QueryResult results = aq.lookup(parameters, call.getPlayer());
+					// Perform preview
+					final ActionsQuery aq = new ActionsQuery(plugin);
+					final QueryResult results = aq.lookup(parameters, call.getPlayer());
 
-						// Rollback
-						if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")) {
-							parameters.setProcessType(PrismProcessType.ROLLBACK);
-							if (!results.getActionResults().isEmpty()) {
+					// Rollback
+					if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")) {
+						parameters.setProcessType(PrismProcessType.ROLLBACK);
+						if (!results.getActionResults().isEmpty()) {
 
-								call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+							call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
 
-								// Perform preview on the main thread
-								plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-									@Override
-									public void run() {
-										final Previewable rs = new Rollback(plugin, call.getPlayer(),
-												results.getActionResults(), parameters, new PrismApplierCallback());
-										rs.preview();
-									}
-								});
-							}
-							else {
-								call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
-							}
+							// Perform preview on the main thread
+							plugin.getServer().getScheduler().runTask(plugin, () -> {
+								final Previewable rs = new Rollback(plugin, call.getPlayer(),
+										results.getActionResults(), parameters, new PrismApplierCallback());
+								rs.preview();
+							});
+						} else {
+							call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
 						}
-						// Restore
-						if (call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")) {
-							parameters.setProcessType(PrismProcessType.RESTORE);
-							if (!results.getActionResults().isEmpty()) {
+					}
+					// Restore
+					if (call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")) {
+						parameters.setProcessType(PrismProcessType.RESTORE);
+						if (!results.getActionResults().isEmpty()) {
 
-								call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+							call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
 
-								// Perform preview on the main thread
-								plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-									@Override
-									public void run() {
-										final Previewable rs = new Restore(plugin, call.getPlayer(),
-												results.getActionResults(), parameters, new PrismApplierCallback());
-										rs.preview();
-									}
-								});
-							}
-							else {
-								call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
-							}
+							// Perform preview on the main thread
+							plugin.getServer().getScheduler().runTask(plugin, () -> {
+								final Previewable rs = new Restore(plugin, call.getPlayer(),
+										results.getActionResults(), parameters, new PrismApplierCallback());
+								rs.preview();
+							});
+						} else {
+							call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
 						}
 					}
 				});

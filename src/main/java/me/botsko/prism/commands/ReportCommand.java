@@ -42,11 +42,11 @@ public class ReportCommand implements SubHandler {
 	 */
 	public ReportCommand(Prism plugin) {
 		this.plugin = plugin;
-		secondaries = new ArrayList<String>();
+		secondaries = new ArrayList<>();
 		secondaries.add("queue");
 		secondaries.add("db");
 		secondaries.add("sum");
-		sumTertiaries = new ArrayList<String>();
+		sumTertiaries = new ArrayList<>();
 		sumTertiaries.add("blocks");
 		sumTertiaries.add("actions");
 	}
@@ -230,16 +230,11 @@ public class ReportCommand implements SubHandler {
 		}
 
 		final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery();
-		/**
-		 * Run the lookup itself in an async task so the lookup query isn't done on the
-		 * main thread
+		/*
+		  Run the lookup itself in an async task so the lookup query isn't done on the
+		  main thread
 		 */
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-			@Override
-			public void run() {
-				reportQuery.report(call.getSender());
-			}
-		});
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
 	}
 
 	/**
@@ -272,15 +267,10 @@ public class ReportCommand implements SubHandler {
 		final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery();
 
 
-		/**
-		 * Run the lookup itself in an async task so the lookup query isn't done on the
-		 * main thread
+		/*
+		  Run the lookup itself in an async task so the lookup query isn't done on the
+		  main thread
 		 */
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-			@Override
-			public void run() {
-				reportQuery.report(call.getSender());
-			}
-		});
+		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
 	}
 }

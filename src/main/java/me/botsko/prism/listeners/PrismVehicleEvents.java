@@ -51,8 +51,7 @@ public class PrismVehicleEvents implements Listener {
 		UUID uuid = null;
 		try {
 			uuid = UUID.fromString(value);
-		}
-		catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		final OfflinePlayer player = uuid != null ? Bukkit.getOfflinePlayer(uuid) : null;
 		if (player != null) {

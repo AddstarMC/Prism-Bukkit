@@ -74,10 +74,6 @@ public class BlockChangeAction extends BlockAction {
 	/**
 	 * 
 	 * @param type
-	 * @param old_id
-	 * @param old_subid
-	 * @param new_id
-	 * @param new_subid
 	 * @param block
 	 * @param is_deferred
 	 * @return

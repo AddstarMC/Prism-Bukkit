@@ -16,156 +16,156 @@ public interface Handler {
 	/**
 	 * @return the id
 	 */
-	public abstract long getId();
+	long getId();
 
 	/**
 	 * @param id the id to set
 	 */
-	public abstract void setId(long id);
+	void setId(long id);
 
 	/**
 	 * @return the action_time
 	 */
-	public abstract long getUnixEpoch();
+	long getUnixEpoch();
 
 	/**
 	 * @return the display_date
 	 */
-	public abstract String getDisplayDate();
+	String getDisplayDate();
 
 	/**
 	 * @return the display_time
 	 */
-	public abstract String getDisplayTime();
+	String getDisplayTime();
 
 	/**
 	 * @param epoch the display_time to set
 	 */
-	public abstract void setUnixEpoch(long epoch);
+	void setUnixEpoch(long epoch);
 
-	public boolean hasExtraData();
+	boolean hasExtraData();
 	/**
 	 * 
 	 * @return
 	 */
-	public abstract String getTimeSince();
+	String getTimeSince();
 
 	/**
 	 * @return the action_type
 	 */
-	public abstract ActionType getActionType();
+	ActionType getActionType();
 
 	/**
 	 * 
 	 * @param type
 	 */
-	public abstract void setActionType(ActionType type);
+	void setActionType(ActionType type);
 
 	/**
 	 * @param world the world to set
 	 */
-	public abstract void setWorld(World world);
-	
-	public abstract Location getLoc();
+	void setWorld(World world);
+
+	Location getLoc();
 
 	/**
 	 * @return the name of the event cause
 	 */
-	public abstract String getSourceName();
+	String getSourceName();
 
 	/**
 	 * @param name the custom name for the event cause
 	 */
-	public abstract void setSourceName(String name);
+	void setSourceName(String name);
 
 
 	/**
 	 * @param x the x to set
 	 */
-	public abstract void setX(double x);
+	void setX(double x);
 
 	/**
 	 * @param y the y to set
 	 */
-	public abstract void setY(double y);
+	void setY(double y);
 
 	/**
 	 * @param z the z to set
 	 */
-	public abstract void setZ(double z);
+	void setZ(double z);
 
 	/**
 	 * 
 	 * @param material
 	 */
-	public abstract void setMaterial(Material material);
+	void setMaterial(Material material);
 
 	/**
 	 * 
 	 * @param state
 	 */
-	public abstract void setBlockData(BlockData state);
+	void setBlockData(BlockData state);
 
-	public abstract void setDurability(short durability);
-
-	/**
-	 * 
-	 */
-	public abstract Material getMaterial();
+	void setDurability(short durability);
 
 	/**
 	 * 
 	 */
-	public abstract BlockData getBlockData();
+	Material getMaterial();
 
-	public abstract short getDurability();
-	
-	public abstract String serialize();
-	
-	public abstract void deserialize(String data);
+	/**
+	 * 
+	 */
+	BlockData getBlockData();
+
+	short getDurability();
+
+	String serialize();
+
+	void deserialize(String data);
 
 	/**
 	 * 
 	 * @param material
 	 */
-	public abstract void setOldMaterial(Material material);
+	void setOldMaterial(Material material);
 
 	/**
 	 * 
 	 * @param state
 	 */
-	public abstract void setOldBlockData(BlockData state);
+	void setOldBlockData(BlockData state);
 
-	public abstract void setOldDurability(short durability);
-
-	/**
-	 * 
-	 */
-	public abstract Material getOldMaterial();
+	void setOldDurability(short durability);
 
 	/**
 	 * 
 	 */
-	public abstract BlockData getOldBlockData();
+	Material getOldMaterial();
 
-	public abstract short getOldDurability();
+	/**
+	 * 
+	 */
+	BlockData getOldBlockData();
+
+	short getOldDurability();
 
 	/**
 	 * 
 	 * @param aggregateCount
 	 */
-	public abstract void setAggregateCount(int aggregateCount);
+	void setAggregateCount(int aggregateCount);
 
 	/**
 	 * 
 	 * @return
 	 */
-	public abstract int getAggregateCount();
+	int getAggregateCount();
 
 	/**
 	 * 
 	 */
-	public abstract String getNiceName();
+	String getNiceName();
 	
 	void setUUID(UUID uuid);
 	UUID getUUID();
@@ -173,13 +173,13 @@ public interface Handler {
 	/**
 	 *
 	 */
-	public abstract boolean isCanceled();
+	boolean isCanceled();
 
 	/**
 	 * 
 	 * @param cancel
 	 */
-	public abstract void setCanceled(boolean cancel);
+	void setCanceled(boolean cancel);
 
 	/**
 	 * 
@@ -188,7 +188,7 @@ public interface Handler {
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview);
+	ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview);
 
 	/**
 	 * 
@@ -197,7 +197,7 @@ public interface Handler {
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview);
+	ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview);
 
 	/**
 	 * 
@@ -206,7 +206,7 @@ public interface Handler {
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview);
+	ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview);
 
 	/**
 	 * 
@@ -215,10 +215,10 @@ public interface Handler {
 	 * @param is_preview
 	 * @return
 	 */
-	public abstract ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
+	ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
 
-	public String getCustomDesc();
+	String getCustomDesc();
 
-	public void setCustomDesc(String description);
+	void setCustomDesc(String description);
 
 }

@@ -64,7 +64,6 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 				}
 				else {
 					// Try to find an online player
-					@SuppressWarnings("deprecation")
 					Player p2 = Bukkit.getServer().getPlayer(radiusLocOrPlayer);
 					if (p2 == null)
 						throw new IllegalArgumentException("Couldn't find the player named '" + radiusLocOrPlayer
@@ -127,77 +126,78 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 			}
 
 			// User wants an area inside of a worldedit selection
-			if (inputValue.equals("we")) {
+			switch (inputValue) {
+				case "we":
 
-				if (Prism.plugin_worldEdit == null) {
-					throw new IllegalArgumentException(
-							"This feature is disabled because Prism couldn't find WorldEdit.");
-				}
-				else {
-
-					// Load a selection from world edit as our area.
-					final Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
-					if (!WorldEditBridge.getSelectedArea(prism, player, query)) {
+					if (Prism.plugin_worldEdit == null) {
 						throw new IllegalArgumentException(
-								"Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
+								"This feature is disabled because Prism couldn't find WorldEdit.");
+					} else {
+
+						// Load a selection from world edit as our area.
+						final Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
+						if (!WorldEditBridge.getSelectedArea(prism, player, query)) {
+							throw new IllegalArgumentException(
+									"Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
+						}
 					}
-				}
-			}
+					break;
 
-			// Confine to the chunk
-			else if (inputValue.equals("c") || inputValue.equals("chunk")) {
+				// Confine to the chunk
+				case "c":
+				case "chunk":
 
-				final Chunk ch = player.getLocation().getChunk();
-				query.setWorld(ch.getWorld().getName());
-				query.setMinLocation(ChunkUtils.getChunkMinVector(ch));
-				query.setMaxLocation(ChunkUtils.getChunkMaxVector(ch));
+					final Chunk ch = player.getLocation().getChunk();
+					query.setWorld(ch.getWorld().getName());
+					query.setMinLocation(ChunkUtils.getChunkMinVector(ch));
+					query.setMaxLocation(ChunkUtils.getChunkMaxVector(ch));
 
-			}
+					break;
 
-			// User wants no radius, but contained within the current world
-			else if (inputValue.equals("world")) {
-				// Do they have permission to override the global lookup radius
-				if (query.getProcessType().equals(PrismProcessType.LOOKUP)
-						&& !player.hasPermission("prism.override-max-lookup-radius")) {
-					throw new IllegalArgumentException("You do not have permission to override the max radius.");
-				}
-				// Do they have permission to override the global applier radius
-				if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
-						&& !player.hasPermission("prism.override-max-applier-radius")) {
-					throw new IllegalArgumentException("You do not have permission to override the max radius.");
-				}
-				// Use the world defined in the w: param
-				if (query.getWorld() != null) {
-					inputValue = query.getWorld();
-				}
-				// Use the current world
-				else {
-					inputValue = player.getWorld().getName();
-				}
-				query.setWorld(inputValue);
-				query.setAllowNoRadius(true);
-			}
+				// User wants no radius, but contained within the current world
+				case "world":
+					// Do they have permission to override the global lookup radius
+					if (query.getProcessType().equals(PrismProcessType.LOOKUP)
+							&& !player.hasPermission("prism.override-max-lookup-radius")) {
+						throw new IllegalArgumentException("You do not have permission to override the max radius.");
+					}
+					// Do they have permission to override the global applier radius
+					if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
+							&& !player.hasPermission("prism.override-max-applier-radius")) {
+						throw new IllegalArgumentException("You do not have permission to override the max radius.");
+					}
+					// Use the world defined in the w: param
+					if (query.getWorld() != null) {
+						inputValue = query.getWorld();
+					}
+					// Use the current world
+					else {
+						inputValue = player.getWorld().getName();
+					}
+					query.setWorld(inputValue);
+					query.setAllowNoRadius(true);
+					break;
 
-			// User has asked for a global radius
-			else if (inputValue.equals("global")) {
-				// Do they have permission to override the global lookup radius
-				if (query.getProcessType().equals(PrismProcessType.LOOKUP)
-						&& !player.hasPermission("prism.override-max-lookup-radius")) {
-					throw new IllegalArgumentException("You do not have permission to override the max radius.");
-				}
-				// Do they have permission to override the global applier radius
-				if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
-						&& !player.hasPermission("prism.override-max-applier-radius")) {
-					throw new IllegalArgumentException("You do not have permission to override the max radius.");
-				}
-				// Either they have permission or player is null
-				query.setWorld(null);
-				query.setAllowNoRadius(true);
+				// User has asked for a global radius
+				case "global":
+					// Do they have permission to override the global lookup radius
+					if (query.getProcessType().equals(PrismProcessType.LOOKUP)
+							&& !player.hasPermission("prism.override-max-lookup-radius")) {
+						throw new IllegalArgumentException("You do not have permission to override the max radius.");
+					}
+					// Do they have permission to override the global applier radius
+					if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
+							&& !player.hasPermission("prism.override-max-applier-radius")) {
+						throw new IllegalArgumentException("You do not have permission to override the max radius.");
+					}
+					// Either they have permission or player is null
+					query.setWorld(null);
+					query.setAllowNoRadius(true);
 
-			}
-			else {
-				throw new IllegalArgumentException(
-						"Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.");
+					break;
+				default:
+					throw new IllegalArgumentException(
+							"Radius is invalid. There's a bunch of choice, so use /prism actions for assistance.");
 			}
 		}
 	}
@@ -209,7 +209,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 	public void defaultTo(QueryParameters query, CommandSender sender) {
 		if (query.getProcessType().equals(PrismProcessType.DELETE))
 			return;
-		if (sender != null && sender instanceof Player) {
+		if (sender instanceof Player) {
 			if (query.allowsNoRadius()) {
 				// We'll allow no radius.
 			}

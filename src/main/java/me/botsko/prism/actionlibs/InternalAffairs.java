@@ -69,8 +69,7 @@ public class InternalAffairs implements Runnable {
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (final SQLException e) {
+				} catch (final SQLException ignored) {
 				}
 		}
 	}

@@ -23,7 +23,7 @@ public class PrismApplierCallback implements ApplierCallback {
 		if (!entitiesMoved.isEmpty()) {
 			for (final Entry<Entity, Integer> entry : entitiesMoved.entrySet()) {
 				if (entry.getKey() instanceof Player) {
-					((Player) entry.getKey()).sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+					entry.getKey().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
 							"Moved you " + entry.getValue() + " blocks to safety due to a rollback."));
 				}
 			}

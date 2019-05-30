@@ -45,7 +45,6 @@ public class PlayerIdentification {
 	 *
 	 * Runs during PlayerJoin events, so it will never be for a fake/null player.
 	 *
-	 * @param player
 	 */
 	public static PrismPlayer cachePrismPlayer(final String playerName) {
 
@@ -76,7 +75,6 @@ public class PlayerIdentification {
 	 */
 	public static PrismPlayer getPrismPlayer(String playerName) {
 
-		@SuppressWarnings("deprecation")
 		Player player = Bukkit.getPlayer(playerName);
 
 		if (player != null)
@@ -86,11 +84,9 @@ public class PlayerIdentification {
 		PrismPlayer prismPlayer = lookupByName(playerName);
 
 		// Player found! Return the id
-		if (prismPlayer != null)
-			return prismPlayer;
+		return prismPlayer;
 
 		// No player exists! We must create one
-		return null;
 
 	}
 
@@ -100,7 +96,6 @@ public class PlayerIdentification {
 	 *
 	 * Used by the recorder in determining proper foreign key
 	 *
-	 * @param playerName
 	 * @return
 	 */
 	public static PrismPlayer getPrismPlayer(Player player) {
@@ -128,10 +123,7 @@ public class PlayerIdentification {
 
 		// Still not found, try looking them up by name
 		prismPlayer = lookupByName(player.getName());
-		if (prismPlayer != null)
-			return prismPlayer;
-
-		return null;
+		return prismPlayer;
 
 	}
 
@@ -173,8 +165,7 @@ public class PlayerIdentification {
 
 	/**
 	 * Converts UUID to a string ready for use against database
-	 * 
-	 * @param player
+	 *
 	 */
 	public static String uuidToDbString(UUID id) {
 		return id.toString().replace("-", "");
@@ -182,8 +173,7 @@ public class PlayerIdentification {
 
 	/**
 	 * Converts UUID to a string ready for use against database
-	 * 
-	 * @param player
+	 *
 	 */
 	public static UUID uuidFromDbString(String uuid) {
 		// Positions need to be -2
@@ -238,20 +228,17 @@ public class PlayerIdentification {
 			if (rs != null)
 				try {
 					rs.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 		return prismPlayer;
@@ -298,20 +285,17 @@ public class PlayerIdentification {
 			if (rs != null)
 				try {
 					rs.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 		return fakePlayer;
@@ -344,14 +328,12 @@ public class PlayerIdentification {
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 	}
@@ -384,20 +366,17 @@ public class PlayerIdentification {
 			if (rs != null)
 				try {
 					rs.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 		return prismPlayer;
@@ -431,20 +410,17 @@ public class PlayerIdentification {
 			if (rs != null)
 				try {
 					rs.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 		return prismPlayer;
@@ -489,20 +465,17 @@ public class PlayerIdentification {
 			if (rs != null)
 				try {
 					rs.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (s != null)
 				try {
 					s.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 			if (conn != null)
 				try {
 					conn.close();
-				}
-				catch (SQLException e) {
+				} catch (SQLException ignored) {
 				}
 		}
 	}

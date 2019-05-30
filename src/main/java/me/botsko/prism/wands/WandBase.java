@@ -52,8 +52,7 @@ public abstract class WandBase implements Wand {
 	}
 
 	/**
-	 * 
-	 * @param mode
+	 *
 	 */
 	public String getWandMode() {
 		return wand_mode;

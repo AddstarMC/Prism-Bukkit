@@ -44,12 +44,12 @@ public enum Flag {
 	 * 
 	 * @param description
 	 */
-	private Flag(String description) {
+	Flag(String description) {
 		this("", description); // We can't use this.name() in a constructor so
 								// we defer it to the getUsage.
 	}
 
-	private Flag(String usage, String description) {
+	Flag(String usage, String description) {
 		this.usage = usage;
 		this.description = description;
 		this.permission = "prism.parameters.flag." + name().toLowerCase().replace('_', '-');

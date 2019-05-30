@@ -12,7 +12,7 @@ public class DateUtil {
 	 */
 	public static Long translateTimeStringToDate(String arg_value) {
 
-		Long dateFrom = 0L;
+		long dateFrom = 0L;
 
 		final Pattern p = Pattern.compile("([0-9]+)(s|h|m|d|w)");
 		final Calendar cal = Calendar.getInstance();
@@ -29,23 +29,24 @@ public class DateUtil {
 						final int tfValue = Integer.parseInt(m.group(1));
 						final String tfFormat = m.group(2);
 
-						if (tfFormat.equals("w")) {
-							cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
-						}
-						else if (tfFormat.equals("d")) {
-							cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
-						}
-						else if (tfFormat.equals("h")) {
-							cal.add(Calendar.HOUR, -1 * tfValue);
-						}
-						else if (tfFormat.equals("m")) {
-							cal.add(Calendar.MINUTE, -1 * tfValue);
-						}
-						else if (tfFormat.equals("s")) {
-							cal.add(Calendar.SECOND, -1 * tfValue);
-						}
-						else {
-							return null;
+						switch (tfFormat) {
+							case "w":
+								cal.add(Calendar.WEEK_OF_YEAR, -1 * tfValue);
+								break;
+							case "d":
+								cal.add(Calendar.DAY_OF_MONTH, -1 * tfValue);
+								break;
+							case "h":
+								cal.add(Calendar.HOUR, -1 * tfValue);
+								break;
+							case "m":
+								cal.add(Calendar.MINUTE, -1 * tfValue);
+								break;
+							case "s":
+								cal.add(Calendar.SECOND, -1 * tfValue);
+								break;
+							default:
+								return null;
 						}
 					}
 				}

@@ -86,11 +86,11 @@ public class DeleteCommand implements SubHandler {
 
 		// determine if defaults were used
 		final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-		String defaultsReminder = "";
+		StringBuilder defaultsReminder = new StringBuilder();
 		if (!defaultsUsed.isEmpty()) {
-			defaultsReminder += " using defaults:";
+			defaultsReminder.append(" using defaults:");
 			for (final String d : defaultsUsed) {
-				defaultsReminder += " " + d;
+				defaultsReminder.append(" ").append(d);
 			}
 		}
 
@@ -127,7 +127,7 @@ public class DeleteCommand implements SubHandler {
 			callback.setSender(call.getSender());
 
 			// add to an arraylist so we're consistent
-			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<QueryParameters>();
+			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
 			paramList.add(parameters);
 
 			Prism.log(

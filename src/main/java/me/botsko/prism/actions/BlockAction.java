@@ -130,9 +130,6 @@ public class BlockAction extends GenericAction {
 				actionData = new CommandActionData();
 				((CommandActionData)actionData).command = data;
 			}
-			else {
-				// No longer used, was for pre-1.5 data formats
-			}
 		}
 	}
 
@@ -384,8 +381,8 @@ public class BlockAction extends GenericAction {
 
 			BlockActionData blockActionData = getActionData();
 
-			/**
-			 * Skulls
+			/*
+			  Skulls
 			 */
 			if ((getMaterial() == Material.PLAYER_HEAD || getMaterial() == Material.PLAYER_WALL_HEAD)
 					&& blockActionData instanceof SkullActionData) {
@@ -403,8 +400,8 @@ public class BlockAction extends GenericAction {
 
 			}
 
-			/**
-			 * Spawner
+			/*
+			  Spawner
 			 */
 			if (getMaterial() == Material.SPAWNER && blockActionData instanceof SpawnerActionData) {
 
@@ -417,8 +414,8 @@ public class BlockAction extends GenericAction {
 
 			}
 
-			/**
-			 * Restoring command block
+			/*
+			  Restoring command block
 			 */
 			if (getMaterial() == Material.COMMAND_BLOCK
 					&& blockActionData instanceof CommandActionData) {
@@ -427,8 +424,8 @@ public class BlockAction extends GenericAction {
 				cmdblock.setCommand(c.command);
 			}
 
-			/**
-			 * Signs
+			/*
+			  Signs
 			 */
 			if (parameters.getProcessType() == PrismProcessType.ROLLBACK
 					&& Tag.SIGNS.isTagged(getMaterial())

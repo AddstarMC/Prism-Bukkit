@@ -76,7 +76,7 @@ public class PrismInventoryEvents implements Listener {
 		if (ih instanceof Player) {
 			Player other = (Player) event.getInventory().getHolder();
 
-			if (other.equals((Player) event.getWhoClicked())) {
+			if (other.equals(event.getWhoClicked())) {
 				return;
 			}
 		}

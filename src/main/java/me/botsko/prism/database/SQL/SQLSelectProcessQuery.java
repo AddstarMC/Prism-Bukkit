@@ -96,7 +96,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
         try (
                 Connection conn = dataSource.getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(query);
-                ResultSet rs = s.executeQuery();
+                ResultSet rs = s.executeQuery()
         ) {
             if (rs.first()) {
                 process = new PrismProcessAction();
@@ -126,7 +126,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
             try (
                     Connection conn = dataSource.getDataSource().getConnection();
                     PreparedStatement s = conn.prepareStatement(query);
-                    ResultSet rs = s.executeQuery();
+                    ResultSet rs = s.executeQuery()
             ) {
                 if (rs.first()) {
                     id = rs.getLong("id");

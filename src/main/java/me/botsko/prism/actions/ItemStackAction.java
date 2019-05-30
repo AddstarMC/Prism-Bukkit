@@ -443,15 +443,15 @@ public class ItemStackAction extends GenericAction {
 					// Prism.log("Slot found: " + slot);
 					try {
 						eSlot = EquipmentSlot.valueOf(slot);
-					}
-					catch(IllegalArgumentException e) {}
+					} catch (IllegalArgumentException ignored) {
+                    }
 					// Prism.log("   eSlot: " + eSlot);
 					
 					BlockFace fSlot = null;
 					try {
 						fSlot = BlockFace.valueOf(slot);
-					}
-					catch(IllegalArgumentException e) {}
+					} catch (IllegalArgumentException ignored) {
+                    }
 					// Prism.log("   fSlot: " + fSlot);
 					
 					Entity[] foundEntities = block.getChunk().getEntities();
@@ -542,8 +542,8 @@ public class ItemStackAction extends GenericAction {
 
 				try {
 					iSlot = Integer.parseInt(getActionData().slot);
-				}
-				catch(IllegalArgumentException e) {}
+				} catch (IllegalArgumentException ignored) {
+                }
 
 				// Rolling back a:remove or a:drop should place the item into
 				// the inventory

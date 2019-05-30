@@ -76,7 +76,7 @@ public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implement
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
-                ResultSet rs = s.executeQuery();
+                ResultSet rs = s.executeQuery()
         ) {
             sender.sendMessage(
                     Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Action", colTextLen)

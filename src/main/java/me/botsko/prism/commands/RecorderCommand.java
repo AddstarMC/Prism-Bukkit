@@ -99,10 +99,8 @@ public class RecorderCommand implements SubHandler {
 						}
 						catch (final Exception ignored) {
 						}
-					;
 				}
 			}
-			return;
 		}
 	}
 

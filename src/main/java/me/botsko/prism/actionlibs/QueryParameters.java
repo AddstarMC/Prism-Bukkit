@@ -27,9 +27,9 @@ public class QueryParameters implements Cloneable {
 	/**
 	 * Internal use
 	 */
-	protected Set<String> foundArgs = new HashSet<String>();
+	protected Set<String> foundArgs = new HashSet<>();
 	protected PrismProcessType processType = PrismProcessType.LOOKUP;
-	protected final ArrayList<String> defaultsUsed = new ArrayList<String>();
+	protected final ArrayList<String> defaultsUsed = new ArrayList<>();
 	protected String original_command;
 
 	/**
@@ -513,13 +513,13 @@ public class QueryParameters implements Cloneable {
 	 * @param args
 	 */
 	public void setStringFromRawArgs(String[] args, int start) {
-		String params = "";
+		StringBuilder params = new StringBuilder();
 		if (args.length > 0) {
 			for (int i = start; i < args.length; i++) {
-				params += " " + args[i];
+				params.append(" ").append(args[i]);
 			}
 		}
-		original_command = params;
+		original_command = params.toString();
 	}
 
 	/**
@@ -554,7 +554,7 @@ public class QueryParameters implements Cloneable {
 	@Override
 	public QueryParameters clone() throws CloneNotSupportedException {
 		final QueryParameters cloned = (QueryParameters) super.clone();
-		cloned.actionTypeRules = new HashMap<String, MatchRule>(actionTypeRules);
+		cloned.actionTypeRules = new HashMap<>(actionTypeRules);
 		return cloned;
 	}
 

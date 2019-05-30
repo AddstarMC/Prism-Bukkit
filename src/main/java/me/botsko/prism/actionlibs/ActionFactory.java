@@ -41,9 +41,9 @@ public class ActionFactory {
 
 	/**
 	 * GenericAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player Offline Player
 	 */
 	public static Handler createBlock(String action_type, OfflinePlayer player) {
 		final BlockAction a = new BlockAction();
@@ -55,9 +55,9 @@ public class ActionFactory {
 	/**
 	 * BlockAction
 	 *
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 * @param action_type the action
+	 * @param block the block
+	 * @param player Offline Player
 	 */
 	public static Handler createBlock(String action_type, Block block, OfflinePlayer player) {
 		final BlockAction a = new BlockAction();
@@ -76,9 +76,9 @@ public class ActionFactory {
 	/**
 	 * BlockAction
 	 *
-	 * @param action_type
-	 * @param state
-	 * @param player
+	 * @param action_type the action
+	 * @param state the block state
+	 * @param player Offline Player
 	 */
 	public static Handler createBlock(String action_type, BlockState state, OfflinePlayer player) {
 		final BlockAction a = new BlockAction();
@@ -96,9 +96,9 @@ public class ActionFactory {
 
 	/**
 	 * BlockChangeAction | WorldeditAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player Offline Player
 	 */
 	public static Handler createBlockChange(String action_type, Location loc, Material oldMat, BlockData oldData,
 			Material newMat, BlockData newData, OfflinePlayer player) {
@@ -122,9 +122,8 @@ public class ActionFactory {
 
 	/**
 	 * BlockShiftAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
 	 */
 	public static Handler createBlockShift(String action_type, Block from, Location to, String nonPlayer) {
 		final BlockShiftAction a = new BlockShiftAction();
@@ -137,9 +136,9 @@ public class ActionFactory {
 
 	/**
 	 * EntityAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createEntity(String action_type, Entity entity, OfflinePlayer player) {
 		return ActionFactory.createEntity(action_type, entity, player, null);
@@ -165,8 +164,8 @@ public class ActionFactory {
 
 	/**
 	 * EntityTravelAction
-	 * 
-	 * @param action_type
+	 *
+	 * @param action_type the action
 	 */
 	public static Handler createEntityTravel(String action_type, Entity entity, Location from, Location to,
 			TeleportCause cause) {
@@ -181,9 +180,9 @@ public class ActionFactory {
 
 	/**
 	 * GrowAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the player
 	 */
 	public static Handler createGrow(String action_type, BlockState blockstate, OfflinePlayer player) {
 		final GrowAction a = new GrowAction();
@@ -201,9 +200,9 @@ public class ActionFactory {
 
 	/**
 	 * HangingItemAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the player
 	 */
 	public static Handler createHangingItem(String action_type, Hanging hanging, OfflinePlayer player) {
 		final HangingItemAction a = new HangingItemAction();
@@ -221,9 +220,9 @@ public class ActionFactory {
 
 	/**
 	 * ItemStackAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createItemStack(String action_type, ItemStack item, Map<Enchantment, Integer> enchantments,
 			Location loc, OfflinePlayer player) {
@@ -277,9 +276,9 @@ public class ActionFactory {
 
 	/**
 	 * PlayerAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createPlayer(String action_type, Player player, String additionalInfo) {
 		final PlayerAction a = new PlayerAction();
@@ -292,9 +291,9 @@ public class ActionFactory {
 
 	/**
 	 * PlayerDeathAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createPlayerDeath(String action_type, Player player, String cause, String attacker) {
 		final PlayerDeathAction a = new PlayerDeathAction();
@@ -308,9 +307,9 @@ public class ActionFactory {
 
 	/**
 	 * PrismProcessActionData
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createPrismProcess(String action_type, PrismProcessType processType, Player player,
 			String parameters) {
@@ -324,9 +323,9 @@ public class ActionFactory {
 
 	/**
 	 * PrismRollbackAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createPrismRollback(String action_type, BlockState oldblock, BlockState newBlock,
 			OfflinePlayer player, long parent_id) {
@@ -340,10 +339,10 @@ public class ActionFactory {
 
 	/**
 	 * SignAction
-	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param block the block acted on
+	 * @param player the acting player
 	 */
 	public static Handler createSign(String action_type, Block block, String[] lines, OfflinePlayer player) {
 		final SignAction a = new SignAction();
@@ -355,10 +354,10 @@ public class ActionFactory {
 
 	/**
 	 * UseAction
-	 * 
-	 * @param action_type
-	 * @param block
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param block the block acted on
+	 * @param player the acting player
 	 */
 	public static Handler createUse(String action_type, Material item, Block block, OfflinePlayer player) {
 		final UseAction a = new UseAction();
@@ -371,9 +370,9 @@ public class ActionFactory {
 
 	/**
 	 * VehicleAction
-	 * 
-	 * @param action_type
-	 * @param player
+	 *
+	 * @param action_type the action
+	 * @param player the acting player
 	 */
 	public static Handler createVehicle(String action_type, Vehicle vehicle, OfflinePlayer player) {
 		final VehicleAction a = new VehicleAction();

@@ -69,13 +69,9 @@ public class Ignore {
 		}
 
 		// Should we ignore this action type?
-		if ((TypeUtils.subStrOccurences(actionTypeName, "-") == 1
-				&& !plugin.getConfig().getBoolean("prism.tracking." + actionTypeName))) {
-			// Prism.debug("Ignoring action type " + actionTypeName);
-			return false;
-		}
-
-		return true;
+		// Prism.debug("Ignoring action type " + actionTypeName);
+		return (TypeUtils.subStrOccurences(actionTypeName, "-") != 1
+				|| plugin.getConfig().getBoolean("prism.tracking." + actionTypeName));
 	}
 
 	/**

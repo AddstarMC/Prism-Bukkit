@@ -64,15 +64,15 @@ public class ActionMessage {
 		
 		msg.append((action.doesCreateBlock() || action.getName().equals("item-insert")
 				|| action.getName().equals("sign-change")) ? "+" : "-");
-		msg.append(" #" + a.getId());
-		msg.append(" " + a.getSourceName());
-		msg.append(" " + action.getName());
-		msg.append(" " + a.getMaterial());
+		msg.append(" #").append(a.getId());
+		msg.append(" ").append(a.getSourceName());
+		msg.append(" ").append(action.getName());
+		msg.append(" ").append(a.getMaterial());
 		msg.append(BlockUtils.dataString(a.getBlockData()));
 
 		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
-				msg.append(" (" + a.getNiceName() + ")");
+				msg.append(" (").append(a.getNiceName()).append(")");
 		}
 		else {
 			// We should really improve this, but this saves me from having to
@@ -86,12 +86,12 @@ public class ActionMessage {
 			}
 		}
 		if (a.getAggregateCount() > 1) {
-			msg.append(" x" + a.getAggregateCount());
+			msg.append(" x").append(a.getAggregateCount());
 		}
-		msg.append(" " + a.getDisplayDate());
-		msg.append(" " + a.getDisplayTime().toLowerCase());
+		msg.append(" ").append(a.getDisplayDate());
+		msg.append(" ").append(a.getDisplayTime().toLowerCase());
 		Location l = a.getLoc();
-		msg.append(" - " + l.getWorld().getName() + " @ " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ());
+		msg.append(" - ").append(l.getWorld().getName()).append(" @ ").append(l.getBlockX()).append(" ").append(l.getBlockY()).append(" ").append(l.getBlockZ());
 		return msg.toString();
 	}
 

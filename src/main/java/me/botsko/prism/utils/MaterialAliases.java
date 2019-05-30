@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import me.botsko.prism.database.PrismDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -27,7 +26,7 @@ public class MaterialAliases {
 	/**
 	 * Contains loaded item ids => aliases
 	 */
-	protected HashMap<String, String> itemAliases = new HashMap<String, String>();
+	protected HashMap<String, String> itemAliases = new HashMap<>();
 
 	/**
 	 * Load the yml file and save config to hashmap
@@ -79,9 +78,7 @@ public class MaterialAliases {
 				continue;
 			}
 
-			query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> {
-				storeCache(m, dataString, i, d);
-			}, () -> {
+			query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> storeCache(m, dataString, i, d), () -> {
 				int id = query.mapAutoId(matName, dataString);
 
 				storeCache(m, dataString, id, 0);
@@ -109,8 +106,7 @@ public class MaterialAliases {
 				if (data.getMaterial() == material) {
 					return data;
 				}
-			}
-			catch (IllegalArgumentException e) {
+			} catch (IllegalArgumentException ignored) {
 			}
 
 			return null;
@@ -122,8 +118,7 @@ public class MaterialAliases {
 			if (!state.isEmpty()) {
 				try {
 					ItemUtils.setItemDamage(item, Short.parseShort(state));
-				}
-				catch (NumberFormatException e) {
+				} catch (NumberFormatException ignored) {
 				}
 			}
 
@@ -152,9 +147,7 @@ public class MaterialAliases {
 
 		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
-		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> {
-			allIdsCache.put(material, new HashSet<>(list));
-		});
+		query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(material, new HashSet<>(list)));
 
 		return allIdsCache.get(material);
 	}
@@ -228,8 +221,7 @@ public class MaterialAliases {
 		int durability = 0;
 		try {
 			durability = Integer.parseInt(state);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException ignored) {
 		}
 
 		if (material.getMaxDurability() > 0)
@@ -291,9 +283,7 @@ public class MaterialAliases {
 		SQLIdMapQuery query = new SQLIdMapQuery(Prism.getPrismDataSource());
 
 		Set<IntPair> ids = new HashSet<>();
-		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, list -> {
-			ids.addAll(list);
-		});
+		query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, ids::addAll);
 
 		return ids;
 	}

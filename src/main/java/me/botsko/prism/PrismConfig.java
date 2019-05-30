@@ -1,13 +1,8 @@
 package me.botsko.prism;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import me.botsko.prism.database.PrismDatabaseFactory;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -51,7 +46,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.wands.default-block-mode-id", "spruce_log");
 		config.addDefault("prism.wands.auto-equip", true);
 		config.addDefault("prism.wands.allow-user-override", true);
-		final List<String> ignoreActionsForInspect = new ArrayList<String>();
+		final List<String> ignoreActionsForInspect = new ArrayList<>();
 		ignoreActionsForInspect.add("player-chat");
 		ignoreActionsForInspect.add("player-command");
 		ignoreActionsForInspect.add("player-join");
@@ -92,7 +87,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.ignore.worlds_whitelist", false);
 
 		// Purge
-		final List<String> purgeRules = new ArrayList<String>();
+		final List<String> purgeRules = new ArrayList<>();
 		purgeRules.add("before:8w");
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
@@ -107,12 +102,12 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.appliers.remove-drops-on-explode-rollback", true);
 
 		// Illegal Entity Rollbacks
-		final List<String> illegalEntities = new ArrayList<String>();
+		final List<String> illegalEntities = new ArrayList<>();
 		illegalEntities.add("creeper");
 		config.addDefault("prism.appliers.never-spawn-entity", illegalEntities);
 
 		// Illegal Block Rollbacks
-		final List<String> illegalBlocks = new ArrayList<String>();
+		final List<String> illegalBlocks = new ArrayList<>();
 		illegalBlocks.add("water");
 		illegalBlocks.add("lava");
 
@@ -196,7 +191,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.track-player-ip-on-join", false);
 		config.addDefault("prism.track-hopper-item-events", false);
 
-		final List<String> doNotTrackCommand = new ArrayList<String>();
+		final List<String> doNotTrackCommand = new ArrayList<>();
 		doNotTrackCommand.add("vanish");
 		doNotTrackCommand.add("v");
 		doNotTrackCommand.add("login");
@@ -206,7 +201,7 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.do-not-track.commands", doNotTrackCommand);
 
 		config.addDefault("prism.tracking.api.enabled", true);
-		final List<String> allowedApiPlugins = new ArrayList<String>();
+		final List<String> allowedApiPlugins = new ArrayList<>();
 		allowedApiPlugins.add("DarkMythos");
 		allowedApiPlugins.add("PrismApiDemo");
 		config.addDefault("prism.tracking.api.allowed-plugins", allowedApiPlugins);
@@ -216,9 +211,9 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.alert-player-about-self", true);
 		config.addDefault("prism.alerts.ores.enabled", true);
 		config.addDefault("prism.alerts.ores.log-to-console", true);
-		config.addDefault("prism.alerts.ores.log-commands", Arrays.asList("examplecommand <alert>"));
+		config.addDefault("prism.alerts.ores.log-commands", Collections.singletonList("examplecommand <alert>"));
 		// Ore blocks
-		final HashMap<String, String> oreBlocks = new HashMap<String, String>();
+		final HashMap<String, String> oreBlocks = new HashMap<>();
 		oreBlocks.put("iron_ore", "&6");
 		oreBlocks.put("gold_ore", "&7");
 		oreBlocks.put("lapis_ore", "&9");
@@ -229,8 +224,8 @@ public class PrismConfig extends ConfigBase {
 		// Illegal Command Alerts
 		config.addDefault("prism.alerts.illegal-commands.enabled", false);
 		config.addDefault("prism.alerts.illegal-commands.log-to-console", true);
-		config.addDefault("prism.alerts.illegal-commands.log-commands", Arrays.asList("examplecommand <alert>"));
-		final List<String> illegal_commands = new ArrayList<String>();
+		config.addDefault("prism.alerts.illegal-commands.log-commands", Collections.singletonList("examplecommand <alert>"));
+		final List<String> illegal_commands = new ArrayList<>();
 		illegal_commands.add("op");
 		illegal_commands.add("deop");
 		illegal_commands.add("stop");
@@ -248,18 +243,18 @@ public class PrismConfig extends ConfigBase {
 		// Use Alerts
 		config.addDefault("prism.alerts.uses.enabled", true);
 		config.addDefault("prism.alerts.uses.log-to-console", true);
-		config.addDefault("prism.alerts.uses.log-commands", Arrays.asList("examplecommand <alert>"));
+		config.addDefault("prism.alerts.uses.log-commands", Collections.singletonList("examplecommand <alert>"));
 		config.addDefault("prism.alerts.uses.lighter", true);
 		config.addDefault("prism.alerts.uses.lava", true);
 
-		List<String> monitorItems = new ArrayList<String>();
+		List<String> monitorItems = new ArrayList<>();
 		monitorItems.add("bedrock");
 		monitorItems.add("sticky_piston");
 		monitorItems.add("tnt");
 		monitorItems.add("lava");
 		config.addDefault("prism.alerts.uses.item-placement", monitorItems);
 
-		monitorItems = new ArrayList<String>();
+		monitorItems = new ArrayList<>();
 		config.addDefault("prism.alerts.uses.item-break", monitorItems);
 
 		// Misc Alerts

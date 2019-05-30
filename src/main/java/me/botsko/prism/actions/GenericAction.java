@@ -182,8 +182,8 @@ public abstract class GenericAction implements Handler {
 		}
 		
 		long period = 24 * 60 * 60;
-		
-		final long diff[] = {
+
+		final long[] diff = {
 				diffInSeconds / period, // days
 				(diffInSeconds / (period /= 24)) % 24, // hours
 				(diffInSeconds / (period /= 60)) % 60, // minutes

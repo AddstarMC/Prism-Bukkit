@@ -11,64 +11,63 @@ public interface Wand {
 	/**
 	 * 
 	 */
-	public void playerLeftClick(Player player, Location loc);
+	void playerLeftClick(Player player, Location loc);
 
 	/**
 	 * 
 	 */
-	public void playerRightClick(Player player, Location loc);
+	void playerRightClick(Player player, Location loc);
 
 	/**
 	 * 
 	 * @param player
 	 * @param entity
 	 */
-	public void playerRightClick(Player player, Entity entity);
+	void playerRightClick(Player player, Entity entity);
 
 	/**
 	 * 
 	 * @param given
 	 */
-	public void setItemWasGiven(boolean given);
+	void setItemWasGiven(boolean given);
 
 	/**
 	 * 
 	 * @return
 	 */
-	public boolean itemWasGiven();
+	boolean itemWasGiven();
 
 	/**
 	 * 
 	 * @param mode
 	 */
-	public void setWandMode(String mode);
+	void setWandMode(String mode);
 
 	/**
-	 * 
-	 * @param mode
+	 *
 	 */
-	public String getWandMode();
+	String getWandMode();
 
-	public Material getItem();
+	Material getItem();
 
-	public void setItem(Material material);
+	void setItem(Material material);
 
 	/**
 	 * 
 	 * @param key
 	 */
-	public void setItemFromKey(String key);
+	void setItemFromKey(String key);
 
 	/**
 	 * 
 	 * @param item
 	 */
-	public void setOriginallyHeldItem(ItemStack item);
+	void setOriginallyHeldItem(ItemStack item);
 
 	/**
 	 * 
 	 * @param player
 	 */
-	public void disable(Player player);
+	void disable(Player player);
 
 }

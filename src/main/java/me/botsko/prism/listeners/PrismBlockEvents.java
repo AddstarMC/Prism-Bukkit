@@ -110,19 +110,11 @@ public class PrismBlockEvents implements Listener {
 	 * @param block
 	 */
 	protected void logBlockRelationshipsForBlock(Player player, Block block) {
-		relatedBlockCallback(block, b -> {
-			RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", b, player));
-		}, s -> {
-			plugin.preplannedBlockFalls.put(s, player.getUniqueId().toString());
-		});
+		relatedBlockCallback(block, b -> RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", b, player)), s -> plugin.preplannedBlockFalls.put(s, player.getUniqueId().toString()));
 	}
 
 	protected void logBlockRelationshipsForBlock(String nonPlayer, Block block) {
-		relatedBlockCallback(block, b -> {
-			RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", b, nonPlayer));
-		}, s -> {
-			plugin.preplannedBlockFalls.put(s, nonPlayer);
-		});
+		relatedBlockCallback(block, b -> RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", b, nonPlayer)), s -> plugin.preplannedBlockFalls.put(s, nonPlayer));
 	}
 
 	protected void relatedBlockCallback(Block block, Consumer<Block> breakCallback, Consumer<String> fallCallback) {
@@ -208,10 +200,8 @@ public class PrismBlockEvents implements Listener {
 		// note: done before the container so a "rewind" for rollback will work
 		// properly
 		// logItemRemoveFromDestroyedContainer( player, block );
-		forEachItem(block, (i, s) -> {
-			RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
-					block.getLocation(), player));
-		});
+		forEachItem(block, (i, s) -> RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+				block.getLocation(), player)));
 
 		// Change handling a bit if it's a long block
 		/*

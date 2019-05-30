@@ -1,9 +1,7 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import org.apache.juli.logging.Log;
-import org.bukkit.configuration.ConfigurationSection;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

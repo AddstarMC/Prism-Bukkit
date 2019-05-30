@@ -42,7 +42,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
 				final ArrayList<ActionType> actionTypes = Prism.getActionRegistry()
 						.getActionsByShortname(action.replace("!", ""));
 				if (!actionTypes.isEmpty()) {
-					List<String> noPermission = new ArrayList<String>();
+					List<String> noPermission = new ArrayList<>();
 					for (final ActionType actionType : actionTypes) {
 
 						// Ensure the action allows this process type

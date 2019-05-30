@@ -31,8 +31,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
-import static me.botsko.prism.actionlibs.RecordingManager.*;
-
 public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     /**
@@ -156,7 +154,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
-        final ArrayList<String> prismActionIds = new ArrayList<String>();
+        final ArrayList<String> prismActionIds = new ArrayList<>();
         for (final Entry<String, Integer> entry : Prism.prismActions.entrySet()) {
             if (entry.getKey().contains("prism")) {
                 containsPrismProcessType = true;
@@ -167,8 +165,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // scan whitelist of given actions
         if (action_types.size() > 0) {
 
-            final ArrayList<String> includeIds = new ArrayList<String>();
-            final ArrayList<String> excludeIds = new ArrayList<String>();
+            final ArrayList<String> includeIds = new ArrayList<>();
+            final ArrayList<String> excludeIds = new ArrayList<>();
             for (final Entry<String, MatchRule> entry : action_types.entrySet()) {
                 if (entry.getValue().equals(MatchRule.INCLUDE)) {
                     includeIds.add("" + Prism.prismActions.get(entry.getKey()));
@@ -265,7 +263,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                             + ".block_subid = " + pair.second);
                 }
             }
-            addCondition(buildGroupConditions(null, blockArr.toArray(new String[blockArr.size()]), "%s%s", "OR", null));
+            addCondition(buildGroupConditions(null, blockArr.toArray(new String[0]), "%s%s", "OR", null));
         }
     }
 
@@ -313,16 +311,14 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // Specific coords
         final ArrayList<Location> locations = parameters.getSpecificBlockLocations();
         if (locations.size() > 0) {
-            String coordCond = "(";
+            StringBuilder coordCond = new StringBuilder("(");
             int l = 0;
             for (final Location loc : locations) {
-                coordCond += (l > 0 ? " OR" : "") + " (" + tableNameData + ".x = " + loc.getBlockX() + " AND "
-                        + tableNameData + ".y = " + loc.getBlockY() + " AND " + tableNameData + ".z = "
-                        + loc.getBlockZ() + ")";
+                coordCond.append(l > 0 ? " OR" : "").append(" (").append(tableNameData).append(".x = ").append(loc.getBlockX()).append(" AND ").append(tableNameData).append(".y = ").append(loc.getBlockY()).append(" AND ").append(tableNameData).append(".z = ").append(loc.getBlockZ()).append(")");
                 l++;
             }
-            coordCond += ")";
-            addCondition(coordCond);
+            coordCond.append(")");
+            addCondition(coordCond.toString());
         }
     }
 
@@ -339,20 +335,20 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
         // Build final condition string
         int condCount = 1;
-        String query = "";
+        StringBuilder query = new StringBuilder();
         if (conditions.size() > 0) {
             for (final String cond : conditions) {
                 if (condCount == 1) {
-                    query += " WHERE ";
+                    query.append(" WHERE ");
                 } else {
-                    query += " AND ";
+                    query.append(" AND ");
                 }
-                query += cond;
+                query.append(cond);
                 condCount++;
             }
         }
 
-        return query;
+        return query.toString();
 
     }
 
@@ -407,9 +403,9 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         String query = "";
         if (!origValues.isEmpty()) {
 
-            final ArrayList<String> whereIs = new ArrayList<String>();
-            final ArrayList<String> whereNot = new ArrayList<String>();
-            final ArrayList<String> whereIsLike = new ArrayList<String>();
+            final ArrayList<String> whereIs = new ArrayList<>();
+            final ArrayList<String> whereNot = new ArrayList<>();
+            final ArrayList<String> whereIsLike = new ArrayList<>();
             for (final Entry<String, MatchRule> entry : origValues.entrySet()) {
                 if (entry.getValue().equals(MatchRule.EXCLUDE)) {
                     whereNot.add(entry.getKey());
@@ -458,25 +454,25 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
     protected String buildGroupConditions(String fieldname, String[] arg_values, String matchFormat, String matchType,
                                           String dataFormat) {
 
-        String where = "";
+        StringBuilder where = new StringBuilder();
         matchFormat = (matchFormat == null ? "%s = %s" : matchFormat);
         matchType = (matchType == null ? "AND" : matchType);
         dataFormat = (dataFormat == null ? "%s" : dataFormat);
 
         if (arg_values.length > 0 && !matchFormat.isEmpty()) {
-            where += "(";
+            where.append("(");
             int c = 1;
             for (final String val : arg_values) {
                 if (c > 1 && c <= arg_values.length) {
-                    where += " " + matchType + " ";
+                    where.append(" ").append(matchType).append(" ");
                 }
                 fieldname = (fieldname == null ? "" : fieldname);
-                where += String.format(matchFormat, fieldname, String.format(dataFormat, val));
+                where.append(String.format(matchFormat, fieldname, String.format(dataFormat, val)));
                 c++;
             }
-            where += ")";
+            where.append(")");
         }
-        return where;
+        return where.toString();
     }
 
     /**
@@ -510,7 +506,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
     @Override
     public QueryResult executeSelect(TimeTaken eventTimer) {
 
-        final List<Handler> actions = new ArrayList<Handler>();
+        final List<Handler> actions = new ArrayList<>();
         // Build conditions based off final args
         final String query = getQuery(parameters, shouldGroup);
         eventTimer.recordTimedEvent("query started");
@@ -518,7 +514,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         try (
                 Connection conn = Prism.getPrismDataSource().getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(query);
-                ResultSet rs = s.executeQuery();
+                ResultSet rs = s.executeQuery()
         ) {
             RecordingManager.failedDbConnectionCount = 0;
             eventTimer.recordTimedEvent("query returned, building results");
@@ -588,8 +584,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                     String itemMetadata = rs.getString(13);
 
-                    Boolean validBlockId = false;
-                    Boolean validOldBlockId = false;
+                    boolean validBlockId = false;
+                    boolean validOldBlockId = false;
 
                     MaterialState current = Prism.getItems().idsToMaterial(blockId, blockSubId, false);
 
@@ -644,13 +640,9 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     if (!validBlockId && !validOldBlockId) {
                         // Entry could not be converted to a block or an item
 
-                        Boolean logWarning;
-                        if (blockId == 0 && oldBlockId == 0 && itemMetadata != null && itemMetadata.contains("entity_name")) {
-                            // The current item is likely a spawn or death event for an entity, for example, a cow or horse
-                            logWarning = false;
-                        } else {
-                            logWarning = true;
-                        }
+                        boolean logWarning;
+                        // The current item is likely a spawn or death event for an entity, for example, a cow or horse
+                        logWarning = blockId != 0 || oldBlockId != 0 || itemMetadata == null || !itemMetadata.contains("entity_name");
 
                         if (logWarning) {
                             String itemMetadataDesc;

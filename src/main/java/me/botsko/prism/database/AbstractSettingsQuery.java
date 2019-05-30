@@ -9,9 +9,9 @@ import org.bukkit.entity.Player;
 public abstract class AbstractSettingsQuery implements SettingsQuery {
     /**
      *
-     * @param player
-     * @param key
-     * @return
+     * @param player the Player
+     * @param key the setting to return
+     * @return String
      */
     public String getPlayerKey(Player player, String key) {
         return player.getName() + "." + key;

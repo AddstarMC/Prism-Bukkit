@@ -17,7 +17,6 @@ public class AboutCommand implements SubHandler {
 	/**
 	 *
 	 * @param plugin
-	 * @return
 	 */
 	public AboutCommand(Prism plugin) {
 		this.plugin = plugin;

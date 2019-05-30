@@ -48,7 +48,6 @@ public class RestoreWand extends QueryWandBase {
 	/**
 	 * 
 	 * @param player
-	 * @param block
 	 */
 	protected void restore(Player player, Location loc) {
 
@@ -102,6 +101,5 @@ public class RestoreWand extends QueryWandBase {
 	 */
 	@Override
 	public void playerRightClick(Player player, Entity entity) {
-		return;
 	}
 }

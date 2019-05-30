@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface PrismParameterHandler {
 
-	public String getName();
+	String getName();
 
-	public String[] getHelp();
+	String[] getHelp();
 
-	public boolean applicable(String parameter, CommandSender sender);
+	boolean applicable(String parameter, CommandSender sender);
 
-	public void process(QueryParameters query, String parameter, CommandSender sender);
+	void process(QueryParameters query, String parameter, CommandSender sender);
 
-	public void defaultTo(QueryParameters query, CommandSender sender);
+	void defaultTo(QueryParameters query, CommandSender sender);
 
 	/**
 	 * Complete a param after the `:`
@@ -25,7 +25,7 @@ public interface PrismParameterHandler {
 	 * @param sender The sender
 	 * @return List of strings with suggestions or null if not applicable
 	 */
-	public List<String> tabComplete(String partialParameter, CommandSender sender);
+	List<String> tabComplete(String partialParameter, CommandSender sender);
 
-	public boolean hasPermission(String parameter, Permissible permissible);
+	boolean hasPermission(String parameter, Permissible permissible);
 }

@@ -20,8 +20,6 @@ public class DeathUtils {
 	/**
 	 * Returns the name of what caused an entity to die.
 	 * 
-	 * @param damageCause
-	 * @param p
 	 * @return
 	 */
 	public static String getCauseNiceName(Entity entity) {
@@ -61,7 +59,7 @@ public class DeathUtils {
 			// yourself with instant damage it doesn't show as suicide.
 			if (killer instanceof Player) {
 				// Themself
-				if (((Player) killer).getName().equals(player.getName())) {
+				if (killer.getName().equals(player.getName())) {
 					return "suicide";
 				}
 				// translate bukkit events to nicer names
@@ -99,8 +97,6 @@ public class DeathUtils {
 	/**
 	 * Returns the name of the attacker, whether mob or player.
 	 * 
-	 * @param event
-	 * @param p
 	 * @return
 	 */
 	public static String getAttackerName(Entity victim) {
@@ -121,7 +117,7 @@ public class DeathUtils {
 
 			// Playa!
 			if (killer instanceof Player) {
-				return ((Player) killer).getName();
+				return killer.getName();
 			}
 			// Which skeleton type?
 			// TODO: Other skeleton types
@@ -162,14 +158,12 @@ public class DeathUtils {
 	/**
 	 * Returns the name of the attacker, whether mob or player.
 	 * 
-	 * @param event
-	 * @param p
 	 * @return
 	 */
 	public static String getVictimName(Entity victim) {
 
 		if (victim instanceof Player) {
-			return ((Player) victim).getName();
+			return victim.getName();
 		}
 		else {
 
@@ -224,7 +218,7 @@ public class DeathUtils {
 					owner = ((Player) wolf.getOwner()).getName();
 				}
 				if (wolf.getOwner() instanceof OfflinePlayer) {
-					owner = ((OfflinePlayer) wolf.getOwner()).getName();
+					owner = wolf.getOwner().getName();
 				}
 			}
 		}
@@ -234,7 +228,6 @@ public class DeathUtils {
 	/**
 	 * Determines the weapon used to kill an entity.
 	 * 
-	 * @param p
 	 * @return
 	 */
 	public static String getWeapon(LivingEntity entity) {

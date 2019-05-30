@@ -3,6 +3,7 @@ package me.botsko.prism;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 
+import io.papermc.lib.PaperLib;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.utils.MaterialAliases;
@@ -35,13 +36,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -73,8 +69,8 @@ public class Prism extends JavaPlugin {
 	private static Ignore ignore;
 	protected static List<Material> illegalBlocks;
 	protected static List<EntityType> illegalEntities;
-	protected static HashMap<String, String> alertedOres = new HashMap<String, String>();
-	private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<String, PrismParameterHandler>();
+	protected static HashMap<String, String> alertedOres = new HashMap<>();
+	private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
 	
 	public ScheduledThreadPoolExecutor getSchedulePool() {
 		return schedulePool;
@@ -96,11 +92,11 @@ public class Prism extends JavaPlugin {
 	public ActionsQuery actionsQuery;
 	public OreMonitor oreMonitor;
 	public UseMonitor useMonitor;
-	public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<String, Wand>();
-	public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<String, PreviewSession>();
-	public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<String, ArrayList<Block>>();
-	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<String, QueryResult>();
-	public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<Location, Long>();
+	public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+	public ConcurrentHashMap<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
 	public TimeTaken eventTimer;
 	public QueueStats queueStats;
 	public BukkitTask recordingTask;
@@ -109,9 +105,9 @@ public class Prism extends JavaPlugin {
 	/**
 	 * DB Foreign key caches
 	 */
-	public static HashMap<String, Integer> prismWorlds = new HashMap<String, Integer>();
-	public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<UUID, PrismPlayer>();
-	public static HashMap<String, Integer> prismActions = new HashMap<String, Integer>();
+	public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+	public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+	public static HashMap<String, Integer> prismActions = new HashMap<>();
 
 	/**
 	 * We store a basic index of hanging entities we anticipate will fall, so that
@@ -141,7 +137,7 @@ public class Prism extends JavaPlugin {
 		plugin_version = this.getDescription().getVersion();
 
 		log("Initializing Prism " + plugin_version + ". By Viveleroi.");
-
+		PaperLib.suggestPaper(this);
 		// Load configuration, or install if new
 		loadConfig();
 
@@ -306,16 +302,15 @@ public class Prism extends JavaPlugin {
 
 		// Cache config arrays we check constantly
 		illegalBlocks = getConfig().getStringList("prism.appliers.never-place-block").stream()
-				.map(s -> Material.matchMaterial(s)).filter(m -> m != null).collect(Collectors.toList());
+				.map(Material::matchMaterial).filter(Objects::nonNull).collect(Collectors.toList());
 		illegalEntities = getConfig().getStringList("prism.appliers.never-spawn-entity").stream().map(s -> {
 			try {
 				return EntityType.valueOf(s.toUpperCase());
-			}
-			catch (Exception e) {
+			} catch (Exception ignored) {
 			}
 
 			return null;
-		}).filter(e -> e != null).collect(Collectors.toList());
+		}).filter(Objects::nonNull).collect(Collectors.toList());
 
 		final ConfigurationSection alertBlocks = getConfig().getConfigurationSection("prism.alerts.ores.blocks");
 		alertedOres.clear();
@@ -331,9 +326,9 @@ public class Prism extends JavaPlugin {
 		items = new MaterialAliases();
 	}
 
-	/**
-	 * 
-	 * @return
+	/*
+
+	  @return
 	 */
 	/*
 	 * public Language getLang() { return this.language; }
@@ -466,17 +461,13 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void endExpiredQueryCaches() {
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-
-			@Override
-			public void run() {
-				final java.util.Date date = new java.util.Date();
-				for (final Map.Entry<String, QueryResult> query : cachedQueries.entrySet()) {
-					final QueryResult result = query.getValue();
-					final long diff = (date.getTime() - result.getQueryTime()) / 1000;
-					if (diff >= 120) {
-						cachedQueries.remove(query.getKey());
-					}
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
+			final java.util.Date date = new java.util.Date();
+			for (final Entry<String, QueryResult> query : cachedQueries.entrySet()) {
+				final QueryResult result = query.getValue();
+				final long diff = (date.getTime() - result.getQueryTime()) / 1000;
+				if (diff >= 120) {
+					cachedQueries.remove(query.getKey());
 				}
 			}
 		}, 2400L, 2400L);
@@ -486,23 +477,19 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void endExpiredPreviews() {
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
+			final java.util.Date date = new java.util.Date();
+			for (final Entry<String, PreviewSession> query : playerActivePreviews.entrySet()) {
+				final PreviewSession result = query.getValue();
+				final long diff = (date.getTime() - result.getQueryTime()) / 1000;
+				if (diff >= 60) {
+					// inform player
 
-			@Override
-			public void run() {
-				final java.util.Date date = new java.util.Date();
-				for (final Map.Entry<String, PreviewSession> query : playerActivePreviews.entrySet()) {
-					final PreviewSession result = query.getValue();
-					final long diff = (date.getTime() - result.getQueryTime()) / 1000;
-					if (diff >= 60) {
-						// inform player
-
-						final Player player = result.getPlayer();
-						if (player.isOnline()) {
-							player.sendMessage(Prism.messenger.playerHeaderMsg("Canceling forgotten preview."));
-						}
-						playerActivePreviews.remove(query.getKey());
+					final Player player = result.getPlayer();
+					if (player.isOnline()) {
+						player.sendMessage(Prism.messenger.playerHeaderMsg("Canceling forgotten preview."));
 					}
+					playerActivePreviews.remove(query.getKey());
 				}
 			}
 		}, 1200L, 1200L);
@@ -512,17 +499,13 @@ public class Prism extends JavaPlugin {
 	 * 
 	 */
 	public void removeExpiredLocations() {
-		getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
-
-			@Override
-			public void run() {
-				final java.util.Date date = new java.util.Date();
-				// Remove locations logged over five minute ago.
-				for (final Entry<Location, Long> entry : alertedBlocks.entrySet()) {
-					final long diff = (date.getTime() - entry.getValue()) / 1000;
-					if (diff >= 300) {
-						alertedBlocks.remove(entry.getKey());
-					}
+		getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
+			final java.util.Date date = new java.util.Date();
+			// Remove locations logged over five minute ago.
+			for (final Entry<Location, Long> entry : alertedBlocks.entrySet()) {
+				final long diff = (date.getTime() - entry.getValue()) / 1000;
+				if (diff >= 300) {
+					alertedBlocks.remove(entry.getKey());
 				}
 			}
 		}, 1200L, 1200L);
