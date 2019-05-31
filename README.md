@@ -47,8 +47,11 @@ That said; please feel free to cherry pick commits or fork from this fork, or co
 fork with issues and pull requests.
 
 **Only the latest server version (1.11.2) is supported; older servers may break GPrism.**
-#Build Server
+
+## Build Server
+
 https://jenkins.addstar.com.au/job/Prism-Bukkit/
+
 [![Build Status](https://jenkins.addstar.com.au/buildStatus/icon?job=Prism-Bukkit)](https://jenkins.addstar.com.au/job/Prism-Bukkit/)
 
 # Building, debugging and debug logging
