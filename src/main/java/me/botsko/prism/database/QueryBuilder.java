@@ -28,6 +28,17 @@ abstract public class QueryBuilder {
 	protected String prefix;
 
 	/**
+	 * Setting this will cause the recording queue to be unable to process while the query is running.
+	 *
+	 * @param shouldPause
+	 */
+	public void setShouldPause(boolean shouldPause) {
+		this.shouldPause = shouldPause;
+	}
+
+	protected boolean shouldPause;
+
+	/**
 	 * 
 	 */
 	public QueryBuilder(PrismDataSource dataSource) {

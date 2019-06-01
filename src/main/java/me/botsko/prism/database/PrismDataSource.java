@@ -14,6 +14,10 @@ import java.util.HashMap;
  */
 public interface PrismDataSource {
 
+    boolean isPaused();
+
+    void setPaused(boolean paused);
+
     String getName();
 
     String getPrefix();
@@ -56,4 +60,5 @@ public interface PrismDataSource {
 
     SelectProcessActionQuery createProcessQuery();
 
+    InsertQuery getDataInsertionQuery();
 }

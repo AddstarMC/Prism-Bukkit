@@ -20,6 +20,17 @@ import java.sql.*;
  */
 public abstract class SQLPrismDataSource implements PrismDataSource {
 
+    @Override
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    private boolean paused; //when set the datasource will not allow insertions;
+
     protected String name = "unconfigured";
     private Log log;
     protected static org.apache.tomcat.jdbc.pool.DataSource database = null;
@@ -410,5 +421,9 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     @Override
     public SelectProcessActionQuery createProcessQuery() {
         return new SQLSelectProcessQuery(this);
+    }
+
+    public InsertQuery getDataInsertionQuery() {
+        return new SQLInsertBuilder(this);
     }
 }

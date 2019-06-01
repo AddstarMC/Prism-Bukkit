@@ -1,5 +1,6 @@
 package me.botsko.prism.database.SQL;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.PrismDataSource;
 
@@ -51,6 +52,8 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
 
     @Override
     public int execute() {
+        if (shouldPause)
+            dataSource.setPaused(true); //pause so that the database cannot process the queue.
         int total_rows_affected = 0;
         int cycle_rows_affected = 0;
         try (
@@ -62,6 +65,7 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
         } catch (final SQLException e) {
             dataSource.handleDataSourceException(e);
         }
+        dataSource.setPaused(false);
         return total_rows_affected;
     }
 }
