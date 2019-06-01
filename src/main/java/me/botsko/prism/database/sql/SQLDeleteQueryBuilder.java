@@ -1,6 +1,5 @@
-package me.botsko.prism.database.SQL;
+package me.botsko.prism.database.sql;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.PrismDataSource;
 

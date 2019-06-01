@@ -20,7 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.database.SQL.SQLIdMapQuery;
+import me.botsko.prism.database.sql.SQLIdMapQuery;
 
 public class MaterialAliases {
 	/**

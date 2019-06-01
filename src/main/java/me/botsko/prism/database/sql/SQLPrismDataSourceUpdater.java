@@ -1,4 +1,4 @@
-package me.botsko.prism.database.SQL;
+package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;

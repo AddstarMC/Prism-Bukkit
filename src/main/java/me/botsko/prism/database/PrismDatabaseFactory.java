@@ -3,7 +3,7 @@ package me.botsko.prism.database;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.derby.DerbyPrismDataSource;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
-import me.botsko.prism.database.SQL.SQLPrismDataSourceUpdater;
+import me.botsko.prism.database.sql.SQLPrismDataSourceUpdater;
 import me.botsko.prism.database.sqlite.SQLitePrismDataSource;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;

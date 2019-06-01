@@ -1,4 +1,4 @@
-package me.botsko.prism.database.SQL;
+package me.botsko.prism.database.sql;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -235,7 +235,7 @@ public class SQLIdMapQuery implements IdMapQuery {
                 SQLWarning warning = st.getWarnings();
 
                 while (warning != null) {
-                    dataSource.getLog().warn("SQL Warning: " + warning.getMessage());
+                    dataSource.getLog().warn("sql Warning: " + warning.getMessage());
                     warning = warning.getNextWarning();
                 }
 

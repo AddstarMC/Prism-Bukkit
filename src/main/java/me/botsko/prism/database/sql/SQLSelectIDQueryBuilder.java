@@ -1,4 +1,4 @@
-package me.botsko.prism.database.SQL;
+package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectIDQuery;
