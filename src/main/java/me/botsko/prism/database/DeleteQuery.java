@@ -10,4 +10,6 @@ public interface DeleteQuery extends SelectQuery {
      * @return the number of affected rows.
      */
     int execute();
+
+    void setShouldPause(boolean pause);
 }
