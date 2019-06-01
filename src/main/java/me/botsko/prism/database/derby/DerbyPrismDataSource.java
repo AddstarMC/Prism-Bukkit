@@ -1,6 +1,6 @@
 package me.botsko.prism.database.derby;
 
-import me.botsko.prism.database.SQL.SQLPrismDataSource;
+import me.botsko.prism.database.sql.SQLPrismDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 

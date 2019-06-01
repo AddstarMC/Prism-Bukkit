@@ -1,7 +1,7 @@
 package me.botsko.prism.database.mysql;
 
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.SQL.SQLSelectQueryBuilder;
+import me.botsko.prism.database.sql.SQLSelectQueryBuilder;
 import me.botsko.prism.utils.TypeUtils;
 
 public class MySQLSelectQueryBuilder extends SQLSelectQueryBuilder {
