@@ -31,6 +31,11 @@ public class ActionsQuery {
 	 */
 	private boolean shouldGroup = false;
 
+    public void setShouldPauseDB(boolean shouldPauseDB) {
+        this.shouldPauseDB = shouldPauseDB;
+    }
+
+    private boolean shouldPauseDB = false;
 	/**
 	 * 
 	 * @param plugin
@@ -155,6 +160,7 @@ public class ActionsQuery {
 			final DeleteQuery dqb =  Prism.getPrismDataSource().createDeleteQuery();
 			dqb.setParameters(parameters);
 			dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
+        dqb.setShouldPause(shouldPauseDB); //will stop recording queue
 			return dqb.execute();
 	}
 }
