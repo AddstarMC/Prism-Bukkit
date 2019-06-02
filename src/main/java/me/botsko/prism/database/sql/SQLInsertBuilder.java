@@ -119,6 +119,10 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
     }
 
     public void processBatch() throws SQLException {
+        if (batchStatement == null) {
+            Prism.debug("Batch insert was null");
+            throw new SQLException("no batchstatement configured");
+        }
         batchStatement.executeBatch();
         batchConnection.commit();
         Prism.debug("Batch insert was commit: " + System.currentTimeMillis());

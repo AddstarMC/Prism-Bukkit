@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import me.botsko.prism.database.InsertQuery;
 import org.bukkit.Location;
 
 import me.botsko.prism.Prism;
@@ -66,7 +67,6 @@ public class RecordingTask implements Runnable {
                 }
 				Prism.debug("Beginning batch insert from queue. " + System.currentTimeMillis());
 
-				final ArrayList<Handler> extraDataQueue = new ArrayList<>();
 				// Handle dead connections
                 try {
                     if (Prism.getPrismDataSource().getConnection().isClosed() || Prism.getPrismDataSource().getConnection() == null) {
@@ -92,8 +92,10 @@ public class RecordingTask implements Runnable {
                     Prism.getPrismDataSource().handleDataSourceException(e);
                     return;
                 }
+                InsertQuery batchedQuery = null;
                 try {
-                    Prism.getPrismDataSource().getDataInsertionQuery().createBatch();
+                    batchedQuery = Prism.getPrismDataSource().getDataInsertionQuery();
+                    batchedQuery.createBatch();
                 } catch (Exception e) {
                     e.printStackTrace();
                     if (e instanceof SQLException)
@@ -112,7 +114,7 @@ public class RecordingTask implements Runnable {
 
 					if (a.isCanceled())
 						continue;
-                    Prism.getPrismDataSource().getDataInsertionQuery().insertActionIntoDatabase(a);
+                    batchedQuery.insertActionIntoDatabase(a);
 
 					actionsRecorded++;
 
@@ -126,7 +128,7 @@ public class RecordingTask implements Runnable {
 				}
 				// The main delay is here
 				try {
-                    Prism.getPrismDataSource().getDataInsertionQuery().processBatch();
+                    batchedQuery.processBatch();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
