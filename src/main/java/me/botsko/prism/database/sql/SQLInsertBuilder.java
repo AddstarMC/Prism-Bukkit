@@ -86,6 +86,9 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
     @Override
     public void createBatch() throws SQLException {
         batchConnection = dataSource.getConnection();
+        if (batchConnection == null) {
+            throw new SQLException("No Connection to database");
+        }
         batchConnection.setAutoCommit(false);
         batchStatement = batchConnection.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS);
     }
