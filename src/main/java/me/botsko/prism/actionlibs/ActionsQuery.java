@@ -41,6 +41,11 @@ public class ActionsQuery {
         this.qb = Prism.getPrismDataSource().createSelectQuery();
     }
 
+    /**
+     * Will cause the db to pause with large transactions and stop processing the q
+     *
+     * @param shouldPauseDB
+     */
     public void setShouldPauseDB(boolean shouldPauseDB) {
         this.shouldPauseDB = shouldPauseDB;
     }

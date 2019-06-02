@@ -11,10 +11,7 @@ import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.IntPair;
 import org.bukkit.Location;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
 /**
@@ -59,7 +56,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
         Location l = a.getLoc();
 
         try (Connection con = dataSource.getConnection();
-             PreparedStatement s = con.prepareStatement(getQuery());
+             PreparedStatement s = con.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS);
         ) {
             applytoInsert(s, a, action_id, player_id, world_id, newIds, oldIds, l);
             s.executeUpdate();
@@ -73,7 +70,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
 
                     try (
                             PreparedStatement s2 = con.prepareStatement(
-                                    "INSERT INTO `" + prefix + "data_extra` (data_id, data) VALUES (?, ?)")) {
+                                    "INSERT INTO `" + prefix + "data_extra` (data_id, data) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
                         s2.setLong(1, id);
                         s2.setString(2, serialData);
                         s2.executeUpdate();
@@ -90,7 +87,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
     public void createBatch() throws SQLException {
         batchConnection = dataSource.getConnection();
         batchConnection.setAutoCommit(false);
-        batchStatement = batchConnection.prepareStatement(getQuery());
+        batchStatement = batchConnection.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS);
     }
 
     @Override
@@ -133,7 +130,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
         if (extraDataQueue.isEmpty())
             return;
         try (Connection conn = dataSource.getConnection();
-             PreparedStatement s = conn.prepareStatement("INSERT INTO `" + prefix + "data_extra` (data_id,data) VALUES (?,?)");
+             PreparedStatement s = conn.prepareStatement("INSERT INTO `" + prefix + "data_extra` (data_id,data) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
         ) {
             conn.setAutoCommit(false);
             int i = 0;
