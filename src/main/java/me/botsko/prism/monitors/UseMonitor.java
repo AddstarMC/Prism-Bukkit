@@ -106,7 +106,7 @@ public class UseMonitor {
         if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
-        final String blockType = "" + block.getType();
+        final String blockType = "" + block.getTypeId();
         
         // TODO: 1.13
         @SuppressWarnings("deprecation")
@@ -114,7 +114,7 @@ public class UseMonitor {
 
         // Ensure we're tracking this block
         if( blocksToAlertOnPlace.contains( blockType )
-                || blocksToAlertOnPlace.contains( block.getType() + ":" + data ) ) {
+                || blocksToAlertOnPlace.contains( block.getTypeId() + ":" + data ) ) {
             final String alias = Prism.getItems().getAlias( block.getType(), data );
             incrementCount( playername, "placed " + alias );
         }
@@ -131,7 +131,7 @@ public class UseMonitor {
         if( !checkFeatureShouldProceed( player ) ) return;
 
         final String playername = player.getName();
-        final String blockType = "" + block.getType();
+        final String blockType = "" + block.getTypeId();
         
         // TODO: 1.13
         @SuppressWarnings("deprecation")
@@ -139,7 +139,7 @@ public class UseMonitor {
         
         // Ensure we're tracking this block
         if( blocksToAlertOnBreak.contains( blockType )
-                || blocksToAlertOnBreak.contains( block.getType() + ":" + data ) ) {
+                || blocksToAlertOnBreak.contains( block.getTypeId() + ":" + data ) ) {
             final String alias = Prism.getItems().getAlias( block.getType(), data );
             incrementCount( playername, "broke " + alias );
         }

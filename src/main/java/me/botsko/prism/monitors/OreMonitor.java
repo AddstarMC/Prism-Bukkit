@@ -69,6 +69,7 @@ public class OreMonitor {
             // identify all ore blocks on same Y axis in x/z direction
             final ArrayList<Block> matchingBlocks = new ArrayList<Block>();
             final ArrayList<Block> foundores = findNeighborBlocks( block.getType(), block, matchingBlocks );
+
             if( !foundores.isEmpty() ) {
 
                 // Save the block
@@ -136,7 +137,7 @@ public class OreMonitor {
      */
     protected String getOreColor(Block block) {
         if( isWatched( block ) ) {
-            return Prism.getAlertedOres().get( "" + block.getType() );
+            return Prism.getAlertedOres().get( "" + block.getTypeId() );
         } else {
             return "&f";
         }
@@ -159,10 +160,10 @@ public class OreMonitor {
     protected boolean isWatched(Block block) {
         // TODO: 1.13
         @SuppressWarnings("deprecation")
-		byte data = block.getData();
+        byte data = block.getData();
         
-        return Prism.getAlertedOres().containsKey( block.getType() + ":" + data )
-                || Prism.getAlertedOres().containsKey( "" + block.getType() );
+        return Prism.getAlertedOres().containsKey( block.getTypeId() + ":" + data )
+                || Prism.getAlertedOres().containsKey( "" + block.getTypeId() );
     }
 
     /**
