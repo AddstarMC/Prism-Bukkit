@@ -39,7 +39,9 @@ public class UseMonitor {
 	public UseMonitor(Prism plugin) {
 		this.plugin = plugin;
 		blocksToAlertOnPlace = plugin.getConfig().getStringList("prism.alerts.uses.item-placement");
+		blocksToAlertOnPlace.replaceAll(String::toUpperCase);
 		blocksToAlertOnBreak = plugin.getConfig().getStringList("prism.alerts.uses.item-break");
+		blocksToAlertOnBreak.replaceAll(String::toUpperCase);
 		resetEventsQueue();
 	}
 

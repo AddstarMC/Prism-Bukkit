@@ -316,7 +316,7 @@ public class Prism extends JavaPlugin {
 		alertedOres.clear();
 		if (alertBlocks != null) {
 			for (final String key : alertBlocks.getKeys(false)) {
-				alertedOres.put(key, alertBlocks.getString(key));
+				alertedOres.put(key.toUpperCase(), alertBlocks.getString(key));
 			}
 		}
 
