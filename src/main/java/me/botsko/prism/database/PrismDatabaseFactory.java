@@ -60,12 +60,16 @@ public class PrismDatabaseFactory {
     }
     public static PrismDataSource createDataSource(Configuration  configuration) {
         if(configuration == null) return null;
-        String dataSource = configuration.getString("dataSource","mysql");
+        String dataSource = configuration.getString("datasource","mysql");
         if(dataSource == null)return null;
         switch (dataSource) {
             case "mysql":
                 Prism.log("Attempting to configure datasource as " + dataSource);
-                database = new MySQLPrismDataSource(configuration.getConfigurationSection("prism.mysql"));
+                ConfigurationSection section = configuration.getConfigurationSection("prism.mysql");
+                String dns = "jdbc:mysql://" + section.getString("hostname") + ":"
+                        + section.getString("port") + "/" + section.getString("databaseName")
+                        + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
+                database = new MySQLPrismDataSource(section);
                 return database;
             case "derby":
                 Prism.log("Attempting to configure datasource as " + dataSource);
@@ -83,7 +87,7 @@ public class PrismDatabaseFactory {
     }
     public static PrismDataSourceUpdater createUpdater(Configuration configuration){
         if(configuration == null) return null;
-        String dataSource = configuration.getString("dataSource","mysql");
+        String dataSource = configuration.getString("datasource","mysql");
         if(dataSource == null)return null;
         switch (dataSource) {
             case "mysql":

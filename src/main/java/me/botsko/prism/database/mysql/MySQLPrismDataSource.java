@@ -1,5 +1,6 @@
 package me.botsko.prism.database.mysql;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.sql.*;
 import me.botsko.prism.database.SelectQuery;
 import org.bukkit.configuration.ConfigurationSection;
