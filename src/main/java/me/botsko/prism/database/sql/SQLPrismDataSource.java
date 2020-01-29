@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.*;
@@ -33,7 +34,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     protected String name = "unconfigured";
     private Log log;
-    protected static org.apache.tomcat.jdbc.pool.DataSource database = null;
+    protected static HikariDataSource database = null;
     private SettingsQuery settingsQuery = null;
     protected ConfigurationSection section;
 

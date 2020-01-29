@@ -1,10 +1,8 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.database.derby.DerbyPrismDataSource;
 import me.botsko.prism.database.mysql.MySQLPrismDataSource;
 import me.botsko.prism.database.sql.SQLPrismDataSourceUpdater;
-import me.botsko.prism.database.sqlite.SQLitePrismDataSource;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -20,38 +18,24 @@ public class PrismDatabaseFactory {
 
     public static void createDefaultConfig(Configuration configuration) {
         ConfigurationSection mysql;
-        if(configuration.contains("prism.mysql"))
-        {
+        if (configuration.contains("prism.mysql")) {
             mysql = configuration.getConfigurationSection("prism.mysql");
-        }else {
+        } else {
             mysql = configuration.createSection("prism.mysql");
         }
         MySQLPrismDataSource.updateDefaultConfig(mysql);
-        addTomcatJDBCDefaults(mysql);
-        ConfigurationSection derby;
-        if(configuration.contains("prism.derby"))
-        {
-            derby = configuration.getConfigurationSection("prism.derby");
-        }else {
-            derby = configuration.createSection("prism.derby");
+        addDatabaseDefaults(mysql);
+        if (configuration.contains("prism.derby")) {
+            Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use MySQL.");
         }
-        DerbyPrismDataSource.updateDefaultConfig(derby);
-        addTomcatJDBCDefaults(derby);
-        ConfigurationSection sqlite;
-        if(configuration.contains("prism.sqlite"))
-        {
-            sqlite = configuration.getConfigurationSection("prism.sqlite");
-        }else {
-            sqlite = configuration.createSection("prism.sqlite");
+        if (configuration.contains("prism.sqlite")) {
+            Prism.warn("ERROR: This version of Prism no longer supports SQLite. Please use MySQL.");
         }
-        SQLitePrismDataSource.updateDefaultConfig(sqlite);
-        addTomcatJDBCDefaults(sqlite);
     }
 
-    private static void addTomcatJDBCDefaults(ConfigurationSection section) {
+    private static void addDatabaseDefaults(ConfigurationSection section) {
         section.addDefault("database.max-pool-connections", 20);
-        section.addDefault("database.pool-initial-size", 10);
-        section.addDefault("database.max-idle-connections", 10);
+        section.addDefault("database.min-idle-connections", 5);
         section.addDefault("database.max-wait", 30000);
         section.addDefault("database.max-failures-before-wait", 5);
         section.addDefault("database.actions-per-insert-batch", 300);
@@ -72,13 +56,11 @@ public class PrismDatabaseFactory {
                 database = new MySQLPrismDataSource(section);
                 return database;
             case "derby":
-                Prism.log("Attempting to configure datasource as " + dataSource);
-                database = new DerbyPrismDataSource(configuration.getConfigurationSection("prism.derby"));
-                return database;
+                Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use MySQL.");
+                return null;
             case "sqlite":
-                Prism.log("Attempting to configure datasource as " + dataSource);
-                database = new SQLitePrismDataSource(configuration.getConfigurationSection("prism.sqlite"));
-                return database;
+                Prism.warn("ERROR: This version of Prism no longer supports SQLite. Please use MySQL.");
+                return null;
             default:
                 Prism.log("Attempting to configure datasource as " + null);
                 return null;
