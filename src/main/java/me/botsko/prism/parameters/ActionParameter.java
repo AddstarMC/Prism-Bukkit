@@ -59,7 +59,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
 							continue;
 						}
 
-						if (!sender.hasPermission(getPermission() + "." + actionType.getName())) {
+						if (sender != null && !sender.hasPermission(getPermission() + "." + actionType.getName())) {
 							noPermission.add(actionType.getName());
 							continue;
 						}

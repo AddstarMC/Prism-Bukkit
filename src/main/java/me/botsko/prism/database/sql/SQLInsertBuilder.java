@@ -77,6 +77,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
                     }
                 }
             }
+            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -130,7 +131,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
         batchConnection.commit();
         Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
         processExtraData(batchStatement.getGeneratedKeys());
-
+        batchConnection.close();
     }
 
     public void processExtraData(ResultSet keys) throws SQLException {
@@ -164,7 +165,6 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
                 }
 
                 i++;
-
             }
 
             // The main delay is here
@@ -176,7 +176,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
             } else {
                 conn.commit();
             }
-
+            conn.close();
         } catch (final SQLException e) {
             e.printStackTrace();
             Prism.getPrismDataSource().handleDataSourceException(e);

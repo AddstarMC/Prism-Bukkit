@@ -1,5 +1,7 @@
 package me.botsko.prism.commands;
 
+import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.Prism;
@@ -146,15 +148,22 @@ public class ReportCommand implements SubHandler {
 				.playerMsg("Active Failure Count: " + ChatColor.WHITE + RecordingManager.failedDbConnectionCount));
 		sender.sendMessage(
 				Prism.messenger.playerMsg("Actions in queue: " + ChatColor.WHITE + RecordingQueue.getQueueSize()));
-		if(Prism.getPrismDataSource().getDataSource() instanceof org.apache.tomcat.jdbc.pool.DataSource) {
-			org.apache.tomcat.jdbc.pool.DataSource pool = (DataSource) Prism.getPrismDataSource().getDataSource();
-			sender.sendMessage(Prism.messenger.playerMsg("Pool active: " + ChatColor.WHITE + pool.getActive()));
-			sender.sendMessage(Prism.messenger.playerMsg("Pool idle: " + ChatColor.WHITE + pool.getIdle()));
-			sender.sendMessage(
-					Prism.messenger.playerMsg("Pool active count: " + ChatColor.WHITE +pool.getNumActive()));
-			sender.sendMessage(
-					Prism.messenger.playerMsg("Pool idle count: " + ChatColor.WHITE + pool.getNumIdle()));
+
+		if(Prism.getPrismDataSource().getDataSource() instanceof HikariDataSource) {
+			HikariDataSource ds = (HikariDataSource) Prism.getPrismDataSource().getDataSource();
+
+			sender.sendMessage(Prism.messenger.playerMsg("Pool total: " + ChatColor.WHITE
+					+ ds.getHikariPoolMXBean().getTotalConnections()));
+			sender.sendMessage(Prism.messenger.playerMsg("Pool active: " + ChatColor.WHITE
+					+ ds.getHikariPoolMXBean().getActiveConnections()));
+			sender.sendMessage(Prism.messenger.playerMsg("Pool idle: " + ChatColor.WHITE
+					+ ds.getHikariPoolMXBean().getIdleConnections()));
+			sender.sendMessage(Prism.messenger.playerMsg("Pool min idle: " + ChatColor.WHITE
+					+ ds.getMinimumIdle()));
+			sender.sendMessage(Prism.messenger.playerMsg("Pool max idle: " + ChatColor.WHITE
+					+ ds.getMaximumPoolSize()));
 		}
+
 		boolean recorderActive = false;
 		if (plugin.recordingTask != null) {
 			final int taskId = plugin.recordingTask.getTaskId();
