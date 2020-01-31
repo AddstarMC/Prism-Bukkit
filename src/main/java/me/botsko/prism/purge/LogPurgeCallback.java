@@ -10,10 +10,10 @@ public class LogPurgeCallback implements PurgeCallback {
 	 */
 	@Override
 	public void cycle(QueryParameters param, int cycle_rows_affected, int total_records_affected,
-			boolean cycle_complete) {
+			boolean cycle_complete, long max_cycle_time) {
 		Prism.debug("Purge cycle cleared " + cycle_rows_affected + " rows.");
 		if (cycle_complete) {
-			Prism.log("Cleared " + total_records_affected + " rows from the database. Using:"
+			Prism.log("Cleared " + total_records_affected + " rows. Max cycle time " + max_cycle_time + " msec. Using:"
 					+ param.getOriginalCommand());
 		}
 	}
