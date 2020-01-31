@@ -1,5 +1,7 @@
 package me.botsko.prism.database.mysql;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.database.sql.*;
 import me.botsko.prism.database.SelectQuery;
 import org.bukkit.configuration.ConfigurationSection;
@@ -11,6 +13,7 @@ import org.bukkit.configuration.ConfigurationSection;
 public class MySQLPrismDataSource extends SQLPrismDataSource {
 
     private boolean nonStandardSQL;
+    private static HikariConfig dbconfig = new HikariConfig();
 
     public MySQLPrismDataSource(ConfigurationSection section) {
         super(section);
@@ -29,25 +32,20 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
     }
     @Override
     public MySQLPrismDataSource createDataSource() {
-        org.apache.tomcat.jdbc.pool.DataSource pool = null;
+        HikariDataSource ds = null;
         final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
                 + this.section.getString("port") + "/" + this.section.getString("databaseName")
                 + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
-        pool = new org.apache.tomcat.jdbc.pool.DataSource();
-        pool.setDriverClassName("com.mysql.jdbc.Driver");
-        pool.setUrl(dns);
-        pool.setUsername(this.section.getString("username"));
-        pool.setPassword(this.section.getString("password"));
-        pool.setInitialSize(this.section.getInt("database.pool-initial-size"));
-        pool.setMaxActive(this.section.getInt("database.max-pool-connections"));
-        pool.setMaxIdle(this.section.getInt("database.max-idle-connections"));
-        pool.setMaxWait(this.section.getInt("database.max-wait"));
-        pool.setRemoveAbandoned(true);
-        pool.setRemoveAbandonedTimeout(60);
-        pool.setTestOnBorrow(true);
-        pool.setValidationQuery("/* ping */SELECT 1");
-        pool.setValidationInterval(30000);
-        database = pool;
+
+        dbconfig.setPoolName("prism");
+        dbconfig.setMaximumPoolSize(this.section.getInt("database.max-pool-connections"));
+        dbconfig.setMinimumIdle(this.section.getInt("database.min-idle-connections"));
+        dbconfig.setJdbcUrl(dns);
+        dbconfig.setUsername(this.section.getString("username"));
+        dbconfig.setPassword(this.section.getString("password"));
+
+        ds = new HikariDataSource(dbconfig);
+        database = ds;
         createSettingsQuery();
         return this;
     }
@@ -64,6 +62,5 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         } else {
             return new SQLSelectQueryBuilder(this);
         }
-
     }
 }

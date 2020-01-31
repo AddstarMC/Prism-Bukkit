@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.destroystokyo.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.14-R0.1-SNAPSHOT</version>
+			<version>1.15-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -44,13 +44,6 @@
 			<version>7.0.52</version>
 			<scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.14.1.0</version>
-            <scope>provided</scope>
-        </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -59,7 +52,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>1.5</version>
+            <version>1.7</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
@@ -67,6 +60,16 @@
 			<artifactId>annotations</artifactId>
 			<version>18.0.0</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>3.4.2</version>
 		</dependency>
 	</dependencies>
 	<repositories>
@@ -85,6 +88,10 @@
 		<repository>
             <id>CodeMC</id>
             <url>https://repo.codemc.org/repository/maven-public</url>
+		</repository>
+		<repository>
+			<id>maven-central</id>
+			<url>https://repo1.maven.org/maven2/</url>
 		</repository>
 	</repositories>
 	<build>
