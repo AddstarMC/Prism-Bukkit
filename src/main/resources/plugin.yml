@@ -5,7 +5,7 @@ softdepend: [WorldEdit,HeroChat]
 author: viveleroi
 authors: [ezeiger92]
 website: http://discover-prism.com
-api-version: 1.14
+api-version: 1.15
 commands:
    prism:
       description: Base command for everything Prism
