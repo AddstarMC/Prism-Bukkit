@@ -52,6 +52,7 @@ final public class PurgeManager implements Runnable {
 				if (parameters.getFoundArgs().size() > 0) {
 					parameters.setStringFromRawArgs(purgeArgs.split(" "), 0);
 					paramList.add(parameters);
+					Prism.log( "Processed parameters for database purge: " + purgeArgs );
 				}
 			}
 

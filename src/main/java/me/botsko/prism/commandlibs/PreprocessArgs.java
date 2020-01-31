@@ -69,9 +69,11 @@ public class PreprocessArgs {
 
 		// Reject no matches
 		if (foundArgsList.isEmpty() && !optional) {
-			if (sender != null)
-				sender.sendMessage(
-						Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance."));
+			if (sender != null) {
+				sender.sendMessage(Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance."));
+			} else {
+				Prism.log("Missing valid parameters");
+			}
 			return null;
 		}
 
@@ -95,8 +97,11 @@ public class PreprocessArgs {
 				handler.process(parameters, matchedParam.getArg(), sender);
 			}
 			catch (final IllegalArgumentException e) {
-				if (sender != null)
+				if (sender != null) {
 					sender.sendMessage(Prism.messenger.playerError(e.getMessage()));
+				} else {
+					Prism.log(e.getMessage());
+				}
 				return null;
 			}
 		}
@@ -169,14 +174,18 @@ public class PreprocessArgs {
 
 		switch (result) {
 			case NotFound:
-				if (sender != null)
-					sender.sendMessage(Prism.messenger
-							.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
+				if (sender != null) {
+					sender.sendMessage(Prism.messenger.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
+				} else {
+					Prism.log( "Unrecognized parameter '" + arg + "'" );
+				}
 				break;
 			case NoPermission:
-				if (sender != null)
-					sender.sendMessage(
-							Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
+				if (sender != null) {
+					sender.sendMessage(Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
+				} else {
+					Prism.log("No permission for parameter '" + arg + "'");
+				}
 				break;
 			default:
 				break;

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import me.botsko.prism.utils.MiscUtils;
+import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -39,7 +40,9 @@ public class UseMonitor {
 	public UseMonitor(Prism plugin) {
 		this.plugin = plugin;
 		blocksToAlertOnPlace = plugin.getConfig().getStringList("prism.alerts.uses.item-placement");
+		blocksToAlertOnPlace.replaceAll(String::toUpperCase);
 		blocksToAlertOnBreak = plugin.getConfig().getStringList("prism.alerts.uses.item-break");
+		blocksToAlertOnBreak.replaceAll(String::toUpperCase);
 		resetEventsQueue();
 	}
 
@@ -65,7 +68,7 @@ public class UseMonitor {
 		if (count <= 5) {
 			if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
 				plugin.alertPlayers(null, msg);
-				Prism.log(msg);
+				Prism.log(TypeUtils.colorize(msg));
 			}
 
 			// Log to commands
