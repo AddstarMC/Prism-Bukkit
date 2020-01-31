@@ -143,7 +143,8 @@ public class Prism extends JavaPlugin {
 		loadConfig();
 
 		if (getConfig().getBoolean("prism.allow-metrics")) {
-			Metrics metrics = new Metrics(this);
+			int pluginid = 4365; // assigned by bstats.org
+			Metrics metrics = new Metrics(this, pluginid);
 		}
 
 		// init db async then call back to complete enable.
