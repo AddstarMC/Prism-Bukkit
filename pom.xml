@@ -44,13 +44,6 @@
 			<version>7.0.52</version>
 			<scope>compile</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.derby/derby -->
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>10.14.1.0</version>
-            <scope>provided</scope>
-        </dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
