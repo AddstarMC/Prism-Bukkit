@@ -101,6 +101,7 @@ public class Prism extends JavaPlugin {
 	public QueueStats queueStats;
 	public BukkitTask recordingTask;
 	public int total_records_affected = 0;
+	public long max_cycle_time = 0;
 
 	/**
 	 * DB Foreign key caches
@@ -316,7 +317,7 @@ public class Prism extends JavaPlugin {
 		alertedOres.clear();
 		if (alertBlocks != null) {
 			for (final String key : alertBlocks.getKeys(false)) {
-				alertedOres.put(key, alertBlocks.getString(key));
+				alertedOres.put(key.toUpperCase(), alertBlocks.getString(key));
 			}
 		}
 

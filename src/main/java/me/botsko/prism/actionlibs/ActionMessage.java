@@ -5,6 +5,7 @@ import me.botsko.prism.utils.BlockUtils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 public class ActionMessage {
 
@@ -144,7 +145,7 @@ public class ActionMessage {
 			}
 		}
 
-		if (showExtended) {
+		if (showExtended && (a.getMaterial() != Material.AIR)) {
 			line1 += " " + a.getMaterial() + BlockUtils.dataString(a.getBlockData());
 		}
 

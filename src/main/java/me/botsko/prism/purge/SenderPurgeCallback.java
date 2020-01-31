@@ -17,13 +17,13 @@ public class SenderPurgeCallback implements PurgeCallback {
 	 */
 	@Override
 	public void cycle(QueryParameters param, int cycle_rows_affected, int total_records_affected,
-			boolean cycle_complete) {
+			boolean cycle_complete, long max_cycle_time) {
 		if (sender == null)
 			return;
 		sender.sendMessage(
 				Prism.messenger.playerSubduedHeaderMsg("Purge cycle cleared " + cycle_rows_affected + " records."));
 		if (cycle_complete) {
-			sender.sendMessage(Prism.messenger.playerHeaderMsg(total_records_affected + " records have been purged."));
+			sender.sendMessage(Prism.messenger.playerHeaderMsg(total_records_affected + " records purged. Max cycle time " + max_cycle_time + " msec."));
 		}
 	}
 

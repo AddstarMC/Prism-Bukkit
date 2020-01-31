@@ -118,7 +118,7 @@ public class OreMonitor {
 
 						// Log to console
 						if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
-							Prism.log(msg);
+							Prism.log(TypeUtils.colorize(msg));
 						}
 
 						// Log to commands
