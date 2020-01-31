@@ -101,6 +101,7 @@ public class Prism extends JavaPlugin {
 	public QueueStats queueStats;
 	public BukkitTask recordingTask;
 	public int total_records_affected = 0;
+	public long max_cycle_time = 0;
 
 	/**
 	 * DB Foreign key caches
