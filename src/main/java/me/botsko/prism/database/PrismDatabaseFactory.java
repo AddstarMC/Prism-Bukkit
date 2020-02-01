@@ -25,12 +25,6 @@ public class PrismDatabaseFactory {
         }
         MySQLPrismDataSource.updateDefaultConfig(mysql);
         addDatabaseDefaults(mysql);
-        if (configuration.contains("prism.derby")) {
-            Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use MySQL.");
-        }
-        if (configuration.contains("prism.sqlite")) {
-            Prism.warn("ERROR: This version of Prism no longer supports SQLite. Please use MySQL.");
-        }
     }
 
     private static void addDatabaseDefaults(ConfigurationSection section) {
