@@ -52,6 +52,7 @@ public class InspectorWand extends QueryWandBase {
 	protected void showLocationHistory(final Player player, final Location loc) {
 
 		final Block block = loc.getBlock();
+		final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
 
 		/*
 		  Run the lookup itself in an async task so the lookup query isn't done on the
@@ -73,7 +74,6 @@ public class InspectorWand extends QueryWandBase {
 			params.setSpecificBlockLocation(loc);
 
 			// Do we need a second location? (For beds, doors, etc)
-			final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
 			if (sibling != null) {
 				params.addSpecificBlockLocation(sibling.getLocation());
 			}
