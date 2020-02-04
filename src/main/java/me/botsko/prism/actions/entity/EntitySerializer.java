@@ -142,7 +142,7 @@ public class EntitySerializer {
 			sb.append(' ').append(MiscUtils.niceName(newColor));
 
 		if (custom_name != null)
-			sb.append(" named").append(custom_name);
+			sb.append(" named ").append(custom_name);
 
 		niceName(sb, index);
 		return sb.toString();

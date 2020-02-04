@@ -144,7 +144,7 @@ public class MiscUtils {
 			TextComponent[] toSend = new TextComponent[message.length];
 			int i = 0;
 			for (String m : message) {
-				toSend[i] = new TextComponent(m);
+				toSend[i] = new TextComponent(TextComponent.fromLegacyText(m));
 				i++;
 			}
 			toSend[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
