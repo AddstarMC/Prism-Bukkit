@@ -91,9 +91,15 @@ public class PrismVehicleEvents implements Listener {
 			final List<Entity> passengers = vehicle.getPassengers();
 			if (!passengers.isEmpty()) {
 				Entity passenger = passengers.get(0);
-				if (!Prism.getIgnore().event("vehicle-break", ((Player) passenger)))
-					return;
-				RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-break", vehicle, (Player) passenger));
+				if (passenger instanceof Player) {
+					if (!Prism.getIgnore().event("vehicle-break", ((Player) passenger)))
+						return;
+					RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-break", vehicle, (Player) passenger));
+				} else {
+					if (!Prism.getIgnore().event("vehicle-break", passenger.getWorld()))
+						return;
+					RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-break", vehicle, passenger.getType().name().toLowerCase()));
+				}
 			}
 		}
 	}
