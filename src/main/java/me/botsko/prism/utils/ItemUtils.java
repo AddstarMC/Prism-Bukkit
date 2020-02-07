@@ -388,7 +388,7 @@ public class ItemUtils {
 		if (meta instanceof LeatherArmorMeta) {
 			LeatherArmorMeta lam = (LeatherArmorMeta) meta;
 			if (lam.getColor() != Bukkit.getItemFactory().getDefaultLeatherColor()) {
-				item_name.append("dyed ");
+				item_name.append(" dyed");
 			}
 		}
 
