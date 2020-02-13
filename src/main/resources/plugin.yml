@@ -2,9 +2,9 @@ name: Prism
 main: me.botsko.prism.Prism
 version: ${pom.version}-${env.BUILD_NUMBER}
 softdepend: [WorldEdit,HeroChat]
-author: viveleroi
-authors: [ezeiger92]
-website: http://discover-prism.com
+author: AddstarMC
+authors: [add5tar, Narimm, viveleroi]
+website: https://github.com/AddstarMC/Prism-Bukkit/wiki
 api-version: 1.15
 commands:
    prism:
