@@ -29,31 +29,49 @@ import org.bukkit.entity.EntityType;
 
 public class BlockUtils {
 
-	// TODO: 1.13 material change
-	private static final MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.FIRE, Material.GRAVEL,
-			Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK, Material.WATER);
+	// Material at a location that are commonly acceptable to replace.
+	private static final MaterialTag replaceableMaterials = new MaterialTag(Material.AIR, Material.CAVE_AIR, Material.VOID_AIR,
+			Material.FIRE, Material.GRAVEL, Material.LAVA, Material.TALL_GRASS, Material.SAND, Material.SNOW, Material.SNOW_BLOCK,
+			Material.WATER);
 
-	private static final MaterialTag fallingMaterials = new MaterialTag(Material.SAND, Material.GRAVEL, Material.ANVIL,
-			Material.DRAGON_EGG).append("_CONCRETE_POWDER", MatchMode.SUFFIX);
+	// Material that has gravity (will fall, not break, when placed on the side of a wall or breaking the block under it)
+	private static final MaterialTag fallingMaterials = new MaterialTag(Material.GRAVEL, Material.ANVIL, Material.DRAGON_EGG)
+				.append("_CONCRETE_POWDER", MatchMode.SUFFIX)
+				.append(Tag.SAND);
 
+	// Material that will detach from the side of a block when that block is broken
 	private static final MaterialTag fallsOffWall = new MaterialTag(Material.POWERED_RAIL, Material.DETECTOR_RAIL,
 			Material.STICKY_PISTON, Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH,
-			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL,
-			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL).append(Tag.RAILS)
-					.append(Tag.BUTTONS, MaterialTag.WALL_BANNERS, Tag.WALL_SIGNS);
+			Material.LADDER, Material.LEVER, Material.REDSTONE_TORCH, Material.NETHER_PORTAL, Material.BEACON,
+			Material.VINE, Material.COCOA, Material.TRIPWIRE_HOOK, Material.ACTIVATOR_RAIL, Material.ITEM_FRAME)
+				.append(Tag.RAILS, Tag.BUTTONS, Tag.WALL_SIGNS)
+				.append(MaterialTag.WALL_BANNERS);
 
+	// Material that will detach from the top of a block when that block is broken
 	private static final MaterialTag fallsOffTop = new MaterialTag(Material.STICKY_PISTON, Material.DEAD_BUSH,
 			Material.PISTON, Material.PISTON_HEAD, Material.MOVING_PISTON, Material.TORCH, Material.REDSTONE,
 			Material.WHEAT, Material.LEVER, Material.STONE_PRESSURE_PLATE, Material.REDSTONE_TORCH,
 			Material.SNOW, Material.CACTUS, Material.SUGAR_CANE, Material.NETHER_PORTAL, Material.REPEATER,
 			Material.PUMPKIN_STEM, Material.MELON_STEM, Material.LILY_PAD, Material.NETHER_WART, Material.CARROTS,
-			Material.POTATOES, Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEETROOTS,
-			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.COMPARATOR)
+			Material.POTATOES, Material.BEETROOTS, Material.COMPARATOR, Material.BAMBOO, Material.TURTLE_EGG,
+			Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.BEACON,
+			Material.ITEM_FRAME, Material.CONDUIT)
+				.append(Tag.DOORS, Tag.RAILS, Tag.SAPLINGS, MaterialTag.BANNERS, Tag.STANDING_SIGNS)
+				.append(Tag.WOODEN_PRESSURE_PLATES, Tag.BUTTONS, Tag.CARPETS, Tag.FLOWER_POTS)
+				.append(MaterialTag.ALL_PLANTS);
 
-					.append(Tag.DOORS, Tag.RAILS, Tag.SAPLINGS, MaterialTag.BANNERS, Tag.STANDING_SIGNS)
-					.append(Tag.WOODEN_PRESSURE_PLATES).append(Tag.BUTTONS).append(Tag.CARPETS)
-					.append(MaterialTag.ALL_PLANTS).append(Tag.FLOWER_POTS);
+	// Material that will be detached by flowing water/lava
+	private static final MaterialTag flowBreaks = new MaterialTag(MaterialTag.ALL_PLANTS, MaterialTag.CROPS, MaterialTag.SKULLS)
+				.append(Material.CACTUS, Material.REPEATER, Material.COMPARATOR, Material.REDSTONE, Material.LEVER)
+				.append(Material.REDSTONE_TORCH, Material.SUGAR_CANE, Material.TORCH, Material.TRIPWIRE)
+				.append(Material.TRIPWIRE_HOOK, Material.VINE, Material.END_ROD)
+				.append(Tag.BUTTONS, Tag.SAPLINGS, Tag.RAILS, Tag.FLOWER_POTS);
 
+	// Material that can grow/spread to another location
+	private static final MaterialTag growableStructure = new MaterialTag(Tag.LEAVES, Tag.LOGS)
+			.append(Material.RED_MUSHROOM_BLOCK, Material.BROWN_MUSHROOM_BLOCK, Material.MUSHROOM_STEM);
+
+	// Material that could possibly cause other material to detach from another block
 	private static final EnumSet<Material> detachingBlocks = EnumSet.of(Material.AIR, Material.FIRE, Material.WATER,
 			Material.LAVA);
 
@@ -485,14 +503,6 @@ public class BlockUtils {
 		return block;
 	}
 
-	private static final MaterialTag flowBreaks = new MaterialTag(MaterialTag.ALL_PLANTS, Tag.SAPLINGS, Tag.RAILS,
-			MaterialTag.CROPS, Tag.WOODEN_PRESSURE_PLATES, MaterialTag.SKULLS, Tag.FLOWER_POTS).append(Material.CACTUS,
-					Material.REPEATER, Material.COMPARATOR, Material.REDSTONE, Material.LADDER, Material.LEVER,
-					Material.REDSTONE_TORCH, Material.STONE_PRESSURE_PLATE,
-					Material.LIGHT_WEIGHTED_PRESSURE_PLATE, Material.HEAVY_WEIGHTED_PRESSURE_PLATE, Material.SUGAR_CANE,
-					Material.TORCH, Material.TRIPWIRE, Material.TRIPWIRE_HOOK, Material.VINE)
-			.append(Tag.SIGNS);
-
 	/**
 	 * 
 	 * @param m
@@ -560,9 +570,6 @@ public class BlockUtils {
 		}
 		return null;
 	}
-
-	private static final MaterialTag growableStructure = new MaterialTag(Tag.LEAVES, Tag.LOGS)
-			.append(Material.RED_MUSHROOM_BLOCK, Material.BROWN_MUSHROOM_BLOCK, Material.MUSHROOM_STEM);
 
 	/**
 	 * 

@@ -150,13 +150,18 @@ public class MaterialTag implements Tag<Material> {
 			Material.LIGHT_GRAY_DYE, Material.GRAY_DYE, Material.PINK_DYE, Material.LIME_DYE, Material.YELLOW_DYE,
 			Material.LIGHT_BLUE_DYE, Material.MAGENTA_DYE, Material.ORANGE_DYE, Material.BONE_MEAL);
 
+	public static final MaterialTag CORAL_WALL_FANS = new MaterialTag(Material.DEAD_BRAIN_CORAL_WALL_FAN,
+			Material.DEAD_BUBBLE_CORAL_WALL_FAN, Material.DEAD_FIRE_CORAL_WALL_FAN, Material.DEAD_HORN_CORAL_WALL_FAN,
+			Material.DEAD_TUBE_CORAL_WALL_FAN, Material.DEAD_BRAIN_CORAL_WALL_FAN,
+			Material.BRAIN_CORAL_WALL_FAN, Material.BUBBLE_CORAL_WALL_FAN, Material.FIRE_CORAL_WALL_FAN,
+			Material.HORN_CORAL_WALL_FAN, Material.TUBE_CORAL_WALL_FAN);
+
 	public static final MaterialTag PLANTS = new MaterialTag(Material.GRASS, Material.FERN, Material.DEAD_BUSH,
 			Material.DANDELION, Material.POPPY, Material.BLUE_ORCHID, Material.ALLIUM, Material.AZURE_BLUET,
 			Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
-			Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.KELP, Material.KELP_PLANT
-
-	// TODO: Dead coral fans pending api
-	).append(Tag.CORALS);
+			Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.KELP, Material.KELP_PLANT)
+				.append(CORAL_WALL_FANS)
+				.append(Tag.CORALS);
 
 	public static final MaterialTag TALL_PLANTS = new MaterialTag(Material.SUNFLOWER, Material.LILAC,
 			Material.ROSE_BUSH, Material.PEONY, Material.TALL_GRASS, Material.LARGE_FERN, Material.TALL_SEAGRASS,
@@ -170,10 +175,15 @@ public class MaterialTag implements Tag<Material> {
 			Material.DIRT, Material.GRASS_BLOCK, Material.PODZOL, Material.MYCELIUM, Material.COARSE_DIRT,
 			Material.FARMLAND, Material.GRASS_PATH);
 
-	public static final MaterialTag SKULLS = new MaterialTag(Material.SKELETON_SKULL, Material.SKELETON_WALL_SKULL,
-			Material.WITHER_SKELETON_SKULL, Material.WITHER_SKELETON_WALL_SKULL, Material.CREEPER_HEAD,
-			Material.CREEPER_WALL_HEAD, Material.DRAGON_HEAD, Material.DRAGON_WALL_HEAD, Material.PLAYER_HEAD,
-			Material.PLAYER_WALL_HEAD, Material.ZOMBIE_HEAD, Material.ZOMBIE_WALL_HEAD);
+	public static final MaterialTag WALL_SKULLS = new MaterialTag(Material.SKELETON_WALL_SKULL,
+			Material.WITHER_SKELETON_WALL_SKULL, Material.CREEPER_WALL_HEAD, Material.DRAGON_WALL_HEAD,
+			Material.PLAYER_WALL_HEAD, Material.ZOMBIE_WALL_HEAD);
+
+	public static final MaterialTag FLOOR_SKULLS = new MaterialTag(Material.SKELETON_SKULL,
+			Material.WITHER_SKELETON_SKULL, Material.CREEPER_HEAD, Material.DRAGON_HEAD,
+			Material.PLAYER_HEAD, Material.ZOMBIE_HEAD);
+
+	public static final MaterialTag SKULLS = new MaterialTag(WALL_SKULLS).append(FLOOR_SKULLS);
 
 	public static final MaterialTag ALL_PLANTS = new MaterialTag(PLANTS).append(TALL_PLANTS);
 
