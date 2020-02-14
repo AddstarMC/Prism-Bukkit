@@ -57,11 +57,10 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.tomcat</groupId>
-			<artifactId>tomcat-jdbc</artifactId>
-			<version>9.0.30</version>
-			<scope>compile</scope>
-        </dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.30</version>
+		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
@@ -142,14 +141,6 @@
 			<version>3.2.1</version>
 			<configuration>
 				<relocations>
-					<relocation>
-						<pattern>org.apache.tomcat.jdbc</pattern>
-						<shadedPattern>com.helion3.prism.libs.org.apache.tomcat.jdbc</shadedPattern>
-					</relocation>
-					<relocation>
-						<pattern>org.apache.juli</pattern>
-						<shadedPattern>com.helion3.prism.libs.org.apache.juli</shadedPattern>
-					</relocation>
 					<relocation>
 						<pattern>com.google.gson</pattern>
 						<shadedPattern>com.helion3.prism.libs.com.google.gson</shadedPattern>

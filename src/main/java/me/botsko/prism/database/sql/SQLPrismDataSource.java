@@ -4,9 +4,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.*;
-import org.apache.juli.logging.Log;
-import org.apache.juli.logging.LogFactory;
 import org.bukkit.configuration.ConfigurationSection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 
@@ -33,13 +33,13 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     private boolean paused; //when set the datasource will not allow insertions;
 
     protected String name = "unconfigured";
-    private Log log;
+    private Logger log;
     protected static HikariDataSource database = null;
     private SettingsQuery settingsQuery = null;
     protected ConfigurationSection section;
 
     public SQLPrismDataSource(ConfigurationSection section) {
-        log = LogFactory.getLog("Prism");
+        log = LoggerFactory.getLogger("Prism");
         this.section = section;
         setPrefix(section.getString("prefix"));
         setFile();
@@ -50,7 +50,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
         return name;
     }
     @Override
-    public Log getLog() {
+    public Logger getLog() {
         return log;
     }
 
