@@ -73,12 +73,21 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             columns.add("z");
         }
 
-        columns.add("MIN(block_id) block_id");
-        columns.add("MIN(block_subid) block_subid");
-        columns.add("MIN(old_block_id) old_block_id");
-        columns.add("MIN(old_block_subid) old_block_subid");
-        columns.add("MIN(data) data");
-        columns.add("MIN(HEX(player_uuid)) AS uuid");
+        if (shouldGroup) {
+            columns.add("MIN(block_id) block_id");
+            columns.add("MIN(block_subid) block_subid");
+            columns.add("MIN(old_block_id) old_block_id");
+            columns.add("MIN(old_block_subid) old_block_subid");
+            columns.add("MIN(data) data");
+            columns.add("MIN(HEX(player_uuid)) AS uuid");
+        } else {
+            columns.add("block_id");
+            columns.add("block_subid");
+            columns.add("old_block_id");
+            columns.add("old_block_subid");
+            columns.add("data");
+            columns.add("HEX(player_uuid) AS uuid");
+        }
 
         if (shouldGroup) {
             columns.add("COUNT(*) counted");
