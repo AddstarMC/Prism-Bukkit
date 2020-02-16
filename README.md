@@ -53,7 +53,7 @@ fork with issues and pull requests.
 https://jenkins.addstar.com.au/job/Prism-Bukkit/
 
 [![Build Status](https://jenkins.addstar.com.au/buildStatus/icon?job=Prism-Bukkit)](https://jenkins.addstar.com.au/job/Prism-Bukkit/)
-
+![Java CI](https://github.com/AddstarMC/Prism-Bukkit/workflows/Java%20CI/badge.svg)
 # Building, debugging and debug logging
 
 For instructions and screenshots on how to. . .
