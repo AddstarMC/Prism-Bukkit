@@ -32,7 +32,6 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
     }
     @Override
     public MySQLPrismDataSource createDataSource() {
-        HikariDataSource ds = null;
         final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
                 + this.section.getString("port") + "/" + this.section.getString("databaseName")
                 + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
@@ -43,9 +42,7 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         dbconfig.setJdbcUrl(dns);
         dbconfig.setUsername(this.section.getString("username"));
         dbconfig.setPassword(this.section.getString("password"));
-
-        ds = new HikariDataSource(dbconfig);
-        database = ds;
+        database = new HikariDataSource(dbconfig);
         createSettingsQuery();
         return this;
     }

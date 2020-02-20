@@ -1,7 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
-import org.apache.juli.logging.Log;
+import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -24,7 +24,7 @@ public interface PrismDataSource {
 
     PrismDataSource createDataSource();
 
-    Log getLog();
+    Logger getLog();
 
     void setFile();
 
