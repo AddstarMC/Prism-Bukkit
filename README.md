@@ -52,8 +52,9 @@ fork with issues and pull requests.
 
 https://jenkins.addstar.com.au/job/Prism-Bukkit/
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2af0a620548f4e0cae282ac9e0b172da)](https://app.codacy.com/gh/AddstarMC/Prism-Bukkit?utm_source=github.com&utm_medium=referral&utm_content=AddstarMC/Prism-Bukkit&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://jenkins.addstar.com.au/buildStatus/icon?job=Prism-Bukkit)](https://jenkins.addstar.com.au/job/Prism-Bukkit/)
-
+![Java CI](https://github.com/AddstarMC/Prism-Bukkit/workflows/Java%20CI/badge.svg)
 # Building, debugging and debug logging
 
 For instructions and screenshots on how to. . .
