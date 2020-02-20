@@ -169,6 +169,7 @@ public class ActionMessage {
 
 		// Date & Time
 		if (showExtended) {
+			line2 += System.lineSeparator();
 			line2 += ChatColor.GRAY + a.getDisplayDate();
 			line2 += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
 			Location l = a.getLoc();

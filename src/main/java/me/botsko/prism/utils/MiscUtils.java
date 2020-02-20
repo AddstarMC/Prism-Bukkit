@@ -165,7 +165,6 @@ public class MiscUtils {
 				}else{
 					toSend.addAll(Arrays.asList(text));
 				}
-				toSend.add(new TextComponent(System.lineSeparator()));
 				i++;
 			}
 			BaseComponent[] finalMessage = new BaseComponent[toSend.size()];

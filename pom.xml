@@ -3,14 +3,26 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.botsko</groupId>
 	<artifactId>prism</artifactId>
-    <version>2.1.5-SNAPSHOT</version>
-    <name>Prism</name>
-    <scm>
-        <connection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</connection>
-        <developerConnection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</developerConnection>
-        <url>https://github.com/AddstarMC/Prism-Bukkit</url>
-        <tag>HEAD</tag>
-    </scm>
+	<version>2.1.5-SNAPSHOT</version>
+	<name>Prism</name>
+	<scm>
+		<connection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</connection>
+		<developerConnection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</developerConnection>
+		<url>https://github.com/AddstarMC/Prism-Bukkit</url>
+		<tag>HEAD</tag>
+	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>maven.addstar.com.au-snapshots</id>
+			<name>addstar-maven-snapshots</name>
+			<url>https://maven.addstar.com.au/artifactory/ext-snapshots-local</url>
+		</snapshotRepository>
+		<repository>
+			<id>maven.addstar.com.au</id>
+			<name>addstar-maven-releases</name>
+			<url>https://maven.addstar.com.au/artifactory/ext-release-local</url>
+		</repository>
+	</distributionManagement>
 	<developers>
 		<developer>
 			<id>viv</id>
@@ -106,7 +118,7 @@
 		</repository>
 		<repository>
             <id>CodeMC</id>
-            <url>https://repo.codemc.org/repository/maven-public</url>
+			<url>https://repo.codemc.org/repository/maven-public/</url>
 		</repository>
 		<repository>
 			<id>maven-central</id>
@@ -184,6 +196,20 @@
 			<artifactId>maven-dependency-plugin</artifactId>
 			<version>3.1.1</version>
 		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-release-plugin</artifactId>
+			<version>3.0.0-M1</version>
+		</plugin>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-deploy-plugin</artifactId>
+			<version>3.0.0-M1</version>
+			<configuration>
+				<skip>true</skip>
+			</configuration>
+		</plugin>
 	</plugins>
 	</build>
+
 </project>
