@@ -2,7 +2,6 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.BlockUtils;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,42 +9,39 @@ import org.bukkit.Material;
 public class ActionMessage {
 
 	/**
-	 * 
+	 *
 	 */
 	protected final Handler a;
 
 	/**
-	 * 
+	 *
 	 */
 	private boolean showExtended = false;
+	/**
+	 *
+	 */
+	private int index = 0;
+
+	/**
+	 * @param a Handler
+	 */
+	public ActionMessage(Handler a) {
+		this.a = a;
+	}
 
 	public final int getIndex() {
 		return index;
 	}
 
 	/**
-	 * 
-	 */
-	private int index = 0;
-
-	/**
-	 * 
-	 * @param a
-	 */
-	public ActionMessage(Handler a) {
-		this.a = a;
-	}
-
-	/**
-	 * 
+	 *
 	 */
 	public void showExtended() {
 		showExtended = true;
 	}
 
 	/**
-	 * 
-	 * @param index
+	 * @param index integer
 	 */
 	public void setResultIndex(int index) {
 		this.index = index;
@@ -53,18 +49,18 @@ public class ActionMessage {
 
 	/**
 	 * Here, we don't use formatting or anything, we just use a regular message raw.
-	 * 
+	 * <p>
 	 * This will automatically show extended information, as this can be passed to a
 	 * pastebin service.
-	 * 
-	 * @return
+	 *
+	 * @return String
 	 */
 	public String getRawMessage() {
 		final StringBuilder msg = new StringBuilder();
 		ActionType action = a.getActionType();
-		
+
 		msg.append((action.doesCreateBlock() || action.getName().equals("item-insert")
-				|| action.getName().equals("sign-change")) ? "+" : "-");
+			|| action.getName().equals("sign-change")) ? "+" : "-");
 		msg.append(" #").append(a.getId());
 		msg.append(" ").append(a.getSourceName());
 		msg.append(" ").append(action.getName());
@@ -74,15 +70,13 @@ public class ActionMessage {
 		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				msg.append(" (").append(a.getNiceName()).append(")");
-		}
-		else {
+		} else {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
 			if (action.getName().equals("lava-bucket")) {
 				msg.append(" (lava)");
-			}
-			else if (action.getName().equals("water-bucket")) {
+			} else if (action.getName().equals("water-bucket")) {
 				msg.append(" (water)");
 			}
 		}
@@ -97,7 +91,7 @@ public class ActionMessage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public String[] getMessage() {
 
@@ -132,15 +126,13 @@ public class ActionMessage {
 		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
 				line1 += " " + highlight + a.getNiceName();
-		}
-		else {
+		} else {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
 			if (action.getName().equals("lava-bucket")) {
 				line1 += " " + highlight + "lava";
-			}
-			else if (action.getName().equals("water-bucket")) {
+			} else if (action.getName().equals("water-bucket")) {
 				line1 += " " + highlight + "water";
 			}
 		}
@@ -186,16 +178,14 @@ public class ActionMessage {
 	}
 
 	/**
-	 * 
-	 * @return
+	 * @return String
 	 */
 	protected String getPosNegPrefix() {
 
 		if (a.getActionType().doesCreateBlock() || a.getActionType().getName().equals("item-insert")
-				|| a.getActionType().getName().equals("sign-change")) {
+			|| a.getActionType().getName().equals("sign-change")) {
 			return ChatColor.GREEN + " + " + ChatColor.WHITE;
-		}
-		else {
+		} else {
 			return ChatColor.RED + " - " + ChatColor.WHITE;
 		}
 	}
