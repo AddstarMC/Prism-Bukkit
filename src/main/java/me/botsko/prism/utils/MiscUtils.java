@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import com.google.common.base.CaseFormat;
+import com.google.common.reflect.Reflection;
 import com.helion3.pste.api.Paste;
 import com.helion3.pste.api.PsteApi;
 import com.helion3.pste.api.Results;
@@ -9,12 +10,12 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PrismProcessType;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
@@ -22,6 +23,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MiscUtils {
@@ -138,22 +140,40 @@ public class MiscUtils {
 		}
 	}
 	public static void sendClickableTPRecord(ActionMessage a, CommandSender player){
-		if(PaperLib.isPaper() || Bukkit.getServer().getVersion().toLowerCase().contains("spigot")) {
+		boolean isSpigot = false;
+		boolean isPaper = PaperLib.isPaper();
+		try {
+			Player.class.getMethod("spigot");
+			isSpigot = true;
+		} catch (NoSuchMethodException ignored){
+		}
+		if (isPaper || isSpigot) {
 			String[] message = Prism.messenger.playerMsg(a.getMessage());
 			//line 1 holds the index so we set that as the highlighted for command click
-			TextComponent[] toSend = new TextComponent[message.length];
+			final List<BaseComponent> toSend = new ArrayList<>();
 			int i = 0;
 			for (String m : message) {
-				toSend[i] = new TextComponent(TextComponent.fromLegacyText(m));
+				BaseComponent[] text = TextComponent.fromLegacyText(m);
+				if (i == 0) {
+					Arrays.asList(text).forEach(baseComponent -> {
+						baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+							new TextComponent[]{new TextComponent("Click to teleport")}));
+						baseComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp "
+							+ a.getIndex()));
+						toSend.add(baseComponent);
+					});
+				}else{
+					toSend.addAll(Arrays.asList(text));
+				}
+				toSend.add(new TextComponent(System.lineSeparator()));
 				i++;
 			}
-			toSend[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
-					new TextComponent("Click to teleport")}));
-			toSend[0].setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp " + a.getIndex()));
+			BaseComponent[] finalMessage = new BaseComponent[toSend.size()];
+			toSend.toArray(finalMessage);
 			if(PaperLib.isPaper()) {
-				player.sendMessage(toSend);
+				player.sendMessage(finalMessage);
 			}else{
-				player.spigot().sendMessage(toSend);
+				player.spigot().sendMessage(finalMessage);
 			}
 		}else{
 			player.sendMessage(Prism.messenger.playerMsg(a.getMessage()));

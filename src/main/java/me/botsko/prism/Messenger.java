@@ -48,13 +48,13 @@ public class Messenger {
 	 */
 	public String playerMsg(String msg) {
 		if (msg != null) {
-			return ChatColor.WHITE + msg;
+			return ChatColor.WHITE + msg + System.lineSeparator();
 		}
 		return "";
 	}
 
 	/**
-	 * 
+	 * This just wraps the each message with a line end and Color White
 	 * @param msg
 	 * @return
 	 */
