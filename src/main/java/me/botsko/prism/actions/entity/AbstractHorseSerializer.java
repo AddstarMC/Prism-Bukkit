@@ -1,6 +1,7 @@
 package me.botsko.prism.actions.entity;
 
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.Entity;
@@ -21,6 +22,7 @@ public class AbstractHorseSerializer extends EntitySerializer {
 	protected int maxDom = 20;
 	protected double jump = 1.0;
 	protected double maxHealth = 20.0;
+	protected double movementSpeed = 0.2;
 
 	@Override
 	protected void serializer(Entity entity) {
@@ -52,6 +54,11 @@ public class AbstractHorseSerializer extends EntitySerializer {
 		maxDom = h.getMaxDomestication();
 		jump = h.getJumpStrength();
 		maxHealth = h.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
+
+		AttributeInstance attributeInstance = h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+		if (attributeInstance != null) {
+			movementSpeed = attributeInstance.getBaseValue();
+		}
 	}
 
 	@Override
@@ -90,6 +97,11 @@ public class AbstractHorseSerializer extends EntitySerializer {
 		h.setMaxDomestication(maxDom);
 		h.setJumpStrength(jump);
 		h.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(maxHealth);
+
+		AttributeInstance attributeInstance =  h.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED);
+		if (attributeInstance != null) {
+			attributeInstance.setBaseValue(movementSpeed);
+		}
 	}
 
 	@Override
