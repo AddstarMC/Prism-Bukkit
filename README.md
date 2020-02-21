@@ -25,7 +25,7 @@ we have now published this to SpigotMC and are providing support on the [M.O.S.S
 
 **Development Builds:** https://jenkins.addstar.com.au/job/Prism-Bukkit/lastSuccessfulBuild/
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2af0a620548f4e0cae282ac9e0b172da)](https://app.codacy.com/gh/AddstarMC/Prism-Bukkit?utm_source=github.com&utm_medium=referral&utm_content=AddstarMC/Prism-Bukkit&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/90bdaff7ab11483a81b50ad2f0136bef)](https://www.codacy.com/gh/AddstarMC/Prism-Bukkit?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=AddstarMC/Prism-Bukkit&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://jenkins.addstar.com.au/buildStatus/icon?job=Prism-Bukkit)](https://jenkins.addstar.com.au/job/Prism-Bukkit/)
 ![Java CI](https://github.com/AddstarMC/Prism-Bukkit/workflows/Java%20CI/badge.svg)
 
