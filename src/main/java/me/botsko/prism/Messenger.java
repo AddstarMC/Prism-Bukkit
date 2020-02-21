@@ -48,7 +48,7 @@ public class Messenger {
 	 */
 	public String playerMsg(String msg) {
 		if (msg != null) {
-			return ChatColor.WHITE + msg + System.lineSeparator();
+			return ChatColor.WHITE + msg;
 		}
 		return "";
 	}
