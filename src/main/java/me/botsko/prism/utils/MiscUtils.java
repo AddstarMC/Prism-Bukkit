@@ -153,7 +153,7 @@ public class MiscUtils {
 			final List<BaseComponent> toSend = new ArrayList<>();
 			int i = 0;
 			for (String m : message) {
-				BaseComponent[] text = TextComponent.fromLegacyText(m);
+				BaseComponent[] text = TextComponent.fromLegacyText((player instanceof Player) ? m : m.replace("\n", ""));
 				if (i == 0) {
 					Arrays.asList(text).forEach(baseComponent -> {
 						baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
