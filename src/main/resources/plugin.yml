@@ -1,11 +1,11 @@
 name: Prism
 main: me.botsko.prism.Prism
-version: ${pom.version}-${env.BUILD_NUMBER}
+version: ${plugin.version}
 softdepend: [WorldEdit,HeroChat]
 author: AddstarMC
 authors: [add5tar, Narimm, viveleroi]
 website: https://github.com/AddstarMC/Prism-Bukkit/wiki
-api-version: 1.15
+api-version: ${spigot.api.version}
 commands:
    prism:
       description: Base command for everything Prism
