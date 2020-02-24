@@ -173,6 +173,10 @@
 						<pattern>io.papermc.lib</pattern>
 						<shadedPattern>com.botsko.prism.libs.paperlib</shadedPattern>
 					</relocation>
+					<relocation>
+						<pattern>com.zaxxer.hikari</pattern>
+						<shadedPattern>com.botsko.prism.libs.hikari</shadedPattern>
+					</relocation>
 				</relocations>
 			</configuration>
 			<executions>
