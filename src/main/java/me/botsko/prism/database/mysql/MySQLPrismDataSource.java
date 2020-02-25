@@ -7,15 +7,11 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.database.sql.*;
 import me.botsko.prism.database.SelectQuery;
 import org.bukkit.configuration.ConfigurationSection;
-import sun.rmi.transport.proxy.RMIDirectSocketFactory;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Set;
