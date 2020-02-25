@@ -89,13 +89,19 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
 
     @Override
     public MySQLPrismDataSource createDataSource() {
-        if(dbConfig.getJdbcUrl() == null) {
+        if (dbConfig.getJdbcUrl() == null) {
             final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
-                  + this.section.getString("port") + "/" + this.section.getString("databaseName")
-                  + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
+                    + this.section.getString("port") + "/" + this.section.getString("databaseName")
+                    + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
             dbConfig.setJdbcUrl(dns);
             dbConfig.setUsername(this.section.getString("username"));
             dbConfig.setPassword(this.section.getString("password"));
+        }
+        if (Prism.getInstance().monitoring) {
+            dbConfig.setMetricRegistry(Prism.monitor.getRegistry());
+            dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
+            dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
+            dbConfig.setHealthCheckRegistry(Prism.monitor.getHealthRegistry());
         }
         database = new HikariDataSource(dbConfig);
         createSettingsQuery();

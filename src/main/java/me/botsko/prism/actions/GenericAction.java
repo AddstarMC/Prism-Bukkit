@@ -3,6 +3,9 @@ package me.botsko.prism.actions;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import au.com.addstar.dripreporter.DripMeter;
+import com.codahale.metrics.Meter;
+import com.codahale.metrics.Metric;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -83,6 +86,7 @@ public abstract class GenericAction implements Handler {
 	
 	public GenericAction() {
 		epoch = System.currentTimeMillis() / 1000;
+		ActionMeter.mark(this.getClass());
 	}
 	
 	protected final Gson gson() {

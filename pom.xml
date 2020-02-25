@@ -66,6 +66,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>au.com.addstar.dripreporter</groupId>
+			<artifactId>DripReporterApi</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sk89q.worldedit</groupId>
 			<artifactId>worldedit-bukkit</artifactId>
 			<version>7.1.0</version>
