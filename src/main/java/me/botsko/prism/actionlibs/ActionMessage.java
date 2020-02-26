@@ -109,7 +109,7 @@ public class ActionMessage {
 
 		// Result index for teleporting
 		if (index > 0) {
-			line1 += ChatColor.GRAY + " [" + index + "] ";
+			line1 += ChatColor.GRAY + "[" + index + "] ";
 		}
 
 		// Who
@@ -154,24 +154,24 @@ public class ActionMessage {
 		// Action type reminder
 		line1 += " " + ChatColor.GRAY + "(a:" + action.getShortName() + ")";
 
-		// Line 2
-		String line2 = ChatColor.GRAY + " --";
-
-		line2 += ChatColor.GRAY + " " + a.getId() + " - ";
-
-		// Date & Time
 		if (showExtended) {
-			line2 += System.lineSeparator();
-			line2 += ChatColor.GRAY + a.getDisplayDate();
-			line2 += " " + ChatColor.GRAY + a.getDisplayTime().toLowerCase();
+			line1 += "\n";
+
+			// Line 2
+			String line2 = ChatColor.GRAY + " - " + a.getId() + " - ";
+
+			// Date & Time
+			line2 += a.getDisplayDate();
+			line2 += " " + a.getDisplayTime().toLowerCase();
+
+			// Location
 			Location l = a.getLoc();
 			line2 += " - " + l.getWorld().getName() + " @ " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " ";
+
+			msg[1] = line2;
 		}
 
 		msg[0] = line1;
-		if (showExtended) {
-			msg[1] = line2;
-		}
 
 		return msg;
 
