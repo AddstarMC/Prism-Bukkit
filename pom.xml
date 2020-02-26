@@ -67,7 +67,7 @@
 		</dependency>
 		<dependency>
 			<groupId>au.com.addstar.dripreporter</groupId>
-			<artifactId>DripReporterApi</artifactId>
+			<artifactId>DripReporterAPI</artifactId>
 			<version>1.0</version>
 		</dependency>
 		<dependency>
