@@ -115,6 +115,10 @@
 	</dependencies>
 	<repositories>
 		<repository>
+			<id>maven.addstar.com.au-release</id>
+			<url>https://maven.addstar.com.au/artifactory/all-release</url>
+		</repository>
+		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
 		</repository>
