@@ -153,13 +153,14 @@ public class Prism extends JavaPlugin {
         // Load configuration, or install if new
         loadConfig();
 
-        if (getConfig().getBoolean("prism.allow-metrics")) {
-            Prism.log("Prism bStats metrics are enabled - thank you!");
-            Metrics metrics = new Metrics(this);
-            if (metrics == null || !metrics.isEnabled()) {
-                Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
-            }
-        }
+		if (getConfig().getBoolean("prism.allow-metrics")) {
+			Prism.log("Prism bStats metrics are enabled - thank you!");
+			int pluginid = 4365; // assigned by bstats.org
+			Metrics metrics = new Metrics(this, pluginid);
+			if (metrics == null || !metrics.isEnabled()) {
+				Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
+			}
+		}
 
         // init db async then call back to complete enable.
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
