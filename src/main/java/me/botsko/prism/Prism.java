@@ -4,18 +4,31 @@ import au.com.addstar.dripreporter.DripReporterApi;
 import com.codahale.metrics.Gauge;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-
 import io.papermc.lib.PaperLib;
+import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.HandlerRegistry;
+import me.botsko.prism.actionlibs.Ignore;
+import me.botsko.prism.actionlibs.InternalAffairs;
+import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actionlibs.QueueDrain;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actions.ActionMeter;
-import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.PrismDatabaseFactory;
-import me.botsko.prism.utils.MaterialAliases;
-import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
-import me.botsko.prism.listeners.*;
+import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.PrismDatabaseFactory;
+import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismCustomEvents;
+import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismInventoryEvents;
+import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
+import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismVehicleEvents;
+import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
@@ -25,10 +38,14 @@ import me.botsko.prism.parameters.*;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
+import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.wands.Wand;
-
 import org.bstats.bukkit.Metrics;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -38,9 +55,14 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -49,54 +71,46 @@ import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
-    public static PrismDataSource getPrismDataSource() {
-        return prismDataSource;
-    }
-
-    /**
-     * Connection Pool
-     */
-    private static PrismDataSource prismDataSource = null;
-
-    /**
-     * Protected/private
-     */
-    private static String plugin_name;
-    private String plugin_version;
-    private static MaterialAliases items;
-    // private Language language = null;
-    private static Logger log = Logger.getLogger("Minecraft");
-    private final ArrayList<String> enabledPlugins = new ArrayList<>();
-    private static ActionRegistry actionRegistry;
-    private static HandlerRegistry handlerRegistry;
-    private static Ignore ignore;
-    protected static List<Material> illegalBlocks;
-    protected static List<EntityType> illegalEntities;
-    protected static HashMap<String, String> alertedOres = new HashMap<>();
-    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
-
-    public ScheduledThreadPoolExecutor getSchedulePool() {
-        return schedulePool;
-    }
-
-    private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
-    private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
-    // private ScheduledFuture<?> scheduledPurgeExecutor;
-    private PurgeManager purgeManager;
     public static DripReporterApi monitor;
-    public boolean monitoring = false;
-    private static Prism instance;
-
     /**
      * Public
      */
     public static Messenger messenger;
     public static FileConfiguration config;
     public static WorldEditPlugin plugin_worldEdit = null;
+    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+    /**
+     * DB Foreign key caches
+     */
+    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+    public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+    public static HashMap<String, Integer> prismActions = new HashMap<>();
+    protected static List<Material> illegalBlocks;
+    protected static List<EntityType> illegalEntities;
+    protected static HashMap<String, String> alertedOres = new HashMap<>();
+    /**
+     * Connection Pool
+     */
+    private static PrismDataSource prismDataSource = null;
+    /**
+     * Protected/private
+     */
+    private static String plugin_name;
+    private static MaterialAliases items;
+    // private Language language = null;
+    private static Logger log = Logger.getLogger("Minecraft");
+    private static ActionRegistry actionRegistry;
+    private static HandlerRegistry handlerRegistry;
+    private static Ignore ignore;
+    private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
+    private static Prism instance;
+    private final ArrayList<String> enabledPlugins = new ArrayList<>();
+    private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
+    private final ScheduledThreadPoolExecutor recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
+    public boolean monitoring = false;
     public ActionsQuery actionsQuery;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
@@ -106,30 +120,179 @@ public class Prism extends JavaPlugin {
     public BukkitTask recordingTask;
     public int total_records_affected = 0;
     public long max_cycle_time = 0;
-
-    /**
-     * DB Foreign key caches
-     */
-    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
-    public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
-    public static HashMap<String, Integer> prismActions = new HashMap<>();
-
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
      * block.
      */
     public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
-
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so we
      * need to track players right-clicking rails with minecart vehicles, or water
      * for boats
      */
     public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+    private String plugin_version;
+    // private ScheduledFuture<?> scheduledPurgeExecutor;
+    private PurgeManager purgeManager;
 
     public Prism() {
         instance = this;
+    }
+
+    public static PrismDataSource getPrismDataSource() {
+        return prismDataSource;
+    }
+
+    /**
+     * @return
+     */
+    public static String getPrismName() {
+        return plugin_name;
+    }
+
+    /**
+     * @return
+     */
+    public static List<Material> getIllegalBlocks() {
+        return illegalBlocks;
+    }
+
+    /**
+     *
+     */
+    public static List<EntityType> getIllegalEntities() {
+        return illegalEntities;
+    }
+
+    /**
+     *
+     */
+    public static HashMap<String, String> getAlertedOres() {
+        return alertedOres;
+    }
+
+    /**
+     * @return
+     */
+    public static MaterialAliases getItems() {
+        return items;
+    }
+
+    /**
+     * @return
+     */
+    public static ActionRegistry getActionRegistry() {
+        return actionRegistry;
+    }
+
+	/*
+
+	  @return
+	 */
+    /*
+     * public Language getLang() { return this.language; }
+     */
+
+    /**
+     * @return
+     */
+    public static HandlerRegistry getHandlerRegistry() {
+        return handlerRegistry;
+    }
+
+    /**
+     * @return
+     */
+    public static Ignore getIgnore() {
+        return ignore;
+    }
+
+    /**
+     * Registers a parameter and a handler. Example:
+     * <p>
+     * pr l a:block-break. The "a" is an action, and the action handler will process
+     * what "block-break" refers to.
+     *
+     * @param handler
+     */
+    public static void registerParameter(PrismParameterHandler handler) {
+        paramHandlers.put(handler.getName().toLowerCase(), handler);
+    }
+
+    /**
+     * @return
+     */
+    public static HashMap<String, PrismParameterHandler> getParameters() {
+        return paramHandlers;
+    }
+
+    /**
+     * @return
+     */
+    public static PrismParameterHandler getParameter(String name) {
+        return paramHandlers.get(name);
+    }
+
+    /**
+     * Log a message
+     *
+     * @param message
+     */
+    public static void log(String message) {
+        log.info("[" + getPrismName() + "]: " + message);
+    }
+
+    /**
+     * Log a warning
+     *
+     * @param message
+     */
+    public static void warn(String message) {
+        log.warning("[" + getPrismName() + "]: " + message);
+    }
+
+    /**
+     * Log a series of messages, precedent by a header
+     *
+     * @param messages
+     */
+    public static void logSection(String[] messages) {
+        if (messages.length > 0) {
+            log("--------------------- ## Important ## ---------------------");
+            for (final String msg : messages) {
+                log(msg);
+            }
+            log("--------------------- ## ========= ## ---------------------");
+        }
+    }
+
+    /**
+     * Log a debug message if config.yml has debug: true
+     *
+     * @param message
+     */
+    public static void debug(String message) {
+        if (config.getBoolean("prism.debug")) {
+            log.info("[" + plugin_name + "]: " + message);
+        }
+    }
+
+    /**
+     * Log the current location as a debug message
+     *
+     * @param loc
+     */
+    public static void debug(Location loc) {
+        debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
+    }
+
+    public static Prism getInstance() {
+        return instance;
+    }
+
+    public ScheduledThreadPoolExecutor getSchedulePool() {
+        return schedulePool;
     }
 
     /**
@@ -147,20 +310,20 @@ public class Prism extends JavaPlugin {
             new ActionMeter();
             Gauge<Integer> recordingQ = RecordingQueue::getQueueSize;
             monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
+            ActionMeter.setupActionMeter(monitor.getRegistry());
         }
         log("Initializing Prism " + plugin_version + ". By Viveleroi.");
         PaperLib.suggestPaper(this);
         // Load configuration, or install if new
         loadConfig();
-
-		if (getConfig().getBoolean("prism.allow-metrics")) {
-			Prism.log("Prism bStats metrics are enabled - thank you!");
-			int pluginid = 4365; // assigned by bstats.org
-			Metrics metrics = new Metrics(this, pluginid);
-			if (metrics == null || !metrics.isEnabled()) {
-				Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
-			}
-		}
+        if (getConfig().getBoolean("prism.allow-metrics")) {
+            Prism.log("Prism bStats metrics are enabled - thank you!");
+            int pluginid = 4365; // assigned by bstats.org
+            Metrics metrics = new Metrics(this, pluginid);
+            if (metrics == null || !metrics.isEnabled()) {
+                Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
+            }
+        }
 
         // init db async then call back to complete enable.
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
@@ -298,13 +461,6 @@ public class Prism extends JavaPlugin {
     /**
      * @return
      */
-    public static String getPrismName() {
-        return plugin_name;
-    }
-
-    /**
-     * @return
-     */
     public String getPrismVersion() {
         return this.plugin_version;
     }
@@ -318,7 +474,7 @@ public class Prism extends JavaPlugin {
 
         // Cache config arrays we check constantly
         illegalBlocks = getConfig().getStringList("prism.appliers.never-place-block").stream()
-                .map(Material::matchMaterial).filter(Objects::nonNull).collect(Collectors.toList());
+              .map(Material::matchMaterial).filter(Objects::nonNull).collect(Collectors.toList());
         illegalEntities = getConfig().getStringList("prism.appliers.never-spawn-entity").stream().map(s -> {
             try {
                 return EntityType.valueOf(s.toUpperCase());
@@ -341,14 +497,6 @@ public class Prism extends JavaPlugin {
         // Load items db
         items = new MaterialAliases();
     }
-
-	/*
-
-	  @return
-	 */
-    /*
-     * public Language getLang() { return this.language; }
-     */
 
     /**
      *
@@ -383,83 +531,8 @@ public class Prism extends JavaPlugin {
     /**
      * @return
      */
-    public static List<Material> getIllegalBlocks() {
-        return illegalBlocks;
-    }
-
-    /**
-     *
-     */
-    public static List<EntityType> getIllegalEntities() {
-        return illegalEntities;
-    }
-
-    /**
-     *
-     */
-    public static HashMap<String, String> getAlertedOres() {
-        return alertedOres;
-    }
-
-    /**
-     * @return
-     */
-    public static MaterialAliases getItems() {
-        return items;
-    }
-
-    /**
-     * @return
-     */
-    public static ActionRegistry getActionRegistry() {
-        return actionRegistry;
-    }
-
-    /**
-     * @return
-     */
-    public static HandlerRegistry getHandlerRegistry() {
-        return handlerRegistry;
-    }
-
-    /**
-     * @return
-     */
-    public static Ignore getIgnore() {
-        return ignore;
-    }
-
-    /**
-     * @return
-     */
     public PurgeManager getPurgeManager() {
         return purgeManager;
-    }
-
-    /**
-     * Registers a parameter and a handler. Example:
-     * <p>
-     * pr l a:block-break. The "a" is an action, and the action handler will process
-     * what "block-break" refers to.
-     *
-     * @param handler
-     */
-    public static void registerParameter(PrismParameterHandler handler) {
-        paramHandlers.put(handler.getName().toLowerCase(), handler);
-    }
-
-    /**
-     * @return
-     */
-    public static HashMap<String, PrismParameterHandler> getParameters() {
-        return paramHandlers;
-    }
-
-    /**
-     * @return
-     */
-    public static PrismParameterHandler getParameter(String name) {
-        return paramHandlers.get(name);
     }
 
     /**
@@ -526,7 +599,7 @@ public class Prism extends JavaPlugin {
         }
         // we schedule it once, it will reschedule itself
         recordingTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new RecordingTask(this),
-                recorder_tick_delay);
+              recorder_tick_delay);
     }
 
     /**
@@ -611,69 +684,12 @@ public class Prism extends JavaPlugin {
             if (!p.equals(player)) {
                 if (player.getWorld().equals(p.getWorld())) {
                     if (player.getLocation().distance(p.getLocation()) <= (radius
-                            + config.getInt("prism.appliers.notify-nearby.additional-radius"))) {
+                          + config.getInt("prism.appliers.notify-nearby.additional-radius"))) {
                         p.sendMessage(messenger.playerHeaderMsg(msg));
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Log a message
-     *
-     * @param message
-     */
-    public static void log(String message) {
-        log.info("[" + getPrismName() + "]: " + message);
-    }
-
-    /**
-     * Log a warning
-     *
-     * @param message
-     */
-    public static void warn(String message) {
-        log.warning("[" + getPrismName() + "]: " + message);
-    }
-
-    /**
-     * Log a series of messages, precedent by a header
-     *
-     * @param messages
-     */
-    public static void logSection(String[] messages) {
-        if (messages.length > 0) {
-            log("--------------------- ## Important ## ---------------------");
-            for (final String msg : messages) {
-                log(msg);
-            }
-            log("--------------------- ## ========= ## ---------------------");
-        }
-    }
-
-    /**
-     * Log a debug message if config.yml has debug: true
-     *
-     * @param message
-     */
-    public static void debug(String message) {
-        if (config.getBoolean("prism.debug")) {
-            log.info("[" + plugin_name + "]: " + message);
-        }
-    }
-
-    /**
-     * Log the current location as a debug message
-     *
-     * @param loc
-     */
-    public static void debug(Location loc) {
-        debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
-    }
-
-    public static Prism getInstance() {
-        return instance;
     }
 
     /**
