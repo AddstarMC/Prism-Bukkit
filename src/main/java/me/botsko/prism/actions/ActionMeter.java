@@ -17,21 +17,21 @@ public class ActionMeter {
     private static boolean monitoring = false;
 
     static {
-        meter.put(GenericAction.class.getName(), new DripMeter());
-        meter.put(EntityAction.class.getName(), new DripMeter());
-        meter.put(BlockAction.class.getName(), new DripMeter());
-        meter.put(BlockChangeAction.class.getName(), new DripMeter());
-        meter.put(ItemStackAction.class.getName(), new DripMeter());
-        meter.put(BlockShiftAction.class.getName(), new DripMeter());
-        meter.put(EntityTravelAction.class.getName(), new DripMeter());
-        meter.put(GrowAction.class.getName(), new DripMeter());
-        meter.put(HangingItemAction.class.getName(), new DripMeter());
-        meter.put(PlayerAction.class.getName(), new DripMeter());
-        meter.put(PlayerDeathAction.class.getName(), new DripMeter());
-        meter.put(PrismProcessAction.class.getName(), new DripMeter());
-        meter.put(PrismRollbackAction.class.getName(), new DripMeter());
-        meter.put(SignAction.class.getName(), new DripMeter());
-        meter.put(VehicleAction.class.getName(), new DripMeter());
+        meter.put(GenericAction.class.getSimpleName(), new DripMeter());
+        meter.put(EntityAction.class.getSimpleName(), new DripMeter());
+        meter.put(BlockAction.class.getSimpleName(), new DripMeter());
+        meter.put(BlockChangeAction.class.getSimpleName(), new DripMeter());
+        meter.put(ItemStackAction.class.getSimpleName(), new DripMeter());
+        meter.put(BlockShiftAction.class.getSimpleName(), new DripMeter());
+        meter.put(EntityTravelAction.class.getSimpleName(), new DripMeter());
+        meter.put(GrowAction.class.getSimpleName(), new DripMeter());
+        meter.put(HangingItemAction.class.getSimpleName(), new DripMeter());
+        meter.put(PlayerAction.class.getSimpleName(), new DripMeter());
+        meter.put(PlayerDeathAction.class.getSimpleName(), new DripMeter());
+        meter.put(PrismProcessAction.class.getSimpleName(), new DripMeter());
+        meter.put(PrismRollbackAction.class.getSimpleName(), new DripMeter());
+        meter.put(SignAction.class.getSimpleName(), new DripMeter());
+        meter.put(VehicleAction.class.getSimpleName(), new DripMeter());
     }
 
     /**
@@ -48,9 +48,9 @@ public class ActionMeter {
     @SuppressWarnings("rawtypes")
     static void mark(Class clazz) {
         if (monitoring) {
-            Meter m = meter.get(clazz.getName());
+            Meter m = meter.get(clazz.getSimpleName());
             if (m == null) {
-                m = meter.get(GenericAction.class.getName());
+                m = meter.get(GenericAction.class.getSimpleName());
             }
             m.mark();
         }
