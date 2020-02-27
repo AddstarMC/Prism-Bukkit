@@ -124,10 +124,10 @@ public class SignAction extends GenericAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
 
 		final Block block = getWorld().getBlockAt(getLoc());
 

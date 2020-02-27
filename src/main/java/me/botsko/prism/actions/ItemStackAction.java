@@ -377,19 +377,19 @@ public class ItemStackAction extends GenericAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
-		return placeItems(player, parameters, is_preview);
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+		return placeItems(player, parameters, isPreview);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
-		return placeItems(player, parameters, is_preview);
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+		return placeItems(player, parameters, isPreview);
 	}
 
 	/**
