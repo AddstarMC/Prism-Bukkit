@@ -28,7 +28,7 @@ public class PrismConfig extends ConfigBase {
 	public FileConfiguration getConfig() {
 
 		config = plugin.getConfig();
-        config.addDefault("datasource", "mysql");
+		config.addDefault("datasource", "mysql");
 		// set defaults
 		config.addDefault("prism.debug", false);
 		config.addDefault("prism.preload-materials", false);
@@ -41,12 +41,11 @@ public class PrismConfig extends ConfigBase {
 
 		// pste.me sharing.
 		config.addDefault("prism.paste.enable", false);
-		config.addDefault("prism.paste.username", "Username on http://pste.me/#/signup");
-		config.addDefault("prism.paste.api-key", "API key from http://pste.me/#/account");
+		config.addDefault("prism.paste.api-key", "API key from http://paste.gg");
 
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item,
-																// or block
+		// or block
 		config.addDefault("prism.wands.default-item-mode-id", "stick");
 		config.addDefault("prism.wands.default-block-mode-id", "spruce_log");
 		config.addDefault("prism.wands.auto-equip", true);

@@ -3,56 +3,27 @@ package me.botsko.prism;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import me.botsko.prism.actionlibs.HandlerRegistry;
-import me.botsko.prism.actionlibs.Ignore;
-import me.botsko.prism.actionlibs.InternalAffairs;
-import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actionlibs.QueueDrain;
-import me.botsko.prism.actionlibs.RecordingTask;
+import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
-import me.botsko.prism.listeners.PrismBlockEvents;
-import me.botsko.prism.listeners.PrismCustomEvents;
-import me.botsko.prism.listeners.PrismEntityEvents;
-import me.botsko.prism.listeners.PrismInventoryEvents;
-import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
-import me.botsko.prism.listeners.PrismPlayerEvents;
-import me.botsko.prism.listeners.PrismVehicleEvents;
-import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.listeners.*;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.ActionParameter;
-import me.botsko.prism.parameters.BeforeParameter;
-import me.botsko.prism.parameters.BlockParameter;
-import me.botsko.prism.parameters.EntityParameter;
-import me.botsko.prism.parameters.FlagParameter;
-import me.botsko.prism.parameters.IdParameter;
-import me.botsko.prism.parameters.KeywordParameter;
-import me.botsko.prism.parameters.PlayerParameter;
-import me.botsko.prism.parameters.PrismParameterHandler;
-import me.botsko.prism.parameters.RadiusParameter;
-import me.botsko.prism.parameters.SinceParameter;
-import me.botsko.prism.parameters.WorldParameter;
+import me.botsko.prism.parameters.*;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.wands.Wand;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -64,12 +35,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -78,52 +45,45 @@ import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
-    public static PrismDataSource getPrismDataSource() {
-        return prismDataSource;
-    }
-
+    public static Messenger messenger;
+    public static FileConfiguration config;
+    public static WorldEditPlugin plugin_worldEdit = null;
+    public static ConcurrentHashMap<String, Wand> playersWithActiveTools
+            = new ConcurrentHashMap<>();
+    /**
+     * DB Foreign key caches.
+     */
+    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
+    public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+    public static HashMap<String, Integer> prismActions = new HashMap<>();
+    protected static List<Material> illegalBlocks;
+    protected static List<EntityType> illegalEntities;
+    protected static HashMap<String, String> alertedOres = new HashMap<>();
     /**
      * Connection Pool.
      */
     private static PrismDataSource prismDataSource = null;
-
     /**
      * Protected/private.
      */
     private static String plugin_name;
-    private String pluginVersion;
+    private static String pasteKey;
     private static MaterialAliases items;
     // private Language language = null;
     private static Logger log = Logger.getLogger("Minecraft");
-    private final ArrayList<String> enabledPlugins = new ArrayList<>();
     private static ActionRegistry actionRegistry;
     private static HandlerRegistry handlerRegistry;
     private static Ignore ignore;
-    protected static List<Material> illegalBlocks;
-    protected static List<EntityType> illegalEntities;
-    protected static HashMap<String, String> alertedOres = new HashMap<>();
     private static HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
-
-    public ScheduledThreadPoolExecutor getSchedulePool() {
-        return schedulePool;
-    }
-
+    private static Prism instance;
+    private final ArrayList<String> enabledPlugins = new ArrayList<>();
     private final ScheduledThreadPoolExecutor schedulePool
             = new ScheduledThreadPoolExecutor(1);
     private final ScheduledThreadPoolExecutor recordingMonitorTask
             = new ScheduledThreadPoolExecutor(1);
-    // private ScheduledFuture<?> scheduledPurgeExecutor;
-    private PurgeManager purgeManager;
-
-    private static Prism instance;
-    public static Messenger messenger;
-    public static FileConfiguration config;
-    public static WorldEditPlugin plugin_worldEdit = null;
     public ActionsQuery actionsQuery;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public static ConcurrentHashMap<String, Wand> playersWithActiveTools
-            = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, PreviewSession> playerActivePreviews
             = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews
@@ -135,14 +95,6 @@ public class Prism extends JavaPlugin {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
-
-    /**
-     * DB Foreign key caches.
-     */
-    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
-    public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
-    public static HashMap<String, Integer> prismActions = new HashMap<>();
-
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
@@ -156,9 +108,135 @@ public class Prism extends JavaPlugin {
      **/
 
     public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+    private String pluginVersion;
+    // private ScheduledFuture<?> scheduledPurgeExecutor;
+    private PurgeManager purgeManager;
 
     public Prism() {
         instance = this;
+    }
+
+    public static PrismDataSource getPrismDataSource() {
+        return prismDataSource;
+    }
+
+    public static String getPasteKey() {
+        return pasteKey;
+    }
+
+    public static String getPrismName() {
+        return plugin_name;
+    }
+
+    public static List<Material> getIllegalBlocks() {
+        return illegalBlocks;
+    }
+
+    public static List<EntityType> getIllegalEntities() {
+        return illegalEntities;
+    }
+
+    public static HashMap<String, String> getAlertedOres() {
+        return alertedOres;
+    }
+
+    public static MaterialAliases getItems() {
+        return items;
+    }
+
+    public static ActionRegistry getActionRegistry() {
+        return actionRegistry;
+    }
+
+    public static HandlerRegistry getHandlerRegistry() {
+        return handlerRegistry;
+    }
+
+    public static Ignore getIgnore() {
+        return ignore;
+    }
+
+    /**
+     * Registers a parameter and a handler.
+     * Example:
+     * pr l a:block-break. The "a" is an action, and the action handler will process
+     * what "block-break" refers to.
+     *
+     * @param handler Handler
+     **/
+    public static void registerParameter(PrismParameterHandler handler) {
+        paramHandlers.put(handler.getName().toLowerCase(), handler);
+    }
+
+    public static HashMap<String, PrismParameterHandler> getParameters() {
+        return paramHandlers;
+    }
+
+    public static PrismParameterHandler getParameter(String name) {
+        return paramHandlers.get(name);
+    }
+
+    /**
+     * Log a message.
+     *
+     * @param message String
+     */
+    public static void log(String message) {
+        log.info("[" + getPrismName() + "]: "
+                + message);
+    }
+
+    /**
+     * Log a warning.
+     *
+     * @param message Message
+     */
+    public static void warn(String message) {
+        log.warning("[" + getPrismName() + "]: "
+                + message);
+    }
+
+    /**
+     * Log a series of messages, precedent by a header.
+     *
+     * @param messages Message[]
+     */
+    public static void logSection(String[] messages) {
+        if (messages.length > 0) {
+            log("--------------------- ## Important ## ---------------------");
+            for (final String msg : messages) {
+                log(msg);
+            }
+            log("--------------------- ## ========= ## ---------------------");
+        }
+    }
+
+    /**
+     * Log a debug message if config.yml has debug: true.
+     *
+     * @param message Message
+     */
+    public static void debug(String message) {
+        if (config.getBoolean("prism.debug")) {
+            log.info("[" + plugin_name + "]: " + message);
+        }
+    }
+
+    /**
+     * Log the current location as a debug message.
+     *
+     * @param loc Location
+     */
+    public static void debug(Location loc) {
+        debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
+    }
+
+    public static Prism getInstance() {
+        return instance;
+    }
+
+    public ScheduledThreadPoolExecutor getSchedulePool() {
+        return schedulePool;
     }
 
     /**
@@ -184,7 +262,12 @@ public class Prism extends JavaPlugin {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
         }
-
+        if (getConfig().getBoolean("prism.paste.enable")) {
+            pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
+            if (pasteKey != null && pasteKey.startsWith("API key")) {
+                pasteKey = null;
+            }
+        }
         // init db async then call back to complete enable.
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
@@ -334,10 +417,6 @@ public class Prism extends JavaPlugin {
         }
     }
 
-    public static String getPrismName() {
-        return plugin_name;
-    }
-
     public String getPrismVersion() {
         return this.pluginVersion;
     }
@@ -403,56 +482,8 @@ public class Prism extends JavaPlugin {
         return enabledPlugins.contains(pluginName);
     }
 
-    public static List<Material> getIllegalBlocks() {
-        return illegalBlocks;
-    }
-
-    public static List<EntityType> getIllegalEntities() {
-        return illegalEntities;
-    }
-
-    public static HashMap<String, String> getAlertedOres() {
-        return alertedOres;
-    }
-
-    public static MaterialAliases getItems() {
-        return items;
-    }
-
-    public static ActionRegistry getActionRegistry() {
-        return actionRegistry;
-    }
-
-    public static HandlerRegistry getHandlerRegistry() {
-        return handlerRegistry;
-    }
-
-    public static Ignore getIgnore() {
-        return ignore;
-    }
-
     public PurgeManager getPurgeManager() {
         return purgeManager;
-    }
-
-    /**
-     * Registers a parameter and a handler.
-     * Example:
-     * pr l a:block-break. The "a" is an action, and the action handler will process
-     * what "block-break" refers to.
-     *
-     * @param handler Handler
-     **/
-    public static void registerParameter(PrismParameterHandler handler) {
-        paramHandlers.put(handler.getName().toLowerCase(), handler);
-    }
-
-    public static HashMap<String, PrismParameterHandler> getParameters() {
-        return paramHandlers;
-    }
-
-    public static PrismParameterHandler getParameter(String name) {
-        return paramHandlers.get(name);
     }
 
     public void endExpiredQueryCaches() {
@@ -558,65 +589,6 @@ public class Prism extends JavaPlugin {
                 }
             }
         }
-    }
-
-    /**
-     * Log a message.
-     *
-     * @param message String
-     */
-    public static void log(String message) {
-        log.info("[" + getPrismName() + "]: "
-                + message);
-    }
-
-    /**
-     * Log a warning.
-     *
-     * @param message Message
-     */
-    public static void warn(String message) {
-        log.warning("[" + getPrismName() + "]: "
-                + message);
-    }
-
-    /**
-     * Log a series of messages, precedent by a header.
-     *
-     * @param messages Message[]
-     */
-    public static void logSection(String[] messages) {
-        if (messages.length > 0) {
-            log("--------------------- ## Important ## ---------------------");
-            for (final String msg : messages) {
-                log(msg);
-            }
-            log("--------------------- ## ========= ## ---------------------");
-        }
-    }
-
-    /**
-     * Log a debug message if config.yml has debug: true.
-     *
-     * @param message Message
-     */
-    public static void debug(String message) {
-        if (config.getBoolean("prism.debug")) {
-            log.info("[" + plugin_name + "]: " + message);
-        }
-    }
-
-    /**
-     * Log the current location as a debug message.
-     *
-     * @param loc Location
-     */
-    public static void debug(Location loc) {
-        debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
-    }
-
-    public static Prism getInstance() {
-        return instance;
     }
 
     /**

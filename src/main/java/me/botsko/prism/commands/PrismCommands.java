@@ -28,12 +28,12 @@ public class PrismCommands extends Executor {
 		/*
 		  /prism about
 		 */
-		addSub(new String[] { "about", "default" }, "prism.help").allowConsole().setHandler(new AboutCommand(prism));
-
+		addSub(new String[]{"about", "default"}, "prism.help").allowConsole().setHandler(new AboutCommand(prism));
+		addSub(new String[]{"debug"}, "prism.debug").allowConsole().setHandler(new DebugCommand());
 		/*
 		  /prism lookup
 		 */
-		addSub(new String[] { "lookup", "l" }, "prism.lookup").allowConsole().setMinArgs(1)
+		addSub(new String[]{"lookup", "l"}, "prism.lookup").allowConsole().setMinArgs(1)
 				.setHandler(new LookupCommand(prism));
 
 		/*
