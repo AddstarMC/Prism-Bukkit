@@ -85,12 +85,18 @@ public class MySqlPrismDataSource extends SQLPrismDataSource {
                 if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)) {
                     continue;
                 }
+
                 Object out = PropertyElf.getProperty(k, dbConfig);
-                prop.setProperty(k, out.toString());
+                if (out != null) {
+                    prop.setProperty(k, out.toString());
+                }
             }
             Properties datasourceProps = dbConfig.getDataSourceProperties();
             for (String name : datasourceProps.stringPropertyNames()) {
-                prop.setProperty("dataSource." + name, datasourceProps.getProperty(name));
+                String val = datasourceProps.getProperty(name);
+                if (val != null) {
+                    prop.setProperty("dataSource." + name, val);
+                }
             }
             try {
                 OutputStream out = new FileOutputStream(propFile);
