@@ -82,10 +82,10 @@ public class MySqlPrismDataSource extends SQLPrismDataSource {
             Properties prop = new Properties();
             Set<String> keys = PropertyElf.getPropertyNames(HikariConfig.class);
             for (String k : keys) {
-                if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)) {
+                if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)
+                || "dataSourceProperties".equals(k) || "healthCheckProperties".equals(k)) {
                     continue;
                 }
-
                 Object out = PropertyElf.getProperty(k, dbConfig);
                 if (out != null) {
                     prop.setProperty(k, out.toString());
