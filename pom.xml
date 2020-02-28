@@ -128,12 +128,22 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-            <id>CodeMC</id>
+			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public/</url>
 		</repository>
 		<repository>
 			<id>maven-central</id>
 			<url>https://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>maven.addstar.com.au-snapshots</id>
+			<name>addstar-maven-snapshots</name>
+			<url>https://maven.addstar.com.au/artifactory/all-snapshot</url>
+		</repository>
+		<repository>
+			<id>maven.addstar.com.au</id>
+			<name>addstar-maven-releases</name>
+			<url>https://maven.addstar.com.au/artifactory/all-release</url>
 		</repository>
 	</repositories>
 	<build>
