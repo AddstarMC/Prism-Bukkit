@@ -26,7 +26,6 @@ import org.kitteh.pastegg.Visibility;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class MiscUtils {
 
@@ -47,31 +46,32 @@ public class MiscUtils {
         }
 
         // Safety checks for max lookup radius
-        int max_lookup_radius = config.getInt("prism.queries.max-lookup-radius");
-        if (max_lookup_radius <= 0) {
-            max_lookup_radius = 5;
+        int maxLookupRadius = config.getInt("prism.queries.max-lookup-radius");
+        if (maxLookupRadius <= 0) {
+            maxLookupRadius = 5;
             Prism.log("Max lookup radius may not be lower than one. Using safe inputue of five.");
         }
 
         // Safety checks for max applier radius
-        int max_applier_radius = config.getInt("prism.queries.max-applier-radius");
-        if (max_applier_radius <= 0) {
-            max_applier_radius = 5;
+        int maxApplierRadius = config.getInt("prism.queries.max-applier-radius");
+        if (maxApplierRadius <= 0) {
+            maxApplierRadius = 5;
             Prism.log("Max applier radius may not be lower than one. Using safe inputue of five.");
         }
 
         // Does the radius exceed the configured max?
-        if (processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_lookup_radius) {
+        if (processType.equals(PrismProcessType.LOOKUP) && desiredRadius > maxLookupRadius) {
             // If player does not have permission to override the max
             if (player != null && !player.hasPermission("prism.override-max-lookup-radius")) {
-                return max_lookup_radius;
+                return maxLookupRadius;
             }
             // Otherwise non-player
             return desiredRadius;
-        } else if (!processType.equals(PrismProcessType.LOOKUP) && desiredRadius > max_applier_radius) {
+        } else if (!processType.equals(PrismProcessType.LOOKUP) && desiredRadius
+                > maxApplierRadius) {
             // If player does not have permission to override the max
             if (player != null && !player.hasPermission("prism.override-max-applier-radius")) {
-                return max_applier_radius;
+                return maxApplierRadius;
             }
             // Otherwise non-player
             return desiredRadius;
@@ -81,23 +81,29 @@ public class MiscUtils {
         }
     }
 
+    /**
+     * Get an enum that extends T as a fall back class.
+     *
+     * @param from     String
+     * @param fallback the Class to fallback too
+     * @param <T>      THe Class extending Enum
+     * @return T
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> T getEnum(String from, T fallback) {
-        if (from != null)
+        if (from != null) {
             try {
                 return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase());
             } catch (IllegalArgumentException ignored) {
+
             }
+        }
         return fallback;
     }
 
     public static String niceName(String in) {
         String[] parts = in.replace('_', ' ').trim().split("", 2);
         return parts[0].toUpperCase() + parts[1].toLowerCase();
-    }
-
-    public static String niceLower(String in) {
-        return in.replace('_', ' ').trim().toLowerCase();
     }
 
     /**
@@ -140,27 +146,31 @@ public class MiscUtils {
 
     }
 
-    public static void sendClickableTPRecord(ActionMessage a, CommandSender player) {
-        boolean isSpigot = false;
+    /**
+     * Send clickable record.
+     *
+     * @param a      ActionMessage
+     * @param player CommandSender
+     */
+    public static void sendClickableTpRecord(ActionMessage a, CommandSender player) {
+        boolean isSpigot = PaperLib.isSpigot();
         boolean isPaper = PaperLib.isPaper();
-        try {
-            Player.class.getMethod("spigot");
-            isSpigot = true;
-        } catch (NoSuchMethodException ignored) {
-        }
+
         if (isPaper || isSpigot) {
             String[] message = Prism.messenger.playerMsg(a.getMessage());
             //line 1 holds the index so we set that as the highlighted for command click
             final List<BaseComponent> toSend = new ArrayList<>();
             int i = 0;
             for (String m : message) {
-                BaseComponent[] text = TextComponent.fromLegacyText((player instanceof Player) ? m : m.replace("\n", ""));
+                BaseComponent[] text = TextComponent.fromLegacyText(
+                        (player instanceof Player) ? m : m.replace("\n", ""));
                 if (i == 0) {
                     Arrays.asList(text).forEach(baseComponent -> {
                         baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new TextComponent[]{new TextComponent("Click to teleport")}));
-                        baseComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp "
-                                + a.getIndex()));
+                        baseComponent.setClickEvent(
+                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp "
+                                        + a.getIndex()));
                         toSend.add(baseComponent);
                     });
                 } else {
@@ -180,40 +190,61 @@ public class MiscUtils {
         }
     }
 
+    /**
+     * Send page buttons.
+     *
+     * @param results Results
+     * @param player  Player
+     */
     public static void sendPageButtons(QueryResult results, CommandSender player) {
         if (player instanceof Player) {
             if (PaperLib.isPaper()) {
                 if (results.getPage() == 1) {
-                    if (results.getTotal_pages() > 1)
+                    if (results.getTotal_pages() > 1) {
                         player.sendMessage(MiscUtils.getNextButton());
-                } else if (results.getPage() < results.getTotal_pages())
+                    }
+                } else if (results.getPage() < results.getTotal_pages()) {
                     player.sendMessage(MiscUtils.getPrevNextButtons());
-                else if (results.getPage() == results.getTotal_pages())
+                } else if (results.getPage() == results.getTotal_pages()) {
                     player.sendMessage(MiscUtils.getPreviousButton());
+                }
             } else {
                 if (results.getPage() == 1) {
-                    if (results.getTotal_pages() > 1)
+                    if (results.getTotal_pages() > 1) {
                         player.spigot().sendMessage(MiscUtils.getNextButton());
-                } else if (results.getPage() < results.getTotal_pages())
+                    }
+                } else if (results.getPage() < results.getTotal_pages()) {
                     player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
-                else if (results.getPage() == results.getTotal_pages())
+                } else if (results.getPage() == results.getTotal_pages()) {
                     player.spigot().sendMessage(MiscUtils.getPreviousButton());
+                }
             }
         }
     }
 
-    public static List<String> getStartingWith(String start, Iterable<String> options, boolean caseSensitive) {
+    /**
+     * Gets a list of strings starting with.
+     *
+     * @param start         String
+     * @param options       Options
+     * @param caseSensitive if case sensitive
+     * @return List of Strings
+     */
+    public static List<String> getStartingWith(String start, Iterable<String> options,
+                                               boolean caseSensitive) {
         final List<String> result = new ArrayList<>();
         if (caseSensitive) {
             for (final String option : options) {
-                if (option.startsWith(start))
+                if (option.startsWith(start)) {
                     result.add(option);
+                }
             }
         } else {
             start = start.toLowerCase();
             for (final String option : options) {
-                if (option.toLowerCase().startsWith(start))
+                if (option.toLowerCase().startsWith(start)) {
                     result.add(option);
+                }
             }
         }
 
@@ -224,35 +255,61 @@ public class MiscUtils {
         return getStartingWith(arg, options, true);
     }
 
+    /**
+     * Send alert.
+     *
+     * @param msg      the message
+     * @param commands the commands
+     */
     public static void dispatchAlert(String msg, List<String> commands) {
         String colorized = TypeUtils.colorize(msg);
         String stripped = ChatColor.stripColor(colorized);
         for (String command : commands) {
-            if (command.equals("examplecommand <alert>"))
+            if (command.equals("examplecommand <alert>")) {
                 continue;
+            }
             String processedCommand = command.replace("<alert>", stripped);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand);
         }
     }
 
+    /**
+     * FInd a nice name for entity.
+     *
+     * @param entity Entity
+     * @return SDtring
+     */
     public static String getEntityName(Entity entity) {
-        if (entity == null)
+        if (entity == null) {
             return "unknown";
-        if (entity.getType() == EntityType.PLAYER)
+        }
+        if (entity.getType() == EntityType.PLAYER) {
             return entity.getName();
+        }
         return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, entity.getType().name());
     }
 
+    /**
+     * Prev Button.
+     *
+     * @return TextComponent
+     */
     public static TextComponent getPreviousButton() {
         TextComponent textComponent = new TextComponent(" [<< Prev]");
         textComponent.setColor(ChatColor.GRAY);
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
                 new TextComponent("Click to view the previous page")}));
-        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
+        textComponent.setClickEvent(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
         return textComponent;
 
     }
 
+    /**
+     * NExt button.
+     *
+     * @return TextComponent
+     */
     public static TextComponent getNextButton() {
         TextComponent textComponent = new TextComponent("           ");
         textComponent.setColor(ChatColor.GRAY);
@@ -260,14 +317,25 @@ public class MiscUtils {
         return textComponent;
     }
 
+    /**
+     * Next Button.
+     *
+     * @return BaseComponent.
+     */
     private static BaseComponent getNextButtonComponent() {
         TextComponent textComponent = new TextComponent("[Next >>]");
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
                 new TextComponent("Click to view the next page")}));
-        textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
+        textComponent.setClickEvent(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
         return textComponent;
     }
 
+    /**
+     * Prev Button.
+     *
+     * @return BaseComponent.
+     */
     public static BaseComponent getPrevNextButtons() {
         TextComponent textComponent = new TextComponent();
         textComponent.setColor(ChatColor.GRAY);
