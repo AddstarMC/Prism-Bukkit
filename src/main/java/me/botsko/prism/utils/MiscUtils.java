@@ -94,8 +94,8 @@ public class MiscUtils {
         if (from != null) {
             try {
                 return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase());
-            } catch (IllegalArgumentException ignored) {
-
+            } catch (IllegalArgumentException e) {
+                Prism.debug(e.getMessage());
             }
         }
         return fallback;
@@ -230,7 +230,7 @@ public class MiscUtils {
      * @param caseSensitive if case sensitive
      * @return List of Strings
      */
-    public static List<String> getStartingWith(String start, Iterable<String> options,
+    public static List<String> getStartingWith(final String start, Iterable<String> options,
                                                boolean caseSensitive) {
         final List<String> result = new ArrayList<>();
         if (caseSensitive) {
@@ -240,9 +240,9 @@ public class MiscUtils {
                 }
             }
         } else {
-            start = start.toLowerCase();
+            String caseStart = start.toLowerCase();
             for (final String option : options) {
-                if (option.toLowerCase().startsWith(start)) {
+                if (option.toLowerCase().startsWith(caseStart)) {
                     result.add(option);
                 }
             }
@@ -265,7 +265,7 @@ public class MiscUtils {
         String colorized = TypeUtils.colorize(msg);
         String stripped = ChatColor.stripColor(colorized);
         for (String command : commands) {
-            if (command.equals("examplecommand <alert>")) {
+            if ("examplecommand <alert>".equals(command)) {
                 continue;
             }
             String processedCommand = command.replace("<alert>", stripped);
@@ -297,8 +297,8 @@ public class MiscUtils {
     public static TextComponent getPreviousButton() {
         TextComponent textComponent = new TextComponent(" [<< Prev]");
         textComponent.setColor(ChatColor.GRAY);
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
-                new TextComponent("Click to view the previous page")}));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new TextComponent[]{new TextComponent("Click to view the previous page")}));
         textComponent.setClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
         return textComponent;
@@ -324,8 +324,8 @@ public class MiscUtils {
      */
     private static BaseComponent getNextButtonComponent() {
         TextComponent textComponent = new TextComponent("[Next >>]");
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent[]{
-                new TextComponent("Click to view the next page")}));
+        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                new TextComponent[]{new TextComponent("Click to view the next page")}));
         textComponent.setClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
         return textComponent;
