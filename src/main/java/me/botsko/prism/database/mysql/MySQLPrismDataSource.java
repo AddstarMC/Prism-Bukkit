@@ -2,9 +2,16 @@ package me.botsko.prism.database.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import me.botsko.prism.database.sql.*;
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.sql.SQLPrismDataSource;
+import me.botsko.prism.database.sql.SQLSelectQueryBuilder;
 import org.bukkit.configuration.ConfigurationSection;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -12,15 +19,28 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class MySQLPrismDataSource extends SQLPrismDataSource {
 
-    private boolean nonStandardSQL;
-    private static HikariConfig dbconfig = new HikariConfig();
+    private Boolean nonStandardSql;
+    public static final HashMap<String, String> dbInfo = new HashMap<>();
+    private static HikariConfig dbConfig = new HikariConfig();
 
+    /**
+     * Create a dataSource.
+     *
+     * @param section Config
+     */
     public MySQLPrismDataSource(ConfigurationSection section) {
         super(section);
-        nonStandardSQL = this.section.getBoolean("useNonStandardSql", true);
+        nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
+        detectNonStandardSql();
         name = "mysql";
     }
 
+    /**
+     * Add default params to new Config.
+     * //todo Version the config so we can remove the ones we dont need.
+     *
+     * @param section Config
+     */
     public static void updateDefaultConfig(ConfigurationSection section) {
         section.addDefault("hostname", "127.0.0.1");
         section.addDefault("username", "root");
@@ -28,21 +48,22 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         section.addDefault("databaseName", "minecraft");
         section.addDefault("prefix", "prism_");
         section.addDefault("port", "3306");
-        section.addDefault("useNonStandardSql", true);
+        //section.addDefault("useNonStandardSql", true);
     }
+
     @Override
     public MySQLPrismDataSource createDataSource() {
         final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
                 + this.section.getString("port") + "/" + this.section.getString("databaseName")
                 + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
 
-        dbconfig.setPoolName("prism");
-        dbconfig.setMaximumPoolSize(this.section.getInt("database.max-pool-connections"));
-        dbconfig.setMinimumIdle(this.section.getInt("database.min-idle-connections"));
-        dbconfig.setJdbcUrl(dns);
-        dbconfig.setUsername(this.section.getString("username"));
-        dbconfig.setPassword(this.section.getString("password"));
-        database = new HikariDataSource(dbconfig);
+        dbConfig.setPoolName("prism");
+        dbConfig.setMaximumPoolSize(this.section.getInt("database.max-pool-connections"));
+        dbConfig.setMinimumIdle(this.section.getInt("database.min-idle-connections"));
+        dbConfig.setJdbcUrl(dns);
+        dbConfig.setUsername(this.section.getString("username"));
+        dbConfig.setPassword(this.section.getString("password"));
+        database = new HikariDataSource(dbConfig);
         createSettingsQuery();
         return this;
     }
@@ -54,10 +75,39 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
 
     @Override
     public SelectQuery createSelectQuery() {
-        if (nonStandardSQL) {
+        if (nonStandardSql) {
             return new MySQLSelectQueryBuilder(this);
         } else {
             return new SQLSelectQueryBuilder(this);
+        }
+    }
+
+    private void detectNonStandardSql() {
+        try (
+                PreparedStatement st = getConnection().prepareStatement("SHOW VARIABLES");
+                ResultSet rs = st.executeQuery()) {
+            while (rs.next()) {
+                dbInfo.put(rs.getString(1).toLowerCase(), rs.getString(2));
+            }
+        } catch (SQLException e) {
+            Prism.debug(e.getMessage());
+        }
+        String version = dbInfo.get("version");
+        String versionComment = dbInfo.get("version_comment");
+
+        Prism.log("Prism detected you database is " + version + " / " + versionComment);
+        if (version.toLowerCase().contains("maria")
+                || versionComment.toLowerCase().contains("maria")) {
+            Prism.log("You have set nonStandardSql to " + nonStandardSql);
+            if (nonStandardSql) {
+                Prism.log("This sounds like a configuration error.  If you have database access"
+                        + "errors please set nonStandardSql to false");
+                return;
+            }
+            nonStandardSql = false;
+        }
+        if (!nonStandardSql) {
+            Prism.log("Prism will use standard sql queries");
         }
     }
 }
