@@ -48,7 +48,6 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         section.addDefault("databaseName", "minecraft");
         section.addDefault("prefix", "prism_");
         section.addDefault("port", "3306");
-        //section.addDefault("useNonStandardSql", true);
     }
 
     @Override
@@ -92,19 +91,26 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         } catch (SQLException e) {
             Prism.debug(e.getMessage());
         }
+        boolean anyValueSuccess;
+        try (
+                PreparedStatement st = getConnection().prepareStatement("SELECT ANY_VALUE(1)");
+                ResultSet rs = st.executeQuery()) {
+            nonStandardSql = true;
+            anyValueSuccess = true;
+            rs.next();
+        } catch (SQLException e) {
+            anyValueSuccess = false;
+        }
         String version = dbInfo.get("version");
         String versionComment = dbInfo.get("version_comment");
-
         Prism.log("Prism detected you database is " + version + " / " + versionComment);
-        if (version.toLowerCase().contains("maria")
-                || versionComment.toLowerCase().contains("maria")) {
-            Prism.log("You have set nonStandardSql to " + nonStandardSql);
+        Prism.log("You have set nonStandardSql to " + nonStandardSql);
+        if (!anyValueSuccess) {
             if (nonStandardSql) {
                 Prism.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");
                 return;
             }
-            nonStandardSql = false;
         }
         if (!nonStandardSql) {
             Prism.log("Prism will use standard sql queries");
