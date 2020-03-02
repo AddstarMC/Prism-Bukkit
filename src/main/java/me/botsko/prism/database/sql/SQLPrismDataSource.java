@@ -212,6 +212,23 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
                     + "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
                     + "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
+
+            // rollback
+            resultSet = metadata.getTables(null, null, getPrefix() + "data_rollback", null);
+            if (!resultSet.next()) {
+                query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "data_rollback` ("
+                        + "`rollback_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` bigint(20) UNSIGNED NOT NULL, `rollback` tinyint(1) DEFAULT NULL,"
+                        + "PRIMARY KEY (`rollback_id`), UNIQUE KEY `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+                st.executeUpdate(query);
+
+                // rollback foreign key
+                query = "ALTER TABLE `" + getPrefix() + "data_rollback` ADD CONSTRAINT `"
+                        + getPrefix() + "data_rollback_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `"
+                        + getPrefix() + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                st.executeUpdate(query);
+            }
         } catch (final SQLException e) {
             Prism.log("Database connection error: " + e.getMessage());
             e.printStackTrace();
