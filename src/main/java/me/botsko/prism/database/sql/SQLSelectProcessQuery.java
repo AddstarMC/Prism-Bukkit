@@ -46,6 +46,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
         sql += " INNER JOIN " + prefix + "actions a ON a.action_id = d.action_id ";
         sql += " INNER JOIN " + prefix + "worlds w ON w.world_id = d.world_id ";
         sql += " LEFT JOIN " + prefix + "data_extra ex ON ex.data_id = d.id ";
+        sql +=  "LEFT JOIN " + prefix + "data_rollback rb ON rb.data_id = d.id ";
         return sql;
     }
 
@@ -111,6 +112,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
                 process.setY(rs.getInt("y"));
                 process.setZ(rs.getInt("z"));
                 process.deserialize(rs.getString("data"));
+                process.setWasRollback(rs.getInt("rollback"));
             }
         } catch (SQLException e) {
             dataSource.handleDataSourceException(e);

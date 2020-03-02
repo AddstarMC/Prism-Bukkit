@@ -181,6 +181,11 @@ public interface Handler {
 	 */
 	void setCanceled(boolean cancel);
 
+
+	void setWasRollback(int rollback);
+
+	int getWasRollback();
+
 	/**
 	 * 
 	 * @param player

@@ -53,6 +53,8 @@ public class MySQLSelectQueryBuilder extends SQLSelectQueryBuilder {
         columns.add("any_value(data) data");
         columns.add("any_value(HEX(player_uuid)) AS uuid");
 
+        columns.add("rollback");
+
         if (shouldGroup) {
             columns.add("COUNT(*) counted");
         }
@@ -68,6 +70,7 @@ public class MySQLSelectQueryBuilder extends SQLSelectQueryBuilder {
         // Joins
         query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
         query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
+        query += "LEFT JOIN " + tableNameDataRollback + " rb ON rb.data_id = " + tableNameData + ".id ";
 
         return query;
 

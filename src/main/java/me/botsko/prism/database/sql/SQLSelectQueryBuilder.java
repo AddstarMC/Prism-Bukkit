@@ -89,6 +89,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             columns.add("HEX(player_uuid) AS uuid");
         }
 
+        columns.add("rollback");
+
         if (shouldGroup) {
             columns.add("COUNT(*) counted");
         }
@@ -104,6 +106,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // Joins
         query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
         query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
+        query += "LEFT JOIN " + tableNameDataRollback + " rb ON rb.data_id = " + tableNameData + ".id ";
 
         return query;
 
@@ -592,6 +595,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     int oldBlockSubId = rs.getInt(12);
 
                     String itemMetadata = rs.getString(13);
+
+                    baseHandler.setWasRollback(rs.getInt(15));
 
                     boolean validBlockId = false;
                     boolean validOldBlockId = false;

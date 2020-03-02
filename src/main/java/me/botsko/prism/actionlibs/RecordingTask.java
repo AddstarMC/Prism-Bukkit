@@ -2,20 +2,13 @@ package me.botsko.prism.actionlibs;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import me.botsko.prism.database.InsertQuery;
-import org.bukkit.Location;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
-import me.botsko.prism.players.PlayerIdentification;
-import me.botsko.prism.players.PrismPlayer;
-import me.botsko.prism.utils.BlockUtils;
-import me.botsko.prism.utils.IntPair;
 
 public class RecordingTask implements Runnable {
 
@@ -179,5 +172,46 @@ public class RecordingTask implements Runnable {
 		}
 		plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
 				this, getTickDelayForNextBatch());
+	}
+
+	public static void updateRollbackDatabase(ArrayList<Long> dataIds, boolean isRestore) {
+		if (dataIds.isEmpty()) {
+			return;
+		}
+
+		String prefix = Prism.config.getString("prism.mysql.prefix");
+		final Connection conn = Prism.getPrismDataSource().getConnection();
+		try {
+			if (conn == null || conn.isClosed()) {
+				Prism.log("Prism database error. Connection should be there but it's not. This action wasn't logged.");
+				return;
+			}
+
+			conn.setAutoCommit(false);
+			final PreparedStatement s = conn.prepareStatement("INSERT INTO "
+					+ prefix + "data_rollback (data_id,rollback) VALUES (?,?) ON DUPLICATE KEY UPDATE rollback = ?");
+			for (long id : dataIds) {
+				s.setLong(1, id);
+				if (isRestore) {
+					s.setNull(2, java.sql.Types.TINYINT);
+					s.setNull(3, java.sql.Types.TINYINT);
+				} else {
+					s.setInt(2, 1);
+					s.setInt(3, 1);
+				}
+				s.addBatch();
+			}
+
+			s.executeBatch();
+			conn.commit();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (final SQLException ignored) {}
+		}
 	}
 }

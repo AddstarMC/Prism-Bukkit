@@ -14,6 +14,7 @@ abstract public class QueryBuilder {
 
 	protected final String tableNameData;
 	protected final String tableNameDataExtra;
+	protected final String tableNameDataRollback;
 
 	public void setParameters(QueryParameters parameters) {
 		this.parameters = parameters;
@@ -46,6 +47,7 @@ abstract public class QueryBuilder {
 		prefix = this.dataSource.getPrefix();
 		tableNameData = prefix + "data";
 		tableNameDataExtra = prefix + "data_extra";
+		tableNameDataRollback = prefix + "data_rollback";
 	}
 
 	/**

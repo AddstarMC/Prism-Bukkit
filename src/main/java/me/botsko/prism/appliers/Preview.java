@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -65,6 +66,11 @@ public class Preview implements Previewable {
 	 * 
 	 */
 	protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
+
+	/**
+	 *
+	 */
+	protected ArrayList<Long> processedId = new ArrayList<>();
 
 	/**
 	 * 
@@ -331,6 +337,7 @@ public class Preview implements Previewable {
 						else {
 							blockStateChanges.add(result.getBlockStateChange());
 							changes_applied_count++;
+							processedId.add(a.getId());
 						}
 						// Unless a preview, remove from queue
 						if (!is_preview) {
@@ -431,6 +438,12 @@ public class Preview implements Previewable {
 			// e.printStackTrace();
 			// }
 			// }
+		}
+
+		if (processType.equals(PrismProcessType.ROLLBACK)) {
+			RecordingTask.updateRollbackDatabase(processedId, false);
+		} else if (processType.equals(PrismProcessType.RESTORE)) {
+			RecordingTask.updateRollbackDatabase(processedId, true);
 		}
 
 		moveEntitiesToSafety();

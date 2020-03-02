@@ -80,6 +80,8 @@ public abstract class GenericAction implements Handler {
 	 * 
 	 */
 	private int aggregateCount = 0;
+
+	private int rollback;
 	
 	public GenericAction() {
 		epoch = System.currentTimeMillis() / 1000;
@@ -472,6 +474,16 @@ public abstract class GenericAction implements Handler {
 	@Override
 	public void setCanceled(boolean cancel) {
 		this.canceled = cancel;
+	}
+
+	@Override
+	public void setWasRollback(int rollback) {
+		this.rollback = rollback;
+	}
+
+	@Override
+	public int getWasRollback() {
+		return rollback;
 	}
 
 	/**

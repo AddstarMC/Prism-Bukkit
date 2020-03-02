@@ -104,6 +104,12 @@ public class ActionMessage {
 
 		String line1 = "";
 
+		// Strikethrough when was rollback
+		String strike = "";
+		if (a.getWasRollback() == 1) {
+			strike += ChatColor.STRIKETHROUGH;
+		}
+
 		// +/-
 		line1 += getPosNegPrefix();
 
@@ -113,7 +119,7 @@ public class ActionMessage {
 		}
 
 		// Who
-		line1 += highlight + a.getSourceName();
+		line1 += highlight + strike + a.getSourceName();
 
 		String description = a.getCustomDesc();
 		ActionType action = a.getActionType();
@@ -122,37 +128,37 @@ public class ActionMessage {
 			description = action.getNiceDescription();
 
 		// Description of event
-		line1 += " " + ChatColor.WHITE + description;
+		line1 += " " + ChatColor.WHITE + strike + description;
 		if (action.getHandler() != null) {
 			if (!a.getNiceName().isEmpty())
-				line1 += " " + highlight + a.getNiceName();
+				line1 += " " + highlight + strike + a.getNiceName();
 		} else {
 			// We should really improve this, but this saves me from having to
 			// make
 			// a custom handler.
 			if (action.getName().equals("lava-bucket")) {
-				line1 += " " + highlight + "lava";
+				line1 += " " + highlight + strike + "lava";
 			} else if (action.getName().equals("water-bucket")) {
-				line1 += " " + highlight + "water";
+				line1 += " " + highlight + strike + "water";
 			}
 		}
 
 		if (showExtended && (a.getMaterial() != Material.AIR)) {
-			line1 += " " + a.getMaterial() + BlockUtils.dataString(a.getBlockData());
+			line1 += " " + strike + a.getMaterial() + BlockUtils.dataString(a.getBlockData());
 		}
 
 		// Aggregate count
 		if (a.getAggregateCount() > 1) {
-			line1 += ChatColor.GREEN + " x" + a.getAggregateCount();
+			line1 += ChatColor.GREEN + strike + " x" + a.getAggregateCount();
 		}
 
 		// Time since
 		if (!a.getTimeSince().isEmpty()) {
-			line1 += ChatColor.WHITE + " " + a.getTimeSince();
+			line1 += ChatColor.WHITE + strike +  " " + a.getTimeSince();
 		}
 
 		// Action type reminder
-		line1 += " " + ChatColor.GRAY + "(a:" + action.getShortName() + ")";
+		line1 += " " + ChatColor.GRAY + strike + "(a:" + action.getShortName() + ")";
 
 		if (showExtended) {
 			line1 += "\n";
