@@ -21,12 +21,12 @@ public class PurgeTask implements Runnable {
 	/**
 	 * 
 	 */
-	private int cycle_rows_affected = 0;
+	private int cycleRowsAffected = 0;
 
 	/**
 	 * 
 	 */
-	private final int purge_tick_delay;
+	private final int purgeTickDelay;
 
 	/**
 	 * 
@@ -48,25 +48,25 @@ public class PurgeTask implements Runnable {
 	 *
 	 * @param plugin
 	 * @param paramList
-	 * @param purge_tick_delay
+	 * @param purgeTickDelay
 	 * @param callback
 	 */
-	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay,
+	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purgeTickDelay,
 					 PurgeCallback callback) {
 		this.plugin = plugin;
 		this.paramList = paramList;
-		this.purge_tick_delay = purge_tick_delay;
+		this.purgeTickDelay = purgeTickDelay;
 		this.callback = callback;
 	}
 	/**
 	 * 
 	 * @param plugin
 	 */
-	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purge_tick_delay, long minId,
+	public PurgeTask(Prism plugin, CopyOnWriteArrayList<QueryParameters> paramList, int purgeTickDelay, long minId,
 			long maxId, PurgeCallback callback) {
 		this.plugin = plugin;
 		this.paramList = paramList;
-		this.purge_tick_delay = purge_tick_delay;
+		this.purgeTickDelay = purgeTickDelay;
 		this.minId = minId;
 		this.maxId = maxId;
 		this.callback = callback;
@@ -78,57 +78,64 @@ public class PurgeTask implements Runnable {
 	@Override
 	public void run() {
 
-		if (paramList.isEmpty())
+		if (paramList.isEmpty()) {
 			return;
-
-		long start_time = System.nanoTime();
+		}
 
 		final ActionsQuery aq = new ActionsQuery(plugin);
 
 		// Pull the next-in-line purge param
 		final QueryParameters param = paramList.get(0);
-		if(minId == 0 && maxId == 0){
-			//Suspect first run set the min and max
+		if (minId == 0 && maxId == 0) {
+			// First run - Set the min and max IDs
 			minId = aq.getMinIDForQuery(param);
-			maxId = aq.getMaxIDForQuery(param);
+			if (minId > 0) {
+				maxId = aq.getMaxIDForQuery(param);
+			}
 		}
-		boolean cycle_complete = false;
+		boolean cycleComplete = false;
+		cycleRowsAffected = 0;
+
+		long startTime = System.nanoTime();
 
 		// We're chunking by IDs instead of using LIMIT because
 		// that should be a lot better as far as required record lock counts
 		// http://mysql.rjweb.org/doc.php/deletebig
 		int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
-		if (spread <= 1)
+		if (spread <= 1) {
 			spread = 10000;
-		long newMinId = minId + spread;
-		param.setMinPrimaryKey(minId);
-		param.setMaxPrimaryKey(newMinId);
+		}
+		// Delete includes id < newMinId. This ensures the maxId isn't exceeded on the final chunk
+		// and also handles the case where minId == maxId (they need to be different by at least 1).
+		long newMinId = Math.min(minId + spread, maxId + 1);
 
-		cycle_rows_affected = aq.delete(param);
-		plugin.total_records_affected += cycle_rows_affected;
-
-		// If nothing (or less than the limit) has been deleted this cycle, we
-		// need to move on
-		if (newMinId > maxId) {
-			// Remove rule, reset affected count, mark complete
+		// Make sure there are rows to potentially delete
+		if (maxId > 0) {
+			param.setMinPrimaryKey(minId);
+			param.setMaxPrimaryKey(newMinId);
+			cycleRowsAffected = aq.delete(param);
+			plugin.total_records_affected += cycleRowsAffected;
+		}
+		// If done, remove rule and mark complete
+		if (newMinId >= maxId) {
 			paramList.remove(param);
-			cycle_complete = true;
+			cycleComplete = true;
 		}
 
-        long cycle_time = (System.nanoTime() - start_time) / 1000000L; // msec
-        plugin.max_cycle_time = Math.max(plugin.max_cycle_time, cycle_time);
+        long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
+        plugin.max_cycle_time = Math.max(plugin.max_cycle_time, cycleTime);
 
 		Prism.debug("------------------- " + param.getOriginalCommand());
 		Prism.debug("minId: " + minId);
 		Prism.debug("maxId: " + maxId);
 		Prism.debug("newMinId: " + newMinId);
-		Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
-		Prism.debug("cycle_complete: " + cycle_complete);
+		Prism.debug("cycleRowsAffected: " + cycleRowsAffected);
+		Prism.debug("cycleComplete: " + cycleComplete);
 		Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
 		Prism.debug("-------------------");
 
 		// Send cycle to callback
-		callback.cycle(param, cycle_rows_affected, plugin.total_records_affected, cycle_complete, plugin.max_cycle_time);
+		callback.cycle(param, cycleRowsAffected, plugin.total_records_affected, cycleComplete, plugin.max_cycle_time);
 
 		if (!plugin.isEnabled()) {
 			Prism.log(
@@ -136,33 +143,24 @@ public class PurgeTask implements Runnable {
 			return;
 		}
 
-		// If cycle is incomplete, reschedule it, or reset counts
-		if (!cycle_complete) {
+		// If cycle is incomplete, reschedule it
+		if (!cycleComplete) {
 			plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
-					new PurgeTask(plugin, paramList, purge_tick_delay, newMinId, maxId, callback), purge_tick_delay);
-		}
-		else {
-
+					new PurgeTask(plugin, paramList, purgeTickDelay, newMinId, maxId, callback), purgeTickDelay);
+		} else {
 			// reset counts
 			plugin.total_records_affected = 0;
 			plugin.max_cycle_time = 0;
 
-			if (paramList.isEmpty())
-				return;
-
-			Prism.log("Moving on to next purge rule...");
-
-			// Identify the minimum for chunking
-			newMinId = PurgeChunkingUtil.getMinimumPrimaryKey();
-			if (newMinId == 0) {
-				Prism.log("No minimum primary key could be found for purge chunking.");
+			if (paramList.isEmpty()) {
 				return;
 			}
 
+			Prism.log("Moving on to next purge rule...");
+
 			// schedule a new task with next param
 			plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
-					new PurgeTask(plugin, paramList, purge_tick_delay, newMinId, maxId, callback), purge_tick_delay);
-
+					new PurgeTask(plugin, paramList, purgeTickDelay, callback), purgeTickDelay);
 		}
 	}
 }

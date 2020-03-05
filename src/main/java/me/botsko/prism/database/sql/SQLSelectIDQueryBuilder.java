@@ -30,6 +30,11 @@ public class SQLSelectIDQueryBuilder extends SQLSelectQueryBuilder implements Se
         return select;
     }
 
+    @Override
+    protected String order() {
+        return "";
+    }
+
     public void setMax() {
         select = "SELECT max(id) FROM " + tableNameData + " ";
     }
