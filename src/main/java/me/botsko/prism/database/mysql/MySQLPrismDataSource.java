@@ -105,12 +105,10 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
         String versionComment = dbInfo.get("version_comment");
         Prism.log("Prism detected you database is " + version + " / " + versionComment);
         Prism.log("You have set nonStandardSql to " + nonStandardSql);
-        if (!anyValueSuccess) {
-            if (nonStandardSql) {
+        if (!anyValueSuccess && nonStandardSql) {
                 Prism.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");
                 return;
-            }
         }
         if (!nonStandardSql) {
             Prism.log("Prism will use standard sql queries");

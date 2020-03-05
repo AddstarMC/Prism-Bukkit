@@ -95,67 +95,67 @@ public class PurgeTask implements Runnable {
 		boolean cycle_complete = false;
 
 		// We're chunking by IDs instead of using LIMIT because
-		// that should be a lot better as far as required record lock counts
-		// http://mysql.rjweb.org/doc.php/deletebig
-		int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
-		if (spread <= 1)
-			spread = 10000;
-		long newMinId = minId + spread;
-		param.setMinPrimaryKey(minId);
-		param.setMaxPrimaryKey(newMinId);
+        // that should be a lot better as far as required record lock counts
+        // http://mysql.rjweb.org/doc.php/deletebig
+        int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
+        if (spread <= 1)
+            spread = 10000;
+        long newMinId = minId + spread;
+        param.setMinPrimaryKey(minId);
+        param.setMaxPrimaryKey(newMinId);
 
-		cycle_rows_affected = aq.delete(param);
-		plugin.total_records_affected += cycle_rows_affected;
+        cycle_rows_affected = aq.delete(param);
+        plugin.totalRecordsAffected += cycle_rows_affected;
 
-		// If nothing (or less than the limit) has been deleted this cycle, we
-		// need to move on
-		if (newMinId > maxId) {
-			// Remove rule, reset affected count, mark complete
-			paramList.remove(param);
-			cycle_complete = true;
-		}
+        // If nothing (or less than the limit) has been deleted this cycle, we
+        // need to move on
+        if (newMinId > maxId) {
+            // Remove rule, reset affected count, mark complete
+            paramList.remove(param);
+            cycle_complete = true;
+        }
 
         long cycle_time = (System.nanoTime() - start_time) / 1000000L; // msec
-        plugin.max_cycle_time = Math.max(plugin.max_cycle_time, cycle_time);
+        plugin.maxCycleTime = Math.max(plugin.maxCycleTime, cycle_time);
 
-		Prism.debug("------------------- " + param.getOriginalCommand());
-		Prism.debug("minId: " + minId);
-		Prism.debug("maxId: " + maxId);
-		Prism.debug("newMinId: " + newMinId);
-		Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
-		Prism.debug("cycle_complete: " + cycle_complete);
-		Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
-		Prism.debug("-------------------");
+        Prism.debug("------------------- " + param.getOriginalCommand());
+        Prism.debug("minId: " + minId);
+        Prism.debug("maxId: " + maxId);
+        Prism.debug("newMinId: " + newMinId);
+        Prism.debug("cycle_rows_affected: " + cycle_rows_affected);
+        Prism.debug("cycle_complete: " + cycle_complete);
+        Prism.debug("plugin.total_records_affected: " + plugin.totalRecordsAffected);
+        Prism.debug("-------------------");
 
-		// Send cycle to callback
-		callback.cycle(param, cycle_rows_affected, plugin.total_records_affected, cycle_complete, plugin.max_cycle_time);
+        // Send cycle to callback
+        callback.cycle(param, cycle_rows_affected, plugin.totalRecordsAffected, cycle_complete, plugin.maxCycleTime);
 
-		if (!plugin.isEnabled()) {
-			Prism.log(
-					"Can't schedule new purge tasks as plugin is now disabled. If you're shutting down the server, ignore me.");
-			return;
-		}
+        if (!plugin.isEnabled()) {
+            Prism.log(
+                    "Can't schedule new purge tasks as plugin is now disabled. If you're shutting down the server, ignore me.");
+            return;
+        }
 
-		// If cycle is incomplete, reschedule it, or reset counts
-		if (!cycle_complete) {
-			plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
+        // If cycle is incomplete, reschedule it, or reset counts
+        if (!cycle_complete) {
+            plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
 					new PurgeTask(plugin, paramList, purge_tick_delay, newMinId, maxId, callback), purge_tick_delay);
 		}
 		else {
 
-			// reset counts
-			plugin.total_records_affected = 0;
-			plugin.max_cycle_time = 0;
+            // reset counts
+            plugin.totalRecordsAffected = 0;
+            plugin.maxCycleTime = 0;
 
-			if (paramList.isEmpty())
-				return;
+            if (paramList.isEmpty())
+                return;
 
-			Prism.log("Moving on to next purge rule...");
+            Prism.log("Moving on to next purge rule...");
 
-			// Identify the minimum for chunking
-			newMinId = PurgeChunkingUtil.getMinimumPrimaryKey();
-			if (newMinId == 0) {
-				Prism.log("No minimum primary key could be found for purge chunking.");
+            // Identify the minimum for chunking
+            newMinId = PurgeChunkingUtil.getMinimumPrimaryKey();
+            if (newMinId == 0) {
+                Prism.log("No minimum primary key could be found for purge chunking.");
 				return;
 			}
 
