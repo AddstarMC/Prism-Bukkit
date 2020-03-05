@@ -3,17 +3,17 @@ package me.botsko.prism.monitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-
 import me.botsko.prism.utils.MiscUtils;
+import me.botsko.prism.utils.TypeUtils;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 public class OreMonitor {
@@ -75,17 +75,18 @@ public class OreMonitor {
 			final ArrayList<Block> foundores = findNeighborBlocks(block.getType(), block, matchingBlocks);
 			if (!foundores.isEmpty()) {
 
-				// Save the block
-				final BlockState state = block.getState();
+				// Determine light level
+				int light = 0;
+				final BlockFace[] blockFaces = {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
+				for (BlockFace blockFace: blockFaces) {
+					light = Math.max(light, block.getRelative(blockFace).getLightLevel());
+					if (light >= 15) {
+						break;
+					}
+				}
+				light = light * 100 / 15;
 
-				// Set to air to get the light
-				block.setType(Material.AIR);
-				int light = block.getLightLevel();
-				light = Math.max(0, light * 100 / 15);
-
-				// Restore the block
-				block.setType(state.getType());
-
+				// Create alert message
 				final String count = foundores.size() + (foundores.size() >= threshold_max ? "+" : "");
 				final String msg = getOreColor(block) + player.getName() + " found " + count + " "
 						+ getOreNiceName(block) + " " + light + "% light";
