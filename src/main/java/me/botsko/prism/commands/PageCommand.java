@@ -113,15 +113,15 @@ public class PageCommand implements SubHandler {
 		// Show it!
 		int result_count = results.getIndexOfFirstResult();
 		for (final Handler a : paginated) {
-			final ActionMessage am = new ActionMessage(a);
-			if (results.getParameters().hasFlag(Flag.EXTENDED)
-					|| plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
-				am.showExtended();
-			}
-			am.setResultIndex(result_count);
-			MiscUtils.sendClickableTPRecord(am, call.getSender());
-			result_count++;
-		}
+            final ActionMessage am = new ActionMessage(a);
+            if (results.getParameters().hasFlag(Flag.EXTENDED)
+                    || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
+                am.showExtended();
+            }
+            am.setResultIndex(result_count);
+            MiscUtils.sendClickableTpRecord(am, call.getSender());
+            result_count++;
+        }
 		MiscUtils.sendPageButtons(results, call.getSender());
 
 	}
