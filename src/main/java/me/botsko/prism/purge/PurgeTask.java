@@ -122,8 +122,8 @@ public class PurgeTask implements Runnable {
 			cycleComplete = true;
 		}
 
-        long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
-        plugin.maxCycleTime = Math.max(plugin.maxCycleTime, cycleTime);
+		long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
+		plugin.maxCycleTime = Math.max(plugin.maxCycleTime, cycleTime);
 
 		Prism.debug("------------------- " + param.getOriginalCommand());
 		Prism.debug("minId: " + minId);
