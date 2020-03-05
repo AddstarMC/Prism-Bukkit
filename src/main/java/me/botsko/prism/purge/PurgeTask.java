@@ -114,7 +114,7 @@ public class PurgeTask implements Runnable {
 			param.setMinPrimaryKey(minId);
 			param.setMaxPrimaryKey(newMinId);
 			cycleRowsAffected = aq.delete(param);
-			plugin.total_records_affected += cycleRowsAffected;
+			plugin.totalRecordsAffected += cycleRowsAffected;
 		}
 		// If done, remove rule and mark complete
 		if (newMinId >= maxId) {
@@ -123,7 +123,7 @@ public class PurgeTask implements Runnable {
 		}
 
         long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
-        plugin.max_cycle_time = Math.max(plugin.max_cycle_time, cycleTime);
+        plugin.maxCycleTime = Math.max(plugin.maxCycleTime, cycleTime);
 
 		Prism.debug("------------------- " + param.getOriginalCommand());
 		Prism.debug("minId: " + minId);
@@ -131,11 +131,11 @@ public class PurgeTask implements Runnable {
 		Prism.debug("newMinId: " + newMinId);
 		Prism.debug("cycleRowsAffected: " + cycleRowsAffected);
 		Prism.debug("cycleComplete: " + cycleComplete);
-		Prism.debug("plugin.total_records_affected: " + plugin.total_records_affected);
+		Prism.debug("plugin.total_records_affected: " + plugin.totalRecordsAffected);
 		Prism.debug("-------------------");
 
 		// Send cycle to callback
-		callback.cycle(param, cycleRowsAffected, plugin.total_records_affected, cycleComplete, plugin.max_cycle_time);
+		callback.cycle(param, cycleRowsAffected, plugin.totalRecordsAffected, cycleComplete, plugin.maxCycleTime);
 
 		if (!plugin.isEnabled()) {
 			Prism.log(
@@ -149,8 +149,8 @@ public class PurgeTask implements Runnable {
 					new PurgeTask(plugin, paramList, purgeTickDelay, newMinId, maxId, callback), purgeTickDelay);
 		} else {
 			// reset counts
-			plugin.total_records_affected = 0;
-			plugin.max_cycle_time = 0;
+			plugin.totalRecordsAffected = 0;
+			plugin.maxCycleTime = 0;
 
 			if (paramList.isEmpty()) {
 				return;
