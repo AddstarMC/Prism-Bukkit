@@ -1,8 +1,13 @@
 package me.botsko.prism;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import me.botsko.prism.database.PrismDatabaseFactory;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -91,8 +96,8 @@ public class PrismConfig extends ConfigBase {
 		purgeRules.add("before:8w");
 		purgeRules.add("a:water-flow before:4w");
 		config.addDefault("prism.db-records-purge-rules", purgeRules);
-		config.addDefault("prism.purge.batch-tick-delay", 60);
-		config.addDefault("prism.purge.records-per-batch", 5000);
+		config.addDefault("prism.purge.batch-tick-delay", 30);
+		config.addDefault("prism.purge.records-per-batch", 100000);
 
 		// Appliers
 		config.addDefault("prism.appliers.allow-rollback-items-removed-from-container", true);
@@ -110,6 +115,7 @@ public class PrismConfig extends ConfigBase {
 		final List<String> illegalBlocks = new ArrayList<>();
 		illegalBlocks.add("water");
 		illegalBlocks.add("lava");
+		illegalBlocks.add("flowing_lava");
 
 		config.addDefault("prism.appliers.never-place-block", illegalBlocks);
 
@@ -213,9 +219,9 @@ public class PrismConfig extends ConfigBase {
 		config.addDefault("prism.alerts.ores.log-to-console", true);
 		config.addDefault("prism.alerts.ores.log-commands", Collections.singletonList("examplecommand <alert>"));
 		// Ore blocks
-		final HashMap<String, String> oreBlocks = new HashMap<>();
-		oreBlocks.put("iron_ore", "&6");
-		oreBlocks.put("gold_ore", "&7");
+		final HashMap<String, String> oreBlocks = new LinkedHashMap<>();
+		oreBlocks.put("iron_ore", "&7");
+		oreBlocks.put("gold_ore", "&6");
 		oreBlocks.put("lapis_ore", "&9");
 		oreBlocks.put("diamond_ore", "&b");
 		oreBlocks.put("emerald_ore", "&a");

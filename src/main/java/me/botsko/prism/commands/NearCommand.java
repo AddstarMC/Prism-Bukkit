@@ -83,15 +83,15 @@ public class NearCommand implements SubHandler {
 				if (paginated != null) {
 					int result_count = results.getIndexOfFirstResult();
 					for (final Handler a : paginated) {
-						final ActionMessage am = new ActionMessage(a);
-						if (parameters.hasFlag(Flag.EXTENDED)
-								|| plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
-							am.showExtended();
-						}
-						am.setResultIndex(result_count);
-						MiscUtils.sendClickableTPRecord(am, call.getPlayer());
-						result_count++;
-					}
+                        final ActionMessage am = new ActionMessage(a);
+                        if (parameters.hasFlag(Flag.EXTENDED)
+                                || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
+                            am.showExtended();
+                        }
+                        am.setResultIndex(result_count);
+                        MiscUtils.sendClickableTpRecord(am, call.getPlayer());
+                        result_count++;
+                    }
 					MiscUtils.sendPageButtons(results, call.getPlayer());
 
 					// Flush timed data

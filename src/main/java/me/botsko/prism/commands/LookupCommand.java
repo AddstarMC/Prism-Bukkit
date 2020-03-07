@@ -20,127 +20,136 @@ import java.util.List;
 
 public class LookupCommand implements SubHandler {
 
-	/**
-	 * 
-	 */
-	private final Prism plugin;
 
-	/**
-	 * 
-	 * @param plugin
-	 * @return
-	 */
-	public LookupCommand(Prism plugin) {
-		this.plugin = plugin;
-	}
+    private final Prism plugin;
 
-	/**
-	 * Handle the command
-	 */
-	@Override
-	public void handle(final CallInfo call) {
+    /**
+     * Perform a lookup.
+     *
+     * @param plugin Prism
+     */
+    public LookupCommand(Prism plugin) {
+        this.plugin = plugin;
+    }
 
-		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
-				PrismProcessType.LOOKUP, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
-		if (parameters == null) {
-			return;
-		}
+    /**
+     * Handle the command.
+     */
+    @Override
+    public void handle(final CallInfo call) {
 
-		/*
-		  Run the lookup itself in an async task so the lookup query isn't done on the
-		  main thread
-		 */
-		plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        // Process and validate all of the arguments
+        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(),
+                call.getArgs(),
+                PrismProcessType.LOOKUP, 1,
+                !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+        if (parameters == null) {
+            return;
+        }
 
-			// determine if defaults were used
-			final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-			StringBuilder defaultsReminder = new StringBuilder();
-			if (!defaultsUsed.isEmpty()) {
-				defaultsReminder.append("Using defaults:");
-				for (final String d : defaultsUsed) {
-					defaultsReminder.append(" ").append(d);
-				}
-			}
+        // Run the lookup itself in an async task so the lookup query isn't done on the main thread
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
-			final ActionsQuery aq = new ActionsQuery(plugin);
-			final QueryResult results = aq.lookup(parameters, call.getSender());
-			StringBuilder sharingWithPlayers = new StringBuilder();
-			for (final CommandSender shareWith : parameters.getSharedPlayers()) {
-				sharingWithPlayers.append(shareWith.getName()).append(", ");
-			}
-			sharingWithPlayers = new StringBuilder(sharingWithPlayers.substring(0,
-					(sharingWithPlayers.length() == 0) ? 0 : sharingWithPlayers.length() - 2));
+            // determine if defaults were used
+            final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+            StringBuilder defaultsReminder = new StringBuilder();
+            if (!defaultsUsed.isEmpty()) {
+                defaultsReminder.append("Using defaults:");
+                for (final String d : defaultsUsed) {
+                    defaultsReminder.append(" ").append(d);
+                }
+            }
 
-			// Add current sender
-			parameters.addSharedPlayer(call.getSender());
+            final ActionsQuery aq = new ActionsQuery(plugin);
+            final QueryResult results = aq.lookup(parameters, call.getSender());
+            StringBuilder sharingWithPlayers = new StringBuilder();
+            for (final CommandSender shareWith : parameters.getSharedPlayers()) {
+                sharingWithPlayers.append(shareWith.getName()).append(", ");
+            }
+            sharingWithPlayers = new StringBuilder(sharingWithPlayers.substring(0,
+                    (sharingWithPlayers.length() == 0) ? 0 : sharingWithPlayers.length() - 2));
 
-			for (final CommandSender player : parameters.getSharedPlayers()) {
+            // Add current sender
+            parameters.addSharedPlayer(call.getSender());
 
-				final boolean isSender = player.getName().equals(call.getSender().getName());
+            for (final CommandSender player : parameters.getSharedPlayers()) {
 
-				if (!isSender) {
-					player.sendMessage(Prism.messenger
-							.playerHeaderMsg(ChatColor.YELLOW + "" + ChatColor.ITALIC + call.getSender().getName()
-									+ ChatColor.GOLD + " shared these Prism lookup logs with you:"));
-				} else if (sharingWithPlayers.length() > 0) {
-					player.sendMessage(
-							Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "Sharing results with players: "
-									+ ChatColor.YELLOW + "" + ChatColor.ITALIC + sharingWithPlayers));
-				}
+                final boolean isSender = player.getName().equals(call.getSender().getName());
 
-				if (!results.getActionResults().isEmpty()) {
-					player.sendMessage(Prism.messenger.playerHeaderMsg("Showing " + results.getTotalResults()
-							+ " results. Page 1 of " + results.getTotal_pages()));
-					if ((defaultsReminder.length() > 0) && isSender) {
-						player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(defaultsReminder.toString()));
-					}
-					final List<Handler> paginated = results.getPaginatedActionResults();
-					if (paginated != null) {
-						int result_count = results.getIndexOfFirstResult();
-						for (final Handler a : paginated) {
-							final ActionMessage am = new ActionMessage(a);
-							if (parameters.hasFlag(Flag.EXTENDED)
-									|| plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
-								am.showExtended();
-							}
-							am.setResultIndex(result_count);
-							MiscUtils.sendClickableTPRecord(am, player);
-							result_count++;
-						}
-						MiscUtils.sendPageButtons(results, player);
-					} else {
-						player.sendMessage(Prism.messenger
-								.playerError("Pagination can't find anything. Do you have the right page number?"));
-					}
-					if (parameters.hasFlag(Flag.PASTE)) {
-						StringBuilder paste = new StringBuilder();
-						for (final Handler a : results.getActionResults()) {
-							paste.append(new ActionMessage(a).getRawMessage()).append("\r\n");
-						}
-						player.sendMessage(MiscUtils.paste_results(plugin, paste.toString()));
-					}
-				} else {
-					if (defaultsReminder.length() > 0) {
-						if (isSender) {
-							player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(defaultsReminder.toString()));
-						}
-					}
-					if (isSender) {
-						player.sendMessage(Prism.messenger.playerError("Nothing found." + ChatColor.GRAY
-								+ " Either you're missing something, or we are."));
-					}
-				}
-			}
+                if (!isSender) {
+                    player.sendMessage(Prism.messenger
+                            .playerHeaderMsg(ChatColor.YELLOW + ""
+                                    + ChatColor.ITALIC
+                                    + call.getSender().getName()
+                                    + ChatColor.GOLD
+                                    + " shared these Prism lookup logs with you:"));
+                } else if (sharingWithPlayers.length() > 0) {
+                    player.sendMessage(
+                            Prism.messenger.playerHeaderMsg(ChatColor.GOLD
+                                    + "Sharing results with players: "
+                                    + ChatColor.YELLOW + ""
+                                    + ChatColor.ITALIC + sharingWithPlayers));
+                }
 
-			// Flush timed data
-			plugin.eventTimer.printTimeRecord();
+                if (!results.getActionResults().isEmpty()) {
+                    player.sendMessage(Prism.messenger.playerHeaderMsg("Showing "
+                            + results.getTotalResults()
+                            + " results. Page 1 of "
+                            + results.getTotal_pages()));
+                    if ((defaultsReminder.length() > 0) && isSender) {
+                        player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                                defaultsReminder.toString()));
+                    }
+                    final List<Handler> paginated = results.getPaginatedActionResults();
+                    if (paginated != null) {
+                        int resultCount = results.getIndexOfFirstResult();
+                        for (final Handler a : paginated) {
+                            final ActionMessage am = new ActionMessage(a);
+                            if (parameters.hasFlag(Flag.EXTENDED)
+                                    || plugin.getConfig()
+                                    .getBoolean("prism.messenger.always-show-extended")) {
+                                am.showExtended();
+                            }
+                            am.setResultIndex(resultCount);
+                            MiscUtils.sendClickableTpRecord(am, player);
+                            resultCount++;
+                        }
+                        MiscUtils.sendPageButtons(results, player);
+                    } else {
+                        player.sendMessage(Prism.messenger
+                                .playerError("Pagination can't find anything. "
+                                        + "Do you have the right page number?"));
+                    }
+                    if (parameters.hasFlag(Flag.PASTE)) {
+                        StringBuilder paste = new StringBuilder();
+                        for (final Handler a : results.getActionResults()) {
+                            paste.append(new ActionMessage(a).getRawMessage()).append("\r\n");
+                        }
+                        MiscUtils.paste_results(player, paste.toString());
+                    }
+                } else {
+                    if (defaultsReminder.length() > 0) {
+                        if (isSender) {
+                            player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                                    defaultsReminder.toString()));
+                        }
+                    }
+                    if (isSender) {
+                        player.sendMessage(Prism.messenger.playerError("Nothing found."
+                                + ChatColor.GRAY
+                                + " Either you're missing something, or we are."));
+                    }
+                }
+            }
 
-		});
-	}
+            // Flush timed data
+            plugin.eventTimer.printTimeRecord();
 
-	@Override
-	public List<String> handleComplete(CallInfo call) {
-		return PreprocessArgs.complete(call.getSender(), call.getArgs());
-	}
+        });
+    }
+
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }
