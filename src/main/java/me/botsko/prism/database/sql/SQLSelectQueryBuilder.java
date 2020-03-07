@@ -703,7 +703,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     // Set aggregate counts if a lookup
                     int aggregated = 0;
                     if (shouldGroup) {
-                        aggregated = rs.getInt(15);
+                        aggregated = rs.getInt(16);
                     }
                     baseHandler.setAggregateCount(aggregated);
 
