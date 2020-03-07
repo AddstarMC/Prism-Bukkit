@@ -193,8 +193,8 @@ public class RecordingTask implements Runnable {
 			for (long id : dataIds) {
 				s.setLong(1, id);
 				if (isRestore) {
-					s.setNull(2, java.sql.Types.TINYINT);
-					s.setNull(3, java.sql.Types.TINYINT);
+					s.setNull(2, java.sql.Types.BIGINT);
+					s.setNull(3, java.sql.Types.BIGINT);
 				} else {
 					s.setInt(2, 1);
 					s.setInt(3, 1);
