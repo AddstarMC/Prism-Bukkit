@@ -80,6 +80,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             columns.add("MIN(old_block_subid) old_block_subid");
             columns.add("MIN(data) data");
             columns.add("MIN(HEX(player_uuid)) AS uuid");
+            columns.add("MIN(IFNULL(rollback, 0)) rollback");
         } else {
             columns.add("block_id");
             columns.add("block_subid");
@@ -87,9 +88,9 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             columns.add("old_block_subid");
             columns.add("data");
             columns.add("HEX(player_uuid) AS uuid");
+            columns.add("rollback");
         }
 
-        columns.add("rollback");
 
         if (shouldGroup) {
             columns.add("COUNT(*) counted");

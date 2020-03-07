@@ -52,8 +52,7 @@ public class MySQLSelectQueryBuilder extends SQLSelectQueryBuilder {
         columns.add("any_value(old_block_subid) old_block_subid");
         columns.add("any_value(data) data");
         columns.add("any_value(HEX(player_uuid)) AS uuid");
-
-        columns.add("rollback");
+        columns.add("any_value(rollback) rollback");
 
         if (shouldGroup) {
             columns.add("COUNT(*) counted");
