@@ -112,6 +112,12 @@
 			<artifactId>HikariCP</artifactId>
 			<version>3.4.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.kitteh</groupId>
+			<artifactId>paste-gg-api</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
@@ -131,12 +137,22 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-            <id>CodeMC</id>
+			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public/</url>
 		</repository>
 		<repository>
 			<id>maven-central</id>
 			<url>https://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>maven.addstar.com.au-snapshots</id>
+			<name>addstar-maven-snapshots</name>
+			<url>https://maven.addstar.com.au/artifactory/all-snapshot</url>
+		</repository>
+		<repository>
+			<id>maven.addstar.com.au</id>
+			<name>addstar-maven-releases</name>
+			<url>https://maven.addstar.com.au/artifactory/all-release</url>
 		</repository>
 	</repositories>
 	<build>
@@ -183,8 +199,8 @@
 						<shadedPattern>com.botsko.prism.libs.paperlib</shadedPattern>
 					</relocation>
 					<relocation>
-						<pattern>com.zaxxer.hikari</pattern>
-						<shadedPattern>com.botsko.prism.libs.hikari</shadedPattern>
+						<pattern>org.kitteh.pastegg</pattern>
+						<shadedPattern>com.botsko.prism.libs.pastegg</shadedPattern>
 					</relocation>
 				</relocations>
 			</configuration>
