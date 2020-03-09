@@ -85,19 +85,19 @@ public class HangingItemAction extends GenericAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
-		return hangItem(player, parameters, is_preview);
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+		return hangItem(player, parameters, isPreview);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
-		return hangItem(player, parameters, is_preview);
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+		return hangItem(player, parameters, isPreview);
 	}
 
 	/**

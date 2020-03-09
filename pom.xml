@@ -66,6 +66,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>au.com.addstar.dripreporter</groupId>
+			<artifactId>DripReporterAPI</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sk89q.worldedit</groupId>
 			<artifactId>worldedit-bukkit</artifactId>
 			<version>7.1.0</version>
@@ -115,6 +120,10 @@
 		</dependency>
 	</dependencies>
 	<repositories>
+		<repository>
+			<id>maven.addstar.com.au-release</id>
+			<url>https://maven.addstar.com.au/artifactory/all-release</url>
+		</repository>
 		<repository>
 			<id>sk89q-repo</id>
 			<url>http://maven.sk89q.com/repo/</url>
@@ -180,11 +189,16 @@
 			<artifactId>maven-shade-plugin</artifactId>
 			<version>3.2.2</version>
 			<configuration>
+				<artifactSet>
+					<excludes>
+						<exclude>io.dropwizard.metrics:metrics*</exclude>
+					</excludes>
+				</artifactSet>
 				<relocations>
-                    <relocation>
-                        <pattern>org.bstats</pattern>
-                        <shadedPattern>com.botsko.prism.libs.bstats</shadedPattern>
-                    </relocation>
+					<relocation>
+						<pattern>org.bstats</pattern>
+						<shadedPattern>com.botsko.prism.libs.bstats</shadedPattern>
+					</relocation>
 					<relocation>
 						<pattern>io.papermc.lib</pattern>
 						<shadedPattern>com.botsko.prism.libs.paperlib</shadedPattern>

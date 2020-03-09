@@ -44,9 +44,6 @@ public class PrismDatabaseFactory {
             case "mysql":
                 Prism.log("Attempting to configure datasource as " + dataSource);
                 ConfigurationSection section = configuration.getConfigurationSection("prism.mysql");
-                String dns = "jdbc:mysql://" + section.getString("hostname") + ":"
-                        + section.getString("port") + "/" + section.getString("databaseName")
-                        + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
                 database = new MySqlPrismDataSource(section);
                 return database;
             case "derby":
