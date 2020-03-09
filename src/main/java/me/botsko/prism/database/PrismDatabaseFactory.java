@@ -1,7 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.database.mysql.MySQLPrismDataSource;
+import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 import me.botsko.prism.database.sql.SQLPrismDataSourceUpdater;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,7 +23,7 @@ public class PrismDatabaseFactory {
         } else {
             mysql = configuration.createSection("prism.mysql");
         }
-        MySQLPrismDataSource.updateDefaultConfig(mysql);
+        MySqlPrismDataSource.updateDefaultConfig(mysql);
         addDatabaseDefaults(mysql);
     }
 
@@ -47,7 +47,7 @@ public class PrismDatabaseFactory {
                 String dns = "jdbc:mysql://" + section.getString("hostname") + ":"
                         + section.getString("port") + "/" + section.getString("databaseName")
                         + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
-                database = new MySQLPrismDataSource(section);
+                database = new MySqlPrismDataSource(section);
                 return database;
             case "derby":
                 Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use MySQL.");
@@ -69,7 +69,7 @@ public class PrismDatabaseFactory {
             case "mysql":
             case "derby":
             case "sqlite":
-                return new SQLPrismDataSourceUpdater((MySQLPrismDataSource) database);
+                return new SQLPrismDataSourceUpdater((MySqlPrismDataSource) database);
             default:
                 return null;
         }

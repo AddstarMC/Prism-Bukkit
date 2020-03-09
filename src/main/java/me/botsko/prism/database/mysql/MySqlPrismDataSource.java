@@ -17,7 +17,7 @@ import java.util.HashMap;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 5/04/2019.
  */
-public class MySQLPrismDataSource extends SQLPrismDataSource {
+public class MySqlPrismDataSource extends SQLPrismDataSource {
 
     private Boolean nonStandardSql;
     public static final HashMap<String, String> dbInfo = new HashMap<>();
@@ -28,7 +28,7 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
      *
      * @param section Config
      */
-    public MySQLPrismDataSource(ConfigurationSection section) {
+    public MySqlPrismDataSource(ConfigurationSection section) {
         super(section);
         nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
         detectNonStandardSql();
@@ -51,7 +51,7 @@ public class MySQLPrismDataSource extends SQLPrismDataSource {
     }
 
     @Override
-    public MySQLPrismDataSource createDataSource() {
+    public MySqlPrismDataSource createDataSource() {
         final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
                 + this.section.getString("port") + "/" + this.section.getString("databaseName")
                 + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
