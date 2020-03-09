@@ -258,55 +258,53 @@ public class BlockAction extends GenericAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
 		final Block block = getWorld().getBlockAt(getLoc());
 		if (getActionType().doesCreateBlock()) {
-			return removeBlock(player, parameters, is_preview, block);
-		}
-		else {
-			return placeBlock(player, parameters, is_preview, block, false);
+			return removeBlock(player, parameters, isPreview, block);
+		} else {
+			return placeBlock(player, parameters, isPreview, block, false);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview) {
+	public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
 		final Block block = getWorld().getBlockAt(getLoc());
 		if (getActionType().doesCreateBlock()) {
-			return placeBlock(player, parameters, is_preview, block, false);
-		}
-		else {
-			return removeBlock(player, parameters, is_preview, block);
+			return placeBlock(player, parameters, isPreview, block, false);
+		} else {
+			return removeBlock(player, parameters, isPreview, block);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview) {
+	public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean isPreview) {
 
 		final Block block = getWorld().getBlockAt(getLoc());
 
 		// Undo a drain/ext event (which always remove blocks)
 		// @todo if we ever track rollback/restore for undo, we'll
 		// need logic to do the opposite
-		return placeBlock(player, parameters, is_preview, block, false);
+		return placeBlock(player, parameters, isPreview, block, false);
 
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview) {
+	public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean isPreview) {
 		final Block block = getWorld().getBlockAt(getLoc());
-		return placeBlock(player, parameters, is_preview, block, true);
+		return placeBlock(player, parameters, isPreview, block, true);
 	}
 
 	/**
