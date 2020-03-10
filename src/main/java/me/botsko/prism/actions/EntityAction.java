@@ -95,25 +95,24 @@ public class EntityAction extends GenericAction {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
-	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview) {
-		if(serializer == null) {
+	public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+		if (serializer == null) {
 			return new ChangeResult(ChangeResultType.SKIPPED, null);
 		}
-		
+
 		EntityType entityType = getEntityType(serializer.getEntityName());
 		if (entityType != null && !Prism.getIllegalEntities().contains(entityType)) {
-			if (!is_preview) {
+			if (!isPreview) {
 				final Location loc = getLoc().add(0.5, 0.0, 0.5);
 
 				loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> serializer.deserialize(entity));
 
 				return new ChangeResult(ChangeResultType.APPLIED, null);
 
-			}
-			else
+			} else
 				return new ChangeResult(ChangeResultType.PLANNED, null);
 		}
 		else

@@ -128,13 +128,15 @@ public class RecordingTask implements Runnable {
 				}
 				// The main delay is here
 				try {
-                    batchedQuery.processBatch();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                // Save the current count to the queue for short historical data
-                plugin.queueStats.addRunCount(actionsRecorded);
-            }
+					batchedQuery.processBatch();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// Save the current count to the queue for short historical data
+				plugin.queueStats.addRunCount(actionsRecorded);
+				if (Prism.getInstance().monitoring) {
+				}
+			}
 	}
 
 	/**
