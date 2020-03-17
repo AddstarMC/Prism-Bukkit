@@ -1,118 +1,112 @@
 package me.botsko.prism.database;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.botsko.prism.actionlibs.QueryParameters;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
 
 abstract public class QueryBuilder {
-	protected PrismDataSource dataSource;
-	protected List<String> columns = new ArrayList<>();
-	protected List<String> conditions = new ArrayList<>();
+    protected final String tableNameData;
+    protected final String tableNameDataExtra;
+    protected PrismDataSource dataSource;
+    protected Collection<String> columns = new ArrayList<>();
+    protected Collection<String> conditions = new ArrayList<>();
+    protected QueryParameters parameters;
+    protected boolean shouldGroup;
+    protected String prefix;
+    protected boolean shouldPause;
 
-	protected final String tableNameData;
-	protected final String tableNameDataExtra;
+    /**
+     *
+     */
+    public QueryBuilder(PrismDataSource dataSource) {
+        this.dataSource = dataSource;
+        prefix = this.dataSource.getPrefix();
+        tableNameData = prefix + "data";
+        tableNameDataExtra = prefix + "data_extra";
+    }
 
-	public void setParameters(QueryParameters parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(QueryParameters parameters) {
+        this.parameters = parameters;
+    }
 
-	public void setShouldGroup(boolean shouldGroup) {
-		this.shouldGroup = shouldGroup;
-	}
+    public void setShouldGroup(boolean shouldGroup) {
+        this.shouldGroup = shouldGroup;
+    }
 
-	protected QueryParameters parameters;
-	protected boolean shouldGroup;
-	protected String prefix;
+    /**
+     * Setting this will cause the recording queue to be unable to process while the query is running.
+     *
+     * @param shouldPause
+     */
+    public void setShouldPause(boolean shouldPause) {
+        this.shouldPause = shouldPause;
+    }
 
-	/**
-	 * Setting this will cause the recording queue to be unable to process while the query is running.
-	 *
-	 * @param shouldPause
-	 */
-	public void setShouldPause(boolean shouldPause) {
-		this.shouldPause = shouldPause;
-	}
+    /**
+     * @param parameters
+     * @param shouldGroup
+     * @return
+     */
+    public String getQuery(@Nullable QueryParameters parameters, boolean shouldGroup) {
 
-	protected boolean shouldPause;
+        this.parameters = parameters;
+        this.shouldGroup = shouldGroup;
 
-	/**
-	 * 
-	 */
-	public QueryBuilder(PrismDataSource dataSource) {
-		this.dataSource = dataSource;
-		prefix = this.dataSource.getPrefix();
-		tableNameData = prefix + "data";
-		tableNameDataExtra = prefix + "data_extra";
-	}
+        // Reset
+        columns = new ArrayList<>();
+        conditions = new ArrayList<>();
 
-	/**
-	 * 
-	 * @param parameters
-	 * @param shouldGroup
-	 * @return
-	 */
-	public String getQuery(@Nullable QueryParameters parameters, boolean shouldGroup) {
+        String query = select() + where() + group() + order() + limit();
 
-		this.parameters = parameters;
-		this.shouldGroup = shouldGroup;
+        query += ";";
+        dataSource.getLog().debug(query);
+        return query;
 
-		// Reset
-		columns = new ArrayList<>();
-		conditions = new ArrayList<>();
+    }
 
-		String query = select() + where() + group() + order() + limit();
+    /**
+     *
+     */
+    protected String select() {
+        return "";
+    }
 
-		query += ";";
-		dataSource.getLog().debug(query);
-		return query;
+    /**
+     *
+     */
+    protected String where() {
+        return "";
+    }
 
-	}
+    /**
+     *
+     */
+    protected String group() {
+        return "";
+    }
 
-	/**
-	 * 
-	 */
-	protected String select() {
-		return "";
-	}
+    /**
+     *
+     */
+    protected String order() {
+        return "";
+    }
 
-	/**
-	 * 
-	 */
-	protected String where() {
-		return "";
-	}
+    /**
+     *
+     */
+    protected String limit() {
+        return "";
+    }
 
-	/**
-	 * 
-	 */
-	protected String group() {
-		return "";
-	}
-
-	/**
-	 * 
-	 */
-	protected String order() {
-		return "";
-	}
-
-	/**
-	 * 
-	 */
-	protected String limit() {
-		return "";
-	}
-
-	/**
-	 * 
-	 * @param condition
-	 */
-	protected void addCondition(String condition) {
-		if (!condition.isEmpty()) {
-			conditions.add(condition);
-		}
-	}
+    /**
+     * @param condition
+     */
+    protected void addCondition(String condition) {
+        if (!condition.isEmpty()) {
+            conditions.add(condition);
+        }
+    }
 }

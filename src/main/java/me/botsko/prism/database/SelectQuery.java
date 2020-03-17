@@ -11,8 +11,11 @@ import me.botsko.prism.measurement.TimeTaken;
  */
 public interface SelectQuery {
     String getQuery(QueryParameters parameters, boolean shouldGroup);
+
     void setParameters(QueryParameters parameters);
+
     void setShouldGroup(boolean shouldGroup);
+
     QueryResult executeSelect(TimeTaken eventTimer);
     /*    These methods should exist in a selectQuery and it should extend QueryBuilder
     String select();

@@ -8,66 +8,26 @@ import org.bukkit.inventory.ItemStack;
 
 public interface Wand {
 
-	/**
-	 * 
-	 */
-	void playerLeftClick(Player player, Location loc);
+    void playerLeftClick(Player player, Location loc);
 
-	/**
-	 * 
-	 */
-	void playerRightClick(Player player, Location loc);
+    void playerRightClick(Player player, Location loc);
 
-	/**
-	 * 
-	 * @param player
-	 * @param entity
-	 */
-	void playerRightClick(Player player, Entity entity);
+    void playerRightClick(Player player, Entity entity);
+    void setItemWasGiven(boolean given);
 
-	/**
-	 * 
-	 * @param given
-	 */
-	void setItemWasGiven(boolean given);
+    boolean itemWasGiven();
 
-	/**
-	 * 
-	 * @return
-	 */
-	boolean itemWasGiven();
+    String getWandMode();
 
-	/**
-	 * 
-	 * @param mode
-	 */
-	void setWandMode(String mode);
+    void setWandMode(String mode);
 
-	/**
-	 *
-	 */
-	String getWandMode();
+    Material getItem();
 
-	Material getItem();
+    void setItem(Material material);
 
-	void setItem(Material material);
+    void setItemFromKey(String key);
 
-	/**
-	 * 
-	 * @param key
-	 */
-	void setItemFromKey(String key);
+    void setOriginallyHeldItem(ItemStack item);
 
-	/**
-	 * 
-	 * @param item
-	 */
-	void setOriginallyHeldItem(ItemStack item);
-
-	/**
-	 * 
-	 * @param player
-	 */
-	void disable(Player player);
-
+    void disable(Player player);
 }

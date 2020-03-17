@@ -31,23 +31,15 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
+public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
-    /**
-     *
-     */
-    public SQLSelectQueryBuilder(PrismDataSource dataSource) {
+    public SqlSelectQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String select() {
-
         String query = "";
-
         query += "SELECT ";
         if (shouldGroup) {
             columns.add("MIN(id) id");
@@ -109,9 +101,6 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String where() {
         if (parameters == null) return " ";
@@ -143,10 +132,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     }
 
-    /**
-     *
-     */
-    protected void worldCondition() {
+    private void worldCondition() {
         if (parameters.getWorld() != null) {
             addCondition(
                     String.format("world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
@@ -154,16 +140,13 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void actionCondition() {
+    private void actionCondition() {
         // Action type
-        final HashMap<String, MatchRule> action_types = parameters.getActionTypeNames();
+        final HashMap<String, MatchRule> action_types = parameters.getActionTypes();
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
-        final ArrayList<String> prismActionIds = new ArrayList<>();
+        final Collection<String> prismActionIds = new ArrayList<>();
         for (final Entry<String, Integer> entry : Prism.prismActions.entrySet()) {
             if (entry.getKey().contains("prism")) {
                 containsPrismProcessType = true;
@@ -174,8 +157,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // scan whitelist of given actions
         if (action_types.size() > 0) {
 
-            final ArrayList<String> includeIds = new ArrayList<>();
-            final ArrayList<String> excludeIds = new ArrayList<>();
+            final Collection<String> includeIds = new ArrayList<>();
+            final Collection<String> excludeIds = new ArrayList<>();
             for (final Entry<String, MatchRule> entry : action_types.entrySet()) {
                 if (entry.getValue().equals(MatchRule.INCLUDE)) {
                     includeIds.add("" + Prism.prismActions.get(entry.getKey()));
@@ -200,11 +183,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void playerCondition() {
-        final HashMap<String, MatchRule> playerNames = parameters.getPlayerNames();
+    private void playerCondition() {
+        final Map<String, MatchRule> playerNames = parameters.getPlayerNames();
         if (playerNames.size() > 0) {
 
             // Match the first rule, this needs to change, we can't include and
@@ -227,17 +207,11 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void radiusCondition() {
+    private void radiusCondition() {
         buildRadiusCondition(parameters.getMinLocation(), parameters.getMaxLocation());
     }
 
-    /**
-     *
-     */
-    protected void blockCondition() {
+    private void blockCondition() {
         // Blocks
         final Set<Material> blockfilters = parameters.getBlockFilters();
         if (!blockfilters.isEmpty()) {
@@ -247,12 +221,12 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                 Set<IntPair> allIds = Prism.getItems().materialToAllIds(m);
 
-                StringBuilder block_ids = new StringBuilder("(");
+                StringBuilder blockIds = new StringBuilder("(");
                 for (IntPair pair : allIds) {
-                    block_ids.append(pair.first).append(',');
+                    blockIds.append(pair.first).append(',');
                 }
 
-                String in = block_ids.append(')').toString().replace(",)", ")");
+                String in = blockIds.append(')').toString().replace(",)", ")");
 
                 blockArr[i++] = tableNameData + ".block_id IN " + in;
             }
@@ -276,21 +250,15 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void entityCondition() {
+    private void entityCondition() {
         // Entity
-        final HashMap<String, MatchRule> entityNames = parameters.getEntities();
+        final Map<String, MatchRule> entityNames = parameters.getEntities();
         if (entityNames.size() > 0) {
             addCondition(buildMultipleConditions(entityNames, "ex.data", "entity_name\":\"%s"));
         }
     }
 
-    /**
-     *
-     */
-    protected void timeCondition() {
+    private void timeCondition() {
         // Timeframe
         Long time = parameters.getBeforeTime();
         if (time != null && time != 0) {
@@ -302,10 +270,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void keywordCondition() {
+    private void keywordCondition() {
         // Keyword(s)
         final String keyword = parameters.getKeyword();
         if (keyword != null) {
@@ -313,17 +278,17 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     *
-     */
-    protected void coordinateCondition() {
+    private void coordinateCondition() {
         // Specific coords
-        final ArrayList<Location> locations = parameters.getSpecificBlockLocations();
+        final List<Location> locations = parameters.getSpecificBlockLocations();
         if (locations.size() > 0) {
             StringBuilder coordCond = new StringBuilder("(");
             int l = 0;
             for (final Location loc : locations) {
-                coordCond.append(l > 0 ? " OR" : "").append(" (").append(tableNameData).append(".x = ").append(loc.getBlockX()).append(" AND ").append(tableNameData).append(".y = ").append(loc.getBlockY()).append(" AND ").append(tableNameData).append(".z = ").append(loc.getBlockZ()).append(")");
+                coordCond.append(l > 0 ? " OR" : "").append(" (").append(tableNameData).append(".x = ")
+                        .append(loc.getBlockX()).append(" AND ").append(tableNameData).append(".y = ")
+                        .append(loc.getBlockY()).append(" AND ").append(tableNameData).append(".z = ")
+                        .append(loc.getBlockZ()).append(")");
                 l++;
             }
             coordCond.append(")");
@@ -331,10 +296,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     * @return
-     */
-    protected String buildWhereConditions() {
+    private String buildWhereConditions() {
 
         // Parent process
         // if(parameters.getParentId() > 0){
@@ -361,9 +323,6 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String group() {
         if (shouldGroup) {
@@ -373,27 +332,26 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return "";
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String order() {
-        if (parameters == null) return " ";
+        if (parameters == null) {
+            return " ";
+        }
         final String sort_dir = parameters.getSortDirection();
 
         if (shouldGroup) {
-            return " ORDER BY MAX(" + tableNameData + ".epoch) " + sort_dir + ", AVG(x) ASC, AVG(z) ASC, AVG(y) ASC, MIN(id) " + sort_dir;
+            return " ORDER BY MAX(" + tableNameData + ".epoch) " + sort_dir
+                    + ", AVG(x) ASC, AVG(z) ASC, AVG(y) ASC, MIN(id) " + sort_dir;
         }
 
         return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", x ASC, z ASC, y ASC, id " + sort_dir;
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String limit() {
-        if (parameters == null) return "";
+        if (parameters == null) {
+            return "";
+        }
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             final int limit = parameters.getLimit();
             if (limit > 0) {
@@ -403,12 +361,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return "";
     }
 
-    /**
-     * @param origValues
-     * @param field_name
-     * @return
-     */
-    protected String buildMultipleConditions(HashMap<String, MatchRule> origValues, String field_name, String format) {
+    private String buildMultipleConditions(Map<String, MatchRule> origValues, String fieldName, String format) {
         String query = "";
         if (!origValues.isEmpty()) {
 
@@ -429,16 +382,16 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 String[] whereValues = new String[whereIs.size()];
                 whereValues = whereIs.toArray(whereValues);
                 if (format == null) {
-                    query += buildGroupConditions(field_name, whereValues, "%s = '%s'", "OR", null);
+                    query += buildGroupConditions(fieldName, whereValues, "%s = '%s'", "OR", null);
                 } else {
-                    query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
+                    query += buildGroupConditions(fieldName, whereValues, "%s LIKE '%%%s%%'", "OR", format);
                 }
             }
             // To match partial
             if (!whereIsLike.isEmpty()) {
                 String[] whereValues = new String[whereIsLike.size()];
                 whereValues = whereIsLike.toArray(whereValues);
-                query += buildGroupConditions(field_name, whereValues, "%s LIKE '%%%s%%'", "OR", format);
+                query += buildGroupConditions(fieldName, whereValues, "%s LIKE '%%%s%%'", "OR", format);
             }
             // Not match
             if (!whereNot.isEmpty()) {
@@ -446,21 +399,16 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 whereNotValues = whereNot.toArray(whereNotValues);
 
                 if (format == null) {
-                    query += buildGroupConditions(field_name, whereNotValues, "%s != '%s'", null, null);
+                    query += buildGroupConditions(fieldName, whereNotValues, "%s != '%s'", null, null);
                 } else {
-                    query += buildGroupConditions(field_name, whereNotValues, "%s NOT LIKE '%%%s%%'", null, format);
+                    query += buildGroupConditions(fieldName, whereNotValues, "%s NOT LIKE '%%%s%%'", null, format);
                 }
             }
         }
         return query;
     }
 
-    /**
-     * @param fieldname
-     * @param arg_values
-     * @return
-     */
-    protected String buildGroupConditions(String fieldname, String[] arg_values, String matchFormat, String matchType,
+    private String buildGroupConditions(String fieldname, String[] argValues, String matchFormat, String matchType,
                                           String dataFormat) {
 
         StringBuilder where = new StringBuilder();
@@ -468,11 +416,11 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         matchType = (matchType == null ? "AND" : matchType);
         dataFormat = (dataFormat == null ? "%s" : dataFormat);
 
-        if (arg_values.length > 0 && !matchFormat.isEmpty()) {
+        if (argValues.length > 0 && !matchFormat.isEmpty()) {
             where.append("(");
             int c = 1;
-            for (final String val : arg_values) {
-                if (c > 1 && c <= arg_values.length) {
+            for (final String val : argValues) {
+                if (c > 1 && c <= argValues.length) {
                     where.append(" ").append(matchType).append(" ");
                 }
                 fieldname = (fieldname == null ? "" : fieldname);
@@ -484,12 +432,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return where.toString();
     }
 
-    /**
-     * @param minLoc
-     * @param maxLoc
-     * @return
-     */
-    protected void buildRadiusCondition(Vector minLoc, Vector maxLoc) {
+    private void buildRadiusCondition(Vector minLoc, Vector maxLoc) {
         if (minLoc != null && maxLoc != null) {
             addCondition("(" + tableNameData + ".x BETWEEN " + minLoc.getBlockX() + " AND " + maxLoc.getBlockX() + ")");
             addCondition("(" + tableNameData + ".y BETWEEN " + minLoc.getBlockY() + " AND " + maxLoc.getBlockY() + ")");
@@ -497,10 +440,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         }
     }
 
-    /**
-     * @return
-     */
-    protected String buildTimeCondition(Long dateFrom, String equation) {
+    private String buildTimeCondition(Long dateFrom, String equation) {
         final String where = "";
         if (dateFrom != null) {
             if (equation == null) {
@@ -533,8 +473,9 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             }
             while (rs.next()) {
 
-                if (rs.getString(3) == null)
+                if (rs.getString(3) == null) {
                     continue;
+                }
 
                 // Convert action ID to name
                 // Performance-wise this is a lot faster than table joins
@@ -548,16 +489,17 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     }
                 }
                 if (actionName.isEmpty()) {
-                    Prism.warn("Record contains action ID that doesn't exist in cache: " + actionId + ", cacheSize=" + Prism.prismActions.size());
+                    Prism.warn("Record contains action ID that doesn't exist in cache: " + actionId
+                            + ", cacheSize=" + Prism.prismActions.size());
                     continue;
                 }
 
                 // Get the action handler
                 final ActionType actionType = Prism.getActionRegistry().getAction(actionName);
 
-                if (actionType == null)
+                if (actionType == null) {
                     continue;
-
+                }
                 // Prism.debug("Important: Action type '" + rs.getString(3)
                 // +
                 // "' has no official handling class, will be shown as generic."
@@ -572,14 +514,13 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     // Convert world ID to name
                     // Performance-wise this is typically a lot faster than
                     // table joins
-                    String worldName = worldsInverse.getOrDefault(rs.getInt(5), "");
-
                     rowId = rs.getLong(1);
-
                     // Set all shared values
                     baseHandler.setActionType(actionType);
                     baseHandler.setId(rowId);
                     baseHandler.setUnixEpoch(rs.getLong(2));
+
+                    String worldName = worldsInverse.getOrDefault(rs.getInt(5), "");
                     baseHandler.setWorld(Bukkit.getWorld(worldName));
                     baseHandler.setX(rs.getInt(6));
                     baseHandler.setY(rs.getInt(7));
@@ -618,7 +559,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                                 newData = Bukkit.createBlockData(item.getType());
                             } catch (IllegalArgumentException e) {
                                 // This exception occurs, for example, with "ItemStack{DIAMOND_LEGGINGS x 1}"
-                                Prism.debug("IllegalArgumentException for record #" + rowId + " calling createBlockData for " + item.toString());
+                                Prism.debug("IllegalArgumentException for record #" + rowId + " calling createBlockData for "
+                                        + item.toString());
                                 newData = null;
                             }
 
@@ -632,14 +574,13 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     if (old != null) {
                         ItemStack oldItem = old.asItem();
                         BlockData oldBlock = old.asBlockData();
+                        validOldBlockId = true;
 
                         if (oldBlock != null) {
-                            validOldBlockId = true;
                             baseHandler.setOldMaterial(oldBlock.getMaterial());
                             baseHandler.setOldBlockData(oldBlock);
                             baseHandler.setOldDurability((short) 0);
                         } else {
-                            validOldBlockId = true;
                             baseHandler.setOldMaterial(oldItem.getType());
                             baseHandler.setOldBlockData(Bukkit.createBlockData(oldItem.getType()));
                             baseHandler.setOldDurability((short) ItemUtils.getItemDamage(oldItem));
@@ -651,7 +592,8 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                         boolean logWarning;
                         // The current item is likely a spawn or death event for an entity, for example, a cow or horse
-                        logWarning = blockId != 0 || oldBlockId != 0 || itemMetadata == null || !itemMetadata.contains("entity_name");
+                        logWarning = blockId != 0 || oldBlockId != 0 || itemMetadata == null
+                                || !itemMetadata.contains("entity_name");
 
                         if (logWarning) {
                             String itemMetadataDesc;
@@ -663,14 +605,15 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                             }
 
                             if (blockId > 0) {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: " +
-                                        "block_id=" + blockId + ", block_subid=" + blockSubId + itemMetadataDesc);
+                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                        + "block_id=" + blockId + ", block_subid=" + blockSubId + itemMetadataDesc);
                             } else if (oldBlockId > 0) {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: " +
-                                        "old_block_id=" + oldBlockId + ", old_block_subid=" + oldBlockSubId + itemMetadataDesc);
+                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                        + "old_block_id=" + oldBlockId + ", old_block_subid="
+                                        + oldBlockSubId + itemMetadataDesc);
                             } else {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: " +
-                                        "block_id=0, old_block_id=0" + itemMetadataDesc);
+                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                        + "block_id=0, old_block_id=0" + itemMetadataDesc);
                             }
                         }
                     }
@@ -689,7 +632,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                         // Fake player
                         if (offline.hasPlayedBefore()) {
-                            baseHandler.setUUID(offline.getUniqueId());
+                            baseHandler.setUuid(offline.getUniqueId());
                         }
                     } catch (IllegalArgumentException | NullPointerException e) {
                         // Not a valid uuid
@@ -712,7 +655,7 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         } catch (NullPointerException e) {
             if (RecordingManager.failedDbConnectionCount == 0) {
                 Prism.log(
-                        "Prism database error. Connection should be there but it's not. Leaving actions to log in queue.");
+                        "Prism database error. Connection missing. Leaving actions to log in queue.");
             }
             RecordingManager.failedDbConnectionCount++;
 
@@ -721,7 +664,6 @@ public class SQLSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         } catch (SQLException e) {
             Prism.getPrismDataSource().handleDataSourceException(e);
         }
-        final QueryResult res = new QueryResult(actions, parameters);
-        return res;
+        return new QueryResult(actions, parameters);
     }
 }

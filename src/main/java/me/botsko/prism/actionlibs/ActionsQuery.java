@@ -1,64 +1,48 @@
 package me.botsko.prism.actionlibs;
 
 
-import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.SelectIDQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
-
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 public class ActionsQuery {
 
-    /**
-     *
-     */
     private final Prism plugin;
-
-    /**
-     *
-     */
     private final SelectQuery qb;
-
-    /**
-     *
-     */
-    private boolean shouldGroup = false;
     private boolean shouldPauseDB = false;
 
-    /**
-     * @param plugin
-     * @return
-     */
     public ActionsQuery(Prism plugin) {
         this.plugin = plugin;
         this.qb = Prism.getPrismDataSource().createSelectQuery();
     }
 
     /**
-     * Will cause the db to pause with large transactions and stop processing the q
+     * When set it pauses the db.
      *
-     * @param shouldPauseDB
+     * @param shouldPauseDB boolean.
      */
+    @SuppressWarnings("unused")
     public void setShouldPauseDB(boolean shouldPauseDB) {
         this.shouldPauseDB = shouldPauseDB;
     }
 
-    /**
-     * @return
-     */
     public QueryResult lookup(QueryParameters parameters) {
         return lookup(parameters, null);
     }
 
     /**
-     * @return
+     * Lookup.
+     *
+     * @param parameters params
+     * @param sender     sender
+     * @return result.
      */
     public QueryResult lookup(QueryParameters parameters, CommandSender sender) {
 
@@ -67,7 +51,7 @@ public class ActionsQuery {
             player = (Player) sender;
         }
         // If lookup, determine if we need to group
-        shouldGroup = false;
+        boolean shouldGroup = false;
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             // What to default to
             shouldGroup = plugin.getConfig().getBoolean("prism.queries.lookup-auto-group");
@@ -104,7 +88,10 @@ public class ActionsQuery {
     }
 
     /**
-     * @param playername
+     * Get the Users last process id.
+     *
+     * @param playername player.
+     * @return long
      */
     public long getUsersLastPrismProcessId(String playername) {
         SelectProcessActionQuery q = Prism.getPrismDataSource().createProcessQuery();
@@ -117,7 +104,10 @@ public class ActionsQuery {
     }
 
     /**
-     * @param id
+     * Get a Process associated with an ID.
+     *
+     * @param id long.
+     * @return Process Action
      */
     public PrismProcessAction getPrismProcessRecord(long id) {
         SelectProcessActionQuery q = Prism.getPrismDataSource().createProcessQuery();
@@ -129,11 +119,12 @@ public class ActionsQuery {
     }
 
     /**
-     * Returns the minimum id found that meets the parameters
+     * Get the minimum id for a param set.
      *
-     * @return
+     * @param parameters params
+     * @return id
      */
-    public long getMinIDForQuery(QueryParameters parameters) {
+    public long getMinIdForQuery(QueryParameters parameters) {
         final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMin();
         parameters.setMinPrimaryKey(0);
@@ -143,11 +134,12 @@ public class ActionsQuery {
     }
 
     /**
-     * Returns the maximum id found that meets the parameters
+     * Get the max id for a param set.
      *
-     * @return
+     * @param parameters params
+     * @return id
      */
-    public long getMaxIDForQuery(QueryParameters parameters) {
+    public long getMaxIdForQuery(QueryParameters parameters) {
         final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMax();
         parameters.setMinPrimaryKey(0);
@@ -157,7 +149,10 @@ public class ActionsQuery {
     }
 
     /**
-     * @return
+     * Delete based on params.
+     *
+     * @param parameters params.
+     * @return the number of rows deleted.
      */
     public int delete(QueryParameters parameters) {
         final DeleteQuery dqb = Prism.getPrismDataSource().createDeleteQuery();

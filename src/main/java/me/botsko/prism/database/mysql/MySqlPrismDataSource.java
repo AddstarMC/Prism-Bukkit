@@ -6,7 +6,7 @@ import com.zaxxer.hikari.util.PropertyElf;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.SQLPrismDataSource;
-import me.botsko.prism.database.sql.SQLSelectQueryBuilder;
+import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
@@ -29,9 +29,8 @@ public class MySqlPrismDataSource extends SQLPrismDataSource {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
-    private static HikariConfig dbConfig;
-    private Boolean nonStandardSql;
-    public static final HashMap<String, String> dbInfo = new HashMap<>();
+    private static final HikariConfig dbConfig;
+    private static final HashMap<String, String> dbInfo = new HashMap<>();
 
     static {
         if (propFile.exists()) {
@@ -45,6 +44,8 @@ public class MySqlPrismDataSource extends SQLPrismDataSource {
             dbConfig = new HikariConfig();
         }
     }
+
+    private Boolean nonStandardSql;
 
     /**
      * Create a dataSource.
@@ -144,9 +145,9 @@ public class MySqlPrismDataSource extends SQLPrismDataSource {
     @Override
     public SelectQuery createSelectQuery() {
         if (nonStandardSql) {
-            return new MySQLSelectQueryBuilder(this);
+            return new MySqlSelectQueryBuilder(this);
         } else {
-            return new SQLSelectQueryBuilder(this);
+            return new SqlSelectQueryBuilder(this);
         }
     }
 
