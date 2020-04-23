@@ -632,7 +632,7 @@ public class ItemStackAction extends GenericAction {
 					// We'll attempt to take it from the same slot
 					if (iSlot >= 0) {
 
-						if (iSlot > inventory.getContents().length) {
+						if (iSlot >= inventory.getContents().length) {
 							inventory.addItem(getItem());
 						}
 						else {
