@@ -55,9 +55,10 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
             dataSource.setPaused(true); //pause so that the database cannot process the queue.
         int total_rows_affected = 0;
         int cycle_rows_affected = 0;
+
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
-                Statement s = connection.createStatement()
+                Statement s = connection.createStatement();
         ) {
             cycle_rows_affected = s.executeUpdate(getQuery(parameters, shouldGroup));
             total_rows_affected += cycle_rows_affected;

@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -96,45 +97,33 @@ public class DeleteCommand implements SubHandler {
 
 		if (parameters.getFoundArgs().size() > 0) {
 
-			// Identify the minimum for chunking
-			final long minId = PurgeChunkingUtil.getMinimumPrimaryKey();
-			if (minId == 0) {
-				call.getSender().sendMessage(
-						Prism.messenger.playerError("No minimum primary key could be found for purge chunking"));
-				return;
-			}
-
-			// Identify the max id for chunking
-			final long maxId = PurgeChunkingUtil.getMaximumPrimaryKey();
-			if (maxId == 0) {
-				call.getSender().sendMessage(
-						Prism.messenger.playerError("No maximum primary key could be found for purge chunking"));
-				return;
-			}
-
 			call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder));
-
-			int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
-			if (purge_tick_delay < 1) {
-				purge_tick_delay = 20;
-			}
-
 			call.getSender().sendMessage(Prism.messenger
 					.playerHeaderMsg("Starting purge cycle." + ChatColor.GRAY + " No one will ever know..."));
 
-			// build callback
-			final SenderPurgeCallback callback = new SenderPurgeCallback();
-			callback.setSender(call.getSender());
+			plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+				int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
+				if (purge_tick_delay < 1) {
+					purge_tick_delay = 20;
+				}
 
-			// add to an arraylist so we're consistent
-			final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
-			paramList.add(parameters);
+				// build callback
+				final SenderPurgeCallback callback = new SenderPurgeCallback();
+				callback.setSender(call.getSender());
 
-			Prism.log(
-					"Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-			deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
-					new PurgeTask(plugin, paramList, purge_tick_delay, minId, maxId, callback));
+				// add to an arraylist so we're consistent
+				final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
+				paramList.add(parameters);
 
+				final ActionsQuery aq = new ActionsQuery(plugin);
+				final long minId = aq.getMinIDForQuery(parameters);
+				final long maxId = aq.getMaxIDForQuery(parameters);
+
+				Prism.log(
+						"Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
+				deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
+						new PurgeTask(plugin, paramList, purge_tick_delay, minId, maxId, callback));
+			});
 		}
 		else {
 			call.getSender().sendMessage(Prism.messenger.playerError("You must supply at least one parameter."));
