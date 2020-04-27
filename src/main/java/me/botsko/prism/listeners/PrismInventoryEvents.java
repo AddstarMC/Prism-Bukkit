@@ -146,6 +146,9 @@ public class PrismInventoryEvents implements Listener {
 		ItemStack heldItem = event.getCursor();
 		ItemStack slotItem = event.getCurrentItem();
 
+		// This happens when opening someone else's inventory, so don't bother tracking it
+		if (slotItem == null) return;
+
 		switch (event.getClick()) {
 			// IGNORE BOTTOM
 			case LEFT:
