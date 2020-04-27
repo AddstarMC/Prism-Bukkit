@@ -207,6 +207,10 @@
 						<pattern>org.kitteh.pastegg</pattern>
 						<shadedPattern>com.botsko.prism.libs.pastegg</shadedPattern>
 					</relocation>
+					<relocation>
+						<pattern>com.zaxxer.hikari</pattern>
+						<shadedPattern>com.botsko.prism.libs.hikari</shadedPattern>
+					</relocation>
 				</relocations>
 			</configuration>
 			<executions>
