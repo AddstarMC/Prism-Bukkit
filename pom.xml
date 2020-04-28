@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.botsko</groupId>
 	<artifactId>prism</artifactId>
-	<version>2.1.6</version>
+	<version>2.1.7-SNAPSHOT</version>
 	<name>Prism</name>
 	<scm>
 		<connection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</connection>
 		<developerConnection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</developerConnection>
 		<url>https://github.com/AddstarMC/Prism-Bukkit</url>
-		<tag>prism-2.1.6</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<distributionManagement>
 		<snapshotRepository>
