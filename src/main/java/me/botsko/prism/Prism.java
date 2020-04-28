@@ -332,7 +332,7 @@ public class Prism extends JavaPlugin {
             monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
             ActionMeter.setupActionMeter(monitor.getRegistry());
         }
-        log("Initializing Prism " + plugin_version + ". maintained my the AddstarMC Network");
+        log("Initializing Prism " + plugin_version + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         PaperLib.suggestPaper(this);
         // Load configuration, or install if new
         loadConfig();

@@ -28,7 +28,7 @@ public class AboutCommand implements SubHandler {
 	@Override
 	public void handle(CallInfo call) {
 		call.getSender().sendMessage(Prism.messenger.playerHeaderMsg(
-				"Prism - maintained by " + ChatColor.GOLD + "The AddstarMC Network" + ChatColor.GRAY + " v" + plugin.getPrismVersion()));
+				"Prism - originally by Viveleroi; maintained by " + ChatColor.GOLD + "The AddstarMC Network" + ChatColor.GRAY + " v" + plugin.getPrismVersion()));
 		call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Help: " + ChatColor.WHITE + "/pr ?"));
 		call.getSender().sendMessage(
 				Prism.messenger.playerSubduedHeaderMsg("Discord: " + ChatColor.WHITE + "https://discord.gg/Y9Qx3V"));
