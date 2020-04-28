@@ -38,7 +38,7 @@ public class ParamsCommand implements SubHandler {
 				+ " Force a worldwide search, for lookups only (unless configured for rollbacks)."));
 		sender.sendMessage(
 				Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:<player|x,y,z>:[radius]" + ChatColor.WHITE
-						+ " Base the radius around another place, like r:[player]:20 or r:20,35,10:5 (x,y,z)"));
+						+ " Base the radius around another place, like r:player:20 or r:20,35,10:5 (x,y,z)"));
 		sender.sendMessage(Prism.messenger
 				.playerMsg(ChatColor.LIGHT_PURPLE + "r:we" + ChatColor.WHITE + " Use a WorldEdit selection."));
 
