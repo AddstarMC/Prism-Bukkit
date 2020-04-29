@@ -30,6 +30,7 @@ public class EntitySerializerFactory {
 		entitySerializers.put(EntityType.VILLAGER, VillagerSerializer.class);
 		entitySerializers.put(EntityType.WOLF, WolfSerlializer.class);
 		entitySerializers.put(EntityType.ZOMBIE_VILLAGER, ZombieVillagerSerlializer.class);
+		entitySerializers.put(EntityType.PANDA, PandaSerializer.class);
 
 		/*
 		 * TODO: Creeper charge, enderman block, magma cube size, shulker color, slime
