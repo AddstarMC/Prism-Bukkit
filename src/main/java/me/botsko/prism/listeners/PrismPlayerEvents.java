@@ -282,13 +282,14 @@ public class PrismPlayerEvents implements Listener {
 		final Player player = event.getPlayer();
 		if (!Prism.getIgnore().event("bucket-fill", player))
 			return;
-		final Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
+		final Block spot = event.getBlock();
 
 		String liquid_type = "milk";
 		if (spot.getType() == Material.WATER) {
 			liquid_type = "water";
-		}
-		else if (spot.getType() == Material.LAVA) {
+		} else if (spot.getBlockData() instanceof Waterlogged && ((Waterlogged) spot.getBlockData()).isWaterlogged()) {
+			liquid_type = "water";
+		} else if (spot.getType() == Material.LAVA) {
 			liquid_type = "lava";
 		}
 
