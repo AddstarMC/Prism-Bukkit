@@ -16,19 +16,19 @@ public class PandaSerializer extends EntitySerializer {
 
     @Override
     protected void deserializer(Entity entity) {
-        Panda.Gene mGene = MiscUtils.getEnum(mainGene, Panda.Gene.NORMAL);
-        Panda.Gene hGene = MiscUtils.getEnum(hiddenGene, Panda.Gene.NORMAL);
-        ((Panda) entity).setMainGene(mGene);
-        ((Panda) entity).setHiddenGene(hGene);
-}
+        Panda.Gene mainPandaGene = MiscUtils.getEnum(mainGene, Panda.Gene.NORMAL);
+        Panda.Gene hiddenPandaGene = MiscUtils.getEnum(hiddenGene, Panda.Gene.NORMAL);
+        ((Panda) entity).setMainGene(mainPandaGene);
+        ((Panda) entity).setHiddenGene(hiddenPandaGene);
+    }
 
     @Override
     protected void niceName(StringBuilder sb, int start) {
         if (mainGene != null && hiddenGene != null) {
             String niceName;
-            if (mainGene.equals("weak") && !hiddenGene.equals("weak")) {
+            if ("weak".equals(mainGene) && !"weak".equals(hiddenGene)) {
                 niceName = "normal";
-            } else if (mainGene.equals("brown") && !hiddenGene.equals("brown")) {
+            } else if ("brown".equals(mainGene) && !"brown".equals(hiddenGene)) {
                 niceName = "normal";
             } else {
                 niceName = mainGene;
