@@ -36,7 +36,7 @@ public class FlagsCommand implements SubHandler {
 		sender.sendMessage(Prism.messenger.playerMsg(
 				ChatColor.GRAY + "Flags control how Prism applies a rollback/restore, or formats lookup results."));
 		sender.sendMessage(Prism.messenger
-				.playerMsg(ChatColor.GRAY + "Use them after parameters, like /pr l p:<player_name> -extended"));
+				.playerMsg(ChatColor.GRAY + "Use them after parameters, like /pr l p:<player> -extended"));
 		for (final Flag flag : Flag.values()) {
 			sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + flag.getUsage().replace("_", "-")
 					+ ChatColor.WHITE + " " + flag.getDescription()));
