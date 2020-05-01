@@ -41,9 +41,7 @@ public class PrismConfig extends ConfigBase {
 
 		// pste.me sharing.
 		config.addDefault("prism.paste.enable", false);
-		config.addDefault("prism.paste.username", "Username on http://pste.me/#/signup");
-		config.addDefault("prism.paste.api-key", "API key from http://pste.me/#/account");
-
+		config.addDefault("prism.paste.api-key", "API key from http://paste.gg");
 		// Wands
 		config.addDefault("prism.wands.default-mode", "hand"); // hand, item,
 																// or block
