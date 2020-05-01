@@ -116,6 +116,7 @@ public class Prism extends JavaPlugin {
      * Protected/private
      */
     private static String plugin_name;
+    private static String pasteKey;
     private static MaterialAliases items;
     // private Language language = null;
     private static Logger log = Logger.getLogger("Minecraft");
@@ -164,16 +165,14 @@ public class Prism extends JavaPlugin {
         return prismDataSource;
     }
 
-    /**
-     * @return
-     */
+    public static String getPasteKey() {
+        return pasteKey;
+    }
+
     public static String getPrismName() {
         return plugin_name;
     }
 
-    /**
-     * @return
-     */
     public static List<Material> getIllegalBlocks() {
         return illegalBlocks;
     }
@@ -344,7 +343,12 @@ public class Prism extends JavaPlugin {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
         }
-
+        if (getConfig().getBoolean("prism.paste.enable")) {
+            pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
+            if (pasteKey != null && pasteKey.startsWith("API key")) {
+                pasteKey = null;
+            }
+        }
         // init db async then call back to complete enable.
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
