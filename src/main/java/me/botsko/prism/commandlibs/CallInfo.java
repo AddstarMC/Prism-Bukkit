@@ -5,63 +5,52 @@ import org.bukkit.entity.Player;
 
 public class CallInfo {
 
-	/**
-	 * 
-	 */
-	private final CommandSender sender;
+    private final CommandSender sender;
+    private final Player player;
+    private final String[] args;
 
-	/**
-	 * 
-	 */
-	private final Player player;
+    /**
+     * Constructor.
+     * @param sender CommandSender
+     * @param player Player
+     * @param args String[]
+     */
+    public CallInfo(CommandSender sender, Player player, String[] args) {
+        this.sender = sender;
+        this.player = player;
+        this.args = args;
+    }
 
-	/**
-	 * 
-	 */
-	private final String[] args;
+    /**
+     * Get Player.
+     * @return Player
+     */
+    public Player getPlayer() {
+        return player;
+    }
 
-	/**
-	 * 
-	 * @param sender
-	 * @param player
-	 * @param args
-	 */
-	public CallInfo(CommandSender sender, Player player, String[] args) {
-		this.sender = sender;
-		this.player = player;
-		this.args = args;
-	}
+    /**
+     * Get Sender.
+     * @return CommandSender
+     */
+    public CommandSender getSender() {
+        return sender;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public Player getPlayer() {
-		return player;
-	}
+    /**
+     * Get arg number n.
+     * @param n int
+     * @return String.
+     */
+    public String getArg(int n) {
+        return this.args[n];
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public CommandSender getSender() {
-		return sender;
-	}
-
-	/**
-	 * 
-	 * @param n
-	 * @return
-	 */
-	public String getArg(int n) {
-		return this.args[n];
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public String[] getArgs() {
-		return this.args;
-	}
+    /**
+     * Get all args.
+     * @return String[]
+     */
+    public String[] getArgs() {
+        return this.args;
+    }
 }

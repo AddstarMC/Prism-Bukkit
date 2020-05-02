@@ -8,20 +8,23 @@ import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.measurement.TimeTaken;
 import org.bukkit.Bukkit;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 6/04/2019.
  */
-public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements SelectProcessActionQuery {
+public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements SelectProcessActionQuery {
     private boolean getLastID;
 
     /**
      * @param dataSource
      */
-    public SQLSelectProcessQuery(PrismDataSource dataSource) {
+    public SqlSelectProcessQuery(PrismDataSource dataSource) {
         super(dataSource);
     }
 
@@ -106,7 +109,7 @@ public class SQLSelectProcessQuery extends SQLSelectQueryBuilder implements Sele
                 process.setUnixEpoch(rs.getLong("epoch"));
                 process.setWorld(Bukkit.getWorld(rs.getString("world")));
                 process.setSourceName(rs.getString("player"));
-                process.setUUID(UUID.fromString(rs.getString("player_uuid")));
+                process.setUuid(UUID.fromString(rs.getString("player_uuid")));
                 process.setX(rs.getInt("x"));
                 process.setY(rs.getInt("y"));
                 process.setZ(rs.getInt("z"));

@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * Created by benjamincharlton on 6/04/2019.
  */
 public class SQLSettingsQuery extends AbstractSettingsQuery implements SettingsQuery {
-    private SQLPrismDataSource dataSource;
+    private final SQLPrismDataSource dataSource;
 
     public SQLSettingsQuery(SQLPrismDataSource dataSource) {
         this.dataSource = dataSource;

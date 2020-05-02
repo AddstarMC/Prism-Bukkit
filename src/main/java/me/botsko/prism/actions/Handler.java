@@ -1,224 +1,136 @@
 package me.botsko.prism.actions;
 
-import java.util.UUID;
-
+import me.botsko.prism.actionlibs.ActionType;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.appliers.ChangeResult;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-import me.botsko.prism.actionlibs.ActionType;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
+import java.util.UUID;
 
 public interface Handler {
-	/**
-	 * @return the id
-	 */
-	long getId();
 
-	/**
-	 * @param id the id to set
-	 */
-	void setId(long id);
+    long getId();
 
-	/**
-	 * @return the action_time
-	 */
-	long getUnixEpoch();
+    void setId(long id);
 
-	/**
-	 * @return the display_date
-	 */
-	String getDisplayDate();
+    long getUnixEpoch();
 
-	/**
-	 * @return the display_time
-	 */
-	String getDisplayTime();
+    void setUnixEpoch(long epoch);
 
-	/**
-	 * @param epoch the display_time to set
-	 */
-	void setUnixEpoch(long epoch);
+    String getDisplayDate();
 
-	boolean hasExtraData();
-	/**
-	 * 
-	 * @return
-	 */
-	String getTimeSince();
+    String getDisplayTime();
 
-	/**
-	 * @return the action_type
-	 */
-	ActionType getActionType();
+    boolean hasExtraData();
 
-	/**
-	 * 
-	 * @param type
-	 */
-	void setActionType(ActionType type);
+    String getTimeSince();
 
-	/**
-	 * @param world the world to set
-	 */
-	void setWorld(World world);
+    ActionType getActionType();
 
-	Location getLoc();
+    void setActionType(ActionType type);
 
-	/**
-	 * @return the name of the event cause
-	 */
-	String getSourceName();
+    void setWorld(World world);
 
-	/**
-	 * @param name the custom name for the event cause
-	 */
-	void setSourceName(String name);
+    Location getLoc();
 
+    String getSourceName();
 
-	/**
-	 * @param x the x to set
-	 */
-	void setX(double x);
+    void setSourceName(String name);
 
-	/**
-	 * @param y the y to set
-	 */
-	void setY(double y);
+    void setX(double x);
 
-	/**
-	 * @param z the z to set
-	 */
-	void setZ(double z);
+    void setY(double y);
 
-	/**
-	 * 
-	 * @param material
-	 */
-	void setMaterial(Material material);
+    void setZ(double z);
 
-	/**
-	 * 
-	 * @param state
-	 */
-	void setBlockData(BlockData state);
+    Material getMaterial();
 
-	void setDurability(short durability);
+    void setMaterial(Material material);
 
-	/**
-	 * 
-	 */
-	Material getMaterial();
+    BlockData getBlockData();
 
-	/**
-	 * 
-	 */
-	BlockData getBlockData();
+    void setBlockData(BlockData state);
 
-	short getDurability();
+    short getDurability();
 
-	String serialize();
+    void setDurability(short durability);
 
-	void deserialize(String data);
+    String serialize();
 
-	/**
-	 * 
-	 * @param material
-	 */
-	void setOldMaterial(Material material);
+    void deserialize(String data);
 
-	/**
-	 * 
-	 * @param state
-	 */
-	void setOldBlockData(BlockData state);
+    Material getOldMaterial();
 
-	void setOldDurability(short durability);
+    void setOldMaterial(Material material);
 
-	/**
-	 * 
-	 */
-	Material getOldMaterial();
+    BlockData getOldBlockData();
 
-	/**
-	 * 
-	 */
-	BlockData getOldBlockData();
+    void setOldBlockData(BlockData state);
 
-	short getOldDurability();
+    short getOldDurability();
 
-	/**
-	 * 
-	 * @param aggregateCount
-	 */
-	void setAggregateCount(int aggregateCount);
+    void setOldDurability(short durability);
 
-	/**
-	 * 
-	 * @return
-	 */
-	int getAggregateCount();
+    int getAggregateCount();
 
-	/**
-	 * 
-	 */
-	String getNiceName();
-	
-	void setUUID(UUID uuid);
-	UUID getUUID();
+    void setAggregateCount(int aggregateCount);
 
-	/**
-	 *
-	 */
-	boolean isCanceled();
+    String getNiceName();
 
-	/**
-	 * 
-	 * @param cancel
-	 */
-	void setCanceled(boolean cancel);
+    UUID getUuid();
 
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	ChangeResult applyRollback(Player player, QueryParameters parameters, boolean is_preview);
+    void setUuid(UUID uuid);
 
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	ChangeResult applyRestore(Player player, QueryParameters parameters, boolean is_preview);
+    boolean isCanceled();
 
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	ChangeResult applyUndo(Player player, QueryParameters parameters, boolean is_preview);
+    void setCanceled(boolean cancel);
 
-	/**
-	 * 
-	 * @param player
-	 * @param parameters
-	 * @param is_preview
-	 * @return
-	 */
-	ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean is_preview);
+    /**
+     * Apply a rollback.
+     *
+     * @param player     Player
+     * @param parameters Query Params
+     * @param isPreview  bool
+     * @return ChangeResult
+     */
+    ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview);
 
-	String getCustomDesc();
+    /**
+     * Apply a restore.
+     *
+     * @param player     Player
+     * @param parameters Query Params
+     * @param isPreview  bool
+     * @return ChangeResult
+     */
+    ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview);
 
-	void setCustomDesc(String description);
+    /**
+     * Apply a undo.
+     *
+     * @param player     Player
+     * @param parameters Query Params
+     * @param isPreview  bool
+     * @return ChangeResult
+     */
+    ChangeResult applyUndo(Player player, QueryParameters parameters, boolean isPreview);
+
+    /**
+     * Apply a Deferred.
+     *
+     * @param player     Player
+     * @param parameters Query Params
+     * @param isPreview  bool
+     * @return ChangeResult
+     */
+    ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean isPreview);
+
+    String getCustomDesc();
+
+    void setCustomDesc(String description);
 
 }

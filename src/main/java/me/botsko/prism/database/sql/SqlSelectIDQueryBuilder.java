@@ -14,13 +14,13 @@ import java.sql.SQLException;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 31/03/2019.
  */
-public class SQLSelectIDQueryBuilder extends SQLSelectQueryBuilder implements SelectIDQuery {
+public class SqlSelectIDQueryBuilder extends SqlSelectQueryBuilder implements SelectIDQuery {
     /**
      * @param plugin
      */
     private String select = "";
 
-    public SQLSelectIDQueryBuilder(PrismDataSource dataSource) {
+    public SqlSelectIDQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
         setMin();
     }

@@ -23,20 +23,20 @@ public class PurgeCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        if(call.getArgs().length < 1) {
+        if (call.getArgs().length < 1) {
             call.getSender().sendMessage(
-                    Prism.messenger.playerHeaderMsg("Prism"  + ChatColor.GRAY + " v"
+                    Prism.messenger.playerHeaderMsg("Prism" + ChatColor.GRAY + " v"
                             + plugin.getPrismVersion()));
             call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purges Scheduled: " + ChatColor.WHITE + plugin.getSchedulePool().getTaskCount()));
             call.getSender().sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg("Purges Run : " + ChatColor.WHITE + plugin.getSchedulePool().getCompletedTaskCount()));
             call.getSender().sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg("Pool String: " + ChatColor.WHITE + plugin.getSchedulePool().toString()));
-        }else{
+        } else {
             if (Objects.equals(call.getArgs()[0], "execute")) {
                 call.getSender().sendMessage(
-                        Prism.messenger.playerHeaderMsg("Prism"  + ChatColor.GRAY + " Executing Purge Run"));
-                Bukkit.getScheduler().runTaskAsynchronously(plugin,plugin.getPurgeManager());
+                        Prism.messenger.playerHeaderMsg("Prism" + ChatColor.GRAY + " Executing Purge Run"));
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, plugin.getPurgeManager());
             }
         }
 

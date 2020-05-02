@@ -8,185 +8,175 @@ import org.bukkit.Material;
 
 public class ActionMessage {
 
-	/**
-	 *
-	 */
-	protected final Handler a;
+    protected final Handler handler;
 
-	/**
-	 *
-	 */
-	private boolean showExtended = false;
-	/**
-	 *
-	 */
-	private int index = 0;
+    private boolean showExtended = false;
 
-	/**
-	 * @param a Handler
-	 */
-	public ActionMessage(Handler a) {
-		this.a = a;
-	}
+    private int index = 0;
 
-	public final int getIndex() {
-		return index;
-	}
+    public ActionMessage(Handler handler) {
+        this.handler = handler;
+    }
 
-	/**
-	 *
-	 */
-	public void showExtended() {
-		showExtended = true;
-	}
+    public final int getIndex() {
+        return index;
+    }
 
-	/**
-	 * @param index integer
-	 */
-	public void setResultIndex(int index) {
-		this.index = index;
-	}
+    public void showExtended() {
+        showExtended = true;
+    }
 
-	/**
-	 * Here, we don't use formatting or anything, we just use a regular message raw.
-	 * <p>
-	 * This will automatically show extended information, as this can be passed to a
-	 * pastebin service.
-	 *
-	 * @return String
-	 */
-	public String getRawMessage() {
-		final StringBuilder msg = new StringBuilder();
-		ActionType action = a.getActionType();
+    public void setResultIndex(int index) {
+        this.index = index;
+    }
 
-		msg.append((action.doesCreateBlock() || action.getName().equals("item-insert")
-			|| action.getName().equals("sign-change")) ? "+" : "-");
-		msg.append(" #").append(a.getId());
-		msg.append(" ").append(a.getSourceName());
-		msg.append(" ").append(action.getName());
-		msg.append(" ").append(a.getMaterial());
-		msg.append(BlockUtils.dataString(a.getBlockData()));
+    /**
+     * Here, we don't use formatting or anything, we just use a regular message raw.
+     * This will automatically show extended information, as this can be passed to a
+     * paste service.
+     *
+     * @return String
+     */
+    public String getRawMessage() {
+        final StringBuilder msg = new StringBuilder();
+        ActionType action = handler.getActionType();
 
-		if (action.getHandler() != null) {
-			if (!a.getNiceName().isEmpty())
-				msg.append(" (").append(a.getNiceName()).append(")");
-		} else {
-			// We should really improve this, but this saves me from having to
-			// make
-			// a custom handler.
-			if (action.getName().equals("lava-bucket")) {
-				msg.append(" (lava)");
-			} else if (action.getName().equals("water-bucket")) {
-				msg.append(" (water)");
-			}
-		}
-		if (a.getAggregateCount() > 1) {
-			msg.append(" x").append(a.getAggregateCount());
-		}
-		msg.append(" ").append(a.getDisplayDate());
-		msg.append(" ").append(a.getDisplayTime().toLowerCase());
-		Location l = a.getLoc();
-		msg.append(" - ").append(l.getWorld().getName()).append(" @ ").append(l.getBlockX()).append(" ").append(l.getBlockY()).append(" ").append(l.getBlockZ());
-		return msg.toString();
-	}
+        msg.append((action.doesCreateBlock() || action.getName().equals("item-insert")
+                || action.getName().equals("sign-change")) ? "+" : "-");
+        msg.append(" #").append(handler.getId());
+        msg.append(" ").append(handler.getSourceName());
+        msg.append(" ").append(action.getName());
+        msg.append(" ").append(handler.getMaterial());
+        msg.append(BlockUtils.dataString(handler.getBlockData()));
 
-	/**
-	 *
-	 */
-	public String[] getMessage() {
+        if (action.getHandler() != null) {
+            if (!handler.getNiceName().isEmpty()) {
+                msg.append(" (").append(handler.getNiceName()).append(")");
+            }
+        } else {
+            // We should really improve this, but this saves me from having to
+            // make
+            // a custom handler.
+            if (action.getName().equals("lava-bucket")) {
+                msg.append(" (lava)");
+            } else if (action.getName().equals("water-bucket")) {
+                msg.append(" (water)");
+            }
+        }
+        if (handler.getAggregateCount() > 1) {
+            msg.append(" x").append(handler.getAggregateCount());
+        }
+        msg.append(" ").append(handler.getDisplayDate());
+        msg.append(" ").append(handler.getDisplayTime().toLowerCase());
+        Location l = handler.getLoc();
+        msg.append(" - ")
+                .append(l.getWorld().getName())
+                .append(" @ ")
+                .append(l.getBlockX()).append(" ")
+                .append(l.getBlockY()).append(" ")
+                .append(l.getBlockZ());
+        return msg.toString();
+    }
 
-		String[] msg = new String[1];
-		if (showExtended) {
-			msg = new String[2];
-		}
+    /**
+     * Get the message.
+     *
+     * @return String[]
+     */
+    public String[] getMessage() {
 
-		final ChatColor highlight = ChatColor.DARK_AQUA;
+        String[] msg = new String[1];
+        if (showExtended) {
+            msg = new String[2];
+        }
 
-		String line1 = "";
+        final ChatColor highlight = ChatColor.DARK_AQUA;
 
-		// +/-
-		line1 += getPosNegPrefix();
+        String line1 = "";
 
-		// Result index for teleporting
-		if (index > 0) {
-			line1 += ChatColor.GRAY + "[" + index + "] ";
-		}
+        // +/-
+        line1 += getPosNegPrefix();
 
-		// Who
-		line1 += highlight + a.getSourceName();
+        // Result index for teleporting
+        if (index > 0) {
+            line1 += ChatColor.GRAY + "[" + index + "] ";
+        }
 
-		String description = a.getCustomDesc();
-		ActionType action = a.getActionType();
+        // Who
+        line1 += highlight + handler.getSourceName();
 
-		if (description == null)
-			description = action.getNiceDescription();
+        String description = handler.getCustomDesc();
+        ActionType action = handler.getActionType();
 
-		// Description of event
-		line1 += " " + ChatColor.WHITE + description;
-		if (action.getHandler() != null) {
-			if (!a.getNiceName().isEmpty())
-				line1 += " " + highlight + a.getNiceName();
-		} else {
-			// We should really improve this, but this saves me from having to
-			// make
-			// a custom handler.
-			if (action.getName().equals("lava-bucket")) {
-				line1 += " " + highlight + "lava";
-			} else if (action.getName().equals("water-bucket")) {
-				line1 += " " + highlight + "water";
-			}
-		}
+        if (description == null) {
+            description = action.getNiceDescription();
+        }
 
-		if (showExtended && (a.getMaterial() != Material.AIR)) {
-			line1 += " " + a.getMaterial() + BlockUtils.dataString(a.getBlockData());
-		}
+        // Description of event
+        line1 += " " + ChatColor.WHITE + description;
+        if (action.getHandler() != null) {
+            if (!handler.getNiceName().isEmpty()) {
+                line1 += " " + highlight + handler.getNiceName();
+            }
+        } else {
+            // We should really improve this, but this saves me from having to
+            // make
+            // a custom handler.
+            if (action.getName().equals("lava-bucket")) {
+                line1 += " " + highlight + "lava";
+            } else if (action.getName().equals("water-bucket")) {
+                line1 += " " + highlight + "water";
+            }
+        }
 
-		// Aggregate count
-		if (a.getAggregateCount() > 1) {
-			line1 += ChatColor.GREEN + " x" + a.getAggregateCount();
-		}
+        if (showExtended && (handler.getMaterial() != Material.AIR)) {
+            line1 += " " + handler.getMaterial() + BlockUtils.dataString(handler.getBlockData());
+        }
 
-		// Time since
-		if (!a.getTimeSince().isEmpty()) {
-			line1 += ChatColor.WHITE + " " + a.getTimeSince();
-		}
+        // Aggregate count
+        if (handler.getAggregateCount() > 1) {
+            line1 += ChatColor.GREEN + " x" + handler.getAggregateCount();
+        }
 
-		// Action type reminder
-		line1 += " " + ChatColor.GRAY + "(a:" + action.getShortName() + ")";
+        // Time since
+        if (!handler.getTimeSince().isEmpty()) {
+            line1 += ChatColor.WHITE + " " + handler.getTimeSince();
+        }
 
-		if (showExtended) {
-			line1 += "\n";
+        // Action type reminder
+        line1 += " " + ChatColor.GRAY + "(a:" + action.getShortName() + ")";
 
-			// Line 2
-			String line2 = ChatColor.GRAY + " - " + a.getId() + " - ";
+        if (showExtended) {
+            line1 += "\n";
 
-			// Date & Time
-			line2 += a.getDisplayDate();
-			line2 += " " + a.getDisplayTime().toLowerCase();
+            // Line 2
+            String line2 = ChatColor.GRAY + " - " + handler.getId() + " - ";
 
-			// Location
-			Location l = a.getLoc();
-			line2 += " - " + l.getWorld().getName() + " @ " + l.getBlockX() + " " + l.getBlockY() + " " + l.getBlockZ() + " ";
+            // Date & Time
+            line2 += handler.getDisplayDate();
+            line2 += " " + handler.getDisplayTime().toLowerCase();
 
-			msg[1] = line2;
-		}
+            // Location
+            Location l = handler.getLoc();
+            line2 += " - " + l.getWorld().getName() + " @ " + l.getBlockX() + " "
+                    + l.getBlockY() + " " + l.getBlockZ() + " ";
 
-		msg[0] = line1;
+            msg[1] = line2;
+        }
 
-		return msg;
+        msg[0] = line1;
 
-	}
+        return msg;
 
-	/**
-	 * @return String
-	 */
-	protected String getPosNegPrefix() {
+    }
 
-		if (a.getActionType().doesCreateBlock() || a.getActionType().getName().equals("item-insert")
-			|| a.getActionType().getName().equals("sign-change")) {
-			return ChatColor.GREEN + " + " + ChatColor.WHITE;
-		} else {
-			return ChatColor.RED + " - " + ChatColor.WHITE;
-		}
-	}
+    private String getPosNegPrefix() {
+
+        if (handler.getActionType().doesCreateBlock() || handler.getActionType().getName().equals("item-insert")
+                || handler.getActionType().getName().equals("sign-change")) {
+            return ChatColor.GREEN + " + " + ChatColor.WHITE;
+        } else {
+            return ChatColor.RED + " - " + ChatColor.WHITE;
+        }
+    }
 }

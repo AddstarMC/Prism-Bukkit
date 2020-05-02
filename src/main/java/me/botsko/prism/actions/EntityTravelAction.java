@@ -6,98 +6,91 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 public class EntityTravelAction extends GenericAction {
+    protected EntityTravelActionData actionData;
 
-	public class EntityTravelActionData {
-		int to_x;
-		int to_y;
-		int to_z;
-		String cause;
-	}
+    public EntityTravelAction() {
+        actionData = new EntityTravelActionData();
+    }
 
-	/**
-	 * 
-	 */
-	protected EntityTravelActionData actionData;
+    /**
+     * Set entity.
+     * @param entity Entity.
+     */
+    public void setEntity(Entity entity) {
+        if (entity != null) {
+            if (entity instanceof Player) {
+                setPlayer((Player) entity);
+            } else {
+                setSourceName(entity.getType().name().toLowerCase());
+            }
+        }
+    }
 
-	/**
-	 *
-	 */
-	public EntityTravelAction() {
-		actionData = new EntityTravelActionData();
-	}
+    /**
+     * Set Location .
+     * @param to Location.
+     */
+    public void setToLocation(Location to) {
+        if (to != null) {
+            actionData.x = to.getBlockX();
+            actionData.y = to.getBlockY();
+            actionData.z = to.getBlockZ();
+        }
+    }
 
-	/**
-	 * 
-	 * @param entity
-	 */
-	public void setEntity(Entity entity) {
-		if (entity != null) {
-			if (entity instanceof Player) {
-				setPlayer((Player) entity);
-			}
-			else {
-				setSourceName(entity.getType().name().toLowerCase());
-			}
-		}
-	}
+    /**
+     * Set cause.
+     * @param cause TeleportCause
+     */
+    public void setCause(TeleportCause cause) {
+        if (cause != null) {
+            actionData.cause = cause.name().toLowerCase();
+        }
+    }
 
-	/**
-	 * 
-	 * @param to
-	 */
-	public void setToLocation(Location to) {
-		if (to != null) {
-			actionData.to_x = to.getBlockX();
-			actionData.to_y = to.getBlockY();
-			actionData.to_z = to.getBlockZ();
-		}
-	}
+    @Override
+    public boolean hasExtraData() {
+        return actionData != null;
+    }
 
-	/**
-	 * 
-	 * @param cause
-	 */
-	public void setCause(TeleportCause cause) {
-		if (cause != null) {
-			actionData.cause = cause.name().toLowerCase();
-		}
-	}
+    @Override
+    public String serialize() {
+        return gson().toJson(actionData);
+    }
 
-	@Override
-	public boolean hasExtraData() {
-		return actionData != null;
-	}
+    @Override
+    public void deserialize(String data) {
+        if (data != null && data.startsWith("{")) {
+            actionData = gson().fromJson(data, EntityTravelActionData.class);
+        }
+    }
 
-	@Override
-	public String serialize() {
-		return gson().toJson(actionData);
-	}
-	
-	@Override
-	public void deserialize(String data) {
-		if (data != null && data.startsWith("{")) {
-			actionData = gson().fromJson(data, EntityTravelActionData.class);
-		}
-	}
+    /**
+     * Set TravelActionData.
+     * @return EntityTravelActionData
+     */
+    @SuppressWarnings("unused")
+    public EntityTravelActionData getActionData() {
+        return actionData;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public EntityTravelActionData getActionData() {
-		return actionData;
-	}
+    /**
+     * Get nice name.
+     * @return String
+     */
+    @Override
+    public String getNiceName() {
+        if (actionData != null) {
+            final String cause = (actionData.cause == null ? "unknown" : actionData.cause.replace("_", " "));
+            return "using " + cause + " to " + actionData.x + " " + actionData.y + " " + actionData.z;
+        }
+        return "teleported somewhere";
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	@Override
-	public String getNiceName() {
-		if (actionData != null) {
-			final String cause = (actionData.cause == null ? "unknown" : actionData.cause.replace("_", " "));
-			return "using " + cause + " to " + actionData.to_x + " " + actionData.to_y + " " + actionData.to_z;
-		}
-		return "teleported somewhere";
-	}
+    public static class EntityTravelActionData {
+        int x;
+        int y;
+        int z;
+        String cause;
+    }
 }

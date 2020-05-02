@@ -1,178 +1,120 @@
 package me.botsko.prism.actionlibs;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import me.botsko.prism.actions.Handler;
+
+import java.util.List;
 
 public class QueryResult {
 
-	/**
-	 * 
-	 */
-	protected List<Handler> actionResults = new ArrayList<>();
+    protected final QueryParameters parameters;
+    private final int totalResults;
+    protected int page = 1;
+    private final List<Handler> actionResults;
+    private long queryTime;
+    private int perPage = 5;
+    private int totalPages = 0;
+    private long lastTeleportIndex = 0;
 
-	/**
-	 * 
-	 */
-	protected final QueryParameters parameters;
+    /**
+     * Create a Query Result.
+     *
+     * @param actions    List of ActionHandlers
+     * @param parameters params
+     */
+    public QueryResult(List<Handler> actions, QueryParameters parameters) {
 
-	/**
-	 * 
-	 */
-	protected long queryTime;
+        this.actionResults = actions;
+        this.parameters = parameters;
 
-	/**
-	 * 
-	 */
-	protected final int total_results;
+        setQueryTime();
 
-	/**
-	 * 
-	 */
-	protected int per_page = 5;
+        // set counts
+        totalResults = actionResults.size();
+        setPerPage(perPage); // does the total pages calc
 
-	/**
-	 * 
-	 */
-	protected int total_pages = 0;
+    }
 
-	/**
-	 * 
-	 */
-	protected int page = 1;
+    public void setQueryTime() {
+        final java.util.Date date = new java.util.Date();
+        this.queryTime = date.getTime();
+    }
 
-	/**
-	 * 
-	 */
-	protected long lastTeleportIndex = 0;
+    public List<Handler> getActionResults() {
+        return actionResults;
+    }
 
-	/**
-	 * 
-	 * @param actions
-	 */
-	public QueryResult(List<Handler> actions, QueryParameters parameters) {
+    /**
+     * Get a list Action ActionHandlers.
+     *
+     * @return Handler List.
+     */
+    public List<Handler> getPaginatedActionResults() {
 
-		this.actionResults = actions;
-		this.parameters = parameters;
+        int limit = (page * perPage);
+        final int offset = (limit - perPage);
 
-		setQueryTime();
+        if (offset <= totalResults) {
+            if (limit > totalResults) {
+                limit = totalResults;
+            }
+            return actionResults.subList(offset, limit);
+        }
+        return null;
+    }
 
-		// set counts
-		total_results = actionResults.size();
-		setPerPage(per_page); // does the total pages calc
+    /**
+     * Get the params.
+     *
+     * @return the parameters
+     */
+    public QueryParameters getParameters() {
+        return parameters;
+    }
 
-	}
+    /**
+     * The total number of results.
+     *
+     * @return int
+     */
+    public int getTotalResults() {
+        return totalResults;
+    }
 
-	/**
-	 * 
-	 */
-	public void setQueryTime() {
-		final java.util.Date date = new java.util.Date();
-		this.queryTime = date.getTime();
-	}
+    public long getQueryTime() {
+        return queryTime;
+    }
 
-	/**
-	 * @return the actionResults
-	 */
-	public List<Handler> getActionResults() {
-		return actionResults;
-	}
+    public int getPerPage() {
+        return perPage;
+    }
 
-	/**
-	 * @return the actionResults
-	 */
-	public List<Handler> getPaginatedActionResults() {
+    void setPerPage(int perPage) {
+        this.perPage = perPage;
+        totalPages = (int) Math.ceil(((double) totalResults / (double) perPage));
+    }
 
-		int limit = (page * per_page);
-		final int offset = (limit - per_page);
+    public long getLastTeleportIndex() {
+        return lastTeleportIndex;
+    }
 
-		if (offset <= total_results) {
-			if (limit > total_results) {
-				limit = total_results;
-			}
-			return actionResults.subList(offset, limit);
-		}
-		return null;
-	}
+    public void setLastTeleportIndex(long index) {
+        this.lastTeleportIndex = index;
+    }
 
-	/**
-	 * @return the parameters
-	 */
-	public QueryParameters getParameters() {
-		return parameters;
-	}
+    public int getIndexOfFirstResult() {
+        final int index = (page * perPage) - perPage;
+        return index + 1;
+    }
 
-	/**
-	 * @return the total_results
-	 */
-	public int getTotalResults() {
-		return total_results;
-	}
+    public int getPage() {
+        return page;
+    }
 
-	/**
-	 * @return the queryTime
-	 */
-	public long getQueryTime() {
-		return queryTime;
-	}
+    public void setPage(int page) {
+        this.page = page;
+    }
 
-	/**
-	 * @return the per_page
-	 */
-	public int getPerPage() {
-		return per_page;
-	}
-
-	/**
-	 * 
-	 */
-	public long getLastTeleportIndex() {
-		return lastTeleportIndex;
-	}
-
-	/**
-	 * 
-	 */
-	public long setLastTeleportIndex(long index) {
-		return lastTeleportIndex = index;
-	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public int getIndexOfFirstResult() {
-		final int index = (page * per_page) - per_page;
-		return index + 1;
-	}
-
-	/**
-	 * @param per_page the per_page to set
-	 */
-	public void setPerPage(int per_page) {
-		this.per_page = per_page;
-		total_pages = (int) Math.ceil(((double) total_results / (double) per_page));
-	}
-
-	/**
-	 * @return the page
-	 */
-	public int getPage() {
-		return page;
-	}
-
-	/**
-	 * @param page the page to set
-	 */
-	public void setPage(int page) {
-		this.page = page;
-	}
-
-	/**
-	 * @return the total_pages
-	 */
-	public int getTotal_pages() {
-		return total_pages;
-	}
+    public int getTotalPages() {
+        return totalPages;
+    }
 }
