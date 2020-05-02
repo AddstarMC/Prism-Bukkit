@@ -12,7 +12,7 @@ import java.util.List;
 public class FlagsCommand implements SubHandler {
 
     /**
-     * Handle the command
+     * Handle the command.
      */
     @Override
     public void handle(CallInfo call) {
@@ -25,9 +25,9 @@ public class FlagsCommand implements SubHandler {
     }
 
     /**
-     * Display param help
+     * Display param help.
      *
-     * @param sender
+     * @param sender CommandSender
      */
     private void help(CommandSender sender) {
 

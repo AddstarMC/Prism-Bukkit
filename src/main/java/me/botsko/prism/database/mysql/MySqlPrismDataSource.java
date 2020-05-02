@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.util.PropertyElf;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.sql.SQLPrismDataSource;
+import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -25,7 +25,7 @@ import java.util.Set;
  * Created for use for the Add5tar MC Minecraft server
  * Created by Narimm on 5/04/2019.
  */
-public class MySqlPrismDataSource extends SQLPrismDataSource {
+public class MySqlPrismDataSource extends SqlPrismDataSource {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");

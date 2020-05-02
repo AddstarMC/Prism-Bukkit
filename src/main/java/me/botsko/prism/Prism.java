@@ -148,6 +148,7 @@ public class Prism extends JavaPlugin {
     public static String getPasteKey() {
         return pasteKey;
     }
+
     /**
      * Get the plugin name.
      *

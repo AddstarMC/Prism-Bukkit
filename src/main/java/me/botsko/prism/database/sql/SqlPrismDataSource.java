@@ -8,7 +8,7 @@ import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.SettingsQuery;
@@ -24,14 +24,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 8/04/2019.
  */
-public abstract class SQLPrismDataSource implements PrismDataSource {
+public abstract class SqlPrismDataSource implements PrismDataSource {
 
     protected static HikariDataSource database = null;
     protected String name = "unconfigured";
@@ -45,7 +44,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
      * Constructor.
      * @param section Config
      */
-    public SQLPrismDataSource(ConfigurationSection section) {
+    public SqlPrismDataSource(ConfigurationSection section) {
         log = LoggerFactory.getLogger("Prism");
         this.section = section;
         setPrefix(section.getString("prefix"));
@@ -352,8 +351,8 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     }
 
     @Override
-    public SelectIDQuery createSelectIDQuery() {
-        return new SqlSelectIDQueryBuilder(this);
+    public SelectIdQuery createSelectIDQuery() {
+        return new SqlSelectIdQueryBuilder(this);
     }
 
     @Override
@@ -374,7 +373,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     @Override
     public SettingsQuery createSettingsQuery() {
         if (settingsQuery == null) {
-            settingsQuery = new SQLSettingsQuery(this);
+            settingsQuery = new SqlSettingsQuery(this);
         }
         return settingsQuery;
     }
@@ -385,6 +384,6 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     }
 
     public InsertQuery getDataInsertionQuery() {
-        return new SQLInsertBuilder(this);
+        return new SqlInsertBuilder(this);
     }
 }

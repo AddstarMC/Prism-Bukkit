@@ -2,7 +2,7 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
-import me.botsko.prism.database.sql.SQLPrismDataSourceUpdater;
+import me.botsko.prism.database.sql.SqlPrismDataSourceUpdater;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
@@ -92,7 +92,7 @@ public class PrismDatabaseFactory {
             case "mysql":
             case "derby":
             case "sqlite":
-                return new SQLPrismDataSourceUpdater((MySqlPrismDataSource) database);
+                return new SqlPrismDataSourceUpdater((MySqlPrismDataSource) database);
             default:
                 return null;
         }

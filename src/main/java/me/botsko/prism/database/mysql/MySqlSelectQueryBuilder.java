@@ -6,16 +6,10 @@ import me.botsko.prism.utils.TypeUtils;
 
 public class MySqlSelectQueryBuilder extends SqlSelectQueryBuilder {
 
-    /**
-     *
-     */
     public MySqlSelectQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String select() {
 
@@ -73,16 +67,16 @@ public class MySqlSelectQueryBuilder extends SqlSelectQueryBuilder {
 
     }
 
-    /**
-     * @return
-     */
     @Override
     protected String order() {
-        if (parameters == null) return " ";
+        if (parameters == null) {
+            return " ";
+        }
         final String sort_dir = parameters.getSortDirection();
 
         if (shouldGroup) {
-            return " ORDER BY MAX(" + tableNameData + ".epoch) " + sort_dir + ", AVG(x) ASC, AVG(z) ASC, AVG(y) ASC, any_value(id) " + sort_dir;
+            return " ORDER BY MAX(" + tableNameData + ".epoch) " + sort_dir
+                    + ", AVG(x) ASC, AVG(z) ASC, AVG(y) ASC, any_value(id) " + sort_dir;
         }
 
         return " ORDER BY " + tableNameData + ".epoch " + sort_dir + ", x ASC, z ASC, y ASC, id " + sort_dir;
