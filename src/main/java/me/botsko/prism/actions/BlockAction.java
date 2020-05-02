@@ -31,6 +31,7 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.CHEST;
@@ -38,7 +39,6 @@ import static org.bukkit.Material.COMMAND_BLOCK;
 import static org.bukkit.Material.FARMLAND;
 import static org.bukkit.Material.FIRE;
 import static org.bukkit.Material.JUKEBOX;
-import static org.bukkit.Material.LILY_PAD;
 import static org.bukkit.Material.NETHER_PORTAL;
 import static org.bukkit.Material.OBSIDIAN;
 import static org.bukkit.Material.PLAYER_HEAD;
@@ -46,6 +46,7 @@ import static org.bukkit.Material.PLAYER_WALL_HEAD;
 import static org.bukkit.Material.SPAWNER;
 import static org.bukkit.Material.TRAPPED_CHEST;
 import static org.bukkit.Material.WATER;
+
 
 public class BlockAction extends GenericAction {
 
@@ -69,53 +70,56 @@ public class BlockAction extends GenericAction {
      */
     public void setBlock(BlockState state) {
         if (state != null) {
-
             setMaterial(state.getType());
             setBlockData(state.getBlockData());
-            SkullActionData skullActionData;
-            switch (state.getType()) {
-                case SPAWNER:
-                    final SpawnerActionData spawnerActionData = new SpawnerActionData();
-                    final CreatureSpawner spawner = (CreatureSpawner) state;
-                    spawnerActionData.entityType = spawner.getSpawnedType().name().toLowerCase();
-                    spawnerActionData.delay = spawner.getDelay();
-                    actionData = spawnerActionData;
-                    break;
-                case PLAYER_WALL_HEAD:
-                case PLAYER_HEAD:
-                    skullActionData = new SkullActionData();
-                    if (state instanceof Skull) {
-                        Skull skull = ((Skull) state);
-                        if (skull.getOwningPlayer() != null) {
-                            skullActionData.owner = skull.getOwningPlayer().getUniqueId().toString();
-                        }
-                    }
-                    setBlockRotation(state, skullActionData);
-                    actionData = skullActionData;
-                    break;
-                case SKELETON_SKULL:
-                case SKELETON_WALL_SKULL:
-                case WITHER_SKELETON_SKULL:
-                case WITHER_SKELETON_WALL_SKULL:
-                    skullActionData = new SkullActionData();
-                    setBlockRotation(state, skullActionData);
-                    actionData = skullActionData;
-                    break;
-                case COMMAND_BLOCK:
-                    final CommandBlock cmdblock = (CommandBlock) state;
-                    final CommandActionData commandActionData = new CommandActionData();
-                    commandActionData.command = cmdblock.getCommand();
-                    actionData = commandActionData;
-                    break;
-                default:
-                    if (Tag.SIGNS.isTagged(state.getType())) {
-                        final SignActionData signActionData = new SignActionData();
-                        final Sign sign = (Sign) state;
-                        signActionData.lines = sign.getLines();
-                        actionData = signActionData;
-                    }
-            }
+            createActionData(state);
             setLoc(state.getLocation());
+        }
+    }
+
+    private void createActionData(BlockState state) {
+        switch (state.getType()) {
+            case SPAWNER:
+                final SpawnerActionData spawnerActionData = new SpawnerActionData();
+                final CreatureSpawner spawner = (CreatureSpawner) state;
+                spawnerActionData.entityType = spawner.getSpawnedType().name().toLowerCase();
+                spawnerActionData.delay = spawner.getDelay();
+                actionData = spawnerActionData;
+                break;
+            case PLAYER_WALL_HEAD:
+            case PLAYER_HEAD:
+                SkullActionData headActionData = new SkullActionData();
+                if (state instanceof Skull) {
+                    Skull skull = ((Skull) state);
+                    if (skull.getOwningPlayer() != null) {
+                        headActionData.owner = skull.getOwningPlayer().getUniqueId().toString();
+                    }
+                }
+                setBlockRotation(state, headActionData);
+                actionData = headActionData;
+                break;
+            case SKELETON_SKULL:
+            case SKELETON_WALL_SKULL:
+            case WITHER_SKELETON_SKULL:
+            case WITHER_SKELETON_WALL_SKULL:
+                SkullActionData skullActionData = new SkullActionData();
+                setBlockRotation(state, skullActionData);
+                actionData = skullActionData;
+                break;
+            case COMMAND_BLOCK:
+                final CommandBlock cmdblock = (CommandBlock) state;
+                final CommandActionData commandActionData = new CommandActionData();
+                commandActionData.command = cmdblock.getCommand();
+                actionData = commandActionData;
+                break;
+            default:
+                if (Tag.SIGNS.isTagged(state.getType())) {
+                    final SignActionData signActionData = new SignActionData();
+                    final Sign sign = (Sign) state;
+                    signActionData.lines = sign.getLines();
+                    actionData = signActionData;
+                }
+                break;
         }
     }
 
@@ -160,11 +164,7 @@ public class BlockAction extends GenericAction {
         return actionData;
     }
 
-    /**
-     * Get a nice name.
-     *
-     * @return String
-     */
+
     @Override
     public String getNiceName() {
         String name = "";
@@ -243,7 +243,6 @@ public class BlockAction extends GenericAction {
     ChangeResult placeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block,
                             boolean isDeferred) {
         BlockStateChange stateChange;
-        BlockState state = block.getState();
 
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
@@ -252,200 +251,22 @@ public class BlockAction extends GenericAction {
                 && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
         if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(block.getType())) {
-            // System.out.print("Block skipped due to being unacceptable for block place.");
+            Prism.debug("Block skipped due to being unacceptable for block place.: " + block.getType().name());
             return new ChangeResult(ChangeResultType.SKIPPED, null);
         }
 
         // On the blacklist (except an undo)
         if (Prism.getIllegalBlocks().contains(getMaterial())
                 && !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
-            // System.out.print("Block skipped because it's not allowed to be placed.");
+            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO."
+                    + block.getType().name());
             return new ChangeResult(ChangeResultType.SKIPPED, null);
         }
-
         // If we're not in a preview, actually apply this block
         // Capture the block before we change it
         final BlockState originalBlock = block.getState();
         if (!isPreview) {
-
-            // Capture the block before we change it
-
-            // If lilypad, check that block below is water. Be sure
-            // it's set to stationary water so the lilypad will sit
-            if (getMaterial() == LILY_PAD) {
-
-                final Block below = block.getRelative(BlockFace.DOWN);
-                if (below.getType().equals(WATER) || below.getType().equals(AIR)) {
-                    below.setType(WATER);
-                } else {
-                    // Prism.debug("Lilypad skipped because no water exists below.");
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
-                }
-            }
-
-            // If portal, we need to light the portal. seems to be the only way.
-            if (getMaterial() == NETHER_PORTAL) {
-                final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
-                if (obsidian != null) {
-                    final Block above = obsidian.getRelative(BlockFace.UP);
-                    if (!(above.getType() == NETHER_PORTAL)) {
-                        above.setType(FIRE);
-                        return new ChangeResult(ChangeResultType.APPLIED, null);
-                    }
-                }
-            }
-
-            // Jukebox, never use the data val because
-            // it becomes unplayable
-            if (getMaterial() == JUKEBOX) {
-                setBlockData(Bukkit.createBlockData(JUKEBOX));
-            }
-
-            // Set the material
-            state.setType(getMaterial());
-
-            BlockActionData blockActionData = getActionData();
-
-            /*
-              Skulls
-             */
-            if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
-                    && blockActionData instanceof SkullActionData) {
-
-                block.setType(getMaterial());
-                state = block.getState();
-                final SkullActionData s = (SkullActionData) blockActionData;
-
-                if (state.getBlockData() instanceof Rotatable) {
-                    final Rotatable r = (Rotatable) state.getBlockData();
-                    r.setRotation(s.getRotation());
-                    state.setBlockData(r);
-                } else {
-                    final Directional d = (Directional) state.getBlockData();
-                    d.setFacing(s.getRotation());
-                    state.setBlockData(d);
-                }
-                state = block.getState();
-
-                if (!s.owner.isEmpty()) {
-                    final Skull skull = (Skull) state;
-                    skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf((s.owner))));
-                }
-
-            }
-
-            /*
-              Spawner
-             */
-            if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
-
-                final SpawnerActionData s = (SpawnerActionData) blockActionData;
-
-                // Set spawner data
-                final CreatureSpawner spawner = (CreatureSpawner) state;
-                spawner.setDelay(s.getDelay());
-                spawner.setSpawnedType(s.getEntityType());
-
-            }
-
-            /*
-              Restoring command block
-             */
-            if (getMaterial() == COMMAND_BLOCK
-                    && blockActionData instanceof CommandActionData) {
-                final CommandBlock cmdblock = (CommandBlock) state;
-                final CommandActionData c = (CommandActionData) blockActionData;
-                cmdblock.setCommand(c.command);
-            }
-
-            /*
-              Signs
-             */
-            if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-                    && Tag.SIGNS.isTagged(getMaterial())
-                    && blockActionData instanceof SignActionData) {
-
-                final SignActionData s = (SignActionData) blockActionData;
-
-                // Verify block is sign. Rarely, if the block somehow pops off
-                // or fails
-                // to set it causes ClassCastException:
-                // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
-                // cannot be cast to org.bukkit.block.Sign
-                // https://snowy-evening.com/botsko/prism/455/
-                if (state instanceof Sign) {
-
-                    // Set sign data
-                    final Sign sign = (Sign) state;
-
-                    if (s.lines != null) {
-                        for (int i = 0; i < s.lines.length; ++i) {
-                            sign.setLine(i, s.lines[i]);
-                        }
-                    }
-                }
-            }
-
-            state.setBlockData(getBlockData());
-
-            // -----------------------------
-            // Sibling logic marker
-
-            // If the material is a crop that needs soil, we must restore the
-            // soil
-            // This may need to go before setting the block, but I prefer the
-            // BlockUtil
-            // logic to use materials.
-            BlockState sibling = null;
-
-            if (BlockUtils.materialRequiresSoil(getMaterial())) {
-                sibling = block.getRelative(BlockFace.DOWN).getState();
-
-                if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
-                }
-
-                sibling.setType(FARMLAND);
-            }
-
-            // Chest sides can be broken independently, ignore them
-            if (state.getType() != CHEST && state.getType() != TRAPPED_CHEST) {
-                final Block s = BlockUtils.getSiblingForDoubleLengthBlock(state);
-
-                if (s != null) {
-                    sibling = s.getState();
-
-                    if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(sibling.getType())) {
-                        // Upper half fail
-                        return new ChangeResult(ChangeResultType.SKIPPED, null);
-                    }
-
-                    sibling.setType(block.getType());
-
-                    BlockData siblingData = getBlockData().clone();
-
-                    if (siblingData instanceof Bed) {
-                        // We always log the foot
-                        ((Bed) siblingData).setPart(Part.HEAD);
-                    } else if (siblingData instanceof Bisected) {
-                        // We always log the bottom
-                        ((Bisected) siblingData).setHalf(Half.TOP);
-                    }
-
-                    sibling.setBlockData(siblingData);
-                }
-            }
-
-            boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
-
-            state.update(true, physics);
-
-            if (sibling != null) {
-                sibling.update(true, physics);
-            }
-
-            // Store the state change
-            stateChange = new BlockStateChange(originalBlock, state);
+            return handleApply(block, originalBlock, parameters, cancelIfBadPlace);
         } else {
 
             // Otherwise, save the state so we can cancel if needed
@@ -462,13 +283,187 @@ public class BlockAction extends GenericAction {
                     EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), getBlockData());
                 }
             }
+            return new ChangeResult(ChangeResultType.APPLIED, stateChange);
         }
-
-        return new ChangeResult(ChangeResultType.APPLIED, stateChange);
-
     }
 
-    private ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
+    /**
+     * The BlockState object is modified by this method.
+     *
+     * @param block            Block
+     * @param originalBlock    BlockState
+     * @param parameters       QueryParameters
+     * @param cancelIfBadPlace cancelIfBadPlace
+     * @return ChangeResult.
+     */
+    private @NotNull ChangeResult handleApply(final Block block, final BlockState originalBlock,
+                                     final QueryParameters parameters, final boolean cancelIfBadPlace) {
+        BlockState state = block.getState();
+        // If lily pad, check that block below is water. Be sure
+        // it's set to stationary water so the lily pad will sit
+        switch (getMaterial()) {
+            case LILY_PAD:
+                final Block below = block.getRelative(BlockFace.DOWN);
+                if (below.getType().equals(WATER) || below.getType().equals(AIR)) {
+                    below.setType(WATER);
+                } else {
+                    // Prism.debug("Lilypad skipped because no water exists below.");
+                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                }
+                break;
+            case NETHER_PORTAL: // Only way is to set the portal on fire.
+                final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
+                if (obsidian != null) {
+                    final Block above = obsidian.getRelative(BlockFace.UP);
+                    if (!(above.getType() == NETHER_PORTAL)) {
+                        above.setType(FIRE);
+                        return new ChangeResult(ChangeResultType.APPLIED, null);
+                    }
+                }
+                break;
+            case JUKEBOX:
+                setBlockData(Bukkit.createBlockData(JUKEBOX));
+                break;
+            default:
+                break;
+
+        }
+        state.setType(getMaterial());
+        BlockActionData blockActionData = getActionData();
+
+        if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
+                && blockActionData instanceof SkullActionData) {
+            return handleSkulls(block, blockActionData, originalBlock);
+        }
+
+        if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
+
+            final SpawnerActionData s = (SpawnerActionData) blockActionData;
+
+            // Set spawner data
+            final CreatureSpawner spawner = (CreatureSpawner) state;
+            spawner.setDelay(s.getDelay());
+            spawner.setSpawnedType(s.getEntityType());
+
+        }
+
+        if (getMaterial() == COMMAND_BLOCK
+                && blockActionData instanceof CommandActionData) {
+            final CommandBlock cmbBlock = (CommandBlock) state;
+            final CommandActionData c = (CommandActionData) blockActionData;
+            cmbBlock.setCommand(c.command);
+        }
+
+        if (parameters.getProcessType() == PrismProcessType.ROLLBACK
+                && Tag.SIGNS.isTagged(getMaterial())
+                && blockActionData instanceof SignActionData) {
+
+            final SignActionData s = (SignActionData) blockActionData;
+
+            // Verify block is sign. Rarely, if the block somehow pops off
+            // or fails
+            // to set it causes ClassCastException:
+            // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
+            // cannot be cast to org.bukkit.block.Sign
+            // https://snowy-evening.com/botsko/prism/455/
+            if (state instanceof Sign) {
+
+                // Set sign data
+                final Sign sign = (Sign) state;
+
+                if (s.lines != null) {
+                    for (int i = 0; i < s.lines.length; ++i) {
+                        sign.setLine(i, s.lines[i]);
+                    }
+                }
+            }
+        }
+
+        state.setBlockData(getBlockData());
+
+        // -----------------------------
+        // Sibling logic marker
+
+        // If the material is a crop that needs soil, we must restore the soil
+        // This may need to go before setting the block, but I prefer the BlockUtil logic to use materials.
+        BlockState sibling = null;
+
+        if (BlockUtils.materialRequiresSoil(getMaterial())) {
+            sibling = block.getRelative(BlockFace.DOWN).getState();
+
+            if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
+                Prism.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
+                        + getMaterial().name());
+                return new ChangeResult(ChangeResultType.SKIPPED, null);
+            }
+            sibling.setType(FARMLAND);
+        }
+
+        // Chest sides can be broken independently, ignore them
+        if (state.getType() != CHEST && state.getType() != TRAPPED_CHEST) {
+            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(state);
+
+            if (s != null) {
+                sibling = s.getState();
+
+                if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(sibling.getType())) {
+                    Prism.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
+                            + getMaterial().name());
+                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                }
+
+                sibling.setType(block.getType());
+
+                BlockData siblingData = getBlockData().clone();
+
+                if (siblingData instanceof Bed) {
+                    // We always log the foot
+                    ((Bed) siblingData).setPart(Part.HEAD);
+                } else if (siblingData instanceof Bisected) {
+                    // We always log the bottom
+                    ((Bisected) siblingData).setHalf(Half.TOP);
+                }
+
+                sibling.setBlockData(siblingData);
+            }
+        }
+
+        boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
+
+        state.update(true, physics);
+
+        if (sibling != null) {
+            sibling.update(true, physics);
+        }
+        return new ChangeResult(ChangeResultType.APPLIED,new BlockStateChange(originalBlock,state));
+    }
+
+    private @NotNull ChangeResult handleSkulls(final Block block, BlockActionData blockActionData,
+                                               final BlockState originalBlock) {
+        block.setType(getMaterial());
+        BlockState state = block.getState();
+        final SkullActionData s = (SkullActionData) blockActionData;
+
+        if (state.getBlockData() instanceof Rotatable) {
+            final Rotatable r = (Rotatable) state.getBlockData();
+            r.setRotation(s.getRotation());
+            state.setBlockData(r);
+        } else {
+            final Directional d = (Directional) state.getBlockData();
+            d.setFacing(s.getRotation());
+            state.setBlockData(d);
+        }
+        state = block.getState();
+
+        if (!s.owner.isEmpty()) {
+            final Skull skull = (Skull) state;
+            skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf((s.owner))));
+        }
+        BlockStateChange stateChange = new BlockStateChange(originalBlock, state);
+        return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+    }
+
+    ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
 
         BlockStateChange stateChange;
 
@@ -480,23 +475,17 @@ public class BlockAction extends GenericAction {
                     && !parameters.hasFlag(Flag.OVERWRITE)) {
                 return new ChangeResult(ChangeResultType.SKIPPED, null);
             }
+            // Capture the block before we change it
 
             final BlockState originalBlock = block.getState();
             if (!isPreview) {
-
-                // Capture the block before we change it
-
                 // Set
                 block.setType(AIR);
-
                 // Capture the new state
                 final BlockState newBlock = block.getState();
-
                 // Store the state change
                 stateChange = new BlockStateChange(originalBlock, newBlock);
-
             } else {
-
                 // Otherwise, save the state so we can cancel if needed
                 // Note: we save the original state as both old/new so we can
                 // re-use blockStateChanges
@@ -518,13 +507,23 @@ public class BlockAction extends GenericAction {
         return new ChangeResult(ChangeResultType.SKIPPED, null);
     }
 
+    /**
+     * BlockActionData.
+     *
+     * @author botskonet
+     */
     static class BlockActionData {
     }
 
     public static class CommandActionData extends BlockActionData {
-        public String command;
+        String command;
     }
 
+    /**
+     * Spawner ActionData.
+     *
+     * @author botskonet
+     */
     public static class SpawnerActionData extends BlockActionData {
 
         String entityType;
@@ -539,6 +538,11 @@ public class BlockAction extends GenericAction {
         }
     }
 
+    /**
+     * SkullActionData.
+     *
+     * @author botskonet
+     */
     public static class SkullActionData extends BlockActionData {
 
         String rotation;
