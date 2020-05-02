@@ -1,128 +1,84 @@
 package me.botsko.prism.appliers;
 
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.events.BlockStateChange;
+import org.bukkit.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.bukkit.entity.Entity;
-
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.events.BlockStateChange;
-
 public class ApplierResult {
 
-	/**
-	 * 
-	 */
-	private final int changes_applied;
 
-	/**
-	 * 
-	 */
-	private final int changes_skipped;
+    private final int changesApplied;
 
-	/**
-	 * 
-	 */
-	private final int changes_planned;
+    private final int changesSkipped;
 
-	/**
-	 * 
-	 */
-	private final boolean is_preview;
+    private final int changesPlanned;
 
-	/**
-	 * 
-	 */
-	private final HashMap<Entity, Integer> entities_moved;
+    private final boolean isPreview;
 
-	/**
-	 * 
-	 */
-	private final ArrayList<BlockStateChange> blockStateChanges;
+    private final HashMap<Entity, Integer> entitiesMoved;
 
-	/**
-	 * 
-	 */
-	private final QueryParameters params;
+    private final ArrayList<BlockStateChange> blockStateChanges;
 
-	/**
-	 * 
-	 * @param changes_applied
-	 * @param changes_skipped
-	 * @param changes_planned
-	 * @param blockStateChanges
-	 * @param params
-	 * @param entities_moved
-	 */
-	public ApplierResult(boolean is_preview, int changes_applied, int changes_skipped, int changes_planned,
-			ArrayList<BlockStateChange> blockStateChanges, QueryParameters params,
-			HashMap<Entity, Integer> entities_moved) {
-		this.changes_applied = changes_applied;
-		this.changes_skipped = changes_skipped;
-		this.changes_planned = changes_planned;
-		this.is_preview = is_preview;
-		this.blockStateChanges = blockStateChanges;
-		this.params = params;
-		this.entities_moved = entities_moved;
-	}
+    private final QueryParameters params;
 
-	/**
-	 * @return the changes_applied
-	 */
-	public int getChangesApplied() {
-		return changes_applied;
-	}
+    /**
+     * Constructor.
+     *
+     * @param isPreview         int
+     * @param changesApplied    int
+     * @param changesSkipped    int
+     * @param changesPlanned    int
+     * @param blockStateChanges List
+     * @param params            Query Params
+     * @param entitiesMoved     Map
+     */
+    public ApplierResult(boolean isPreview, int changesApplied, int changesSkipped, int changesPlanned,
+                         ArrayList<BlockStateChange> blockStateChanges, QueryParameters params,
+                         HashMap<Entity, Integer> entitiesMoved) {
+        this.changesApplied = changesApplied;
+        this.changesSkipped = changesSkipped;
+        this.changesPlanned = changesPlanned;
+        this.isPreview = isPreview;
+        this.blockStateChanges = blockStateChanges;
+        this.params = params;
+        this.entitiesMoved = entitiesMoved;
+    }
 
-	/**
-	 * @return the changes_skipped
-	 */
-	public int getChangesSkipped() {
-		return changes_skipped;
-	}
+    public int getChangesApplied() {
+        return changesApplied;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public int getChangesPlanned() {
-		return changes_planned;
-	}
+    public int getChangesSkipped() {
+        return changesSkipped;
+    }
 
-	/**
-	 * @return the is_preview
-	 */
-	public boolean isPreview() {
-		return is_preview;
-	}
+    public int getChangesPlanned() {
+        return changesPlanned;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public HashMap<Entity, Integer> getEntitiesMoved() {
-		return entities_moved;
-	}
 
-	/**
-	 * @return the undo
-	 */
-	public ArrayList<BlockStateChange> getBlockStateChanges() {
-		return blockStateChanges;
-	}
+    public boolean isPreview() {
+        return isPreview;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public PrismProcessType getProcessType() {
-		return params.getProcessType();
-	}
 
-	/**
-	 * 
-	 * @return
-	 */
-	public QueryParameters getParameters() {
-		return params;
-	}
+    public HashMap<Entity, Integer> getEntitiesMoved() {
+        return entitiesMoved;
+    }
+
+
+    public ArrayList<BlockStateChange> getBlockStateChanges() {
+        return blockStateChanges;
+    }
+
+    public PrismProcessType getProcessType() {
+        return params.getProcessType();
+    }
+
+    public QueryParameters getParameters() {
+        return params;
+    }
 }

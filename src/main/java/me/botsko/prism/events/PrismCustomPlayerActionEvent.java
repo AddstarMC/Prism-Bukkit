@@ -9,72 +9,65 @@ import org.jetbrains.annotations.NotNull;
 
 public class PrismCustomPlayerActionEvent extends Event {
 
-	private static final HandlerList handlers = new HandlerList();
-	private final String plugin_name;
-	private final String action_type_name;
-	private final Player player;
-	private final String message;
+    private static final HandlerList handlers = new HandlerList();
+    private final String pluginName;
+    private final String actionTypeName;
+    private final Player player;
+    private final String message;
 
-	/**
-	 * 
-	 * @param plugin
-	 * @param action_type_name
-	 * @param player
-	 * @param message
-	 */
-	public PrismCustomPlayerActionEvent(Plugin plugin, String action_type_name, Player player, String message) {
-		this.plugin_name = plugin.getName();
-		this.action_type_name = action_type_name;
-		this.player = player;
-		this.message = message + ChatColor.GOLD + " [" + this.plugin_name + "]" + ChatColor.DARK_AQUA;
-	}
+    /**
+     * Constructor.
+     * @param plugin Plugin
+     * @param actionTypeName String
+     * @param player Player
+     * @param message String
+     */
+    public PrismCustomPlayerActionEvent(Plugin plugin, String actionTypeName, Player player, String message) {
+        this.pluginName = plugin.getName();
+        this.actionTypeName = actionTypeName;
+        this.player = player;
+        this.message = message + ChatColor.GOLD + " [" + this.pluginName + "]" + ChatColor.DARK_AQUA;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public String getPluginName() {
-		return plugin_name;
-	}
+    /**
+     * Get plugin name.
+     * @return String
+     */
+    public String getPluginName() {
+        return pluginName;
+    }
 
-	/**
-	 * 
-	 * @return
-	 */
-	public String getActionTypeName() {
-		return action_type_name;
-	}
+    /**
+     * Get Action Name.
+     * @return String
+     */
+    public String getActionTypeName() {
+        return actionTypeName;
+    }
 
-	/**
-	 * @return the player
-	 */
-	public Player getPlayer() {
-		return player;
-	}
+    /**
+     * Get the Player.
+     * @return the player
+     */
+    public Player getPlayer() {
+        return player;
+    }
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /**
+     * Get the message.
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * Required by bukkit for proper event handling.
-	 */
+    /**
+     * Required by bukkit for proper event handling.
+     */
 
-	@NotNull
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	/**
-	 * Required by bukkit for proper event handling.
-	 * 
-	 * @return
-	 */
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+    @NotNull
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
 }

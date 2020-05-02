@@ -7,12 +7,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements DeleteQuery {
+public class SqlDeleteQueryBuilder extends SqlSelectQueryBuilder implements DeleteQuery {
 
     /**
      *
      */
-    public SQLDeleteQueryBuilder(PrismDataSource dataSource) {
+    public SqlDeleteQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
@@ -58,7 +58,7 @@ public class SQLDeleteQueryBuilder extends SQLSelectQueryBuilder implements Dele
 
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
-                Statement s = connection.createStatement();
+                Statement s = connection.createStatement()
         ) {
             cycle_rows_affected = s.executeUpdate(getQuery(parameters, shouldGroup));
             total_rows_affected += cycle_rows_affected;

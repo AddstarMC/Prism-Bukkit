@@ -1,6 +1,5 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
@@ -11,9 +10,8 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
-
+import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -22,8 +20,12 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
-import org.bukkit.block.data.*;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
@@ -44,6 +46,7 @@ import static org.bukkit.Material.PLAYER_WALL_HEAD;
 import static org.bukkit.Material.SPAWNER;
 import static org.bukkit.Material.TRAPPED_CHEST;
 import static org.bukkit.Material.WATER;
+
 
 public class BlockAction extends GenericAction {
 
@@ -184,7 +187,7 @@ public class BlockAction extends GenericAction {
             final CommandActionData ad = (CommandActionData) blockActionData;
             name += " (" + ad.command + ")";
         }
-        if (getActionType().getName().equals("crop-trample") && getMaterial() == Material.AIR) {
+        if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
         }
         return name;
@@ -231,9 +234,6 @@ public class BlockAction extends GenericAction {
 
     }
 
-    /**
-     *
-     */
     @Override
     public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
@@ -475,25 +475,18 @@ public class BlockAction extends GenericAction {
                     && !parameters.hasFlag(Flag.OVERWRITE)) {
                 return new ChangeResult(ChangeResultType.SKIPPED, null);
             }
+            // Capture the block before we change it
 
+            final BlockState originalBlock = block.getState();
             if (!isPreview) {
-
-                // Capture the block before we change it
-                final BlockState originalBlock = block.getState();
-
                 // Set
                 block.setType(AIR);
-
                 // Capture the new state
                 final BlockState newBlock = block.getState();
-
                 // Store the state change
                 stateChange = new BlockStateChange(originalBlock, newBlock);
-
             } else {
-
                 // Otherwise, save the state so we can cancel if needed
-                final BlockState originalBlock = block.getState();
                 // Note: we save the original state as both old/new so we can
                 // re-use blockStateChanges
                 stateChange = new BlockStateChange(originalBlock, originalBlock);

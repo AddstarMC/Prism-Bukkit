@@ -32,12 +32,11 @@ CREATE TABLE IF NOT EXISTS `prism_data_extra`
     `data`     text                NULL,
     `te_data`  text                NULL,
     PRIMARY KEY (`extra_id`),
-    KEY `data_id` (`data_id`)
+    KEY 'data_id' (`data_id`)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
 ALTER TABLE `prism_data_extra`
-    ADD CONSTRAINT `prism_data_extra_ibfk_1`
-        FOREIGN KEY (`data_id`) REFERENCES `prism_data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+    ADD CONSTRAINT `prism_data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `prism_data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 CREATE TABLE IF NOT EXISTS `prism_meta`
 (
     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,

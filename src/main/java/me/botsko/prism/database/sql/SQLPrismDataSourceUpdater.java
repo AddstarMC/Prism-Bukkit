@@ -13,10 +13,17 @@ import java.sql.Statement;
  * Created by benjamincharlton on 5/04/2019.
  */
 public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
-    private MySqlPrismDataSource dataSource;
+    private final MySqlPrismDataSource dataSource;
 
     public SQLPrismDataSourceUpdater(MySqlPrismDataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
+        // this "backwards" insert matches the order in the prepared statement
+        st.setString(1, after);
+        st.setString(2, before);
+        st.addBatch();
     }
 
     public void v1_to_v2() {
@@ -35,8 +42,7 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
         String prefix = dataSource.getPrefix();
         String query;
         try (Connection conn = dataSource.getConnection();
-             Statement st = conn.createStatement())
-        {
+             Statement st = conn.createStatement()) {
 
             // Key must be dropped before we can edit colum types
             query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix + "data_extra_ibfk_1`;";
@@ -60,19 +66,13 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
             dataSource.handleDataSourceException(e);
         }
     }
-    private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
-        // this "backwards" insert matches the order in the prepared statement
-        st.setString(1, after);
-        st.setString(2, before);
-        st.addBatch();
-    }
 
     @Override
     public void v6_to_v7() {
 
         String prefix = dataSource.getPrefix();
         String query = "UPDATE `" + prefix + "id_map` SET material = ? WHERE material = ?";
-        try(
+        try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement st = conn.prepareStatement(query)
         ) {
@@ -82,8 +82,7 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
             v7_batch_material(st, "SIGN", "OAK_SIGN");
             v7_batch_material(st, "WALL_SIGN", "OAK_WALL_SIGN");
             st.executeBatch();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             dataSource.handleDataSourceException(e);
         }
     }

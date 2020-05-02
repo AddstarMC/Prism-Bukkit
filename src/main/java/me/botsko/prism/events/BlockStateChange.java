@@ -4,37 +4,33 @@ import org.bukkit.block.BlockState;
 
 public class BlockStateChange {
 
-	/**
-	 * 
-	 */
-	private final BlockState originalBlock;
 
-	/**
-	 * 
-	 */
-	private final BlockState newBlock;
+    private final BlockState originalBlock;
+    private final BlockState newBlock;
 
-	/**
-	 * 
-	 * @param originalBlock
-	 * @param newBlock
-	 */
-	public BlockStateChange(BlockState originalBlock, BlockState newBlock) {
-		this.originalBlock = originalBlock;
-		this.newBlock = newBlock;
-	}
+    /**
+     * Constructor.
+     * @param originalBlock BlockState
+     * @param newBlock BlockState
+     */
+    public BlockStateChange(BlockState originalBlock, BlockState newBlock) {
+        this.originalBlock = originalBlock;
+        this.newBlock = newBlock;
+    }
 
-	/**
-	 * @return the originalBlock
-	 */
-	public BlockState getOriginalBlock() {
-		return originalBlock;
-	}
+    /**
+     * Get Original.
+     * @return the originalBlock
+     */
+    public BlockState getOriginalBlock() {
+        return originalBlock;
+    }
 
-	/**
-	 * @return the newBlock
-	 */
-	public BlockState getNewBlock() {
-		return newBlock;
-	}
+    /**
+     * Get new.
+     * @return the newBlock
+     */
+    public BlockState getNewBlock() {
+        return newBlock;
+    }
 }
