@@ -3,23 +3,50 @@ package me.botsko.prism.database.sql;
 import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.BlockReportQuery;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.InsertQuery;
+import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-
-
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Map;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 8/04/2019.
  */
 public abstract class SQLPrismDataSource implements PrismDataSource {
+
+    protected static HikariDataSource database = null;
+    protected String name = "unconfigured";
+    protected ConfigurationSection section;
+    private boolean paused; //when set the datasource will not allow insertions;
+    private final Logger log;
+    private final SettingsQuery settingsQuery = null;
+    private String prefix;
+
+    public SQLPrismDataSource(ConfigurationSection section) {
+        log = LoggerFactory.getLogger("Prism");
+        this.section = section;
+        setPrefix(section.getString("prefix"));
+        setFile();
+        createDataSource();
+    }
 
     @Override
     public boolean isPaused() {
@@ -30,40 +57,23 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
         this.paused = paused;
     }
 
-    private boolean paused; //when set the datasource will not allow insertions;
-
-    protected String name = "unconfigured";
-    private Logger log;
-    protected static HikariDataSource database = null;
-    private SettingsQuery settingsQuery = null;
-    protected ConfigurationSection section;
-
-    public SQLPrismDataSource(ConfigurationSection section) {
-        log = LoggerFactory.getLogger("Prism");
-        this.section = section;
-        setPrefix(section.getString("prefix"));
-        setFile();
-        createDataSource();
-    }
     @Nonnull
-    public String getName(){
+    public String getName() {
         return name;
     }
+
     @Override
     public Logger getLog() {
         return log;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    private String prefix;
-
-
     @Override
     public String getPrefix() {
         return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     @Override
@@ -72,7 +82,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             if (database != null)
                 return database.getConnection();
         } catch (SQLException e) {
-            log.info("Could not retreive a connection");
+            log.info("Could not retrieve a connection");
             return null;
         }
         return null;
@@ -80,7 +90,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public void rebuildDataSource() {
-// Close pool connections when plugin disables
+        // Close pool connections when plugin disables
         if (database != null) {
             try {
                 database.getConnection().close();
@@ -310,7 +320,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
         }
     }
 
-    public void cacheWorldPrimaryKeys(HashMap prismWorlds) {
+    public void cacheWorldPrimaryKeys(Map<String, Integer> prismWorlds) {
 
         Connection conn = null;
         PreparedStatement s = null;
@@ -388,40 +398,41 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public SelectQuery createSelectQuery() {
-        return new SQLSelectQueryBuilder(this);
+        return new SqlSelectQueryBuilder(this);
     }
 
     @Override
     public SelectIDQuery createSelectIDQuery() {
-        return new SQLSelectIDQueryBuilder(this);
+        return new SqlSelectIDQueryBuilder(this);
     }
 
     @Override
     public DeleteQuery createDeleteQuery() {
-        return new SQLDeleteQueryBuilder(this);
+        return new SqlDeleteQueryBuilder(this);
     }
 
     @Override
     public BlockReportQuery createBlockReportQuery() {
-        return new SQLBlockReportQueryBuilder(this);
+        return new SqlBlockReportQueryBuilder(this);
     }
 
     @Override
     public ActionReportQuery createActionReportQuery() {
-        return new SQLActionReportQueryBuilder(this);
+        return new SqlActionReportQueryBuilder(this);
     }
 
     @Override
     public SettingsQuery createSettingsQuery() {
-        if (settingsQuery == null)
+        if (settingsQuery == null) {
             return new SQLSettingsQuery(this);
-        else
+        } else {
             return settingsQuery;
+        }
     }
 
     @Override
     public SelectProcessActionQuery createProcessQuery() {
-        return new SQLSelectProcessQuery(this);
+        return new SqlSelectProcessQuery(this);
     }
 
     public InsertQuery getDataInsertionQuery() {

@@ -1,11 +1,5 @@
 package me.botsko.prism.database.sql;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.ActionReportQuery;
@@ -14,12 +8,18 @@ import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-public class SQLActionReportQueryBuilder extends SQLSelectQueryBuilder implements ActionReportQuery {
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implements ActionReportQuery {
 
     /**
      *
      **/
-    public SQLActionReportQueryBuilder(PrismDataSource dataSource) {
+    public SqlActionReportQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 

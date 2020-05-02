@@ -7,131 +7,102 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
-import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.purge.PurgeChunkingUtil;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
 import org.bukkit.ChatColor;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class DeleteCommand implements SubHandler {
+public class DeleteCommand extends AbstractCommand {
 
-	/**
-	 * 
-	 */
-	private final Prism plugin;
+    private final Prism plugin;
+    private BukkitTask deleteTask;
 
-	/**
-	 * 
-	 */
-	protected BukkitTask deleteTask;
+    /**
+     * Constructor.
+     *
+     * @param plugin Prism
+     */
+    public DeleteCommand(Prism plugin) {
+        this.plugin = plugin;
+    }
 
-	/**
-	 * 
-	 */
-	protected int total_records_affected = 0, cycle_rows_affected = 0;
+    @Override
+    public void handle(final CallInfo call) {
 
-	/**
-	 * 
-	 * @param plugin
-	 * @return
-	 */
-	public DeleteCommand(Prism plugin) {
-		this.plugin = plugin;
-	}
+        // Allow for canceling tasks
+        if (call.getArgs().length > 1 && call.getArg(1).equals("cancel")) {
+            if (plugin.getPurgeManager().deleteTask != null) {
+                plugin.getPurgeManager().deleteTask.cancel();
+                call.getSender().sendMessage(Prism.messenger.playerMsg("Current purge tasks have been canceled."));
+            } else {
+                call.getSender().sendMessage(Prism.messenger.playerError("No purge task is currently running."));
+            }
+            return;
+        }
 
-	/**
-	 * Handle the command
-	 */
-	@Override
-	public void handle(final CallInfo call) {
+        // Allow for wiping live queue
+        if (call.getArgs().length > 1 && call.getArg(1).equals("queue")) {
+            if (RecordingQueue.getQueue().size() > 0) {
+                Prism.log("User " + call.getSender().getName()
+                        + " wiped the live queue before it could be written to the database. "
+                        + RecordingQueue.getQueue().size() + " events lost.");
+                RecordingQueue.getQueue().clear();
+                call.getSender().sendMessage(Prism.messenger.playerSuccess("Unwritten data in queue cleared."));
+            } else {
+                call.getSender().sendMessage(Prism.messenger.playerError("Event queue is empty, nothing to wipe."));
+            }
+            return;
+        }
 
-		// Allow for canceling tasks
-		if (call.getArgs().length > 1 && call.getArg(1).equals("cancel")) {
-			if (plugin.getPurgeManager().deleteTask != null) {
-				plugin.getPurgeManager().deleteTask.cancel();
-				call.getSender().sendMessage(Prism.messenger.playerMsg("Current purge tasks have been canceled."));
-			}
-			else {
-				call.getSender().sendMessage(Prism.messenger.playerError("No purge task is currently running."));
-			}
-			return;
-		}
+        // Process and validate all of the arguments
+        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
+                PrismProcessType.DELETE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+        if (parameters == null) {
+            return;
+        }
+        parameters.setStringFromRawArgs(call.getArgs(), 1);
 
-		// Allow for wiping live queue
-		if (call.getArgs().length > 1 && call.getArg(1).equals("queue")) {
-			if (RecordingQueue.getQueue().size() > 0) {
-				Prism.log("User " + call.getSender().getName()
-						+ " wiped the live queue before it could be written to the database. "
-						+ RecordingQueue.getQueue().size() + " events lost.");
-				RecordingQueue.getQueue().clear();
-				call.getSender().sendMessage(Prism.messenger.playerSuccess("Unwritten data in queue cleared."));
-			}
-			else {
-				call.getSender().sendMessage(Prism.messenger.playerError("Event queue is empty, nothing to wipe."));
-			}
-			return;
-		}
+        StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
+        if (parameters.getFoundArgs().size() > 0) {
 
-		// Process and validate all of the arguments
-		final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
-				PrismProcessType.DELETE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
-		if (parameters == null) {
-			return;
-		}
-		parameters.setStringFromRawArgs(call.getArgs(), 1);
+            call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder));
+            call.getSender().sendMessage(Prism.messenger
+                    .playerHeaderMsg("Starting purge cycle." + ChatColor.GRAY + " No one will ever know..."));
 
-		// determine if defaults were used
-		final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
-		StringBuilder defaultsReminder = new StringBuilder();
-		if (!defaultsUsed.isEmpty()) {
-			defaultsReminder.append(" using defaults:");
-			for (final String d : defaultsUsed) {
-				defaultsReminder.append(" ").append(d);
-			}
-		}
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
+                if (purgeTickDelay < 1) {
+                    purgeTickDelay = 20;
+                }
 
-		if (parameters.getFoundArgs().size() > 0) {
+                // build callback
+                final SenderPurgeCallback callback = new SenderPurgeCallback();
+                callback.setSender(call.getSender());
 
-			call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder));
-			call.getSender().sendMessage(Prism.messenger
-					.playerHeaderMsg("Starting purge cycle." + ChatColor.GRAY + " No one will ever know..."));
+                // add to an arraylist so we're consistent
+                final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
+                paramList.add(parameters);
 
-			plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-				int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
-				if (purge_tick_delay < 1) {
-					purge_tick_delay = 20;
-				}
+                final ActionsQuery aq = new ActionsQuery(plugin);
+                final long minId = aq.getMinIdForQuery(parameters);
+                final long maxId = aq.getMaxIdForQuery(parameters);
 
-				// build callback
-				final SenderPurgeCallback callback = new SenderPurgeCallback();
-				callback.setSender(call.getSender());
+                Prism.log(
+                        "Beginning prism database purge cycle. Will be performed in batches so "
+                                + "we don't tie up the db...");
+                deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
+                        new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));
+            });
+        } else {
+            call.getSender().sendMessage(Prism.messenger.playerError("You must supply at least one parameter."));
+        }
+    }
 
-				// add to an arraylist so we're consistent
-				final CopyOnWriteArrayList<QueryParameters> paramList = new CopyOnWriteArrayList<>();
-				paramList.add(parameters);
-
-				final ActionsQuery aq = new ActionsQuery(plugin);
-				final long minId = aq.getMinIDForQuery(parameters);
-				final long maxId = aq.getMaxIDForQuery(parameters);
-
-				Prism.log(
-						"Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
-				deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
-						new PurgeTask(plugin, paramList, purge_tick_delay, minId, maxId, callback));
-			});
-		}
-		else {
-			call.getSender().sendMessage(Prism.messenger.playerError("You must supply at least one parameter."));
-		}
-	}
-
-	@Override
-	public List<String> handleComplete(CallInfo call) {
-		return PreprocessArgs.complete(call.getSender(), call.getArgs());
-	}
+    @Override
+    public List<String> handleComplete(CallInfo call) {
+        return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
 }

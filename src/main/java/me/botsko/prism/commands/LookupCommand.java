@@ -15,7 +15,6 @@ import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class LookupCommand implements SubHandler {
@@ -51,7 +50,7 @@ public class LookupCommand implements SubHandler {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
             // determine if defaults were used
-            final ArrayList<String> defaultsUsed = parameters.getDefaultsUsed();
+            final List<String> defaultsUsed = parameters.getDefaultsUsed();
             StringBuilder defaultsReminder = new StringBuilder();
             if (!defaultsUsed.isEmpty()) {
                 defaultsReminder.append("Using defaults:");
@@ -95,7 +94,7 @@ public class LookupCommand implements SubHandler {
                     player.sendMessage(Prism.messenger.playerHeaderMsg("Showing "
                             + results.getTotalResults()
                             + " results. Page 1 of "
-                            + results.getTotal_pages()));
+                            + results.getTotalPages()));
                     if ((defaultsReminder.length() > 0) && isSender) {
                         player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
                                 defaultsReminder.toString()));

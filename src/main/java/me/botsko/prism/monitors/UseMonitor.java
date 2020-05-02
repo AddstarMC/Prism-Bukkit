@@ -1,179 +1,127 @@
 package me.botsko.prism.monitors;
 
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-
+import me.botsko.prism.Prism;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import me.botsko.prism.Prism;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UseMonitor {
+    protected final List<String> blocksToAlertOnPlace;
+    protected final List<String> blocksToAlertOnBreak;
+    private final Prism plugin;
+    private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<>();
+    /**
+     * Constructor
+     * @param plugin Prism
+     */
+    public UseMonitor(Prism plugin) {
+        this.plugin = plugin;
+        blocksToAlertOnPlace = plugin.getConfig().getStringList("prism.alerts.uses.item-placement");
+        blocksToAlertOnPlace.replaceAll(String::toUpperCase);
+        blocksToAlertOnBreak = plugin.getConfig().getStringList("prism.alerts.uses.item-break");
+        blocksToAlertOnBreak.replaceAll(String::toUpperCase);
+        resetEventsQueue();
+    }
 
-	/**
-	 * 
-	 */
-	private final Prism plugin;
+    protected void incrementCount(String playername, String msg) {
 
-	/**
-	 * 
-	 */
-	protected final List<String> blocksToAlertOnPlace;
+        int count = 0;
+        if (countedEvents.containsKey(playername)) {
+            count = countedEvents.get(playername);
+        }
+        count++;
+        countedEvents.put(playername, count);
 
-	/**
-	 * 
-	 */
-	protected final List<String> blocksToAlertOnBreak;
+        msg = ChatColor.GRAY + playername + " " + msg;
+        if (count == 5) {
+            msg = playername + " continues - pausing warnings.";
+        }
 
-	/**
-	 * 
-	 */
-	private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<>();
+        if (count <= 5) {
+            if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
+                plugin.alertPlayers(null, msg);
+                Prism.log(TypeUtils.colorize(msg));
+            }
 
-	/**
-	 * 
-	 * @param plugin
-	 */
-	public UseMonitor(Prism plugin) {
-		this.plugin = plugin;
-		blocksToAlertOnPlace = plugin.getConfig().getStringList("prism.alerts.uses.item-placement");
-		blocksToAlertOnPlace.replaceAll(String::toUpperCase);
-		blocksToAlertOnBreak = plugin.getConfig().getStringList("prism.alerts.uses.item-break");
-		blocksToAlertOnBreak.replaceAll(String::toUpperCase);
-		resetEventsQueue();
-	}
+            // Log to commands
+            List<String> commands = plugin.getConfig().getStringList("prism.alerts.uses.log-commands");
+            MiscUtils.dispatchAlert(msg, commands);
+        }
+    }
 
-	/**
-	 * 
-	 * @param playername
-	 * @return
-	 */
-	protected void incrementCount(String playername, String msg) {
+    private boolean checkFeatureShouldCancel(Player player) {
 
-		int count = 0;
-		if (countedEvents.containsKey(playername)) {
-			count = countedEvents.get(playername);
-		}
-		count++;
-		countedEvents.put(playername, count);
+        // Ensure enabled
+        if (!plugin.getConfig().getBoolean("prism.alerts.uses.enabled"))
+            return true;
 
-		msg = ChatColor.GRAY + playername + " " + msg;
-		if (count == 5) {
-			msg = playername + " continues - pausing warnings.";
-		}
+        // Ignore players who would see the alerts
+        if (plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts"))
+            return true;
 
-		if (count <= 5) {
-			if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
-				plugin.alertPlayers(null, msg);
-				Prism.log(TypeUtils.colorize(msg));
-			}
+        // Ignore certain ranks
+        return player.hasPermission("prism.bypass-use-alerts");
+    }
 
-			// Log to commands
-			List<String> commands = plugin.getConfig().getStringList("prism.alerts.uses.log-commands");
-			MiscUtils.dispatchAlert(msg, commands);
-		}
-	}
+    public void alertOnBlockPlacement(Player player, Block block) {
 
-	/**
-	 * 
-	 * @param player
-	 * @return
-	 */
-	protected boolean checkFeatureShouldProceed(Player player) {
+        // Ensure enabled
+        if (checkFeatureShouldCancel(player))
+            return;
 
-		// Ensure enabled
-		if (!plugin.getConfig().getBoolean("prism.alerts.uses.enabled"))
-			return false;
+        final String playername = player.getName();
+        final String blockType = "" + block.getType();
 
-		// Ignore players who would see the alerts
-		if (plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts"))
-			return false;
+        // Ensure we're tracking this block
+        if (blocksToAlertOnPlace.contains(blockType) || blocksToAlertOnPlace.contains(block.getType().name())) {
+            final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
+            incrementCount(playername, "placed " + alias);
+        }
+    }
 
-		// Ignore certain ranks
-		return !player.hasPermission("prism.bypass-use-alerts");
-	}
+    public void alertOnBlockBreak(Player player, Block block) {
 
-	/**
-	 * 
-	 * @param player
-	 * @param block
-	 */
-	public void alertOnBlockPlacement(Player player, Block block) {
+        // Ensure enabled
+        if (checkFeatureShouldCancel(player))
+            return;
 
-		// Ensure enabled
-		if (!checkFeatureShouldProceed(player))
-			return;
+        final String playername = player.getName();
+        final String blockType = "" + block.getType();
 
-		final String playername = player.getName();
-		final String blockType = "" + block.getType();
+        // Ensure we're tracking this block
+        if (blocksToAlertOnBreak.contains(blockType) || blocksToAlertOnBreak.contains(block.getType().name())) {
+            final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
+            incrementCount(playername, "broke " + alias);
+        }
+    }
 
-		// Ensure we're tracking this block
-		if (blocksToAlertOnPlace.contains(blockType) || blocksToAlertOnPlace.contains(block.getType().name())) {
-			final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
-			incrementCount(playername, "placed " + alias);
-		}
-	}
+    public void alertOnItemUse(Player player, String use_msg) {
 
-	/**
-	 * 
-	 * @param player
-	 * @param block
-	 */
-	public void alertOnBlockBreak(Player player, Block block) {
+        // Ensure enabled
+        if (checkFeatureShouldCancel(player))
+            return;
 
-		// Ensure enabled
-		if (!checkFeatureShouldProceed(player))
-			return;
+        final String playername = player.getName();
+        incrementCount(playername, use_msg);
 
-		final String playername = player.getName();
-		final String blockType = "" + block.getType();
+    }
 
-		// Ensure we're tracking this block
-		if (blocksToAlertOnBreak.contains(blockType) || blocksToAlertOnBreak.contains(block.getType().name())) {
-			final String alias = Prism.getItems().getAlias(block.getType(), block.getBlockData());
-			incrementCount(playername, "broke " + alias);
-		}
-	}
+    public void alertOnVanillaXray(Player player, String use_msg) {
 
-	/**
-	 * 
-	 * @param player
-	 * @param use_msg
-	 */
-	public void alertOnItemUse(Player player, String use_msg) {
+        if (checkFeatureShouldCancel(player))
+            return;
 
-		// Ensure enabled
-		if (!checkFeatureShouldProceed(player))
-			return;
+        final String playername = player.getName();
+        incrementCount(playername, use_msg);
 
-		final String playername = player.getName();
-		incrementCount(playername, use_msg);
+    }
 
-	}
-
-	/**
-	 * 
-	 * @param player
-	 * @param use_msg
-	 */
-	public void alertOnVanillaXray(Player player, String use_msg) {
-
-		if (!checkFeatureShouldProceed(player))
-			return;
-
-		final String playername = player.getName();
-		incrementCount(playername, use_msg);
-
-	}
-
-	/**
-	 * Reset the queue every now and then Technically this can reset someone's
-	 * counts too early but that just means staff will see extra warnings.
-	 */
-	public void resetEventsQueue() {
-		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> countedEvents = new ConcurrentHashMap<>(), 7000L, 7000L);
-	}
+    private void resetEventsQueue() {
+        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> countedEvents = new ConcurrentHashMap<>(), 7000L, 7000L);
+    }
 }

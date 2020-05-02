@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -34,11 +34,12 @@ public interface PrismDataSource {
 
     void rebuildDataSource();
 
+
     DataSource getDataSource();
 
     void handleDataSourceException(SQLException e);
 
-    void cacheWorldPrimaryKeys(HashMap prismWorlds);
+    void cacheWorldPrimaryKeys(Map<String, Integer> prismWorlds);
 
     void addWorldName(String worldName);
 

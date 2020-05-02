@@ -11,7 +11,11 @@ import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.IntPair;
 import org.bukkit.Location;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 /**
@@ -20,9 +24,9 @@ import java.util.ArrayList;
  */
 @SuppressWarnings("ALL")
 public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
+    final ArrayList<Handler> extraDataQueue = new ArrayList<>();
     private PreparedStatement batchStatement;
     private Connection batchConnection;
-    final ArrayList<Handler> extraDataQueue = new ArrayList<>();
 
     /**
      * @param dataSource

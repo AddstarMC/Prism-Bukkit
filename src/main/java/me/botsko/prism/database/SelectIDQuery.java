@@ -6,9 +6,9 @@ package me.botsko.prism.database;
  */
 public interface SelectIDQuery extends SelectQuery {
 
-     void setMax();
+    void setMax();
 
-     void setMin();
+    void setMin();
 
-     long execute();
+    long execute();
 }

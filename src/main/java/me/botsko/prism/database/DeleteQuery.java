@@ -6,8 +6,8 @@ package me.botsko.prism.database;
  */
 public interface DeleteQuery extends SelectQuery {
     /**
-     *
-     * @return the number of affected rows.
+     * the number of affected rows.
+     * @return int
      */
     int execute();
 
