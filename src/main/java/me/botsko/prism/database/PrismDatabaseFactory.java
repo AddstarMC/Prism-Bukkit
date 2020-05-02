@@ -3,7 +3,6 @@ package me.botsko.prism.database;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 import me.botsko.prism.database.sql.SQLPrismDataSourceUpdater;
-import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.Connection;
@@ -16,10 +15,17 @@ public class PrismDatabaseFactory {
 
     private static PrismDataSource database = null;
 
-    public static void createDefaultConfig(Configuration configuration) {
+    /**
+     * Create a config.
+     * @param configuration ConfigurationSection
+     */
+    public static void createDefaultConfig(ConfigurationSection configuration) {
         ConfigurationSection mysql;
         if (configuration.contains("prism.mysql")) {
             mysql = configuration.getConfigurationSection("prism.mysql");
+            if(mysql == null){
+                mysql = configuration.createSection("prism.mysql");
+            }
         } else {
             mysql = configuration.createSection("prism.mysql");
         }
@@ -36,10 +42,20 @@ public class PrismDatabaseFactory {
         // queue
         section.addDefault("database.force-write-queue-on-shutdown", true);
     }
-    public static PrismDataSource createDataSource(Configuration  configuration) {
-        if(configuration == null) return null;
-        String dataSource = configuration.getString("datasource","mysql");
-        if(dataSource == null)return null;
+
+    /**
+     * Constuct Data source.
+     * @param configuration ConfigurationSection
+     * @return PrismDataSource
+     */
+    public static PrismDataSource createDataSource(ConfigurationSection configuration) {
+        if (configuration == null) {
+            return null;
+        }
+        String dataSource = configuration.getString("datasource", "mysql");
+        if (dataSource == null) {
+            return null;
+        }
         switch (dataSource) {
             case "mysql":
                 Prism.log("Attempting to configure datasource as " + dataSource);
@@ -58,10 +74,20 @@ public class PrismDatabaseFactory {
         }
 
     }
-    public static PrismDataSourceUpdater createUpdater(Configuration configuration){
-        if(configuration == null) return null;
-        String dataSource = configuration.getString("datasource","mysql");
-        if(dataSource == null)return null;
+
+    /**
+     * Create updater for datasource.
+     * @param configuration ConfigurationSection
+     * @return PrismDataSourceUpdater
+     */
+    public static PrismDataSourceUpdater createUpdater(ConfigurationSection configuration) {
+        if (configuration == null) {
+            return null;
+        }
+        String dataSource = configuration.getString("datasource", "mysql");
+        if (dataSource == null) {
+            return null;
+        }
         switch (dataSource) {
             case "mysql":
             case "derby":

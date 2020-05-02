@@ -1,8 +1,5 @@
 package me.botsko.prism.database.sql;
 
-import java.sql.*;
-import java.util.ArrayList;
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.BlockReportQuery;
@@ -14,12 +11,18 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 
-public class SQLBlockReportQueryBuilder extends SQLSelectQueryBuilder implements BlockReportQuery {
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements BlockReportQuery {
 
     /**
      *
      */
-    public SQLBlockReportQueryBuilder(PrismDataSource dataSource) {
+    public SqlBlockReportQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
