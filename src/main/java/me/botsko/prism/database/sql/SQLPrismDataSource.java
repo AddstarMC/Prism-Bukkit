@@ -348,27 +348,27 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public SelectQuery createSelectQuery() {
-        return new SQLSelectQueryBuilder(this);
+        return new SqlSelectQueryBuilder(this);
     }
 
     @Override
     public SelectIDQuery createSelectIDQuery() {
-        return new SQLSelectIDQueryBuilder(this);
+        return new SqlSelectIDQueryBuilder(this);
     }
 
     @Override
     public DeleteQuery createDeleteQuery() {
-        return new SQLDeleteQueryBuilder(this);
+        return new SqlDeleteQueryBuilder(this);
     }
 
     @Override
     public BlockReportQuery createBlockReportQuery() {
-        return new SQLBlockReportQueryBuilder(this);
+        return new SqlBlockReportQueryBuilder(this);
     }
 
     @Override
     public ActionReportQuery createActionReportQuery() {
-        return new SQLActionReportQueryBuilder(this);
+        return new SqlActionReportQueryBuilder(this);
     }
 
     @Override
@@ -381,7 +381,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
     @Override
     public SelectProcessActionQuery createProcessQuery() {
-        return new SQLSelectProcessQuery(this);
+        return new SqlSelectProcessQuery(this);
     }
 
     public InsertQuery getDataInsertionQuery() {

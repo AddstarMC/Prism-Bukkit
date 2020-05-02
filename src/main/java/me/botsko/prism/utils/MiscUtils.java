@@ -13,6 +13,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -25,6 +26,7 @@ import org.kitteh.pastegg.Visibility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class MiscUtils {
@@ -39,7 +41,7 @@ public class MiscUtils {
      * @return integer
      */
     public static int clampRadius(Player player, int desiredRadius, PrismProcessType processType,
-                                  FileConfiguration config) {
+                                  ConfigurationSection config) {
 
         if (desiredRadius <= 0) {
             return config.getInt("prism.near.default-radius");
@@ -159,7 +161,7 @@ public class MiscUtils {
         if (isPaper || isSpigot) {
             String[] message = Prism.messenger.playerMsg(a.getMessage());
             //line 1 holds the index so we set that as the highlighted for command click
-            final List<BaseComponent> toSend = new ArrayList<>();
+            final Collection<BaseComponent> toSend = new ArrayList<>();
             int i = 0;
             for (String m : message) {
                 BaseComponent[] text = TextComponent.fromLegacyText(
@@ -200,22 +202,22 @@ public class MiscUtils {
         if (player instanceof Player) {
             if (PaperLib.isPaper()) {
                 if (results.getPage() == 1) {
-                    if (results.getTotal_pages() > 1) {
+                    if (results.getTotalPages() > 1) {
                         player.sendMessage(MiscUtils.getNextButton());
                     }
-                } else if (results.getPage() < results.getTotal_pages()) {
+                } else if (results.getPage() < results.getTotalPages()) {
                     player.sendMessage(MiscUtils.getPrevNextButtons());
-                } else if (results.getPage() == results.getTotal_pages()) {
+                } else if (results.getPage() == results.getTotalPages()) {
                     player.sendMessage(MiscUtils.getPreviousButton());
                 }
             } else {
                 if (results.getPage() == 1) {
-                    if (results.getTotal_pages() > 1) {
+                    if (results.getTotalPages() > 1) {
                         player.spigot().sendMessage(MiscUtils.getNextButton());
                     }
-                } else if (results.getPage() < results.getTotal_pages()) {
+                } else if (results.getPage() < results.getTotalPages()) {
                     player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
-                } else if (results.getPage() == results.getTotal_pages()) {
+                } else if (results.getPage() == results.getTotalPages()) {
                     player.spigot().sendMessage(MiscUtils.getPreviousButton());
                 }
             }
@@ -261,7 +263,7 @@ public class MiscUtils {
      * @param msg      the message
      * @param commands the commands
      */
-    public static void dispatchAlert(String msg, List<String> commands) {
+    public static void dispatchAlert(String msg, Iterable<String> commands) {
         String colorized = TypeUtils.colorize(msg);
         String stripped = ChatColor.stripColor(colorized);
         for (String command : commands) {

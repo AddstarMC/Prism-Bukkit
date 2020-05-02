@@ -87,8 +87,6 @@ public class PlayerIdentification {
 
         return lookupByName(playerName);
 
-        // No player exists! We must create one
-
     }
 
     /**
@@ -118,7 +116,7 @@ public class PlayerIdentification {
         }
 
         // Lookup by UUID
-        prismPlayer = lookupByUUID(player.getUniqueId());
+        prismPlayer = lookupByUuid(player.getUniqueId());
         if (prismPlayer != null) {
             return prismPlayer;
         }
@@ -306,7 +304,7 @@ public class PlayerIdentification {
     /**
      * Loads `prism_players` ID for a player into our cache.
      */
-    protected static PrismPlayer lookupByUUID(UUID uuid) {
+    protected static PrismPlayer lookupByUuid(UUID uuid) {
         PrismPlayer prismPlayer = null;
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();

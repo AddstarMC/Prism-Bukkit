@@ -34,6 +34,7 @@ public interface PrismDataSource {
 
     void rebuildDataSource();
 
+
     DataSource getDataSource();
 
     void handleDataSourceException(SQLException e);

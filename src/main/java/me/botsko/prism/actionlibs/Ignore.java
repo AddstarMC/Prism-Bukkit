@@ -1,171 +1,152 @@
 package me.botsko.prism.actionlibs;
 
-import java.util.List;
-
+import me.botsko.prism.Prism;
+import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import me.botsko.prism.utils.TypeUtils;
-import me.botsko.prism.Prism;
+import java.util.List;
 
 public class Ignore {
 
-	/**
-	 * 
-	 */
-	private final Prism plugin;
+    private final Prism plugin;
+    private final List<String> ignorePlayers;
+    private final boolean ignorePlayersWhiteList;
+    private final List<String> ignoreWorlds;
+    private final boolean ignoreWorldsWhiteList;
+    private final boolean ignoreCreative;
 
-	/**
-	 * 
-	 */
-	private final List<String> ignore_players;
+    /**
+     * Create Ignore.
+     *
+     * @param plugin the plugin.
+     */
+    public Ignore(Prism plugin) {
+        this.plugin = plugin;
+        ignorePlayers = plugin.getConfig().getStringList("prism.ignore.players");
+        ignorePlayersWhiteList = plugin.getConfig().getBoolean("prism.ignore.players_whitelist");
+        ignoreWorlds = plugin.getConfig().getStringList("prism.ignore.worlds");
+        ignoreWorldsWhiteList = plugin.getConfig().getBoolean("prism.ignore.worlds_whitelist");
+        ignoreCreative = plugin.getConfig().getBoolean("prism.ignore.players-in-creative");
+    }
 
-	/**
-	 *
-	 */
-	private final boolean ignore_players_whitelist;
+    /**
+     * Check event typ.
+     *
+     * @param actionTypeName type.
+     * @return boolean
+     */
+    public boolean event(String actionTypeName) {
 
-	/**
-	 * 
-	 */
-	private final List<String> ignore_worlds;
+        // Always track Prism actions - it's mainly internal
+        if (actionTypeName.contains("prism")) {
+            return true;
+        }
 
-	/**
-	 *
-	 */
-	private final boolean ignore_worlds_whitelist;
+        if (TypeUtils.subStrOccurences(actionTypeName, "-") != 1
+                || plugin.getConfig().getBoolean("prism.tracking." + actionTypeName)) {
+            return true;
+        } else {
+            Prism.debug("Ignoring Action Type: " + actionTypeName);
+            return false;
+        }
+    }
 
-	/**
-	 * 
-	 */
-	private final boolean ignore_creative;
+    /**
+     * Check whether an action should be ignored.
+     *
+     * @param actionTypeName type to ignore.
+     * @param world          world to check.
+     * @param player         player to check
+     * @return boolean.
+     */
+    public boolean event(String actionTypeName, World world, String player) {
+        return event(actionTypeName, world) && event(player);
+    }
 
-	/**
-	 * 
-	 * @param plugin
-	 */
-	public Ignore(Prism plugin) {
-		this.plugin = plugin;
-		ignore_players = plugin.getConfig().getStringList("prism.ignore.players");
-		ignore_players_whitelist = plugin.getConfig().getBoolean("prism.ignore.players_whitelist");
-		ignore_worlds = plugin.getConfig().getStringList("prism.ignore.worlds");
-		ignore_worlds_whitelist = plugin.getConfig().getBoolean("prism.ignore.worlds_whitelist");
-		ignore_creative = plugin.getConfig().getBoolean("prism.ignore.players-in-creative");
-	}
+    /**
+     * Check whether an action should be ignored.
+     *
+     * @param actionTypeName type to ignore.
+     * @param player         player to check.
+     * @return boolean.
+     */
+    public boolean event(String actionTypeName, Player player) {
 
-	/**
-	 * 
-	 * @param actionTypeName
-	 * @return
-	 */
-	public boolean event(String actionTypeName) {
+        if (!event(actionTypeName, player.getWorld())) {
+            return false;
+        }
 
-		// Always track Prism actions - it's mainly internal
-		// use anyway.
-		if (actionTypeName.contains("prism")) {
-			return true;
-		}
+        // Does the player have perms to ignore this action type?
+        if (plugin.getConfig().getBoolean("prism.ignore.enable-perm-nodes")
+                && player.hasPermission("prism.ignore.tracking." + actionTypeName)) {
+            Prism.debug("Player has permission node to ignore " + actionTypeName);
+            return false;
+        }
 
-		// Should we ignore this action type?
-		// Prism.debug("Ignoring action type " + actionTypeName);
-		return (TypeUtils.subStrOccurences(actionTypeName, "-") != 1
-				|| plugin.getConfig().getBoolean("prism.tracking." + actionTypeName));
-	}
+        return event(player);
 
-	/**
-	 * 
-	 * @param actionTypeName
-	 * @param world
-	 * @param player
-	 * @return
-	 */
-	public boolean event(String actionTypeName, World world, String player) {
+    }
 
-		return event(actionTypeName, world) && event(player);
+    /**
+     * Check if we are ignoring a player.
+     *
+     * @param player the player
+     * @return boolean
+     */
+    public boolean event(Player player) {
 
-	}
+        if (player == null) {
+            Prism.debug("Player is null will be ignored");
+            return false;
+        }
 
-	/**
-	 * 
-	 * @param actionTypeName
-	 * @param player
-	 * @return
-	 */
-	public boolean event(String actionTypeName, Player player) {
+        // Should we ignore this player?
+        if (ignorePlayers != null && ignorePlayers.contains(player.getName()) != ignorePlayersWhiteList) {
+            Prism.debug("Player is being ignored, per config: " + player.getName());
+            return false;
+        }
 
-		if (!event(actionTypeName, player.getWorld())) {
-			return false;
-		}
+        // Should we ignore this player for being in creative?
+        if (ignoreCreative) {
+            if (player.getGameMode().equals(GameMode.CREATIVE)) {
+                Prism.debug("Player is in creative mode, creative mode ignored: " + player.getName());
+                return false;
+            }
+        }
 
-		// Does the player have perms to ignore this action type?
-		if (plugin.getConfig().getBoolean("prism.ignore.enable-perm-nodes")
-				&& player.hasPermission("prism.ignore.tracking." + actionTypeName)) {
-			Prism.debug("Player has permission node to ignore " + actionTypeName);
-			return false;
-		}
+        return true;
+    }
 
-		return event(player);
+    /**
+     * Check whether an action should be ignored.
+     *
+     * @param actionTypeName type to ignore.
+     * @param block          to check.
+     * @return boolean.
+     */
+    public boolean event(String actionTypeName, Block block) {
+        return event(actionTypeName, block.getWorld());
+    }
 
-	}
+    /**
+     * Check whether an action should be ignored.
+     *
+     * @param actionTypeName type to ignore.
+     * @param world          world to check.
+     * @return boolean.
+     */
+    public boolean event(String actionTypeName, World world) {
 
-	/**
-	 * 
-	 * @param player
-	 * @return
-	 */
-	public boolean event(Player player) {
+        // Should we ignore this world?
+        if (ignoreWorlds != null && ignoreWorlds.contains(world.getName()) != ignoreWorldsWhiteList) {
+            Prism.debug("World is being ignored, per config: " + world.getName());
+            return false;
+        }
 
-		if (player == null || player.getName() == null) {
-			Prism.debug("Player is being ignored, name is null");
-			return false;
-		}
+        return event(actionTypeName);
 
-		// Should we ignore this player?
-		if (ignore_players != null && ignore_players.contains(player.getName()) != ignore_players_whitelist) {
-			Prism.debug("Player is being ignored, per config: " + player.getName());
-			return false;
-		}
-
-		// Should we ignore this player for being in creative?
-		if (ignore_creative) {
-			if (player.getGameMode().equals(GameMode.CREATIVE)) {
-				Prism.debug("Player is in creative mode, creative mode ignored: " + player.getName());
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * 
-	 * @param actionTypeName
-	 * @param block
-	 * @return
-	 */
-	public boolean event(String actionTypeName, Block block) {
-
-		return event(actionTypeName, block.getWorld());
-
-	}
-
-	/**
-	 * 
-	 * @param actionTypeName
-	 * @param world
-	 * @return
-	 */
-	public boolean event(String actionTypeName, World world) {
-
-		// Should we ignore this world?
-		if (ignore_worlds != null && ignore_worlds.contains(world.getName()) != ignore_worlds_whitelist) {
-			Prism.debug("World is being ignored, per config: " + world.getName());
-			return false;
-		}
-
-		return event(actionTypeName);
-
-	}
+    }
 }

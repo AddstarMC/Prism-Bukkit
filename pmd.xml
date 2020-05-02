@@ -1,0 +1,12 @@
+<ruleset name="Prism_Bukkit">
+    <description>
+        A basic set of rules to ensure error free code
+    </description>
+    <rule ref="category/java/errorprone.xml" />
+    <rule ref="category/java/multithreading.xml" />
+    <rule ref="category/java/bestpractices.xml"  />
+    <rule ref="category/java/codestyle.xml" />
+    <rule ref="category/java/performance.xml"  />
+    <rule ref="category/java/design.xml" />
+    <rule ref="category/pom/errorprone.xml" />
+</ruleset>

@@ -9,9 +9,9 @@ import me.botsko.prism.appliers.ChangeResult;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
@@ -20,11 +20,8 @@ import java.util.UUID;
 public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
-
-    private boolean canceled = false;
-
     private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-
+    private boolean canceled = false;
     private ActionType type;
 
     private long id;
@@ -65,17 +62,6 @@ public abstract class GenericAction implements Handler {
     public void setCustomDesc(String description) {
     }
 
-    /**
-     * Set Action Type from a String.
-     *
-     * @param actionType String
-     */
-    public void setActionType(String actionType) {
-        if (actionType != null) {
-            setActionType(Prism.getActionRegistry().getAction(actionType));
-        }
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -109,21 +95,21 @@ public abstract class GenericAction implements Handler {
     /*
      * (non-Javadoc)
      *
-     * @see me.botsko.prism.actions.Handler#getDisplayDate()
-     */
-    @Override
-    public String getDisplayDate() {
-        return date.format(epoch * 1000);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see me.botsko.prism.actions.Handler#setDisplayDate(java.lang.String)
      */
     @Override
     public void setUnixEpoch(long epoch) {
         this.epoch = epoch;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see me.botsko.prism.actions.Handler#getDisplayDate()
+     */
+    @Override
+    public String getDisplayDate() {
+        return date.format(epoch * 1000);
     }
 
     /*
@@ -188,6 +174,17 @@ public abstract class GenericAction implements Handler {
     }
 
     /**
+     * Set Action Type from a String.
+     *
+     * @param actionType String
+     */
+    public void setActionType(String actionType) {
+        if (actionType != null) {
+            setActionType(Prism.getActionRegistry().getAction(actionType));
+        }
+    }
+
+    /**
      * Set the Action Type.
      *
      * @param type {@link ActionType}
@@ -195,17 +192,6 @@ public abstract class GenericAction implements Handler {
     @Override
     public void setActionType(ActionType type) {
         this.type = type;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setWorld(org.bukkit.World)
-     */
-    @Override
-    public void setWorld(World world) {
-        createWorldIfNull();
-        location.setWorld(world);
     }
 
     private void createWorldIfNull() {
@@ -219,16 +205,10 @@ public abstract class GenericAction implements Handler {
      *
      * @param player OfflinePlayer
      */
-    public void setPlayer(OfflinePlayer player) {
+    public void setPlayer(AnimalTamer player) {
         if (player != null) {
-            setUUID(player.getUniqueId());
+            setUuid(player.getUniqueId());
         }
-    }
-
-    @Override
-    public void setUUID(UUID uuid) {
-        this.playerUuid = uuid;
-        this.sourceName = null;
     }
 
     /*
@@ -245,11 +225,6 @@ public abstract class GenericAction implements Handler {
         return Bukkit.getOfflinePlayer(playerUuid).getName();
     }
 
-    @Override
-    public UUID getUUID() {
-        return playerUuid;
-    }
-
     /*
      * (non-Javadoc)
      *
@@ -259,6 +234,17 @@ public abstract class GenericAction implements Handler {
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
         this.playerUuid = null;
+    }
+
+    @Override
+    public UUID getUuid() {
+        return playerUuid;
+    }
+
+    @Override
+    public void setUuid(UUID uuid) {
+        this.playerUuid = uuid;
+        this.sourceName = null;
     }
 
     /*
@@ -295,19 +281,6 @@ public abstract class GenericAction implements Handler {
     }
 
     /**
-     * Set Location.
-     *
-     * @param loc Location
-     */
-    public void setLoc(Location loc) {
-        if (loc != null) {
-            location = loc.clone();
-        } else {
-            location = null;
-        }
-    }
-
-    /**
      * Get World.
      *
      * @return World
@@ -320,6 +293,17 @@ public abstract class GenericAction implements Handler {
         return null;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see me.botsko.prism.actions.Handler#setWorld(org.bukkit.World)
+     */
+    @Override
+    public void setWorld(World world) {
+        createWorldIfNull();
+        location.setWorld(world);
+    }
+
     /**
      * Get Location.
      *
@@ -329,9 +313,37 @@ public abstract class GenericAction implements Handler {
         return location;
     }
 
+    /**
+     * Set Location.
+     *
+     * @param loc Location
+     */
+    public void setLoc(Location loc) {
+        if (loc != null) {
+            location = loc.clone();
+        } else {
+            location = null;
+        }
+    }
+
+    @Override
+    public Material getMaterial() {
+        return material;
+    }
+
     @Override
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see me.botsko.prism.actions.Handler#getBlockSubId()
+     */
+    @Override
+    public BlockData getBlockData() {
+        return blockData;
     }
 
     /*
@@ -345,32 +357,32 @@ public abstract class GenericAction implements Handler {
     }
 
     @Override
-    public void setDurability(short durability) {
-    }
-
-    @Override
-    public Material getMaterial() {
-        return material;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#getBlockSubId()
-     */
-    @Override
-    public BlockData getBlockData() {
-        return blockData;
-    }
-
-    @Override
     public short getDurability() {
         return 0;
     }
 
     @Override
+    public void setDurability(short durability) {
+    }
+
+    @Override
+    public Material getOldMaterial() {
+        return oldBlock;
+    }
+
+    @Override
     public void setOldMaterial(Material material) {
         this.oldBlock = material;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
+     */
+    @Override
+    public BlockData getOldBlockData() {
+        return oldBlockData;
     }
 
     /*
@@ -384,37 +396,12 @@ public abstract class GenericAction implements Handler {
     }
 
     @Override
-    public void setOldDurability(short durability) {
-    }
-
-    @Override
-    public Material getOldMaterial() {
-        return oldBlock;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
-     */
-    @Override
-    public BlockData getOldBlockData() {
-        return oldBlockData;
-    }
-
-    @Override
     public short getOldDurability() {
         return 0;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
-     */
     @Override
-    public void setAggregateCount(int aggregateCount) {
-        this.aggregateCount = aggregateCount;
+    public void setOldDurability(short durability) {
     }
 
     /*
@@ -427,6 +414,15 @@ public abstract class GenericAction implements Handler {
         return aggregateCount;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
+     */
+    @Override
+    public void setAggregateCount(int aggregateCount) {
+        this.aggregateCount = aggregateCount;
+    }
 
     @Override
     public boolean isCanceled() {
