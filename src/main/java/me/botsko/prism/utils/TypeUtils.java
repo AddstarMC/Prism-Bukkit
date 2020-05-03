@@ -10,13 +10,14 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class TypeUtils {
 
     /**
-     * Is the string numeric
+     * Is the string numeric.
      *
-     * @param str
-     * @return
+     * @param str String
+     * @return boolean
      */
     public static boolean isNumeric(String str) {
         try {
@@ -28,8 +29,10 @@ public class TypeUtils {
     }
 
     /**
-     * @param val
-     * @return
+     * Format a double to a float.
+     *
+     * @param val double
+     * @return Float
      */
     public static float formatDouble(double val) {
         return Float.parseFloat(new DecimalFormat("#.##").format(val));
@@ -55,8 +58,8 @@ public class TypeUtils {
     /**
      * Converts colors place-holders.
      *
-     * @param text
-     * @return
+     * @param text String
+     * @return String
      */
     public static String colorize(String text) {
         return ChatColor.translateAlternateColorCodes('&', text);
@@ -64,35 +67,36 @@ public class TypeUtils {
 
     /**
      * Strips all text format codes - from colors codes like &2 to text format codes
-     * like &k
+     * like &k.
      *
-     * @param text
-     * @return
+     * @param text String
+     * @return String
      */
     public static String stripTextFormatCodes(String text) {
         return ChatColor.stripColor(text.replaceAll("(&+([a-z0-9A-Z])+)", ""));
     }
 
     /**
-     * Joins an arraylist together by a delimiter
+     * Joins an arraylist together by a delimiter.
      *
-     * @param s
-     * @param delimiter
-     * @return
+     * @param s         Collection
+     * @param delimiter String
+     * @return String
      */
     public static String join(Collection<String> s, String delimiter) {
         StringBuilder buffer = new StringBuilder();
         Iterator<?> iter = s.iterator();
         while (iter.hasNext()) {
             buffer.append(iter.next());
-            if (iter.hasNext())
+            if (iter.hasNext()) {
                 buffer.append(delimiter);
+            }
         }
         return buffer.toString();
     }
 
     /**
-     * Method to join array elements of type string
+     * Method to join array elements of type string.
      *
      * @param inputArray Array which contains strings
      * @param glueString String between each array element
@@ -120,8 +124,10 @@ public class TypeUtils {
     }
 
     /**
-     * @param s
-     * @return
+     * Upper case.
+     *
+     * @param s String
+     * @return String
      */
     public static String strToUpper(String s) {
         return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
@@ -130,9 +136,9 @@ public class TypeUtils {
     /**
      * Java implementation of preg_match_all by https://github.com/raimonbosch
      *
-     * @param p
-     * @param subject
-     * @return
+     * @param p       Pattern
+     * @param subject CharSequence
+     * @return String[]
      */
     public static String[] preg_match_all(Pattern p, CharSequence subject) {
         Matcher m = p.matcher(subject);
@@ -147,12 +153,15 @@ public class TypeUtils {
     }
 
     /**
-     * @param str
-     * @param findStr
-     * @return
+     * Position of occurance.
+     *
+     * @param str     String
+     * @param findStr String
+     * @return int
      */
     public static int subStrOccurences(String str, String findStr) {
-        int lastIndex = 0, count = 0;
+        int lastIndex = 0;
+        int count = 0;
         while (lastIndex != -1) {
             lastIndex = str.indexOf(findStr, lastIndex);
             if (lastIndex != -1) {
@@ -164,13 +173,16 @@ public class TypeUtils {
     }
 
     /**
-     * @param str
-     * @param desiredLength
-     * @return
+     * Pad a String.
+     *
+     * @param str           String
+     * @param desiredLength int
+     * @return String
      */
     public static String padStringRight(String str, int desiredLength) {
-        if (str.length() >= desiredLength)
+        if (str.length() >= desiredLength) {
             return str.substring(0, desiredLength);
+        }
         StringBuilder sb = new StringBuilder();
         int rest = desiredLength - str.length();
         for (int i = 1; i < rest; i++) {

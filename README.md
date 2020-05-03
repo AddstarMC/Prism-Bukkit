@@ -17,8 +17,11 @@ we have now published this to SpigotMC and are providing support on the [M.O.S.S
 ## Information
 
 *  [**SpigotMC page**][spigot]
+
 *  [**Wiki**][wiki]
+
 *  [**bStats**](https://bstats.org/plugin/bukkit/Prism/4365)
+
 *  [**Discord**][moss]
     
 ## Build Server
@@ -35,7 +38,6 @@ This is a fork of Prism by viveleroi and is licensed the under the Creative Comm
 Attribution-NonCommercial-ShareAlike 3.0 Unported. Please see `LICENSE` or [this website][license]
 for the full license.
 
-[prism]: https://github.com/prism/Prism-Bukkit
 [sponge]: https://github.com/prism/Prism
 [wiki]: https://github.com/AddstarMC/Prism-Bukkit/wiki
 [license]: http://creativecommons.org/licenses/by-nc-sa/3.0/us/
