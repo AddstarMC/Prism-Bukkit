@@ -9,41 +9,26 @@ import java.sql.Statement;
 
 public class SqlDeleteQueryBuilder extends SqlSelectQueryBuilder implements DeleteQuery {
 
-    /**
-     *
-     */
     public SqlDeleteQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
-    /**
-     *
-     */
     @Override
     protected String select() {
         return "DELETE FROM " + tableNameData + " USING " + tableNameData + " LEFT JOIN " + tableNameDataExtra
                 + " ex ON (" + tableNameData + ".id = ex.data_id) ";
     }
 
-    /**
-     *
-     */
     @Override
     protected String group() {
         return "";
     }
 
-    /**
-     *
-     */
     @Override
     protected String order() {
         return "";
     }
 
-    /**
-     *
-     */
     @Override
     protected String limit() {
         return "";
@@ -51,21 +36,22 @@ public class SqlDeleteQueryBuilder extends SqlSelectQueryBuilder implements Dele
 
     @Override
     public int execute() {
-        if (shouldPause)
+        if (shouldPause) {
             dataSource.setPaused(true); //pause so that the database cannot process the queue.
-        int total_rows_affected = 0;
-        int cycle_rows_affected = 0;
+        }
+        int totalRowsAffected = 0;
+        int cycleRowsAffected;
 
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
                 Statement s = connection.createStatement()
         ) {
-            cycle_rows_affected = s.executeUpdate(getQuery(parameters, shouldGroup));
-            total_rows_affected += cycle_rows_affected;
+            cycleRowsAffected = s.executeUpdate(getQuery(parameters, shouldGroup));
+            totalRowsAffected += cycleRowsAffected;
         } catch (final SQLException e) {
             dataSource.handleDataSourceException(e);
         }
         dataSource.setPaused(false);
-        return total_rows_affected;
+        return totalRowsAffected;
     }
 }

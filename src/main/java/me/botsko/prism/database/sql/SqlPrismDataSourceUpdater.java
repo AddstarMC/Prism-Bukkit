@@ -12,11 +12,13 @@ import java.sql.Statement;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 5/04/2019.
  */
-public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
+public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
     private final MySqlPrismDataSource dataSource;
+    private static String  prefix = "prism_";
 
-    public SQLPrismDataSourceUpdater(MySqlPrismDataSource dataSource) {
+    public SqlPrismDataSourceUpdater(MySqlPrismDataSource dataSource) {
         this.dataSource = dataSource;
+        prefix = this.dataSource.getPrefix();
     }
 
     private static void v7_batch_material(PreparedStatement st, String before, String after) throws SQLException {
@@ -38,11 +40,16 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
     public void v4_to_v5() {
     }
 
+    /**
+     * Update 5 to 6.
+     */
     public void v5_to_v6() {
-        String prefix = dataSource.getPrefix();
+
         String query;
-        try (Connection conn = dataSource.getConnection();
-             Statement st = conn.createStatement()) {
+        try (
+                Connection conn = dataSource.getConnection();
+                Statement st = conn.createStatement()
+        ) {
 
             // Key must be dropped before we can edit colum types
             query = "ALTER TABLE `" + prefix + "data_extra` DROP FOREIGN KEY `" + prefix + "data_extra_ibfk_1`;";
@@ -51,8 +58,8 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
             query = "ALTER TABLE " + prefix + "data MODIFY id bigint(20) unsigned NOT NULL AUTO_INCREMENT";
             st.executeUpdate(query);
 
-            query = "ALTER TABLE " + prefix
-                    + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, MODIFY data_id bigint(20) unsigned NOT NULL";
+            query = "ALTER TABLE " + prefix + "data_extra MODIFY extra_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
+                    + " MODIFY data_id bigint(20) unsigned NOT NULL";
             st.executeUpdate(query);
 
             // return foreign key
@@ -69,8 +76,6 @@ public class SQLPrismDataSourceUpdater implements PrismDataSourceUpdater {
 
     @Override
     public void v6_to_v7() {
-
-        String prefix = dataSource.getPrefix();
         String query = "UPDATE `" + prefix + "id_map` SET material = ? WHERE material = ?";
         try (
                 Connection conn = dataSource.getConnection();

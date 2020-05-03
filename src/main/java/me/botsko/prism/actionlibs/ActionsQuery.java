@@ -6,7 +6,7 @@ import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import org.bukkit.command.CommandSender;
@@ -125,7 +125,7 @@ public class ActionsQuery {
      * @return id
      */
     public long getMinIdForQuery(QueryParameters parameters) {
-        final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
+        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMin();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);
@@ -140,7 +140,7 @@ public class ActionsQuery {
      * @return id
      */
     public long getMaxIdForQuery(QueryParameters parameters) {
-        final SelectIDQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
+        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMax();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);

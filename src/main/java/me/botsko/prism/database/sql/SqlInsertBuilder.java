@@ -22,16 +22,15 @@ import java.util.ArrayList;
  * Created for use for the Add5tar MC Minecraft server
  * Created by Narimm on 1/06/2019.
  */
-@SuppressWarnings("ALL")
-public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
+public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
     final ArrayList<Handler> extraDataQueue = new ArrayList<>();
     private PreparedStatement batchStatement;
     private Connection batchConnection;
 
     /**
-     * @param dataSource
+     * @param dataSource Data source
      */
-    public SQLInsertBuilder(PrismDataSource dataSource) {
+    public SqlInsertBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
@@ -52,7 +51,7 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
         int player_id = prismPlayer.getId();
 
         if (world_id == 0 || action_id == 0 || player_id == 0) {
-            // @todo do something, error here
+            Prism.debug("Sql data error: Handler:" + a.toString());
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(), BlockUtils.dataString(a.getBlockData()));
         IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(), BlockUtils.dataString(a.getOldBlockData()));
@@ -81,7 +80,6 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
                     }
                 }
             }
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -99,8 +97,10 @@ public class SQLInsertBuilder extends QueryBuilder implements InsertQuery {
     }
 
     @Override
-    public boolean addInsertiontoBatch(Handler a) throws SQLException {
-        if (batchStatement == null) return false;
+    public boolean addInsertionToBatch(Handler a) throws SQLException {
+        if (batchStatement == null) {
+            return false;
+        }
         int world_id = 0;
         String worldName = a.getLoc().getWorld().getName();
         if (Prism.prismWorlds.containsKey(worldName)) {

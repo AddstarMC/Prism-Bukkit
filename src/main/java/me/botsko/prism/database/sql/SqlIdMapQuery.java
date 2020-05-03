@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class SQLIdMapQuery implements IdMapQuery {
+public class SqlIdMapQuery implements IdMapQuery {
     private static final String toIds =
             "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=? AND state=? LIMIT 1;";
     private static final String toAllIds = "SELECT block_id, block_subid FROM <prefix>id_map WHERE material=?;";
@@ -36,7 +36,7 @@ public class SQLIdMapQuery implements IdMapQuery {
      * Constructor
      * @param dataSource  PrismDataSource
      */
-    public SQLIdMapQuery(PrismDataSource dataSource) {
+    public SqlIdMapQuery(PrismDataSource dataSource) {
         this.dataSource = dataSource;
         prefix = dataSource.getPrefix();
 
@@ -46,7 +46,7 @@ public class SQLIdMapQuery implements IdMapQuery {
     }
 
     public void findMaterial(int blockId, int blockSubid, BiConsumer<String, String> success) {
-        findMaterial(blockId, blockSubid, success, SQLIdMapQuery::noop);
+        findMaterial(blockId, blockSubid, success, SqlIdMapQuery::noop);
     }
 
     /**
@@ -80,7 +80,7 @@ public class SQLIdMapQuery implements IdMapQuery {
     }
 
     public void findIds(String material, String state, BiConsumer<Integer, Integer> success) {
-        findIds(material, state, success, SQLIdMapQuery::noop);
+        findIds(material, state, success, SqlIdMapQuery::noop);
     }
 
     /**
@@ -120,7 +120,7 @@ public class SQLIdMapQuery implements IdMapQuery {
     }
 
     public void findAllIds(String material, Consumer<List<IntPair>> success) {
-        findAllIds(material, success, SQLIdMapQuery::noop);
+        findAllIds(material, success, SqlIdMapQuery::noop);
     }
 
     /**
@@ -148,7 +148,7 @@ public class SQLIdMapQuery implements IdMapQuery {
     }
 
     public void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success) {
-        findAllIdsPartial(material, stateLike, success, SQLIdMapQuery::noop);
+        findAllIdsPartial(material, stateLike, success, SqlIdMapQuery::noop);
     }
 
     /**
