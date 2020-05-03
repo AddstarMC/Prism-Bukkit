@@ -20,7 +20,9 @@ public interface PrismDataSource {
 
     String getName();
 
-    String getPrefix();
+    default String getPrefix() {
+        return "prism_";
+    }
 
     PrismDataSource createDataSource();
 
@@ -49,7 +51,7 @@ public interface PrismDataSource {
 
     SelectQuery createSelectQuery();
 
-    SelectIDQuery createSelectIDQuery();
+    SelectIdQuery createSelectIDQuery();
 
     DeleteQuery createDeleteQuery();
 

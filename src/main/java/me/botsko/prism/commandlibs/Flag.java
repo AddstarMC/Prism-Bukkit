@@ -21,9 +21,9 @@ public enum Flag {
     private String usage;
 
     /**
-     * Defaults {@link #usage} to -(flagname)
+     * Defaults {@link #usage} to -(flagname).
      *
-     * @param description
+     * @param description string
      */
     Flag(String description) {
         this("", description); // We can't use this.name() in a constructor so
@@ -40,6 +40,10 @@ public enum Flag {
         return description;
     }
 
+    /**
+     * Get usage for flag.
+     * @return String
+     */
     public String getUsage() {
         if (usage.isEmpty()) {
             usage = "-" + this.name().toLowerCase();

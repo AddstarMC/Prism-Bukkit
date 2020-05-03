@@ -22,7 +22,8 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
     private boolean getLastID;
 
     /**
-     * @param dataSource
+     * Constructor.
+     * @param dataSource PrismDataSource
      */
     public SqlSelectProcessQuery(PrismDataSource dataSource) {
         super(dataSource);
@@ -39,9 +40,8 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
 
     protected String select() {
         if (getLastID) {
-            String sql = "SELECT id FROM " + prefix + "data JOIN " + prefix + "players p ON p.player_id = " + prefix
+            return "SELECT id FROM " + prefix + "data JOIN " + prefix + "players p ON p.player_id = " + prefix
                     + "data.player_id";
-            return sql;
         }
         String sql = "SELECT id, action, epoch, world, player, player_uuid, x, y, z, data FROM " + prefix
                 + "data d";
@@ -57,8 +57,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
             //bit hacky here we are using the id parameter which should generally refer to a player.
             final int action_id = Prism.prismActions.get("prism-process");
             String playerName = parameters.getKeyword();
-            String sql = "WHERE action_id = " + action_id + " AND p.player = " + playerName;
-            return sql;
+            return "WHERE action_id = " + action_id + " AND p.player = " + playerName;
         }
         //bit hacky here we are using the id parameter which should generally refer to a player.
         final long id = parameters.getId();
@@ -81,8 +80,9 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
 
     @Override
     protected String limit() {
-        if (getLastID)
+        if (getLastID) {
             return " LIMIT 1";
+        }
         return " ";
     }
 
@@ -93,7 +93,9 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
 
     @Override
     public PrismProcessAction executeProcessQuery() {
-        if (getLastID) return null;
+        if (getLastID) {
+            return null;
+        }
         final String query = getQuery(parameters, false);
         PrismProcessAction process = null;
         try (

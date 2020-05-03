@@ -16,18 +16,10 @@ import java.util.ArrayList;
 
 public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implements ActionReportQuery {
 
-    /**
-     *
-     **/
     public SqlActionReportQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
     }
 
-    /**
-     * @param parameters
-     * @param shouldGroup
-     * @return
-     */
     @Override
     public String getQuery(QueryParameters parameters, boolean shouldGroup) {
 
@@ -48,16 +40,11 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
 
     }
 
-    /**
-     *
-     */
     @Override
     public String select() {
-        final String sql = "SELECT COUNT(*), a.action " + "FROM " + prefix + "data " + "INNER JOIN " + prefix
+        return "SELECT COUNT(*), a.action " + "FROM " + prefix + "data " + "INNER JOIN " + prefix
                 + "actions a ON a.action_id = " + prefix + "data.action_id " + where() + " " + "GROUP BY a.action_id "
                 + "ORDER BY COUNT(*) DESC";
-
-        return sql;
 
     }
 

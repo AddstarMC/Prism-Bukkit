@@ -19,9 +19,10 @@ public class PrismBlocksExtinguishEvent extends Event {
 
     /**
      * Constructor.
+     *
      * @param blockStateChanges List
-     * @param onBehalfOf Player
-     * @param radius int
+     * @param onBehalfOf        Player
+     * @param radius            int
      */
     public PrismBlocksExtinguishEvent(ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius) {
         this.blockStateChanges = blockStateChanges;
@@ -49,5 +50,14 @@ public class PrismBlocksExtinguishEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    /**
+     * Required by bukkit for proper event handling.
+     */
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
+        return handlers;
+
     }
 }
