@@ -18,16 +18,10 @@ import java.util.regex.Pattern;
 
 public class RadiusParameter extends SimplePrismParameterHandler {
 
-    /**
-     *
-     */
     public RadiusParameter() {
         super("Radius", Pattern.compile("[\\w,:-]+"), "r");
     }
 
-    /**
-     *
-     */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
 
@@ -38,7 +32,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 
         String inputValue = input;
 
-        final FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
+        final FileConfiguration config = Prism.config;
 
         if (TypeUtils.isNumeric(inputValue) || (inputValue.contains(":") && inputValue.split(":").length >= 1
                 && TypeUtils.isNumeric(inputValue.split(":")[1]))) {
@@ -64,9 +58,10 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                 } else {
                     // Try to find an online player
                     Player p2 = Bukkit.getServer().getPlayer(radiusLocOrPlayer);
-                    if (p2 == null)
+                    if (p2 == null) {
                         throw new IllegalArgumentException("Couldn't find the player named '" + radiusLocOrPlayer
                                 + "'. Perhaps they are not online or you misspelled their name?");
+                    }
                     player = p2;
                 }
             } else {
@@ -80,15 +75,17 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             // If neither sender or a named player found, die here
             if (player == null) {
                 throw new IllegalArgumentException(
-                        "The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
+                        "The radius parameter must be used by a player. Use w:worldname if attempting "
+                                + "to limit to a world.");
             }
 
             // Clamp radius based on perms, configs
             radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
             if (desiredRadius != radius) {
-                if (sender != null)
+                if (sender != null) {
                     sender.sendMessage(
                             Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
+                }
             }
 
             if (radius > 0) {
@@ -118,7 +115,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             // If neither sender or a named player found, die here
             if (player == null) {
                 throw new IllegalArgumentException(
-                        "The radius parameter must be used by a player. Use w:worldname if attempting to limit to a world.");
+                        "The radius parameter must be used by a player. "
+                                + "Use w:worldname if attempting to limit to a world.");
             }
 
             // User wants an area inside of a worldedit selection
@@ -134,7 +132,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                         final Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
                         if (!WorldEditBridge.getSelectedArea(prism, player, query)) {
                             throw new IllegalArgumentException(
-                                    "Invalid region selected. Make sure you have a region selected, and that it doesn't exceed the max radius.");
+                                    "Invalid region selected. Make sure you have a region selected,"
+                                            + " and that it doesn't exceed the max radius.");
                         }
                     }
                     break;
@@ -165,9 +164,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                     // Use the world defined in the w: param
                     if (query.getWorld() != null) {
                         inputValue = query.getWorld();
-                    }
-                    // Use the current world
-                    else {
+                    } else {
                         inputValue = player.getWorld().getName();
                     }
                     query.setWorld(inputValue);
@@ -198,19 +195,16 @@ public class RadiusParameter extends SimplePrismParameterHandler {
         }
     }
 
-    /**
-     *
-     */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
-        if (query.getProcessType().equals(PrismProcessType.DELETE))
+        if (query.getProcessType().equals(PrismProcessType.DELETE)) {
             return;
+        }
         if (sender instanceof Player) {
             if (query.allowsNoRadius()) {
                 // We'll allow no radius.
             } else {
-                final FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
-                query.setRadius(config.getInt("prism.queries.default-radius"));
+                query.setRadius(Prism.config.getInt("prism.queries.default-radius"));
                 query.addDefaultUsed("r:" + query.getRadius());
             }
         }
