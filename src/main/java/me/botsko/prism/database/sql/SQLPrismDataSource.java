@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,9 +38,13 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     protected ConfigurationSection section;
     private boolean paused; //when set the datasource will not allow insertions;
     private final Logger log;
-    private final SettingsQuery settingsQuery = null;
-    private String prefix;
+    private SettingsQuery settingsQuery = null;
+    private String prefix = "prism_";
 
+    /**
+     * Constructor.
+     * @param section Config
+     */
     public SQLPrismDataSource(ConfigurationSection section) {
         log = LoggerFactory.getLogger("Prism");
         this.section = section;
@@ -79,8 +84,9 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     @Override
     public Connection getConnection() {
         try {
-            if (database != null)
+            if (database != null) {
                 return database.getConnection();
+            }
         } catch (SQLException e) {
             log.info("Could not retrieve a connection");
             return null;
@@ -126,35 +132,36 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
                 return;
             }
         } catch (final SQLException ignored) {
+            log.error("Database rescue was unsuccessful.");
         }
         log.error("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
-            msg[1] = "Try running `CHECK TABLE " + getPrefix() + "data` and then `REPAIR TABLE " + getPrefix() + "data`.";
+            msg[1] = "Try running `CHECK TABLE " + getPrefix() + "data` and then `REPAIR TABLE "
+                    + getPrefix() + "data`.";
             Prism.logSection(msg);
         }
         e.printStackTrace();
     }
 
+    /**
+     * Setub Db.
+     * @param actionRegistry ActionReg.
+     */
     public void setupDatabase(ActionRegistry actionRegistry) {
-        Connection conn = null;
-        Statement st = null;
-        try {
-            conn = getConnection();
-            if (conn == null)
-                return;
-
-            // actions
-            String query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "actions` ("
+        try (
+                Connection  conn = getConnection();
+                Statement st = conn.createStatement()
+                ) {
+            String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
                     + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`action` varchar(25) NOT NULL,"
                     + "PRIMARY KEY (`action_id`)," + "UNIQUE KEY `action` (`action`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st = conn.createStatement();
             st.executeUpdate(query);
 
             // data
-            query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "data` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` ("
                     + "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
                     + "`action_id` int(10) unsigned NOT NULL," + "`player_id` int(10) unsigned NOT NULL,"
                     + "`world_id` int(10) unsigned NOT NULL," + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL,"
@@ -169,11 +176,11 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             // re-adding foreign key stuff)
             final DatabaseMetaData metadata = conn.getMetaData();
             ResultSet resultSet;
-            resultSet = metadata.getTables(null, null, "" + getPrefix() + "data_extra", null);
+            resultSet = metadata.getTables(null, null, "" + prefix + "data_extra", null);
             if (!resultSet.next()) {
 
                 // extra data
-                query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "data_extra` ("
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
                         + "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
                         + "`data_id` bigint(20) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
                         + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
@@ -181,20 +188,20 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
                 st.executeUpdate(query);
 
                 // add extra data delete cascade
-                query = "ALTER TABLE `" + getPrefix() + "data_extra` ADD CONSTRAINT `" + getPrefix()
-                        + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + getPrefix()
+                query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
+                        + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix
                         + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
                 st.executeUpdate(query);
             }
 
             // meta
-            query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "meta` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` ("
                     + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`k` varchar(25) NOT NULL,"
                     + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
 
             // players
-            query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "players` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "players` ("
                     + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
                     + "`player_uuid` binary(16) NOT NULL," + "PRIMARY KEY (`player_id`),"
                     + "UNIQUE KEY `player` (`player`)," + "UNIQUE KEY `player_uuid` (`player_uuid`)"
@@ -202,7 +209,7 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             st.executeUpdate(query);
 
             // worlds
-            query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "worlds` ("
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
                     + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`world` varchar(255) NOT NULL,"
                     + "PRIMARY KEY (`world_id`)," + "UNIQUE KEY `world` (`world`)"
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
@@ -217,81 +224,57 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
             }
 
             // id map
-            query = "CREATE TABLE IF NOT EXISTS `" + getPrefix() + "id_map` (" + "`material` varchar(63) NOT NULL,"
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` (" + "`material` varchar(63) NOT NULL,"
                     + "`state` varchar(255) NOT NULL," + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
                     + "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
                     + "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
         } catch (final SQLException e) {
+            handleDataSourceException(e);
+
             Prism.log("Database connection error: " + e.getMessage());
             e.printStackTrace();
-        } finally {
-            if (st != null)
-                try {
-                    st.close();
-                } catch (final SQLException ignored) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException ignored) {
-                }
         }
     }
 
+    /**
+     * Add action to db.
+     * @param actionName String
+     */
     public void addActionName(String actionName) {
 
-        if (Prism.prismActions.containsKey(actionName))
+        if (Prism.prismActions.containsKey(actionName)) {
             return;
-
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
-
-            conn = database.getConnection();
-            s = conn.prepareStatement("INSERT INTO " + getPrefix() + "actions (action) VALUES (?)",
-                    Statement.RETURN_GENERATED_KEYS);
+        }
+        try (
+                Connection conn = database.getConnection();
+                PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "actions (action) VALUES (?)",
+                        Statement.RETURN_GENERATED_KEYS)
+        ) {
             s.setString(1, actionName);
             s.executeUpdate();
-
-            rs = s.getGeneratedKeys();
+            ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 log.info("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
                 Prism.prismActions.put(actionName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
-        } catch (final SQLException ignored) {
+            rs.close();
+        } catch (final SQLException e) {
+            handleDataSourceException(e);
 
-        } finally {
-            if (rs != null)
-                try {
-                    rs.close();
-                } catch (final SQLException ignored) {
-                }
-            if (s != null)
-                try {
-                    s.close();
-                } catch (final SQLException ignored) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException ignored) {
-                }
         }
     }
 
     protected void cacheActionPrimaryKeys() {
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
-            conn = getConnection();
-            s = conn.prepareStatement("SELECT action_id, action FROM " + getPrefix() + "actions");
-            rs = s.executeQuery();
 
+        try (
+                Connection conn = getConnection();
+                PreparedStatement s = conn.prepareStatement(
+                        "SELECT action_id, action FROM " + prefix + "actions");
+                ResultSet rs = s.executeQuery()
+                ) {
             while (rs.next()) {
                 log.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
                 Prism.prismActions.put(rs.getString(2), rs.getInt(1));
@@ -301,98 +284,65 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
 
         } catch (final SQLException e) {
             handleDataSourceException(e);
-        } finally {
-            if (rs != null)
-                try {
-                    rs.close();
-                } catch (final SQLException ignored) {
-                }
-            if (s != null)
-                try {
-                    s.close();
-                } catch (final SQLException ignored) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException ignored) {
-                }
         }
     }
 
+
+    /**
+     * Cache the world keys.
+     * @param prismWorlds Map
+     */
+    @Override
     public void cacheWorldPrimaryKeys(Map<String, Integer> prismWorlds) {
 
-        Connection conn = null;
-        PreparedStatement s = null;
-        ResultSet rs = null;
-        try {
-
-            conn = getConnection();
-            s = conn.prepareStatement("SELECT world_id, world FROM " + getPrefix() + "worlds");
-            rs = s.executeQuery();
-
+        try (
+                Connection conn = getConnection();
+                PreparedStatement s = conn.prepareStatement(
+                        "SELECT world_id, world FROM " + prefix + "worlds");
+                ResultSet rs = s.executeQuery()
+        ) {
             while (rs.next()) {
                 prismWorlds.put(rs.getString(2), rs.getInt(1));
             }
             Prism.debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
         } catch (final SQLException e) {
             handleDataSourceException(e);
-        } finally {
-            if (rs != null)
-                try {
-                    rs.close();
-                } catch (final SQLException ignored) {
-                }
-            if (s != null)
-                try {
-                    s.close();
-                } catch (final SQLException ignored) {
-                }
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException ignored) {
-                }
         }
     }
 
     /**
-     * Saves a world name to the database, and adds the id to the cache hashmap
+     * Saves a world name to the database, and adds the id to the cache hashmap.
      */
     public void addWorldName(String worldName) {
 
-        if (Prism.prismWorlds.containsKey(worldName))
+        if (Prism.prismWorlds.containsKey(worldName)) {
             return;
-        String query = "INSERT INTO `" + getPrefix() + "worlds` (world) VALUES (?)";
-        ResultSet rs = null;
+        }
+        String query = "INSERT INTO `" + prefix + "worlds` (world) VALUES (?)";
         try (
                 Connection conn = database.getConnection();
                 PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, worldName);
             s.executeUpdate();
-            rs = s.getGeneratedKeys();
+            ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 log.info("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
                 Prism.prismWorlds.put(worldName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
-        } catch (final SQLException ignored) {
-
-        } finally {
-            if (rs != null)
-                try {
-                    rs.close();
-                } catch (final SQLException ignored) {
-                }
+            rs.close();
+        } catch (final SQLException e) {
+            handleDataSourceException(e);
         }
     }
 
     @Override
     public void dispose() {
-        if (database != null)
+        if (database != null) {
             database.close();
+        }
         database = null;
     }
 
@@ -424,10 +374,9 @@ public abstract class SQLPrismDataSource implements PrismDataSource {
     @Override
     public SettingsQuery createSettingsQuery() {
         if (settingsQuery == null) {
-            return new SQLSettingsQuery(this);
-        } else {
-            return settingsQuery;
+            settingsQuery = new SQLSettingsQuery(this);
         }
+        return settingsQuery;
     }
 
     @Override
