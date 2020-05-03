@@ -19,10 +19,11 @@ public class PrismCustomBlockEvent extends Event {
 
     /**
      * Constructor.
-     * @param plugin Plugin
+     *
+     * @param plugin         Plugin
      * @param actionTypeName Strign
-     * @param player Player
-     * @param message message
+     * @param player         Player
+     * @param message        message
      */
     public PrismCustomBlockEvent(Plugin plugin, String actionTypeName, Player player, Block block, String message) {
         this.pluginName = plugin.getName();
@@ -57,5 +58,14 @@ public class PrismCustomBlockEvent extends Event {
     @Override
     public HandlerList getHandlers() {
         return handlers;
+    }
+
+    /**
+     * Required by bukkit for proper event handling.
+     */
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
+        return handlers;
+
     }
 }

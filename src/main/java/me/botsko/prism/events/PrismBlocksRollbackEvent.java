@@ -19,10 +19,11 @@ public class PrismBlocksRollbackEvent extends Event {
 
     /**
      * Constructor.
+     *
      * @param blockStateChanges List BlockStateChange
-     * @param onBehalfOf Player
-     * @param parameters QueryParameters
-     * @param result ApplierResult
+     * @param onBehalfOf        Player
+     * @param parameters        QueryParameters
+     * @param result            ApplierResult
      */
     public PrismBlocksRollbackEvent(ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf,
                                     QueryParameters parameters, ApplierResult result) {
@@ -34,6 +35,7 @@ public class PrismBlocksRollbackEvent extends Event {
 
     /**
      * ArrayList
+     *
      * @return the originalBlock  List BlockStateChange
      */
     public ArrayList<BlockStateChange> getBlockStateChanges() {
@@ -42,6 +44,7 @@ public class PrismBlocksRollbackEvent extends Event {
 
     /**
      * Player
+     *
      * @return the onBehalfOf Player
      */
     public Player onBehalfOf() {
@@ -50,6 +53,7 @@ public class PrismBlocksRollbackEvent extends Event {
 
     /**
      * QueryParameters
+     *
      * @return QueryParameters
      */
     public QueryParameters getQueryParameters() {
@@ -58,6 +62,7 @@ public class PrismBlocksRollbackEvent extends Event {
 
     /**
      * ApplierResult
+     *
      * @return ApplierResult
      */
     public ApplierResult getResult() {
@@ -67,5 +72,14 @@ public class PrismBlocksRollbackEvent extends Event {
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlers;
+    }
+
+    /**
+     * Required by bukkit for proper event handling.
+     */
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
+        return handlers;
+
     }
 }

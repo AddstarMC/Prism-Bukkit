@@ -12,7 +12,7 @@ public interface InsertQuery {
 
     void createBatch() throws Exception;
 
-    boolean addInsertiontoBatch(Handler a) throws Exception;
+    boolean addInsertionToBatch(Handler a) throws Exception;
 
     void processBatch() throws Exception;
 

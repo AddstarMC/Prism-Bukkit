@@ -1,7 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.SelectIDQuery;
+import me.botsko.prism.database.SelectIdQuery;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,17 +10,17 @@ import java.sql.SQLException;
 
 /**
  * THis Class will return an id set for a specific query OR it can return the min and max ID's
- * <p>
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 31/03/2019.
  */
-public class SqlSelectIDQueryBuilder extends SqlSelectQueryBuilder implements SelectIDQuery {
+public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements SelectIdQuery {
     /**
-     * @param plugin
+     * Constructor.
+     * @param dataSource PrismDataSource
      */
     private String select = "";
 
-    public SqlSelectIDQueryBuilder(PrismDataSource dataSource) {
+    public SqlSelectIdQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
         setMin();
     }

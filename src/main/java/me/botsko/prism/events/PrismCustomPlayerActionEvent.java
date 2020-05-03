@@ -70,4 +70,13 @@ public class PrismCustomPlayerActionEvent extends Event {
     public HandlerList getHandlers() {
         return handlers;
     }
+
+    /**
+     * Required by bukkit for proper event handling.
+     */
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
+        return handlers;
+
+    }
 }
