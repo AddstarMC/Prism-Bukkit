@@ -21,6 +21,8 @@ import java.util.Map.Entry;
 
 public class PrismInventoryEvents implements Listener {
 
+    private final boolean trackingInsert;
+    private final boolean trackingRemove;
     private static final String INSERT = "item-insert";
     private static final String REMOVE = "item-remove";
     private final Prism plugin;
@@ -31,20 +33,24 @@ public class PrismInventoryEvents implements Listener {
      */
     public PrismInventoryEvents(Prism plugin) {
         this.plugin = plugin;
+        this.trackingInsert = plugin.getConfig().getBoolean("prism.tracking.item-insert");
+        this.trackingRemove = plugin.getConfig().getBoolean("prism.tracking.item-remove");
     }
 
     /**
-     * InventoryPickupItemEvent
+     * InventoryPickupItemEvent.
      * @param event InventoryPickupItemEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
 
-        if (!plugin.getConfig().getBoolean("prism.track-hopper-item-events"))
+        if (!plugin.getConfig().getBoolean("prism.track-hopper-item-events")) {
             return;
+        }
 
-        if (!Prism.getIgnore().event("item-pickup"))
+        if (!Prism.getIgnore().event("item-pickup")) {
             return;
+        }
 
         // If hopper
         if (event.getInventory().getType().equals(InventoryType.HOPPER)) {
@@ -54,17 +60,15 @@ public class PrismInventoryEvents implements Listener {
     }
 
     /**
-     * Handle inventory transfers
+     * Handle inventory transfers.
      *
      * @param event InventoryDragEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryDrag(final InventoryDragEvent event) {
-
-        if (!plugin.getConfig().getBoolean("prism.tracking.item-insert")
-                && !plugin.getConfig().getBoolean("prism.tracking.item-remove"))
+        if (!trackingInsert && !trackingRemove) {
             return;
-
+        }
         // Get container
         final InventoryHolder ih = event.getInventory().getHolder();
 
@@ -105,7 +109,7 @@ public class PrismInventoryEvents implements Listener {
     }
 
     /**
-     * Handle inventory transfers
+     * Handle inventory transfers.
      *
      * @param event InventoryClickEvent
      */
@@ -125,10 +129,9 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
 
-        if (!plugin.getConfig().getBoolean("prism.tracking.item-insert")
-                && !plugin.getConfig().getBoolean("prism.tracking.item-remove"))
+        if (!trackingInsert && !trackingRemove) {
             return;
-
+        }
         // Store some info
         final Player player = (Player) event.getWhoClicked();
 
@@ -146,13 +149,15 @@ public class PrismInventoryEvents implements Listener {
         ItemStack slotItem = event.getCurrentItem();
 
         // This happens when opening someone else's inventory, so don't bother tracking it
-        if (slotItem == null) return;
+        if (slotItem == null) {
+            return;
+        }
 
         switch (event.getClick()) {
             // IGNORE BOTTOM
             case LEFT:
                 if (isTopInv) {
-                    if (heldItem.getType() == Material.AIR) { //@todo if the item under the cursor is null what to do?
+                    if (heldItem.getType() == Material.AIR) { //todo if the item under the cursor is null what to do?
                         if (slotItem.getType() != Material.AIR) {
                             RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem,
                                     slotItem.getAmount(), slot, null, containerLoc, player));
@@ -227,8 +232,9 @@ public class PrismInventoryEvents implements Listener {
                                 containerLoc, player));
                     }
 
-                    if (amount <= 0)
+                    if (amount <= 0) {
                         break;
+                    }
                 }
                 break;
             }
@@ -242,7 +248,7 @@ public class PrismInventoryEvents implements Listener {
                         int remaining = slotItem.getAmount();
 
                         for (ItemStack is : event.getView().getBottomInventory().getStorageContents()) {
-                            if (is == null || is.getType() == Material.AIR) {
+                            if (is.getType() == Material.AIR) {
                                 remaining -= stackSize;
                             } else if (is.isSimilar(slotItem)) {
                                 remaining -= (stackSize - Math.min(is.getAmount(), stackSize));
@@ -277,8 +283,9 @@ public class PrismInventoryEvents implements Listener {
                                         i, null, containerLoc, player));
                             }
 
-                            if (amount <= 0)
+                            if (amount <= 0) {
                                 break;
+                            }
                         }
                     }
 
@@ -296,8 +303,9 @@ public class PrismInventoryEvents implements Listener {
                                             transferred, i, null, containerLoc, player));
                                 }
 
-                                if (amount <= 0)
+                                if (amount <= 0) {
                                     break;
+                                }
                             }
                         }
                     }
