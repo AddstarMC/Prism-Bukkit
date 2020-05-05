@@ -1,7 +1,7 @@
 ---
 name: Support Request
 about: Request Support
-title: "[SUPPORT REQEUST] CLOSE"
+title: "[SUPPORT REQUEST] CLOSE"
 labels: wontfix
 assignees: ''
 
