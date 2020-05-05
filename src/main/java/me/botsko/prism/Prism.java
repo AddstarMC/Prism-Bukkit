@@ -259,7 +259,7 @@ public class Prism extends JavaPlugin {
      * @param message String.
      */
     public static void log(String message) {
-        log.info("[" + getPrismName() + "]: " + message);
+        log.info("[" + getPrismName() + "] " + message);
     }
 
     /**
@@ -268,7 +268,7 @@ public class Prism extends JavaPlugin {
      * @param message String
      */
     public static void warn(String message) {
-        log.warning("[" + getPrismName() + "]: " + message);
+        log.warning("[" + getPrismName() + "] " + message);
     }
 
     /**
@@ -376,10 +376,10 @@ public class Prism extends JavaPlugin {
     }
 
     private void notifyDisabled() {
-        final String[] dbDisabled = new String[4];
+        final String[] dbDisabled = new String[3];
         dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
         dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
-        dbDisabled[3] = "For help - try our Discord Channel or the Wiki on Github.";
+        dbDisabled[2] = "For help - try our Discord Channel or the Wiki on Github.";
         logSection(dbDisabled);
     }
 

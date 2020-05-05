@@ -2,6 +2,7 @@ package me.botsko.prism.database.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool;
 import com.zaxxer.hikari.util.PropertyElf;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
@@ -14,9 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -45,7 +44,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         }
     }
 
-    private Boolean nonStandardSql;
+    private final Boolean nonStandardSql;
 
     /**
      * Create a dataSource.
@@ -76,9 +75,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     private static void setupDefaultProperties(@Nonnull ConfigurationSection section) {
-        int maxPool = section.getInt("database.max-pool-connections", 10);
-        int minIdle = section.getInt("database.min-idle-connections", 10);
-        if (!propFile.exists()) {
+        int maxPool = section.getInt("database.max-pool-connections",10);
+        int minIdle = section.getInt("database.min-idle-connections",2);
+        if (maxPool > 0 && minIdle > 0 && !propFile.exists()) {
             dbConfig.addDataSourceProperty("maximumPoolSize", maxPool);
             dbConfig.addDataSourceProperty("minimumIdle", minIdle);
             dbConfig.setMaximumPoolSize(maxPool);
@@ -106,6 +105,11 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
                 }
             }
             try {
+                if (!propFile.getParentFile().exists()) {
+                    if (!propFile.getParentFile().mkdirs()) {
+                        Prism.log("Prism Directory couldn't be created");
+                    }
+                }
                 OutputStream out = new FileOutputStream(propFile);
                 prop.store(out, "Prism Hikari Datasource Properties for"
                         + " advanced database Configuration");
@@ -132,8 +136,14 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
             dbConfig.setHealthCheckRegistry(Prism.monitor.getHealthRegistry());
         }
-        database = new HikariDataSource(dbConfig);
-        createSettingsQuery();
+        try {
+            database = new HikariDataSource(dbConfig);
+            createSettingsQuery();
+            return this;
+        } catch (HikariPool.PoolInitializationException e) {
+            getLog().error("Hikari Pool did not Initialize: " + e.getMessage());
+            database = null;
+        }
         return this;
     }
 
@@ -153,35 +163,36 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
 
     private void detectNonStandardSql() {
         try (
-                PreparedStatement st = getConnection().prepareStatement("SHOW VARIABLES");
-                ResultSet rs = st.executeQuery()) {
+                Connection conn = getConnection();
+                PreparedStatement st = (conn != null) ? conn.prepareStatement("SHOW VARIABLES") : null;
+                PreparedStatement st1 = (conn != null) ? conn.prepareStatement("SELECT ANY_VALUE(1)") : null;
+                ResultSet rs = (st != null) ? st.executeQuery() : null;
+                ResultSet rs1 = (st1 != null) ? st1.executeQuery() : null
+
+        ) {
+            if (rs == null || rs1 == null) {
+                throw new SQLNonTransientConnectionException("Database did not configure correctly.");
+            }
             while (rs.next()) {
                 dbInfo.put(rs.getString(1).toLowerCase(), rs.getString(2));
             }
+            rs1.next();
+            String version = dbInfo.get("version");
+            String versionComment = dbInfo.get("version_comment");
+            Prism.log("Prism detected you database is version:" + version + " / " + versionComment);
+            Prism.log("You have set nonStandardSql to " + nonStandardSql);
+            Prism.log("You are able to use non standard SQL");
+            if (!nonStandardSql) {
+                Prism.log("Prism will use standard sql queries");
+            }
+        } catch (SQLNonTransientConnectionException e) {
+            Prism.warn(e.getMessage());
         } catch (SQLException e) {
-            Prism.debug(e.getMessage());
-        }
-        boolean anyValueSuccess;
-        try (
-                PreparedStatement st = getConnection().prepareStatement("SELECT ANY_VALUE(1)");
-                ResultSet rs = st.executeQuery()) {
-            nonStandardSql = true;
-            anyValueSuccess = true;
-            rs.next();
-        } catch (SQLException e) {
-            anyValueSuccess = false;
-        }
-        String version = dbInfo.get("version");
-        String versionComment = dbInfo.get("version_comment");
-        Prism.log("Prism detected you database is " + version + " / " + versionComment);
-        Prism.log("You have set nonStandardSql to " + nonStandardSql);
-        if (!anyValueSuccess && nonStandardSql) {
-            Prism.log("This sounds like a configuration error.  If you have database access"
-                    + "errors please set nonStandardSql to false");
-            return;
-        }
-        if (!nonStandardSql) {
-            Prism.log("Prism will use standard sql queries");
+            Prism.log("You are not able to use non standard Sql");
+            if (nonStandardSql) {
+                Prism.log("This sounds like a configuration error.  If you have database access"
+                        + "errors please set nonStandardSql to false");
+            }
         }
     }
 }

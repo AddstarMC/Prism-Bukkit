@@ -27,8 +27,7 @@ public class PrismConfig extends ConfigBase {
      */
     @Override
     public FileConfiguration getConfig() {
-
-        config = plugin.getConfig();
+        config = super.getConfig();
         config.addDefault("datasource", "mysql");
         // set defaults
         config.addDefault("prism.debug", false);
@@ -40,9 +39,9 @@ public class PrismConfig extends ConfigBase {
         // Database
         PrismDatabaseFactory.createDefaultConfig(config);
 
-        // pste.me sharing.
+        // paste.gg sharing.
         config.addDefault("prism.paste.enable", false);
-		config.addDefault("prism.paste.api-key", "API key from http://paste.gg");
+        config.addDefault("prism.paste.api-key", "API key from http://paste.gg");
         // Wands
         config.addDefault("prism.wands.default-mode", "hand"); // hand, item,
         // or block
@@ -271,9 +270,8 @@ public class PrismConfig extends ConfigBase {
 
         // Copy defaults
         config.options().copyDefaults(true);
-
         // save the defaults/config
-        plugin.saveConfig();
+        super.write("config",config);
 
         return config;
 

@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 public class ConfigBase {
 
@@ -91,7 +92,7 @@ public class ConfigBase {
      * @param filename the file name to save as
      * @param config FileConfig to save
      */
-    private void saveConfig(String filename, FileConfiguration config) {
+    protected void saveConfig(String filename, FileConfiguration config) {
         final File file = getFilename(filename);
         try {
             config.save(file);
@@ -106,15 +107,7 @@ public class ConfigBase {
      * @param filename String
      * @param config FileConfig
      */
-    @SuppressWarnings("unused")
     protected void write(String filename, FileConfiguration config) {
-        try {
-            final BufferedWriter bw = new BufferedWriter(new FileWriter(getFilename(filename), true));
             saveConfig(filename, config);
-            bw.flush();
-            bw.close();
-        } catch (final IOException e) {
-            Prism.debug("IOException: " + e.getMessage());
-        }
     }
 }
