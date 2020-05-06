@@ -1,7 +1,7 @@
 name: Prism
 main: me.botsko.prism.Prism
 version: ${plugin.version}
-softdepend: [WorldEdit,HeroChat]
+softdepend: [WorldEdit,HeroChat,DripReporter]
 author: AddstarMC
 authors: [add5tar, Narimm, viveleroi]
 website: https://github.com/AddstarMC/Prism-Bukkit/wiki

@@ -223,10 +223,6 @@
 						<pattern>com.zaxxer.hikari</pattern>
 						<shadedPattern>com.botsko.prism.libs.hikari</shadedPattern>
 					</relocation>
-					<relocation>
-						<pattern>au.com.addstar.dripreporter</pattern>
-						<shadedPattern>com.botsko.prism.libs.dripreporter</shadedPattern>
-					</relocation>
 				</relocations>
 			</configuration>
 			<executions>
