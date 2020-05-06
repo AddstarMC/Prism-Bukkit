@@ -443,10 +443,16 @@ public class Prism extends JavaPlugin {
                 PrismCommands commands = new PrismCommands(this);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
+            } else {
+                warn("Command Executor Error: Check plugin.yml");
+                Bukkit.getPluginManager().disablePlugin(instance);
+                return;
             }
-            PluginCommand commandAlt = getCommand("prism");
+            PluginCommand commandAlt = getCommand("what");
             if (commandAlt != null) {
                 commandAlt.setExecutor(new WhatCommand(this));
+            } else {
+                log("Command Executor Error: Check plugin.yml - what command not found ");
             }
             // Register official parameters
             registerParameter(new ActionParameter());
