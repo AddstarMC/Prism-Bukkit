@@ -110,7 +110,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             }
             try {
                 if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
-                        Prism.log("Prism Directory couldn't be created");
+                    Prism.log("Prism Directory couldn't be created");
                 }
                 OutputStream out = new FileOutputStream(propFile);
                 prop.store(out, "Prism Hikari Datasource Properties for"
