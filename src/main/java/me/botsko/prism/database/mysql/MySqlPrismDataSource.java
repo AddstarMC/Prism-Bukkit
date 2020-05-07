@@ -15,7 +15,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
@@ -105,10 +109,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
                 }
             }
             try {
-                if (!propFile.getParentFile().exists()) {
-                    if (!propFile.getParentFile().mkdirs()) {
+                if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
                         Prism.log("Prism Directory couldn't be created");
-                    }
                 }
                 OutputStream out = new FileOutputStream(propFile);
                 prop.store(out, "Prism Hikari Datasource Properties for"
