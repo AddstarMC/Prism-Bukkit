@@ -790,7 +790,7 @@ public class PrismEntityEvents implements Listener {
                 }
                 action = "tnt-explode";
                 Entity source = ((TNTPrimed) event.getEntity()).getSource();
-                name = followTNTTrail(source);
+                name = followTntTrail(source);
             } else if (event.getEntity() instanceof EnderDragon) {
                 if (!Prism.getIgnore().event("dragon-eat", event.getEntity().getWorld())) {
                     return;
@@ -819,10 +819,9 @@ public class PrismEntityEvents implements Listener {
         for (Block block : event.blockList()) {
 
             // don't bother record upper doors.
-            if (MaterialTag.DOORS.isTagged(block.getType())) {
-                if (((Door) block.getState().getBlockData()).getHalf() == Bisected.Half.TOP) {
-                    continue;
-                }
+            if (MaterialTag.DOORS.isTagged(block.getType())
+                    && ((Door) block.getState().getBlockData()).getHalf() == Bisected.Half.TOP) {
+                continue;
             }
 
             // Change handling a bit if it's a long block
@@ -847,7 +846,7 @@ public class PrismEntityEvents implements Listener {
         }
     }
 
-    private String followTNTTrail(Entity initial) {
+    private String followTntTrail(Entity initial) {
         int counter = 10000000;
 
         while (initial != null) {

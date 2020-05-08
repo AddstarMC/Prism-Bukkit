@@ -474,7 +474,7 @@ public class BlockAction extends GenericAction {
         return new ChangeResult(ChangeResultType.APPLIED, stateChange);
     }
 
-    ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
+    private ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
 
         BlockStateChange stateChange;
 
