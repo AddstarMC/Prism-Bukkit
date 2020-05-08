@@ -122,10 +122,11 @@ public class BlockAction extends GenericAction {
                 }
                 break;
         }
-        if (state instanceof Nameable) {
+        if (state instanceof Nameable && ((Nameable) state).getCustomName() != null) {
+            if (actionData == null) {
+                actionData = new BlockActionData();
+            }
             actionData.customName = ((Nameable) state).getCustomName();
-        } else {
-            actionData.customName = null;
         }
     }
 
@@ -162,6 +163,8 @@ public class BlockAction extends GenericAction {
             } else if (getMaterial() == COMMAND_BLOCK) {
                 actionData = new CommandActionData();
                 ((CommandActionData) actionData).command = data;
+            } else {
+                actionData = gson().fromJson(data,BlockActionData.class);
             }
         }
     }
@@ -175,15 +178,19 @@ public class BlockAction extends GenericAction {
     public String getNiceName() {
         String name = "";
         BlockActionData blockActionData = getActionData();
-
-        if (blockActionData instanceof SkullActionData) {
-            final SkullActionData ad = (SkullActionData) blockActionData;
-            name += ad.skullType + " ";
-        } else if (blockActionData instanceof SpawnerActionData) {
-            final SpawnerActionData ad = (SpawnerActionData) blockActionData;
-            name += ad.entityType + " ";
+        if (blockActionData != null) {
+            if (blockActionData instanceof SkullActionData) {
+                final SkullActionData ad = (SkullActionData) blockActionData;
+                name += ad.skullType + " ";
+            } else if (blockActionData instanceof SpawnerActionData) {
+                final SpawnerActionData ad = (SpawnerActionData) blockActionData;
+                name += ad.entityType + " ";
+            }
         }
         name += Prism.getItems().getAlias(getMaterial(), getBlockData());
+        if (blockActionData == null) {
+            return name;
+        }
         if (blockActionData instanceof SignActionData) {
             final SignActionData ad = (SignActionData) blockActionData;
             if (ad.lines != null && ad.lines.length > 0) {
