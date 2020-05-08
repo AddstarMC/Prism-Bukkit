@@ -130,6 +130,7 @@ public class MiscUtils {
 
         final PasteBuilder.PasteResult result
                 = new PasteBuilder().name("Prism Results")
+                .setApiKey(Prism.getPasteKey())
                 .expireIn(expire)
                 .addFile(file)
                 .visibility(Visibility.UNLISTED)
