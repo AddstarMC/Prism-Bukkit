@@ -12,6 +12,7 @@ import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Nameable;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -107,9 +108,9 @@ public class BlockAction extends GenericAction {
                 actionData = skullActionData;
                 break;
             case COMMAND_BLOCK:
-                final CommandBlock cmdblock = (CommandBlock) state;
+                final CommandBlock cmdBlock = (CommandBlock) state;
                 final CommandActionData commandActionData = new CommandActionData();
-                commandActionData.command = cmdblock.getCommand();
+                commandActionData.command = cmdBlock.getCommand();
                 actionData = commandActionData;
                 break;
             default:
@@ -120,6 +121,11 @@ public class BlockAction extends GenericAction {
                     actionData = signActionData;
                 }
                 break;
+        }
+        if (state instanceof Nameable) {
+            actionData.customName = ((Nameable) state).getCustomName();
+        } else {
+            actionData.customName = null;
         }
     }
 
@@ -186,6 +192,9 @@ public class BlockAction extends GenericAction {
         } else if (blockActionData instanceof CommandActionData) {
             final CommandActionData ad = (CommandActionData) blockActionData;
             name += " (" + ad.command + ")";
+        }
+        if (blockActionData.customName != null) {
+            name += " (" + blockActionData.customName + ") ";
         }
         if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
@@ -353,7 +362,9 @@ public class BlockAction extends GenericAction {
             final CommandActionData c = (CommandActionData) blockActionData;
             cmbBlock.setCommand(c.command);
         }
-
+        if (state instanceof Nameable && actionData.customName != null) {
+            ((Nameable) state).setCustomName(actionData.customName);
+        }
         if (parameters.getProcessType() == PrismProcessType.ROLLBACK
                 && Tag.SIGNS.isTagged(getMaterial())
                 && blockActionData instanceof SignActionData) {
@@ -513,6 +524,7 @@ public class BlockAction extends GenericAction {
      * @author botskonet
      */
     static class BlockActionData {
+        String customName;
     }
 
     public static class CommandActionData extends BlockActionData {

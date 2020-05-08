@@ -14,6 +14,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
@@ -56,7 +58,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Door;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
@@ -819,7 +820,7 @@ public class PrismEntityEvents implements Listener {
 
             // don't bother record upper doors.
             if (MaterialTag.DOORS.isTagged(block.getType())) {
-                if (((Door) block.getState().getData()).isTopHalf()) {
+                if (((Door) block.getState().getBlockData()).getHalf() == Bisected.Half.TOP) {
                     continue;
                 }
             }
@@ -854,7 +855,7 @@ public class PrismEntityEvents implements Listener {
                 return initial.getName();
             } else if (initial instanceof TNTPrimed) {
                 initial = (((TNTPrimed) initial).getSource());
-                if (counter < 0) {
+                if (counter < 0 && initial != null) {
                     Location last = initial.getLocation();
                     plugin.getLogger().warning("TnT chain has exceeded one million, will not continue!");
                     plugin.getLogger().warning("Last Tnt was at " + last.getX() + ", " + last.getY() + ". "
