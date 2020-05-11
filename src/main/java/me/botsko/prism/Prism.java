@@ -331,9 +331,11 @@ public class Prism extends JavaPlugin {
             ActionMeter.setupActionMeter(monitor.getRegistry());
         }
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
-        PaperLib.suggestPaper(this);
-        // Load configuration, or install if new
         loadConfig();
+        // Load configuration, or install if new
+        if (!getConfig().getBoolean("prism.suppress-Paper-message",false)) {
+            PaperLib.suggestPaper(this);
+        }
         if (getConfig().getBoolean("prism.allow-metrics")) {
             Prism.log("Prism bStats metrics are enabled - thank you!");
             int pluginid = 4365; // assigned by bstats.org
