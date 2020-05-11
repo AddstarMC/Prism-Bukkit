@@ -63,9 +63,10 @@ public class PurgeTask implements Runnable {
         final QueryParameters param = paramList.get(0);
         if (minId == 0 && maxId == 0) {
             // First run - Set the min and max IDs
-            minId = aq.getMinIdForQuery(param);
+            long[] result = aq.getQueryExtents(param);
+            minId = result[0];
             if (minId > 0) {
-                maxId = aq.getMaxIdForQuery(param);
+                maxId = result[1];
             }
         }
         boolean cycleComplete = false;

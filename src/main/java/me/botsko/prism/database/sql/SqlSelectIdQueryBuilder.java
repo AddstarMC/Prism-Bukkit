@@ -19,10 +19,11 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
      * @param dataSource PrismDataSource
      */
     private String select = "";
+    private boolean pair = false;
 
     public SqlSelectIdQueryBuilder(PrismDataSource dataSource) {
         super(dataSource);
-        setMin();
+        setMinMax();
     }
 
     @Override
@@ -35,29 +36,43 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
         return "";
     }
 
+    @Deprecated
     public void setMax() {
         select = "SELECT max(id) FROM " + tableNameData + " ";
     }
 
+    @Deprecated
     public void setMin() {
         select = "SELECT min(id) FROM " + tableNameData + " ";
     }
 
+    public void setMinMax() {
+        select = "SELECT min(id) as min, max(id) as max FROM " + tableNameData + " ";
+        pair = true;
+    }
+
     @Override
-    public long execute() {
-        long id = 0;
+    public long[] execute() {
+        long id1 = 0;
+        long id2 = 0;
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
                 PreparedStatement s = connection.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery()
         ) {
             if (rs.first()) {
-                id = rs.getLong(1);
+                id1 = rs.getLong(1);
+                if (pair) {
+                    id2 = rs.getLong(2);
+                }
             }
         } catch (final SQLException e) {
             dataSource.handleDataSourceException(e);
         }
-        return id;
+        if (pair) {
+            return new long[]{id1, id2};
+        }
+        return new long[]{id1};
     }
 
 }
