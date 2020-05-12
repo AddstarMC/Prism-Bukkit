@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import io.papermc.lib.PaperLib;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -16,21 +17,19 @@ import java.util.List;
 
 public class TeleportCommand implements SubHandler {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * TeleportCommand.
+     *
+     * @param plugin Prism.
      */
-    public TeleportCommand(Prism plugin) {
+    TeleportCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Handle the command
+     * Handle the command.
      */
     @Override
     public void handle(CallInfo call) {
@@ -54,18 +53,18 @@ public class TeleportCommand implements SubHandler {
 
         // Determine result index to tp to - either an id, or the next/previous
         // id
-        long record_id;
+        long recordId;
         if (ident.equals("next") || ident.equals("prev")) {
             // Get stored results
             final QueryResult results = plugin.cachedQueries.get(keyName);
-            record_id = results.getLastTeleportIndex();
-            record_id = (record_id == 0 ? 1 : record_id);
-            if (record_id > 0) {
+            recordId = results.getLastTeleportIndex();
+            recordId = (recordId == 0 ? 1 : recordId);
+            if (recordId > 0) {
                 if (ident.equals("next")) {
-                    record_id++;
+                    recordId++;
                 } else {
-                    if (record_id > 1) {
-                        record_id--;
+                    if (recordId > 1) {
+                        recordId--;
                     }
                 }
             }
@@ -75,8 +74,8 @@ public class TeleportCommand implements SubHandler {
                         .playerError("You must provide a numeric result number or record ID to teleport to."));
                 return;
             }
-            record_id = Integer.parseInt(ident);
-            if (record_id <= 0) {
+            recordId = Integer.parseInt(ident);
+            if (recordId <= 0) {
                 call.getPlayer().sendMessage(
                         Prism.messenger.playerError("Result number or record ID must be greater than zero."));
                 return;
@@ -84,13 +83,13 @@ public class TeleportCommand implements SubHandler {
         }
 
         // If a record id provided, re-query the database
-        Handler destinationAction;
+        final Handler destinationAction;
         if (call.getArg(1).contains("id:")) {
 
             // Build params
             final QueryParameters params = new QueryParameters();
             params.setWorld(call.getPlayer().getWorld().getName());
-            params.setId(record_id);
+            params.setId(recordId);
 
             // Query
             final ActionsQuery aq = new ActionsQuery(plugin);
@@ -103,27 +102,25 @@ public class TeleportCommand implements SubHandler {
             // Get the first result
             destinationAction = results.getActionResults().get(0);
 
-        }
-        // Otherwise, look for a cached query
-        else {
+        } else {
 
             // Get stored results
             final QueryResult results = plugin.cachedQueries.get(keyName);
 
-            if (record_id > results.getActionResults().size()) {
+            if (recordId > results.getActionResults().size()) {
                 call.getPlayer().sendMessage(Prism.messenger.playerError(
-                        "No records exists at this index. Did you mean /pr tp id:" + record_id + " instead?"));
+                        "No records exists at this index. Did you mean /pr tp id:" + recordId + " instead?"));
                 return;
             }
 
-            final int key = (int) (record_id - 1);
+            final int key = (int) (recordId - 1);
 
             // Get the result index specified
             destinationAction = results.getActionResults().get(key);
 
             // Refresh the query time and replace
             results.setQueryTime();
-            results.setLastTeleportIndex(record_id);
+            results.setLastTeleportIndex(recordId);
             plugin.cachedQueries.replace(keyName, results);
 
         }
@@ -135,13 +132,25 @@ public class TeleportCommand implements SubHandler {
                         Prism.messenger.playerError("Action record occurred in world we can't find anymore."));
                 return;
             }
+            if (PaperLib.isPaper()) {
+                PaperLib.teleportAsync(call.getPlayer(), destinationAction.getLoc())
+                        .thenAccept(
+                              success -> sendTeleportCompleteMessage(success, call.getPlayer(), destinationAction));
+            } else {
+                sendTeleportCompleteMessage(call.getPlayer().teleport(destinationAction.getLoc()), call.getPlayer(),
+                        destinationAction);
+            }
+        }
+    }
 
-            call.getPlayer().teleport(destinationAction.getLoc());
-            call.getPlayer()
-                    .sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-                            "Teleporting... " + ChatColor.WHITE + destinationAction.getActionType().getName() + ChatColor.GRAY
-                                    + " by " + ChatColor.WHITE + destinationAction.getSourceName() + ChatColor.GRAY
-                                    + ", " + ChatColor.WHITE + destinationAction.getTimeSince()));
+    private void sendTeleportCompleteMessage(boolean success, Player player, Handler destinationAction) {
+        if (success) {
+            player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                    "Teleporting... " + ChatColor.WHITE + destinationAction.getActionType().getName() + ChatColor.GRAY
+                            + " by " + ChatColor.WHITE + destinationAction.getSourceName() + ChatColor.GRAY
+                            + ", " + ChatColor.WHITE + destinationAction.getTimeSince()));
+        } else {
+            player.sendMessage(Prism.messenger.playerError("Prism teleportation failed"));
         }
     }
 
