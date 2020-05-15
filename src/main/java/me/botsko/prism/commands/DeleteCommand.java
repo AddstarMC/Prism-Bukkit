@@ -87,9 +87,9 @@ public class DeleteCommand extends AbstractCommand {
                 paramList.add(parameters);
 
                 final ActionsQuery aq = new ActionsQuery(plugin);
-                final long minId = aq.getMinIdForQuery(parameters);
-                final long maxId = aq.getMaxIdForQuery(parameters);
-
+                final long[] extents = aq.getQueryExtents(parameters);
+                final long minId = extents[0];
+                final long maxId = extents[1];
                 Prism.log(
                         "Beginning prism database purge cycle. Will be performed in batches so "
                                 + "we don't tie up the db...");
