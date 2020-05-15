@@ -333,7 +333,7 @@ public class Prism extends JavaPlugin {
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();
         // Load configuration, or install if new
-        if (!getConfig().getBoolean("prism.suppress-Paper-message",false)) {
+        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
             PaperLib.suggestPaper(this);
         }
         if (getConfig().getBoolean("prism.allow-metrics")) {
