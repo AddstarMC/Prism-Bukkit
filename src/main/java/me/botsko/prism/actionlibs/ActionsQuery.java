@@ -162,6 +162,7 @@ public class ActionsQuery {
         idQ.setMinMax();
         parameters.setMaxPrimaryKey(0);
         parameters.setMinPrimaryKey(0);
+        idQ.setParameters(parameters);
         return idQ.execute();
     }
 
