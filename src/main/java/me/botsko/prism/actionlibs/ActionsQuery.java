@@ -123,14 +123,16 @@ public class ActionsQuery {
      *
      * @param parameters params
      * @return id
+     * @deprecated use {@link this#getQueryExtents(QueryParameters)}
      */
+    @Deprecated
     public long getMinIdForQuery(QueryParameters parameters) {
         final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMin();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);
         idQ.setParameters(parameters);
-        return idQ.execute();
+        return idQ.execute()[0];
     }
 
     /**
@@ -138,12 +140,28 @@ public class ActionsQuery {
      *
      * @param parameters params
      * @return id
+     * @deprecated use {@link this#getQueryExtents(QueryParameters)}
      */
+    @Deprecated
     public long getMaxIdForQuery(QueryParameters parameters) {
         final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
         idQ.setMax();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);
+        idQ.setParameters(parameters);
+        return idQ.execute()[0];
+    }
+
+    /**
+     * Get min and max in 1 go.
+     * @param parameters QueryParams
+     * @return array with minID at 0 and maxID at 1
+     */
+    public long[] getQueryExtents(QueryParameters parameters) {
+        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIDQuery();
+        idQ.setMinMax();
+        parameters.setMaxPrimaryKey(0);
+        parameters.setMinPrimaryKey(0);
         idQ.setParameters(parameters);
         return idQ.execute();
     }
