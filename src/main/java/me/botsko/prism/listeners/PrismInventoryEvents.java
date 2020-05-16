@@ -292,7 +292,7 @@ public class PrismInventoryEvents implements Listener {
                         ItemStack is = contents[i];
 
                         if (slotItem.isSimilar(is)) {
-                            amount = recordDeductTransfer(INSERT,stackSize - is.getAmount(),amount,heldItem,
+                            amount = recordDeductTransfer(INSERT,stackSize - is.getAmount(),amount,slotItem,
                                     containerLoc,i,player,event);
                             if (amount <= 0) {
                                 break;
@@ -306,7 +306,7 @@ public class PrismInventoryEvents implements Listener {
                             ItemStack is = contents[i];
 
                             if (is == null || is.getType() == Material.AIR) {
-                                amount = recordDeductTransfer(INSERT,stackSize,amount,heldItem,
+                                amount = recordDeductTransfer(INSERT,stackSize,amount,slotItem,
                                         containerLoc,i,player,event);
                                 if (amount <= 0) {
                                     break;

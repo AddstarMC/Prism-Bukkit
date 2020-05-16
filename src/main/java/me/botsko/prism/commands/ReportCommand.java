@@ -229,6 +229,7 @@ public class ReportCommand extends AbstractCommand {
             return;
         }
         final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery();
+        reportQuery.setParameters(parameters);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }
 }
