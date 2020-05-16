@@ -166,7 +166,7 @@ public class PrismInventoryEvents implements Listener {
                         int amount = 0;
                         int maxStack = heldItem.getMaxStackSize();
                         if (slotItem.getType() == Material.AIR && heldItem.getAmount() <= maxStack) {
-                                amount = heldItem.getAmount();
+                            amount = heldItem.getAmount();
                         }
                         if (slotItem.getType().equals(heldItem.getType())) {
                             int slotQty = slotItem.getAmount();
