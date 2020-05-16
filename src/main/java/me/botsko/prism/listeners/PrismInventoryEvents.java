@@ -149,8 +149,9 @@ public class PrismInventoryEvents implements Listener {
         if (slotItem == null) {
             return;
         }
-        Prism.log("HELD:" + ((heldItem != null) ? heldItem.toString() : "NULL"));
-        Prism.log("SLOT:" + ((slotItem != null) ? slotItem.toString() : "NULL"));
+        Prism.debug("HELD:" + ((heldItem != null) ? heldItem.toString() : "NULL"));
+        Prism.debug("SLOT:" + ((slotItem != null) ? slotItem.toString() : "NULL"));
+
         switch (event.getClick()) {
             // IGNORE BOTTOM
             case LEFT:
@@ -160,7 +161,6 @@ public class PrismInventoryEvents implements Listener {
                             RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem,
                                     slotItem.getAmount(), slot, null, containerLoc, player));
                             Prism.debug("ACTION: " + event.getAction().name());
-
                         }
                     } else {
                         int amount = 0;
@@ -248,17 +248,7 @@ public class PrismInventoryEvents implements Listener {
                     if (is != null && (is.getType() != Material.AIR || is.equals(heldItem))) {
                         size += is.getAmount();
                     }
-
-                    int transferred = Math.min(size, amount);
-                    amount -= transferred;
-
-                    if (transferred > 0) {
-                        RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, heldItem, transferred, i, null,
-                                containerLoc, player));
-                        Prism.debug("ACTION: " + event.getAction().name());
-
-                    }
-
+                    amount = recordDeductTransfer(REMOVE,size,amount,heldItem,containerLoc,i,player,event);
                     if (amount <= 0) {
                         break;
                     }
@@ -305,16 +295,8 @@ public class PrismInventoryEvents implements Listener {
                         ItemStack is = contents[i];
 
                         if (slotItem.isSimilar(is)) {
-                            int transferred = Math.min(stackSize - is.getAmount(), amount);
-                            amount -= transferred;
-
-                            if (transferred > 0) {
-                                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem, transferred,
-                                        i, null, containerLoc, player));
-                                Prism.debug("ACTION: " + event.getAction().name());
-
-                            }
-
+                            amount = recordDeductTransfer(INSERT,stackSize - is.getAmount(),amount,heldItem,
+                                    containerLoc,i,player,event);
                             if (amount <= 0) {
                                 break;
                             }
@@ -327,16 +309,8 @@ public class PrismInventoryEvents implements Listener {
                             ItemStack is = contents[i];
 
                             if (is == null || is.getType() == Material.AIR) {
-                                int transferred = Math.min(stackSize, amount);
-                                amount -= transferred;
-
-                                if (transferred > 0) {
-                                    RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem,
-                                            transferred, i, null, containerLoc, player));
-                                    Prism.debug("ACTION: " + event.getAction().name());
-
-                                }
-
+                                amount = recordDeductTransfer(INSERT,stackSize,amount,heldItem,
+                                        containerLoc,i,player,event);
                                 if (amount <= 0) {
                                     break;
                                 }
@@ -374,4 +348,18 @@ public class PrismInventoryEvents implements Listener {
                 // What the hell did you do
         }
     }
+
+    private int recordDeductTransfer(String act, int size, int amount, ItemStack heldItem, Location containerLoc,
+                                     int slotLocation, Player player, InventoryClickEvent event) {
+        int transferred = Math.min(size, amount);
+        amount -= transferred;
+        if (transferred > 0) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(act, heldItem, transferred, slotLocation, null,
+                    containerLoc, player));
+            Prism.debug("ACTION: " + event.getAction().name());
+
+        }
+        return amount;
+    }
+
 }
