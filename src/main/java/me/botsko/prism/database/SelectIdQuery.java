@@ -10,5 +10,7 @@ public interface SelectIdQuery extends SelectQuery {
 
     void setMin();
 
-    long execute();
+    void setMinMax();
+
+    long[] execute();
 }
