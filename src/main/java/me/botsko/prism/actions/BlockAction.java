@@ -345,6 +345,7 @@ public class BlockAction extends GenericAction {
 
         }
         state.setType(getMaterial());
+        state.setBlockData(getBlockData());
         BlockActionData blockActionData = getActionData();
 
         if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
@@ -396,8 +397,6 @@ public class BlockAction extends GenericAction {
                 }
             }
         }
-
-        state.setBlockData(getBlockData());
 
         // -----------------------------
         // Sibling logic marker
