@@ -47,7 +47,7 @@ public class ReportCommand extends AbstractCommand {
     }
 
     /**
-     * Handle the command
+     * Handle the command.
      */
     @Override
     public void handle(CallInfo call) {
@@ -161,10 +161,7 @@ public class ReportCommand extends AbstractCommand {
 
         sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg("Attempting to check connection readiness..."));
 
-        Connection conn = null;
-        try {
-
-            conn = Prism.getPrismDataSource().getConnection();
+        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
             if (conn == null) {
                 sender.sendMessage(Prism.messenger.playerError("Pool returned NULL instead of a valid connection."));
             } else if (conn.isClosed()) {
@@ -175,12 +172,6 @@ public class ReportCommand extends AbstractCommand {
         } catch (final SQLException e) {
             sender.sendMessage(Prism.messenger.playerError("Error: " + e.getMessage()));
             e.printStackTrace();
-        } finally {
-            if (conn != null)
-                try {
-                    conn.close();
-                } catch (final SQLException ignored) {
-                }
         }
     }
 
@@ -196,18 +187,20 @@ public class ReportCommand extends AbstractCommand {
             return;
         }
         // No actions
-        if(checkParams(parameters,call)){
+        if (checkParams(parameters,call)) {
             return;
         }
 
         final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery();
+        reportQuery.setParameters(parameters);
         /*
           Run the lookup itself in an async task so the lookup query isn't done on the
           main thread
          */
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }
-    private boolean checkParams(QueryParameters parameters, CallInfo call){
+
+    private boolean checkParams(QueryParameters parameters, CallInfo call) {
         if (!parameters.getActionTypes().isEmpty()) {
             call.getSender()
                     .sendMessage(Prism.messenger.playerError("You may not specify any action types for this report."));
@@ -217,7 +210,7 @@ public class ReportCommand extends AbstractCommand {
         final Map<String, MatchRule> players = parameters.getPlayerNames();
         if (players.size() != 1) {
             call.getSender().sendMessage(Prism.messenger.playerError("You must provide only a single player name."));
-            return true ;
+            return true;
         }
         return false;
     }
@@ -236,6 +229,7 @@ public class ReportCommand extends AbstractCommand {
             return;
         }
         final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery();
+        reportQuery.setParameters(parameters);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }
 }

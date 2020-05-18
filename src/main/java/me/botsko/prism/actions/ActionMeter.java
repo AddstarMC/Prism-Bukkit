@@ -1,7 +1,6 @@
 package me.botsko.prism.actions;
 
 import au.com.addstar.dripreporter.DripMeter;
-import com.codahale.metrics.MetricRegistry;
 import me.botsko.prism.Prism;
 
 import java.util.HashMap;
@@ -17,33 +16,39 @@ public class ActionMeter {
 
     static {
         if (monitoring) {
-            meter.put(GenericAction.class.getSimpleName(), new DripMeter());
-            meter.put(EntityAction.class.getSimpleName(), new DripMeter());
-            meter.put(BlockAction.class.getSimpleName(), new DripMeter());
-            meter.put(BlockChangeAction.class.getSimpleName(), new DripMeter());
-            meter.put(ItemStackAction.class.getSimpleName(), new DripMeter());
-            meter.put(BlockShiftAction.class.getSimpleName(), new DripMeter());
-            meter.put(EntityTravelAction.class.getSimpleName(), new DripMeter());
-            meter.put(GrowAction.class.getSimpleName(), new DripMeter());
-            meter.put(HangingItemAction.class.getSimpleName(), new DripMeter());
-            meter.put(PlayerAction.class.getSimpleName(), new DripMeter());
-            meter.put(PlayerDeathAction.class.getSimpleName(), new DripMeter());
-            meter.put(PrismProcessAction.class.getSimpleName(), new DripMeter());
-            meter.put(PrismRollbackAction.class.getSimpleName(), new DripMeter());
-            meter.put(SignAction.class.getSimpleName(), new DripMeter());
-            meter.put(VehicleAction.class.getSimpleName(), new DripMeter());
+            meter.put("UnknownHandler",getMeter(Handler.class));
+            meter.put(GenericAction.class.getSimpleName(), getMeter(GenericAction.class));
+            meter.put(EntityAction.class.getSimpleName(), getMeter(EntityAction.class));
+            meter.put(BlockAction.class.getSimpleName(),getMeter(BlockAction.class));
+            meter.put(BlockChangeAction.class.getSimpleName(), getMeter(BlockChangeAction.class));
+            meter.put(ItemStackAction.class.getSimpleName(), getMeter(ItemStackAction.class));
+            meter.put(BlockShiftAction.class.getSimpleName(), getMeter(BlockShiftAction.class));
+            meter.put(EntityTravelAction.class.getSimpleName(), getMeter(EntityTravelAction.class));
+            meter.put(GrowAction.class.getSimpleName(), getMeter(GrowAction.class));
+            meter.put(HangingItemAction.class.getSimpleName(), getMeter(HangingItemAction.class));
+            meter.put(PlayerAction.class.getSimpleName(),getMeter(PlayerAction.class));
+            meter.put(PlayerDeathAction.class.getSimpleName(), getMeter(PlayerDeathAction.class));
+            meter.put(PrismProcessAction.class.getSimpleName(), getMeter(PrismProcessAction.class));
+            meter.put(PrismRollbackAction.class.getSimpleName(),getMeter(PrismRollbackAction.class));
+            meter.put(SignAction.class.getSimpleName(), getMeter(SignAction.class));
+            meter.put(VehicleAction.class.getSimpleName(), getMeter(VehicleAction.class));
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private static DripMeter getMeter(Class clazz) {
+        if (meter.containsKey(clazz.getSimpleName())) {
+            return meter.get(clazz.getSimpleName());
+        } else {
+            return Prism.monitor.addMeter(clazz);
         }
     }
 
     /**
      * Setup the meter to record.
-     *
-     * @param registry metric registry
      */
-    public static void setupActionMeter(MetricRegistry registry) {
-        for (Map.Entry<String, DripMeter> e : meter.entrySet()) {
-            registry.register(e.getKey(), e.getValue());
-        }
+    public static void setupActionMeter() {
+        // Initializes the static class
     }
 
     @SuppressWarnings("rawtypes")
@@ -51,7 +56,7 @@ public class ActionMeter {
         if (monitoring) {
             DripMeter m = meter.get(clazz.getSimpleName());
             if (m == null) {
-                m = meter.get(GenericAction.class.getSimpleName());
+                m = meter.get("UnknownHandler");
             }
             m.mark();
         }

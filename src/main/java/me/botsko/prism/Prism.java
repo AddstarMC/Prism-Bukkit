@@ -322,15 +322,16 @@ public class Prism extends JavaPlugin {
 
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
+        log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         Plugin drip = this.getServer().getPluginManager().getPlugin("DripReporter");
         if (drip != null && drip.isEnabled()) {
             monitor = (DripReporterApi) drip;
             monitoring = true;
             Gauge<Integer> recordingQ = RecordingQueue::getQueueSize;
             monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
-            ActionMeter.setupActionMeter(monitor.getRegistry());
+            ActionMeter.setupActionMeter();
+            log("Prism hooked DripReporterApi instance: " + drip.getName() + " " + drip.getDescription().getVersion());
         }
-        log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         PaperLib.suggestPaper(this);
         // Load configuration, or install if new
         loadConfig();

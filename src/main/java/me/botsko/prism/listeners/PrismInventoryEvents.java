@@ -115,15 +115,12 @@ public class PrismInventoryEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClick(final InventoryClickEvent event) {
-        int slot = event.getRawSlot();
-
+        int slot = event.getRawSlot(); //this is the unique slot number for the view.
         // Specifically slot -999, or out of the window
         if (slot < 0) {
             return;
         }
-
-        Location containerLoc = event.getInventory().getLocation();
-
+        Location containerLoc = event.getInventory().getLocation(); //this is the top Inventory
         // Virtual inventory or something (enderchest?)
         if (containerLoc == null) {
             return;
@@ -152,25 +149,42 @@ public class PrismInventoryEvents implements Listener {
         if (slotItem == null) {
             return;
         }
+        Prism.debug("HELD:" + ((heldItem != null) ? heldItem.toString() : "NULL"));
+        Prism.debug("SLOT:" +  slotItem.toString());
 
         switch (event.getClick()) {
             // IGNORE BOTTOM
             case LEFT:
                 if (isTopInv) {
-                    if (heldItem.getType() == Material.AIR) { //todo if the item under the cursor is null what to do?
+                    if (heldItem == null || heldItem.getType() == Material.AIR) {
                         if (slotItem.getType() != Material.AIR) {
                             RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem,
                                     slotItem.getAmount(), slot, null, containerLoc, player));
+                            Prism.debug("ACTION: " + event.getAction().name());
                         }
                     } else {
-                        if (slotItem.getType() == Material.AIR || slotItem.equals(heldItem)) {
-                            int amount = Math.min(slotItem.getType().getMaxStackSize(),
-                                    slotItem.getAmount() + heldItem.getAmount()) - slotItem.getAmount();
+                        int amount = 0;
+                        int maxStack = heldItem.getMaxStackSize();
+                        if (slotItem.getType() == Material.AIR && heldItem.getAmount() <= maxStack) {
+                            amount = heldItem.getAmount();
+                        }
+                        if (slotItem.getType().equals(heldItem.getType())) {
+                            int slotQty = slotItem.getAmount();
+                            amount = Math.min(maxStack - slotQty,heldItem.getAmount());
+                        }
+                        if (amount > 0) {
+                            RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, heldItem, amount, slot,
+                                    null, containerLoc, player));
+                            Prism.debug("ACTION: " + event.getAction().name());
 
-                            if (amount > 0) {
-                                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem, amount, slot,
-                                        null, containerLoc, player));
-                            }
+                        }
+                        if (slotItem.getType() != Material.AIR && !slotItem.getType().equals(heldItem.getType())) {
+                            // its a switch.
+                            RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT,heldItem,
+                                    heldItem.getAmount(),slot,null,containerLoc,player));
+                            Prism.debug("ACTION: " + event.getAction().name());
+                            RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE,slotItem,
+                                    slotItem.getAmount(),slot,null,containerLoc,player));
                         }
                     }
                 }
@@ -178,16 +192,20 @@ public class PrismInventoryEvents implements Listener {
 
             case RIGHT:
                 if (isTopInv) {
-                    if (heldItem.getType() == Material.AIR) {
+                    if (heldItem == null || heldItem.getType() == Material.AIR) {
                         if (slotItem.getType() != Material.AIR) {
                             RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem,
                                     (slotItem.getAmount() + 1) / 2, slot, null, containerLoc, player));
+                            Prism.debug("ACTION: " + event.getAction().name());
+
                         }
                     } else {
                         if ((slotItem.getType() == Material.AIR || slotItem.equals(heldItem))
                                 && slotItem.getAmount() < slotItem.getType().getMaxStackSize()) {
                             RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem, 1, slot, null,
                                     containerLoc, player));
+                            Prism.debug("ACTION: " + event.getAction().name());
+
                         }
                     }
                 }
@@ -200,18 +218,23 @@ public class PrismInventoryEvents implements Listener {
                     if (slotItem.getType() != Material.AIR) {
                         RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem, slotItem.getAmount(),
                                 slot, null, containerLoc, player));
+                        Prism.debug("ACTION: " + event.getAction().name());
+
                     }
 
                     if (swapItem != null && swapItem.getType() != Material.AIR) {
                         RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, swapItem, swapItem.getAmount(),
                                 slot, null, containerLoc, player));
+                        Prism.debug("ACTION: " + event.getAction().name());
+
                     }
                 }
                 break;
 
             // HALF 'N HALF
             case DOUBLE_CLICK: {
-                int amount = heldItem.getType().getMaxStackSize() - heldItem.getAmount();
+                int amount = (heldItem == null) ? 0 :
+                        heldItem.getType().getMaxStackSize() - heldItem.getAmount();
 
                 ItemStack[] contents = event.getInventory().getStorageContents();
                 int length = contents.length;
@@ -223,15 +246,7 @@ public class PrismInventoryEvents implements Listener {
                     if (is != null && (is.getType() != Material.AIR || is.equals(heldItem))) {
                         size += is.getAmount();
                     }
-
-                    int transferred = Math.min(size, amount);
-                    amount -= transferred;
-
-                    if (transferred > 0) {
-                        RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, heldItem, transferred, i, null,
-                                containerLoc, player));
-                    }
-
+                    amount = recordDeductTransfer(REMOVE,size,amount,heldItem,containerLoc,i,player,event);
                     if (amount <= 0) {
                         break;
                     }
@@ -248,7 +263,7 @@ public class PrismInventoryEvents implements Listener {
                         int remaining = slotItem.getAmount();
 
                         for (ItemStack is : event.getView().getBottomInventory().getStorageContents()) {
-                            if (is.getType() == Material.AIR) {
+                            if (is == null || is.getType() == Material.AIR) {
                                 remaining -= stackSize;
                             } else if (is.isSimilar(slotItem)) {
                                 remaining -= (stackSize - Math.min(is.getAmount(), stackSize));
@@ -262,6 +277,8 @@ public class PrismInventoryEvents implements Listener {
 
                         RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem,
                                 slotItem.getAmount() - remaining, slot, null, containerLoc, player));
+                        Prism.debug("ACTION: " + event.getAction().name());
+
                     }
                 } else {
                     int stackSize = slotItem.getType().getMaxStackSize();
@@ -275,14 +292,8 @@ public class PrismInventoryEvents implements Listener {
                         ItemStack is = contents[i];
 
                         if (slotItem.isSimilar(is)) {
-                            int transferred = Math.min(stackSize - is.getAmount(), amount);
-                            amount -= transferred;
-
-                            if (transferred > 0) {
-                                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem, transferred,
-                                        i, null, containerLoc, player));
-                            }
-
+                            amount = recordDeductTransfer(INSERT,stackSize - is.getAmount(),amount,slotItem,
+                                    containerLoc,i,player,event);
                             if (amount <= 0) {
                                 break;
                             }
@@ -295,14 +306,8 @@ public class PrismInventoryEvents implements Listener {
                             ItemStack is = contents[i];
 
                             if (is == null || is.getType() == Material.AIR) {
-                                int transferred = Math.min(stackSize, amount);
-                                amount -= transferred;
-
-                                if (transferred > 0) {
-                                    RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, slotItem,
-                                            transferred, i, null, containerLoc, player));
-                                }
-
+                                amount = recordDeductTransfer(INSERT,stackSize,amount,slotItem,
+                                        containerLoc,i,player,event);
                                 if (amount <= 0) {
                                     break;
                                 }
@@ -317,6 +322,8 @@ public class PrismInventoryEvents implements Listener {
                 if (slotItem.getType() != Material.AIR && slotItem.getAmount() > 0) {
                     RecordingQueue.addToQueue(
                             ActionFactory.createItemStack(REMOVE, slotItem, 1, slot, null, containerLoc, player));
+                    Prism.debug("ACTION: " + event.getAction().name());
+
                 }
                 break;
 
@@ -324,6 +331,8 @@ public class PrismInventoryEvents implements Listener {
                 if (slotItem.getType() != Material.AIR && slotItem.getAmount() > 0) {
                     RecordingQueue.addToQueue(ActionFactory.createItemStack(REMOVE, slotItem, slotItem.getAmount(),
                             slot, null, containerLoc, player));
+                    Prism.debug("ACTION: " + event.getAction().name());
+
                 }
                 break;
 
@@ -336,4 +345,18 @@ public class PrismInventoryEvents implements Listener {
                 // What the hell did you do
         }
     }
+
+    private int recordDeductTransfer(String act, int size, int amount, ItemStack heldItem, Location containerLoc,
+                                     int slotLocation, Player player, InventoryClickEvent event) {
+        int transferred = Math.min(size, amount);
+        int newAmount = amount - transferred;
+        if (transferred > 0) {
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(act, heldItem, transferred, slotLocation, null,
+                    containerLoc, player));
+            Prism.debug("ACTION: " + event.getAction().name());
+
+        }
+        return newAmount;
+    }
+
 }
