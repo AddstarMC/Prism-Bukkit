@@ -48,7 +48,7 @@ public class ActionMeter {
      * Setup the meter to record.
      */
     public static void setupActionMeter() {
-
+        // Initializes the static class
     }
 
     @SuppressWarnings("rawtypes")
