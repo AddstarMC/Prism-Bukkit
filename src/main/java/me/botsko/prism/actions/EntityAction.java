@@ -73,7 +73,7 @@ public class EntityAction extends GenericAction {
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
-            String entityName = gson().fromJson(data, JsonObject.class).get("entity_name").getAsString();
+            String entityName = gson().fromJson(data, JsonObject.class).get("entityName").getAsString();
             serializer = gson().fromJson(data, EntitySerializerFactory.getSerlializingClass(getEntityType(entityName)));
         }
     }

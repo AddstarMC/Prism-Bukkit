@@ -663,6 +663,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             if (RecordingManager.failedDbConnectionCount == 0) {
                 Prism.log(
                         "Prism database error. Connection missing. Leaving actions to log in queue.");
+                Prism.debug(e.getMessage());
             }
             RecordingManager.failedDbConnectionCount++;
 
