@@ -54,6 +54,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * Constructor.
+     *
      * @param plugin Prism
      */
     public PrismPlayerEvents(Prism plugin) {
@@ -109,31 +110,35 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerJoinEvent.
+     *
      * @param event PlayerJoinEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
 
         final Player player = event.getPlayer();
+        Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
+            // Lookup player for cache reasons
+            PlayerIdentification.cachePrismPlayer(player);
 
-        // Lookup player for cache reasons
-        PlayerIdentification.cachePrismPlayer(player);
+            // Track the join event
+            if (!Prism.getIgnore().event("player-join", player)) {
+                return;
+            }
 
-        // Track the join event
-        if (!Prism.getIgnore().event("player-join", player)) {
-            return;
-        }
-
-        String ip = null;
-        if (plugin.getConfig().getBoolean("prism.track-player-ip-on-join") && player.getAddress() != null) {
+            String ip = null;
+            if (plugin.getConfig().getBoolean("prism.track-player-ip-on-join") && player.getAddress() != null) {
                 ip = player.getAddress().getAddress().getHostAddress();
-        }
+            }
 
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", event.getPlayer(), ip));
+            RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", event.getPlayer(), ip));
+        });
+
     }
 
     /**
      * PlayerQuitEvent.
+     *
      * @param event PlayerQuitEvent
      */
     @EventHandler(priority = EventPriority.NORMAL)
@@ -159,6 +164,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * AsyncPlayerChatEvent.
+     *
      * @param event AsyncPlayerChatEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -167,14 +173,12 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event("player-chat", event.getPlayer())) {
             return;
         }
-        if (plugin.dependencyEnabled("Herochat")) {
-            return;
-        }
         RecordingQueue.addToQueue(ActionFactory.createPlayer("player-chat", event.getPlayer(), event.getMessage()));
     }
 
     /**
      * PlayerDropItemEvent.
+     *
      * @param event PlayerDropItemEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -192,6 +196,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * EntityPickupItemEvent.
+     *
      * @param event EntityPickupItemEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -208,6 +213,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerExpChangeEvent.
+     *
      * @param event PlayerExpChangeEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -220,6 +226,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerBucketEmptyEvent.
+     *
      * @param event PlayerBucketEmptyEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -229,17 +236,19 @@ public class PrismPlayerEvents implements Listener {
         String cause;
         Material newMat;
         Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
-
-        if (event.getBucket() == Material.LAVA_BUCKET) {
-            cause = "lava-bucket";
-            newMat = Material.LAVA;
-        } else {
-            cause = "water-bucket";
-            newMat = Material.WATER;
-
-            if (event.getBucket() != Material.WATER_BUCKET) {
-                // TODO: handle fish here maybe
-            }
+        switch (event.getBucket()) {
+            case LAVA_BUCKET:
+                cause = "lava-bucket";
+                newMat = Material.LAVA;
+                break;
+            case TROPICAL_FISH_BUCKET:
+            case SALMON_BUCKET:
+            case PUFFERFISH_BUCKET:
+            case WATER_BUCKET:
+            default:
+                cause = "water-bucket";
+                newMat = Material.WATER;
+                break;
         }
 
         if (!Prism.getIgnore().event(cause, player)) {
@@ -279,6 +288,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerBucketFillEvent.
+     *
      * @param event PlayerBucketFillEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -312,6 +322,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerTeleportEvent.
+     *
      * @param event PlayerTeleportEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -329,6 +340,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * EnchantItemEvent.
+     *
      * @param event EnchantItemEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -343,6 +355,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * CraftItemEvent.
+     *
      * @param event CraftItemEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -358,6 +371,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerInteractEvent.
+     *
      * @param event PlayerInteractEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -379,13 +393,15 @@ public class PrismPlayerEvents implements Listener {
             if (hand.getType() == item_mat) {
 
                 // Left click is for current block
-                if (event.getAction() == Action.LEFT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND && block != null) {
-                        wand.playerLeftClick(player, block.getLocation());
+                if ((event.getAction() == Action.LEFT_CLICK_BLOCK) && (event.getHand() == EquipmentSlot.HAND)
+                        && (block != null)) {
+                    wand.playerLeftClick(player, block.getLocation());
                 }
                 // Right click is for relative block on blockface
                 // except block placements - those will be handled by the
                 // blockplace.
-                if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND) {
+                if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getHand() == EquipmentSlot.HAND
+                        && block != null) {
                     block = block.getRelative(event.getBlockFace());
                     wand.playerRightClick(player, block.getLocation());
                 }
@@ -492,7 +508,7 @@ public class PrismPlayerEvents implements Listener {
                 case ORANGE_TULIP:
                 case RED_TULIP:
                 case WHITE_TULIP:
-                    recordBoneMealEvent(block, hand, event.getBlockFace(), player);
+                    recordBoneMealEvent(block, hand, player);
                     break;
                 case RAIL:
                 case DETECTOR_RAIL:
@@ -520,7 +536,7 @@ public class PrismPlayerEvents implements Listener {
 
             // if they're holding a rocket
             if (hand.getType() == Material.FIREWORK_ROCKET) {
-                recordRocketLaunch(block, hand, event.getBlockFace(), player);
+                recordRocketLaunch(block, hand, player);
             }
 
             // if they're holding a boat (why they hell can you put boats on
@@ -557,11 +573,12 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * Record Cocoa Plant Event.
-     * @param block Block
+     *
+     * @param block  Block
      * @param inhand ItemStack
      * @param player Player
      */
-    protected void recordCocoaPlantEvent(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
+    private void recordCocoaPlantEvent(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
         if (!Prism.getIgnore().event("block-place", block)) {
             return;
         }
@@ -582,40 +599,43 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * recordBoneMealEvent.
-     * @param block Block
-     * @param inhand ItemStack
-     * @param clickedFace BlockFace
-     * @param player Player
+     *
+     * @param block       Block
+     * @param inhand      ItemStack
+     * @param player      Player
      */
-    protected void recordBoneMealEvent(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
+    private void recordBoneMealEvent(Block block, ItemStack inhand, Player player) {
         if (inhand.getType() == Material.BONE_MEAL) {
-            if (!Prism.getIgnore().event("bonemeal-use", block))
+            if (!Prism.getIgnore().event("bonemeal-use", block)) {
                 return;
+            }
             RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", inhand.getType(), block, player));
         }
     }
 
     /**
      * recordMonsterEggUse.
-     * @param block Block
+     *
+     * @param block  Block
      * @param inhand ItemStack
      * @param player Player
      */
-    protected void recordMonsterEggUse(Block block, ItemStack inhand, Player player) {
-        if (!Prism.getIgnore().event("spawnegg-use", block))
+    private void recordMonsterEggUse(Block block, ItemStack inhand, Player player) {
+        if (!Prism.getIgnore().event("spawnegg-use", block)) {
             return;
+        }
         RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use",
                 inhand.getType(), block, player));
     }
 
     /**
      * recordRocketLaunch.
-     * @param block Block
-     * @param inhand ItemStack
-     * @param clickedFace clickedFace
-     * @param player Player
+     *
+     * @param block       Block
+     * @param inhand      ItemStack
+     * @param player      Player
      */
-    protected void recordRocketLaunch(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
+    private void recordRocketLaunch(Block block, ItemStack inhand, Player player) {
         if (!Prism.getIgnore().event("firework-launch", block)) {
             return;
         }
@@ -625,10 +645,11 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * recordCakeEat.
-     * @param block Block
+     *
+     * @param block  Block
      * @param player Player
      */
-    protected void recordCakeEat(Block block, Player player) {
+    private void recordCakeEat(Block block, Player player) {
         if (!Prism.getIgnore().event("cake-eat", block)) {
             return;
         }
@@ -637,10 +658,11 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * recordDiscInsert.
-     * @param block Block
+     *
+     * @param block  Block
      * @param player Player
      */
-    protected void recordDiscInsert(Block block, Player player) {
+    private void recordDiscInsert(Block block, Player player) {
         ItemStack hand = player.getInventory().getItemInMainHand();
         // They have to be holding a record
         if (!hand.getType().isRecord()) {
@@ -667,7 +689,8 @@ public class PrismPlayerEvents implements Listener {
     }
 
     /**
-     * @param event
+     * PlayerInteractEntityEvent.
+     * @param event PlayerInteractEntityEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerEntityInteract(final PlayerInteractEntityEvent event) {
