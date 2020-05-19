@@ -52,6 +52,7 @@ public class PrismCommands extends Executor {
         addSub("params", "prism.help").allowConsole().setHandler(new ParamsCommand());
         addSub("actions", "prism.help").allowConsole().setHandler(new ActionsCommand());
         addSub("flags", "prism.help").allowConsole().setHandler(new FlagsCommand());
+        addSub("debug","prism.debug").allowConsole().setHandler(new DebugCommand());
         addSub("reload", "prism.reload").allowConsole().setHandler(new SubHandler() {
             @Override
             public void handle(CallInfo call) {
