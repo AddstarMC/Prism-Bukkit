@@ -18,6 +18,8 @@ commands:
 permissions:
     prism.help:
         default: op
+    prism.debug:
+        default: op
     prism.wand.*:
         default: op
         children:

@@ -19,7 +19,7 @@ public interface PrismParameterHandler {
     void defaultTo(QueryParameters query, CommandSender sender);
 
     /**
-     * Complete a param after the `:`
+     * Complete a param after the `:`.
      *
      * @param partialParameter The partial parameter
      * @param sender           The sender

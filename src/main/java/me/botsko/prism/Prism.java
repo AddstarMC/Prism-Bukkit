@@ -345,9 +345,11 @@ public class Prism extends JavaPlugin {
         }
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
-            if (pasteKey != null && pasteKey.startsWith("API key")) {
+            if (pasteKey != null && pasteKey.startsWith("API key") || pasteKey.length() < 6) {
                 pasteKey = null;
             }
+        } else {
+            pasteKey = null;
         }
         // init db async then call back to complete enable.
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
