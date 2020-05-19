@@ -323,6 +323,7 @@ public class Prism extends JavaPlugin {
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
+        loadConfig();        // Load configuration, or install if new
         Plugin drip = this.getServer().getPluginManager().getPlugin("DripReporter");
         if (drip != null && drip.isEnabled()) {
             monitor = (DripReporterApi) drip;
@@ -332,9 +333,9 @@ public class Prism extends JavaPlugin {
             ActionMeter.setupActionMeter();
             log("Prism hooked DripReporterApi instance: " + drip.getName() + " " + drip.getDescription().getVersion());
         }
-        PaperLib.suggestPaper(this);
-        // Load configuration, or install if new
-        loadConfig();
+        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
+            PaperLib.suggestPaper(this);
+        }
         if (getConfig().getBoolean("prism.allow-metrics")) {
             Prism.log("Prism bStats metrics are enabled - thank you!");
             int pluginid = 4365; // assigned by bstats.org
