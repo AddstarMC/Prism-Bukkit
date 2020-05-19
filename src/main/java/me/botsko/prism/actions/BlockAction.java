@@ -346,6 +346,8 @@ public class BlockAction extends GenericAction {
         }
         state.setType(getMaterial());
         state.setBlockData(getBlockData());
+        state.update(true);
+        BlockState newState = block.getState();
         BlockActionData blockActionData = getActionData();
 
         if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
@@ -358,41 +360,34 @@ public class BlockAction extends GenericAction {
             final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
             // Set spawner data
-            final CreatureSpawner spawner = (CreatureSpawner) state;
-            spawner.setDelay(s.getDelay());
-            spawner.setSpawnedType(s.getEntityType());
+            ((CreatureSpawner) newState).setDelay(s.getDelay());
+            ((CreatureSpawner) newState).setSpawnedType(s.getEntityType());
 
         }
 
         if (getMaterial() == COMMAND_BLOCK
                 && blockActionData instanceof CommandActionData) {
-            final CommandBlock cmbBlock = (CommandBlock) state;
             final CommandActionData c = (CommandActionData) blockActionData;
-            cmbBlock.setCommand(c.command);
+            ((CommandBlock) newState).setCommand(c.command);
         }
-        if (state instanceof Nameable && actionData.customName != null) {
-            ((Nameable) state).setCustomName(actionData.customName);
+        if (newState instanceof Nameable && actionData.customName != null) {
+            ((Nameable) newState).setCustomName(actionData.customName);
         }
         if (parameters.getProcessType() == PrismProcessType.ROLLBACK
                 && Tag.SIGNS.isTagged(getMaterial())
                 && blockActionData instanceof SignActionData) {
 
             final SignActionData s = (SignActionData) blockActionData;
-
             // Verify block is sign. Rarely, if the block somehow pops off
             // or fails
             // to set it causes ClassCastException:
             // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
             // cannot be cast to org.bukkit.block.Sign
             // https://snowy-evening.com/botsko/prism/455/
-            if (state instanceof Sign) {
-
-                // Set sign data
-                final Sign sign = (Sign) state;
-
+            if (newState instanceof Sign) {
                 if (s.lines != null) {
                     for (int i = 0; i < s.lines.length; ++i) {
-                        sign.setLine(i, s.lines[i]);
+                        ((Sign) newState).setLine(i, s.lines[i]);
                     }
                 }
             }
@@ -417,8 +412,8 @@ public class BlockAction extends GenericAction {
         }
 
         // Chest sides can be broken independently, ignore them
-        if (state.getType() != CHEST && state.getType() != TRAPPED_CHEST) {
-            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(state);
+        if (newState.getType() != CHEST && newState.getType() != TRAPPED_CHEST) {
+            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(newState);
 
             if (s != null) {
                 sibling = s.getState();
@@ -447,7 +442,7 @@ public class BlockAction extends GenericAction {
 
         boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
 
-        state.update(true, physics);
+        newState.update(true, physics);
 
         if (sibling != null) {
             sibling.update(true, physics);
