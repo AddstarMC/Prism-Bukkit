@@ -64,15 +64,14 @@ public class DebugCommand implements SubHandler {
         StringBuilder out = new StringBuilder();
         String name = dataSource.getClass().getName();
         out.append("DataSource Name: ").append(name).append("/n");
-        if (dataSource instanceof HikariDataSource) {
-            out.append("Running: ").append(((HikariDataSource) dataSource).isRunning())
+        if (dataSource.getDataSource() instanceof HikariDataSource) {
+            HikariDataSource ds = (HikariDataSource) dataSource.getDataSource();
+            out.append("Running: ").append(ds.isRunning())
                     .append("Total Connections: ")
-                    .append(((HikariDataSource) dataSource)
-                            .getHikariPoolMXBean().getTotalConnections())
+                    .append(ds.getHikariPoolMXBean().getTotalConnections())
                     .append("/n")
                     .append("Total Connections: ")
-                    .append(((HikariDataSource) dataSource)
-                            .getHikariPoolMXBean().getActiveConnections())
+                    .append(ds.getHikariPoolMXBean().getActiveConnections())
                     .append("/n");
         }
         out.append("Illegal Blocks: /n");
@@ -105,8 +104,16 @@ public class DebugCommand implements SubHandler {
                         new PasteContent(PasteContent.ContentType.TEXT, getDataSourceInfo())))
                 .build();
         if (result.getPaste().isPresent()) {
-            sender.sendMessage(" Output Complete: paste available on https://paste.gg/"
-                    + result.getPaste().get().getId());
+            String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();
+            sender.sendMessage(" Output Complete: paste available on "
+                    + pasteUrl);
+            Prism.log("Paste Created :" + pasteUrl);
+            result.getPaste().get().getDeletionKey().ifPresent(
+                  s -> {
+                      sender.sendMessage(" Deletion Key: " + s);
+                      Prism.log("Deletion Key:" + s);
+                  }
+            );
         } else {
             sender.sendMessage("Could not Report results.  Please ask support for other methods"
                     + " of providing information");
