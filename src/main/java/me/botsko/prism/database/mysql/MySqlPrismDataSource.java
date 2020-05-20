@@ -49,6 +49,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     private final Boolean nonStandardSql;
+    private boolean monitored;
 
     /**
      * Create a dataSource.
@@ -60,6 +61,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
         detectNonStandardSql();
         name = "mysql";
+        monitored = Prism.getInstance().monitoring;
     }
 
     /**
@@ -132,11 +134,12 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig.setUsername(this.section.getString("username"));
             dbConfig.setPassword(this.section.getString("password"));
         }
-        if (Prism.getInstance().monitoring) {
+        if (monitored) {
             dbConfig.setMetricRegistry(Prism.monitor.getRegistry());
             dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
             dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
             dbConfig.setHealthCheckRegistry(Prism.monitor.getHealthRegistry());
+            getLog().info("Hikari is configured with Metric Reporting.");
         }
         try {
             database = new HikariDataSource(dbConfig);
