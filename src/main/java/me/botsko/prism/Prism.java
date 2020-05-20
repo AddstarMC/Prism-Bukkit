@@ -1,9 +1,5 @@
 package me.botsko.prism;
 
-import au.com.addstar.dripreporter.DripReporterApi;
-import com.codahale.metrics.Gauge;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import io.papermc.lib.PaperLib;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.HandlerRegistry;
@@ -11,11 +7,8 @@ import me.botsko.prism.actionlibs.Ignore;
 import me.botsko.prism.actionlibs.InternalAffairs;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.QueueDrain;
-import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actionlibs.RecordingTask;
-import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
@@ -62,14 +55,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,10 +79,8 @@ public class Prism extends JavaPlugin {
     private static final HashMap<String, String> alertedOres = new HashMap<>();
     private static final Logger log = Logger.getLogger("Minecraft");
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
-    public static DripReporterApi monitor;
     public static Messenger messenger;
     public static FileConfiguration config;
-    public static WorldEditPlugin worldEditPlugin = null;
     public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static HashMap<String, Integer> prismWorlds = new HashMap<>();
     public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
@@ -106,7 +95,6 @@ public class Prism extends JavaPlugin {
     private static HandlerRegistry handlerRegistry;
     private static Ignore ignore;
     private static Prism instance;
-    private final Collection<String> enabledPlugins = new ArrayList<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
@@ -324,18 +312,10 @@ public class Prism extends JavaPlugin {
         pluginVersion = this.getDescription().getVersion();
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        Plugin drip = this.getServer().getPluginManager().getPlugin("DripReporter");
-        if (drip != null && drip.isEnabled()) {
-            monitor = (DripReporterApi) drip;
-            monitoring = true;
-            Gauge<Integer> recordingQ = RecordingQueue::getQueueSize;
-            monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
-            ActionMeter.setupActionMeter();
-            log("Prism hooked DripReporterApi instance: " + drip.getName() + " " + drip.getDescription().getVersion());
-        }
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
             PaperLib.suggestPaper(this);
         }
+        checkPluginDependencies();
         if (getConfig().getBoolean("prism.allow-metrics")) {
             Prism.log("Prism bStats metrics are enabled - thank you!");
             int pluginid = 4365; // assigned by bstats.org
@@ -346,7 +326,7 @@ public class Prism extends JavaPlugin {
         }
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
-            if (pasteKey != null && pasteKey.startsWith("API key") || pasteKey.length() < 6) {
+            if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
                 pasteKey = null;
             }
         } else {
@@ -415,9 +395,6 @@ public class Prism extends JavaPlugin {
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
             ignore = new Ignore(this);
-
-            // Plugins we use
-            checkPluginDependencies();
 
             // Assign event listeners
             getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
@@ -546,24 +523,10 @@ public class Prism extends JavaPlugin {
     }
 
     private void checkPluginDependencies() {
-
+        //DripReporter
+        monitoring = ApiHandler.configureMonitor();
         // WorldEdit
-        final Plugin we = getServer().getPluginManager().getPlugin("WorldEdit");
-        if (we != null) {
-            worldEditPlugin = (WorldEditPlugin) we;
-            enabledPlugins.add(we.getName());
-            // Easier and foolproof way.
-            try {
-                WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
-                log("WorldEdit found. Associated features enabled.");
-            } catch (Throwable error) {
-                log("Required WorldEdit version is 6.0.0 or greater! Certain optional features of Prism disabled.");
-                debug(error.getMessage());
-            }
-
-        } else {
-            log("WorldEdit not found. Certain optional features of Prism disabled.");
-        }
+        ApiHandler.hookWorldEdit();
     }
 
     /**
@@ -572,7 +535,7 @@ public class Prism extends JavaPlugin {
      * @return true
      */
     public boolean dependencyEnabled(String pluginName) {
-        return enabledPlugins.contains(pluginName);
+        return ApiHandler.checkDependency(pluginName);
     }
 
     /**
@@ -717,12 +680,15 @@ public class Prism extends JavaPlugin {
             final QueueDrain drainer = new QueueDrain(this);
             drainer.forceDrainQueue();
         }
+        if (!ApiHandler.disable()) {
+            log("Possible errors unhooking dependencies...");
+        }
+
         Bukkit.getScheduler().cancelTasks(this);
         // Close prismDataSource connections when plugin disables
         if (prismDataSource != null) {
             prismDataSource.dispose();
         }
-
         log("Closing plugin.");
         super.onDisable();
     }

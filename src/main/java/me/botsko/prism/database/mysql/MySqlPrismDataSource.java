@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import com.zaxxer.hikari.util.PropertyElf;
+import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
@@ -135,10 +136,10 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig.setPassword(this.section.getString("password"));
         }
         if (monitored) {
-            dbConfig.setMetricRegistry(Prism.monitor.getRegistry());
+            dbConfig.setMetricRegistry(ApiHandler.monitor.getRegistry());
             dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
             dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
-            dbConfig.setHealthCheckRegistry(Prism.monitor.getHealthRegistry());
+            dbConfig.setHealthCheckRegistry(ApiHandler.monitor.getHealthRegistry());
             getLog().info("Hikari is configured with Metric Reporting.");
         }
         try {

@@ -1,5 +1,6 @@
 package me.botsko.prism.parameters;
 
+import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -36,8 +37,8 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 
         if (TypeUtils.isNumeric(inputValue) || (inputValue.contains(":") && inputValue.split(":").length >= 1
                 && TypeUtils.isNumeric(inputValue.split(":")[1]))) {
-            int radius, desiredRadius;
             Location coordsLoc = null;
+            int desiredRadius;
             if (inputValue.contains(":")) {
                 desiredRadius = Integer.parseInt(inputValue.split(":")[1]);
                 final String radiusLocOrPlayer = inputValue.split(":")[0];
@@ -80,7 +81,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             }
 
             // Clamp radius based on perms, configs
-            radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
+            int radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
             if (desiredRadius != radius) {
                 if (sender != null) {
                     sender.sendMessage(
@@ -123,14 +124,13 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             switch (inputValue) {
                 case "we":
 
-                    if (Prism.worldEditPlugin == null) {
+                    if (ApiHandler.worldEditPlugin == null) {
                         throw new IllegalArgumentException(
                                 "This feature is disabled because Prism couldn't find WorldEdit.");
                     } else {
 
                         // Load a selection from world edit as our area.
-                        final Prism prism = (Prism) Bukkit.getPluginManager().getPlugin("Prism");
-                        if (!WorldEditBridge.getSelectedArea(prism, player, query)) {
+                        if (!WorldEditBridge.getSelectedArea(Prism.getInstance(), player, query)) {
                             throw new IllegalArgumentException(
                                     "Invalid region selected. Make sure you have a region selected,"
                                             + " and that it doesn't exceed the max radius.");
@@ -201,9 +201,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             return;
         }
         if (sender instanceof Player) {
-            if (query.allowsNoRadius()) {
-                // We'll allow no radius.
-            } else {
+            if (!query.allowsNoRadius()) {
                 query.setRadius(Prism.config.getInt("prism.queries.default-radius"));
                 query.addDefaultUsed("r:" + query.getRadius());
             }

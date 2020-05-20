@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import au.com.addstar.dripreporter.DripMeter;
+import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class ActionMeter {
         if (meter.containsKey(clazz.getSimpleName())) {
             return meter.get(clazz.getSimpleName());
         } else {
-            return Prism.monitor.addMeter(clazz);
+            return ApiHandler.monitor.addMeter(clazz);
         }
     }
 
