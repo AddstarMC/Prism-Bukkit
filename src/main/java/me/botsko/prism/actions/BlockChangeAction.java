@@ -12,7 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-public class BlockChangeAction extends BlockAction {
+public class  BlockChangeAction extends BlockAction {
 
     @Override
     public String getNiceName() {
@@ -60,8 +60,7 @@ public class BlockChangeAction extends BlockAction {
         final BlockAction b = new BlockAction();
         b.setActionType(type);
         b.setLoc(getLoc());
-        if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK)
-                || parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
+        if (parameters.getProcessType().equals(PrismProcessType.ROLLBACK)) {
             // Run verification for no-overwrite. Only reverse a change
             // if the opposite state is what's present now.
             // We skip this check because if we're in preview mode the block may
@@ -69,7 +68,10 @@ public class BlockChangeAction extends BlockAction {
             // have been properly changed yet.
             // https://snowy-evening.com/botsko/prism/302/
             // and https://snowy-evening.com/botsko/prism/258/
-            return checkCanPlaceBlockType(block, b, player, parameters, oldMat, newMat, newData, isPreview, isDeferred);
+            return checkCanPlaceBlockType(block, b, player, parameters, newMat, oldMat, newData, isPreview, isDeferred);
+        }
+        if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
+            return checkCanPlaceBlockType(block, b, player, parameters,oldMat, newMat, oldData, isPreview, isDeferred);
         }
         if (parameters.getProcessType().equals(PrismProcessType.UNDO)) {
             b.setMaterial(oldMat);
@@ -80,12 +82,13 @@ public class BlockChangeAction extends BlockAction {
     }
 
     private ChangeResult checkCanPlaceBlockType(Block block, BlockAction b, Player player,
-                                                QueryParameters parameters, Material oldMat, Material newMat,
+                                                QueryParameters parameters, Material from, Material to,
                                                 BlockData newData, boolean isPreview, boolean isDeferred) {
-        if (BlockUtils.isAcceptableForBlockPlace(block.getType())
-                || BlockUtils.areBlockIdsSameCoreItem(block.getType(), oldMat) || isPreview
-                || parameters.hasFlag(Flag.OVERWRITE)) {
-            b.setMaterial(newMat);
+        boolean isAcceptable = BlockUtils.isAcceptableForBlockPlace(block.getType());
+        boolean  areSameId = BlockUtils.areBlockIdsSameCoreItem(block.getType(), from);
+        boolean overWriter = parameters.hasFlag(Flag.OVERWRITE);
+        if (isAcceptable || areSameId || isPreview || overWriter) {
+            b.setMaterial(to);
             b.setBlockData(newData);
             return b.placeBlock(player, parameters, isPreview, block, isDeferred);
         } else {
