@@ -13,10 +13,10 @@ import java.util.Map;
  */
 public class ActionMeter {
     private static final Map<String, DripMeter> meter = new HashMap<>();
-    private static final boolean monitoring = Prism.getInstance().monitoring;
+    private static  boolean monitoring = false;
 
     static {
-        if (monitoring) {
+        if (Prism.getInstance().monitoring) {
             meter.put("UnknownHandler",getMeter(Handler.class));
             meter.put(GenericAction.class.getSimpleName(), getMeter(GenericAction.class));
             meter.put(EntityAction.class.getSimpleName(), getMeter(EntityAction.class));
@@ -33,6 +33,8 @@ public class ActionMeter {
             meter.put(PrismRollbackAction.class.getSimpleName(),getMeter(PrismRollbackAction.class));
             meter.put(SignAction.class.getSimpleName(), getMeter(SignAction.class));
             meter.put(VehicleAction.class.getSimpleName(), getMeter(VehicleAction.class));
+            Prism.log("Action Meter metrics enabled. " + meter.size() + " metrics registered");
+            monitoring = true;
         }
     }
 
@@ -53,13 +55,15 @@ public class ActionMeter {
     }
 
     @SuppressWarnings("rawtypes")
-    static void mark(Class clazz) {
+    public static void mark(Class clazz) {
         if (monitoring) {
             DripMeter m = meter.get(clazz.getSimpleName());
             if (m == null) {
                 m = meter.get("UnknownHandler");
             }
-            m.mark();
+            if (m != null) {
+                m.mark();
+            }
         }
     }
 }

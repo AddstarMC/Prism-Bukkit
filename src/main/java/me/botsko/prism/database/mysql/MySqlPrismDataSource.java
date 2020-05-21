@@ -39,7 +39,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     static {
         if (propFile.exists()) {
             Prism.log("Configuring Hikari from " + propFile.getName());
-            Prism.log("This file will not save the jdbcURL, username or password - these are loaded"
+            Prism.debug("This file will not save the jdbcURL, username or password - these are loaded"
                     + " by default from the standard prism configuration file.  If you set these "
                     + "explicitly in the properties file the settings in the standard config will be"
                     + "ignored.");
@@ -50,7 +50,6 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     private final Boolean nonStandardSql;
-    private boolean monitored;
 
     /**
      * Create a dataSource.
@@ -62,7 +61,6 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
         detectNonStandardSql();
         name = "mysql";
-        monitored = Prism.getInstance().monitoring;
     }
 
     /**
@@ -82,8 +80,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     private static void setupDefaultProperties(@Nonnull ConfigurationSection section) {
-        int maxPool = section.getInt("database.max-pool-connections",10);
-        int minIdle = section.getInt("database.min-idle-connections",2);
+        int maxPool = section.getInt("database.max-pool-connections", 10);
+        int minIdle = section.getInt("database.min-idle-connections", 2);
         if (maxPool > 0 && minIdle > 0 && !propFile.exists()) {
             dbConfig.addDataSourceProperty("maximumPoolSize", maxPool);
             dbConfig.addDataSourceProperty("minimumIdle", minIdle);
@@ -135,13 +133,16 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig.setUsername(this.section.getString("username"));
             dbConfig.setPassword(this.section.getString("password"));
         }
-        if (monitored) {
+        dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
+        dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
+        if (Prism.getInstance().monitoring) {
             dbConfig.setMetricRegistry(ApiHandler.monitor.getRegistry());
-            dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
-            dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");
             dbConfig.setHealthCheckRegistry(ApiHandler.monitor.getHealthRegistry());
             getLog().info("Hikari is configured with Metric Reporting.");
+        } else {
+            getLog().info("No metric recorder found to hook into Hikari.");
         }
+
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();

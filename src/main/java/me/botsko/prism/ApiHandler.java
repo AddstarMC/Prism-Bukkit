@@ -27,19 +27,18 @@ public class ApiHandler {
     /**
      * Setup Drip Reporter.
      */
-    static boolean configureMonitor() {
+    static void configureMonitor() {
         Plugin drip = Prism.getInstance().getServer().getPluginManager().getPlugin("DripReporter");
         if (drip != null && drip.isEnabled()) {
             monitor = (DripReporterApi) drip;
-            DripGauge<Integer> recordingQ = RecordingQueue::getQueueSize;
-            ApiHandler.monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
-            ActionMeter.setupActionMeter();
             Prism.log("Prism hooked DripReporterApi instance: " + drip.getName() + " "
                     + drip.getDescription().getVersion());
             enabledPlugins.add(drip.getName());
-            return true;
+            Prism.getInstance().monitoring = true;
+            ActionMeter.setupActionMeter();
+            DripGauge<Integer> recordingQ = RecordingQueue::getQueueSize;
+            ApiHandler.monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
         }
-        return false;
     }
 
     static void hookWorldEdit() {

@@ -280,8 +280,8 @@ public class Prism extends JavaPlugin {
      * @param message String
      */
     public static void debug(String message) {
-        if (config.getBoolean("prism.debug")) {
-            log.info("[" + pluginName + "]: " + message);
+        if (config == null || config.getBoolean("prism.debug")) {
+            log.info("[" + pluginName + " Debug ]: " + message);
         }
     }
 
@@ -316,18 +316,12 @@ public class Prism extends JavaPlugin {
             PaperLib.suggestPaper(this);
         }
         checkPluginDependencies();
-        if (getConfig().getBoolean("prism.allow-metrics")) {
-            Prism.log("Prism bStats metrics are enabled - thank you!");
-            int pluginid = 4365; // assigned by bstats.org
-            Metrics metrics = new Metrics(this, pluginid);
-            if (!metrics.isEnabled()) {
-                Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
-            }
-        }
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
             if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
                 pasteKey = null;
+            } else {
+                Prism.log("PasteApi is configured and available");
             }
         } else {
             pasteKey = null;
@@ -524,9 +518,18 @@ public class Prism extends JavaPlugin {
 
     private void checkPluginDependencies() {
         //DripReporter
-        monitoring = ApiHandler.configureMonitor();
+        ApiHandler.configureMonitor();
         // WorldEdit
         ApiHandler.hookWorldEdit();
+        //bstats
+        if (getConfig().getBoolean("prism.allow-metrics")) {
+            Prism.log("Prism bStats metrics are enabled - thank you!");
+            int pluginid = 4365; // assigned by bstats.org
+            Metrics metrics = new Metrics(this, pluginid);
+            if (!metrics.isEnabled()) {
+                Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
+            }
+        }
     }
 
     /**

@@ -23,7 +23,7 @@ public class PrismDatabaseFactory {
         ConfigurationSection mysql;
         if (configuration.contains("prism.mysql")) {
             mysql = configuration.getConfigurationSection("prism.mysql");
-            if(mysql == null){
+            if (mysql == null) {
                 mysql = configuration.createSection("prism.mysql");
             }
         } else {
