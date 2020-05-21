@@ -12,7 +12,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
-public class  BlockChangeAction extends BlockAction {
+public class BlockChangeAction extends BlockAction {
 
     @Override
     public String getNiceName() {
@@ -64,14 +64,11 @@ public class  BlockChangeAction extends BlockAction {
             // Run verification for no-overwrite. Only reverse a change
             // if the opposite state is what's present now.
             // We skip this check because if we're in preview mode the block may
-            // not
-            // have been properly changed yet.
-            // https://snowy-evening.com/botsko/prism/302/
-            // and https://snowy-evening.com/botsko/prism/258/
-            return checkCanPlaceBlockType(block, b, player, parameters, newMat, oldMat, newData, isPreview, isDeferred);
+            // not have been properly changed yet.
+            return processChange(player, parameters, isPreview, newMat, oldMat, oldData, block, isDeferred, b);
         }
         if (parameters.getProcessType().equals(PrismProcessType.RESTORE)) {
-            return checkCanPlaceBlockType(block, b, player, parameters,oldMat, newMat, oldData, isPreview, isDeferred);
+            return processChange(player, parameters, isPreview, oldMat, newMat, newData, block, isDeferred, b);
         }
         if (parameters.getProcessType().equals(PrismProcessType.UNDO)) {
             b.setMaterial(oldMat);
@@ -81,20 +78,18 @@ public class  BlockChangeAction extends BlockAction {
         return new ChangeResult(ChangeResultType.SKIPPED, null);
     }
 
-    private ChangeResult checkCanPlaceBlockType(Block block, BlockAction b, Player player,
-                                                QueryParameters parameters, Material from, Material to,
-                                                BlockData newData, boolean isPreview, boolean isDeferred) {
-        boolean isAcceptable = BlockUtils.isAcceptableForBlockPlace(block.getType());
-        boolean  areSameId = BlockUtils.areBlockIdsSameCoreItem(block.getType(), from);
-        boolean overWriter = parameters.hasFlag(Flag.OVERWRITE);
-        if (isAcceptable || areSameId || isPreview || overWriter) {
-            b.setMaterial(to);
-            b.setBlockData(newData);
-            return b.placeBlock(player, parameters, isPreview, block, isDeferred);
+    private ChangeResult processChange(Player player, QueryParameters parameters, boolean isPreview,
+                                       Material originalMaterial, Material replacedMaterial, BlockData replacedData,
+                                       Block currentBlock, boolean isDeferred, BlockAction action) {
+        if (BlockUtils.isAcceptableForBlockPlace(currentBlock.getType())
+                || BlockUtils.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial) || isPreview
+                || parameters.hasFlag(Flag.OVERWRITE)) {
+            action.setMaterial(replacedMaterial);
+            action.setBlockData(replacedData);
+            return action.placeBlock(player, parameters, isPreview, currentBlock, isDeferred);
         } else {
-            // System.out.print("Block change skipped because old id doesn't match what's
-            // there now. There now: "
-            // + block.getTypeId() + " vs " + old_id);
+            Prism.debug("Skipped Change for " + parameters.getProcessType().name() + " because current-> "
+                    + currentBlock.getType() + " != " + originalMaterial.name() + " <- what we think was replaced.");
             return new ChangeResult(ChangeResultType.SKIPPED, null);
         }
     }

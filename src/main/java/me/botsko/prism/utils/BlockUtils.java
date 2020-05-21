@@ -70,6 +70,7 @@ public class BlockUtils {
             Material.COCOA,
             Material.TRIPWIRE_HOOK,
             Material.ACTIVATOR_RAIL,
+            Material.BELL,
             Material.ITEM_FRAME)
             .append(Tag.RAILS, Tag.BUTTONS, Tag.WALL_SIGNS)
             .append(MaterialTag.WALL_BANNERS);
@@ -106,7 +107,8 @@ public class BlockUtils {
             Material.LIGHT_WEIGHTED_PRESSURE_PLATE,
             Material.BEACON,
             Material.ITEM_FRAME,
-            Material.CONDUIT
+            Material.CONDUIT,
+            Material.BELL
     )
             .append(Tag.DOORS,
                     Tag.RAILS,
