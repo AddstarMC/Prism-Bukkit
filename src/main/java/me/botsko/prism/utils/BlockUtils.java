@@ -12,6 +12,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.Chest;
@@ -213,6 +214,37 @@ public class BlockUtils {
         return removeMaterialsFromRadius(materials, loc, radius);
     }
 
+    private static ArrayList<BlockStateChange> checkForWaterlogged(Location loc,int radius) {
+        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
+        if (loc != null && radius > 0) {
+            final int x1 = loc.getBlockX();
+            final int y1 = loc.getBlockY();
+            final int z1 = loc.getBlockZ();
+            final World world = loc.getWorld();
+            for (int x = x1 - radius; x <= x1 + radius; x++) {
+                for (int y = y1 - radius; y <= y1 + radius; y++) {
+                    for (int z = z1 - radius; z <= z1 + radius; z++) {
+                        loc = new Location(world, x, y, z);
+                        final Block b = loc.getBlock();
+                        if (b.getType().equals(Material.AIR)) {
+                            continue;
+                        }
+                        BlockData data = loc.getBlock().getBlockData();
+                        if (data instanceof Waterlogged) {
+                            final BlockState originalBlock = loc.getBlock().getState();
+                            BlockData modified = loc.getBlock().getBlockData();
+                            ((Waterlogged)modified).setWaterlogged(false);
+                            loc.getBlock().setBlockData(modified);
+                            final BlockState newBlock = loc.getBlock().getState();
+                            blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
+                        }
+                    }
+                }
+            }
+        }
+        return blockStateChanges;
+    }
+
     /**
      * Remove materials in an radius.
      *
@@ -268,7 +300,10 @@ public class BlockUtils {
      */
     public static ArrayList<BlockStateChange> drain(Location loc, int radius) {
         final Material[] materials = {Material.LAVA, Material.WATER};
-        return removeMaterialsFromRadius(materials, loc, radius);
+
+        ArrayList<BlockStateChange> result =  removeMaterialsFromRadius(materials, loc, radius);
+        result.addAll(checkForWaterlogged(loc,radius));
+        return result;
     }
 
     /**
