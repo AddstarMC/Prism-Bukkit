@@ -35,10 +35,10 @@ public class PlayerIdentification {
         // Lookup the player
         PrismPlayer prismPlayer = getPrismPlayer(player);
         if (prismPlayer != null) {
-            prismPlayer = comparePlayerToCache(player, prismPlayer);
-            Prism.debug("Loaded player " + player.getName() + ", id: " + prismPlayer.getId() + " into the cache.");
-            Prism.prismPlayers.put(player.getUniqueId(), prismPlayer);
-            return prismPlayer;
+            PrismPlayer checkPrismPlayer = comparePlayerToCache(player, prismPlayer);
+            Prism.debug("Loaded player " + player.getName() + ", id: " + checkPrismPlayer.getId() + " into the cache.");
+            Prism.prismPlayers.put(player.getUniqueId(), checkPrismPlayer);
+            return checkPrismPlayer;
         }
         prismPlayer = addPlayer(player);
         return prismPlayer;
@@ -54,9 +54,6 @@ public class PlayerIdentification {
         // Lookup the player
         PrismPlayer prismPlayer = getPrismPlayer(playerName);
         if (prismPlayer != null) {
-            // prismPlayer = comparePlayerToCache( player, prismPlayer );
-            Prism.debug("Loaded player " + prismPlayer.getName() + ", id: " + prismPlayer.getId() + " into the cache.");
-            // Prism.prismPlayers.put( player.getUniqueId(), prismPlayer );
             return prismPlayer;
         }
 
@@ -97,18 +94,7 @@ public class PlayerIdentification {
      * @return PrismPlayer
      */
     public static PrismPlayer getPrismPlayer(Player player) {
-
-        if (player.getUniqueId() == null) {
-            // If they have a name, we can attempt to find them that way
-            if (player.getName() != null && !player.getName().trim().isEmpty()) {
-                return getPrismPlayer(player.getName());
-            }
-            // No name, no UUID, no service.
-            return null;
-        }
-
         PrismPlayer prismPlayer;
-
         // Are they in the cache?
         prismPlayer = Prism.prismPlayers.get(player.getUniqueId());
         if (prismPlayer != null) {
