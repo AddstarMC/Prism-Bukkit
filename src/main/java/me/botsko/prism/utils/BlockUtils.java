@@ -214,7 +214,7 @@ public class BlockUtils {
         return removeMaterialsFromRadius(materials, loc, radius);
     }
 
-    private static ArrayList<BlockStateChange> checkForWaterlogged(Location loc,int radius) {
+    private static ArrayList<BlockStateChange> checkForWaterlogged(final Location loc,int radius) {
         final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0) {
             final int x1 = loc.getBlockX();
@@ -224,18 +224,18 @@ public class BlockUtils {
             for (int x = x1 - radius; x <= x1 + radius; x++) {
                 for (int y = y1 - radius; y <= y1 + radius; y++) {
                     for (int z = z1 - radius; z <= z1 + radius; z++) {
-                        loc = new Location(world, x, y, z);
-                        final Block b = loc.getBlock();
+                        Location testLocation = new Location(world, x, y, z);
+                        final Block b = testLocation.getBlock();
                         if (b.getType().equals(Material.AIR)) {
                             continue;
                         }
-                        BlockData data = loc.getBlock().getBlockData();
+                        BlockData data = testLocation.getBlock().getBlockData();
                         if (data instanceof Waterlogged) {
-                            final BlockState originalBlock = loc.getBlock().getState();
-                            BlockData modified = loc.getBlock().getBlockData();
+                            final BlockState originalBlock = testLocation.getBlock().getState();
+                            BlockData modified = testLocation.getBlock().getBlockData();
                             ((Waterlogged)modified).setWaterlogged(false);
-                            loc.getBlock().setBlockData(modified);
-                            final BlockState newBlock = loc.getBlock().getState();
+                            testLocation.getBlock().setBlockData(modified);
+                            final BlockState newBlock = testLocation.getBlock().getState();
                             blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
                         }
                     }
@@ -253,7 +253,7 @@ public class BlockUtils {
      * @param radius    integer
      */
     @SuppressWarnings("WeakerAccess")
-    public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, Location loc,
+    public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, final Location loc,
                                                                         int radius) {
         final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0 && materials != null && materials.length > 0) {
@@ -264,15 +264,15 @@ public class BlockUtils {
             for (int x = x1 - radius; x <= x1 + radius; x++) {
                 for (int y = y1 - radius; y <= y1 + radius; y++) {
                     for (int z = z1 - radius; z <= z1 + radius; z++) {
-                        loc = new Location(world, x, y, z);
-                        final Block b = loc.getBlock();
+                        Location testLocation = new Location(world, x, y, z);
+                        final Block b = testLocation.getBlock();
                         if (b.getType().equals(Material.AIR)) {
                             continue;
                         }
-                        if (Arrays.asList(materials).contains(loc.getBlock().getType())) {
-                            final BlockState originalBlock = loc.getBlock().getState();
-                            loc.getBlock().setType(Material.AIR);
-                            final BlockState newBlock = loc.getBlock().getState();
+                        if (Arrays.asList(materials).contains(testLocation.getBlock().getType())) {
+                            final BlockState originalBlock = testLocation.getBlock().getState();
+                            testLocation.getBlock().setType(Material.AIR);
+                            final BlockState newBlock = testLocation.getBlock().getState();
                             blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
                         }
                     }
