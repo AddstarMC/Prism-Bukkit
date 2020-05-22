@@ -45,6 +45,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.UUID;
 
 public class PrismPlayerEvents implements Listener {
 
@@ -117,21 +118,23 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerJoin(final PlayerJoinEvent event) {
 
         final Player player = event.getPlayer();
+        final UUID uuid = player.getUniqueId();
+        final String name = player.getName();
+        final boolean trackIp = plugin.getConfig().getBoolean("prism.track-player-ip-on-join");
+        final boolean doNotTrackJoin = !Prism.getIgnore().event("player-join", player);
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             // Lookup player for cache reasons
-            PlayerIdentification.cachePrismPlayer(player);
-
-            // Track the join event
-            if (!Prism.getIgnore().event("player-join", player)) {
-                return;
-            }
-
-            String ip = null;
-            if (plugin.getConfig().getBoolean("prism.track-player-ip-on-join") && player.getAddress() != null) {
-                ip = player.getAddress().getAddress().getHostAddress();
-            }
-
-            RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", event.getPlayer(), ip));
+            PlayerIdentification.cachePrismPlayer(uuid,name);
+            Bukkit.getScheduler().runTask(Prism.getInstance(),() -> {
+                if (doNotTrackJoin) {
+                    return;
+                }
+                String ip = null;
+                if (trackIp  && player.getAddress() != null) { //player may have disconnected.
+                    ip = player.getAddress().getAddress().getHostAddress();
+                }
+                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", player, ip));
+            });
         });
 
     }

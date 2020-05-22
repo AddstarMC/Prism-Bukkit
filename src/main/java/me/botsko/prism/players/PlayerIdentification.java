@@ -18,7 +18,7 @@ public class PlayerIdentification {
      * This assists with code completion for SQL statements.
      */
     @SuppressWarnings("UnusedAssignment")
-    static String prefix = "prism_";
+    private static String prefix = "prism_";
 
     static {
         prefix = Prism.config.getString("prism.mysql.prefix","prism_");
@@ -31,18 +31,29 @@ public class PlayerIdentification {
      * @param player Player
      */
     public static PrismPlayer cachePrismPlayer(@NotNull final Player player) {
-
         // Lookup the player
-        PrismPlayer prismPlayer = getPrismPlayer(player);
+        return cachePrismPlayer(player.getUniqueId(),player.getName());
+    }
+
+    /**
+     * Loads `prism_players` ID for a real player into our cache.
+     * Runs during PlayerJoin events, so it will never be for a fake/null player.
+     *
+     * @param uuid Player uuid
+     * @param name String
+     * @return {@link PrismPlayer}
+     */
+    public static PrismPlayer cachePrismPlayer(UUID uuid,String name) {
+        PrismPlayer prismPlayer;
+        prismPlayer = getPrismPlayer(uuid,name);
         if (prismPlayer != null) {
-            prismPlayer = comparePlayerToCache(player, prismPlayer);
-            Prism.debug("Loaded player " + player.getName() + ", id: " + prismPlayer.getId() + " into the cache.");
-            Prism.prismPlayers.put(player.getUniqueId(), prismPlayer);
+            prismPlayer = comparePlayerToCache(name,uuid, prismPlayer);
+            Prism.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
+            Prism.prismPlayers.put(uuid, prismPlayer);
             return prismPlayer;
         }
-        prismPlayer = addPlayer(player);
+        prismPlayer = addPlayer(name,uuid);
         return prismPlayer;
-
     }
 
     /**
@@ -75,12 +86,12 @@ public class PlayerIdentification {
      * @param playerName String
      * @return PrismPlayer
      */
-    public static PrismPlayer getPrismPlayer(String playerName) {
+    private static PrismPlayer getPrismPlayer(String playerName) {
 
         Player player = Bukkit.getPlayer(playerName);
 
         if (player != null) {
-            return getPrismPlayer(player);
+            return getPrismPlayer(player.getUniqueId(),player.getName());
         }
 
         // Player not online, we need to go to cache
@@ -96,33 +107,24 @@ public class PlayerIdentification {
      *
      * @return PrismPlayer
      */
-    public static PrismPlayer getPrismPlayer(Player player) {
-
-        if (player.getUniqueId() == null) {
-            // If they have a name, we can attempt to find them that way
-            if (player.getName() != null && !player.getName().trim().isEmpty()) {
-                return getPrismPlayer(player.getName());
-            }
-            // No name, no UUID, no service.
-            return null;
-        }
+    private static PrismPlayer getPrismPlayer(UUID uuid, String name) {
 
         PrismPlayer prismPlayer;
 
         // Are they in the cache?
-        prismPlayer = Prism.prismPlayers.get(player.getUniqueId());
+        prismPlayer = Prism.prismPlayers.get(uuid);
         if (prismPlayer != null) {
             return prismPlayer;
         }
 
         // Lookup by UUID
-        prismPlayer = lookupByUuid(player.getUniqueId());
+        prismPlayer = lookupByUuid(uuid);
         if (prismPlayer != null) {
             return prismPlayer;
         }
 
         // Still not found, try looking them up by name
-        prismPlayer = lookupByName(player.getName());
+        prismPlayer = lookupByName(name);
         return prismPlayer;
 
     }
@@ -139,26 +141,24 @@ public class PlayerIdentification {
      * @return PrismPlayer
      */
     protected static PrismPlayer comparePlayerToCache(Player player, PrismPlayer prismPlayer) {
+        return comparePlayerToCache(player.getName(),player.getUniqueId(),prismPlayer);
+    }
 
-        // Compare for username differences, update database
-        if (!player.getName().equals(prismPlayer.getName())) {
-            prismPlayer.setName(player.getName());
+    private static PrismPlayer comparePlayerToCache(final String name, final UUID uuid, PrismPlayer prismPlayer) {
+        if (!name.equals(prismPlayer.getName())) {
+            prismPlayer.setName(name);
             updatePlayer(prismPlayer);
         }
-
-        // Compare UUID
-        if (!player.getUniqueId().equals(prismPlayer.getUUID())) {
-            Prism.log("Player UUID for " + player.getName() + " does not match our cache! " + player.getUniqueId()
+        if (!uuid.equals(prismPlayer.getUUID())) {
+            Prism.log("Player UUID for " + name + " does not match our cache! " + uuid
                     + " versus cache of " + prismPlayer.getUUID());
 
             // Update anyway...
-            prismPlayer.setUUID(player.getUniqueId());
+            prismPlayer.setUUID(uuid);
             updatePlayer(prismPlayer);
 
         }
-
         return prismPlayer;
-
     }
 
     /**
@@ -166,7 +166,7 @@ public class PlayerIdentification {
      * @param id Uuid
      * @return String
      */
-    public static String uuidToDbString(UUID id) {
+    private static String uuidToDbString(UUID id) {
         return id.toString().replace("-", "");
     }
 
@@ -194,25 +194,29 @@ public class PlayerIdentification {
      * @return PrismPlayer
      */
     protected static PrismPlayer addPlayer(Player player) {
+        return addPlayer(player.getName(),player.getUniqueId());
+    }
+
+    private static PrismPlayer addPlayer(final String name, final UUID uuid) {
         prefix = Prism.config.getString("prism.mysql.prefix","prism_");
-        PrismPlayer prismPlayer = new PrismPlayer(0, player.getUniqueId(), player.getName());
+        PrismPlayer prismPlayer = new PrismPlayer(0, uuid, name);
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix
                                 + "players (player,player_uuid) VALUES (?,UNHEX(?))",
                         Statement.RETURN_GENERATED_KEYS)
-                ) {
-            s.setString(1, player.getName());
-            s.setString(2, uuidToDbString(player.getUniqueId()));
+        ) {
+            s.setString(1, name);
+            s.setString(2, uuidToDbString(uuid));
             s.executeUpdate();
 
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 prismPlayer.setId(rs.getInt(1));
-                Prism.debug("Saved and loaded player " + player.getName() + " (" + player.getUniqueId()
+                Prism.debug("Saved and loaded player " + name + " (" + uuid
                         + ") into the cache.");
-                Prism.prismPlayers.put(player.getUniqueId(),
-                        new PrismPlayer(rs.getInt(1), player.getUniqueId(), player.getName()));
+                Prism.prismPlayers.put(uuid,
+                        new PrismPlayer(rs.getInt(1),uuid, name));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
@@ -230,7 +234,7 @@ public class PlayerIdentification {
      * @param playerName String
      * @return PrismPlayer
      */
-    protected static PrismPlayer addPlayer(String playerName) {
+    private static PrismPlayer addPlayer(String playerName) {
         PrismPlayer fakePlayer = new PrismPlayer(0, UUID.randomUUID(), playerName);
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
@@ -260,7 +264,7 @@ public class PlayerIdentification {
      * Saves a player's UUID to the prism_players table. We cache the current
      * username as well.
      */
-    protected static void updatePlayer(PrismPlayer prismPlayer) {
+    private static void updatePlayer(PrismPlayer prismPlayer) {
         prefix = Prism.config.getString("prism.mysql.prefix","prism_");
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
@@ -280,7 +284,7 @@ public class PlayerIdentification {
     /**
      * Loads `prism_players` ID for a player into our cache.
      */
-    protected static PrismPlayer lookupByName(String playerName) {
+    private static PrismPlayer lookupByName(String playerName) {
         PrismPlayer prismPlayer = null;
 
         try (
@@ -304,7 +308,7 @@ public class PlayerIdentification {
     /**
      * Loads `prism_players` ID for a player into our cache.
      */
-    protected static PrismPlayer lookupByUuid(UUID uuid) {
+    private static PrismPlayer lookupByUuid(UUID uuid) {
         PrismPlayer prismPlayer = null;
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
@@ -335,8 +339,6 @@ public class PlayerIdentification {
             playerNames[i] = pl.getName();
             i++;
         }
-
-
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(
