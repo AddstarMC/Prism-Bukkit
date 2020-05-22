@@ -1,5 +1,6 @@
 package me.botsko.prism.parameters;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
@@ -7,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class BlockParameter extends SimplePrismParameterHandler {
@@ -94,5 +95,16 @@ public class BlockParameter extends SimplePrismParameterHandler {
                 }
             }
         }
+    }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (Material mat : Material.values()) {
+            if (mat.name().startsWith(partialParameter)) {
+                result.add(mat.name());
+            }
+        }
+        return result;
     }
 }

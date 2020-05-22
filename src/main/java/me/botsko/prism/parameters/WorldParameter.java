@@ -4,9 +4,13 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class WorldParameter extends SimplePrismParameterHandler {
@@ -37,7 +41,7 @@ public class WorldParameter extends SimplePrismParameterHandler {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
@@ -46,5 +50,16 @@ public class WorldParameter extends SimplePrismParameterHandler {
         if (sender instanceof Player && !query.allowsNoRadius()) {
             query.setWorld(((Player) sender).getWorld().getName());
         }
+    }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (World w : Bukkit.getWorlds()) {
+            if (w.getName().startsWith(partialParameter)) {
+                result.add(w.getName());
+            }
+        }
+        return result;
     }
 }
