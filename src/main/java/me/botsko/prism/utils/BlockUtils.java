@@ -12,6 +12,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.Chest;
@@ -70,6 +71,7 @@ public class BlockUtils {
             Material.COCOA,
             Material.TRIPWIRE_HOOK,
             Material.ACTIVATOR_RAIL,
+            Material.BELL,
             Material.ITEM_FRAME)
             .append(Tag.RAILS, Tag.BUTTONS, Tag.WALL_SIGNS)
             .append(MaterialTag.WALL_BANNERS);
@@ -106,7 +108,8 @@ public class BlockUtils {
             Material.LIGHT_WEIGHTED_PRESSURE_PLATE,
             Material.BEACON,
             Material.ITEM_FRAME,
-            Material.CONDUIT
+            Material.CONDUIT,
+            Material.BELL
     )
             .append(Tag.DOORS,
                     Tag.RAILS,
@@ -211,6 +214,37 @@ public class BlockUtils {
         return removeMaterialsFromRadius(materials, loc, radius);
     }
 
+    private static ArrayList<BlockStateChange> checkForWaterlogged(final Location loc,int radius) {
+        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
+        if (loc != null && radius > 0) {
+            final int x1 = loc.getBlockX();
+            final int y1 = loc.getBlockY();
+            final int z1 = loc.getBlockZ();
+            final World world = loc.getWorld();
+            for (int x = x1 - radius; x <= x1 + radius; x++) {
+                for (int y = y1 - radius; y <= y1 + radius; y++) {
+                    for (int z = z1 - radius; z <= z1 + radius; z++) {
+                        Location testLocation = new Location(world, x, y, z);
+                        final Block b = testLocation.getBlock();
+                        if (b.getType().equals(Material.AIR)) {
+                            continue;
+                        }
+                        BlockData data = testLocation.getBlock().getBlockData();
+                        if (data instanceof Waterlogged) {
+                            final BlockState originalBlock = testLocation.getBlock().getState();
+                            BlockData modified = testLocation.getBlock().getBlockData();
+                            ((Waterlogged)modified).setWaterlogged(false);
+                            testLocation.getBlock().setBlockData(modified);
+                            final BlockState newBlock = testLocation.getBlock().getState();
+                            blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
+                        }
+                    }
+                }
+            }
+        }
+        return blockStateChanges;
+    }
+
     /**
      * Remove materials in an radius.
      *
@@ -219,7 +253,7 @@ public class BlockUtils {
      * @param radius    integer
      */
     @SuppressWarnings("WeakerAccess")
-    public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, Location loc,
+    public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, final Location loc,
                                                                         int radius) {
         final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0 && materials != null && materials.length > 0) {
@@ -230,15 +264,15 @@ public class BlockUtils {
             for (int x = x1 - radius; x <= x1 + radius; x++) {
                 for (int y = y1 - radius; y <= y1 + radius; y++) {
                     for (int z = z1 - radius; z <= z1 + radius; z++) {
-                        loc = new Location(world, x, y, z);
-                        final Block b = loc.getBlock();
+                        Location testLocation = new Location(world, x, y, z);
+                        final Block b = testLocation.getBlock();
                         if (b.getType().equals(Material.AIR)) {
                             continue;
                         }
-                        if (Arrays.asList(materials).contains(loc.getBlock().getType())) {
-                            final BlockState originalBlock = loc.getBlock().getState();
-                            loc.getBlock().setType(Material.AIR);
-                            final BlockState newBlock = loc.getBlock().getState();
+                        if (Arrays.asList(materials).contains(testLocation.getBlock().getType())) {
+                            final BlockState originalBlock = testLocation.getBlock().getState();
+                            testLocation.getBlock().setType(Material.AIR);
+                            final BlockState newBlock = testLocation.getBlock().getState();
                             blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
                         }
                     }
@@ -266,7 +300,10 @@ public class BlockUtils {
      */
     public static ArrayList<BlockStateChange> drain(Location loc, int radius) {
         final Material[] materials = {Material.LAVA, Material.WATER};
-        return removeMaterialsFromRadius(materials, loc, radius);
+
+        ArrayList<BlockStateChange> result =  removeMaterialsFromRadius(materials, loc, radius);
+        result.addAll(checkForWaterlogged(loc,radius));
+        return result;
     }
 
     /**
