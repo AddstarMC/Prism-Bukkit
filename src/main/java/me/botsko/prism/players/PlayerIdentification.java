@@ -47,10 +47,10 @@ public class PlayerIdentification {
         PrismPlayer prismPlayer;
         prismPlayer = getPrismPlayer(uuid,name);
         if (prismPlayer != null) {
-            prismPlayer = comparePlayerToCache(name,uuid, prismPlayer);
+            PrismPlayer checkPrismPlayer = comparePlayerToCache(name,uuid, prismPlayer)
             Prism.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
             Prism.prismPlayers.put(uuid, prismPlayer);
-            return prismPlayer;
+            return checkPrismPlayer;
         }
         prismPlayer = addPlayer(name,uuid);
         return prismPlayer;
@@ -110,7 +110,6 @@ public class PlayerIdentification {
     private static PrismPlayer getPrismPlayer(UUID uuid, String name) {
 
         PrismPlayer prismPlayer;
-
         // Are they in the cache?
         prismPlayer = Prism.prismPlayers.get(uuid);
         if (prismPlayer != null) {
