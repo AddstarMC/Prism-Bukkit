@@ -2,9 +2,7 @@ package me.botsko.prism.parameters;
 
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
-import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.ArrayList;
@@ -19,6 +17,17 @@ public class EntityParameter extends SimplePrismParameterHandler {
         for (EntityType ent : EntityType.values()) {
             if (ent.name().startsWith(partialParameter)) {
                 result.add(ent.name());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (EntityType ent : EntityType.values()) {
+            if (ent.name().toLowerCase().startsWith(partialParameter.toLowerCase())) {
+                result.add(ent.name().toLowerCase());
             }
         }
         return result;

@@ -6,7 +6,6 @@ import me.botsko.prism.appliers.PrismProcessType;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -16,14 +15,14 @@ import java.util.regex.Pattern;
 public class WorldParameter extends SimplePrismParameterHandler {
 
     /**
-     *
+     * Constructor.
      */
     public WorldParameter() {
         super("World", Pattern.compile("[^\\s]+"), "w");
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
@@ -45,8 +44,9 @@ public class WorldParameter extends SimplePrismParameterHandler {
      */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
-        if (query.getProcessType().equals(PrismProcessType.DELETE))
+        if (query.getProcessType().equals(PrismProcessType.DELETE)) {
             return;
+        }
         if (sender instanceof Player && !query.allowsNoRadius()) {
             query.setWorld(((Player) sender).getWorld().getName());
         }
@@ -57,6 +57,17 @@ public class WorldParameter extends SimplePrismParameterHandler {
         List<String> result = new ArrayList<>();
         for (World w : Bukkit.getWorlds()) {
             if (w.getName().startsWith(partialParameter)) {
+                result.add(w.getName());
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (World w : Bukkit.getWorlds()) {
+            if (w.getName().toLowerCase().startsWith(partialParameter.toLowerCase())) {
                 result.add(w.getName());
             }
         }
