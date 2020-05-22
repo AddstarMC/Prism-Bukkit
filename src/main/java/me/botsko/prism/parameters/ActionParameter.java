@@ -87,4 +87,17 @@ public class ActionParameter extends SimplePrismParameterHandler {
             }
         }
     }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> res = super.tabComplete(alias, partialParameter, sender);
+        final String[] actionTypes = Prism.getActionRegistry().listAll();
+        for (String ac : actionTypes) {
+            if (ac.startsWith(partialParameter)) {
+                res.add(ac);
+            }
+        }
+
+        return res;
+    }
 }

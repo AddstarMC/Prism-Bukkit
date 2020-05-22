@@ -13,7 +13,7 @@ public enum Flag {
     NO_GROUP("Disables grouping of related actions."),
     OVERWRITE("Forces rb/rs to not skip blocks if something unexpected is at location."),
     SHARE("-share=player1[,player2...]", "Share a lookup result with another player."),
-    PASTE("Share your results with a pastebin service and return the link"),
+    PASTE("Share your results with a paste service and return the link"),
     NO_PHYS("Don't update physics during rollback");
 
     private final String description;
