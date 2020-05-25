@@ -6,7 +6,7 @@ import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
@@ -81,8 +81,8 @@ public class BlockChangeAction extends BlockAction {
     private ChangeResult processChange(Player player, QueryParameters parameters, boolean isPreview,
                                        Material originalMaterial, Material replacedMaterial, BlockData replacedData,
                                        Block currentBlock, boolean isDeferred, BlockAction action) {
-        if (BlockUtils.isAcceptableForBlockPlace(currentBlock.getType())
-                || BlockUtils.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial) || isPreview
+        if (Utilities.isAcceptableForBlockPlace(currentBlock.getType())
+                || Utilities.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial) || isPreview
                 || parameters.hasFlag(Flag.OVERWRITE)) {
             action.setMaterial(replacedMaterial);
             action.setBlockData(replacedData);

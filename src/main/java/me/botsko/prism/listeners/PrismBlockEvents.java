@@ -3,8 +3,8 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.MaterialTag;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -33,6 +33,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -86,8 +87,9 @@ public class PrismBlockEvents implements Listener {
                     // when double chests are broken, they record *all* contents
                     // even though only half of the chest breaks.
                     if ((block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))
-                            && slot > 26)
+                            && slot > 26) {
                         break;
+                    }
                     // record item
                     if (i != null) {
                         callback.accept(i, slot);
@@ -117,7 +119,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all blocks above this block that we know will fall.
-        final ArrayList<Block> falling_blocks = BlockUtils.findFallingBlocksAboveBlock(block);
+        final ArrayList<Block> falling_blocks = Utilities.findFallingBlocksAboveBlock(block);
         if (falling_blocks.size() > 0) {
             for (final Block b : falling_blocks) {
                 breakCallback.accept(b);
@@ -133,7 +135,7 @@ public class PrismBlockEvents implements Listener {
 
         // if it's a piston, the base will break without a physics events
         if (block.getType().equals(Material.PISTON_HEAD) || block.getType().equals(Material.MOVING_PISTON)) {
-            final ArrayList<Block> pistonBases = BlockUtils.findSideFaceAttachedBlocks(block);
+            final ArrayList<Block> pistonBases = Utilities.findSideFaceAttachedBlocks(block);
             if (pistonBases.size() > 0) {
                 for (final Block p : pistonBases) {
                     breakCallback.accept(p);
@@ -142,7 +144,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of side-face attached blocks that will detach
-        ArrayList<Block> detachedBlocks = BlockUtils.findSideFaceAttachedBlocks(block);
+        ArrayList<Block> detachedBlocks = Utilities.findSideFaceAttachedBlocks(block);
         if (detachedBlocks.size() > 0) {
             for (final Block b : detachedBlocks) {
                 breakCallback.accept(b);
@@ -150,7 +152,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of top-side attached blocks that will detach
-        detachedBlocks = BlockUtils.findTopFaceAttachedBlocks(block);
+        detachedBlocks = Utilities.findTopFaceAttachedBlocks(block);
         if (detachedBlocks.size() > 0) {
             for (final Block b : detachedBlocks) {
                 breakCallback.accept(b);
@@ -158,7 +160,7 @@ public class PrismBlockEvents implements Listener {
         }
 
         // Find a list of all hanging entities on this block
-        final ArrayList<Entity> hanging = BlockUtils.findHangingEntities(block);
+        final ArrayList<Entity> hanging = Utilities.findHangingEntities(block);
         if (hanging.size() > 0) {
             for (final Entity e : hanging) {
                 final String coord_key = e.getLocation().getBlockX() + ":" + e.getLocation().getBlockY() + ":"
@@ -176,7 +178,7 @@ public class PrismBlockEvents implements Listener {
     public void onBlockBreak(final BlockBreakEvent event) {
 
         final Player player = event.getPlayer();
-        final Block block = BlockUtils.getBaseBlock(event.getBlock());
+        final Block block = Utilities.getBaseBlock(event.getBlock());
 
         if (block.getType().equals(Material.AIR)) {
             return;
@@ -216,7 +218,7 @@ public class PrismBlockEvents implements Listener {
 
         // if obsidian, log portal blocks
         if (block.getType().equals(Material.OBSIDIAN)) {
-            final ArrayList<Block> blocks = BlockUtils.findConnectedBlocksOfType(Material.NETHER_PORTAL, block, null);
+            final ArrayList<Block> blocks = Utilities.findConnectedBlocksOfType(Material.NETHER_PORTAL, block, null);
             if (!blocks.isEmpty()) {
                 // Only log 1 portal break, we don't need all 8
                 RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", blocks.get(0), player));
@@ -348,7 +350,7 @@ public class PrismBlockEvents implements Listener {
         RecordingQueue.addToQueue(ActionFactory.createBlock("block-burn", block, "Environment"));
 
         // Change handling a bit if it's a long block
-        final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+        final Block sibling = Utilities.getSiblingForDoubleLengthBlock(block);
         if (sibling != null && !block.getType().equals(Material.CHEST)
                 && !block.getType().equals(Material.TRAPPED_CHEST)) {
             block = sibling;
@@ -520,7 +522,7 @@ public class PrismBlockEvents implements Listener {
         final BlockState to = event.getToBlock().getState();
 
         // Watch for blocks that the liquid can break
-        if (BlockUtils.canFlowBreakMaterial(to.getType())) {
+        if (Utilities.canFlowBreakMaterial(to.getType())) {
             if (from.getType() == Material.WATER) {
                 if (Prism.getIgnore().event("water-break", event.getBlock())) {
                     RecordingQueue.addToQueue(ActionFactory.createBlock("water-break", event.getToBlock(), "Water"));

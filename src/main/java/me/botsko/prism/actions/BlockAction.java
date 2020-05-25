@@ -7,10 +7,10 @@ import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Nameable;
 import org.bukkit.Tag;
@@ -266,7 +266,7 @@ public class BlockAction extends GenericAction {
         final boolean cancelIfBadPlace = !getActionType().requiresHandler(BlockChangeAction.class)
                 && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
-        if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(block.getType())) {
+        if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
             Prism.debug("Block skipped due to being unacceptable for block place.: " + block.getType().name());
             return new ChangeResult(ChangeResultType.SKIPPED, null);
         }
@@ -328,7 +328,7 @@ public class BlockAction extends GenericAction {
                 }
                 break;
             case NETHER_PORTAL: // Only way is to set the portal on fire.
-                final Block obsidian = BlockUtils.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
+                final Block obsidian = Utilities.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
                 if (obsidian != null) {
                     final Block above = obsidian.getRelative(BlockFace.UP);
                     if (!(above.getType() == NETHER_PORTAL)) {
@@ -400,7 +400,7 @@ public class BlockAction extends GenericAction {
         // This may need to go before setting the block, but I prefer the BlockUtil logic to use materials.
         BlockState sibling = null;
 
-        if (BlockUtils.materialRequiresSoil(getMaterial())) {
+        if (Utilities.materialRequiresSoil(getMaterial())) {
             sibling = block.getRelative(BlockFace.DOWN).getState();
 
             if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
@@ -413,12 +413,12 @@ public class BlockAction extends GenericAction {
 
         // Chest sides can be broken independently, ignore them
         if (newState.getType() != CHEST && newState.getType() != TRAPPED_CHEST) {
-            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(newState);
+            final Block s = Utilities.getSiblingForDoubleLengthBlock(state);
 
             if (s != null) {
                 sibling = s.getState();
 
-                if (cancelIfBadPlace && !BlockUtils.isAcceptableForBlockPlace(sibling.getType())) {
+                if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(sibling.getType())) {
                     Prism.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
                             + getMaterial().name());
                     return new ChangeResult(ChangeResultType.SKIPPED, null);
@@ -482,8 +482,8 @@ public class BlockAction extends GenericAction {
         if (!block.getType().equals(AIR)) {
 
             // Ensure it's acceptable to remove the current block
-            if (!BlockUtils.isAcceptableForBlockPlace(block.getType())
-                    && !BlockUtils.areBlockIdsSameCoreItem(block.getType(), getMaterial())
+            if (!Utilities.isAcceptableForBlockPlace(block.getType())
+                    && !Utilities.areBlockIdsSameCoreItem(block.getType(), getMaterial())
                     && !parameters.hasFlag(Flag.OVERWRITE)) {
                 return new ChangeResult(ChangeResultType.SKIPPED, null);
             }

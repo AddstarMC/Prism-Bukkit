@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.Handler;
-import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -47,7 +47,7 @@ public class ActionMessage {
         msg.append(" ").append(handler.getSourceName());
         msg.append(" ").append(action.getName());
         msg.append(" ").append(handler.getMaterial());
-        msg.append(BlockUtils.dataString(handler.getBlockData()));
+        msg.append(Utilities.dataString(handler.getBlockData()));
 
         if (action.getHandler() != null) {
             if (!handler.getNiceName().isEmpty()) {
@@ -130,7 +130,7 @@ public class ActionMessage {
         }
 
         if (showExtended && (handler.getMaterial() != Material.AIR)) {
-            line1 += " " + handler.getMaterial() + BlockUtils.dataString(handler.getBlockData());
+            line1 += " " + handler.getMaterial() + Utilities.dataString(handler.getBlockData());
         }
 
         // Aggregate count

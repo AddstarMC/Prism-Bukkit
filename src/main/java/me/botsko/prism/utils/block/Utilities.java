@@ -1,10 +1,9 @@
-package me.botsko.prism.utils;
+package me.botsko.prism.utils.block;
 
 import me.botsko.prism.events.BlockStateChange;
-import me.botsko.prism.utils.MaterialTag.MatchMode;
+import me.botsko.prism.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -21,162 +20,21 @@ import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.Locale;
 
-public class BlockUtils {
+public class Utilities {
 
-    // Material at a location that are commonly acceptable to replace.
-    private static final Tag<Material> replaceableMaterials = new MaterialTag(
-            Material.AIR,
-            Material.CAVE_AIR,
-            Material.VOID_AIR,
-            Material.FIRE,
-            Material.GRAVEL,
-            Material.LAVA,
-            Material.TALL_GRASS,
-            Material.SAND,
-            Material.SNOW,
-            Material.SNOW_BLOCK,
-            Material.WATER);
-
-    // Material that has gravity (will fall, not break, when placed on the side of a wall or breaking
-    // the block under it)
-    private static final MaterialTag fallingMaterials = new MaterialTag(
-            Material.GRAVEL,
-            Material.ANVIL,
-            Material.DRAGON_EGG
-    )
-            .append("_CONCRETE_POWDER", MatchMode.SUFFIX)
-            .append(Tag.SAND);
-
-    // Material that will detach from the side of a block when that block is broken
-    private static final MaterialTag fallsOffWall = new MaterialTag(
-            Material.POWERED_RAIL,
-            Material.DETECTOR_RAIL,
-            Material.STICKY_PISTON,
-            Material.PISTON,
-            Material.PISTON_HEAD,
-            Material.MOVING_PISTON,
-            Material.TORCH,
-            Material.LADDER,
-            Material.LEVER,
-            Material.REDSTONE_TORCH,
-            Material.NETHER_PORTAL,
-            Material.BEACON,
-            Material.VINE,
-            Material.COCOA,
-            Material.TRIPWIRE_HOOK,
-            Material.ACTIVATOR_RAIL,
-            Material.BELL,
-            Material.ITEM_FRAME)
-            .append(Tag.RAILS, Tag.BUTTONS, Tag.WALL_SIGNS)
-            .append(MaterialTag.WALL_BANNERS);
-
-    // Material that will detach from the top of a block when that block is broken
-    private static final MaterialTag fallsOffTop = new MaterialTag(
-            Material.STICKY_PISTON,
-            Material.DEAD_BUSH,
-            Material.PISTON,
-            Material.PISTON_HEAD,
-            Material.MOVING_PISTON,
-            Material.TORCH,
-            Material.REDSTONE,
-            Material.WHEAT,
-            Material.LEVER,
-            Material.STONE_PRESSURE_PLATE,
-            Material.REDSTONE_TORCH,
-            Material.SNOW,
-            Material.CACTUS,
-            Material.SUGAR_CANE,
-            Material.NETHER_PORTAL,
-            Material.REPEATER,
-            Material.PUMPKIN_STEM,
-            Material.MELON_STEM,
-            Material.LILY_PAD,
-            Material.NETHER_WART,
-            Material.CARROTS,
-            Material.POTATOES,
-            Material.BEETROOTS,
-            Material.COMPARATOR,
-            Material.BAMBOO,
-            Material.TURTLE_EGG,
-            Material.HEAVY_WEIGHTED_PRESSURE_PLATE,
-            Material.LIGHT_WEIGHTED_PRESSURE_PLATE,
-            Material.BEACON,
-            Material.ITEM_FRAME,
-            Material.CONDUIT,
-            Material.BELL
-    )
-            .append(Tag.DOORS,
-                    Tag.RAILS,
-                    Tag.SAPLINGS,
-                    MaterialTag.BANNERS,
-                    Tag.STANDING_SIGNS
-            )
-            .append(
-                    Tag.WOODEN_PRESSURE_PLATES,
-                    Tag.BUTTONS,
-                    Tag.CARPETS,
-                    Tag.FLOWER_POTS)
-            .append(MaterialTag.ALL_PLANTS);
-
-    // Material that will be detached by flowing water/lava
-    private static final MaterialTag flowBreaks =
-            new MaterialTag(
-                    MaterialTag.ALL_PLANTS,
-                    MaterialTag.CROPS,
-                    MaterialTag.SKULLS
-            )
-                    .append(
-                            Material.CACTUS,
-                            Material.REPEATER,
-                            Material.COMPARATOR,
-                            Material.REDSTONE,
-                            Material.LEVER
-                    )
-                    .append(
-                            Material.REDSTONE_TORCH,
-                            Material.SUGAR_CANE,
-                            Material.TORCH,
-                            Material.TRIPWIRE)
-                    .append(
-                            Material.TRIPWIRE_HOOK,
-                            Material.VINE,
-                            Material.END_ROD
-                    )
-                    .append(
-                            Tag.BUTTONS,
-                            Tag.SAPLINGS,
-                            Tag.RAILS,
-                            Tag.FLOWER_POTS);
-
-    // Material that can grow/spread to another location
-    private static final MaterialTag growableStructure =
-            new MaterialTag(Tag.LEAVES, Tag.LOGS)
-                    .append(
-                            Material.RED_MUSHROOM_BLOCK,
-                            Material.BROWN_MUSHROOM_BLOCK,
-                            Material.MUSHROOM_STEM);
-
-    // Material that could possibly cause other material to detach from another block
-    private static final EnumSet<Material> detachingBlocks = EnumSet.of(
-            Material.AIR,
-            Material.FIRE,
-            Material.WATER,
-            Material.LAVA);
     /**
      * There are several items that are officially different ItemStacks, but for the
      * purposes of what we're doing are really considered one core item. This
      * attempts to be a little lenient on matching the ids.
-     * Example: Redstone lamp (off) is 123, (on) is 124 but either id means it's a
-     * redstone lamp.
      *
-     * @param id1 Material 1
-     * @param id2 Material 2
+     * @param material Material 1
+     * @param material Material 2
      * @return
      */
     private static final EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
@@ -184,6 +42,24 @@ public class BlockUtils {
     static {
         baseMaterials.put(Material.GRASS_BLOCK, Material.DIRT);
         baseMaterials.put(Material.MYCELIUM, Material.DIRT);
+        baseMaterials.put(Material.FARMLAND, Material.DIRT);
+        baseMaterials.put(Material.GRASS_PATH, Material.DIRT);
+        baseMaterials.put(Material.LIGHT_BLUE_CONCRETE_POWDER,Material.LIGHT_BLUE_CONCRETE);
+        baseMaterials.put(Material.LIGHT_GRAY_CONCRETE_POWDER,Material.LIGHT_GRAY_CONCRETE);
+        baseMaterials.put(Material.BLUE_CONCRETE_POWDER,Material.BLUE_CONCRETE);
+        baseMaterials.put(Material.RED_CONCRETE_POWDER,Material.RED_CONCRETE);
+        baseMaterials.put(Material.BLACK_CONCRETE_POWDER,Material.BLACK_CONCRETE);
+        baseMaterials.put(Material.MAGENTA_CONCRETE_POWDER,Material.MAGENTA_CONCRETE);
+        baseMaterials.put(Material.PURPLE_CONCRETE_POWDER,Material.PURPLE_CONCRETE);
+        baseMaterials.put(Material.GREEN_CONCRETE_POWDER,Material.GREEN_CONCRETE);
+        baseMaterials.put(Material.LIME_CONCRETE_POWDER,Material.LIME_CONCRETE);
+        baseMaterials.put(Material.WHITE_CONCRETE_POWDER,Material.WHITE_CONCRETE);
+        baseMaterials.put(Material.YELLOW_CONCRETE_POWDER,Material.YELLOW_CONCRETE);
+        baseMaterials.put(Material.BROWN_CONCRETE_POWDER,Material.BROWN_CONCRETE);
+        baseMaterials.put(Material.GRAY_CONCRETE_POWDER,Material.GRAY_CONCRETE);
+        baseMaterials.put(Material.ORANGE_CONCRETE_POWDER,Material.ORANGE_CONCRETE);
+        baseMaterials.put(Material.CYAN_CONCRETE_POWDER,Material.CYAN_CONCRETE);
+        baseMaterials.put(Material.PINK_CONCRETE_POWDER,Material.PINK_CONCRETE);
     }
 
     /**
@@ -336,7 +212,7 @@ public class BlockUtils {
      * @return if the material is acceptable to replace
      */
     public static boolean isAcceptableForBlockPlace(Material m) {
-        return replaceableMaterials.isTagged(m);
+        return  TagLibrary.replaceableMaterials.isTagged(m);
     }
 
     /**
@@ -351,7 +227,7 @@ public class BlockUtils {
 
         // Get block above
         Block above = block.getRelative(BlockFace.UP);
-        if (BlockUtils.isFallingBlock(above)) {
+        if (Utilities.isFallingBlock(above)) {
             fallingBlocks.add(above);
             ArrayList<Block> fallingBlocksAbove = findFallingBlocksAboveBlock(above);
             if (fallingBlocksAbove.size() > 0) {
@@ -369,7 +245,7 @@ public class BlockUtils {
      * @return whether the block is capable of falling
      */
     public static boolean isFallingBlock(Block block) {
-        return fallingMaterials.isTagged(block.getType());
+        return TagLibrary.fallingMaterials.isTagged(block.getType());
     }
 
     /**
@@ -384,19 +260,19 @@ public class BlockUtils {
 
         // Check each of the four sides
         Block blockToCheck = block.getRelative(BlockFace.EAST);
-        if (BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())) {
+        if (Utilities.isSideFaceDetachableMaterial(blockToCheck.getType())) {
             detachingBlocks.add(blockToCheck);
         }
         blockToCheck = block.getRelative(BlockFace.WEST);
-        if (BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())) {
+        if (Utilities.isSideFaceDetachableMaterial(blockToCheck.getType())) {
             detachingBlocks.add(blockToCheck);
         }
         blockToCheck = block.getRelative(BlockFace.NORTH);
-        if (BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())) {
+        if (Utilities.isSideFaceDetachableMaterial(blockToCheck.getType())) {
             detachingBlocks.add(blockToCheck);
         }
         blockToCheck = block.getRelative(BlockFace.SOUTH);
-        if (BlockUtils.isSideFaceDetachableMaterial(blockToCheck.getType())) {
+        if (Utilities.isSideFaceDetachableMaterial(blockToCheck.getType())) {
             detachingBlocks.add(blockToCheck);
         }
 
@@ -441,7 +317,7 @@ public class BlockUtils {
      */
     @SuppressWarnings("WeakerAccess")
     public static boolean isSideFaceDetachableMaterial(Material m) {
-        return fallsOffWall.isTagged(m);
+        return  TagLibrary.fallsOffWall.isTagged(m);
     }
 
     /**
@@ -455,7 +331,7 @@ public class BlockUtils {
 
         // Find any block on top of this that will detach
         Block blockToCheck = block.getRelative(BlockFace.UP);
-        if (BlockUtils.isTopFaceDetachableMaterial(blockToCheck.getType())) {
+        if (Utilities.isTopFaceDetachableMaterial(blockToCheck.getType())) {
             detachingBlocks.add(blockToCheck);
             if (blockToCheck.getType().equals(Material.CACTUS) || blockToCheck.getType().equals(Material.SUGAR_CANE)) {
                 // For cactus and sugar cane, we can even have blocks above
@@ -478,7 +354,7 @@ public class BlockUtils {
      **/
     @SuppressWarnings("WeakerAccess")
     public static boolean isTopFaceDetachableMaterial(Material m) {
-        return fallsOffTop.isTagged(m);
+        return  TagLibrary.fallsOffTop.isTagged(m);
     }
 
     /**
@@ -489,7 +365,7 @@ public class BlockUtils {
      * @return boolean
      */
     public static boolean materialMeansBlockDetachment(Material m) {
-        return detachingBlocks.contains(m);
+        return  TagLibrary.detachingBlocks.contains(m);
     }
 
     /**
@@ -682,7 +558,7 @@ public class BlockUtils {
      * @return bool
      */
     public static boolean canFlowBreakMaterial(Material m) {
-        return flowBreaks.isTagged(m);
+        return  TagLibrary.flowBreaks.isTagged(m);
     }
 
     /**
@@ -758,7 +634,7 @@ public class BlockUtils {
      * @return bool
      */
     public static boolean isGrowableStructure(Material m) {
-        return growableStructure.isTagged(m);
+        return  TagLibrary.growableStructure.isTagged(m);
     }
 
     /**
@@ -774,10 +650,18 @@ public class BlockUtils {
         if (mat1 == mat2) {
             return true;
         }
+        mat1 = getMaterial(mat1);
+        mat2 = getMaterial(mat2);
 
-        mat1 = baseMaterials.get(mat1);
-        mat2 = baseMaterials.get(mat2);
+        return  mat1 == mat2;
+    }
 
-        return mat1 != null && mat1 == mat2;
+    @Nonnull
+    private static Material getMaterial(Material material) {
+        if (baseMaterials.get(material) == null) {
+            return material;
+        } else {
+            return baseMaterials.get(material);
+        }
     }
 }

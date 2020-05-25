@@ -7,7 +7,7 @@ import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
-import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.block.Utilities;
 import me.botsko.prism.utils.IntPair;
 import org.bukkit.Location;
 
@@ -34,6 +34,9 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         super(dataSource);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long insertActionIntoDatabase(Handler a) {
         int world_id = 0;
@@ -53,8 +56,8 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         if (world_id == 0 || action_id == 0 || player_id == 0) {
             Prism.debug("Sql data error: Handler:" + a.toString());
         }
-        IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(), BlockUtils.dataString(a.getBlockData()));
-        IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(), BlockUtils.dataString(a.getOldBlockData()));
+        IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(), Utilities.dataString(a.getBlockData()));
+        IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(), Utilities.dataString(a.getOldBlockData()));
 
         Location l = a.getLoc();
 
@@ -115,10 +118,10 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int player_id = prismPlayer.getId();
 
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
-                BlockUtils.dataString(a.getBlockData()));
+                Utilities.dataString(a.getBlockData()));
 
         IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(),
-                BlockUtils.dataString(a.getOldBlockData()));
+                Utilities.dataString(a.getOldBlockData()));
         Location l = a.getLoc();
         applytoInsert(batchStatement, a, action_id, player_id, world_id, newIds, oldIds, l);
         batchStatement.addBatch();

@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Created by benjamincharlton on 5/04/2019.
  */
 public interface IdMapQuery {
-    void findMaterial(int block_id, int block_subid, BiConsumer<String, String> success);
+    void findMaterial(int blockId, int blockSubid, BiConsumer<String, String> success);
 
     void findIds(String material, String state, BiConsumer<Integer, Integer> success);
 
