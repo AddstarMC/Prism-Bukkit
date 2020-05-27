@@ -12,6 +12,7 @@ import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Nameable;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -107,9 +108,9 @@ public class BlockAction extends GenericAction {
                 actionData = skullActionData;
                 break;
             case COMMAND_BLOCK:
-                final CommandBlock cmdblock = (CommandBlock) state;
+                final CommandBlock cmdBlock = (CommandBlock) state;
                 final CommandActionData commandActionData = new CommandActionData();
-                commandActionData.command = cmdblock.getCommand();
+                commandActionData.command = cmdBlock.getCommand();
                 actionData = commandActionData;
                 break;
             default:
@@ -120,6 +121,12 @@ public class BlockAction extends GenericAction {
                     actionData = signActionData;
                 }
                 break;
+        }
+        if (state instanceof Nameable && ((Nameable) state).getCustomName() != null) {
+            if (actionData == null) {
+                actionData = new BlockActionData();
+            }
+            actionData.customName = ((Nameable) state).getCustomName();
         }
     }
 
@@ -156,6 +163,8 @@ public class BlockAction extends GenericAction {
             } else if (getMaterial() == COMMAND_BLOCK) {
                 actionData = new CommandActionData();
                 ((CommandActionData) actionData).command = data;
+            } else {
+                actionData = gson().fromJson(data,BlockActionData.class);
             }
         }
     }
@@ -169,15 +178,19 @@ public class BlockAction extends GenericAction {
     public String getNiceName() {
         String name = "";
         BlockActionData blockActionData = getActionData();
-
-        if (blockActionData instanceof SkullActionData) {
-            final SkullActionData ad = (SkullActionData) blockActionData;
-            name += ad.skullType + " ";
-        } else if (blockActionData instanceof SpawnerActionData) {
-            final SpawnerActionData ad = (SpawnerActionData) blockActionData;
-            name += ad.entityType + " ";
+        if (blockActionData != null) {
+            if (blockActionData instanceof SkullActionData) {
+                final SkullActionData ad = (SkullActionData) blockActionData;
+                name += ad.skullType + " ";
+            } else if (blockActionData instanceof SpawnerActionData) {
+                final SpawnerActionData ad = (SpawnerActionData) blockActionData;
+                name += ad.entityType + " ";
+            }
         }
         name += Prism.getItems().getAlias(getMaterial(), getBlockData());
+        if (blockActionData == null) {
+            return name;
+        }
         if (blockActionData instanceof SignActionData) {
             final SignActionData ad = (SignActionData) blockActionData;
             if (ad.lines != null && ad.lines.length > 0) {
@@ -186,6 +199,9 @@ public class BlockAction extends GenericAction {
         } else if (blockActionData instanceof CommandActionData) {
             final CommandActionData ad = (CommandActionData) blockActionData;
             name += " (" + ad.command + ")";
+        }
+        if (blockActionData.customName != null) {
+            name += " (" + blockActionData.customName + ") ";
         }
         if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
@@ -329,6 +345,9 @@ public class BlockAction extends GenericAction {
 
         }
         state.setType(getMaterial());
+        state.setBlockData(getBlockData());
+        state.update(true);
+        BlockState newState = block.getState();
         BlockActionData blockActionData = getActionData();
 
         if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
@@ -341,45 +360,38 @@ public class BlockAction extends GenericAction {
             final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
             // Set spawner data
-            final CreatureSpawner spawner = (CreatureSpawner) state;
-            spawner.setDelay(s.getDelay());
-            spawner.setSpawnedType(s.getEntityType());
+            ((CreatureSpawner) newState).setDelay(s.getDelay());
+            ((CreatureSpawner) newState).setSpawnedType(s.getEntityType());
 
         }
 
         if (getMaterial() == COMMAND_BLOCK
                 && blockActionData instanceof CommandActionData) {
-            final CommandBlock cmbBlock = (CommandBlock) state;
             final CommandActionData c = (CommandActionData) blockActionData;
-            cmbBlock.setCommand(c.command);
+            ((CommandBlock) newState).setCommand(c.command);
         }
-
+        if (newState instanceof Nameable && actionData.customName != null) {
+            ((Nameable) newState).setCustomName(actionData.customName);
+        }
         if (parameters.getProcessType() == PrismProcessType.ROLLBACK
                 && Tag.SIGNS.isTagged(getMaterial())
                 && blockActionData instanceof SignActionData) {
 
             final SignActionData s = (SignActionData) blockActionData;
-
             // Verify block is sign. Rarely, if the block somehow pops off
             // or fails
             // to set it causes ClassCastException:
             // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
             // cannot be cast to org.bukkit.block.Sign
             // https://snowy-evening.com/botsko/prism/455/
-            if (state instanceof Sign) {
-
-                // Set sign data
-                final Sign sign = (Sign) state;
-
+            if (newState instanceof Sign) {
                 if (s.lines != null) {
                     for (int i = 0; i < s.lines.length; ++i) {
-                        sign.setLine(i, s.lines[i]);
+                        ((Sign) newState).setLine(i, s.lines[i]);
                     }
                 }
             }
         }
-
-        state.setBlockData(getBlockData());
 
         // -----------------------------
         // Sibling logic marker
@@ -400,8 +412,8 @@ public class BlockAction extends GenericAction {
         }
 
         // Chest sides can be broken independently, ignore them
-        if (state.getType() != CHEST && state.getType() != TRAPPED_CHEST) {
-            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(state);
+        if (newState.getType() != CHEST && newState.getType() != TRAPPED_CHEST) {
+            final Block s = BlockUtils.getSiblingForDoubleLengthBlock(newState);
 
             if (s != null) {
                 sibling = s.getState();
@@ -430,7 +442,7 @@ public class BlockAction extends GenericAction {
 
         boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
 
-        state.update(true, physics);
+        newState.update(true, physics);
 
         if (sibling != null) {
             sibling.update(true, physics);
@@ -463,7 +475,7 @@ public class BlockAction extends GenericAction {
         return new ChangeResult(ChangeResultType.APPLIED, stateChange);
     }
 
-    ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
+    private ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
 
         BlockStateChange stateChange;
 
@@ -513,6 +525,7 @@ public class BlockAction extends GenericAction {
      * @author botskonet
      */
     static class BlockActionData {
+        String customName;
     }
 
     public static class CommandActionData extends BlockActionData {
