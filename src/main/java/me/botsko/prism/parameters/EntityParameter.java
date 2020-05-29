@@ -22,17 +22,6 @@ public class EntityParameter extends SimplePrismParameterHandler {
         return result;
     }
 
-    @Override
-    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
-        List<String> result = new ArrayList<>();
-        for (EntityType ent : EntityType.values()) {
-            if (ent.name().toLowerCase().startsWith(partialParameter.toLowerCase())) {
-                result.add(ent.name().toLowerCase());
-            }
-        }
-        return result;
-    }
-
     public EntityParameter() {
         super("Entity", Pattern.compile("[~|!]?[\\w,]+"), "e");
     }

@@ -109,14 +109,4 @@ public class BlockParameter extends SimplePrismParameterHandler {
         return result;
     }
 
-    @Override
-    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
-        List<String> result = new ArrayList<>();
-        for (Material mat : Material.values()) {
-            if (mat.name().toLowerCase().startsWith(partialParameter.toLowerCase())) {
-                result.add(mat.name().toLowerCase());
-            }
-        }
-        return result;
-    }
 }

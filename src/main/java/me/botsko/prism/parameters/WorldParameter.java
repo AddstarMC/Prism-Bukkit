@@ -63,14 +63,4 @@ public class WorldParameter extends SimplePrismParameterHandler {
         return result;
     }
 
-    @Override
-    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
-        List<String> result = new ArrayList<>();
-        for (World w : Bukkit.getWorlds()) {
-            if (w.getName().toLowerCase().startsWith(partialParameter.toLowerCase())) {
-                result.add(w.getName());
-            }
-        }
-        return result;
-    }
 }
