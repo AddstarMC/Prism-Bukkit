@@ -281,7 +281,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // Keyword(s)
         final String keyword = parameters.getKeyword();
         if (keyword != null) {
-            addCondition("ex.data LIKE '%" + keyword + "%'");
+            addCondition("MATCH(ex.data) AGAINST('" + keyword + "')");
         }
     }
 
