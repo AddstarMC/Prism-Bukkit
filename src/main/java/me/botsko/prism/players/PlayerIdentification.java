@@ -47,7 +47,7 @@ public class PlayerIdentification {
         PrismPlayer prismPlayer;
         prismPlayer = getPrismPlayer(uuid,name);
         if (prismPlayer != null) {
-            PrismPlayer checkPrismPlayer = comparePlayerToCache(name,uuid, prismPlayer)
+            PrismPlayer checkPrismPlayer = comparePlayerToCache(name,uuid, prismPlayer);
             Prism.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
             Prism.prismPlayers.put(uuid, prismPlayer);
             return checkPrismPlayer;
