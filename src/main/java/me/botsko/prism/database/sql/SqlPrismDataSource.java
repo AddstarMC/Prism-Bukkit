@@ -182,7 +182,8 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
                         + "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
                         + "`data_id` bigint(20) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
-                        + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
+                        + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`),"
+                        + "FULLTEXT (`data`)"
                         + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
                 st.executeUpdate(query);
 
