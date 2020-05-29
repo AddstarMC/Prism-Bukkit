@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class ProfileWand extends WandBase {
 
     /**
-     *
+     *{@inheritDoc}
      */
     @Override
     public void playerLeftClick(Player player, Location loc) {
@@ -21,7 +21,7 @@ public class ProfileWand extends WandBase {
     }
 
     /**
-     *
+     *{@inheritDoc}
      */
     @Override
     public void playerRightClick(Player player, Location loc) {
@@ -31,8 +31,23 @@ public class ProfileWand extends WandBase {
     }
 
     /**
-     * @param player
-     * @param loc
+     * {@inheritDoc}
+     */
+    @Override
+    public void playerRightClick(Player player, Entity entity) {
+        if (entity != null) {
+            player.sendMessage(Prism.messenger.playerHeaderMsg("Entity Profile"));
+            player.sendMessage(Prism.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase()));
+            player.sendMessage(Prism.messenger.playerMsg("ID: " + entity.getEntityId()));
+            player.sendMessage(Prism.messenger.playerMsg("Coords: " + entity.getLocation().getBlockX() + " "
+                    + entity.getLocation().getBlockY() + " " + entity.getLocation().getBlockZ()));
+        }
+    }
+
+    /**
+     * Show Location Profile.
+     * @param player Player
+     * @param loc Location
      */
     protected void showLocationProfile(Player player, Location loc) {
 
@@ -48,19 +63,5 @@ public class ProfileWand extends WandBase {
         player.sendMessage(
                 Prism.messenger.playerMsg("Coords: " + block.getX() + " " + block.getY() + " " + block.getZ()));
 
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void playerRightClick(Player player, Entity entity) {
-        if (entity != null) {
-            player.sendMessage(Prism.messenger.playerHeaderMsg("Entity Profile"));
-            player.sendMessage(Prism.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase()));
-            player.sendMessage(Prism.messenger.playerMsg("ID: " + entity.getEntityId()));
-            player.sendMessage(Prism.messenger.playerMsg("Coords: " + entity.getLocation().getBlockX() + " "
-                    + entity.getLocation().getBlockY() + " " + entity.getLocation().getBlockZ()));
-        }
     }
 }
