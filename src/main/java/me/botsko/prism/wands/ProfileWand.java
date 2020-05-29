@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 public class ProfileWand extends WandBase {
 
     /**
-     *{@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
     public void playerLeftClick(Player player, Location loc) {
@@ -20,9 +20,6 @@ public class ProfileWand extends WandBase {
         }
     }
 
-    /**
-     *{@inheritDoc}
-     */
     @Override
     public void playerRightClick(Player player, Location loc) {
         if (loc != null) {
