@@ -13,8 +13,10 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.DoubleChest;
 import org.bukkit.block.Jukebox;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Chest;
 import org.bukkit.block.data.type.Chest.Type;
+import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +25,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -86,8 +89,9 @@ public class PrismBlockEvents implements Listener {
                     // when double chests are broken, they record *all* contents
                     // even though only half of the chest breaks.
                     if ((block.getType().equals(Material.CHEST) || block.getType().equals(Material.TRAPPED_CHEST))
-                            && slot > 26)
+                            && slot > 26) {
                         break;
+                    }
                     // record item
                     if (i != null) {
                         callback.accept(i, slot);
@@ -301,6 +305,54 @@ public class PrismBlockEvents implements Listener {
 
         RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(),
                 b.getBlockData(), s.getType(), s.getBlockData(), "Environment"));
+    }
+
+    /**
+     * Log bed explosions...should only happen in the nether.
+     * @param e BlockExplodeEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBedExplosion(BlockExplodeEvent e) {
+        if (!Prism.getIgnore().event("block-explode", e.getBlock())) {
+            return;
+        }
+        if (!MaterialTag.BEDS.isTagged(e.getBlock().getType())) {
+            return; //only track beds
+        }
+        String action = "block-explode";
+        RecordingQueue.addToQueue(ActionFactory.createBlock(action,e.getBlock(),"self"));
+        if (e.blockList().isEmpty()) {
+            return;
+            // if it didnt break anything else
+        }
+        final PrismBlockEvents be = new PrismBlockEvents(plugin);
+        for (Block block : e.blockList()) {
+
+            // don't bother record upper doors.
+            if (MaterialTag.DOORS.isTagged(block.getType())
+                    && ((Door) block.getState().getBlockData()).getHalf() == Bisected.Half.TOP) {
+                continue;
+            }
+
+            // Change handling a bit if it's a long block
+            final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+            if (sibling != null && !block.getType().equals(Material.CHEST)
+                    && !block.getType().equals(Material.TRAPPED_CHEST)) {
+                block = sibling;
+            }
+
+            // log items removed from container
+            // note: done before the container so a "rewind" for rollback will
+            // work properly
+            final Block b2 = block;
+            final String source = e.getBlock().getType().name().toLowerCase();
+            be.forEachItem(block, (i, s) -> RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove",
+                    i, i.getAmount(), 0, null, b2.getLocation(), source)));
+            // be.logItemRemoveFromDestroyedContainer( name, block );
+            RecordingQueue.addToQueue(ActionFactory.createBlock(action, block, source));
+            // look for relationships
+            be.logBlockRelationshipsForBlock(source, block);
+        }
     }
 
     /**

@@ -148,6 +148,7 @@ public class ActionRegistry {
         registerAction(new ActionType("block-shift", true, false, false, BlockShiftAction.class, "moved"));
         registerAction(new ActionType("block-spread", true, true, true, BlockChangeAction.class, "grew"));
         registerAction(new ActionType("block-use", false, false, false, BlockAction.class, "used"));
+        registerAction(new ActionType("block-explode", false, true, true, BlockAction.class, "exploded"));
         registerAction(new ActionType("bonemeal-use", false, false, false, UseAction.class, "used"));
         registerAction(new ActionType("bucket-fill", false, false, false, PlayerAction.class, "filled"));
         registerAction(new ActionType("cake-eat", false, false, false, UseAction.class, "ate"));
