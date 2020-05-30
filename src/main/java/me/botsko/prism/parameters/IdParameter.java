@@ -9,14 +9,14 @@ import java.util.regex.Pattern;
 public class IdParameter extends SimplePrismParameterHandler {
 
     /**
-     *
+     * Constructor.
      */
     public IdParameter() {
         super("ID", Pattern.compile("[\\d,]+"), "id");
     }
 
     /**
-     *
+     *{@inheritDoc}
      */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {

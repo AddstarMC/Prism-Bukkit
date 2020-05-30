@@ -7,7 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class BlockParameter extends SimplePrismParameterHandler {
@@ -66,7 +68,7 @@ public class BlockParameter extends SimplePrismParameterHandler {
                         continue;
                     }
 
-                    Material mat = Material.matchMaterial(part1);
+                    Material mat = Material.matchMaterial(part1.toUpperCase().replace("-", "_"));
                     if (mat != null) {
                         if (parts.length == 1) {
                             query.addBlockFilter(mat);
@@ -95,4 +97,16 @@ public class BlockParameter extends SimplePrismParameterHandler {
             }
         }
     }
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (Material mat : Material.values()) {
+            if (mat.name().startsWith(partialParameter)) {
+                result.add(mat.name());
+            }
+        }
+        return result;
+    }
+
 }

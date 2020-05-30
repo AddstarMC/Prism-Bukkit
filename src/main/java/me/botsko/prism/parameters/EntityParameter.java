@@ -3,10 +3,24 @@ package me.botsko.prism.parameters;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class EntityParameter extends SimplePrismParameterHandler {
+
+    @Override
+    protected List<String> tabComplete(String alias, String partialParameter, CommandSender sender) {
+        List<String> result = new ArrayList<>();
+        for (EntityType ent : EntityType.values()) {
+            if (ent.name().startsWith(partialParameter)) {
+                result.add(ent.name());
+            }
+        }
+        return result;
+    }
 
     public EntityParameter() {
         super("Entity", Pattern.compile("[~|!]?[\\w,]+"), "e");

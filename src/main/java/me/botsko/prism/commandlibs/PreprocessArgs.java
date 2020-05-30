@@ -25,8 +25,20 @@ public class PreprocessArgs {
         return process(plugin, sender, args, processType, startAt, useDefaults, false);
     }
 
+    /**
+     * Create a set of parameters.
+     * @param plugin plugin.
+     * @param sender CommandSender
+     * @param args arg list
+     * @param processType {@link PrismProcessType}
+     * @param startAt int
+     * @param useDefaults  bool
+     * @param optional bool
+     * @return {@link QueryParameters}
+     */
     public static QueryParameters process(Plugin plugin, CommandSender sender, String[] args,
-                                          PrismProcessType processType, int startAt, boolean useDefaults, boolean optional) {
+                                          PrismProcessType processType, int startAt, boolean useDefaults,
+                                          boolean optional) {
 
         // Check for player or sender
         Player player = null;
@@ -62,16 +74,18 @@ public class PreprocessArgs {
             if (arg.isEmpty()) {
                 continue;
             }
-            if (parseParam(plugin, sender, parameters, registeredParams, foundArgsNames, foundArgsList,
-                    arg) == ParseResult.NotFound)
+            if (ParseResult.NotFound == parseParam(plugin, sender, parameters, registeredParams,
+                    foundArgsNames, foundArgsList, arg)) {
                 return null;
+            }
         }
         parameters.setFoundArgs(foundArgsNames);
 
         // Reject no matches
         if (foundArgsList.isEmpty() && !optional) {
             if (sender != null) {
-                sender.sendMessage(Prism.messenger.playerError("You're missing valid parameters. Use /prism ? for assistance."));
+                sender.sendMessage(Prism.messenger
+                        .playerError("You're missing valid parameters. Use /prism ? for assistance."));
             } else {
                 Prism.log("Missing valid parameters");
             }
@@ -124,7 +138,7 @@ public class PreprocessArgs {
     }
 
     /**
-     * Parse a set of params
+     * Parse a set of params.
      * @param plugin Prism
      * @param sender CommandSender
      * @param parameters QueryParameters
@@ -135,8 +149,9 @@ public class PreprocessArgs {
      * @return ParseResult.
      */
     private static ParseResult parseParam(Plugin plugin, CommandSender sender, QueryParameters parameters,
-                                          Map<String, PrismParameterHandler> registeredParams, Collection<String> foundArgsNames,
-                                          Collection<MatchedParam> foundArgsList, String arg) {
+                                          Map<String, PrismParameterHandler> registeredParams,
+                                          Collection<String> foundArgsNames, Collection<MatchedParam> foundArgsList,
+                                          String arg) {
         ParseResult result = ParseResult.NotFound;
 
         // Match command argument to parameter handler
@@ -175,14 +190,16 @@ public class PreprocessArgs {
         switch (result) {
             case NotFound:
                 if (sender != null) {
-                    sender.sendMessage(Prism.messenger.playerError("Unrecognized parameter '" + arg + "'. Use /prism ? for help."));
+                    sender.sendMessage(Prism.messenger.playerError("Unrecognized parameter '"
+                            + arg + "'. Use /prism ? for help."));
                 } else {
                     Prism.log("Unrecognized parameter '" + arg + "'");
                 }
                 break;
             case NoPermission:
                 if (sender != null) {
-                    sender.sendMessage(Prism.messenger.playerError("No permission for parameter '" + arg + "', skipped."));
+                    sender.sendMessage(Prism.messenger.playerError("No permission for parameter '"
+                            + arg + "', skipped."));
                 } else {
                     Prism.log("No permission for parameter '" + arg + "'");
                 }
@@ -194,7 +211,7 @@ public class PreprocessArgs {
     }
 
     /**
-     * TabComplete the an argument
+     * TabComplete the an argument.
      * @param sender  CommandSender
      * @param args String[]
      * @param arg int
@@ -210,7 +227,7 @@ public class PreprocessArgs {
     }
 
     /**
-     * TabComplete the last argument
+     * TabComplete the last argument.
      * @param sender  CommandSender
      * @param args String[]
      * @return List
@@ -220,14 +237,15 @@ public class PreprocessArgs {
     }
 
     /**
-     * TabComplete the an argument
+     * TabComplete the an argument.
      * @param sender  CommandSender
      * @param arg String
      * @return List
      */
     public static List<String> complete(CommandSender sender, String arg) {
-        if (arg.isEmpty())
+        if (arg.isEmpty()) {
             return null;
+        }
 
         // Load registered parameters
         final HashMap<String, PrismParameterHandler> registeredParams = Prism.getParameters();
@@ -243,6 +261,7 @@ public class PreprocessArgs {
     }
 
     /**
+     * Enum to show results of a parse.
      * @author botskonet
      */
     private enum ParseResult {
@@ -252,7 +271,7 @@ public class PreprocessArgs {
     }
 
     /**
-     *
+     * Matched Params.
      */
     private static class MatchedParam {
         private final PrismParameterHandler handler;
