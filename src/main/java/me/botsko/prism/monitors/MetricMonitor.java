@@ -32,6 +32,7 @@ public class MetricMonitor {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
                 return;
             }
+            clearActions();
             Metrics.CustomChart chart = new Metrics.DrilldownPie("logged_actions", () -> {
                 Map<String,Map<String, Integer>> out = new HashMap<>();
                 HashMap<String,Integer> enabled = new HashMap<>();
@@ -57,7 +58,9 @@ public class MetricMonitor {
 
     private void clearActions() {
         synchronized (lock) {
-            actions.replaceAll((s, integer) -> 0);
+            for (String action: Prism.getActionRegistry().listAll()) {
+                actions.put(action,0);
+            }
         }
     }
 
