@@ -40,7 +40,7 @@ public class MetricMonitor {
                 out.put("disabled",disabled);
                 for (String action: Prism.getActionRegistry().listAll()) {
                     if (Prism.getIgnore().event(action)) {
-                        enabled.put(action,actions.get(action));
+                        enabled.put(action,actions.getOrDefault(action,0));
                     } else {
                         disabled.put(action,actions.getOrDefault(action,0));
                     }
