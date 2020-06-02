@@ -2,6 +2,7 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.actions.Handler;
+import me.botsko.prism.monitors.MetricMonitor;
 
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -28,6 +29,7 @@ public class RecordingQueue {
         }
         queue.add(a);
         ActionMeter.mark(a.getClass());
+        MetricMonitor.recordAction(a.getActionType().getName());
 
     }
 

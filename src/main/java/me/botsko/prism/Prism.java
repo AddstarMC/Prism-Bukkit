@@ -24,6 +24,7 @@ import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
+import me.botsko.prism.monitors.MetricMonitor;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
 import me.botsko.prism.parameters.ActionParameter;
@@ -100,6 +101,7 @@ public class Prism extends JavaPlugin {
     public boolean monitoring = false;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
+    private MetricMonitor metricMonitor;
     public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
     public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
@@ -522,14 +524,7 @@ public class Prism extends JavaPlugin {
         // WorldEdit
         ApiHandler.hookWorldEdit();
         //bstats
-        if (getConfig().getBoolean("prism.allow-metrics")) {
-            Prism.log("Prism bStats metrics are enabled - thank you!");
-            int pluginid = 4365; // assigned by bstats.org
-            Metrics metrics = new Metrics(this, pluginid);
-            if (!metrics.isEnabled()) {
-                Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
-            }
-        }
+        metricMonitor = new MetricMonitor();
     }
 
     /**
@@ -686,7 +681,7 @@ public class Prism extends JavaPlugin {
         if (!ApiHandler.disable()) {
             log("Possible errors unhooking dependencies...");
         }
-
+        metricMonitor.disable();
         Bukkit.getScheduler().cancelTasks(this);
         // Close prismDataSource connections when plugin disables
         if (prismDataSource != null) {
