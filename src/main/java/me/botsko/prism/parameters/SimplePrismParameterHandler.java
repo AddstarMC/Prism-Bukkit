@@ -47,7 +47,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public final String getName() {
@@ -55,7 +55,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public String[] getHelp() {
@@ -63,6 +63,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
+     * Get Permission.
      * @return the permission required to use this parameter.
      */
     public String getPermission() {
@@ -70,7 +71,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     * Set a permission
+     * Set a permission.
      * @param permission the permission required to use this parameter.
      */
     @SuppressWarnings("unused")
@@ -79,7 +80,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     * Process the command
+     * Process the command.
      * @param query QueryParameters
      * @param alias String
      * @param input String
@@ -88,7 +89,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     protected abstract void process(QueryParameters query, String alias, String input, CommandSender sender);
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public final void process(QueryParameters query, String parameter, CommandSender sender) {
@@ -103,19 +104,20 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public final boolean applicable(String parameter, CommandSender sender) {
         final String[] split = parameter.split(":", 2);
-        if (split.length != 2)
+        if (split.length != 2) {
             return false;
+        }
         final String alias = split[0];
         return aliases.contains(alias);
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
@@ -123,7 +125,7 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public final List<String> tabComplete(String partialParameter, CommandSender sender) {
@@ -132,8 +134,9 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
         final String alias = split[0];
         final String input = split[1];
         final List<String> completions = tabComplete(alias, input, sender);
-        if (completions == null)
+        if (completions == null) {
             return Collections.emptyList();
+        }
         final List<String> edited = new ArrayList<>(completions.size());
         for (final String completion : completions) {
             edited.add(alias + ":" + completion);
@@ -153,12 +156,13 @@ public abstract class SimplePrismParameterHandler implements PrismParameterHandl
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public final boolean hasPermission(String parameter, Permissible permissible) {
-        if (permissible == null)
+        if (permissible == null) {
             return true;
+        }
         return permissible.hasPermission(permission);
     }
 }
