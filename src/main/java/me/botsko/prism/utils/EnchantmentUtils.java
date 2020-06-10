@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import org.bukkit.Keyed;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 
@@ -79,8 +80,13 @@ public class EnchantmentUtils {
             return Enchantment.DAMAGE_UNDEAD;
         } else if (name.equalsIgnoreCase("unbreaking")) {
             return Enchantment.DURABILITY;
+        } else if (name.equals("vanishing curse")) {
+            return Enchantment.VANISHING_CURSE;
+        } else {
+            String formattedName = name.replace(' ','_');
+            NamespacedKey key = NamespacedKey.minecraft(formattedName);
+            return Enchantment.getByKey(key);
         }
-        return null;
     }
 
     /**
@@ -130,23 +136,30 @@ public class EnchantmentUtils {
             enchName = "projectile protection";
         } else if (ench.equals(Enchantment.WATER_WORKER)) {
             enchName = "aqua affinity";
-        } else {
+        } else if (ench.equals(Enchantment.VANISHING_CURSE)) {
+            enchName = "vanishing curse";
+        }else {
             // can leave as-is: SILK_TOUCH, FIRE_ASPECT, KNOCKBACK, THORNS, LUCK, LURE
             enchName = ench.getKey().getKey().toLowerCase().replace("_", " ");
         }
-
-        if (level == 1) {
-            enchName += " I";
-        } else if (level == 2) {
-            enchName += " II";
-        } else if (level == 3) {
-            enchName += " III";
-        } else if (level == 4) {
-            enchName += " IV";
-        } else if (level == 5) {
-            enchName += " V";
+        switch (level) {
+            case 2:
+                enchName += " II";
+                break;
+            case 3:
+                enchName += " III";
+                break;
+            case 4:
+                enchName += " IV";
+                break;
+            case 5:
+                enchName += " V";
+                break;
+            case 1:
+            default:
+                enchName += " I";
+                break;
         }
-
         return enchName;
 
     }
