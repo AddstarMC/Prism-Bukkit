@@ -71,6 +71,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -326,7 +327,16 @@ public class Prism extends JavaPlugin {
         } else {
             pasteKey = null;
         }
+        final List<String> worldNames = getServer().getWorlds().stream()
+                .map(World::getName).collect(Collectors.toList());
+        final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
+                .map(Player::getName).toArray(String[]::new);
         // init db async then call back to complete enable.
+        final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+            if (!isEnabled()) {
+                warn("Prism is loading and updating the database logging is NOT enabled");
+            }
+        },100,200);
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
             Connection testConnection;
@@ -342,14 +352,37 @@ public class Prism extends JavaPlugin {
             } else {
                 notifyDisabled();
                 Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                updating.cancel();
                 return;
             }
             if (testConnection == null) {
                 notifyDisabled();
                 Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                updating.cancel();
                 return;
             }
+            // Info needed for setup, init these here
+            handlerRegistry = new HandlerRegistry();
+            actionRegistry = new ActionRegistry();
+
+            // Setup databases
+            prismDataSource.setupDatabase(actionRegistry);
+
+            // Cache world IDs
+            prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
+            PlayerIdentification.cacheOnlinePlayerPrimaryKeys(playerNames);
+
+            // ensure current worlds are added
+            for (final String w : worldNames) {
+                if (!Prism.prismWorlds.containsKey(w)) {
+                    prismDataSource.addWorldName(w);
+                }
+            }
+            // Apply any updates
+            final Updater up = new Updater(this);
+            up.applyUpdates();
             Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
+            updating.cancel();
         });
     }
 
@@ -363,29 +396,6 @@ public class Prism extends JavaPlugin {
 
     private void enabled() {
         if (isEnabled()) {
-
-            // Info needed for setup, init these here
-            handlerRegistry = new HandlerRegistry();
-            actionRegistry = new ActionRegistry();
-
-            // Setup databases
-            prismDataSource.setupDatabase(actionRegistry);
-
-            // Cache world IDs
-            prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-            PlayerIdentification.cacheOnlinePlayerPrimaryKeys();
-
-            // ensure current worlds are added
-            for (final World w : getServer().getWorlds()) {
-                if (!Prism.prismWorlds.containsKey(w.getName())) {
-                    prismDataSource.addWorldName(w.getName());
-                }
-            }
-
-            // Apply any updates
-            final Updater up = new Updater(this);
-            up.applyUpdates();
-
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
             ignore = new Ignore(this);
