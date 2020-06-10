@@ -329,32 +329,25 @@ public class Prism extends JavaPlugin {
         }
         final List<String> worldNames = getServer().getWorlds().stream()
                 .map(World::getName).collect(Collectors.toList());
-
         final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
                 .map(Player::getName).toArray(String[]::new);
-
         // init db async then call back to complete enable.
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
                 warn("Prism is loading and updating the database logging is NOT enabled");
             }
         },100,200);
-
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
             Connection testConnection;
             if (prismDataSource != null) {
                 testConnection = prismDataSource.getConnection();
-                if (testConnection == null) {
-                    notifyDisabled();
-                    Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
-                    updating.cancel();
-                    return;
-                }
-                try {
-                    testConnection.close();
-                } catch (final SQLException e) {
-                    prismDataSource.handleDataSourceException(e);
+                if (testConnection != null) {
+                    try {
+                        testConnection.close();
+                    } catch (final SQLException e) {
+                        prismDataSource.handleDataSourceException(e);
+                    }
                 }
             } else {
                 notifyDisabled();
@@ -362,7 +355,12 @@ public class Prism extends JavaPlugin {
                 updating.cancel();
                 return;
             }
-
+            if (testConnection == null) {
+                notifyDisabled();
+                Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                updating.cancel();
+                return;
+            }
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
             actionRegistry = new ActionRegistry();
@@ -549,7 +547,6 @@ public class Prism extends JavaPlugin {
      *
      * @return true
      */
-    @Deprecated
     public boolean dependencyEnabled(String pluginName) {
         return ApiHandler.checkDependency(pluginName);
     }
