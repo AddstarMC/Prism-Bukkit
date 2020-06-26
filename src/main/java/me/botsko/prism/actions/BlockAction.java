@@ -12,6 +12,7 @@ import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Nameable;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
@@ -201,7 +202,7 @@ public class BlockAction extends GenericAction {
             name += " (" + ad.command + ")";
         }
         if (blockActionData.customName != null) {
-            name += " (" + blockActionData.customName + ") ";
+            name += ChatColor.RESET + " (" + blockActionData.customName + ChatColor.RESET + ") ";
         }
         if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
