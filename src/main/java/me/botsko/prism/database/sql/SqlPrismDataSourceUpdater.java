@@ -91,4 +91,21 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
             dataSource.handleDataSourceException(e);
         }
     }
+
+    @Override
+    public void v7_to_v8() {
+        // Prepare query to be used
+        String query = "ALTER TABLE `" + prefix + "data` ADD INDEX `player` (`player_id`)";
+
+        // Prepare database
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement st = conn.prepareStatement(query);
+        ) {
+            // Add player index to speed up player lookups.
+            st.executeUpdate(query);
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
+        }
+    }
 }

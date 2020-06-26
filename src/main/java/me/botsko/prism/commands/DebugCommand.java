@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -93,7 +94,7 @@ public class DebugCommand implements SubHandler {
         PasteBuilder.PasteResult result = new PasteBuilder().name("Prism Debug Output")
                 .visibility(Visibility.UNLISTED)
                 .setApiKey(Prism.getPasteKey())
-                .expireIn(24 * 60 * 60 * 1000) //1 day
+                .expires(ZonedDateTime.now().plusDays(1)) //1 day
                 .addFile(new PasteFile("Main Info",
                         new PasteContent(PasteContent.ContentType.TEXT, getMainInfo())))
                 .addFile(new PasteFile("config.yml",

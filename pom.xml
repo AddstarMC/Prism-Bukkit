@@ -93,6 +93,14 @@
 					<groupId>org.bukkit</groupId>
 					<artifactId>bukkit</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>de.schlichtherle</groupId>
+					<artifactId>truezip</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>net.java.truevfs</groupId>
+					<artifactId>truevfs-profile-default_2.13</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -202,6 +210,14 @@
 			<artifactId>maven-shade-plugin</artifactId>
 			<version>3.2.2</version>
 			<configuration>
+				<filters>
+					<filter>
+						<artifact>*:*</artifact>
+						<excludes>
+							<exclude>META-INF/MANIFEST.MF</exclude>
+						</excludes>
+					</filter>
+				</filters>
 				<artifactSet>
 					<excludes>
 						<exclude>io.dropwizard.metrics:metrics*</exclude>
