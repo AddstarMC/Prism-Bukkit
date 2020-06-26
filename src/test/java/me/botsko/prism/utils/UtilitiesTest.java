@@ -15,6 +15,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class UtilitiesTest {
 
+    /**
+     * Required to avoid NPE.
+     */
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private ServerMock server;
 
     @Before

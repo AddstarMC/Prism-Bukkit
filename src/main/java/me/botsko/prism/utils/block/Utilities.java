@@ -24,7 +24,9 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.BlockingQueue;
 
 public class Utilities {
 
@@ -484,45 +486,53 @@ public class Utilities {
      * @return Block
      */
     public static Block getSiblingForDoubleLengthBlock(BlockState block) {
-        /*
-         */
+
         BlockData data = block.getBlockData();
 
         if (data instanceof Chest) {
             Chest chest = (Chest) data;
-            BlockFace facing = chest.getFacing();
-
-            switch (chest.getType()) {
-                case LEFT:
-                    return block.getBlock().getRelative(getRelativeFaceRight(facing));
-
-                case RIGHT:
-                    return block.getBlock().getRelative(getRelativeFaceLeft(facing));
-
-                case SINGLE:
-                    return null;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + chest.getType());
-            }
+            return handleChest(chest,block);
         } else if (data instanceof Bed) {
-            Bed bed = (Bed) data;
-
-            if (bed.getPart() == Part.FOOT) {
-                return block.getBlock().getRelative(bed.getFacing());
-            } else {
-                return block.getBlock().getRelative(bed.getFacing().getOppositeFace());
-            }
+            return handleBed((Bed) data,block);
         } else if (data instanceof Bisected && !(data instanceof Stairs) && !(data instanceof TrapDoor)) {
-            Bisected bisected = (Bisected) data;
-
-            if (bisected.getHalf() == Half.BOTTOM) {
-                return block.getBlock().getRelative(BlockFace.UP);
-            } else {
-                return block.getBlock().getRelative(BlockFace.DOWN);
-            }
+            return handleBisected((Bisected) data,block);
         }
 
         return null;
+    }
+
+    private static Block handleChest(Chest data, BlockState block) {
+
+        BlockFace facing = data.getFacing();
+        switch (data.getType()) {
+            case LEFT:
+                return block.getBlock().getRelative(getRelativeFaceRight(facing));
+
+            case RIGHT:
+                return block.getBlock().getRelative(getRelativeFaceLeft(facing));
+
+            case SINGLE:
+                return null;
+            default:
+                throw new IllegalStateException("Unexpected value: " + data.getType());
+        }
+    }
+
+    private static Block handleBisected(Bisected data, BlockState block) {
+
+        if (data.getHalf() == Half.BOTTOM) {
+            return block.getBlock().getRelative(BlockFace.UP);
+        } else {
+            return block.getBlock().getRelative(BlockFace.DOWN);
+        }
+    }
+
+    private static Block handleBed(Bed data, BlockState block) {
+        if (data.getPart() == Part.FOOT) {
+            return block.getBlock().getRelative(data.getFacing());
+        } else {
+            return block.getBlock().getRelative(data.getFacing().getOppositeFace());
+        }
     }
 
     /**
@@ -533,7 +543,6 @@ public class Utilities {
      */
     public static Block getBaseBlock(Block block) {
         BlockData data = block.getBlockData();
-
         if (data instanceof Bed) {
             Bed bed = (Bed) data;
 
@@ -580,24 +589,26 @@ public class Utilities {
      * @return List
      */
     public static ArrayList<Block> findConnectedBlocksOfType(Material type, Block currBlock,
-                                                             ArrayList<Location> foundLocations) {
+                                                             final ArrayList<Location> foundLocations) {
 
         ArrayList<Block> foundBlocks = new ArrayList<>();
-
+        ArrayList<Location> locations;
         if (foundLocations == null) {
-            foundLocations = new ArrayList<>();
+            locations = new ArrayList<>();
+        } else {
+            locations = foundLocations;
         }
 
-        foundLocations.add(currBlock.getLocation());
+        locations.add(currBlock.getLocation());
 
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
                 for (int y = -1; y <= 1; y++) {
                     Block newBlock = currBlock.getRelative(x, y, z);
                     // ensure it matches the type and wasn't already found
-                    if (newBlock.getType() == type && !foundLocations.contains(newBlock.getLocation())) {
+                    if (newBlock.getType() == type && !locations.contains(newBlock.getLocation())) {
                         foundBlocks.add(newBlock);
-                        ArrayList<Block> additionalBlocks = findConnectedBlocksOfType(type, newBlock, foundLocations);
+                        ArrayList<Block> additionalBlocks = findConnectedBlocksOfType(type, newBlock, locations);
                         if (additionalBlocks.size() > 0) {
                             foundBlocks.addAll(additionalBlocks);
                         }
@@ -647,13 +658,13 @@ public class Utilities {
     public static boolean areBlockIdsSameCoreItem(Material mat1, Material mat2) {
 
         // Get the obvious one out of the way.
-        if (mat1 == mat2) {
+        if (mat1.equals(mat2)) {
             return true;
         }
-        mat1 = getMaterial(mat1);
-        mat2 = getMaterial(mat2);
+        Material coreMat1 = getMaterial(mat1);
+        Material coreMat2 = getMaterial(mat2);
 
-        return  mat1 == mat2;
+        return  coreMat1.equals(coreMat2);
     }
 
     @Nonnull
