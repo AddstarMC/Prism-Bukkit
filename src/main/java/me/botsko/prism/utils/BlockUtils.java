@@ -41,7 +41,10 @@ public class BlockUtils {
             Material.SAND,
             Material.SNOW,
             Material.SNOW_BLOCK,
-            Material.WATER);
+            Material.WATER,
+            Material.SOUL_SOIL,
+            Material.SOUL_SAND,
+            Material.NETHERRACK);
 
     // Material that has gravity (will fall, not break, when placed on the side of a wall or breaking
     // the block under it)
