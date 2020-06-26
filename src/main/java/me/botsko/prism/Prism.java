@@ -328,14 +328,17 @@ public class Prism extends JavaPlugin {
         }
         final List<String> worldNames = getServer().getWorlds().stream()
                 .map(World::getName).collect(Collectors.toList());
+
         final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
                 .map(Player::getName).toArray(String[]::new);
+
         // init db async then call back to complete enable.
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
-                warn("Prism is loading and updating the database logging is NOT enabled");
+                warn("Prism is loading and updating the database; logging is NOT enabled");
             }
         },100,200);
+
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
             Connection testConnection;
