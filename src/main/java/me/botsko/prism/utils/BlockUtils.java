@@ -55,13 +55,16 @@ public class BlockUtils {
 
     // Material that will detach from the side of a block when that block is broken
     private static final MaterialTag fallsOffWall = new MaterialTag(
+            Material.LANTERN,
+            Material.SOUL_LANTERN,
             Material.POWERED_RAIL,
             Material.DETECTOR_RAIL,
             Material.STICKY_PISTON,
             Material.PISTON,
             Material.PISTON_HEAD,
             Material.MOVING_PISTON,
-            Material.TORCH,
+            Material.WALL_TORCH,
+            Material.SOUL_WALL_TORCH,
             Material.LADDER,
             Material.LEVER,
             Material.REDSTONE_TORCH,
@@ -89,6 +92,8 @@ public class BlockUtils {
             Material.LEVER,
             Material.STONE_PRESSURE_PLATE,
             Material.REDSTONE_TORCH,
+            Material.SOUL_TORCH,
+            Material.LANTERN,
             Material.SNOW,
             Material.CACTUS,
             Material.SUGAR_CANE,
@@ -146,6 +151,8 @@ public class BlockUtils {
                     .append(
                             Material.TRIPWIRE_HOOK,
                             Material.VINE,
+                            Material.TWISTING_VINES,
+                            Material.WEEPING_VINES,
                             Material.END_ROD
                     )
                     .append(
@@ -160,7 +167,11 @@ public class BlockUtils {
                     .append(
                             Material.RED_MUSHROOM_BLOCK,
                             Material.BROWN_MUSHROOM_BLOCK,
-                            Material.MUSHROOM_STEM);
+                            Material.MUSHROOM_STEM,
+                            Material.CHORUS_PLANT,
+                            Material.CHORUS_FLOWER,
+                            Material.CHORUS_FRUIT)
+                    .append(MaterialTag.HYPHAE);
 
     // Material that could possibly cause other material to detach from another block
     private static final EnumSet<Material> detachingBlocks = EnumSet.of(
@@ -184,6 +195,23 @@ public class BlockUtils {
     static {
         baseMaterials.put(Material.GRASS_BLOCK, Material.DIRT);
         baseMaterials.put(Material.MYCELIUM, Material.DIRT);
+        baseMaterials.put(Material.LIGHT_GRAY_CONCRETE, Material.LIGHT_GRAY_CONCRETE_POWDER);
+        baseMaterials.put(Material.LIGHT_BLUE_CONCRETE, Material.LIGHT_BLUE_CONCRETE_POWDER);
+        baseMaterials.put(Material.RED_CONCRETE, Material.RED_CONCRETE_POWDER);
+        baseMaterials.put(Material.YELLOW_CONCRETE, Material.YELLOW_CONCRETE_POWDER);
+        baseMaterials.put(Material.GRAY_CONCRETE, Material.GRAY_CONCRETE_POWDER);
+        baseMaterials.put(Material.BLUE_CONCRETE, Material.BLUE_CONCRETE_POWDER);
+        baseMaterials.put(Material.GREEN_CONCRETE, Material.GREEN_CONCRETE_POWDER);
+        baseMaterials.put(Material.ORANGE_CONCRETE, Material.ORANGE_CONCRETE_POWDER);
+        baseMaterials.put(Material.LIME_CONCRETE, Material.LIME_CONCRETE_POWDER);
+        baseMaterials.put(Material.WHITE_CONCRETE, Material.WHITE_CONCRETE_POWDER);
+        baseMaterials.put(Material.BLACK_CONCRETE, Material.BLACK_CONCRETE_POWDER);
+        baseMaterials.put(Material.BROWN_CONCRETE, Material.BROWN_CONCRETE_POWDER);
+        baseMaterials.put(Material.MAGENTA_CONCRETE, Material.MAGENTA_CONCRETE_POWDER);
+        baseMaterials.put(Material.PINK_CONCRETE, Material.PINK_CONCRETE_POWDER);
+        baseMaterials.put(Material.CYAN_CONCRETE, Material.CYAN_CONCRETE_POWDER);
+        baseMaterials.put(Material.PURPLE_CONCRETE, Material.PURPLE_CONCRETE_POWDER);
+
     }
 
     /**

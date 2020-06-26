@@ -50,13 +50,13 @@
 		<plugin.version>${project.version}-${build.number}</plugin.version>
 		<build.number />
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spigot.api.version>1.15</spigot.api.version>
+		<spigot.api.version>1.16</spigot.api.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>com.destroystokyo.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>${spigot.api.version}-R0.1-SNAPSHOT</version>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.16.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
