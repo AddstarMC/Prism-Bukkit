@@ -329,15 +329,7 @@ public class PlayerIdentification {
     /**
      * Build-load all online players into cache.
      */
-    public static void cacheOnlinePlayerPrimaryKeys() {
-
-        String[] playerNames;
-        playerNames = new String[Bukkit.getServer().getOnlinePlayers().size()];
-        int i = 0;
-        for (Player pl : Bukkit.getServer().getOnlinePlayers()) {
-            playerNames[i] = pl.getName();
-            i++;
-        }
+    public static void cacheOnlinePlayerPrimaryKeys(String[] playerNames) {
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(
