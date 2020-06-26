@@ -16,11 +16,11 @@ public class BlockChangeAction extends BlockAction {
 
     @Override
     public String getNiceName() {
-        String name = "";
+        String name;
         if (this.getActionType().getName().equals("block-fade")) {
-            name += Prism.getItems().getAlias(getOldMaterial(), getOldBlockData());
+            name = Prism.getItems().getAlias(getOldMaterial(), getOldBlockData());
         } else {
-            name += Prism.getItems().getAlias(getMaterial(), getBlockData());
+            name = super.getNiceName();
         }
         return name;
     }
