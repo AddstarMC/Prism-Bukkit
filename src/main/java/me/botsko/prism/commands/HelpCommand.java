@@ -11,7 +11,7 @@ import java.util.List;
 public class HelpCommand implements SubHandler {
 
     /**
-     * Handle the command
+     * {@inheritDoc}
      */
     @Override
     public void handle(CallInfo call) {
@@ -24,9 +24,9 @@ public class HelpCommand implements SubHandler {
     }
 
     /**
-     * Displays help
+     * Displays help.
      *
-     * @param sender
+     * @param sender CommandSender
      */
     protected void help(CommandSender sender) {
 

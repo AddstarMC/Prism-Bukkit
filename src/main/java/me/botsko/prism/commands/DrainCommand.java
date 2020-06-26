@@ -5,8 +5,8 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
@@ -68,11 +68,11 @@ public class DrainCommand implements SubHandler {
 
         ArrayList<BlockStateChange> blockStateChanges = null;
         if (drainType.isEmpty()) {
-            blockStateChanges = BlockUtils.drain(call.getPlayer().getLocation(), radius);
+            blockStateChanges = Utilities.drain(call.getPlayer().getLocation(), radius);
         } else if (drainType.equals("water")) {
-            blockStateChanges = BlockUtils.drainWater(call.getPlayer().getLocation(), radius);
+            blockStateChanges = Utilities.drainWater(call.getPlayer().getLocation(), radius);
         } else if (drainType.equals("lava")) {
-            blockStateChanges = BlockUtils.drainLava(call.getPlayer().getLocation(), radius);
+            blockStateChanges = Utilities.drainLava(call.getPlayer().getLocation(), radius);
         }
 
         if (blockStateChanges != null && !blockStateChanges.isEmpty()) {

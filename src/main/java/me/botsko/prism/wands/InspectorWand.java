@@ -6,7 +6,7 @@ import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +51,7 @@ public class InspectorWand extends QueryWandBase {
     private void showLocationHistory(final Player player, final Location loc) {
 
         final Block block = loc.getBlock();
-        final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+        final Block sibling = Utilities.getSiblingForDoubleLengthBlock(block);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
             // Build params

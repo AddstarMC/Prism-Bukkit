@@ -3,6 +3,7 @@ package me.botsko.prism.utils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.sql.SqlIdMapQuery;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -87,16 +88,17 @@ public class MaterialAliases {
                 String dataString;
 
                 try {
-                    dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
+                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
                 } catch (IllegalArgumentException e) {
                     continue;
                 }
 
-                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) ->
+                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
+                      (i, d) ->
                         storeCache(m, dataString, i, d), () -> {
-                          int id = query.mapAutoId(matName, dataString);
-                          storeCache(m, dataString, id, 0);
-                    });
+                        int id = query.mapAutoId(matName, dataString);
+                        storeCache(m, dataString, id, 0);
+                      });
             }
         });
 
@@ -167,17 +169,18 @@ public class MaterialAliases {
         MaterialState result = new MaterialState();
         SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
 
-        query.findMaterial(blockId, blockSubId, (material, state) -> {
-            result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
-            result.state = state;
-            if (result.material != null) {
-                storeCache(result.material, result.state, blockId, blockSubId);
-            }
-        }, () -> {
-                if (logMaterialErrors) {
-                    Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
-                }
-            });
+        query.findMaterial(blockId, blockSubId,
+              (material, state) -> {
+                  result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
+                  result.state = state;
+                  if (result.material != null) {
+                      storeCache(result.material, result.state, blockId, blockSubId);
+                  }
+              }, () -> {
+                  if (logMaterialErrors) {
+                      Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
+                  }
+              });
 
         if (result.material == null) {
             return null;
@@ -222,16 +225,15 @@ public class MaterialAliases {
         String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
         synchronized (this) {
-            query.findIds(materialName, state, (queryId, querySubId) -> {
-                result.first = queryId;
-                result.second = querySubId;
-                storeCache(material, state, queryId, querySubId);
-            },
+            query.findIds(materialName, state,
+                  (queryId, querySubId) -> {
+                    result.first = queryId;
+                    result.second = querySubId;
+                    storeCache(material, state, queryId, querySubId); },
                   () -> {
-                      int blockId = query.mapAutoId(materialName, state);
-                      result.first = blockId;
-                      storeCache(material, state, blockId, 0);
-                  });
+                    int blockId = query.mapAutoId(materialName, state);
+                    result.first = blockId;
+                    storeCache(material, state, blockId, 0); });
         }
 
         if (blockSubId != durability) {
@@ -254,7 +256,7 @@ public class MaterialAliases {
      */
     public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData)
             throws IllegalArgumentException {
-        String fullBlockData = BlockUtils.dataString(Bukkit.createBlockData(material, partialBlockData));
+        String fullBlockData = Utilities.dataString(Bukkit.createBlockData(material, partialBlockData));
 
         String[] parts = fullBlockData.substring(1, fullBlockData.length() - 1).toLowerCase(Locale.ENGLISH).split(",");
 
@@ -311,7 +313,7 @@ public class MaterialAliases {
      * @return String
      */
     public String getAlias(Material material, BlockData data) {
-        String dataString = BlockUtils.dataString(data);
+        String dataString = Utilities.dataString(data);
 
         String itemName = null;
         if (!itemAliases.isEmpty()) {
