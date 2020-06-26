@@ -3,12 +3,12 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.DeathUtils;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -772,7 +772,7 @@ public class PrismEntityEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityExplodeChangeBlock(final EntityExplodeEvent event) {
 
-        if (event.blockList() == null || event.blockList().isEmpty()) {
+        if (event.blockList().isEmpty()) {
             return;
         }
         String name;
@@ -825,7 +825,7 @@ public class PrismEntityEvents implements Listener {
             }
 
             // Change handling a bit if it's a long block
-            final Block sibling = BlockUtils.getSiblingForDoubleLengthBlock(block);
+            final Block sibling = Utilities.getSiblingForDoubleLengthBlock(block);
             if (sibling != null && !block.getType().equals(Material.CHEST)
                     && !block.getType().equals(Material.TRAPPED_CHEST)) {
                 block = sibling;

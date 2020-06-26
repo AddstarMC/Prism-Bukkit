@@ -33,7 +33,8 @@ public class Ignore {
     }
 
     /**
-     * Check event typ.
+     * Check event type.  This checks to see if an event was configured for tracking - in effect it is an inverted
+     * check.  You could just call the config instead..  but this does report to debug if the action is not tracked.
      *
      * @param actionTypeName type.
      * @return boolean

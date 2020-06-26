@@ -5,8 +5,8 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksExtinguishEvent;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.TypeUtils;
+import me.botsko.prism.utils.block.Utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class ExtinguishCommand implements SubHandler {
             }
         }
 
-        final ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(call.getPlayer().getLocation(),
+        final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(call.getPlayer().getLocation(),
                 radius);
         if (!blockStateChanges.isEmpty()) {
 
