@@ -87,17 +87,18 @@ public class MaterialAliases {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
                 String dataString;
 
-            try {
-                dataString = Utilities.dataString(Bukkit.createBlockData(m));
-            } catch (IllegalArgumentException e) {
-                continue;
-            }
+                try {
+                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
 
-                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) ->
+                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
+                      (i, d) ->
                         storeCache(m, dataString, i, d), () -> {
-                          int id = query.mapAutoId(matName, dataString);
-                          storeCache(m, dataString, id, 0);
-                    });
+                        int id = query.mapAutoId(matName, dataString);
+                        storeCache(m, dataString, id, 0);
+                      });
             }
         });
 
@@ -168,17 +169,18 @@ public class MaterialAliases {
         MaterialState result = new MaterialState();
         SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
 
-        query.findMaterial(blockId, blockSubId, (material, state) -> {
-            result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
-            result.state = state;
-            if (result.material != null) {
-                storeCache(result.material, result.state, blockId, blockSubId);
-            }
-        }, () -> {
-                if (logMaterialErrors) {
-                    Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
-                }
-            });
+        query.findMaterial(blockId, blockSubId,
+              (material, state) -> {
+                  result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
+                  result.state = state;
+                  if (result.material != null) {
+                      storeCache(result.material, result.state, blockId, blockSubId);
+                  }
+              }, () -> {
+                  if (logMaterialErrors) {
+                      Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
+                  }
+              });
 
         if (result.material == null) {
             return null;
@@ -223,16 +225,15 @@ public class MaterialAliases {
         String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
         synchronized (this) {
-            query.findIds(materialName, state, (queryId, querySubId) -> {
-                result.first = queryId;
-                result.second = querySubId;
-                storeCache(material, state, queryId, querySubId);
-            },
+            query.findIds(materialName, state,
+                  (queryId, querySubId) -> {
+                    result.first = queryId;
+                    result.second = querySubId;
+                    storeCache(material, state, queryId, querySubId); },
                   () -> {
-                      int blockId = query.mapAutoId(materialName, state);
-                      result.first = blockId;
-                      storeCache(material, state, blockId, 0);
-                  });
+                    int blockId = query.mapAutoId(materialName, state);
+                    result.first = blockId;
+                    storeCache(material, state, blockId, 0); });
         }
 
         if (blockSubId != durability) {
