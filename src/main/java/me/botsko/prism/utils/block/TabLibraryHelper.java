@@ -14,7 +14,7 @@ import java.util.Locale;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 23/05/2020.
  */
-public class TagLibrary {
+public class TabLibraryHelper {
     // Material at a location that are commonly acceptable to replace.
     protected static final Tag<Material> replaceableMaterials = new MaterialTag(
             Material.AIR,
@@ -28,7 +28,10 @@ public class TagLibrary {
             Material.SNOW,
             Material.SNOW_BLOCK,
             Material.WATER,
-            Material.GRASS);
+            Material.GRASS,
+            Material.SOUL_SOIL,
+            Material.SOUL_SAND,
+            Material.NETHERRACK);
 
     // Material that has gravity (will fall, not break, when placed on the side of a wall or breaking
     // the block under it)
@@ -49,6 +52,7 @@ public class TagLibrary {
             Material.PISTON_HEAD,
             Material.MOVING_PISTON,
             Material.WALL_TORCH,
+            Material.SOUL_WALL_TORCH,
             Material.LADDER,
             Material.LEVER,
             Material.REDSTONE_WALL_TORCH,
@@ -72,6 +76,7 @@ public class TagLibrary {
             Material.PISTON_HEAD,
             Material.MOVING_PISTON,
             Material.TORCH,
+            Material.SOUL_TORCH,
             Material.REDSTONE,
             Material.WHEAT,
             Material.LEVER,
@@ -149,7 +154,9 @@ public class TagLibrary {
                             Material.RED_MUSHROOM_BLOCK,
                             Material.BROWN_MUSHROOM_BLOCK,
                             Material.MUSHROOM_STEM,
-                            Material.CHORUS_FLOWER);
+                            Material.CHORUS_FLOWER)
+                    .append(MaterialTag.HYPHAE);
+
 
     // Material that could possibly cause other material to detach from another block
     protected static final EnumSet<Material> detachingBlocks = EnumSet.of(

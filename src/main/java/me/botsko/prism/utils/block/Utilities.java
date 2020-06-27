@@ -42,8 +42,6 @@ public class Utilities {
     static {
         baseMaterials.put(Material.GRASS_BLOCK, Material.DIRT);
         baseMaterials.put(Material.MYCELIUM, Material.DIRT);
-        baseMaterials.put(Material.FARMLAND, Material.DIRT);
-        baseMaterials.put(Material.GRASS_PATH, Material.DIRT);
         baseMaterials.put(Material.LIGHT_BLUE_CONCRETE_POWDER,Material.LIGHT_BLUE_CONCRETE);
         baseMaterials.put(Material.LIGHT_GRAY_CONCRETE_POWDER,Material.LIGHT_GRAY_CONCRETE);
         baseMaterials.put(Material.BLUE_CONCRETE_POWDER,Material.BLUE_CONCRETE);
@@ -212,7 +210,7 @@ public class Utilities {
      * @return if the material is acceptable to replace
      */
     public static boolean isAcceptableForBlockPlace(Material m) {
-        return  TagLibrary.replaceableMaterials.isTagged(m);
+        return  TabLibraryHelper.replaceableMaterials.isTagged(m);
     }
 
     /**
@@ -245,7 +243,7 @@ public class Utilities {
      * @return whether the block is capable of falling
      */
     public static boolean isFallingBlock(Block block) {
-        return TagLibrary.fallingMaterials.isTagged(block.getType());
+        return TabLibraryHelper.fallingMaterials.isTagged(block.getType());
     }
 
     /**
@@ -317,7 +315,7 @@ public class Utilities {
      */
     @SuppressWarnings("WeakerAccess")
     public static boolean isSideFaceDetachableMaterial(Material m) {
-        return  TagLibrary.fallsOffWall.isTagged(m);
+        return  TabLibraryHelper.fallsOffWall.isTagged(m);
     }
 
     /**
@@ -354,7 +352,7 @@ public class Utilities {
      **/
     @SuppressWarnings("WeakerAccess")
     public static boolean isTopFaceDetachableMaterial(Material m) {
-        return  TagLibrary.fallsOffTop.isTagged(m);
+        return  TabLibraryHelper.fallsOffTop.isTagged(m);
     }
 
     /**
@@ -365,7 +363,7 @@ public class Utilities {
      * @return boolean
      */
     public static boolean materialMeansBlockDetachment(Material m) {
-        return  TagLibrary.detachingBlocks.contains(m);
+        return  TabLibraryHelper.detachingBlocks.contains(m);
     }
 
     /**
@@ -565,7 +563,7 @@ public class Utilities {
      * @return bool
      */
     public static boolean canFlowBreakMaterial(Material m) {
-        return  TagLibrary.flowBreaks.isTagged(m);
+        return  TabLibraryHelper.flowBreaks.isTagged(m);
     }
 
     /**
@@ -643,7 +641,7 @@ public class Utilities {
      * @return bool
      */
     public static boolean isGrowableStructure(Material m) {
-        return  TagLibrary.growableStructure.isTagged(m);
+        return  TabLibraryHelper.growableStructure.isTagged(m);
     }
 
     /**

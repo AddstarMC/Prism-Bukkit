@@ -185,7 +185,7 @@ public class MiscUtils {
             BaseComponent[] finalMessage = new BaseComponent[toSend.size()];
             toSend.toArray(finalMessage);
             if (PaperLib.isPaper()) {
-                player.sendMessage(finalMessage);
+                //player.sendMessage(finalMessage);
             } else {
                 player.spigot().sendMessage(finalMessage);
             }
@@ -205,12 +205,12 @@ public class MiscUtils {
             if (PaperLib.isPaper()) {
                 if (results.getPage() == 1) {
                     if (results.getTotalPages() > 1) {
-                        player.sendMessage(MiscUtils.getNextButton());
+                        //player.sendMessage(MiscUtils.getNextButton());
                     }
                 } else if (results.getPage() < results.getTotalPages()) {
-                    player.sendMessage(MiscUtils.getPrevNextButtons());
+                    //player.sendMessage(MiscUtils.getPrevNextButtons());
                 } else if (results.getPage() == results.getTotalPages()) {
-                    player.sendMessage(MiscUtils.getPreviousButton());
+                    //player.sendMessage(MiscUtils.getPreviousButton());
                 }
             } else {
                 if (results.getPage() == 1) {
