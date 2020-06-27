@@ -7,7 +7,11 @@ import me.botsko.prism.actions.Handler;
  * Created by benjamincharlton on 1/06/2019.
  */
 public interface InsertQuery {
-
+    /**
+     * Returns the id of the action.
+     * @param a Handler
+     * @return long
+     */
     long insertActionIntoDatabase(Handler a);
 
     void createBatch() throws Exception;

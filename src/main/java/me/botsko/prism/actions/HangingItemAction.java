@@ -4,7 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.utils.BlockUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Hanging;
@@ -104,7 +104,7 @@ public class HangingItemAction extends GenericAction {
                 .getLocation();
 
         // Ensure there's a block at this location that accepts an attachment
-        if (BlockUtils.materialMeansBlockDetachment(loc.getBlock().getType())) {
+        if (Utilities.materialMeansBlockDetachment(loc.getBlock().getType())) {
             Prism.debug(parameters.getProcessType() + "Hanging Skipped - block would detach: "
                     + loc.getBlock().getType());
             return new ChangeResult(ChangeResultType.SKIPPED, null);

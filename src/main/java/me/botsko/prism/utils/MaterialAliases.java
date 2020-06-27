@@ -3,6 +3,7 @@ package me.botsko.prism.utils;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.sql.SqlIdMapQuery;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
@@ -24,12 +25,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class MaterialAliases {
-    public static final int SUBID_WILDCARD = -1;
+    private static final int SUBID_WILDCARD = -1;
     private final Map<String, String> matCache = new HashMap<>();
     private final Map<String, String> idCache = new HashMap<>();
     private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
 
-    protected HashMap<String, String> itemAliases = new HashMap<>();
+    private final HashMap<String, String> itemAliases = new HashMap<>();
 
     /**
      * Load the yml file and save config to hashmap.
@@ -76,27 +77,31 @@ public class MaterialAliases {
 
     /**
      * Initialize the library.
+     *
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
-        SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
+        Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
+            SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
+            for (Material m : materials) {
+                String matName = m.name().toLowerCase(Locale.ENGLISH);
+                String dataString;
 
-        for (Material m : materials) {
-            String matName = m.name().toLowerCase(Locale.ENGLISH);
-            String dataString;
+                try {
+                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
+                } catch (IllegalArgumentException e) {
+                    continue;
+                }
 
-            try {
-                dataString = BlockUtils.dataString(Bukkit.createBlockData(m));
-            } catch (IllegalArgumentException e) {
-                continue;
+                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
+                      (i, d) ->
+                        storeCache(m, dataString, i, d), () -> {
+                        int id = query.mapAutoId(matName, dataString);
+                        storeCache(m, dataString, id, 0);
+                      });
             }
+        });
 
-            query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString, (i, d) -> storeCache(
-                    m, dataString, i, d), () -> {
-                    int id = query.mapAutoId(matName, dataString);
-                    storeCache(m, dataString, id, 0);
-                });
-        }
     }
 
     private Set<IntPair> getIdsOf(Material material) {
@@ -148,8 +153,9 @@ public class MaterialAliases {
 
     /**
      * .
-     * @param blockId int
-     * @param blockSubId logMaterialErrorsint
+     *
+     * @param blockId           int
+     * @param blockSubId        logMaterialErrorsint
      * @param logMaterialErrors boolean.
      * @return MaterialState
      */
@@ -163,17 +169,18 @@ public class MaterialAliases {
         MaterialState result = new MaterialState();
         SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
 
-        query.findMaterial(blockId, blockSubId, (material, state) -> {
-            result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
-            result.state = state;
-            if (result.material != null) {
-                storeCache(result.material, result.state, blockId, blockSubId);
-            }
-        }, () -> {
-                if (logMaterialErrors) {
-                    Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
-                }
-            });
+        query.findMaterial(blockId, blockSubId,
+              (material, state) -> {
+                  result.material = Material.matchMaterial(material.toUpperCase(Locale.ENGLISH));
+                  result.state = state;
+                  if (result.material != null) {
+                      storeCache(result.material, result.state, blockId, blockSubId);
+                  }
+              }, () -> {
+                  if (logMaterialErrors) {
+                      Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
+                  }
+              });
 
         if (result.material == null) {
             return null;
@@ -184,8 +191,9 @@ public class MaterialAliases {
 
     /**
      * Create IntPair.
+     *
      * @param material Material
-     * @param state State
+     * @param state    State
      * @return IntPair
      */
     public IntPair materialToIds(Material material, String state) {
@@ -197,6 +205,7 @@ public class MaterialAliases {
         try {
             durability = Integer.parseInt(state);
         } catch (NumberFormatException ignored) {
+            //ignored
         }
 
         if (material.getMaxDurability() > 0) {
@@ -216,18 +225,15 @@ public class MaterialAliases {
         String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
         synchronized (this) {
-            query.findIds(materialName, state, (queryId, querySubId) -> {
-                result.first = queryId;
-                result.second = querySubId;
-
-                storeCache(material, state, queryId, querySubId);
-            }, () -> {
+            query.findIds(materialName, state,
+                  (queryId, querySubId) -> {
+                    result.first = queryId;
+                    result.second = querySubId;
+                    storeCache(material, state, queryId, querySubId); },
+                  () -> {
                     int blockId = query.mapAutoId(materialName, state);
-
                     result.first = blockId;
-
-                    storeCache(material, state, blockId, 0);
-                });
+                    storeCache(material, state, blockId, 0); });
         }
 
         if (blockSubId != durability) {
@@ -242,14 +248,15 @@ public class MaterialAliases {
 
     /**
      * .
-     * @param material Material
+     *
+     * @param material         Material
      * @param partialBlockData String
      * @return Set of IntPair
      * @throws IllegalArgumentException exception
      */
     public Set<IntPair> partialBlockDataIds(Material material, String partialBlockData)
             throws IllegalArgumentException {
-        String fullBlockData = BlockUtils.dataString(Bukkit.createBlockData(material, partialBlockData));
+        String fullBlockData = Utilities.dataString(Bukkit.createBlockData(material, partialBlockData));
 
         String[] parts = fullBlockData.substring(1, fullBlockData.length() - 1).toLowerCase(Locale.ENGLISH).split(",");
 
@@ -273,8 +280,9 @@ public class MaterialAliases {
 
     /**
      * .
+     *
      * @param material Material
-     * @param state String
+     * @param state    String
      * @return IntPair
      */
     @Deprecated
@@ -292,18 +300,20 @@ public class MaterialAliases {
      *
      * @return HashMap
      */
+    @Deprecated
     public HashMap<String, String> getItemAliases() {
         return itemAliases;
     }
 
     /**
      * .
+     *
      * @param material Material
-     * @param data BlockData
+     * @param data     BlockData
      * @return String
      */
     public String getAlias(Material material, BlockData data) {
-        String dataString = BlockUtils.dataString(data);
+        String dataString = Utilities.dataString(data);
 
         String itemName = null;
         if (!itemAliases.isEmpty()) {
@@ -328,6 +338,7 @@ public class MaterialAliases {
 
     /**
      * .
+     *
      * @param alias String
      * @return ArrayList
      */
@@ -357,7 +368,8 @@ public class MaterialAliases {
         }
 
         /**
-         * Get Blockdata.
+         * Get BlockData.
+         *
          * @return BlockData
          */
         public BlockData asBlockData() {
@@ -369,6 +381,7 @@ public class MaterialAliases {
                     return data;
                 }
             } catch (IllegalArgumentException ignored) {
+                //ignored
             }
 
             return null;
@@ -376,6 +389,7 @@ public class MaterialAliases {
 
         /**
          * Get as Item.
+         *
          * @return ItemStack
          */
         public ItemStack asItem() {
@@ -385,7 +399,9 @@ public class MaterialAliases {
                 try {
                     ItemUtils.setItemDamage(item, Short.parseShort(state));
                 } catch (NumberFormatException ignored) {
+                    //ignored
                 }
+
             }
 
             return item;
