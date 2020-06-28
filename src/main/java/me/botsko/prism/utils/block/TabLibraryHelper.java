@@ -128,13 +128,17 @@ public class TabLibraryHelper {
                             Material.CACTUS,
                             Material.REPEATER,
                             Material.COMPARATOR,
-                            Material.REDSTONE,
+                            Material.REDSTONE_WIRE,
                             Material.LEVER
                     )
                     .append(
                             Material.REDSTONE_TORCH,
                             Material.SUGAR_CANE,
                             Material.TORCH,
+                            Material.SOUL_TORCH,
+                            Material.WALL_TORCH,
+                            Material.SOUL_WALL_TORCH,
+                            Material.REDSTONE_WALL_TORCH,
                             Material.TRIPWIRE)
                     .append(
                             Material.TRIPWIRE_HOOK,
