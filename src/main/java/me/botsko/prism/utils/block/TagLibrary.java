@@ -123,7 +123,7 @@ public class TagLibrary {
                             Material.CACTUS,
                             Material.REPEATER,
                             Material.COMPARATOR,
-                            Material.REDSTONE,
+                            Material.REDSTONE_WIRE,
                             Material.LEVER
                     )
                     .append(
