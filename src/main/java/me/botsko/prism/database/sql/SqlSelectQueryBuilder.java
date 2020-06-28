@@ -261,7 +261,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // Entity
         final Map<String, MatchRule> entityNames = parameters.getEntities();
         if (entityNames.size() > 0) {
-            addCondition(buildMultipleConditions(entityNames, "ex.data", "entity_name\":\"%s"));
+            addCondition(buildMultipleConditions(entityNames, "ex.data", "entityName\":\"%s"));
         }
     }
 
