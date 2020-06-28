@@ -1,5 +1,6 @@
 package me.botsko.prism.actions.entity;
 
+import com.google.gson.annotations.SerializedName;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.OfflinePlayer;
@@ -14,12 +15,21 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntitySerializer {
+    //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;
+
+    @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
+
+    @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
+
+    @SerializedName(value = "tamingOwner", alternate = "taming_owner")
     protected String tamingOwner = null;
     protected String newColor = null;
+
+    @SerializedName(value = "customDesc", alternate = "custom_desc")
     protected String customDesc = null;
 
     public final String getEntityName() {
