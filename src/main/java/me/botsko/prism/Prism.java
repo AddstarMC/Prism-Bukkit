@@ -19,6 +19,7 @@ import me.botsko.prism.listeners.PrismEntityEvents;
 import me.botsko.prism.listeners.PrismInventoryEvents;
 import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
 import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismProjectileEvents;
 import me.botsko.prism.listeners.PrismVehicleEvents;
 import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
@@ -415,6 +416,7 @@ public class Prism extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
+            getServer().getPluginManager().registerEvents(new PrismProjectileEvents(), this);
 
             // InventoryMoveItem
             if (getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert")) {

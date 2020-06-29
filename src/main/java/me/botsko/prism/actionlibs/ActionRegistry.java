@@ -63,11 +63,11 @@ public class ActionRegistry {
         registeredActions.put(actionType.getName(), actionType);
     }
 
-    public TreeMap<String, ActionType> getRegisteredAction() {
+    public final TreeMap<String, ActionType> getRegisteredAction() {
         return registeredActions;
     }
 
-    public ActionType getAction(String name) {
+    public final ActionType getAction(String name) {
         return registeredActions.get(name);
     }
 
@@ -174,6 +174,10 @@ public class ActionRegistry {
         registerAction(new ActionType("firework-launch", false, false, false, ItemStackAction.class, "launched"));
         registerAction(new ActionType("hangingitem-break", false, true, true, HangingItemAction.class, "broke"));
         registerAction(new ActionType("hangingitem-place", true, true, true, HangingItemAction.class, "hung"));
+        registerAction(new ActionType("projectile-launch", false, false, false, ItemStackAction.class, "launched"));
+        registerAction(new ActionType("projectile-hit-entity", false, false, false, EntityAction.class, "skewered"));
+        registerAction(new ActionType("projectile-hit-block", false, false, false, BlockAction.class, "struck"));
+        registerAction(new ActionType("projectile-pickup", false, true, true, ItemStackAction.class, "collected"));
         registerAction(new ActionType("item-drop", false, true, true, ItemStackAction.class, "dropped"));
         registerAction(new ActionType("item-insert", false, true, true, ItemStackAction.class, "inserted"));
         registerAction(new ActionType("item-pickup", false, true, true, ItemStackAction.class, "picked up"));

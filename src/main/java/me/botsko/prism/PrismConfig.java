@@ -160,6 +160,9 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.tracking.item-remove", true);
         config.addDefault("prism.tracking.item-break", false);
         config.addDefault("prism.tracking.item-rotate", true);
+        config.addDefault("prism.tracking.projectile-hit", true);
+        config.addDefault("prism.tracking.projectile-launch", true);
+        config.addDefault("prism.tracking.projectile-pickup", true);
         config.addDefault("prism.tracking.lava-break", true);
         config.addDefault("prism.tracking.lava-bucket", true);
         config.addDefault("prism.tracking.lava-flow", false);

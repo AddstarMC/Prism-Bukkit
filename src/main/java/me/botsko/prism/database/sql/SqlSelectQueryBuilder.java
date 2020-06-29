@@ -554,8 +554,6 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                             validBlockId = true;
                             baseHandler.setMaterial(block.getMaterial());
                             baseHandler.setBlockData(block);
-                            baseHandler.setDurability((short) 0);
-
                         } else if (item != null) {
                             validBlockId = true;
                             baseHandler.setMaterial(item.getType());
@@ -600,7 +598,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                         boolean logWarning;
                         // The current item is likely a spawn or death event for an entity, for example, a cow or horse
                         logWarning = blockId != 0 || oldBlockId != 0 || itemMetadata == null
-                                || !itemMetadata.contains("entity_name");
+                                || !itemMetadata.contains("entityName");
 
                         if (logWarning) {
                             String itemMetadataDesc;
@@ -663,9 +661,9 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             if (RecordingManager.failedDbConnectionCount == 0) {
                 Prism.log(
                         "Prism database error. Connection missing. Leaving actions to log in queue.");
-                Prism.debug(e.getMessage());
             }
             RecordingManager.failedDbConnectionCount++;
+            Prism.debug(e.getMessage());
 
             return new QueryResult(actions, parameters);
 
