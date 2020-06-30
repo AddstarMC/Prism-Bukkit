@@ -23,9 +23,9 @@ import java.util.Map.Entry;
 
 public class PrismInventoryEvents implements Listener {
 
-    private final boolean trackingInsert;
-    private final boolean trackingRemove;
-    private final boolean trackingBreaks;
+    private boolean trackingInsert;
+    private boolean trackingRemove;
+    private boolean trackingBreaks;
     private static final String INSERT = "item-insert";
     private static final String REMOVE = "item-remove";
     private static final String BREAK = "item-break";
@@ -37,9 +37,9 @@ public class PrismInventoryEvents implements Listener {
      */
     public PrismInventoryEvents(Prism plugin) {
         this.plugin = plugin;
-        this.trackingInsert = !Prism.getIgnore().event("item-insert");
-        this.trackingRemove = !Prism.getIgnore().event("item-remove");
-        this.trackingBreaks = !Prism.getIgnore().event("item-break");
+        this.trackingInsert = !Prism.getIgnore().event(INSERT);
+        this.trackingRemove = !Prism.getIgnore().event(REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(BREAK);
 
     }
 
@@ -72,7 +72,7 @@ public class PrismInventoryEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryDrag(final InventoryDragEvent event) {
-        if (!trackingInsert && !trackingRemove) {
+        if (notTrackingInsertAndRemove()) {
             return;
         }
         // Get container
@@ -108,7 +108,7 @@ public class PrismInventoryEvents implements Listener {
                         ? 0 : stack.getAmount();
                 int amount = entry.getValue().getAmount() - slotViewAmount;
 
-                RecordingQueue.addToQueue(ActionFactory.createItemStack("item-insert", entry.getValue(), amount,
+                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, entry.getValue(), amount,
                         rawSlot, null, containerLoc, player));
             }
         }
@@ -132,7 +132,7 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
 
-        if (!trackingInsert && !trackingRemove) {
+        if (notTrackingInsertAndRemove()) {
             return;
         }
         // Store some info
@@ -379,6 +379,14 @@ public class PrismInventoryEvents implements Listener {
         ItemStack item = event.getBrokenItem();
         Handler h = ActionFactory.createItemStack(BREAK,item,null, event.getPlayer().getLocation(),event.getPlayer());
         RecordingQueue.addToQueue(h);
+    }
+
+    private boolean notTrackingInsertAndRemove() {
+        this.trackingInsert = Prism.getIgnore().event(INSERT);
+        this.trackingRemove = Prism.getIgnore().event(REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(BREAK);
+
+        return !trackingInsert && !trackingRemove;
     }
 
 }
