@@ -79,11 +79,11 @@ prism:
     bonemeal-use: true
     container-access: true
     cake-eat: true
-    craft-item: false
+    craft-item: true
     creeper-explode: true
     crop-trample: true
     dragon-eat: true
-    enchant-item: false
+    enchant-item: true
     enderman-pickup: true
     enderman-place: true
     entity-break: true
@@ -105,11 +105,11 @@ prism:
     item-insert: true
     item-pickup: true
     item-remove: true
-    item-break: false
+    item-break: true
     item-rotate: true
     lava-break: true
     lava-bucket: true
-    lava-flow: false
+    lava-flow: true
     lava-ignite: true
     leaf-decay: true
     lighter: true
@@ -135,7 +135,7 @@ prism:
     vehicle-place: true
     water-break: true
     water-bucket: true
-    water-flow: false
+    water-flow: true
     world-edit: false
     xp-pickup: false
     api:
@@ -197,7 +197,9 @@ prism:
       - sticky_piston
       - tnt
       - lava
-      item-break: []
+      item-break:
+      - diamond_sword
+      - wooden_axe
     vanilla-xray:
       enabled: true
   queue-empty-tick-delay: 3
