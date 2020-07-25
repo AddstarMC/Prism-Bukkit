@@ -12,6 +12,7 @@
 
 config-version: 12
 settings:
+  log-villager-deaths: true
   debug: false
   bungeecord: false
   save-user-cache-on-stop-only: false
@@ -60,6 +61,12 @@ stats:
   forced-stats: {}
 world-settings:
   default:
+    seed-bastion: 30084232
+    seed-fortress: 30084232
+    seed-mansion: 10387319
+    seed-fossil: 14357921
+    seed-portal: 34222645
+    end-portal-sound-radius: 0
     verbose: true
     view-distance: default
     enable-zombie-pigmen-portal-spawns: true
