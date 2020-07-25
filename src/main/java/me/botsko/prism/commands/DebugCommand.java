@@ -30,8 +30,21 @@ public class DebugCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
+        if(call.getArgs().length == 1) {
+            String arg = call.getArg(0);
+            switch (arg.toLowerCase()){
+                case "on":
+                    Prism.setDebug(true);
+                    break;
+                case "off":
+                    Prism.setDebug(false);
+                    break;
+            }
+            call.getSender().sendMessage("Prism Debug:" + Prism.isDebug());
+            return;
+        }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> createPaste(
-                call.getSender()));
+                    call.getSender()));
     }
 
     private String getFile(Path file) {
@@ -64,25 +77,25 @@ public class DebugCommand implements SubHandler {
         PrismDataSource dataSource = Prism.getPrismDataSource();
         StringBuilder out = new StringBuilder();
         String name = dataSource.getClass().getName();
-        out.append("DataSource Name: ").append(name).append("/n");
+        out.append("DataSource Name: ").append(name).append("\n");
         if (dataSource.getDataSource() instanceof HikariDataSource) {
             HikariDataSource ds = (HikariDataSource) dataSource.getDataSource();
             out.append("Running: ").append(ds.isRunning())
                     .append("Total Connections: ")
                     .append(ds.getHikariPoolMXBean().getTotalConnections())
-                    .append("/n")
+                    .append("\n")
                     .append("Total Connections: ")
                     .append(ds.getHikariPoolMXBean().getActiveConnections())
-                    .append("/n");
+                    .append("\n");
         }
-        out.append("Illegal Blocks: /n");
+        out.append("Illegal Blocks: \n");
         for (Material mat : Prism.getIllegalBlocks()) {
-            out.append("   ").append(mat.name()).append("/n");
+            out.append("   ").append(mat.name()).append("\n");
         }
-        out.append("Worlds Tracked: ").append(Prism.prismWorlds.size()).append("/n");
-        out.append("Players Tracked: ").append(Prism.prismPlayers.size()).append("/n");
+        out.append("Worlds Tracked: ").append(Prism.prismWorlds.size()).append("\n");
+        out.append("Players Tracked: ").append(Prism.prismPlayers.size()).append("\n");
         out.append("Players with Tools: ").append(Prism.playersWithActiveTools.size())
-                .append("/n");
+                .append("\n");
         return out.toString();
     }
 
@@ -91,6 +104,7 @@ public class DebugCommand implements SubHandler {
         Path dataPath = Prism.getInstance().getDataFolder().toPath();
         Path prismConfig = dataPath.resolve("config.yml");
         Path hikariProps = dataPath.resolve("hikari.properties");
+        Path prismLog = dataPath.resolve("prism.log");
         PasteBuilder.PasteResult result = new PasteBuilder().name("Prism Debug Output")
                 .visibility(Visibility.UNLISTED)
                 .setApiKey(Prism.getPasteKey())
@@ -103,6 +117,8 @@ public class DebugCommand implements SubHandler {
                         new PasteContent(PasteContent.ContentType.TEXT, getFile(hikariProps))))
                 .addFile(new PasteFile("dataSource Properties",
                         new PasteContent(PasteContent.ContentType.TEXT, getDataSourceInfo())))
+                .addFile(new PasteFile("Prism Log",
+                        new PasteContent(PasteContent.ContentType.TEXT,getFile(prismLog))))
                 .build();
         if (result.getPaste().isPresent()) {
             String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();

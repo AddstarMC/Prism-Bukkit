@@ -61,6 +61,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -98,6 +102,8 @@ public class Prism extends JavaPlugin {
     private static HandlerRegistry handlerRegistry;
     private static Ignore ignore;
     private static Prism instance;
+    private static Logger prismLog;
+    private static boolean debug = false;
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
@@ -127,7 +133,6 @@ public class Prism extends JavaPlugin {
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
-
     public Prism() {
         instance = this;
     }
@@ -136,6 +141,12 @@ public class Prism extends JavaPlugin {
         super(loader, description, dataFolder, file);
     }
 
+    public static void setDebug(boolean debug) {
+        Prism.debug = debug;
+    }
+    public static boolean isDebug() {
+        return debug;
+    }
     public static PrismDataSource getPrismDataSource() {
         return prismDataSource;
     }
@@ -255,6 +266,7 @@ public class Prism extends JavaPlugin {
      */
     public static void log(String message) {
         log.info("[" + getPrismName() + "] " + message);
+        prismLog.info(message);
     }
 
     /**
@@ -287,7 +299,7 @@ public class Prism extends JavaPlugin {
      * @param message String
      */
     public static void debug(String message) {
-        if (config == null || config.getBoolean("prism.debug")) {
+        if (debug) {
             log.info("[" + pluginName + " Debug ]: " + message);
         }
     }
@@ -314,7 +326,16 @@ public class Prism extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-
+        debug = getConfig().getBoolean("prism.debug", false);
+        prismLog = Logger.getLogger("PrismLogger");
+        try {
+            File file = getDataFolder().toPath().resolve("prism.log").toFile();
+            FileHandler handler = new FileHandler(file.getPath());
+            prismLog.addHandler(handler);
+            prismLog.setLevel(Level.CONFIG);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
@@ -343,8 +364,9 @@ public class Prism extends JavaPlugin {
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
                 warn("Prism is loading and updating the database; logging is NOT enabled");
+
             }
-        },100,200);
+        }, 100, 200);
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
@@ -712,6 +734,9 @@ public class Prism extends JavaPlugin {
             prismDataSource.dispose();
         }
         log("Closing plugin.");
+        for (Handler handler : prismLog.getHandlers()) {
+            handler.close();
+        }
         super.onDisable();
     }
 }
