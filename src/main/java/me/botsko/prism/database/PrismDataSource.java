@@ -26,8 +26,6 @@ public interface PrismDataSource {
 
     PrismDataSource createDataSource();
 
-    Logger getLog();
-
     void setFile();
 
     void setupDatabase(ActionRegistry actionRegistry);

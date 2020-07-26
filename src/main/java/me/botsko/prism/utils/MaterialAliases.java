@@ -66,8 +66,7 @@ public class MaterialAliases {
             }
 
         } else {
-            Prism.getPrismDataSource().getLog().error(
-                    "ERROR: The Item library was unable to load an internal item alias list.");
+            Prism.warn("ERROR: The Item library was unable to load an internal item alias list.");
         }
     }
 

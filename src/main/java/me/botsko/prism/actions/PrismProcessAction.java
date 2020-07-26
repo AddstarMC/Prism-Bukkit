@@ -6,13 +6,14 @@ import me.botsko.prism.appliers.PrismProcessType;
 public class PrismProcessAction extends GenericAction {
 
     /**
-     *
+     * The extra data.
      */
     private PrismProcessActionData actionData;
 
     /**
-     * @param processType
-     * @param parameters
+     * Process.
+     * @param processType PrismProcessType
+     * @param parameters String
      */
     public void setProcessData(PrismProcessType processType, String parameters) {
 
@@ -42,14 +43,15 @@ public class PrismProcessAction extends GenericAction {
     }
 
     /**
-     * @return
+     * Get Type.
+     * @return String
      */
     public String getProcessChildActionType() {
         return Prism.getActionRegistry().getAction("prism-" + actionData.processType).getName();
     }
 
     /**
-     *
+     * Get nice name.
      */
     @Override
     public String getNiceName() {

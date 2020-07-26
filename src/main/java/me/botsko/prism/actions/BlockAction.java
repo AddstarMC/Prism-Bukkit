@@ -350,50 +350,53 @@ public class BlockAction extends GenericAction {
         state.update(true);
         BlockState newState = block.getState();
         BlockActionData blockActionData = getActionData();
+        if (blockActionData != null) {
+            if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
+                    && blockActionData instanceof SkullActionData) {
+                return handleSkulls(block, blockActionData, originalBlock);
+            }
 
-        if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
-                && blockActionData instanceof SkullActionData) {
-            return handleSkulls(block, blockActionData, originalBlock);
-        }
+            if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
 
-        if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
+                final SpawnerActionData s = (SpawnerActionData) blockActionData;
 
-            final SpawnerActionData s = (SpawnerActionData) blockActionData;
+                // Set spawner data
+                ((CreatureSpawner) newState).setDelay(s.getDelay());
+                ((CreatureSpawner) newState).setSpawnedType(s.getEntityType());
 
-            // Set spawner data
-            ((CreatureSpawner) newState).setDelay(s.getDelay());
-            ((CreatureSpawner) newState).setSpawnedType(s.getEntityType());
+            }
 
-        }
+            if (getMaterial() == COMMAND_BLOCK
+                    && blockActionData instanceof CommandActionData) {
+                final CommandActionData c = (CommandActionData) blockActionData;
+                ((CommandBlock) newState).setCommand(c.command);
+            }
+            if (newState instanceof Nameable && blockActionData.customName != null
+                    && !blockActionData.customName.equals("")) {
+                ((Nameable) newState).setCustomName(blockActionData.customName);
+            }
+            if (parameters.getProcessType() == PrismProcessType.ROLLBACK
+                    && Tag.SIGNS.isTagged(getMaterial())
+                    && blockActionData instanceof SignActionData) {
 
-        if (getMaterial() == COMMAND_BLOCK
-                && blockActionData instanceof CommandActionData) {
-            final CommandActionData c = (CommandActionData) blockActionData;
-            ((CommandBlock) newState).setCommand(c.command);
-        }
-        if (newState instanceof Nameable && actionData.customName != null) {
-            ((Nameable) newState).setCustomName(actionData.customName);
-        }
-        if (parameters.getProcessType() == PrismProcessType.ROLLBACK
-                && Tag.SIGNS.isTagged(getMaterial())
-                && blockActionData instanceof SignActionData) {
-
-            final SignActionData s = (SignActionData) blockActionData;
-            // Verify block is sign. Rarely, if the block somehow pops off
-            // or fails
-            // to set it causes ClassCastException:
-            // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
-            // cannot be cast to org.bukkit.block.Sign
-            // https://snowy-evening.com/botsko/prism/455/
-            if (newState instanceof Sign) {
-                if (s.lines != null) {
-                    for (int i = 0; i < s.lines.length; ++i) {
-                        ((Sign) newState).setLine(i, s.lines[i]);
+                final SignActionData s = (SignActionData) blockActionData;
+                // Verify block is sign. Rarely, if the block somehow pops off
+                // or fails
+                // to set it causes ClassCastException:
+                // org.bukkit.craftbukkit.v1_4_R1.block.CraftBlockState
+                // cannot be cast to org.bukkit.block.Sign
+                // https://snowy-evening.com/botsko/prism/455/
+                if (newState instanceof Sign) {
+                    if (s.lines != null) {
+                        for (int i = 0; i < s.lines.length; ++i) {
+                            ((Sign) newState).setLine(i, s.lines[i]);
+                        }
                     }
                 }
             }
+        } else {
+            Prism.debug("BlockAction Data was null with " + parameters.toString());
         }
-
         // -----------------------------
         // Sibling logic marker
 
@@ -526,7 +529,7 @@ public class BlockAction extends GenericAction {
      * @author botskonet
      */
     static class BlockActionData {
-        String customName;
+        String customName = "";
     }
 
     public static class CommandActionData extends BlockActionData {

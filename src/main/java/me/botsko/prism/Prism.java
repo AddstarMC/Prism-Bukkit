@@ -61,9 +61,11 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,13 +76,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
     private static final HashMap<String, String> alertedOres = new HashMap<>();
     private static final Logger log = Logger.getLogger("Minecraft");
+    private static Logger prismLog;
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     public static Messenger messenger;
     public static FileConfiguration config;
@@ -98,6 +106,7 @@ public class Prism extends JavaPlugin {
     private static HandlerRegistry handlerRegistry;
     private static Ignore ignore;
     private static Prism instance;
+    private static boolean debug = false;
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
@@ -134,6 +143,14 @@ public class Prism extends JavaPlugin {
 
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+    }
+
+    public static void setDebug(boolean debug) {
+        Prism.debug = debug;
+    }
+
+    public static boolean isDebug() {
+        return debug;
     }
 
     public static PrismDataSource getPrismDataSource() {
@@ -255,6 +272,7 @@ public class Prism extends JavaPlugin {
      */
     public static void log(String message) {
         log.info("[" + getPrismName() + "] " + message);
+        prismLog.info(message);
     }
 
     /**
@@ -264,6 +282,12 @@ public class Prism extends JavaPlugin {
      */
     public static void warn(String message) {
         log.warning("[" + getPrismName() + "] " + message);
+        prismLog.warning(message);
+    }
+
+    public static void warn(String message, Exception e) {
+        log.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
+        prismLog.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
     }
 
     /**
@@ -287,8 +311,8 @@ public class Prism extends JavaPlugin {
      * @param message String
      */
     public static void debug(String message) {
-        if (config == null || config.getBoolean("prism.debug")) {
-            log.info("[" + pluginName + " Debug ]: " + message);
+        if (debug) {
+            log("- Debug - " + message);
         }
     }
 
@@ -314,7 +338,8 @@ public class Prism extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-
+        debug = getConfig().getBoolean("prism.debug", false);
+        prismLog = createPrismLogger();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
@@ -343,8 +368,9 @@ public class Prism extends JavaPlugin {
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
                 warn("Prism is loading and updating the database; logging is NOT enabled");
+
             }
-        },100,200);
+        }, 100, 200);
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
@@ -392,6 +418,23 @@ public class Prism extends JavaPlugin {
             Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
             updating.cancel();
         });
+    }
+
+    private Logger createPrismLogger() {
+        Logger result = Logger.getLogger("PrismLogger");
+        result.setUseParentHandlers(false);
+        for (Handler handler :result.getHandlers()) {
+            result.removeHandler(handler);
+        }
+        try {
+            File prismFileLog = getDataFolder().toPath().resolve("prism.log").toFile();
+            FileHandler handler = new PrismFileHandler(prismFileLog);
+            result.addHandler(handler);
+            result.setLevel(Level.CONFIG);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     private void notifyDisabled() {
@@ -712,6 +755,46 @@ public class Prism extends JavaPlugin {
             prismDataSource.dispose();
         }
         log("Closing plugin.");
+        for (Handler handler : prismLog.getHandlers()) {
+            handler.close();
+        }
         super.onDisable();
+    }
+
+    private static class PrismFileHandler extends FileHandler {
+
+        public PrismFileHandler(File file) throws IOException, SecurityException {
+            super(file.toString());
+            setFormatter(new SimpleFormatter() {
+                @Override
+                public synchronized String format(LogRecord lr) {
+                    boolean mt = Bukkit.isPrimaryThread();
+                    String thread;
+                    if (mt) {
+                        thread = "[M]";
+                    } else {
+                        thread = "[" + lr.getThreadID() + "]";
+                    }
+                    String thrown;
+                    if (lr.getThrown() == null) {
+                        thrown = "";
+                    } else {
+                        thrown = lr.getThrown().toString();
+                    }
+                    return String.format("[%1$tF %1$tT] [%2$-7s] " + thread + " %3$s%4$s%n",
+                            new Date(lr.getMillis()),
+                            lr.getLevel().getLocalizedName(),
+                            lr.getMessage(),
+                            thrown
+                    );
+                }
+            });
+        }
+
+        @Override
+        public synchronized void publish(LogRecord record) {
+            super.publish(record);
+            flush();
+        }
     }
 }

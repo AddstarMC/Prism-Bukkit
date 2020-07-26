@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import com.google.gson.JsonSyntaxException;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -539,7 +540,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     int oldBlockId = rs.getInt(11);
                     int oldBlockSubId = rs.getInt(12);
 
-                    String itemMetadata = rs.getString(13);
+                    String extraData = rs.getString(13);
 
                     boolean validBlockId = false;
                     boolean validOldBlockId = false;
@@ -599,16 +600,16 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                         boolean logWarning;
                         // The current item is likely a spawn or death event for an entity, for example, a cow or horse
-                        logWarning = blockId != 0 || oldBlockId != 0 || itemMetadata == null
-                                || !itemMetadata.contains("entity_name");
+                        logWarning = blockId != 0 || oldBlockId != 0 || extraData == null
+                                || !extraData.contains("entity_name");
 
                         if (logWarning) {
                             String itemMetadataDesc;
 
-                            if (itemMetadata == null) {
+                            if (extraData == null) {
                                 itemMetadataDesc = "";
                             } else {
-                                itemMetadataDesc = ", metadata=" + itemMetadata;
+                                itemMetadataDesc = ", metadata=" + extraData;
                             }
 
                             if (blockId > 0) {
@@ -626,7 +627,13 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     }
 
                     // data
-                    baseHandler.deserialize(itemMetadata);
+                    try {
+                        baseHandler.deserialize(extraData);
+                    } catch (JsonSyntaxException e) {
+                        if (Prism.isDebug()) {
+                            Prism.warn("Deserialization Error: " + e.getLocalizedMessage(), e);
+                        }
+                    }
 
                     // player
                     baseHandler.setSourceName(rs.getString(4));
@@ -655,8 +662,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     actions.add(baseHandler);
 
                 } catch (final SQLException e) {
-                    Prism.warn("Ignoring data from record #" + rowId + " because it caused an error:");
-                    e.printStackTrace();
+                    Prism.warn("Ignoring data from record #" + rowId + " because it caused an error:", e);
                 }
             }
         } catch (NullPointerException e) {

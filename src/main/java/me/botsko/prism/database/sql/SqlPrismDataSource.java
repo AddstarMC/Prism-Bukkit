@@ -36,7 +36,6 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     protected String name = "unconfigured";
     protected ConfigurationSection section;
     private boolean paused; //when set the datasource will not allow insertions;
-    private final Logger log;
     private SettingsQuery settingsQuery = null;
     private String prefix = "prism_";
 
@@ -45,7 +44,6 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
      * @param section Config
      */
     public SqlPrismDataSource(ConfigurationSection section) {
-        log = LoggerFactory.getLogger("Prism");
         this.section = section;
         setPrefix(section.getString("prefix"));
         setFile();
@@ -67,11 +65,6 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     @Override
-    public Logger getLog() {
-        return log;
-    }
-
-    @Override
     public String getPrefix() {
         return prefix;
     }
@@ -87,9 +80,10 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 return database.getConnection();
             }
         } catch (SQLException e) {
-            log.info("Could not retrieve a connection");
+            Prism.log("Could not retrieve a connection - with exception");
             return null;
         }
+        Prism.log("Could not retrieve a connection");
         return null;
     }
 
@@ -131,9 +125,9 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 return;
             }
         } catch (final SQLException ignored) {
-            log.error("Database rescue was unsuccessful.");
+            Prism.warn("Database rescue was unsuccessful.");
         }
-        log.error("Database connection error: " + e.getMessage());
+        Prism.warn("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
@@ -255,7 +249,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-                log.info("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
+                Prism.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
                 Prism.prismActions.put(actionName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -276,7 +270,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 ResultSet rs = s.executeQuery()
                 ) {
             while (rs.next()) {
-                log.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+                Prism.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
                 Prism.prismActions.put(rs.getString(2), rs.getInt(1));
             }
 
@@ -327,7 +321,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-                log.info("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
+                Prism.log("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
                 Prism.prismWorlds.put(worldName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");

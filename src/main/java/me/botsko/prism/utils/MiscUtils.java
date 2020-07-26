@@ -123,6 +123,7 @@ public class MiscUtils {
         if (!Prism.getInstance().getConfig().getBoolean("prism.paste.enable")) {
             sender.sendMessage(Prism.messenger.playerError(
                     "Paste.gg support is currently disabled by config."));
+            return;
         }
 
         ZonedDateTime expire = ZonedDateTime.now().plusMinutes(60);

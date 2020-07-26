@@ -20,7 +20,7 @@ import java.util.UUID;
 public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
-    private final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private boolean canceled = false;
     private ActionType type;
 
@@ -48,8 +48,8 @@ public abstract class GenericAction implements Handler {
         epoch = System.currentTimeMillis() / 1000;
     }
 
-    protected final Gson gson() {
-        return gson;
+    protected static Gson gson() {
+        return GenericAction.gson;
     }
 
     @Override

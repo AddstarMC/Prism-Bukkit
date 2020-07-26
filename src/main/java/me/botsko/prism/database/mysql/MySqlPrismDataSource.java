@@ -138,9 +138,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         if (Prism.getInstance().monitoring) {
             dbConfig.setMetricRegistry(ApiHandler.monitor.getRegistry());
             dbConfig.setHealthCheckRegistry(ApiHandler.monitor.getHealthRegistry());
-            getLog().info("Hikari is configured with Metric Reporting.");
+            Prism.log("Hikari is configured with Metric Reporting.");
         } else {
-            getLog().info("No metric recorder found to hook into Hikari.");
+            Prism.log("No metric recorder found to hook into Hikari.");
         }
 
         try {
@@ -148,7 +148,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
-            getLog().error("Hikari Pool did not Initialize: " + e.getMessage());
+            Prism.warn("Hikari Pool did not Initialize: " + e.getMessage());
             database = null;
         }
         return this;

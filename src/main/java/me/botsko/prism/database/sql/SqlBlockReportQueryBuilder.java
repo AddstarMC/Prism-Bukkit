@@ -37,7 +37,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
 
         query += ";";
 
-        dataSource.getLog().debug(query);
+        Prism.debug(query);
         return query;
 
     }
