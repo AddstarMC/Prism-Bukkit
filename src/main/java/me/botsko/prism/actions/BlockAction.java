@@ -371,7 +371,7 @@ public class BlockAction extends GenericAction {
                 final CommandActionData c = (CommandActionData) blockActionData;
                 ((CommandBlock) newState).setCommand(c.command);
             }
-            if (newState instanceof Nameable && blockActionData.customName != null) {
+            if (newState instanceof Nameable && blockActionData.customName != null && !blockActionData.customName.equals("")) {
                 ((Nameable) newState).setCustomName(blockActionData.customName);
             }
             if (parameters.getProcessType() == PrismProcessType.ROLLBACK
@@ -528,7 +528,7 @@ public class BlockAction extends GenericAction {
      * @author botskonet
      */
     static class BlockActionData {
-        String customName;
+        String customName = "";
     }
 
     public static class CommandActionData extends BlockActionData {
