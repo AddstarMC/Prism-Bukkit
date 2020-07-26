@@ -24,6 +24,7 @@ import org.kitteh.pastegg.PasteContent;
 import org.kitteh.pastegg.PasteFile;
 import org.kitteh.pastegg.Visibility;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -124,14 +125,14 @@ public class MiscUtils {
                     "Paste.gg support is currently disabled by config."));
         }
 
-        int expire = 60 * 60 * 1000;
+        ZonedDateTime expire = ZonedDateTime.now().plusMinutes(60);
         PasteFile file = new PasteFile("Prism Result",
                 new PasteContent(PasteContent.ContentType.TEXT, results));
 
         final PasteBuilder.PasteResult result
                 = new PasteBuilder().name("Prism Results")
                 .setApiKey(Prism.getPasteKey())
-                .expireIn(expire)
+                .expires(expire)
                 .addFile(file)
                 .visibility(Visibility.UNLISTED)
                 .build();
@@ -184,7 +185,7 @@ public class MiscUtils {
             BaseComponent[] finalMessage = new BaseComponent[toSend.size()];
             toSend.toArray(finalMessage);
             if (PaperLib.isPaper()) {
-                player.sendMessage(finalMessage);
+                //player.sendMessage(finalMessage);
             } else {
                 player.spigot().sendMessage(finalMessage);
             }
@@ -204,12 +205,12 @@ public class MiscUtils {
             if (PaperLib.isPaper()) {
                 if (results.getPage() == 1) {
                     if (results.getTotalPages() > 1) {
-                        player.sendMessage(MiscUtils.getNextButton());
+                        //player.sendMessage(MiscUtils.getNextButton());
                     }
                 } else if (results.getPage() < results.getTotalPages()) {
-                    player.sendMessage(MiscUtils.getPrevNextButtons());
+                    //player.sendMessage(MiscUtils.getPrevNextButtons());
                 } else if (results.getPage() == results.getTotalPages()) {
-                    player.sendMessage(MiscUtils.getPreviousButton());
+                    //player.sendMessage(MiscUtils.getPreviousButton());
                 }
             } else {
                 if (results.getPage() == 1) {

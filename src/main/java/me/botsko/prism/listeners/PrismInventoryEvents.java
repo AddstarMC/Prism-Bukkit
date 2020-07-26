@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actions.Handler;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -21,10 +23,12 @@ import java.util.Map.Entry;
 
 public class PrismInventoryEvents implements Listener {
 
-    private final boolean trackingInsert;
-    private final boolean trackingRemove;
+    private boolean trackingInsert;
+    private boolean trackingRemove;
+    private boolean trackingBreaks;
     private static final String INSERT = "item-insert";
     private static final String REMOVE = "item-remove";
+    private static final String BREAK = "item-break";
     private final Prism plugin;
 
     /**
@@ -33,8 +37,10 @@ public class PrismInventoryEvents implements Listener {
      */
     public PrismInventoryEvents(Prism plugin) {
         this.plugin = plugin;
-        this.trackingInsert = plugin.getConfig().getBoolean("prism.tracking.item-insert");
-        this.trackingRemove = plugin.getConfig().getBoolean("prism.tracking.item-remove");
+        this.trackingInsert = !Prism.getIgnore().event(INSERT);
+        this.trackingRemove = !Prism.getIgnore().event(REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(BREAK);
+
     }
 
     /**
@@ -66,7 +72,7 @@ public class PrismInventoryEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryDrag(final InventoryDragEvent event) {
-        if (!trackingInsert && !trackingRemove) {
+        if (notTrackingInsertAndRemove()) {
             return;
         }
         // Get container
@@ -102,7 +108,7 @@ public class PrismInventoryEvents implements Listener {
                         ? 0 : stack.getAmount();
                 int amount = entry.getValue().getAmount() - slotViewAmount;
 
-                RecordingQueue.addToQueue(ActionFactory.createItemStack("item-insert", entry.getValue(), amount,
+                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, entry.getValue(), amount,
                         rawSlot, null, containerLoc, player));
             }
         }
@@ -126,7 +132,7 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
 
-        if (!trackingInsert && !trackingRemove) {
+        if (notTrackingInsertAndRemove()) {
             return;
         }
         // Store some info
@@ -263,6 +269,7 @@ public class PrismInventoryEvents implements Listener {
                         int remaining = slotItem.getAmount();
 
                         for (ItemStack is : event.getView().getBottomInventory().getStorageContents()) {
+                            //noinspection ConstantConditions  Until intellij sorts it checks
                             if (is == null || is.getType() == Material.AIR) {
                                 remaining -= stackSize;
                             } else if (is.isSimilar(slotItem)) {
@@ -357,6 +364,29 @@ public class PrismInventoryEvents implements Listener {
 
         }
         return newAmount;
+    }
+
+    /**
+     * Tracks item breakage. Cant be rolled back.  At this point the item damage is not 0 however it will be set 0 after
+     * event completes - Reported item durability will be the durability before the event.
+     * @param event PlayerItemBreakEvent.
+     */
+    @EventHandler(ignoreCancelled = true,priority = EventPriority.MONITOR)
+    public void onItemBreak(PlayerItemBreakEvent event) {
+        if (!trackingBreaks) {
+            return;
+        }
+        ItemStack item = event.getBrokenItem();
+        Handler h = ActionFactory.createItemStack(BREAK,item,null, event.getPlayer().getLocation(),event.getPlayer());
+        RecordingQueue.addToQueue(h);
+    }
+
+    private boolean notTrackingInsertAndRemove() {
+        this.trackingInsert = Prism.getIgnore().event(INSERT);
+        this.trackingRemove = Prism.getIgnore().event(REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(BREAK);
+
+        return !trackingInsert && !trackingRemove;
     }
 
 }

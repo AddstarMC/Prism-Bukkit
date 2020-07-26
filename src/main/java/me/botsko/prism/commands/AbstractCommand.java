@@ -14,7 +14,7 @@ import java.util.List;
  */
 public abstract class AbstractCommand implements SubHandler {
 
-    StringBuilder checkIfDefaultUsed(QueryParameters parameters) {
+    final StringBuilder checkIfDefaultUsed(QueryParameters parameters) {
         final List<String> defaultsUsed = parameters.getDefaultsUsed();
         StringBuilder defaultsReminder = new StringBuilder();
         if (!defaultsUsed.isEmpty()) {

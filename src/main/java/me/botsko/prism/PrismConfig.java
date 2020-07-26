@@ -158,6 +158,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.tracking.item-insert", true);
         config.addDefault("prism.tracking.item-pickup", true);
         config.addDefault("prism.tracking.item-remove", true);
+        config.addDefault("prism.tracking.item-break", false);
         config.addDefault("prism.tracking.item-rotate", true);
         config.addDefault("prism.tracking.lava-break", true);
         config.addDefault("prism.tracking.lava-bucket", true);

@@ -5,8 +5,8 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
-import me.botsko.prism.utils.BlockUtils;
 import me.botsko.prism.utils.EntityUtils;
+import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -47,7 +47,7 @@ public class Rollback extends Preview {
             if (plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback")
                     && parameters.getActionTypes().containsKey("block-burn")) {
                 if (!parameters.hasFlag(Flag.NO_EXT)) {
-                    final ArrayList<BlockStateChange> blockStateChanges = BlockUtils.extinguish(player.getLocation(),
+                    final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(player.getLocation(),
                             parameters.getRadius());
                     if (!blockStateChanges.isEmpty()) {
                         player.sendMessage(Prism.messenger
@@ -72,13 +72,13 @@ public class Rollback extends Preview {
             // Remove any liquid at this location
             ArrayList<BlockStateChange> drained = null;
             if (parameters.hasFlag(Flag.DRAIN)) {
-                drained = BlockUtils.drain(player.getLocation(), parameters.getRadius());
+                drained = Utilities.drain(player.getLocation(), parameters.getRadius());
             }
             if (parameters.hasFlag(Flag.DRAIN_LAVA)) {
-                drained = BlockUtils.drainLava(player.getLocation(), parameters.getRadius());
+                drained = Utilities.drainLava(player.getLocation(), parameters.getRadius());
             }
             if (parameters.hasFlag(Flag.DRAIN_WATER)) {
-                drained = BlockUtils.drainWater(player.getLocation(), parameters.getRadius());
+                drained = Utilities.drainWater(player.getLocation(), parameters.getRadius());
             }
             if (drained != null && drained.size() > 0) {
                 player.sendMessage(
