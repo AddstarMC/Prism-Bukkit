@@ -30,14 +30,16 @@ public class DebugCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        if(call.getArgs().length == 1) {
+        if (call.getArgs().length == 1) {
             String arg = call.getArg(0);
-            switch (arg.toLowerCase()){
+            switch (arg.toLowerCase()) {
                 case "on":
                     Prism.setDebug(true);
                     break;
                 case "off":
                     Prism.setDebug(false);
+                    break;
+                default:
                     break;
             }
             call.getSender().sendMessage("Prism Debug:" + Prism.isDebug());

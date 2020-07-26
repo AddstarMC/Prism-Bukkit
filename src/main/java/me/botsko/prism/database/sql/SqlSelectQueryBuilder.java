@@ -629,8 +629,8 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     // data
                     try {
                         baseHandler.deserialize(extraData);
-                    }catch (JsonSyntaxException e) {
-                        if(Prism.isDebug()) {
+                    } catch (JsonSyntaxException e) {
+                        if (Prism.isDebug()) {
                             Prism.warn("Deserialization Error: " + e.getLocalizedMessage(), e);
                         }
                     }
@@ -662,7 +662,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     actions.add(baseHandler);
 
                 } catch (final SQLException e) {
-                    Prism.warn("Ignoring data from record #" + rowId + " because it caused an error:" , e);
+                    Prism.warn("Ignoring data from record #" + rowId + " because it caused an error:", e);
                 }
             }
         } catch (NullPointerException e) {

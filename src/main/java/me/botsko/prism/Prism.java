@@ -136,6 +136,7 @@ public class Prism extends JavaPlugin {
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
+
     public Prism() {
         instance = this;
     }
@@ -147,9 +148,11 @@ public class Prism extends JavaPlugin {
     public static void setDebug(boolean debug) {
         Prism.debug = debug;
     }
+
     public static boolean isDebug() {
         return debug;
     }
+
     public static PrismDataSource getPrismDataSource() {
         return prismDataSource;
     }
@@ -281,10 +284,12 @@ public class Prism extends JavaPlugin {
         log.warning("[" + getPrismName() + "] " + message);
         prismLog.warning(message);
     }
+
     public static void warn(String message, Exception e) {
         log.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
         prismLog.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
     }
+
     /**
      * Log a series of messages, precedent by a header.
      *
@@ -415,10 +420,10 @@ public class Prism extends JavaPlugin {
         });
     }
 
-    private Logger createPrismLogger(){
+    private Logger createPrismLogger() {
         Logger result = Logger.getLogger("PrismLogger");
         result.setUseParentHandlers(false);
-        for(Handler handler :result.getHandlers()){
+        for (Handler handler :result.getHandlers()) {
             result.removeHandler(handler);
         }
         try {
@@ -431,6 +436,7 @@ public class Prism extends JavaPlugin {
         }
         return result;
     }
+
     private void notifyDisabled() {
         final String[] dbDisabled = new String[3];
         dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
@@ -755,26 +761,27 @@ public class Prism extends JavaPlugin {
         super.onDisable();
     }
 
-    private static class PrismFileHandler extends FileHandler{
+    private static class PrismFileHandler extends FileHandler {
 
         public PrismFileHandler(File file) throws IOException, SecurityException {
             super(file.toString());
-            setFormatter(new SimpleFormatter(){
+            setFormatter(new SimpleFormatter() {
                 @Override
                 public synchronized String format(LogRecord lr) {
                     boolean mt = Bukkit.isPrimaryThread();
                     String thread;
-                    if(mt){
+                    if (mt) {
                         thread = "[M]";
-                    } else
-                        thread = "["+lr.getThreadID()+"]";
+                    } else {
+                        thread = "[" + lr.getThreadID() + "]";
+                    }
                     String thrown;
-                    if(lr.getThrown() == null){
+                    if (lr.getThrown() == null) {
                         thrown = "";
                     } else {
                         thrown = lr.getThrown().toString();
                     }
-                    return String.format("[%1$tF %1$tT] [%2$-7s] "+thread+" %3$s%4$s%n",
+                    return String.format("[%1$tF %1$tT] [%2$-7s] " + thread + " %3$s%4$s%n",
                             new Date(lr.getMillis()),
                             lr.getLevel().getLocalizedName(),
                             lr.getMessage(),

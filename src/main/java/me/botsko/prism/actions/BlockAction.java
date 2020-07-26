@@ -350,7 +350,7 @@ public class BlockAction extends GenericAction {
         state.update(true);
         BlockState newState = block.getState();
         BlockActionData blockActionData = getActionData();
-        if(blockActionData != null ) {
+        if (blockActionData != null) {
             if ((getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD)
                     && blockActionData instanceof SkullActionData) {
                 return handleSkulls(block, blockActionData, originalBlock);
@@ -371,7 +371,8 @@ public class BlockAction extends GenericAction {
                 final CommandActionData c = (CommandActionData) blockActionData;
                 ((CommandBlock) newState).setCommand(c.command);
             }
-            if (newState instanceof Nameable && blockActionData.customName != null && !blockActionData.customName.equals("")) {
+            if (newState instanceof Nameable && blockActionData.customName != null
+                    && !blockActionData.customName.equals("")) {
                 ((Nameable) newState).setCustomName(blockActionData.customName);
             }
             if (parameters.getProcessType() == PrismProcessType.ROLLBACK
@@ -394,7 +395,7 @@ public class BlockAction extends GenericAction {
                 }
             }
         } else {
-            Prism.debug("BlockAction Data was null with "+parameters.toString());
+            Prism.debug("BlockAction Data was null with " + parameters.toString());
         }
         // -----------------------------
         // Sibling logic marker
