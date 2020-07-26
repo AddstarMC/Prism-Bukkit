@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.IntPair;
@@ -75,7 +76,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            dataSource.getLog().error("Database connection error: ", e);
+            Prism.warn("Database connection error: ", e);
         }
     }
 
@@ -115,7 +116,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            dataSource.getLog().error("Database connection error: ", e);
+            Prism.warn("Database connection error: ", e);
         }
     }
 
@@ -142,7 +143,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 handleIdResult(st,success,failure);
             }
         } catch (final SQLException e) {
-            dataSource.getLog().error("Database connection error: ", e);
+            Prism.warn("Database connection error: ", e);
             e.printStackTrace();
         }
     }
@@ -173,7 +174,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 handleIdResult(st,success,failure);
             }
         } catch (final SQLException e) {
-            dataSource.getLog().error("Database connection error: ", e);
+            Prism.warn("Database connection error: ", e);
             e.printStackTrace();
         }
     }
@@ -235,7 +236,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                     st.executeUpdate();
                 }
             } catch (final SQLException e) {
-                dataSource.getLog().error("Database connection error: ", e);
+                Prism.warn("Database connection error: ", e);
                 e.printStackTrace();
             }
         } else {
@@ -249,7 +250,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                     st.executeUpdate();
                 }
             } catch (final SQLException e) {
-                dataSource.getLog().error("Database connection error: ", e);
+                Prism.warn("Database connection error: ", e);
                 e.printStackTrace();
             }
         }
@@ -275,7 +276,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 SQLWarning warning = st.getWarnings();
 
                 while (warning != null) {
-                    dataSource.getLog().warn("sql Warning: " + warning.getMessage());
+                    Prism.warn("sql Warning: " + warning.getMessage());
                     warning = warning.getNextWarning();
                 }
 
@@ -284,14 +285,14 @@ public class SqlIdMapQuery implements IdMapQuery {
                     int autoInc = rs.getInt(1);
 
                     if (!success) {
-                        dataSource.getLog().info("Failed id map: material=" + material + ", " + "state=" + state);
+                        Prism.log("Failed id map: material=" + material + ", " + "state=" + state);
                     }
 
                     return autoInc;
                 }
             }
         } catch (final SQLException e) {
-            dataSource.getLog().error("Database connection error: ", e);
+            Prism.warn("Database connection error: ", e);
             e.printStackTrace();
         }
 

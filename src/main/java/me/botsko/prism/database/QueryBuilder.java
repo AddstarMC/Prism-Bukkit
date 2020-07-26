@@ -1,5 +1,6 @@
 package me.botsko.prism.database;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 import javax.annotation.Nullable;
@@ -61,7 +62,7 @@ abstract public class QueryBuilder {
         String query = select() + where() + group() + order() + limit();
 
         query += ";";
-        dataSource.getLog().debug(query);
+        Prism.debug(query);
         return query;
 
     }
