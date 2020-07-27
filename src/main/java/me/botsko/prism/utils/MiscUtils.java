@@ -11,6 +11,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -172,7 +173,7 @@ public class MiscUtils {
                 if (i == 0) {
                     Arrays.asList(text).forEach(baseComponent -> {
                         baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new TextComponent[]{new TextComponent("Click to teleport")}));
+                                new Text("Click to teleport")));
                         baseComponent.setClickEvent(
                                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp "
                                         + a.getIndex()));
@@ -185,11 +186,7 @@ public class MiscUtils {
             }
             BaseComponent[] finalMessage = new BaseComponent[toSend.size()];
             toSend.toArray(finalMessage);
-            if (PaperLib.isPaper()) {
-                //player.sendMessage(finalMessage);
-            } else {
-                player.spigot().sendMessage(finalMessage);
-            }
+            player.spigot().sendMessage(finalMessage);
         } else {
             player.sendMessage(Prism.messenger.playerMsg(a.getMessage()));
         }
@@ -203,26 +200,14 @@ public class MiscUtils {
      */
     public static void sendPageButtons(QueryResult results, CommandSender player) {
         if (player instanceof Player) {
-            if (PaperLib.isPaper()) {
-                if (results.getPage() == 1) {
-                    if (results.getTotalPages() > 1) {
-                        //player.sendMessage(MiscUtils.getNextButton());
-                    }
-                } else if (results.getPage() < results.getTotalPages()) {
-                    //player.sendMessage(MiscUtils.getPrevNextButtons());
-                } else if (results.getPage() == results.getTotalPages()) {
-                    //player.sendMessage(MiscUtils.getPreviousButton());
+            if (results.getPage() == 1) {
+                if (results.getTotalPages() > 1) {
+                    player.spigot().sendMessage(MiscUtils.getNextButton());
                 }
-            } else {
-                if (results.getPage() == 1) {
-                    if (results.getTotalPages() > 1) {
-                        player.spigot().sendMessage(MiscUtils.getNextButton());
-                    }
-                } else if (results.getPage() < results.getTotalPages()) {
-                    player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
-                } else if (results.getPage() == results.getTotalPages()) {
-                    player.spigot().sendMessage(MiscUtils.getPreviousButton());
-                }
+            } else if (results.getPage() < results.getTotalPages()) {
+                player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
+            } else if (results.getPage() == results.getTotalPages()) {
+                player.spigot().sendMessage(MiscUtils.getPreviousButton());
             }
         }
     }
@@ -303,7 +288,7 @@ public class MiscUtils {
         TextComponent textComponent = new TextComponent(" [<< Prev]");
         textComponent.setColor(ChatColor.GRAY);
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new TextComponent[]{new TextComponent("Click to view the previous page")}));
+                new Text("Click to view the previous page")));
         textComponent.setClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
         return textComponent;
@@ -330,7 +315,7 @@ public class MiscUtils {
     private static BaseComponent getNextButtonComponent() {
         TextComponent textComponent = new TextComponent("[Next >>]");
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new TextComponent[]{new TextComponent("Click to view the next page")}));
+                new Text("Click to view the next page")));
         textComponent.setClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
         return textComponent;
