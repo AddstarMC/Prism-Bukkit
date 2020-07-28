@@ -25,6 +25,7 @@ import org.kitteh.pastegg.PasteContent;
 import org.kitteh.pastegg.PasteFile;
 import org.kitteh.pastegg.Visibility;
 
+import java.awt.Color;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -286,7 +287,7 @@ public class MiscUtils {
      */
     public static TextComponent getPreviousButton() {
         TextComponent textComponent = new TextComponent(" [<< Prev]");
-        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setColor(ChatColor.of(Color.decode("#ef9696")));
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new Text("Click to view the previous page")));
         textComponent.setClickEvent(
@@ -302,7 +303,7 @@ public class MiscUtils {
      */
     public static TextComponent getNextButton() {
         TextComponent textComponent = new TextComponent("           ");
-        textComponent.setColor(ChatColor.GRAY);
+        textComponent.setColor(ChatColor.of(Color.decode("#01a960")));
         textComponent.addExtra(getNextButtonComponent());
         return textComponent;
     }
@@ -316,6 +317,7 @@ public class MiscUtils {
         TextComponent textComponent = new TextComponent("[Next >>]");
         textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                 new Text("Click to view the next page")));
+        textComponent.setColor(ChatColor.of(Color.decode("#01a960")));
         textComponent.setClickEvent(
                 new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
         return textComponent;
@@ -326,12 +328,13 @@ public class MiscUtils {
      *
      * @return BaseComponent.
      */
-    public static BaseComponent getPrevNextButtons() {
-        TextComponent textComponent = new TextComponent();
-        textComponent.setColor(ChatColor.GRAY);
-        textComponent.addExtra(getPreviousButton());
-        textComponent.addExtra(" | ");
-        textComponent.addExtra(getNextButtonComponent());
-        return textComponent;
+    public static BaseComponent[] getPrevNextButtons() {
+        List<TextComponent> textComponent = new ArrayList<>();
+        textComponent.add(getPreviousButton());
+        TextComponent divider = new TextComponent(" | ");
+        divider.setColor(ChatColor.of(Color.decode("#969696")));
+        textComponent.add(divider);
+        textComponent.add(getNextButton());
+        return textComponent.toArray(new BaseComponent[0]);
     }
 }

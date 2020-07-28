@@ -30,8 +30,8 @@ public class DebugCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        if (call.getArgs().length == 1) {
-            String arg = call.getArg(0);
+        if (call.getArgs().length == 2) {
+            String arg = call.getArg(1);
             switch (arg.toLowerCase()) {
                 case "on":
                     Prism.setDebug(true);
@@ -107,6 +107,12 @@ public class DebugCommand implements SubHandler {
         Path prismConfig = dataPath.resolve("config.yml");
         Path hikariProps = dataPath.resolve("hikari.properties");
         Path prismLog = dataPath.resolve("prism.log");
+        String pLog;
+        if (prismLog.toFile().length() < 2000000L) {
+            pLog = getFile(prismLog);
+        } else {
+            pLog = "TRUNCATED DUE TO LARGE SIZE: you may need to manually paste. <pluginDir>/prism.log";
+        }
         PasteBuilder.PasteResult result = new PasteBuilder().name("Prism Debug Output")
                 .visibility(Visibility.UNLISTED)
                 .setApiKey(Prism.getPasteKey())
@@ -120,7 +126,7 @@ public class DebugCommand implements SubHandler {
                 .addFile(new PasteFile("dataSource Properties",
                         new PasteContent(PasteContent.ContentType.TEXT, getDataSourceInfo())))
                 .addFile(new PasteFile("Prism Log",
-                        new PasteContent(PasteContent.ContentType.TEXT,getFile(prismLog))))
+                        new PasteContent(PasteContent.ContentType.TEXT, pLog)))
                 .build();
         if (result.getPaste().isPresent()) {
             String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();

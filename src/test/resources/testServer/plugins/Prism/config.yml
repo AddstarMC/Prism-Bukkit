@@ -162,11 +162,13 @@ prism:
       log-commands:
       - examplecommand <alert>
       blocks:
-        iron_ore: '&7'
-        gold_ore: '&6'
-        lapis_ore: '&9'
-        diamond_ore: '&b'
-        emerald_ore: '&a'
+        iron_ore: '#444444'
+        gold_ore: '&b'
+        lapis_ore: '#0670cc'
+        diamond_ore: '#04babd'
+        emerald_ore: '#21bf60'
+        nether_gold_ore: '#ff7308'
+        ancient_debris: '#856d3e'
     illegal-commands:
       enabled: false
       log-to-console: true

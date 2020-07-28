@@ -3,10 +3,13 @@ package me.botsko.prism.monitors;
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,8 +18,10 @@ public class UseMonitor {
     protected final List<String> blocksToAlertOnBreak;
     private final Prism plugin;
     private ConcurrentHashMap<String, Integer> countedEvents = new ConcurrentHashMap<>();
+
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param plugin Prism
      */
     public UseMonitor(Prism plugin) {
@@ -41,10 +46,13 @@ public class UseMonitor {
         if (count == 5) {
             msg = playername + " continues - pausing warnings.";
         }
-
+        List<BaseComponent> send = new ArrayList<>();
+        TextComponent c = new TextComponent(msg);
+        c.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+        send.add(c);
         if (count <= 5) {
             if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
-                plugin.alertPlayers(null, msg);
+                plugin.alertPlayers(null, send);
                 Prism.log(TypeUtils.colorize(msg));
             }
 
@@ -57,22 +65,32 @@ public class UseMonitor {
     private boolean checkFeatureShouldCancel(Player player) {
 
         // Ensure enabled
-        if (!plugin.getConfig().getBoolean("prism.alerts.uses.enabled"))
+        if (!plugin.getConfig().getBoolean("prism.alerts.uses.enabled")) {
             return true;
+        }
 
         // Ignore players who would see the alerts
-        if (plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff") && player.hasPermission("prism.alerts"))
+        if (plugin.getConfig().getBoolean("prism.alerts.uses.ignore-staff")
+                && player.hasPermission("prism.alerts")) {
             return true;
+        }
 
         // Ignore certain ranks
         return player.hasPermission("prism.bypass-use-alerts");
     }
 
+    /**
+     * Alert on block place.
+     *
+     * @param player Player
+     * @param block  Block.
+     */
     public void alertOnBlockPlacement(Player player, Block block) {
 
         // Ensure enabled
-        if (checkFeatureShouldCancel(player))
+        if (checkFeatureShouldCancel(player)) {
             return;
+        }
 
         final String playername = player.getName();
         final String blockType = "" + block.getType();
@@ -84,11 +102,18 @@ public class UseMonitor {
         }
     }
 
+    /**
+     * Alert on break.
+     *
+     * @param player Player
+     * @param block  block.
+     */
     public void alertOnBlockBreak(Player player, Block block) {
 
         // Ensure enabled
-        if (checkFeatureShouldCancel(player))
+        if (checkFeatureShouldCancel(player)) {
             return;
+        }
 
         final String playername = player.getName();
         final String blockType = "" + block.getType();
@@ -100,28 +125,44 @@ public class UseMonitor {
         }
     }
 
-    public void alertOnItemUse(Player player, String use_msg) {
+    /**
+     * Alert on use.
+     *
+     * @param player Player.
+     * @param useMsg msg/
+     */
+    public void alertOnItemUse(Player player, String useMsg) {
 
         // Ensure enabled
-        if (checkFeatureShouldCancel(player))
+        if (checkFeatureShouldCancel(player)) {
             return;
+        }
 
-        final String playername = player.getName();
-        incrementCount(playername, use_msg);
+        final String playerName = player.getName();
+        incrementCount(playerName, useMsg);
 
     }
 
-    public void alertOnVanillaXray(Player player, String use_msg) {
+    /**
+     * Alert on xray.
+     *
+     * @param player Player
+     * @param useMsg message
+     */
+    public void alertOnVanillaXray(Player player, String useMsg) {
 
-        if (checkFeatureShouldCancel(player))
+        if (checkFeatureShouldCancel(player)) {
             return;
+        }
 
-        final String playername = player.getName();
-        incrementCount(playername, use_msg);
+        final String playerName = player.getName();
+        incrementCount(playerName, useMsg);
 
     }
 
     private void resetEventsQueue() {
-        plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> countedEvents = new ConcurrentHashMap<>(), 7000L, 7000L);
+        plugin.getServer().getScheduler()
+                .scheduleSyncRepeatingTask(plugin, () -> countedEvents = new ConcurrentHashMap<>(),
+                        7000L, 7000L);
     }
 }

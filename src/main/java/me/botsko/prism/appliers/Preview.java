@@ -8,6 +8,8 @@ import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
@@ -146,8 +148,15 @@ public class Preview implements Previewable {
                     if (plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")) {
                         final String cmd = parameters.getOriginalCommand();
                         if (cmd != null) {
-                            plugin.alertPlayers(player, ChatColor.WHITE + processType.name().toLowerCase() + " by "
-                                    + player.getDisplayName() + ChatColor.GRAY + parameters.getOriginalCommand());
+                            List<BaseComponent> msg = new ArrayList<>();
+                            TextComponent s = new TextComponent(processType.name().toLowerCase() + " by "
+                                    + player.getDisplayName());
+                            s.setColor(net.md_5.bungee.api.ChatColor.WHITE);
+                            msg.add(s);
+                            TextComponent t = new TextComponent(parameters.getOriginalCommand());
+                            t.setColor(net.md_5.bungee.api.ChatColor.GRAY);
+                            msg.add(t);
+                            plugin.alertPlayers(player, msg);
                         }
                     }
                 }

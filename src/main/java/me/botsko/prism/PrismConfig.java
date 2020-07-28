@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import me.botsko.prism.database.PrismDatabaseFactory;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -219,11 +220,13 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.alerts.ores.log-commands", Collections.singletonList("examplecommand <alert>"));
         // Ore blocks
         final Map<String, String> oreBlocks = new LinkedHashMap<>();
-        oreBlocks.put("iron_ore", "&7");
-        oreBlocks.put("gold_ore", "&6");
-        oreBlocks.put("lapis_ore", "&9");
-        oreBlocks.put("diamond_ore", "&b");
-        oreBlocks.put("emerald_ore", "&a");
+        oreBlocks.put(Material.IRON_ORE.name().toLowerCase(), "#444444");
+        oreBlocks.put(Material.GOLD_ORE.name().toLowerCase(), "#ffe17d");
+        oreBlocks.put(Material.LAPIS_ORE.name().toLowerCase(), "#0670cc");
+        oreBlocks.put(Material.DIAMOND_ORE.name().toLowerCase(), "#04babd");
+        oreBlocks.put(Material.EMERALD_ORE.name().toLowerCase(), "#21bf60");
+        oreBlocks.put(Material.NETHER_GOLD_ORE.name().toLowerCase(), "#ff7308");
+        oreBlocks.put(Material.ANCIENT_DEBRIS.name().toLowerCase(), "#856d3e");
         config.addDefault("prism.alerts.ores.blocks", oreBlocks);
 
         // Illegal Command Alerts

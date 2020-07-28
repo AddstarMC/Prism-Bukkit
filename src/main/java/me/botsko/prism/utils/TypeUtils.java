@@ -1,7 +1,10 @@
 package me.botsko.prism.utils;
 
-import org.bukkit.ChatColor;
+import me.botsko.prism.Prism;
+import net.md_5.bungee.api.ChatColor;
+import sun.dc.pr.PRError;
 
+import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -12,6 +15,8 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class TypeUtils {
+    private static final String HEX_REGEX = "#([A-Fa-f0-9]{6})";
+    private static final Pattern HEX_PATTERN = Pattern.compile(HEX_REGEX);
 
     /**
      * Is the string numeric.
@@ -62,7 +67,59 @@ public class TypeUtils {
      * @return String
      */
     public static String colorize(String text) {
+        text = parseRgbColours(text);
         return ChatColor.translateAlternateColorCodes('&', text);
+    }
+
+    /**
+     * Parse RBG to Color.
+     *
+     * @param input String
+     * @return String
+     */
+    public static String parseRgbColours(final String input) {
+        String out = input;
+        Matcher matcher = HEX_PATTERN.matcher(out);
+        while (matcher.find()) {
+            int groups = matcher.groupCount();
+            for (int i = 0; i < groups; i++) {
+                String hex = matcher.group(i);
+                Color color;
+                try {
+                    color = Color.decode(hex);
+                    out = out.replace(hex, net.md_5.bungee.api.ChatColor.of(color).toString());
+                } catch (NumberFormatException e) {
+                    out = out.replace(hex, "");
+                    Prism.log("Invalid hex code removed: " + hex + " from " + input);
+                }
+            }
+            matcher = HEX_PATTERN.matcher(out);
+        }
+        return out;
+    }
+
+    /**
+     * Get Color.
+     *
+     * @param hex String.
+     * @return ChatColor.
+     */
+    public static ChatColor from(String hex) {
+        if (hex.length() == 2 && hex.startsWith("&")) {
+            return ChatColor.getByChar(hex.charAt(1));
+        }
+        if (hex.length() != 7 && !hex.startsWith("#")) {
+            Prism.log("Could not decode:" + hex);
+            return ChatColor.WHITE;
+        }
+        try {
+            return ChatColor.of(hex);
+        } catch (NumberFormatException e) {
+            Prism.log("Could not decode:" + hex + " Exception:" + e.getLocalizedMessage());
+            return ChatColor.WHITE;
+        }
+
+
     }
 
     /**
@@ -73,7 +130,7 @@ public class TypeUtils {
      * @return String
      */
     public static String stripTextFormatCodes(String text) {
-        return ChatColor.stripColor(text.replaceAll("(&+([a-z0-9A-Z])+)", ""));
+        return ChatColor.stripColor(text.replaceAll(HEX_REGEX, "").replaceAll("(&+([a-z0-9A-Z])+)", ""));
     }
 
     /**

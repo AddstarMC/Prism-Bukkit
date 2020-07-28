@@ -42,10 +42,13 @@ import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
+import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.wands.Wand;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -86,7 +89,7 @@ import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
-    private static final HashMap<String, String> alertedOres = new HashMap<>();
+    private static final HashMap<Material, ChatColor> alertedOres = new HashMap<>();
     private static final Logger log = Logger.getLogger("Minecraft");
     private static Logger prismLog;
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
@@ -121,6 +124,7 @@ public class Prism extends JavaPlugin {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
+    private static BukkitTask debugWatcher;
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
@@ -145,8 +149,27 @@ public class Prism extends JavaPlugin {
         super(loader, description, dataFolder, file);
     }
 
+    /**
+     * Set the debug state.
+     *
+     * @param debug bool.
+     */
     public static void setDebug(boolean debug) {
         Prism.debug = debug;
+        if (debug && (debugWatcher == null || debugWatcher.isCancelled())) {
+            debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (p.hasPermission("prism.debug")) {
+                        p.sendMessage("ALERT : Prism has debug mode enabled - "
+                                + " LOGS will rapidly grow!!!");
+                    }
+                }
+            }, 500, 4000);
+        } else {
+            if (debugWatcher != null) {
+                debugWatcher.cancel();
+            }
+        }
     }
 
     public static boolean isDebug() {
@@ -194,7 +217,7 @@ public class Prism extends JavaPlugin {
      *
      * @return list
      */
-    public static HashMap<String, String> getAlertedOres() {
+    public static HashMap<Material, ChatColor> getAlertedOres() {
         return alertedOres;
     }
 
@@ -571,7 +594,15 @@ public class Prism extends JavaPlugin {
         alertedOres.clear();
         if (alertBlocks != null) {
             for (final String key : alertBlocks.getKeys(false)) {
-                alertedOres.put(key.toUpperCase(), alertBlocks.getString(key));
+                Material m = Material.matchMaterial(key.toUpperCase());
+                String colorString = alertBlocks.getString(key);
+
+                if (m == null || colorString == null) {
+                    Prism.log("Could not match alert block:" + key + " color:" + colorString);
+                    continue;
+                }
+                ChatColor color = TypeUtils.from(colorString);
+                alertedOres.put(m, color);
             }
         }
         items = new MaterialAliases();
@@ -704,11 +735,16 @@ public class Prism extends JavaPlugin {
      *
      * @param msg String
      */
-    public void alertPlayers(Player player, String msg) {
+    public void alertPlayers(Player player, List<BaseComponent> msg) {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
-                    p.sendMessage(messenger.playerMsg(ChatColor.RED + "[!] " + msg));
+                    List<BaseComponent> finalMessage = new ArrayList<>();
+                    TextComponent prefix = new TextComponent("[!]");
+                    prefix.setColor(net.md_5.bungee.api.ChatColor.RED);
+                    finalMessage.add(prefix);
+                    finalMessage.addAll(msg);
+                    p.spigot().sendMessage(finalMessage.toArray(new BaseComponent[0]));
                 }
             }
         }
