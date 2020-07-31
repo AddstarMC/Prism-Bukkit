@@ -21,7 +21,7 @@ public interface IdMapQuery {
 
     void findAllIdsPartial(String material, String stateLike, Consumer<List<IntPair>> success);
 
-    void map(String material, String state, int block_id, int block_subid);
+    void map(String material, String state, int blockId, int blockSubid);
 
     int mapAutoId(String material, String state);
 }

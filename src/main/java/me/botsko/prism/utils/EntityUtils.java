@@ -51,6 +51,7 @@ public class EntityUtils {
             try {
                 return UUID.fromString(uuidOrName);
             } catch (IllegalArgumentException ignored) {
+                //ignored
             }
 
             @SuppressWarnings("deprecation")

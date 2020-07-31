@@ -11,22 +11,17 @@ import java.util.List;
 
 public class ResetmyCommand implements SubHandler {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public ResetmyCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Handle the command
-     */
     @Override
     public void handle(CallInfo call) {
 
@@ -35,17 +30,16 @@ public class ResetmyCommand implements SubHandler {
             setType = call.getArg(1);
         }
 
-		/*
-		  Inspector wand
-		 */
         if (setType != null && !setType.equalsIgnoreCase("wand")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
             return;
         }
 
         if (!plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
-            call.getPlayer().sendMessage(
-                    Prism.messenger.playerError("Sorry, but personalizing the wand is currently not allowed."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError("Sorry, but personalizing the wand "
+                            + "is currently not allowed."));
         }
 
         // Check for any wand permissions. @todo There should be some central
@@ -56,7 +50,9 @@ public class ResetmyCommand implements SubHandler {
                 && !call.getPlayer().hasPermission("prism.wand.profile")
                 && !call.getPlayer().hasPermission("prism.wand.rollback")
                 && !call.getPlayer().hasPermission("prism.wand.restore")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
+            Prism.getAudiences().audience(
+                    call.getPlayer()).sendMessage(Prism.messenger
+                    .playerError("You do not have permission for this."));
             return;
         }
 
@@ -65,13 +61,13 @@ public class ResetmyCommand implements SubHandler {
             final Wand oldwand = Prism.playersWithActiveTools.get(call.getPlayer().getName());
             oldwand.disable(call.getPlayer());
             Prism.playersWithActiveTools.remove(call.getPlayer().getName());
-            call.getPlayer().sendMessage(Prism.messenger
+            Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                     .playerHeaderMsg("Current wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
         }
 
         Settings.deleteSetting("wand.item", call.getPlayer());
         Settings.deleteSetting("wand.mode", call.getPlayer());
-        call.getPlayer().sendMessage(
+        Prism.messenger.sendMessage(call.getPlayer(),
                 Prism.messenger.playerHeaderMsg("Your personal wand settings have been reset to server defaults."));
     }
 

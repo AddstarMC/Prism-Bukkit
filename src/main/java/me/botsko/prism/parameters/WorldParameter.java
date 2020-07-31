@@ -31,7 +31,7 @@ public class WorldParameter extends SimplePrismParameterHandler {
             if (sender instanceof Player) {
                 worldName = ((Player) sender).getWorld().getName();
             } else {
-                sender.sendMessage(Prism.messenger
+                Prism.messenger.sendMessage(sender, Prism.messenger
                         .playerError("Can't use the current world since you're not a player. Using default world."));
                 worldName = Bukkit.getServer().getWorlds().get(0).getName();
             }

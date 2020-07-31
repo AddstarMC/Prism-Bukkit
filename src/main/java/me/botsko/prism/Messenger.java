@@ -1,9 +1,17 @@
 package me.botsko.prism;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.command.CommandSender;
 
 public class Messenger {
 
+
+    private final AudienceProvider audienceProvider;
     private final String pluginName;
 
     /**
@@ -12,8 +20,13 @@ public class Messenger {
      * @param pluginName String
      */
     @SuppressWarnings("WeakerAccess")
-    public Messenger(String pluginName) {
+    public Messenger(String pluginName, AudienceProvider provider) {
         this.pluginName = pluginName;
+        this.audienceProvider = provider;
+    }
+
+    public void sendMessage(CommandSender sender, Component message) {
+        ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message);
     }
 
     /**
@@ -22,11 +35,21 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerHeaderMsg(String msg) {
+    public TextComponent playerHeaderMsg(TextComponent msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.WHITE + msg;
+            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.WHITE);
+            return TextComponent.builder()
+                    .content(pluginName)
+                    .color(NamedTextColor.LIGHT_PURPLE)
+                    .append(coloredMessage)
+                    .build();
         }
-        return "";
+        return TextComponent.empty();
+    }
+
+    @Deprecated
+    public TextComponent playerHeaderMsg(String msg) {
+        return playerHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
     }
 
     /**
@@ -35,11 +58,21 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerSubduedHeaderMsg(String msg) {
+    public TextComponent playerSubduedHeaderMsg(TextComponent msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.GRAY + msg;
+            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.GRAY);
+            return TextComponent.builder()
+                    .content(pluginName + " ")
+                    .color(NamedTextColor.LIGHT_PURPLE)
+                    .append(coloredMessage)
+                    .build();
         }
-        return "";
+        return TextComponent.empty();
+    }
+
+    @Deprecated
+    public TextComponent playerSubduedHeaderMsg(String msg) {
+        return playerSubduedHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
     }
 
     /**
@@ -48,26 +81,26 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerMsg(String msg) {
+    @Deprecated
+    public TextComponent playerMsg(String msg) {
         if (msg != null) {
-            return ChatColor.WHITE + msg;
+            TextComponent component = LegacyComponentSerializer.legacySection().deserialize(msg);
+            return playerMsg(component);
         }
-        return "";
+        return TextComponent.empty();
     }
 
     /**
-     * Get the message String[].
+     * Get the message colored white by default.
      *
-     * @param msg the message to prefix.
-     * @return String[].
+     * @param msg TextComponent
+     * @return TextComponent
      */
-    public String[] playerMsg(String[] msg) {
+    public TextComponent playerMsg(TextComponent msg) {
         if (msg != null) {
-            for (int i = 0; i < msg.length; i++) {
-                msg[i] = playerMsg(msg[i]);
-            }
+            return msg.colorIfAbsent(NamedTextColor.WHITE);
         }
-        return msg;
+        return TextComponent.empty();
     }
 
     /**
@@ -77,8 +110,12 @@ public class Messenger {
      * @param help - a message.
      * @return String.
      */
-    public String playerHelp(String cmd, String help) {
-        return ChatColor.GRAY + "/prism " + ChatColor.LIGHT_PURPLE + cmd + ChatColor.WHITE + " - " + help;
+    public TextComponent playerHelp(String cmd, String help) {
+        return TextComponent.builder()
+                .content("/prism").color(NamedTextColor.GRAY)
+                .build()
+                .append(TextComponent.of(cmd).color(NamedTextColor.LIGHT_PURPLE))
+                .append(TextComponent.of(" - " + help).color(NamedTextColor.WHITE));
     }
 
     /**
@@ -87,11 +124,17 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerError(String msg) {
-        if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.RED + msg;
-        }
-        return "";
+    public TextComponent playerError(TextComponent msg) {
+        TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.RED);
+        return TextComponent.builder()
+                .content(pluginName + " ")
+                .color(NamedTextColor.LIGHT_PURPLE)
+                .append(coloredMessage)
+                .build();
+    }
+
+    public TextComponent playerError(String msg) {
+        return playerError(TextComponent.of(msg));
     }
 
     /**
@@ -100,11 +143,29 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerSuccess(String msg) {
+    public TextComponent playerSuccess(String msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.GREEN + msg;
+            return playerSuccess(TextComponent.of(msg));
         }
-        return "";
+        return TextComponent.empty();
+    }
+
+    /**
+     * Get the Success message.
+     *
+     * @param msg the message to prefix.
+     * @return String.
+     */
+    public TextComponent playerSuccess(TextComponent msg) {
+        if (msg != null) {
+            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.GREEN);
+            return TextComponent.builder()
+                    .content(pluginName + " ")
+                    .color(NamedTextColor.LIGHT_PURPLE)
+                    .append(coloredMessage)
+                    .build();
+        }
+        return TextComponent.empty();
     }
 
 }

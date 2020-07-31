@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -12,10 +13,14 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class LookupCommand implements SubHandler {
 
@@ -61,13 +66,14 @@ public class LookupCommand implements SubHandler {
 
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getSender());
-            StringBuilder sharingWithPlayers = new StringBuilder();
+            final StringBuilder sharingWithPlayers = new StringBuilder();
             for (final CommandSender shareWith : parameters.getSharedPlayers()) {
                 sharingWithPlayers.append(shareWith.getName()).append(", ");
             }
-            sharingWithPlayers = new StringBuilder(sharingWithPlayers.substring(0,
-                    (sharingWithPlayers.length() == 0) ? 0 : sharingWithPlayers.length() - 2));
-
+            if (sharingWithPlayers.length() == 0) {
+                sharingWithPlayers.delete(sharingWithPlayers.lastIndexOf(","), sharingWithPlayers.length());
+            }
+            final String playersList = sharingWithPlayers.toString();
             // Add current sender
             parameters.addSharedPlayer(call.getSender());
 
@@ -76,27 +82,33 @@ public class LookupCommand implements SubHandler {
                 final boolean isSender = player.getName().equals(call.getSender().getName());
 
                 if (!isSender) {
-                    player.sendMessage(Prism.messenger
-                            .playerHeaderMsg(ChatColor.YELLOW + ""
-                                    + ChatColor.ITALIC
-                                    + call.getSender().getName()
-                                    + ChatColor.GOLD
-                                    + " shared these Prism lookup logs with you:"));
+                    Prism.messenger.sendMessage(player, Prism.messenger
+                            .playerHeaderMsg(
+                                    Il8n.getMessage("lookup-share-message")
+                                            .color(NamedTextColor.GOLD)
+                                            .replaceFirst(Pattern.compile("<sender>"), builder ->
+                                                    TextComponent.builder().content(call.getSender().getName())
+                                                            .color(NamedTextColor.YELLOW)
+                                                            .decoration(TextDecoration.ITALIC,
+                                                                    TextDecoration.State.TRUE))));
                 } else if (sharingWithPlayers.length() > 0) {
-                    player.sendMessage(
-                            Prism.messenger.playerHeaderMsg(ChatColor.GOLD
-                                    + "Sharing results with players: "
-                                    + ChatColor.YELLOW + ""
-                                    + ChatColor.ITALIC + sharingWithPlayers));
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerHeaderMsg(
+                                    Il8n.getMessage("lookup-share-to-message")
+                                            .color(NamedTextColor.GOLD)
+                                            .replaceFirst(Pattern.compile("<players>"), builder ->
+                                                    TextComponent.builder().content(playersList)
+                                                            .color(NamedTextColor.YELLOW)
+                                                            .decoration(TextDecoration.ITALIC,
+                                                                    TextDecoration.State.TRUE))));
                 }
-
                 if (!results.getActionResults().isEmpty()) {
-                    player.sendMessage(Prism.messenger.playerHeaderMsg("Showing "
+                    Prism.messenger.sendMessage(player, Prism.messenger.playerHeaderMsg("Showing "
                             + results.getTotalResults()
                             + " results. Page 1 of "
                             + results.getTotalPages()));
                     if ((defaultsReminder.length() > 0) && isSender) {
-                        player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                        Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
                                 defaultsReminder.toString()));
                     }
                     final List<Handler> paginated = results.getPaginatedActionResults();
@@ -115,9 +127,8 @@ public class LookupCommand implements SubHandler {
                         }
                         MiscUtils.sendPageButtons(results, player);
                     } else {
-                        player.sendMessage(Prism.messenger
-                                .playerError("Pagination can't find anything. "
-                                        + "Do you have the right page number?"));
+                        Prism.messenger.sendMessage(player, Prism.messenger
+                                .playerError(Il8n.getMessage("no-pagination-found")));
                     }
                     if (parameters.hasFlag(Flag.PASTE)) {
                         StringBuilder paste = new StringBuilder();
@@ -129,12 +140,12 @@ public class LookupCommand implements SubHandler {
                 } else {
                     if (defaultsReminder.length() > 0) {
                         if (isSender) {
-                            player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                            Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
                                     defaultsReminder.toString()));
                         }
                     }
                     if (isSender) {
-                        player.sendMessage(Prism.messenger.playerError("Nothing found."
+                        Prism.messenger.sendMessage(player, Prism.messenger.playerError("Nothing found."
                                 + ChatColor.GRAY
                                 + " Either you're missing something, or we are."));
                     }

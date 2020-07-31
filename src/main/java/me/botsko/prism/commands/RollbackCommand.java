@@ -31,14 +31,16 @@ public class RollbackCommand extends AbstractCommand {
         parameters.setProcessType(PrismProcessType.ROLLBACK);
         parameters.setStringFromRawArgs(call.getArgs(), 1);
         StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-        call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getSender());
             if (!results.getActionResults().isEmpty()) {
 
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Beginning rollback..."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg("Beginning rollback..."));
 
                 // Perform rollback on the main thread
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -48,7 +50,7 @@ public class RollbackCommand extends AbstractCommand {
                 });
 
             } else {
-                call.getSender().sendMessage(
+                Prism.messenger.sendMessage(call.getSender(),
                         Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first."));
             }
         });

@@ -11,9 +11,6 @@ import java.util.Map.Entry;
 
 public class PrismApplierCallback implements ApplierCallback {
 
-    /**
-     *
-     */
     @Override
     public void handle(CommandSender sender, ApplierResult result) {
 
@@ -22,7 +19,7 @@ public class PrismApplierCallback implements ApplierCallback {
         if (!entitiesMoved.isEmpty()) {
             for (final Entry<Entity, Integer> entry : entitiesMoved.entrySet()) {
                 if (entry.getKey() instanceof Player) {
-                    entry.getKey().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+                    Prism.messenger.sendMessage(entry.getKey(), Prism.messenger.playerSubduedHeaderMsg(
                             "Moved you " + entry.getValue() + " blocks to safety due to a rollback."));
                 }
             }
@@ -41,7 +38,7 @@ public class PrismApplierCallback implements ApplierCallback {
                 if (result.getChangesApplied() > 0) {
                     msg += ChatColor.GRAY + " It's like it never happened.";
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
+                Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(msg));
 
             } else {
 
@@ -53,11 +50,11 @@ public class PrismApplierCallback implements ApplierCallback {
                 if (result.getChangesPlanned() > 0) {
                     msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
+                Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(msg));
 
                 // Let me know there's no need to cancel/apply
                 if (result.getChangesPlanned() == 0) {
-                    sender.sendMessage(Prism.messenger
+                    Prism.messenger.sendMessage(sender, Prism.messenger
                             .playerHeaderMsg(ChatColor.GRAY + "Nothing to rollback, preview canceled for you."));
                 }
             }
@@ -75,7 +72,7 @@ public class PrismApplierCallback implements ApplierCallback {
                 if (result.getChangesApplied() > 0) {
                     msg += ChatColor.GRAY + " It's like it was always there.";
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
+                Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(msg));
 
             } else {
 
@@ -87,11 +84,11 @@ public class PrismApplierCallback implements ApplierCallback {
                 if (result.getChangesPlanned() > 0) {
                     msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
+                Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(msg));
 
                 // Let me know there's no need to cancel/apply
                 if (result.getChangesPlanned() == 0) {
-                    sender.sendMessage(Prism.messenger
+                    Prism.messenger.sendMessage(sender, Prism.messenger
                             .playerHeaderMsg(ChatColor.GRAY + "Nothing to restore, preview canceled for you."));
                 }
             }
@@ -108,13 +105,13 @@ public class PrismApplierCallback implements ApplierCallback {
             if (result.getChangesApplied() > 0) {
                 msg += ChatColor.GRAY + " If anyone asks, you never did that.";
             }
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
+            Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(msg));
 
         }
 
         // Notify shared players of previews
         for (final CommandSender sharedPlayer : result.getParameters().getSharedPlayers()) {
-            sharedPlayer.sendMessage(Prism.messenger.playerHeaderMsg(
+            Prism.messenger.sendMessage(sharedPlayer, Prism.messenger.playerHeaderMsg(
                     "A preview is being shared with you: " + result.getParameters().getOriginalCommand()));
         }
     }

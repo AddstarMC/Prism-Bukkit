@@ -13,6 +13,7 @@ import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.utils.MiscUtils;
+import net.kyori.adventure.audience.Audience;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,7 @@ public class PreviewCommand extends AbstractCommand {
 
     @Override
     public void handle(final CallInfo call) {
+        final Audience audience = Prism.getAudiences().audience(call.getPlayer());
         if (call.getArgs().length >= 2) {
 
             if (call.getArg(1).equalsIgnoreCase("apply")) {
@@ -49,7 +51,7 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().apply_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
                 }
                 return;
             }
@@ -60,14 +62,14 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().cancel_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
                 }
                 return;
             }
 
             // Ensure no current preview is waiting
             if (plugin.playerActivePreviews.containsKey(call.getPlayer().getName())) {
-                call.getPlayer().sendMessage(Prism.messenger
+                audience.sendMessage(Prism.messenger
                         .playerError("You have an existing preview pending. Please apply or cancel before moving on."));
                 return;
             }
@@ -84,13 +86,13 @@ public class PreviewCommand extends AbstractCommand {
                 parameters.setStringFromRawArgs(call.getArgs(), 1);
 
                 if (parameters.getActionTypes().containsKey("world-edit")) {
-                    call.getPlayer().sendMessage(Prism.messenger
+                    audience.sendMessage(Prism.messenger
                             .playerError("Prism does not support previews for WorldEdit rollbacks/restores yet."));
                     return;
                 }
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-                call.getPlayer()
-                        .sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
+                audience.sendMessage(Prism.messenger
+                        .playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
 
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
@@ -103,7 +105,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.ROLLBACK);
                         if (!results.getActionResults().isEmpty()) {
 
-                            call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -112,7 +114,7 @@ public class PreviewCommand extends AbstractCommand {
                                 rs.preview();
                             });
                         } else {
-                            call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
+                            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
                         }
                     }
                     // Restore
@@ -120,7 +122,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.RESTORE);
                         if (!results.getActionResults().isEmpty()) {
 
-                            call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -129,14 +131,14 @@ public class PreviewCommand extends AbstractCommand {
                                 rs.preview();
                             });
                         } else {
-                            call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
+                            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
                         }
                     }
                 });
                 return;
             }
 
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
+            audience.sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
 
         }
     }

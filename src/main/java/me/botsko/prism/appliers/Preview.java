@@ -8,8 +8,8 @@ import me.botsko.prism.events.PrismBlocksRollbackEvent;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
@@ -47,6 +47,7 @@ public class Preview implements Previewable {
 
     /**
      * Constructor.
+     *
      * @param plugin Prism
      */
     public Preview(Prism plugin, CommandSender sender, Collection<Handler> results, QueryParameters parameters,
@@ -79,8 +80,9 @@ public class Preview implements Previewable {
 
     @Override
     public void cancel_preview() {
-        if (player == null)
+        if (player == null) {
             return;
+        }
         if (!blockStateChanges.isEmpty()) {
 
             // pull all players that are part of this preview
@@ -92,23 +94,24 @@ public class Preview implements Previewable {
                 BlockData data = u.getOriginalBlock().getBlockData();
 
                 for (final CommandSender sharedPlayer : previewPlayers) {
-                    if (sharedPlayer instanceof Player)
+                    if (sharedPlayer instanceof Player) {
                         EntityUtils.sendBlockChange((Player) sharedPlayer, loc, data);
+                    }
                 }
             }
         }
-        sender.sendMessage(
-                Prism.messenger.playerHeaderMsg("Preview canceled." + ChatColor.GRAY + " Please come again!"));
+        Prism.messenger.sendMessage(sender,
+                Prism.messenger.playerHeaderMsg("Preview canceled."
+                        + ChatColor.GRAY + " Please come again!"));
     }
 
-    /**
-     *
-     */
     @Override
     public void apply_preview() {
-        if (player == null)
+        if (player == null) {
             return;
-        sender.sendMessage(Prism.messenger.playerHeaderMsg("Applying rollback from preview..."));
+        }
+        Prism.messenger.sendMessage(sender,
+                Prism.messenger.playerHeaderMsg("Applying rollback from preview..."));
         setIsPreview(false);
         changesAppliedCount = 0;
         skippedBlockCount = 0;
@@ -116,9 +119,6 @@ public class Preview implements Previewable {
         apply();
     }
 
-    /**
-     *
-     */
     @Override
     public void preview() {
     }
@@ -130,33 +130,33 @@ public class Preview implements Previewable {
 
             if (!isPreview && player != null) {
 
-                Wand oldwand = null;
+                Wand oldWand = null;
                 if (Prism.playersWithActiveTools.containsKey(player.getName())) {
                     // Pull the wand in use
-                    oldwand = Prism.playersWithActiveTools.get(player.getName());
+                    oldWand = Prism.playersWithActiveTools.get(player.getName());
                 }
 
-                boolean show_nearby = true;
-                if (oldwand instanceof RollbackWand) {
-                    show_nearby = false;
+                boolean showNearby = true;
+                if (oldWand instanceof RollbackWand) {
+                    showNearby = false;
                 }
-                if (show_nearby) {
+                if (showNearby) {
                     // Inform nearby players
-                    plugin.notifyNearby(player, parameters.getRadius(), player.getDisplayName() + " is performing a "
-                            + processType.name().toLowerCase() + " near you.");
+                    plugin.notifyNearby(player, parameters.getRadius(),
+                            player.getDisplayName() + " is performing a "
+                                    + processType.name().toLowerCase() + " near you.");
                     // Inform staff
                     if (plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")) {
                         final String cmd = parameters.getOriginalCommand();
                         if (cmd != null) {
-                            List<BaseComponent> msg = new ArrayList<>();
-                            TextComponent s = new TextComponent(processType.name().toLowerCase() + " by "
-                                    + player.getDisplayName());
-                            s.setColor(net.md_5.bungee.api.ChatColor.WHITE);
-                            msg.add(s);
-                            TextComponent t = new TextComponent(parameters.getOriginalCommand());
-                            t.setColor(net.md_5.bungee.api.ChatColor.GRAY);
-                            msg.add(t);
-                            plugin.alertPlayers(player, msg);
+                            TextComponent s =
+                                    TextComponent.builder().content(processType.name().toLowerCase()
+                                            + " by " + player.getDisplayName())
+                                            .color(NamedTextColor.WHITE)
+                                            .append(TextComponent.of(parameters.getOriginalCommand())
+                                                    .color(NamedTextColor.GRAY))
+                                            .build();
+                            plugin.alertPlayers(player, s);
                         }
                     }
                 }
@@ -179,52 +179,35 @@ public class Preview implements Previewable {
             }
 
             if (worldChangeQueue.isEmpty()) {
-                sender.sendMessage(
-                        Prism.messenger.playerError(ChatColor.GRAY + "No actions found that match the criteria."));
+                Prism.messenger.sendMessage(sender,
+                        Prism.messenger.playerError(ChatColor.GRAY
+                                + "No actions found that match the criteria."));
                 return;
             }
 
             int iterationCount = 0;
             final int currentQueueOffset = blockChangesRead;
             if (currentQueueOffset < worldChangeQueue.size()) {
-                for (final Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset); iterator
-                        .hasNext(); ) {
+                for (final Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset);
+                     iterator.hasNext(); ) {
                     final Handler a = iterator.next();
-
-                    // Only iterate the queue using a diff offset when
-                    // previewing, actual rollbacks
-                    // will remove from the queue and we'd begin at zero
-                    // again
-                    if (isPreview)
+                    if (isPreview) {
                         blockChangesRead++;
-
-                    // We only want to process a set number of block changes
-                    // per
-                    // schedule. Breaking here will leave the rest in the
-                    // queue.
+                    }
                     iterationCount++;
                     if (iterationCount >= 1000) {
                         break;
                     }
-
-                    // No sense in trying to rollback
-                    // when the type doesn't support it.
                     if (processType.equals(PrismProcessType.ROLLBACK) && !a.getActionType().canRollback()) {
                         iterator.remove();
                         continue;
                     }
 
-                    // No sense in trying to restore
-                    // when the type doesn't support it.
                     if (processType.equals(PrismProcessType.RESTORE) && !a.getActionType().canRestore()) {
                         iterator.remove();
                         continue;
                     }
 
-					/*
-					  Reverse or restore block changes by allowing the handler to decide what needs
-					  to happen.
-					 */
                     ChangeResult result = null;
 
                     try {
@@ -238,48 +221,29 @@ public class Preview implements Previewable {
                             result = a.applyUndo(player, parameters, isPreview);
                         }
 
-                        // No action, continue
                         if (result == null) {
                             iterator.remove();
                             continue;
                         }
-                        // Skip actions that have not returned any results
                         if (result.getType() == null) {
                             skippedBlockCount++;
                             iterator.remove();
                             continue;
-                        }
-                        // Skipping
-                        else if (result.getType().equals(ChangeResultType.SKIPPED)) {
+                        } else if (result.getType().equals(ChangeResultType.SKIPPED)) {
                             skippedBlockCount++;
                             iterator.remove();
                             continue;
-                        }
-                        // Skipping, but change planned
-                        else if (result.getType().equals(ChangeResultType.PLANNED)) {
+                        } else if (result.getType().equals(ChangeResultType.PLANNED)) {
                             changesPlannedCount++;
                             continue;
-                        }
-                        // Change applied
-                        else {
+                        } else {
                             blockStateChanges.add(result.getBlockStateChange());
                             changesAppliedCount++;
                         }
-                        // Unless a preview, remove from queue
                         if (!isPreview) {
                             iterator.remove();
                         }
                     } catch (final Exception e) {
-
-                        // Something caused an exception. We *have* to catch
-                        // this
-                        // so we can remove the item from the queue,
-                        // otherwise
-                        // the cycle will just spin in eternity and all
-                        // damnation, normally killing their server through
-                        // log files in the GB.
-
-                        // Log the error so they have something to report
                         String line = "Applier error:";
                         String message = e.getMessage();
 
@@ -323,42 +287,6 @@ public class Preview implements Previewable {
 
     private void postProcess() {
 
-        // POST ROLLBACK TRIGGERS
-        if (processType.equals(PrismProcessType.ROLLBACK)) {
-
-            // We're going to modify the action type of the query params
-            // and pass it along to a restore.
-            // NOTE: These params have been modified from original, so
-            // do NOT use the object for original params.
-
-            // /**
-            // * If we've rolled back any containers we need to restore
-            // item-removes.
-            // */
-            // if(parameters.shouldTriggerRollbackFor(ActionType.ITEM_REMOVE)){
-            //
-            // Prism.debug("Action being rolled back triggers a second rollback: Item
-            // Remove");
-            //
-            // QueryParameters triggerParameters;
-            // try {
-            // triggerParameters = parameters.clone();
-            // triggerParameters.resetActionTypes();
-            // triggerParameters.addActionType(ActionType.ITEM_REMOVE);
-            //
-            // ActionsQuery aq = new ActionsQuery(plugin);
-            // QueryResult results = aq.lookup( player, triggerParameters );
-            // if(!results.getActionResults().isEmpty()){
-            // Rollback rb = new Rollback( plugin, player,
-            // results.getActionResults(), triggerParameters );
-            // rb.apply();
-            // }
-            // } catch (CloneNotSupportedException e) {
-            // e.printStackTrace();
-            // }
-            // }
-        }
-
         moveEntitiesToSafety();
 
         fireApplierCallback();
@@ -378,8 +306,9 @@ public class Preview implements Previewable {
                         final Location l = entity.getLocation();
                         while (!EntityUtils.playerMayPassThrough(l.getBlock().getType())) {
                             add++;
-                            if (l.getY() >= 256)
+                            if (l.getY() >= 256) {
                                 break;
+                            }
                             l.setY(l.getY() + 1);
                         }
                         if (add > 0) {

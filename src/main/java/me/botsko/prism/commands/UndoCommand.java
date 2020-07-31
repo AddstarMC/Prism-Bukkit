@@ -15,64 +15,61 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.ChatColor;
 
 import java.util.List;
 
 public class UndoCommand implements SubHandler {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public UndoCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Handle the command
-     */
     @Override
     public void handle(CallInfo call) {
-
+        final Audience audience = Prism.getAudiences().audience(call.getPlayer());
         if (call.getArgs().length > 1) {
 
             final ActionsQuery aq = new ActionsQuery(plugin);
 
-            long record_id = 0;
+            long recordId = 0;
             if (TypeUtils.isNumeric(call.getArg(1))) {
-                record_id = Long.parseLong(call.getArg(1));
-                if (record_id <= 0) {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("Record ID must be greater than zero."));
+                recordId = Long.parseLong(call.getArg(1));
+                if (recordId <= 0) {
+                    audience.sendMessage(
+                            Prism.messenger.playerError("Record ID must be greater than zero."));
                     return;
                 }
             } else {
                 if (call.getArg(1).equals("last")) {
-                    record_id = aq.getUsersLastPrismProcessId(call.getPlayer().getName());
+                    recordId = aq.getUsersLastPrismProcessId(call.getPlayer().getName());
                 }
             }
 
             // Invalid id
-            if (record_id == 0) {
-                call.getPlayer()
+            if (recordId == 0) {
+                audience
                         .sendMessage(Prism.messenger.playerError("Either you have no last process or an invalid ID."));
                 return;
             }
 
-            final PrismProcessAction process = aq.getPrismProcessRecord(record_id);
+            final PrismProcessAction process = aq.getPrismProcessRecord(recordId);
             if (process == null) {
-                call.getPlayer().sendMessage(Prism.messenger.playerError("A process does not exists with that value."));
+                audience.sendMessage(Prism.messenger.playerError("A process does not exists with that value."));
                 return;
             }
 
             // We only support this for drains
             if (!process.getProcessChildActionType().equals("prism-drain")) {
-                call.getPlayer().sendMessage(
+                audience.sendMessage(
                         Prism.messenger.playerError("You can't currently undo anything other than a drain process."));
                 return;
             }
@@ -82,7 +79,7 @@ public class UndoCommand implements SubHandler {
             parameters.setWorld(call.getPlayer().getWorld().getName());
             parameters.addActionType(process.getProcessChildActionType());
             parameters.addPlayerName(call.getPlayer().getName());
-            parameters.setParentId(record_id);
+            parameters.setParentId(recordId);
             parameters.setProcessType(PrismProcessType.UNDO);
 
             // make sure the distance isn't too far away
@@ -90,7 +87,7 @@ public class UndoCommand implements SubHandler {
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
 
-                call.getPlayer()
+                audience
                         .sendMessage(Prism.messenger.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!"));
 
                 final Previewable rb = new Undo(plugin, call.getPlayer(), results.getActionResults(), parameters,
@@ -98,7 +95,7 @@ public class UndoCommand implements SubHandler {
                 rb.apply();
 
             } else {
-                call.getPlayer().sendMessage(
+                audience.sendMessage(
                         Prism.messenger.playerError("Nothing found to undo. Must be a problem with Prism."));
             }
 
@@ -116,9 +113,9 @@ public class UndoCommand implements SubHandler {
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
-                call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
+                audience.sendMessage(Prism.messenger.playerHeaderMsg(
                         "Showing " + results.getTotalResults() + " results. Page 1 of " + results.getTotalPages()));
-                call.getPlayer().sendMessage(
+                audience.sendMessage(
                         Prism.messenger.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process"));
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {
@@ -128,14 +125,14 @@ public class UndoCommand implements SubHandler {
                                 || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
                             am.showExtended();
                         }
-                        call.getPlayer().sendMessage(Prism.messenger.playerMsg(am.getMessage()));
+                        audience.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
                     }
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger
+                    audience.sendMessage(Prism.messenger
                             .playerError("Pagination can't find anything. Do you have the right page number?"));
                 }
             } else {
-                call.getPlayer().sendMessage(Prism.messenger.playerError(
+                audience.sendMessage(Prism.messenger.playerError(
                         "Nothing found." + ChatColor.GRAY + " Either you're missing something, or we are."));
             }
         }

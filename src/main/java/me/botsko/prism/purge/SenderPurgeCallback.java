@@ -6,29 +6,23 @@ import org.bukkit.command.CommandSender;
 
 public class SenderPurgeCallback implements PurgeCallback {
 
-    /**
-     *
-     */
     private CommandSender sender;
 
-    /**
-     * Simply log the purges, being done automatically
-     */
     @Override
-    public void cycle(QueryParameters param, int cycle_rows_affected, int total_records_affected,
-                      boolean cycle_complete, long max_cycle_time) {
-        if (sender == null)
+    public void cycle(QueryParameters param, int cycleRowsAffected, int totalRecordsAffected,
+                      boolean cycleComplete, long maxCycleTime) {
+        if (sender == null) {
             return;
-        sender.sendMessage(
-                Prism.messenger.playerSubduedHeaderMsg("Purge cycle cleared " + cycle_rows_affected + " records."));
-        if (cycle_complete) {
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(total_records_affected + " records purged. Max cycle time " + max_cycle_time + " msec."));
+        }
+        Prism.messenger.sendMessage(sender,
+                Prism.messenger.playerSubduedHeaderMsg("Purge cycle cleared " + cycleRowsAffected + " records."));
+        if (cycleComplete) {
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerHeaderMsg(totalRecordsAffected + " records purged. Max cycle time "
+                            + maxCycleTime + " msec."));
         }
     }
 
-    /**
-     * @param sender
-     */
     public void setSender(CommandSender sender) {
         this.sender = sender;
     }

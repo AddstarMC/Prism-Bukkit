@@ -67,7 +67,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
         for (String name : parameters.getPlayerNames().keySet()) {
             playerName = name;
         }
-        sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+        Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
                 "Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "..."));
 
         final int colTextLen = 20;
@@ -78,9 +78,9 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 ResultSet rs = s.executeQuery()
 
         ) {
-            sender.sendMessage(Prism.messenger
+            Prism.messenger.sendMessage(sender, Prism.messenger
                     .playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName));
-            sender.sendMessage(
+            Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Block", colTextLen)
                             + TypeUtils.padStringRight("Placed", colIntLen)
                             + TypeUtils.padStringRight("Broken", colIntLen)));
@@ -111,8 +111,9 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 final String colPlaced = TypeUtils.padStringRight("" + placed, colIntLen);
                 final String colBroken = TypeUtils.padStringRight("" + broken, colIntLen);
 
-                sender.sendMessage(Prism.messenger.playerMsg(ChatColor.DARK_AQUA + colAlias
-                        + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
+                Prism.messenger.sendMessage(sender,
+                        Prism.messenger.playerMsg(ChatColor.DARK_AQUA + colAlias
+                                + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
 
             }
         } catch (SQLException e) {

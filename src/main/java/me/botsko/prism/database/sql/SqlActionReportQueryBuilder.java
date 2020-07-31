@@ -58,14 +58,14 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
         final String playerName = tempName;
         final int colTextLen = 16;
         final int colIntLen = 12;
-        sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
+        Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
                 "Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "..."));
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery()
         ) {
-            sender.sendMessage(
+            Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Action", colTextLen)
                             + TypeUtils.padStringRight("Count", colIntLen)));
             while (rs.next()) {
@@ -74,7 +74,7 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
 
                 final String colAlias = TypeUtils.padStringRight(action, colTextLen);
                 final String colPlaced = TypeUtils.padStringRight("" + count, colIntLen);
-                sender.sendMessage(Prism.messenger
+                Prism.messenger.sendMessage(sender, Prism.messenger
                         .playerMsg(ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced));
 
             }

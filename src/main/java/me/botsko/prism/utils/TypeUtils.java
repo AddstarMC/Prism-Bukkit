@@ -1,9 +1,13 @@
 package me.botsko.prism.utils;
 
+import com.sk89q.worldedit.util.formatting.text.serializer.plain.PlainComponentSerializer;
 import me.botsko.prism.Prism;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyFormat;
 
-import java.awt.Color;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -65,36 +69,12 @@ public class TypeUtils {
      * @param text String
      * @return String
      */
-    public static String colorize(String text) {
-        text = parseRgbColours(text);
-        return ChatColor.translateAlternateColorCodes('&', text);
-    }
-
-    /**
-     * Parse RBG to Color.
-     *
-     * @param input String
-     * @return String
-     */
-    public static String parseRgbColours(final String input) {
-        String out = input;
-        Matcher matcher = HEX_PATTERN.matcher(out);
-        while (matcher.find()) {
-            int groups = matcher.groupCount();
-            for (int i = 0; i < groups; i++) {
-                String hex = matcher.group(i);
-                Color color;
-                try {
-                    color = Color.decode(hex);
-                    out = out.replace(hex, net.md_5.bungee.api.ChatColor.of(color).toString());
-                } catch (NumberFormatException e) {
-                    out = out.replace(hex, "");
-                    Prism.log("Invalid hex code removed: " + hex + " from " + input);
-                }
-            }
-            matcher = HEX_PATTERN.matcher(out);
-        }
-        return out;
+    public static TextComponent colorize(String text) {
+        return LegacyComponentSerializer.builder()
+                .character(LegacyComponentSerializer.SECTION_CHAR)
+                .hexColors()
+                .build()
+                .deserialize(text);
     }
 
     /**
@@ -103,21 +83,24 @@ public class TypeUtils {
      * @param hex String.
      * @return ChatColor.
      */
-    public static ChatColor from(String hex) {
+    public static TextColor from(String hex) {
         if (hex.length() == 2 && hex.startsWith("&")) {
-            return ChatColor.getByChar(hex.charAt(1));
+            LegacyFormat format = LegacyComponentSerializer.parseChar(hex.charAt(1));
+            if (format != null && format.color() != null) {
+                return format.color();
+            } else {
+                return NamedTextColor.WHITE;
+            }
         }
         if (hex.length() != 7 && !hex.startsWith("#")) {
             Prism.log("Could not decode:" + hex);
-            return ChatColor.WHITE;
+            return NamedTextColor.WHITE;
         }
-        try {
-            return ChatColor.of(hex);
-        } catch (NumberFormatException e) {
-            Prism.log("Could not decode:" + hex + " Exception:" + e.getLocalizedMessage());
-            return ChatColor.WHITE;
+        TextColor color = TextColor.fromHexString(hex);
+        if (color == null) {
+            return NamedTextColor.WHITE;
         }
-
+        return color;
 
     }
 
@@ -129,7 +112,7 @@ public class TypeUtils {
      * @return String
      */
     public static String stripTextFormatCodes(String text) {
-        return ChatColor.stripColor(text.replaceAll(HEX_REGEX, "").replaceAll("(&+([a-z0-9A-Z])+)", ""));
+        return PlainComponentSerializer.INSTANCE.deserialize(text).content();
     }
 
     /**

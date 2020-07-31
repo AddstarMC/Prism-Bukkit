@@ -12,30 +12,25 @@ import java.util.List;
 
 public class ViewCommand implements SubHandler {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public ViewCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Handle the command
+     * Handle the command.
      */
     @Override
     public void handle(CallInfo call) {
 
         final String playerName = call.getPlayer().getName();
 
-		/*
-		  View current chunk boundaries
-		 */
         if (call.getArg(1).equals("chunk")) {
 
             // Do they already have a view?
@@ -48,7 +43,8 @@ public class ViewCommand implements SubHandler {
                 ChunkUtils.resetPreviewBoundaryBlocks(call.getPlayer(), blocks);
 
                 // Close
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Reset your current view."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg("Reset your current view."));
                 plugin.playerActiveViews.remove(playerName);
 
             } else {
@@ -61,13 +57,15 @@ public class ViewCommand implements SubHandler {
                 ChunkUtils.setPreviewBoundaryBlocks(call.getPlayer(), blocks, Material.GLOWSTONE);
                 plugin.playerActiveViews.put(playerName, blocks);
 
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Showing current chunk boundaries."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg("Showing current chunk boundaries."));
 
             }
             return;
         }
 
-        call.getSender().sendMessage(Prism.messenger.playerError("Invalid view option. Use /prism ? for help."));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerError("Invalid view option. Use /prism ? for help."));
 
     }
 

@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -33,7 +34,8 @@ public class DrainCommand implements SubHandler {
             if (call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava")) {
                 drainType = call.getArg(1);
             } else {
-                call.getPlayer().sendMessage(
+
+                Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerError("Invalid drain type. Must be lava, water, or left out."));
                 return;
             }
@@ -46,7 +48,7 @@ public class DrainCommand implements SubHandler {
                 if (call.getArg(1).equalsIgnoreCase("water") || call.getArg(1).equalsIgnoreCase("lava")) {
                     drainType = call.getArg(1);
                 } else {
-                    call.getPlayer().sendMessage(
+                    Prism.messenger.sendMessage(call.getPlayer(),
                             Prism.messenger.playerError("Invalid drain type. Must be lava, water, or left out."));
                     return;
                 }
@@ -64,7 +66,7 @@ public class DrainCommand implements SubHandler {
         } else if (drainType.equals("lava")) {
             msg += ChatColor.GRAY + " It's getting hot in here.";
         }
-        call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(msg));
+        Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(msg));
 
         ArrayList<BlockStateChange> blockStateChanges = null;
         if (drainType.isEmpty()) {
@@ -78,16 +80,18 @@ public class DrainCommand implements SubHandler {
         if (blockStateChanges != null && !blockStateChanges.isEmpty()) {
 
             // @todo remove the extra space in msg
-            call.getPlayer().sendMessage(Prism.messenger
+            Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                     .playerHeaderMsg("Drained " + blockStateChanges.size() + " " + drainType + " blocks."));
-            call.getPlayer().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Use /prism undo last if needed."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerSubduedHeaderMsg("Use /prism undo last if needed."));
 
             // Trigger the event
             final PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
             plugin.getServer().getPluginManager().callEvent(event);
 
         } else {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to drain within that radius."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError("Nothing found to drain within that radius."));
         }
     }
 
@@ -101,20 +105,20 @@ public class DrainCommand implements SubHandler {
             final int _tmp_radius = Integer.parseInt(radiusArg);
             if (_tmp_radius > 0) {
                 if (_tmp_radius > plugin.getConfig().getInt("prism.drain.max-radius")) {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("Radius exceeds max set in config."));
+                    Prism.messenger.sendMessage(call.getPlayer(),
+                            Prism.messenger.playerError(Il8n.getMessage("exceed-max-radius")));
                     return 0;
                 } else {
                     return _tmp_radius;
                 }
             } else {
-                call.getPlayer().sendMessage(Prism.messenger.playerError(
-                        "Radius must be greater than zero. Or leave it off to use the default."
-                                + " Use /prism ? for help."));
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
+                        Il8n.getMessage("radius-small")));
                 return 0;
             }
         } else {
-            call.getPlayer().sendMessage(Prism.messenger.playerError(
-                    "Radius must be a number. Or leave it off to use the default. Use /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
+                    Il8n.getMessage("radius-not-numeric")));
             return 0;
         }
     }

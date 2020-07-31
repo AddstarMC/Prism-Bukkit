@@ -54,6 +54,10 @@ public class ActionMeter {
         // Initializes the static class
     }
 
+    /**
+     * Mark a event.
+     * @param clazz
+     */
     @SuppressWarnings("rawtypes")
     public static void mark(Class clazz) {
         if (monitoring) {

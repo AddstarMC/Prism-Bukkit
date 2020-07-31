@@ -1,11 +1,18 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
+import java.util.regex.Pattern;
 
 public class AboutCommand implements SubHandler {
 
@@ -20,15 +27,34 @@ public class AboutCommand implements SubHandler {
      */
     @Override
     public void handle(CallInfo call) {
-        call.getSender().sendMessage(Prism.messenger.playerHeaderMsg(
-                "Prism - originally by Viveleroi; maintained by " + ChatColor.GOLD
-                        + "The AddstarMC Network" + ChatColor.GRAY + " v"
-                        + plugin.getPrismVersion()));
-        call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Help: " + ChatColor.WHITE + "/pr ?"));
-        call.getSender().sendMessage(
-                Prism.messenger.playerSubduedHeaderMsg("Discord: " + ChatColor.WHITE + "https://discord.gg/Y9Qx3V"));
-        call.getSender().sendMessage(
-                Prism.messenger.playerSubduedHeaderMsg("Wiki: " + ChatColor.WHITE + "https://github.com/AddstarMC/Prism-Bukkit/wiki"));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerHeaderMsg(
+                        Il8n.getMessage("about-header")
+                                .replace(Pattern.compile("<author>"),
+                                      builder -> TextComponent.builder()
+                                              .content("The AddstarMC Network")
+                                        .color(NamedTextColor.GOLD))
+                                .replace(Pattern.compile("<version>"),
+                                      builder -> TextComponent.builder().content(plugin.getPrismVersion()))));
+        Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerSubduedHeaderMsg(
+                TextComponent.builder().content("Help: ")
+                        .append(TextComponent.of("/pr ?")
+                                .color(NamedTextColor.WHITE))
+                        .build()));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg(
+                        TextComponent.builder().content("Discord: ")
+                                .append(TextComponent.of("https://discord.gg/Y9Qx3V")
+                                        .color(NamedTextColor.WHITE))
+                                .clickEvent(ClickEvent.openUrl("https://discord.gg/Y9Qx3V"))
+                                .build()));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg(
+                        TextComponent.builder().content("Wiki: ")
+                                .append(TextComponent.of("https://github.com/AddstarMC/Prism-Bukkit/wiki")
+                                        .color(NamedTextColor.WHITE))
+                                .clickEvent(ClickEvent.openUrl("https://github.com/AddstarMC/Prism-Bukkit/wiki"))
+                                .build()));
     }
 
     @Override

@@ -1,17 +1,16 @@
 package me.botsko.prism.utils;
 
 import com.google.common.base.CaseFormat;
-import io.papermc.lib.PaperLib;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.appliers.PrismProcessType;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
@@ -25,11 +24,8 @@ import org.kitteh.pastegg.PasteContent;
 import org.kitteh.pastegg.PasteFile;
 import org.kitteh.pastegg.Visibility;
 
-import java.awt.Color;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class MiscUtils {
@@ -123,11 +119,11 @@ public class MiscUtils {
         final String prismWebUrl = "https://paste.gg/";
 
         if (!Prism.getInstance().getConfig().getBoolean("prism.paste.enable")) {
-            sender.sendMessage(Prism.messenger.playerError(
-                    "Paste.gg support is currently disabled by config."));
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerError(
+                            TextComponent.of("Paste.gg support is currently disabled by config.")));
             return;
         }
-
         ZonedDateTime expire = ZonedDateTime.now().plusMinutes(60);
         PasteFile file = new PasteFile("Prism Result",
                 new PasteContent(PasteContent.ContentType.TEXT, results));
@@ -141,14 +137,18 @@ public class MiscUtils {
                 .build();
         if (result.getPaste().isPresent()) {
             Paste paste = result.getPaste().get();
-            sender.sendMessage(Prism.messenger.playerSuccess("Successfully pasted results: "
-                    + prismWebUrl
-                    + paste.getId()));
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerSuccess("Successfully pasted results: "
+                            + prismWebUrl
+                            + paste.getId()));
         } else {
-            sender.sendMessage(Prism.messenger.playerError(
-                    "Unable to paste results (" + ChatColor.YELLOW + result.getMessage()
-                            + ChatColor.RED + ")."));
-
+            String message = result.getMessage().isPresent() ? result.getMessage().get() : "";
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerError(
+                            TextComponent.of("Unable to paste results (")
+                                    .append(TextComponent.of(message).color(NamedTextColor.YELLOW))
+                                    .append(TextComponent.of(")."))
+                    ));
         }
 
     }
@@ -160,37 +160,7 @@ public class MiscUtils {
      * @param player CommandSender
      */
     public static void sendClickableTpRecord(ActionMessage a, CommandSender player) {
-        boolean isSpigot = PaperLib.isSpigot();
-        boolean isPaper = PaperLib.isPaper();
-
-        if (isPaper || isSpigot) {
-            String[] message = Prism.messenger.playerMsg(a.getMessage());
-            //line 1 holds the index so we set that as the highlighted for command click
-            final Collection<BaseComponent> toSend = new ArrayList<>();
-            int i = 0;
-            for (String m : message) {
-                BaseComponent[] text = TextComponent.fromLegacyText(
-                        (player instanceof Player) ? m : m.replace("\n", ""));
-                if (i == 0) {
-                    Arrays.asList(text).forEach(baseComponent -> {
-                        baseComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                                new Text("Click to teleport")));
-                        baseComponent.setClickEvent(
-                                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr tp "
-                                        + a.getIndex()));
-                        toSend.add(baseComponent);
-                    });
-                } else {
-                    toSend.addAll(Arrays.asList(text));
-                }
-                i++;
-            }
-            BaseComponent[] finalMessage = new BaseComponent[toSend.size()];
-            toSend.toArray(finalMessage);
-            player.spigot().sendMessage(finalMessage);
-        } else {
-            player.sendMessage(Prism.messenger.playerMsg(a.getMessage()));
-        }
+        Prism.messenger.sendMessage(player, a.getMessage());
     }
 
     /**
@@ -203,12 +173,12 @@ public class MiscUtils {
         if (player instanceof Player) {
             if (results.getPage() == 1) {
                 if (results.getTotalPages() > 1) {
-                    player.spigot().sendMessage(MiscUtils.getNextButton());
+                    Prism.messenger.sendMessage(player, getNextButton());
                 }
             } else if (results.getPage() < results.getTotalPages()) {
-                player.spigot().sendMessage(MiscUtils.getPrevNextButtons());
+                Prism.messenger.sendMessage(player, MiscUtils.getPrevNextButtons());
             } else if (results.getPage() == results.getTotalPages()) {
-                player.spigot().sendMessage(MiscUtils.getPreviousButton());
+                Prism.messenger.sendMessage(player, MiscUtils.getPreviousButton());
             }
         }
     }
@@ -253,13 +223,12 @@ public class MiscUtils {
      * @param commands the commands
      */
     public static void dispatchAlert(String msg, Iterable<String> commands) {
-        String colorized = TypeUtils.colorize(msg);
-        String stripped = ChatColor.stripColor(colorized);
+        String cleanMessage = PlainComponentSerializer.plain().deserialize(msg).content();
         for (String command : commands) {
             if ("examplecommand <alert>".equals(command)) {
                 continue;
             }
-            String processedCommand = command.replace("<alert>", stripped);
+            String processedCommand = command.replace("<alert>", cleanMessage);
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand);
         }
     }
@@ -286,14 +255,11 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getPreviousButton() {
-        TextComponent textComponent = new TextComponent(" [<< Prev]");
-        textComponent.setColor(ChatColor.of(Color.decode("#ef9696")));
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new Text("Click to view the previous page")));
-        textComponent.setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg p"));
-        return textComponent;
-
+        return TextComponent.builder().content(" [<< Prev]")
+                .color(TextColor.fromHexString("#ef9696"))
+                .hoverEvent(HoverEvent.showText(TextComponent.of("Click to view the previous page")))
+                .clickEvent(ClickEvent.runCommand("/pr pg p"))
+                .build();
     }
 
     /**
@@ -302,10 +268,10 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getNextButton() {
-        TextComponent textComponent = new TextComponent("           ");
-        textComponent.setColor(ChatColor.of(Color.decode("#01a960")));
-        textComponent.addExtra(getNextButtonComponent());
-        return textComponent;
+        return TextComponent.builder().content("           ")
+                .color(TextColor.fromHexString("#01a960"))
+                .append(MiscUtils::getNextButtonComponent)
+                .build();
     }
 
     /**
@@ -313,14 +279,12 @@ public class MiscUtils {
      *
      * @return BaseComponent.
      */
-    private static BaseComponent getNextButtonComponent() {
-        TextComponent textComponent = new TextComponent("[Next >>]");
-        textComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new Text("Click to view the next page")));
-        textComponent.setColor(ChatColor.of(Color.decode("#01a960")));
-        textComponent.setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/pr pg n"));
-        return textComponent;
+    private static TextComponent getNextButtonComponent() {
+        return TextComponent.builder().content("[Next >>]")
+                .hoverEvent(HoverEvent.showText(TextComponent.of("Click to view the next page")))
+                .color(TextColor.fromHexString("#01a960"))
+                .clickEvent(ClickEvent.runCommand("/pr pg n"))
+                .build();
     }
 
     /**
@@ -328,13 +292,14 @@ public class MiscUtils {
      *
      * @return BaseComponent.
      */
-    public static BaseComponent[] getPrevNextButtons() {
-        List<TextComponent> textComponent = new ArrayList<>();
-        textComponent.add(getPreviousButton());
-        TextComponent divider = new TextComponent(" | ");
-        divider.setColor(ChatColor.of(Color.decode("#969696")));
-        textComponent.add(divider);
-        textComponent.add(getNextButton());
-        return textComponent.toArray(new BaseComponent[0]);
+    public static TextComponent getPrevNextButtons() {
+        TextComponent divider = TextComponent.builder().content(" | ")
+                .color(TextColor.fromHexString("#969696"))
+                .build();
+        return TextComponent.builder()
+                .append(getPreviousButton())
+                .append(divider)
+                .append(getNextButton())
+                .build();
     }
 }

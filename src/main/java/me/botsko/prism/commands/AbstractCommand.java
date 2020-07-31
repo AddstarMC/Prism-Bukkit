@@ -3,6 +3,7 @@ package me.botsko.prism.commands;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.commandlibs.SubHandler;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 

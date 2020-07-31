@@ -11,8 +11,7 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -46,7 +45,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,9 +83,9 @@ public class PrismPlayerEvents implements Listener {
             if (illegalCommands.contains(primaryCmd)) {
                 final String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: "
                         + cmd;
-                List<BaseComponent> send = new ArrayList<>();
-                send.add(new TextComponent(msg));
-                player.sendMessage(Prism.messenger.playerError("Sorry, this command is not available in-game."));
+                TextComponent send = TextComponent.of(msg);
+                Prism.messenger.sendMessage(player,
+                        Prism.messenger.playerError("Sorry, this command is not available in-game."));
                 plugin.alertPlayers(null, send);
                 event.setCancelled(true);
                 // Log to console

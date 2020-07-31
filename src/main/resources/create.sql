@@ -1,3 +1,7 @@
+## CREATE schema if not exists `prism`;
+## CREATE user prism identified by 'prism';
+## GRANT ALL ON prism.* to 'prism';
+
 CREATE TABLE IF NOT EXISTS `prism_actions`
 (
     `action_id` int(10) unsigned NOT NULL AUTO_INCREMENT,

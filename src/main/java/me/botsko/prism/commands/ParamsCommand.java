@@ -3,6 +3,7 @@ package me.botsko.prism.commands;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -21,10 +22,10 @@ public class ParamsCommand implements SubHandler {
     }
 
 
-    private void help(CommandSender sender) {
-
+    private void help(CommandSender s) {
+        Audience sender = Prism.getAudiences().audience(s);
         sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Parameters Help ---"));
-
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Parameters Help ---"));
         sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE
                 + " i.e. 20, or 100. Defaults to default-radius defined in config."));
         sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:global" + ChatColor.WHITE

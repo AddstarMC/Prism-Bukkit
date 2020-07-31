@@ -1,12 +1,16 @@
 package me.botsko.prism.wands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.block.Utilities;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +20,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.regex.Pattern;
 
 public class InspectorWand extends QueryWandBase {
 
@@ -33,12 +38,12 @@ public class InspectorWand extends QueryWandBase {
     }
 
     @Override
-    public void playerLeftClick(Player player, Location loc) {
+    public void playerRightClick(Player player, Location loc) {
         showLocationHistory(player, loc);
     }
 
     @Override
-    public void playerRightClick(Player player, Location loc) {
+    public void playerLeftClick(Player player, Location loc) {
         showLocationHistory(player, loc);
     }
 
@@ -61,7 +66,7 @@ public class InspectorWand extends QueryWandBase {
                 params = parameters.clone();
             } catch (final CloneNotSupportedException ex) {
                 params = new QueryParameters();
-                player.sendMessage(Prism.messenger
+                Prism.messenger.sendMessage(player, Prism.messenger
                         .playerError("Error retrieving parameters. Checking with default parameters."));
             }
             params.setWorld(player.getWorld().getName());
@@ -86,11 +91,17 @@ public class InspectorWand extends QueryWandBase {
             if (!results.getActionResults().isEmpty()) {
 
                 final String blockname = Prism.getItems().getAlias(block.getType(), block.getBlockData());
-                player.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Inspecting " + blockname
-                        + " at " + loc.getBlockX() + " " + loc.getBlockY() + " " + loc.getBlockZ() + " ---"));
+                Prism.messenger.sendMessage(player,
+                        Prism.messenger.playerHeaderMsg(ReplaceableTextComponent.builder("inspector-wand-header")
+                                .replace("<block>",blockname)
+                                .replace("<x>",loc.getBlockX())
+                                .replace("<y>",loc.getBlockY())
+                                .replace("<z>",loc.getBlockY())
+                                .build().colorIfAbsent(NamedTextColor.GOLD)));
                 if (results.getActionResults().size() > 5) {
-                    player.sendMessage(Prism.messenger.playerHeaderMsg("Showing " + results.getTotalResults()
-                            + " results. Page 1 of " + results.getTotalPages()));
+                    Prism.messenger.sendMessage(player,
+                            Prism.messenger.playerHeaderMsg("Showing " + results.getTotalResults()
+                                    + " results. Page 1 of " + results.getTotalPages()));
                 }
                 for (final me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()) {
                     final ActionMessage am = new ActionMessage(a);
@@ -98,13 +109,15 @@ public class InspectorWand extends QueryWandBase {
                             || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
                         am.showExtended();
                     }
-                    player.sendMessage(Prism.messenger.playerMsg(am.getMessage()));
+                    Prism.messenger.sendMessage(player,
+                            Prism.messenger.playerMsg(am.getMessage()));
                 }
             } else {
                 final String space_name = (block.getType().equals(Material.AIR) ? "space"
                         : block.getType().toString().replaceAll("_", " ").toLowerCase()
                         + (block.getType().toString().endsWith("BLOCK") ? "" : " block"));
-                player.sendMessage(Prism.messenger.playerError("No history for this " + space_name + " found."));
+                Prism.messenger.sendMessage(player,
+                        Prism.messenger.playerError("No history for this " + space_name + " found."));
             }
         });
     }

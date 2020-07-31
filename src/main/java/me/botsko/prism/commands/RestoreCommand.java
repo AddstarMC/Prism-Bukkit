@@ -33,7 +33,8 @@ public class RestoreCommand extends AbstractCommand {
         parameters.setProcessType(PrismProcessType.RESTORE);
         parameters.setStringFromRawArgs(call.getArgs(), 1);
         StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-        call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
@@ -41,7 +42,8 @@ public class RestoreCommand extends AbstractCommand {
             final QueryResult results = aq.lookup(parameters, call.getSender());
             if (!results.getActionResults().isEmpty()) {
 
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Restoring changes..."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg("Restoring changes..."));
 
                 // Inform nearby players
                 if (call.getSender() instanceof Player) {
@@ -58,7 +60,7 @@ public class RestoreCommand extends AbstractCommand {
                 });
 
             } else {
-                call.getSender().sendMessage(
+                Prism.messenger.sendMessage(call.getSender(),
                         Prism.messenger.playerError("Nothing found to restore. Try using /prism l (args) first."));
             }
         });

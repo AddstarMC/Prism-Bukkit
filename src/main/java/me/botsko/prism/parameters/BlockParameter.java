@@ -62,7 +62,7 @@ public class BlockParameter extends SimplePrismParameterHandler {
 
                     if (part1.indexOf(':') != -1) {
                         // Trailing colon, ie 'stone_slab:' or 'stone_slab:[half=top]'
-                        sender.sendMessage(Prism.messenger
+                        Prism.messenger.sendMessage(sender, Prism.messenger
                                 .playerError("Skipping removed block format 'block:data' used in '" + b + "'"));
 
                         continue;
@@ -79,17 +79,17 @@ public class BlockParameter extends SimplePrismParameterHandler {
                                 Bukkit.createBlockData(mat, part2);
                                 query.addBlockDataFilter(new MaterialState(mat, part2));
                             } catch (IllegalArgumentException e) {
-                                sender.sendMessage(Prism.messenger.playerError(
+                                Prism.messenger.sendMessage(sender, Prism.messenger.playerError(
                                         "Skipping invalid block data '" + part2 + "' for material '" + part1 + "'"));
                             }
                         }
                     } else {
                         try {
                             Integer.parseInt(part1);
-                            sender.sendMessage(Prism.messenger
+                            Prism.messenger.sendMessage(sender, Prism.messenger
                                     .playerError("Skipping numeric id '" + part1 + "', please use materials instead"));
                         } catch (NumberFormatException e) {
-                            sender.sendMessage(
+                            Prism.messenger.sendMessage(sender,
                                     Prism.messenger.playerError("Skipping unknown material '" + part1 + "'"));
                         }
                     }
