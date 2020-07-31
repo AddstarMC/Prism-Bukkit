@@ -27,6 +27,7 @@ import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -112,7 +113,6 @@ public class PrismBlockEvents implements Listener {
     }
 
     private void relatedBlockCallback(Block block, Consumer<Block> breakCallback, Consumer<String> fallCallback) {
-
         if (MaterialTag.DOORS.isTagged(block.getType())) {
             return;
         }
@@ -175,7 +175,6 @@ public class PrismBlockEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
-
         final Player player = event.getPlayer();
         final Block block = Utilities.getBaseBlock(event.getBlock());
 
@@ -478,6 +477,24 @@ public class PrismBlockEvents implements Listener {
 
             }
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR,ignoreCancelled = true)
+    private void onBlockPhysicsEvent(BlockPhysicsEvent event) {
+        Block block = event.getBlock();
+        if (!block.getType().hasGravity() || !Prism.getIgnore().event("block-fall")) {
+            return;
+        }
+        String source;
+        if (event.getSourceBlock().equals(block)) {
+            source = "self";
+        } else {
+            Location loc = event.getSourceBlock().getLocation();
+            source = event.getSourceBlock().getType().name()
+                    + " (" + loc.getX() + "," + loc.getY() + "," + loc.getZ() + ")";
+        }
+        RecordingQueue.addToQueue(ActionFactory.createBlock("block-fall",block,source));
+
     }
 
     /**
