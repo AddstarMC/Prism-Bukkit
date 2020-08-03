@@ -2,7 +2,6 @@ package me.botsko.prism.utils;
 
 import me.botsko.prism.Prism;
 import net.md_5.bungee.api.ChatColor;
-import sun.dc.pr.PRError;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
