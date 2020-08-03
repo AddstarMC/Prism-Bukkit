@@ -121,7 +121,7 @@ public class PreprocessArgs {
         }
 
         // Enforce specifying an action
-        if (sender != null && sender.hasPermission("prism.parameters.action.required")
+        if (sender != null && !sender.hasPermission("prism.parameters.action-filter-bypass")
                 && parameters.getActionTypes().isEmpty()) {
             sender.sendMessage(
                     Prism.messenger.playerError("You're missing valid actions. Use /prism ? for assistance."));

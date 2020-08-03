@@ -231,8 +231,8 @@ permissions:
             prism.parameters.flag.*: true
     prism.parameters.action:
         default: op
-    prism.parameters.action.required:
-        default: false
+    prism.parameters.action-filter-bypass:
+        default: op
     prism.parameters.action.*:
       default: true
       children:
