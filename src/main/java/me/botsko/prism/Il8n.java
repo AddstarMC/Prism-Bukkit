@@ -2,7 +2,6 @@ package me.botsko.prism;
 
 import me.botsko.prism.utils.UTF8Control;
 import net.kyori.adventure.text.TextComponent;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.util.MissingResourceException;

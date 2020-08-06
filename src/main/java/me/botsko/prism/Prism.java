@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.InternalAffairs;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.QueueDrain;
 import me.botsko.prism.actionlibs.RecordingTask;
+import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
@@ -45,6 +46,7 @@ import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -288,7 +290,6 @@ public class Prism extends JavaPlugin {
      *
      * @return PrismParameterHandler
      */
-    @SuppressWarnings("unused")
     public static PrismParameterHandler getParameter(String name) {
         return paramHandlers.get(name);
     }
@@ -642,6 +643,9 @@ public class Prism extends JavaPlugin {
             if (!metrics.isEnabled()) {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
+            Metrics.MultiLineChart blockBreaksHour =
+                    new Metrics.MultiLineChart("//TODO", ActionMeter::getMetricMeter);
+            metrics.addCustomChart(blockBreaksHour);
         }
     }
 
@@ -756,7 +760,7 @@ public class Prism extends JavaPlugin {
      *
      * @param msg String
      */
-    public void alertPlayers(Player player, TextComponent msg) {
+    public void alertPlayers(Player player, Component msg) {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
@@ -777,7 +781,7 @@ public class Prism extends JavaPlugin {
      * @param radius int
      * @param msg    String
      */
-    public void notifyNearby(Player player, int radius, String msg) {
+    public void notifyNearby(Player player, int radius, Component msg) {
         if (!getConfig().getBoolean("prism.appliers.notify-nearby.enabled")) {
             return;
         }

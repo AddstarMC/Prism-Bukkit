@@ -1,6 +1,5 @@
 package me.botsko.prism.wands;
 
-import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -9,9 +8,7 @@ import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.block.Utilities;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -20,7 +17,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.regex.Pattern;
 
 public class InspectorWand extends QueryWandBase {
 

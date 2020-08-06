@@ -8,6 +8,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 
+import java.util.concurrent.CompletableFuture;
+
 public class Messenger {
 
 
@@ -35,13 +37,12 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public TextComponent playerHeaderMsg(TextComponent msg) {
+    public TextComponent playerHeaderMsg(Component msg) {
         if (msg != null) {
-            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.WHITE);
             return TextComponent.builder()
                     .content(pluginName)
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .append(coloredMessage)
+                    .append(msg.colorIfAbsent(NamedTextColor.WHITE))
                     .build();
         }
         return TextComponent.empty();
@@ -49,7 +50,7 @@ public class Messenger {
 
     @Deprecated
     public TextComponent playerHeaderMsg(String msg) {
-        return playerHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
+        return this.playerHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
     }
 
     /**
@@ -58,13 +59,12 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public TextComponent playerSubduedHeaderMsg(TextComponent msg) {
+    public TextComponent playerSubduedHeaderMsg(Component msg) {
         if (msg != null) {
-            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.GRAY);
             return TextComponent.builder()
                     .content(pluginName + " ")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .append(coloredMessage)
+                    .append(msg.colorIfAbsent(NamedTextColor.GRAY))
                     .build();
         }
         return TextComponent.empty();
@@ -82,9 +82,9 @@ public class Messenger {
      * @return String.
      */
     @Deprecated
-    public TextComponent playerMsg(String msg) {
+    public Component playerMsg(String msg) {
         if (msg != null) {
-            TextComponent component = LegacyComponentSerializer.legacySection().deserialize(msg);
+            Component component = LegacyComponentSerializer.legacySection().deserialize(msg);
             return playerMsg(component);
         }
         return TextComponent.empty();
@@ -96,7 +96,7 @@ public class Messenger {
      * @param msg TextComponent
      * @return TextComponent
      */
-    public TextComponent playerMsg(TextComponent msg) {
+    public Component playerMsg(Component msg) {
         if (msg != null) {
             return msg.colorIfAbsent(NamedTextColor.WHITE);
         }
@@ -124,12 +124,11 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public TextComponent playerError(TextComponent msg) {
-        TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.RED);
+    public TextComponent playerError(Component msg) {
         return TextComponent.builder()
                 .content(pluginName + " ")
                 .color(NamedTextColor.LIGHT_PURPLE)
-                .append(coloredMessage)
+                .append(msg.colorIfAbsent(NamedTextColor.RED))
                 .build();
     }
 
@@ -158,11 +157,10 @@ public class Messenger {
      */
     public TextComponent playerSuccess(TextComponent msg) {
         if (msg != null) {
-            TextComponent coloredMessage = msg.colorIfAbsent(NamedTextColor.GREEN);
             return TextComponent.builder()
                     .content(pluginName + " ")
                     .color(NamedTextColor.LIGHT_PURPLE)
-                    .append(coloredMessage)
+                    .append(msg.colorIfAbsent(NamedTextColor.GREEN))
                     .build();
         }
         return TextComponent.empty();

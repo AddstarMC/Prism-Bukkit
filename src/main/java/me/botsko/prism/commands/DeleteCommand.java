@@ -77,7 +77,7 @@ public class DeleteCommand extends AbstractCommand {
 
             Prism.messenger.sendMessage(call.getSender(),
                     Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("purge-data")
-                            .replaceFirst(Pattern.compile("<defaults>"), builder ->
+                            .replaceFirstText(Pattern.compile("<defaults>"), builder ->
                                     TextComponent.builder()
                                             .content(defaultsReminder.toString()))));
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger

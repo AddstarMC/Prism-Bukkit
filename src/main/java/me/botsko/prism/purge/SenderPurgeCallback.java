@@ -2,6 +2,8 @@ package me.botsko.prism.purge;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import org.bukkit.command.CommandSender;
 
 public class SenderPurgeCallback implements PurgeCallback {
@@ -15,11 +17,15 @@ public class SenderPurgeCallback implements PurgeCallback {
             return;
         }
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerSubduedHeaderMsg("Purge cycle cleared " + cycleRowsAffected + " records."));
+                Prism.messenger.playerSubduedHeaderMsg(ReplaceableTextComponent.builder("purge-cycle-cleared")
+                        .replace("<cycleRowsAffected>", cycleRowsAffected)
+                        .build()));
         if (cycleComplete) {
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerHeaderMsg(totalRecordsAffected + " records purged. Max cycle time "
-                            + maxCycleTime + " msec."));
+                    Prism.messenger.playerHeaderMsg(ReplaceableTextComponent.builder("purge-cycle-complete")
+                            .replace("<totalRecordsAffected>", totalRecordsAffected)
+                            .replace("<maxCycleTime>", maxCycleTime)
+                            .build()));
         }
     }
 

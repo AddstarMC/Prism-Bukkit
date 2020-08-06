@@ -61,7 +61,7 @@ public class ApiHandler {
                 WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
                 Prism.log("WorldEdit found. Associated features enabled.");
             } catch (Throwable error) {
-                Prism.log("Required WorldEdit version is 6.0.0 or greater!"
+                Prism.log("Required WorldEdit version is 7.1.0 or greater!"
                         + " Certain optional features of Prism disabled.");
                 Prism.debug(error.getMessage());
             }

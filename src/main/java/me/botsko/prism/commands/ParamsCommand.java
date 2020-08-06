@@ -1,13 +1,18 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ParamsCommand implements SubHandler {
 
@@ -24,19 +29,18 @@ public class ParamsCommand implements SubHandler {
 
     private void help(CommandSender s) {
         Audience sender = Prism.getAudiences().audience(s);
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Parameters Help ---"));
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Parameters Help ---"));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:[radius]" + ChatColor.WHITE
-                + " i.e. 20, or 100. Defaults to default-radius defined in config."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:global" + ChatColor.WHITE
-                + " Force a worldwide search, for lookups only (unless configured for rollbacks)."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:<player|x,y,z>:[radius]"
-                + ChatColor.WHITE
-                + " Base the radius around another place, like r:<player>:20 or r:20,35,10:5 [x,y,z]"));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "r:we" + ChatColor.WHITE
-                + " Use a WorldEdit selection."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.GRAY + "---"));
-
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("params-header")
+                .color(NamedTextColor.GOLD)));
+        sender.sendMessage(Prism.messenger.playerMsg(colourParamHelp(
+                Il8n.getMessage("params-radius-help"))));
+        sender.sendMessage(Prism.messenger.playerMsg(
+                colourParamHelp(Il8n.getMessage("params-radius-help2"))));
+        sender.sendMessage(Prism.messenger.playerMsg(
+                colourParamHelp(Il8n.getMessage("params-radius-help3"))));
+        sender.sendMessage(Prism.messenger.playerMsg(
+                colourParamHelp(Il8n.getMessage("params-radius-help4"))));
+        sender.sendMessage(Prism.messenger.playerMsg(
+                TextComponent.builder().content("---").color(NamedTextColor.GRAY).build()));
         sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "a:[action]" + ChatColor.WHITE
                 + " Like 'block-break' (See below for full list). No default."));
         sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE
@@ -65,5 +69,10 @@ public class ParamsCommand implements SubHandler {
         sender.sendMessage(Prism.messenger.playerMsg(ChatColor.GRAY + "Use " + ChatColor.WHITE + "/pr actions"
                 + ChatColor.GRAY + " to view list of actions."));
 
+    }
+
+    private static Component colourParamHelp(TextComponent message) {
+        Pattern pattern = Pattern.compile("([abtrkpew]|id|since|before){1}:([\\[,<,a-z,0-9,>,|,:,\\],#]*)");
+        return message.replaceText(pattern, builder -> builder.color(NamedTextColor.LIGHT_PURPLE));
     }
 }

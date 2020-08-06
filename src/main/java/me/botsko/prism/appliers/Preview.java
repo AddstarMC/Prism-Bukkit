@@ -1,16 +1,17 @@
 package me.botsko.prism.appliers;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksRollbackEvent;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.Style;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
@@ -101,8 +102,7 @@ public class Preview implements Previewable {
             }
         }
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerHeaderMsg("Preview canceled."
-                        + ChatColor.GRAY + " Please come again!"));
+                Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-cancel")));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class Preview implements Previewable {
             return;
         }
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerHeaderMsg("Applying rollback from preview..."));
+                Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
         setIsPreview(false);
         changesAppliedCount = 0;
         skippedBlockCount = 0;
@@ -142,21 +142,20 @@ public class Preview implements Previewable {
                 }
                 if (showNearby) {
                     // Inform nearby players
-                    plugin.notifyNearby(player, parameters.getRadius(),
-                            player.getDisplayName() + " is performing a "
-                                    + processType.name().toLowerCase() + " near you.");
+                    plugin.notifyNearby(player, parameters.getRadius(), ReplaceableTextComponent.builder("notify-near")
+                            .replace("<player>", player.getDisplayName())
+                            .replace("<processType>", processType.name().toLowerCase())
+                            .build());
                     // Inform staff
                     if (plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")) {
                         final String cmd = parameters.getOriginalCommand();
                         if (cmd != null) {
-                            TextComponent s =
-                                    TextComponent.builder().content(processType.name().toLowerCase()
-                                            + " by " + player.getDisplayName())
-                                            .color(NamedTextColor.WHITE)
-                                            .append(TextComponent.of(parameters.getOriginalCommand())
-                                                    .color(NamedTextColor.GRAY))
-                                            .build();
-                            plugin.alertPlayers(player, s);
+                            plugin.alertPlayers(player, ReplaceableTextComponent.builder("notify-staff")
+                                    .replace("<player>", player.getDisplayName())
+                                    .replace("<processsType>", processType.name().toLowerCase())
+                                    .replace("<originalCommand>", parameters.getOriginalCommand(),
+                                            Style.builder().color(NamedTextColor.GRAY).build())
+                                    .build().colorIfAbsent(NamedTextColor.WHITE));
                         }
                     }
                 }
@@ -180,8 +179,7 @@ public class Preview implements Previewable {
 
             if (worldChangeQueue.isEmpty()) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(ChatColor.GRAY
-                                + "No actions found that match the criteria."));
+                        Prism.messenger.playerError(Il8n.getMessage("preview-no-actions")));
                 return;
             }
 

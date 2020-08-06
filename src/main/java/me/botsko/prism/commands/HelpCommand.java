@@ -40,16 +40,20 @@ public class HelpCommand implements SubHandler {
     protected void help(CommandSender s) {
         Audience sender = Prism.getAudiences().audience(s);
         if (failed) {
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Prism Disabled ---"));
-            sender.sendMessage(Prism.messenger.playerMsg("Prism is running in a disabled mode because the"
-                    + " database could not be connected. \n Please seek help by running /prism debug and perusing"
-                    + " the contents to help with errors.  "));
             sender.sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Discord: " + ChatColor.WHITE
-                            + "https://discord.gg/Y9Qx3V"));
+                    Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.disabled.header")
+                            .color(NamedTextColor.GOLD)));
             sender.sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Wiki: " + ChatColor.WHITE
-                            + "https://github.com/AddstarMC/Prism-Bukkit/wiki\n"));
+                    Prism.messenger.playerMsg(Il8n.getMessage("prism.disabled.content")
+                            .color(NamedTextColor.GOLD)));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("discord", ":")
+                            .color(NamedTextColor.WHITE)
+                            .append(TextComponent.of("https://discord.gg/Y9Qx3V"))));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("wiki", ":")
+                            .color(NamedTextColor.WHITE)
+                            .append(TextComponent.of("https://github.com/AddstarMC/Prism-Bukkit/wiki"))));
             return;
         }
         sender.sendMessage(Prism.messenger.playerHeaderMsg(

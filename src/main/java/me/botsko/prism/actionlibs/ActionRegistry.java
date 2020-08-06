@@ -170,7 +170,7 @@ public class ActionRegistry {
         registerAction(new ActionType("craft-item", false, false, false,
                 ItemStackAction.class, Il8n.getRawMessage("crafted")));
         registerAction(new ActionType("creeper-explode", false, true, true,
-                BlockAction.class, Il8n.getRawMessage("blew up")));
+                BlockAction.class, Il8n.getRawMessage("blew-up")));
         registerAction(new ActionType("crop-trample", false, true, true,
                 BlockAction.class, Il8n.getRawMessage("trampled")));
         registerAction(new ActionType("dragon-eat", false, true, true,
@@ -186,7 +186,7 @@ public class ActionRegistry {
         registerAction(new ActionType("entity-dye", false, false, false,
                 EntityAction.class, Il8n.getRawMessage("dyed")));
         registerAction(new ActionType("entity-explode", false, true, true,
-                BlockAction.class, Il8n.getRawMessage("blew up")));
+                BlockAction.class, Il8n.getRawMessage("blew-up")));
         registerAction(new ActionType("entity-follow", false, false, false,
                 EntityAction.class, Il8n.getRawMessage("lured")));
         registerAction(new ActionType("entity-form", true, true, true,

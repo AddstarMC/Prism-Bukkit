@@ -137,7 +137,7 @@ public class DebugCommand implements SubHandler {
             String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(Il8n.getMessage("paste-output")
-                            .replaceFirst(Pattern.compile("<pasteUrl>"), builder ->
+                            .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
                                     TextComponent.builder()
                                             .content(pasteUrl)
                                             .clickEvent(ClickEvent.openUrl(pasteUrl)))));
@@ -145,11 +145,11 @@ public class DebugCommand implements SubHandler {
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                           Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
-                                Il8n.getMessage("delete-key")
-                                        .replaceFirst(Pattern.compile("<deletekey>"), builder ->
-                                                TextComponent.builder()
-                                                        .content(s)
-                                                        .clickEvent(ClickEvent.copyToClipboard(s)))));
+                                  Il8n.getMessage("delete-key")
+                                          .replaceFirstText(Pattern.compile("<deletekey>"), builder ->
+                                                  TextComponent.builder()
+                                                          .content(s)
+                                                          .clickEvent(ClickEvent.copyToClipboard(s)))));
                           Prism.log("Deletion Key:" + s);
                   }
             );

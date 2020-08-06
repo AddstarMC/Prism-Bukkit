@@ -13,6 +13,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -86,21 +87,20 @@ public class LookupCommand implements SubHandler {
                             .playerHeaderMsg(
                                     Il8n.getMessage("lookup-share-message")
                                             .color(NamedTextColor.GOLD)
-                                            .replaceFirst(Pattern.compile("<sender>"), builder ->
+                                            .replaceText(Pattern.compile("<sender>"), builder ->
                                                     TextComponent.builder().content(call.getSender().getName())
                                                             .color(NamedTextColor.YELLOW)
                                                             .decoration(TextDecoration.ITALIC,
-                                                                    TextDecoration.State.TRUE))));
+                                                                    TextDecoration.State.TRUE), 1)));
                 } else if (sharingWithPlayers.length() > 0) {
-                    Prism.messenger.sendMessage(call.getSender(),
-                            Prism.messenger.playerHeaderMsg(
-                                    Il8n.getMessage("lookup-share-to-message")
-                                            .color(NamedTextColor.GOLD)
-                                            .replaceFirst(Pattern.compile("<players>"), builder ->
-                                                    TextComponent.builder().content(playersList)
-                                                            .color(NamedTextColor.YELLOW)
-                                                            .decoration(TextDecoration.ITALIC,
-                                                                    TextDecoration.State.TRUE))));
+                    Component component = Il8n.getMessage("lookup-share-to-message")
+                            .color(NamedTextColor.GOLD)
+                            .replaceText(Pattern.compile("<players>"), builder ->
+                                    TextComponent.builder().content(playersList)
+                                            .color(NamedTextColor.YELLOW)
+                                            .decoration(TextDecoration.ITALIC,
+                                                    TextDecoration.State.TRUE), 1);
+                    Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerHeaderMsg(component));
                 }
                 if (!results.getActionResults().isEmpty()) {
                     Prism.messenger.sendMessage(player, Prism.messenger.playerHeaderMsg("Showing "

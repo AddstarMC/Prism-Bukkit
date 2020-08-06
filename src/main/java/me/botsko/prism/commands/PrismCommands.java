@@ -35,7 +35,8 @@ public class PrismCommands extends Executor {
             public void handle(CallInfo call) {
                 prism.reloadConfig();
                 prism.loadConfig();
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
                 if (failed) {
                     call.getSender().sendMessage(Prism.messenger
                             .playerHeaderMsg("The server will need restarting to activate the database"));
@@ -74,25 +75,7 @@ public class PrismCommands extends Executor {
         addSub("recorder", "prism.recorder").allowConsole().setHandler(new RecorderCommand(prism));
         addSub("undo", "prism.rollback").setHandler(new UndoCommand(prism));
         addSub(new String[]{"view", "v"}, "prism.view").setMinArgs(1).setHandler(new ViewCommand(prism));
-        addSub(new String[]{"help", "?"}, "prism.help").allowConsole().setHandler(new HelpCommand());
-        addSub("params", "prism.help").allowConsole().setHandler(new ParamsCommand());
-        addSub("actions", "prism.help").allowConsole().setHandler(new ActionsCommand());
-        addSub("flags", "prism.help").allowConsole().setHandler(new FlagsCommand());
-        addSub("debug","prism.debug").allowConsole().setHandler(new DebugCommand());
-        addSub("reload", "prism.reload").allowConsole().setHandler(new SubHandler() {
-            @Override
-            public void handle(CallInfo call) {
-                prism.reloadConfig();
-                prism.loadConfig();
-                Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
-            }
-
-            @Override
-            public List<String> handleComplete(CallInfo call) {
-                return null;
-            }
-        });
+        addSub("purge", "prism.purge").allowConsole().setHandler(new PurgeCommand(prism));
     }
 
 }
