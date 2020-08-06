@@ -10,6 +10,12 @@ import java.util.List;
 
 public class HelpCommand implements SubHandler {
 
+    private final boolean failed;
+
+    public HelpCommand(boolean failed) {
+        this.failed = failed;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -29,7 +35,19 @@ public class HelpCommand implements SubHandler {
      * @param sender CommandSender
      */
     protected void help(CommandSender sender) {
-
+        if (failed) {
+            sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Prism Disabled ---"));
+            sender.sendMessage(Prism.messenger.playerMsg("Prism is running in a disabled mode because the"
+                    + " database could not be connected. \n Please seek help by running /prism debug and perusing"
+                    + " the contents to help with errors.  "));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg("Discord: " + ChatColor.WHITE
+                            + "https://discord.gg/Y9Qx3V"));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg("Wiki: " + ChatColor.WHITE
+                            + "https://github.com/AddstarMC/Prism-Bukkit/wiki\n"));
+            return;
+        }
         sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Basic Usage ---"));
 
         sender.sendMessage(Prism.messenger.playerHelp("i", "Toggle the inspector wand."));

@@ -142,7 +142,6 @@ public class Prism extends JavaPlugin {
      *
      * @return String
      */
-    @SuppressWarnings("WeakerAccess")
     public static String getPrismName() {
         return pluginName;
     }
@@ -310,6 +309,7 @@ public class Prism extends JavaPlugin {
 
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
+        messenger = new Messenger(pluginName);
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
@@ -343,7 +343,7 @@ public class Prism extends JavaPlugin {
                 testConnection = prismDataSource.getConnection();
                 if (testConnection == null) {
                     notifyDisabled();
-                    Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                    Bukkit.getScheduler().runTask(instance, () -> instance.enableFailedDatabase());
                     updating.cancel();
                     return;
                 }
@@ -354,7 +354,7 @@ public class Prism extends JavaPlugin {
                 }
             } else {
                 notifyDisabled();
-                Bukkit.getScheduler().runTask(instance, () -> instance.onDisable());
+                Bukkit.getScheduler().runTask(instance, () -> instance.enableFailedDatabase());
                 updating.cancel();
                 return;
             }
@@ -386,10 +386,25 @@ public class Prism extends JavaPlugin {
 
     private void notifyDisabled() {
         final String[] dbDisabled = new String[3];
-        dbDisabled[0] = "Prism will disable itself because it couldn't connect to a database.";
+        dbDisabled[0] = "Prism will disable most commands because it couldn't connect to a database.";
         dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
         dbDisabled[2] = "For help - try our Discord Channel or the Wiki on Github.";
         logSection(dbDisabled);
+
+    }
+
+    private void enableFailedDatabase() {
+        if (isEnabled()) {
+            PluginCommand command = getCommand("prism");
+            if (command != null) {
+                PrismCommands commands = new PrismCommands(this,true);
+                command.setExecutor(commands);
+                command.setTabCompleter(commands);
+            } else {
+                warn("Command Executor Error: Check plugin.yml");
+                Bukkit.getPluginManager().disablePlugin(instance);
+            }
+        }
     }
 
     private void enabled() {
@@ -423,7 +438,7 @@ public class Prism extends JavaPlugin {
             // Add commands
             PluginCommand command = getCommand("prism");
             if (command != null) {
-                PrismCommands commands = new PrismCommands(this);
+                PrismCommands commands = new PrismCommands(this,false);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
             } else {
@@ -451,7 +466,6 @@ public class Prism extends JavaPlugin {
             registerParameter(new WorldParameter());
 
             // Init re-used classes
-            messenger = new Messenger(pluginName);
             oreMonitor = new OreMonitor(instance);
             useMonitor = new UseMonitor(instance);
 
@@ -562,7 +576,6 @@ public class Prism extends JavaPlugin {
     /**
      * Clears the Query Cache.
      */
-    @SuppressWarnings("WeakerAccess")
     public void endExpiredQueryCaches() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             final java.util.Date date = new java.util.Date();
@@ -602,7 +615,6 @@ public class Prism extends JavaPlugin {
     /**
      * Remove expired locations.
      */
-    @SuppressWarnings("WeakerAccess")
     public void removeExpiredLocations() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             final java.util.Date date = new java.util.Date();
