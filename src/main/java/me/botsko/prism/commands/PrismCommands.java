@@ -12,9 +12,10 @@ public class PrismCommands extends Executor {
 
     /**
      * Constructor.
+     *
      * @param prism Plugin.
      */
-    public PrismCommands(Plugin prism,boolean failed) {
+    public PrismCommands(Plugin prism, boolean failed) {
         super(prism, "subcommand", "prism");
         setupCommands(failed);
     }
@@ -27,6 +28,7 @@ public class PrismCommands extends Executor {
         addSub("flags", "prism.help").allowConsole().setHandler(new FlagsCommand());
         addSub("params", "prism.help").allowConsole().setHandler(new ParamsCommand());
         addSub("actions", "prism.help").allowConsole().setHandler(new ActionsCommand());
+        addSub("settings", "prism.settings").allowConsole().setHandler(new SettingCommands());
         addSub("reload", "prism.reload").allowConsole().setHandler(new SubHandler() {
 
             @Override
@@ -34,6 +36,10 @@ public class PrismCommands extends Executor {
                 prism.reloadConfig();
                 prism.loadConfig();
                 call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
+                if (failed) {
+                    call.getSender().sendMessage(Prism.messenger
+                            .playerHeaderMsg("The server will need restarting to activate the database"));
+                }
             }
 
             @Override

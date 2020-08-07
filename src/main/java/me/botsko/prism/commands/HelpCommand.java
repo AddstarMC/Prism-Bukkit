@@ -48,6 +48,7 @@ public class HelpCommand implements SubHandler {
                             + "https://github.com/AddstarMC/Prism-Bukkit/wiki\n"));
             return;
         }
+        //todo explain Settings Command
         sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Basic Usage ---"));
 
         sender.sendMessage(Prism.messenger.playerHelp("i", "Toggle the inspector wand."));

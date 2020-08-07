@@ -5,8 +5,10 @@ import au.com.addstar.dripreporter.DripReporterApi;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
+import me.botsko.prism.measurement.QueueStats;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -38,6 +40,14 @@ public class ApiHandler {
             ActionMeter.setupActionMeter();
             DripGauge<Integer> recordingQ = RecordingQueue::getQueueSize;
             ApiHandler.monitor.addGauge(Prism.class, recordingQ, "RecordingQueueSize");
+            DripGauge<Double> batchInsertNum = QueueStats::getPerMinuteInsertAverage;
+            ApiHandler.monitor.addGauge(Prism.class, batchInsertNum, "BatchInsertSize");
+            DripGauge<Double> batchProcessTime = QueueStats::getPerMinuteBatchProcessAverage;
+            ApiHandler.monitor.addGauge(Prism.class, batchProcessTime, "BatchProcessingTime");
+            DripGauge<Double> batchBuildAverage = QueueStats::getPerMinuteBatchBuildAverage;
+            ApiHandler.monitor.addGauge(Prism.class, batchBuildAverage, "BatchBuildTime");
+
+
         }
     }
 

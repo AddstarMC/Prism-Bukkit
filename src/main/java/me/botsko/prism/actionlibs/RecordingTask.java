@@ -3,6 +3,7 @@ package me.botsko.prism.actionlibs;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
+import me.botsko.prism.measurement.QueueStats;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -10,7 +11,12 @@ import java.sql.SQLException;
 public class RecordingTask implements Runnable {
 
     private final Prism plugin;
-    private final int actionsPerInsert;
+    private static int actionsPerInsert;
+
+    public static void setActionsPerInsert(int adjust) {
+        actionsPerInsert = adjust;
+    }
+
 
     /**
      * Create the task.
@@ -58,7 +64,8 @@ public class RecordingTask implements Runnable {
                 scheduleNextRecording();
                 return;
             }
-            Prism.debug("Beginning batch insert from queue. " + System.currentTimeMillis());
+            long start = System.currentTimeMillis();
+            Prism.debug("Beginning batch insert from queue. " + start);
             try (
                     Connection conn = Prism.getPrismDataSource().getConnection()
             ) {
@@ -120,6 +127,8 @@ public class RecordingTask implements Runnable {
                 }
                 i++;
             }
+            long batchDoneTime = System.currentTimeMillis();
+            long batchingTime = batchDoneTime - start;
             // The main delay is here
             try {
                 batchedQuery.processBatch();
@@ -127,7 +136,9 @@ public class RecordingTask implements Runnable {
                 e.printStackTrace();
             }
             // Save the current count to the queue for short historical data
-            plugin.queueStats.addRunCount(actionsRecorded);
+            long batchProcessedEnd = System.currentTimeMillis();
+            long batchRunTime = batchProcessedEnd - batchDoneTime;
+            plugin.queueStats.addRunInfo(new QueueStats.TaskRunInfo(actionsRecorded,batchingTime,batchRunTime));
             if (Prism.getInstance().monitoring) {
                 //TODO ADD MONITORING TO METRICS.
             }
