@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
@@ -36,10 +37,10 @@ public class PrismCommands extends Executor {
                 prism.reloadConfig();
                 prism.loadConfig();
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.reload.success", ".")));
                 if (failed) {
-                    call.getSender().sendMessage(Prism.messenger
-                            .playerHeaderMsg("The server will need restarting to activate the database"));
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.restart.db.failed")));
                 }
             }
 

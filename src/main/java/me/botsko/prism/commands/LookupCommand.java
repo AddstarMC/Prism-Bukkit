@@ -71,7 +71,7 @@ public class LookupCommand implements SubHandler {
             for (final CommandSender shareWith : parameters.getSharedPlayers()) {
                 sharingWithPlayers.append(shareWith.getName()).append(", ");
             }
-            if (sharingWithPlayers.length() == 0) {
+            if (sharingWithPlayers.length() > 0) {
                 sharingWithPlayers.delete(sharingWithPlayers.lastIndexOf(","), sharingWithPlayers.length());
             }
             final String playersList = sharingWithPlayers.toString();
