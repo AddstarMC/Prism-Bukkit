@@ -24,9 +24,6 @@ public class PrismCommands extends Executor {
         addSub(new String[]{"about", "default"}, "prism.help").allowConsole().setHandler(new AboutCommand(prism));
         addSub("debug", "prism.debug").allowConsole().setHandler(new DebugCommand());
         addSub(new String[]{"help", "?"}, "prism.help").allowConsole().setHandler(new HelpCommand(failed));
-        addSub("flags", "prism.help").allowConsole().setHandler(new FlagsCommand());
-        addSub("params", "prism.help").allowConsole().setHandler(new ParamsCommand());
-        addSub("actions", "prism.help").allowConsole().setHandler(new ActionsCommand());
         addSub("reload", "prism.reload").allowConsole().setHandler(new SubHandler() {
 
             @Override
@@ -44,6 +41,9 @@ public class PrismCommands extends Executor {
         if (failed) {
             return;
         }
+        addSub("flags", "prism.help").allowConsole().setHandler(new FlagsCommand());
+        addSub("params", "prism.help").allowConsole().setHandler(new ParamsCommand());
+        addSub("actions", "prism.help").allowConsole().setHandler(new ActionsCommand());
         addSub(new String[]{"lookup", "l"}, "prism.lookup").allowConsole().setMinArgs(1)
                 .setHandler(new LookupCommand(prism));
         addSub("near", "prism.lookup").setHandler(new NearCommand(prism));
@@ -51,7 +51,7 @@ public class PrismCommands extends Executor {
                 .setMinArgs(1).setHandler(new PageCommand(prism));
         addSub(new String[]{"wand", "w", "i", "inspect"},
                 new String[]{"prism.rollback", "prism.restore", "prism.lookup", "prism.wand.inspect",
-                      "prism.wand.profile", "prism.wand.rollback", "prism.wand.restore"})
+                        "prism.wand.profile", "prism.wand.rollback", "prism.wand.restore"})
                 .setHandler(new WandCommand(prism));
         addSub(new String[]{"setmy"}, new String[]{"prism.setmy.wand"}).setHandler(new SetmyCommand(prism));
         addSub(new String[]{"resetmy"}, new String[]{"prism.setmy.wand"}).setHandler(new ResetmyCommand(prism));
