@@ -51,6 +51,7 @@
 		<build.number />
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spigot.api.version>1.16</spigot.api.version>
+		<bukkit.version>1.16.2-R0.1-SNAPSHOT</bukkit.version>
 		<test.mysql.host>localhost</test.mysql.host>
 		<test.mysql.user>prism</test.mysql.user>
 		<test.mysql.password>prism</test.mysql.password>
@@ -60,7 +61,7 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<version>${bukkit.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -308,7 +309,7 @@
 				<dependency>
 					<groupId>org.spigotmc</groupId>
 					<artifactId>spigot-api</artifactId>
-					<version>1.16.1-R0.1-SNAPSHOT</version>
+					<version>${bukkit.version}</version>
 					<scope>provided</scope>
 				</dependency>
 			</dependencies>
@@ -319,7 +320,7 @@
 				<dependency>
 					<groupId>com.destroystokyo.paper</groupId>
 					<artifactId>paper-api</artifactId>
-					<version>1.16.1-R0.1-SNAPSHOT</version>
+					<version>${bukkit.version}</version>
                     <scope>provided</scope>
 				</dependency>
 			</dependencies>
