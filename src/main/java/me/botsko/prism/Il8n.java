@@ -1,7 +1,7 @@
 package me.botsko.prism;
 
-import me.botsko.prism.utils.UTF8Control;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import org.jetbrains.annotations.PropertyKey;
 
 import java.util.MissingResourceException;
@@ -15,7 +15,7 @@ public class Il8n {
     private static ResourceBundle resourceBundle;
 
     public Il8n() {
-        resourceBundle = ResourceBundle.getBundle("messages",new UTF8Control());
+        resourceBundle = ResourceBundle.getBundle("messages",new UTF8ResourceBundleControl());
     }
 
     /**
@@ -60,7 +60,7 @@ public class Il8n {
      * @param args Object to insert.
      * @return TextComponent
      */
-    public static TextComponent formatMessage(String key,Object... args) {
+    public static TextComponent formatMessage(@PropertyKey(resourceBundle = "languages.message") String key,Object... args) {
         if (resourceBundle == null) {
             return TextComponent.of(key);
         }
