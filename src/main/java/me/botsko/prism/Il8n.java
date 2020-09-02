@@ -12,19 +12,17 @@ import java.util.ResourceBundle;
  * Created by Narimm on 29/07/2020.
  */
 public class Il8n {
-    private static ResourceBundle resourceBundle;
-
-    public Il8n() {
-        resourceBundle = ResourceBundle.getBundle("messages",new UTF8ResourceBundleControl());
-    }
+    private static ResourceBundle resourceBundle = ResourceBundle.getBundle("languages.message", new UTF8Control());
+    ;
 
     /**
      * Returns a TextComponent un-styled from the give key.
+     *
      * @param key String
      * @return TextComponent
      */
     public static TextComponent getMessage(@PropertyKey(resourceBundle = "languages.message") String key) {
-        return getMessage(key,"");
+        return getMessage(key, "");
     }
 
     /**
