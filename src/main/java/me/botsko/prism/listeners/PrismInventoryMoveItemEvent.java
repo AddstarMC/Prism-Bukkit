@@ -30,8 +30,9 @@ public class PrismInventoryMoveItemEvent implements Listener {
                 containerLoc = eventChest.getLocation();
             }
 
-            if (containerLoc == null)
+            if (containerLoc == null) {
                 return;
+            }
 
             String invName = event.getSource().getType().name().toLowerCase();
 
@@ -50,8 +51,9 @@ public class PrismInventoryMoveItemEvent implements Listener {
                 containerLoc = eventChest.getLocation();
             }
 
-            if (containerLoc == null)
+            if (containerLoc == null) {
                 return;
+            }
 
             String invName = event.getDestination().getType().name().toLowerCase();
 

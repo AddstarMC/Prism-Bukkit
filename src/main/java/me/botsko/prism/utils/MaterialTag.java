@@ -22,7 +22,8 @@ public class MaterialTag implements Tag<Material> {
     public static final MaterialTag PLANTS = new MaterialTag(Material.GRASS, Material.FERN, Material.DEAD_BUSH,
             Material.DANDELION, Material.POPPY, Material.BLUE_ORCHID, Material.ALLIUM, Material.AZURE_BLUET,
             Material.RED_TULIP, Material.ORANGE_TULIP, Material.WHITE_TULIP, Material.PINK_TULIP, Material.OXEYE_DAISY,
-            Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.KELP, Material.KELP_PLANT)
+            Material.BROWN_MUSHROOM, Material.RED_MUSHROOM, Material.LILY_PAD, Material.KELP, Material.KELP_PLANT,
+            Material.SWEET_BERRY_BUSH)
             .append(CORAL_WALL_FANS)
             .append(Tag.CORALS);
     public static final MaterialTag TALL_PLANTS = new MaterialTag(Material.SUNFLOWER, Material.LILAC,
@@ -49,6 +50,18 @@ public class MaterialTag implements Tag<Material> {
     public static final MaterialTag BANNERS = new MaterialTag(ALL_BANNERS).exclude("_WALL_", MatchMode.CONTAINS);
     public static final MaterialTag WALL_BANNERS = new MaterialTag(Tag.BANNERS).exclude(BANNERS);
     public static final MaterialTag BEDS = new MaterialTag(Tag.BEDS);
+    public static final MaterialTag CRAFTING = new MaterialTag(Material.CRAFTING_TABLE,Material.ANVIL,Material.JIGSAW,
+            Material.SMITHING_TABLE,Material.BREWING_STAND,Material.ENCHANTING_TABLE,Material.SMOKER,Material.FURNACE,
+            Material.BLAST_FURNACE);
+    public static final MaterialTag CONTAINERS = new MaterialTag(CRAFTING).append(
+            Material.CHEST,Material.BARREL,Material.ENDER_CHEST,Material.TRAPPED_CHEST,Material.CHEST_MINECART,
+            Material.DROPPER,Material.DISPENSER, Material.HOPPER,Material.HOPPER_MINECART
+    );
+    public static final MaterialTag USABLE = new MaterialTag(Tag.BUTTONS).append(Tag.DOORS).append(Tag.TRAPDOORS)
+            .append(Material.LEVER).append(Tag.FENCE_GATES);
+    // Affected by bone meal.
+    public static final MaterialTag GROWABLE = new MaterialTag(CROPS).append(PLANTS).append(Material.CACTUS)
+            .append(Tag.SAPLINGS);
     private final EnumSet<Material> materials;
     private final NamespacedKey key = null;
 

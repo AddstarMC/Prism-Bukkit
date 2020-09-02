@@ -112,7 +112,7 @@ public class Messenger {
      */
     public TextComponent playerHelp(String cmd, String help) {
         return TextComponent.builder()
-                .content("/prism").color(NamedTextColor.GRAY)
+                .content("/prism ").color(NamedTextColor.GRAY)
                 .build()
                 .append(TextComponent.of(cmd).color(NamedTextColor.LIGHT_PURPLE))
                 .append(TextComponent.of(" - " + help).color(NamedTextColor.WHITE));
