@@ -7,8 +7,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
-
-import java.util.concurrent.CompletableFuture;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class Messenger {
 
@@ -28,7 +27,11 @@ public class Messenger {
     }
 
     public void sendMessage(CommandSender sender, Component message) {
-        ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message);
+        if (sender instanceof ConsoleCommandSender) {
+            audienceProvider.console().sendMessage(message);
+        } else {
+            ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message);
+        }
     }
 
     /**
@@ -40,7 +43,7 @@ public class Messenger {
     public TextComponent playerHeaderMsg(Component msg) {
         if (msg != null) {
             return TextComponent.builder()
-                    .content(pluginName)
+                    .content(pluginName + " ")
                     .color(NamedTextColor.LIGHT_PURPLE)
                     .append(msg.colorIfAbsent(NamedTextColor.WHITE))
                     .build();

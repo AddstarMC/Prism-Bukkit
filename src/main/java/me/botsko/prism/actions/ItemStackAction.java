@@ -10,6 +10,7 @@ import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Location;
@@ -18,17 +19,21 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
@@ -36,12 +41,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public class ItemStackAction extends GenericAction {
 
@@ -194,6 +203,12 @@ public class ItemStackAction extends GenericAction {
                 }
             }
         }
+        if (meta instanceof BannerMeta) {
+            List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
+            Map<String, String> stringyPatterns = new HashMap<>();
+            patterns.forEach(pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+            actionData.bannerMeta = stringyPatterns;
+        }
     }
 
     public void setSlot(String slot) {
@@ -277,6 +292,22 @@ public class ItemStackAction extends GenericAction {
             }
             fireworkMeta.setEffect(effect.build());
             item.setItemMeta(fireworkMeta);
+        }
+        if (meta instanceof BannerMeta && actionData.bannerMeta != null) {
+            Map<String, String> stringStringMap = actionData.bannerMeta;
+            List<Pattern> patterns = new ArrayList<>();
+            stringStringMap.forEach(new BiConsumer<String, String>() {
+                @Override
+                public void accept(String patternIdentifier, String dyeName) {
+                    PatternType type = PatternType.getByIdentifier(patternIdentifier);
+                    DyeColor color = DyeColor.valueOf(dyeName);
+                    if (type != null && color != null) {
+                        Pattern p = new Pattern(color, type);
+                        patterns.add(p);
+                    }
+                }
+            });
+            ((BannerMeta) meta).setPatterns(patterns);
         }
 
         if (actionData.name != null) {
@@ -607,5 +638,7 @@ public class ItemStackAction extends GenericAction {
         public boolean hasFlicker;
         public boolean hasTrail;
         public short durability = 0;
+        public Map<String, String> bannerMeta;
+
     }
 }

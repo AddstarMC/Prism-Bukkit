@@ -1,7 +1,6 @@
 package me.botsko.prism;
 
 import junit.framework.TestCase;
-import org.junit.Before;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -11,13 +10,10 @@ public class Il8nTest extends TestCase {
 
 
     public void testGetMessage() {
-        Il8n.getMessage("about-header");
-    }
-
-    public void testTestGetMessage() {
     }
 
     public void testGetRawMessage() {
+        assertEquals("Prism - originally by Viveleroi; maintained by <author> v<version>", Il8n.getRawMessage("about-header"));
     }
 
     public void testFormatMessage() {
