@@ -583,4 +583,5 @@ public class BlockAction extends GenericAction {
     public static class SignActionData extends BlockActionData {
         String[] lines;
     }
+
 }
