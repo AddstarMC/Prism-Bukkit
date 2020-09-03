@@ -250,7 +250,7 @@ public class ItemStackAction extends GenericAction {
             }
         }
 
-        ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
+        ItemMeta meta = item.getItemMeta();
 
         // Leather color
         if (meta instanceof LeatherArmorMeta && actionData.color > 0) {
