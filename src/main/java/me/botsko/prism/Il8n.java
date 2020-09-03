@@ -78,23 +78,4 @@ public class Il8n {
             return getMessage(key);
         }
     }
-    public static TextComponent formatMessageWithStyle(@PropertyKey(resourceBundle = "languages.message") String key, Style style,
-                                              Object... args) {
-        if (resourceBundle == null) {
-            return TextComponent.of(key);
-        }
-        try {
-            String format = resourceBundle.getString(key);
-            String out = String.format(format, args);
-            Formatter  formatter = new Formatter();
-            TextComponent result = TextComponent.of(out);
-
-        } catch (MissingResourceException e) {
-            Prism.log("Missing Resource " + e.getMessage());
-            return TextComponent.of(key);
-        } catch (MissingFormatArgumentException e) {
-            Prism.log("Missing Format Argument " + e.getMessage());
-            return getMessage(key);
-        }
-    }
 }
