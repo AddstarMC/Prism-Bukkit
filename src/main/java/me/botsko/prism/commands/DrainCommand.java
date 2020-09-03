@@ -8,8 +8,12 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksDrainEvent;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,14 +63,15 @@ public class DrainCommand implements SubHandler {
             return;
         }
 
-        // Build seeking message
-        String msg = "Looking for " + drainType + " within " + radius + " blocks.";
-        if (drainType.equals("water")) {
-            msg += ChatColor.GRAY + " It's just too wet.";
-        } else if (drainType.equals("lava")) {
-            msg += ChatColor.GRAY + " It's getting hot in here.";
+        TextComponent.Builder builder = TextComponent.builder()
+                .append(Il8n.formatMessage("drain.lookup",drainType,radius));
+        String key = "drain.lookup.water";
+        if (drainType.equals("lava")) {
+            key = "drain.lookup.lava";
         }
-        Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(msg));
+        builder.append(TextComponent.of(" ")).append(Il8n.getMessage(key).color(NamedTextColor.GRAY));
+
+        Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(builder.build()));
 
         ArrayList<BlockStateChange> blockStateChanges = null;
         if (drainType.isEmpty()) {
@@ -80,10 +85,11 @@ public class DrainCommand implements SubHandler {
         if (blockStateChanges != null && !blockStateChanges.isEmpty()) {
 
             // @todo remove the extra space in msg
-            Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
-                    .playerHeaderMsg("Drained " + blockStateChanges.size() + " " + drainType + " blocks."));
-            Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerSubduedHeaderMsg("Use /prism undo last if needed."));
+            Component out = Prism.messenger
+                    .playerHeaderMsg(Il8n.formatMessage("drain.lookup.result",blockStateChanges.size(),drainType))
+                    .append(TextComponent.newline())
+                    .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("drain.result.undo")));
+            Prism.messenger.sendMessage(call.getSender(), out);
 
             // Trigger the event
             final PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
@@ -91,7 +97,7 @@ public class DrainCommand implements SubHandler {
 
         } else {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError("Nothing found to drain within that radius."));
+                    Prism.messenger.playerError(Il8n.getMessage("drain.result.empty")));
         }
     }
 

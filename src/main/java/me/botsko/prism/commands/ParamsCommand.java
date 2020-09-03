@@ -4,11 +4,9 @@ import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -28,47 +26,42 @@ public class ParamsCommand implements SubHandler {
 
 
     private void help(CommandSender s) {
-        Audience sender = Prism.getAudiences().audience(s);
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("params-header")
-                .color(NamedTextColor.GOLD)));
-        sender.sendMessage(Prism.messenger.playerMsg(colourParamHelp(
-                Il8n.getMessage("params-radius-help"))));
-        sender.sendMessage(Prism.messenger.playerMsg(
-                colourParamHelp(Il8n.getMessage("params-radius-help2"))));
-        sender.sendMessage(Prism.messenger.playerMsg(
-                colourParamHelp(Il8n.getMessage("params-radius-help3"))));
-        sender.sendMessage(Prism.messenger.playerMsg(
-                colourParamHelp(Il8n.getMessage("params-radius-help4"))));
-        sender.sendMessage(Prism.messenger.playerMsg(
-                TextComponent.builder().content("---").color(NamedTextColor.GRAY).build()));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "a:[action]" + ChatColor.WHITE
-                + " Like 'block-break' (See below for full list). No default."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "b:[block]" + ChatColor.WHITE
-                + " Like 'grass' or '2' or '2:0'. No default."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "before:[time]" + ChatColor.WHITE
-                + " Events prior to x long ago."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "e:[entity]" + ChatColor.WHITE
-                + " Like 'pig'. No default."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "id:[#]" + ChatColor.WHITE
-                + " Record id. Useful for single item rollbacks/restores without a wand."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "k:[text]" + ChatColor.WHITE
-                + " Keyword search. Mainly for command/chat logging."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "p:[player]" + ChatColor.WHITE
-                + " Like 'viveleroi'. No default."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "since:[time]" + ChatColor.WHITE
-                + " Events since to x long ago (same as t:)."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "t:[time]" + ChatColor.WHITE
-                + " Events since x long ago. Like 1s(seconds), 20m(minutes), 1h(hour), 7d(days), 2w(weeks). "
-                + "Default based on config."));
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.LIGHT_PURPLE + "w:[world]" + ChatColor.WHITE
-                + " Defaults to your current world."));
-        sender.sendMessage(Prism.messenger.playerMsg("Prefix action, player, or entity names with ! to exclude. "
-                + "Like p:!viveleroi"));
-        sender.sendMessage(Prism.messenger.playerMsg("Prefix player names with ~ for partial match. Like p:~vive"));
-
-        sender.sendMessage(Prism.messenger.playerMsg(ChatColor.GRAY + "Use " + ChatColor.WHITE + "/pr actions"
-                + ChatColor.GRAY + " to view list of actions."));
-
+        TextComponent.Builder builder = TextComponent.builder()
+                .append(Prism.messenger.playerHeaderMsg(Il8n.getMessage("params-header")
+                        .color(NamedTextColor.GOLD)).append(TextComponent.newline()))
+                .append(Prism.messenger.playerMsg(colourParamHelp(
+                        Il8n.getMessage("params-radius-help")))).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(
+                        colourParamHelp(Il8n.getMessage("params-radius-help2")))).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(
+                        colourParamHelp(Il8n.getMessage("params-radius-help3")))).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(
+                        colourParamHelp(Il8n.getMessage("params-radius-help4")))).append(TextComponent.newline())
+                .append(TextComponent.of("---").color(NamedTextColor.GRAY)).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of(" a[action]: ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-action-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("b:[block] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-block-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("before:[time] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-before-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("e:[entity] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-entity-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("id:[#] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-id-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("k:[text] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-keyword-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("p:[player] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-player-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("since:[time] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-since-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("t:[time] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-time-help")).append(TextComponent.newline())
+                .append(Prism.messenger.playerMsg(TextComponent.of("w:[world] ").color(NamedTextColor.LIGHT_PURPLE)))
+                .append(Il8n.getMessage("params-world-help")).append(TextComponent.newline())
+                .append(Il8n.getMessage("params-prefix-help")).append(TextComponent.newline())
+                .append(Il8n.getMessage("params-partial-help")).append(TextComponent.newline())
+                .append(Il8n.getMessage("params-actionlist-help")).append(TextComponent.newline());
+        Prism.messenger.sendMessage(s,builder.build());
     }
 
     private static Component colourParamHelp(TextComponent message) {

@@ -1,5 +1,6 @@
 package me.botsko.prism.wands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.audience.Audience;
@@ -29,11 +30,15 @@ public class ProfileWand extends WandBase {
     public void playerRightClick(Player player, Entity entity) {
         if (entity != null) {
             Audience sender = Prism.getAudiences().audience(player);
-            sender.sendMessage(Prism.messenger.playerHeaderMsg("Entity Profile"));
-            sender.sendMessage(Prism.messenger.playerMsg("Name: " + entity.getType().toString().toLowerCase()));
-            sender.sendMessage(Prism.messenger.playerMsg("ID: " + entity.getEntityId()));
-            sender.sendMessage(Prism.messenger.playerMsg("Coords: " + entity.getLocation().getBlockX() + " "
-                    + entity.getLocation().getBlockY() + " " + entity.getLocation().getBlockZ()));
+            sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile.entity")));
+            sender.sendMessage(Il8n.formatMessage("profile.detail",
+                    entity.getType().toString().toLowerCase(),
+                    entity.getEntityId(),
+                    "",
+                    entity.getLocation().getBlockX(),
+                    entity.getLocation().getBlockY(),
+                    entity.getLocation().getBlockZ()
+                    ));
         }
     }
 
@@ -42,15 +47,16 @@ public class ProfileWand extends WandBase {
         final Block block = loc.getBlock();
         Audience sender = Prism.getAudiences().audience(player);
 
-        sender.sendMessage(Prism.messenger.playerHeaderMsg("Location Profile"));
-
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile.location")));
         BlockData data = block.getBlockData();
-        sender.sendMessage(Prism.messenger.playerMsg("Name: " + block.getType().toString().toLowerCase()));
-        sender.sendMessage(Prism.messenger.playerMsg("Alias: " + Prism.getItems().getAlias(block.getType(), data)));
-        sender.sendMessage(Prism.messenger.playerMsg("ID: " + block.getType() + " " + Utilities.dataString(data)));
-        sender.sendMessage(
-                Prism.messenger.playerMsg("Coords: " + block.getX() + " " + block.getY() + " " + block.getZ()));
-
+        sender.sendMessage(Il8n.formatMessage("profile.detail",
+                block.getType().toString().toLowerCase(),
+                block.getType() + " " + Utilities.dataString(data),
+                Prism.getItems().getAlias(block.getType(), data),
+                block.getX(),
+                block.getY(),
+                block.getZ()
+        ));
     }
 
 }

@@ -59,7 +59,7 @@ public class LookupCommand implements SubHandler {
             final List<String> defaultsUsed = parameters.getDefaultsUsed();
             StringBuilder defaultsReminder = new StringBuilder();
             if (!defaultsUsed.isEmpty()) {
-                defaultsReminder.append("Using defaults:");
+                defaultsReminder.append(Il8n.getRawMessage("queryparameter.defaults.prefix"));
                 for (final String d : defaultsUsed) {
                     defaultsReminder.append(" ").append(d);
                 }
@@ -103,13 +103,11 @@ public class LookupCommand implements SubHandler {
                     Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerHeaderMsg(component));
                 }
                 if (!results.getActionResults().isEmpty()) {
-                    Prism.messenger.sendMessage(player, Prism.messenger.playerHeaderMsg("Showing "
-                            + results.getTotalResults()
-                            + " results. Page 1 of "
-                            + results.getTotalPages()));
+                    Prism.messenger.sendMessage(player,
+                            Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup.header.message",results.getTotalResults(),1,results.getTotalPages())));
                     if ((defaultsReminder.length() > 0) && isSender) {
                         Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                                defaultsReminder.toString()));
+                                TextComponent.of(defaultsReminder.toString())));
                     }
                     final List<Handler> paginated = results.getPaginatedActionResults();
                     if (paginated != null) {
@@ -141,7 +139,7 @@ public class LookupCommand implements SubHandler {
                     if (defaultsReminder.length() > 0) {
                         if (isSender) {
                             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                                    defaultsReminder.toString()));
+                                    TextComponent.of(defaultsReminder.toString())));
                         }
                     }
                     if (isSender) {

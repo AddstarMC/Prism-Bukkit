@@ -1,5 +1,6 @@
 package me.botsko.prism.appliers;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
@@ -48,7 +49,7 @@ public class Rollback extends Preview {
                             parameters.getRadius());
                     if (!blockStateChanges.isEmpty()) {
                         audience.sendMessage(Prism.messenger
-                                .playerHeaderMsg("Extinguishing fire!" + ChatColor.GRAY + " Like a boss."));
+                                .playerHeaderMsg(Il8n.getMessage("fire-extinguished-sucess")));
                     }
                 }
             }
@@ -61,7 +62,7 @@ public class Rollback extends Preview {
                     final int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
                     if (removed > 0) {
                         audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                                "Removed " + removed + " drops in affected area." + ChatColor.GRAY + " Like a boss."));
+                                Il8n.formatMessage("rollback.removedDrops",removed)));
                     }
                 }
             }
@@ -79,7 +80,7 @@ public class Rollback extends Preview {
             }
             if (drained != null && drained.size() > 0) {
                 audience.sendMessage(
-                        Prism.messenger.playerHeaderMsg("Draining liquid!" + ChatColor.GRAY + " Like a boss."));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("drained.done")));
             }
         }
 

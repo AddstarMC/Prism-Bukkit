@@ -58,8 +58,6 @@ public class EntitySerializer {
         // Get animal age
         if (entity instanceof Ageable) {
             isAdult = ((Ageable) entity).isAdult();
-        } else if (entity instanceof Zombie) {
-            isAdult = !((Zombie) entity).isBaby();
         }
 
         // Owner
@@ -113,10 +111,7 @@ public class EntitySerializer {
             } else {
                 age.setAdult();
             }
-        } else if (entity instanceof Zombie) {
-            ((Zombie) entity).setBaby(Boolean.FALSE.equals(isAdult));
         }
-
         // Owner
         if (entity instanceof Tameable) {
             ((Tameable) entity).setOwner(EntityUtils.offlineOf(tamingOwner));

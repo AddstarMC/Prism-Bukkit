@@ -1,10 +1,14 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.TypeUtils;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -59,25 +63,26 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
         final int colTextLen = 16;
         final int colIntLen = 12;
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
-                "Crafting action type report for " + ChatColor.DARK_AQUA + playerName + "..."));
+                Il8n.formatMessage("actionreport.crafting",playerName)));
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery()
         ) {
-            Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Action", colTextLen)
-                            + TypeUtils.padStringRight("Count", colIntLen)));
+            TextComponent.Builder builder = TextComponent.builder();
+            builder.append(TextComponent.of(TypeUtils.padStringRight("Action", colTextLen),NamedTextColor.GRAY))
+                    .append(TextComponent.of(TypeUtils.padStringRight("Count", colIntLen),NamedTextColor.GRAY));
             while (rs.next()) {
                 final String action = rs.getString(2);
                 final int count = rs.getInt(1);
 
                 final String colAlias = TypeUtils.padStringRight(action, colTextLen);
                 final String colPlaced = TypeUtils.padStringRight("" + count, colIntLen);
-                Prism.messenger.sendMessage(sender, Prism.messenger
-                        .playerMsg(ChatColor.DARK_AQUA + colAlias + ChatColor.GREEN + colPlaced));
+                builder.append(TextComponent.of(colAlias).color(TextColor.of(0x158258)).append(TextComponent.of(colPlaced, NamedTextColor.GREEN)));
 
             }
+            Prism.messenger.sendMessage(sender,builder.build());
+
         } catch (final SQLException e) {
             dataSource.handleDataSourceException(e);
         }

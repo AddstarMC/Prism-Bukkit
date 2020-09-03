@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.BlockReportQuery;
@@ -68,6 +69,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
             playerName = name;
         }
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
+                Il8n.formatMessage("actionreport.blockChange",playerName)
                 "Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "..."));
 
         final int colTextLen = 20;

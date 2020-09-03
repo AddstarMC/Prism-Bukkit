@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -92,8 +93,7 @@ public class PreviewCommand extends AbstractCommand {
                 }
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
                 audience.sendMessage(Prism.messenger
-                        .playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
-
+                        .playerSubduedHeaderMsg(Il8n.getMessage("queryparameter.defaults.prefix",defaultsReminder.toString())));
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
                     // Perform preview
@@ -105,7 +105,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.ROLLBACK);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview.start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -122,7 +122,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.RESTORE);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview.start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -131,7 +131,7 @@ public class PreviewCommand extends AbstractCommand {
                                 rs.preview();
                             });
                         } else {
-                            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
+                            audience.sendMessage(Prism.messenger.playerError(Il8n.getMessage("preview-no-actions")));
                         }
                     }
                 });

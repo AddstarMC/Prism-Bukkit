@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
@@ -97,9 +98,9 @@ public class PageCommand implements SubHandler {
             return;
         }
 
-        Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerHeaderMsg(
-                "Showing " + results.getTotalResults() + " results. Page " + page + " of "
-                        + results.getTotalPages()));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup.header.message",
+                        results.getTotalResults(),results.getPage(),results.getTotalPages())));
         final List<Handler> paginated = results.getPaginatedActionResults();
         if (paginated == null || paginated.size() == 0) {
             Prism.messenger.sendMessage(call.getSender(),
