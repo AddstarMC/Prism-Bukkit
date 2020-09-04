@@ -1,5 +1,7 @@
 package me.botsko.prism.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -7,6 +9,7 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -19,10 +22,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -33,24 +36,24 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class PrismBlockEvents implements Listener {
-
-    private final Prism plugin;
+public class PrismBlockEvents extends BaseListener {
 
     /**
      * Constructor.
      * @param plugin Prism.
      */
     public PrismBlockEvents(Prism plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     /**
@@ -334,6 +337,51 @@ public class PrismBlockEvents implements Listener {
         }
         RecordingQueue.addToQueue(ActionFactory.createBlock("leaf-decay", event.getBlock(),
                 "Environment"));
+    }
+
+    /**
+     * Primarily for tracking bed explosions in the nether and end.
+     * @param event BlockExplodeEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        if (!Prism.getIgnore().event("bed-explode", event.getBlock())) {
+            return;
+        }
+        Block exploding = event.getBlock();
+        List<Block> affected = event.blockList();
+        if (Tag.BEDS.isTagged(exploding.getType())) {
+            Player player = weakCache.getIfPresent(event.getBlock().hashCode());
+            String source;
+            if (player != null) {
+                source = player.getName();
+                RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode",exploding,player));
+            } else {
+                source = "ENVIRONMENT";
+                RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode",exploding,"ENVIRONMENT"));
+            }
+            contructBlockEvent("bed-explode",source,affected);
+        }
+    }
+
+    private final Cache<Integer,Player> weakCache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(10, TimeUnit.SECONDS)
+            .build();
+
+    /**
+     * Tracks players entering a bed  and where its not possible cache's it in case of explosion.
+     * @param enterEvent PlayerBedEnterEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onBedEnter(PlayerBedEnterEvent enterEvent) {
+        if (enterEvent.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.NOT_POSSIBLE_HERE) {
+            weakCache.put(enterEvent.getBed().hashCode(), enterEvent.getPlayer());
+        }
+        if (!Prism.getIgnore().event("block-use", enterEvent.getBed())) {
+            return;
+        }
+        RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", enterEvent.getBed(), enterEvent.getPlayer()));
     }
 
     /**

@@ -271,6 +271,8 @@ public class ActionRegistry {
                 UseAction.class, Il8n.getRawMessage("used")));
         registerAction(new ActionType("tnt-explode", false, true, true,
                 BlockAction.class, Il8n.getRawMessage("blew-up")));
+        registerAction(new ActionType("bed-explode", false, true, true,
+                BlockAction.class, Il8n.getRawMessage("blew-up")));
         registerAction(new ActionType("tnt-prime", false, false, false,
                 UseAction.class, Il8n.getRawMessage("primed")));
         registerAction(new ActionType("tree-grow", true, true, true,
