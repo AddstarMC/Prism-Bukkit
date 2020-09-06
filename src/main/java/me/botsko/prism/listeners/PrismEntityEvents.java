@@ -12,7 +12,6 @@ import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Bisected;
@@ -762,7 +761,7 @@ public class PrismEntityEvents implements Listener {
         final BlockState newState = event.getNewState();
 
         if (event.getEntity() instanceof Player) {
-            final OfflinePlayer player = (OfflinePlayer)event.getEntity();
+            final Player player = (Player)event.getEntity();
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(),
                     block.getBlockData(), newState.getType(), newState.getBlockData(), player));
         } else {
