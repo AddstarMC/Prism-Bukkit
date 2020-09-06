@@ -765,8 +765,7 @@ public class PrismEntityEvents implements Listener {
             final OfflinePlayer player = (OfflinePlayer)event.getEntity();
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(),
                     block.getBlockData(), newState.getType(), newState.getBlockData(), player));
-        }
-        else {
+        } else {
             final String entity = event.getEntity().getType().name().toLowerCase();
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(),
                     block.getBlockData(), newState.getType(), newState.getBlockData(), entity));
