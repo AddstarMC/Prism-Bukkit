@@ -5,6 +5,7 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -14,6 +15,10 @@ public class Messenger {
 
     private final AudienceProvider audienceProvider;
     private final String pluginName;
+    private static final TextColor defaultColor = TextColor.of(0xb5bcc7);
+    private static final TextColor headerColor = TextColor.of(0xb597ba);
+    private static final TextColor error = TextColor.of(0x6e1017);
+    private static final TextColor success = TextColor.of(0x4fab55);
 
     /**
      * Build the class.
@@ -30,7 +35,7 @@ public class Messenger {
         if (sender instanceof ConsoleCommandSender) {
             audienceProvider.console().sendMessage(message);
         } else {
-            ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message);
+            ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message.colorIfAbsent(defaultColor));
         }
     }
 
@@ -44,7 +49,7 @@ public class Messenger {
         if (msg != null) {
             return TextComponent.builder()
                     .content(pluginName + " ")
-                    .color(NamedTextColor.LIGHT_PURPLE)
+                    .color(headerColor)
                     .append(msg.colorIfAbsent(NamedTextColor.WHITE))
                     .build();
         }
@@ -66,8 +71,8 @@ public class Messenger {
         if (msg != null) {
             return TextComponent.builder()
                     .content(pluginName + " ")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-                    .append(msg.colorIfAbsent(NamedTextColor.GRAY))
+                    .color(headerColor)
+                    .append(msg.colorIfAbsent(defaultColor))
                     .build();
         }
         return TextComponent.empty();
@@ -101,7 +106,7 @@ public class Messenger {
      */
     public Component playerMsg(Component msg) {
         if (msg != null) {
-            return msg.colorIfAbsent(NamedTextColor.WHITE);
+            return msg.colorIfAbsent(defaultColor);
         }
         return TextComponent.empty();
     }
@@ -115,10 +120,10 @@ public class Messenger {
      */
     public TextComponent playerHelp(String cmd, String help) {
         return TextComponent.builder()
-                .content("/prism ").color(NamedTextColor.GRAY)
+                .content("/prism ").color(defaultColor)
                 .build()
-                .append(TextComponent.of(cmd).color(NamedTextColor.LIGHT_PURPLE))
-                .append(TextComponent.of(" - " + help).color(NamedTextColor.WHITE));
+                .append(TextComponent.of(cmd).color(headerColor)
+                        .append(TextComponent.of(" - " + help).color(NamedTextColor.WHITE)));
     }
 
     /**
@@ -130,8 +135,8 @@ public class Messenger {
     public TextComponent playerError(Component msg) {
         return TextComponent.builder()
                 .content(pluginName + " ")
-                .color(NamedTextColor.LIGHT_PURPLE)
-                .append(msg.colorIfAbsent(NamedTextColor.RED))
+                .color(headerColor)
+                .append(msg.colorIfAbsent(error))
                 .build();
     }
 
@@ -162,8 +167,8 @@ public class Messenger {
         if (msg != null) {
             return TextComponent.builder()
                     .content(pluginName + " ")
-                    .color(NamedTextColor.LIGHT_PURPLE)
-                    .append(msg.colorIfAbsent(NamedTextColor.GREEN))
+                    .color(headerColor)
+                    .append(msg.colorIfAbsent(success))
                     .build();
         }
         return TextComponent.empty();

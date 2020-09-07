@@ -58,7 +58,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
-import sun.misc.BASE64Decoder;
 
 import java.util.Collection;
 import java.util.Locale;
