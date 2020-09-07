@@ -108,4 +108,30 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
             dataSource.handleDataSourceException(e);
         }
     }
+
+    @Override
+    public void v8_to_v9() {
+        // Declare query
+        String query = "";
+
+        // Prepare database
+        try (
+                Connection conn = dataSource.getConnection();
+                PreparedStatement st = conn.prepareStatement(query);
+        ) {
+            // Add action_id index
+            query = "ALTER TABLE `" + prefix + "data` ADD INDEX `action` (`action_id`)";
+            st.executeUpdate(query);
+
+            // Drop location index to re-create it
+            query = "ALTER TABLE `" + prefix + "data` DROP INDEX `location`";
+            st.executeUpdate(query);
+
+            // Re-create location index
+            query = "ALTER TABLE `" + prefix + "data` CREATE INDEX `location` (`world_id`, `x`, `z`, `y`)";
+            st.executeUpdate(query);
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
+        }
+    }
 }
