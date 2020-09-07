@@ -65,6 +65,7 @@ prism:
     - lava
     - flowing_lava
   tracking:
+    bed-explode: true
     block-break: true
     block-burn: true
     block-dispense: true

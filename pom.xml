@@ -239,6 +239,7 @@
 			<includes>
 				<include>**/*.yml</include>
 			</includes>
+			<targetPath>.</targetPath>
 		</resource>
 		<resource>
 			<directory>src/main/resources</directory>

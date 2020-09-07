@@ -343,40 +343,36 @@ public class PrismBlockEvents extends BaseListener {
      * Primarily for tracking bed explosions in the nether and end.
      * @param event BlockExplodeEvent
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent event) {
         if (!Prism.getIgnore().event("bed-explode", event.getBlock())) {
             return;
         }
-        Block exploding = event.getBlock();
         List<Block> affected = event.blockList();
-        if (Tag.BEDS.isTagged(exploding.getType())) {
-            Player player = weakCache.getIfPresent(event.getBlock().hashCode());
-            String source;
-            if (player != null) {
-                source = player.getName();
-                RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode",exploding,player));
-            } else {
-                source = "ENVIRONMENT";
-                RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode",exploding,"ENVIRONMENT"));
-            }
-            contructBlockEvent("bed-explode",source,affected);
+        PlayerBed playerBed = weakCache.getIfPresent(event.getBlock().getLocation());//while it might be nice to check that its a bed - the block is already air
+        if (playerBed == null) {
+            return;
         }
+        String source;
+        source = playerBed.player.getName();
+        RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode", playerBed.bed, playerBed.player));
+        contructBlockEvent("bed-explode", source, affected);
+        weakCache.invalidate(event.getBlock().getLocation());
     }
 
-    private final Cache<Integer,Player> weakCache = CacheBuilder
+    private final Cache<Location, PlayerBed> weakCache = CacheBuilder
             .newBuilder()
-            .expireAfterWrite(10, TimeUnit.SECONDS)
+            .expireAfterWrite(30, TimeUnit.SECONDS)
             .build();
 
     /**
      * Tracks players entering a bed  and where its not possible cache's it in case of explosion.
      * @param enterEvent PlayerBedEnterEvent
      */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onBedEnter(PlayerBedEnterEvent enterEvent) {
         if (enterEvent.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.NOT_POSSIBLE_HERE) {
-            weakCache.put(enterEvent.getBed().hashCode(), enterEvent.getPlayer());
+            weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(), enterEvent.getBed().getState()));
         }
         if (!Prism.getIgnore().event("block-use", enterEvent.getBed())) {
             return;
@@ -593,6 +589,16 @@ public class PrismBlockEvents extends BaseListener {
             if (Prism.getIgnore().event("lava-flow", event.getBlock())) {
                 RecordingQueue.addToQueue(ActionFactory.createBlock("lava-flow", event.getBlock(), "Lava"));
             }
+        }
+    }
+
+    private static class PlayerBed {
+        Player player;
+        BlockState bed;
+
+        public PlayerBed(Player player, BlockState bed) {
+            this.player = player;
+            this.bed = bed;
         }
     }
 }
