@@ -41,10 +41,10 @@ public class HelpCommand implements SubHandler {
         Audience sender = Prism.getAudiences().audience(s);
         if (failed) {
             sender.sendMessage(
-                    Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.disabled.header")
+                    Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-disabled-header")
                             .color(NamedTextColor.GOLD)));
             sender.sendMessage(
-                    Prism.messenger.playerMsg(Il8n.getMessage("prism.disabled.content")
+                    Prism.messenger.playerMsg(Il8n.getMessage("prism-disabled-content")
                             .color(NamedTextColor.GOLD)));
             sender.sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("discord", ":")

@@ -99,8 +99,8 @@ public class PageCommand implements SubHandler {
         }
 
         Prism.messenger.sendMessage(call.getSender(),
-                Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup.header.message",
-                        results.getTotalResults(),results.getPage(),results.getTotalPages())));
+                Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message",
+                        results.getTotalResults(), results.getPage(), results.getTotalPages())));
         final List<Handler> paginated = results.getPaginatedActionResults();
         if (paginated == null || paginated.size() == 0) {
             Prism.messenger.sendMessage(call.getSender(),

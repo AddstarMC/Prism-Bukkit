@@ -104,7 +104,7 @@ public class LookupCommand implements SubHandler {
                 }
                 if (!results.getActionResults().isEmpty()) {
                     Prism.messenger.sendMessage(player,
-                            Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup.header.message",results.getTotalResults(),1,results.getTotalPages())));
+                            Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message", results.getTotalResults(), 1, results.getTotalPages())));
                     if ((defaultsReminder.length() > 0) && isSender) {
                         Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
                                 TextComponent.of(defaultsReminder.toString())));

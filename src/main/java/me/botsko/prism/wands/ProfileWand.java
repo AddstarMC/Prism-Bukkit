@@ -30,15 +30,15 @@ public class ProfileWand extends WandBase {
     public void playerRightClick(Player player, Entity entity) {
         if (entity != null) {
             Audience sender = Prism.getAudiences().audience(player);
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile.entity")));
-            sender.sendMessage(Il8n.formatMessage("profile.detail",
+            sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-entity")));
+            sender.sendMessage(Il8n.formatMessage("profile-detail",
                     entity.getType().toString().toLowerCase(),
                     entity.getEntityId(),
                     "",
                     entity.getLocation().getBlockX(),
                     entity.getLocation().getBlockY(),
                     entity.getLocation().getBlockZ()
-                    ));
+            ));
         }
     }
 
@@ -47,9 +47,9 @@ public class ProfileWand extends WandBase {
         final Block block = loc.getBlock();
         Audience sender = Prism.getAudiences().audience(player);
 
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile.location")));
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-location")));
         BlockData data = block.getBlockData();
-        sender.sendMessage(Il8n.formatMessage("profile.detail",
+        sender.sendMessage(Il8n.formatMessage("profile-detail",
                 block.getType().toString().toLowerCase(),
                 block.getType() + " " + Utilities.dataString(data),
                 Prism.getItems().getAlias(block.getType(), data),

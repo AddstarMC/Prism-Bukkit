@@ -11,9 +11,7 @@ import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.ChatColor;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,10 +62,10 @@ public class DrainCommand implements SubHandler {
         }
 
         TextComponent.Builder builder = TextComponent.builder()
-                .append(Il8n.formatMessage("drain.lookup",drainType,radius));
-        String key = "drain.lookup.water";
+                .append(Il8n.formatMessage("command-drain-lookup", drainType, radius));
+        String key = "command-drain-lookup-water";
         if (drainType.equals("lava")) {
-            key = "drain.lookup.lava";
+            key = "command-drain-lookup-lava";
         }
         builder.append(TextComponent.of(" ")).append(Il8n.getMessage(key).color(NamedTextColor.GRAY));
 
@@ -86,9 +84,9 @@ public class DrainCommand implements SubHandler {
 
             // @todo remove the extra space in msg
             Component out = Prism.messenger
-                    .playerHeaderMsg(Il8n.formatMessage("drain.lookup.result",blockStateChanges.size(),drainType))
+                    .playerHeaderMsg(Il8n.formatMessage("command-drain-lookup-result", blockStateChanges.size(), drainType))
                     .append(TextComponent.newline())
-                    .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("drain.result.undo")));
+                    .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-drain-result-undo")));
             Prism.messenger.sendMessage(call.getSender(), out);
 
             // Trigger the event
@@ -97,7 +95,7 @@ public class DrainCommand implements SubHandler {
 
         } else {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("drain.result.empty")));
+                    Prism.messenger.playerError(Il8n.getMessage("command-drain-result-empty")));
         }
     }
 

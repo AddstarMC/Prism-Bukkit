@@ -37,10 +37,10 @@ public class PrismCommands extends Executor {
                 prism.reloadConfig();
                 prism.loadConfig();
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.reload.success")));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-reload-success")));
                 if (failed) {
                     Prism.messenger.sendMessage(call.getSender(),
-                            Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism.reload.failed")));
+                            Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-reload-failed")));
                 }
             }
 

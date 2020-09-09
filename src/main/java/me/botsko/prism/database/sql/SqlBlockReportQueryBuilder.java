@@ -69,7 +69,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
             playerName = name;
         }
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
-                Il8n.formatMessage("actionreport.blockChange", playerName)));
+                Il8n.formatMessage("actionreport-blockChange", playerName)));
 
         final int colTextLen = 20;
         final int colIntLen = 12;
