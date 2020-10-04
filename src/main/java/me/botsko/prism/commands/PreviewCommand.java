@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -15,9 +15,11 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 public class PreviewCommand extends AbstractCommand {
 
@@ -94,7 +96,7 @@ public class PreviewCommand extends AbstractCommand {
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
                 audience.sendMessage(Prism.messenger
                         .playerSubduedHeaderMsg(
-                                Il8n.getMessage("queryparameter.defaults.prefix",
+                                Il8nHelper.getMessage("queryparameter.defaults.prefix",
                                         defaultsReminder.toString())));
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
@@ -105,47 +107,57 @@ public class PreviewCommand extends AbstractCommand {
                     // Rollback
                     if (call.getArg(1).equalsIgnoreCase("rollback")
                             || call.getArg(1).equalsIgnoreCase("rb")) {
-                        parameters.setProcessType(PrismProcessType.ROLLBACK);
-                        if (!results.getActionResults().isEmpty()) {
-
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                                    Il8n.getMessage("preview-apply-start")));
-
-                            // Perform preview on the main thread
-                            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                                final Previewable rs = new Rollback(plugin, call.getPlayer(),
-                                        results.getActionResults(), parameters, new PrismApplierCallback());
-                                rs.preview();
-                            });
-                        } else {
-                            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
-                        }
+                        handleRollBack(call, parameters, results, audience);
+                        assert (parameters.getProcessType() == PrismProcessType.ROLLBACK); //todo remove debug
                     }
                     // Restore
                     if (call.getArg(1).equalsIgnoreCase("restore")
                             || call.getArg(1).equalsIgnoreCase("rs")) {
-                        parameters.setProcessType(PrismProcessType.RESTORE);
-                        if (!results.getActionResults().isEmpty()) {
-
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                                    Il8n.getMessage("preview-apply-start")));
-
-                            // Perform preview on the main thread
-                            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                                final Previewable rs = new Restore(plugin, call.getPlayer(),
-                                        results.getActionResults(), parameters, new PrismApplierCallback());
-                                rs.preview();
-                            });
-                        } else {
-                            audience.sendMessage(Prism.messenger.playerError(Il8n.getMessage("preview-no-actions")));
-                        }
+                        handleRestore(call, parameters, results, audience);
+                        assert (parameters.getProcessType() == PrismProcessType.RESTORE);//todo remove debug
                     }
                 });
                 return;
             }
-
             audience.sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
+        }
+    }
 
+    private void handleRestore(CallInfo call, QueryParameters parameters, QueryResult results, Audience audience) {
+        parameters.setProcessType(PrismProcessType.RESTORE);
+        if (!results.getActionResults().isEmpty()) {
+
+            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                    Il8nHelper.getMessage("preview-apply-start")));
+
+            // Perform preview on the main thread
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                final Previewable rs = new Restore(plugin, call.getPlayer(),
+                        results.getActionResults(), parameters, new PrismApplierCallback());
+                rs.preview();
+            });
+        } else {
+            audience.sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("preview-no-actions")));
+        }
+    }
+
+
+    private void handleRollBack(final CallInfo call, final QueryParameters parameters,
+                                final QueryResult results, final Audience audience) {
+        parameters.setProcessType(PrismProcessType.ROLLBACK);
+        if (!results.getActionResults().isEmpty()) {
+
+            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                    Il8nHelper.getMessage("preview-apply-start")));
+
+            // Perform preview on the main thread
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                final Previewable rs = new Rollback(plugin, call.getPlayer(),
+                        results.getActionResults(), parameters, new PrismApplierCallback());
+                rs.preview();
+            });
+        } else {
+            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
         }
     }
 

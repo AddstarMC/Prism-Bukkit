@@ -1,6 +1,6 @@
 package me.botsko.prism.database.sql;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.BlockReportQuery;
@@ -70,7 +70,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
             playerName = name;
         }
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
-                Il8n.formatMessage("actionreport-blockChange", playerName)));
+                Il8nHelper.formatMessage("actionreport-blockChange", playerName)));
 
         final int colTextLen = 20;
         final int colIntLen = 12;
@@ -81,7 +81,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
 
         ) {
             Prism.messenger.sendMessage(sender, Prism.messenger
-                    .playerHeaderMsg(Il8n.getMessage("report-block-changes")
+                    .playerHeaderMsg(Il8nHelper.getMessage("report-block-changes")
                             .replaceText("<player>",
                                     Component.text(playerName).color(NamedTextColor.DARK_AQUA))));
             Prism.messenger.sendMessage(sender,

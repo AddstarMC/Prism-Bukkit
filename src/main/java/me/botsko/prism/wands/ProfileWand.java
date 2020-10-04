@@ -1,6 +1,6 @@
 package me.botsko.prism.wands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.audience.Audience;
@@ -30,8 +30,8 @@ public class ProfileWand extends WandBase {
     public void playerRightClick(Player player, Entity entity) {
         if (entity != null) {
             Audience sender = Prism.getAudiences().player(player);
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-entity")));
-            sender.sendMessage(Il8n.formatMessage("profile-detail",
+            sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("profile-entity")));
+            sender.sendMessage(Il8nHelper.formatMessage("profile-detail",
                     entity.getType().toString().toLowerCase(),
                     entity.getEntityId(),
                     "",
@@ -47,9 +47,9 @@ public class ProfileWand extends WandBase {
         final Block block = loc.getBlock();
         Audience sender = Prism.getAudiences().player(player);
 
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-location")));
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("profile-location")));
         BlockData data = block.getBlockData();
-        sender.sendMessage(Il8n.formatMessage("profile-detail",
+        sender.sendMessage(Il8nHelper.formatMessage("profile-detail",
                 block.getType().toString().toLowerCase(),
                 block.getType() + " " + Utilities.dataString(data),
                 Prism.getItems().getAlias(block.getType(), data),

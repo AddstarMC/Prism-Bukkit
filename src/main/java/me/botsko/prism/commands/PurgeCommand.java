@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -41,7 +41,7 @@ public class PurgeCommand implements SubHandler {
         } else {
             if (Objects.equals(call.getArgs()[0], "execute")) {
                 sender.sendMessage(
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("purge-execute")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("purge-execute")));
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, plugin.getPurgeManager());
             }
         }

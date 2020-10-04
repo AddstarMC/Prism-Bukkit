@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -39,10 +39,10 @@ public class DeleteCommand extends AbstractCommand {
             if (plugin.getPurgeManager().deleteTask != null) {
                 plugin.getPurgeManager().deleteTask.cancel();
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerMsg(Il8n.getMessage("cancel-purge")));
+                        Prism.messenger.playerMsg(Il8nHelper.getMessage("cancel-purge")));
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("no-purge-running")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("no-purge-running")));
             }
             return;
         }
@@ -55,11 +55,11 @@ public class DeleteCommand extends AbstractCommand {
                         + RecordingQueue.getQueue().size() + " events lost.");
                 RecordingQueue.getQueue().clear();
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerSuccess(Il8n.getMessage("clear-queue")));
+                        Prism.messenger.playerSuccess(Il8nHelper.getMessage("clear-queue")));
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
                         Prism.messenger.playerError(
-                                Il8n.getMessage("event-queue-clear")));
+                                Il8nHelper.getMessage("event-queue-clear")));
             }
             return;
         }
@@ -76,12 +76,12 @@ public class DeleteCommand extends AbstractCommand {
         if (parameters.getFoundArgs().size() > 0) {
 
             Prism.messenger.sendMessage(call.getSender(),
-                    Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("purge-data")
+                    Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("purge-data")
                             .replaceFirstText(Pattern.compile("<defaults>"), builder ->
                                     Component.text()
                                             .content(defaultsReminder.toString()))));
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger
-                    .playerHeaderMsg(Il8n.getMessage("start-purge")));
+                    .playerHeaderMsg(Il8nHelper.getMessage("start-purge")));
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
                 if (purgeTickDelay < 1) {
@@ -108,7 +108,7 @@ public class DeleteCommand extends AbstractCommand {
             });
         } else {
             Prism.messenger.sendMessage(call.getSender(),
-                    Prism.messenger.playerError(Il8n.getMessage("no-parameter")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("no-parameter")));
         }
     }
 

@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -26,7 +26,7 @@ public class AboutCommand implements SubHandler {
     public void handle(CallInfo call) {
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerHeaderMsg(
-                        Il8n.getMessage("about-header")
+                        Il8nHelper.getMessage("about-header")
                                 .replaceText(Pattern.compile("<author>"),
                                     builder -> Component.text()
                                              .content("The AddstarMC Network")

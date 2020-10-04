@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
@@ -32,19 +32,19 @@ public class WhatCommand extends Executor {
             public void handle(CallInfo call) {
                 final ItemStack item = call.getPlayer().getInventory().getItemInMainHand();
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("what-header",":")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("what-header", ":")));
                 // TODO: Better material formatting
                 TextComponent out = Component.text()
-                        .append(Il8n.getMessage("what-item-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Il8nHelper.getMessage("what-item-name", ": ").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(item.getType().toString().toLowerCase()))
                         .append(Component.newline())
-                        .append(Il8n.getMessage("what-alias", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Il8nHelper.getMessage("what-alias", ": ").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(Prism.getItems().getAlias(item.getType(), null)))
                         .append(Component.newline())
-                        .append(Il8n.getMessage("what-id", ": "))
+                        .append(Il8nHelper.getMessage("what-id", ": "))
                         .append(Component.text(item.getType().toString()))
                         .append(Component.newline())
-                        .append(Il8n.getMessage("what-display-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Il8nHelper.getMessage("what-display-name", ": ").color(NamedTextColor.DARK_AQUA))
                         .append(Component.text(ItemUtils.getItemFullNiceName(item)))
                         .colorIfAbsent(NamedTextColor.WHITE)
                         .build();

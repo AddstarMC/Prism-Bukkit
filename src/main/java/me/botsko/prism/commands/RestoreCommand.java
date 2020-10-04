@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -46,7 +46,7 @@ public class RestoreCommand extends AbstractCommand {
             if (!results.getActionResults().isEmpty()) {
 
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("restore-start")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("restore-start")));
 
                 // Inform nearby players
                 if (call.getSender() instanceof Player) {
@@ -66,7 +66,7 @@ public class RestoreCommand extends AbstractCommand {
 
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("restore-error")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("restore-error")));
             }
         });
     }

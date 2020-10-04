@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -45,7 +45,7 @@ public class ViewCommand implements SubHandler {
 
                 // Close
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-view-close")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("command-view-close")));
                 plugin.playerActiveViews.remove(playerName);
 
             } else {
@@ -59,14 +59,14 @@ public class ViewCommand implements SubHandler {
                 plugin.playerActiveViews.put(playerName, blocks);
 
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-view-chunks")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("command-view-chunks")));
 
             }
             return;
         }
 
         Prism.messenger.sendMessage(call.getSender(),
-                Prism.messenger.playerError(Il8n.getMessage("invalid-command")));
+                Prism.messenger.playerError(Il8nHelper.getMessage("invalid-command")));
 
     }
 

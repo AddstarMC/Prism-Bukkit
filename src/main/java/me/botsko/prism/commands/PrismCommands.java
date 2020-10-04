@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
@@ -37,10 +37,10 @@ public class PrismCommands extends Executor {
                 prism.reloadConfig();
                 prism.loadConfig();
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-reload-success")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("prism-reload-success")));
                 if (failed) {
                     Prism.messenger.sendMessage(call.getSender(),
-                            Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-reload-failed")));
+                            Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("prism-reload-failed")));
                 }
             }
 

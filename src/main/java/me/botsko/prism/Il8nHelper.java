@@ -13,7 +13,7 @@ import java.util.ResourceBundle;
  * Created for the Prism-Bukkit Project.
  * Created by Narimm on 29/07/2020.
  */
-public class Il8n {
+public class Il8nHelper {
     private static final ResourceBundle resourceBundle = ResourceBundle.getBundle("languages.message",
             new UTF8ResourceBundleControl());
 

@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 
@@ -24,7 +24,7 @@ public class RecorderCommand extends AbstractCommand {
 
         if (call.getArgs().length <= 1) {
             Prism.messenger.sendMessage(call.getSender(),
-                    Prism.messenger.playerError(Il8n.getMessage("invalid-command")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-command")));
             return;
         }
 
@@ -36,12 +36,12 @@ public class RecorderCommand extends AbstractCommand {
                 plugin.recordingTask.cancel();
                 plugin.recordingTask = null;
                 Prism.messenger.sendMessage(call.getSender(), Prism.messenger
-                        .playerMsg(Il8n.getMessage("recorder-stopped")));
+                        .playerMsg(Il8nHelper.getMessage("recorder-stopped")));
                 Prism.messenger.sendMessage(call.getSender(), Prism.messenger
-                        .playerError(Il8n.getMessage("recorder-stopped-warn")));
+                        .playerError(Il8nHelper.getMessage("recorder-stopped-warn")));
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("report-recorder-stopped")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-recorder-stopped")));
             }
             return;
         }
@@ -50,27 +50,27 @@ public class RecorderCommand extends AbstractCommand {
         if (call.getArg(1).equals("start")) {
             if (recorderActive) {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("report-already-running")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-already-running")));
             } else {
 
                 // Run db tests...
                 Prism.getAudiences().sender(call.getSender())
-                        .sendMessage(Prism.messenger.playerMsg(Il8n.getMessage("database-validating")));
+                        .sendMessage(Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
 
                 try (
                         Connection conn = Prism.getPrismDataSource().getConnection()
                 ) {
                     if (conn == null || conn.isClosed()) {
                         Prism.getAudiences().sender(call.getSender())
-                                .sendMessage(Prism.messenger.playerError(Il8n.getMessage("no-valid-database")));
+                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
                         return;
                     }
 
                     Prism.messenger.sendMessage(call.getSender(),
-                            Prism.messenger.playerSuccess(Il8n.getMessage("pool-valid-connection")));
+                            Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
 
                     Prism.messenger.sendMessage(call.getSender(),
-                            Prism.messenger.playerMsg(Il8n.getMessage("recorder-restarting")));
+                            Prism.messenger.playerMsg(Il8nHelper.getMessage("recorder-restarting")));
                     plugin.actionRecorderTask();
 
                 } catch (final Exception e) {

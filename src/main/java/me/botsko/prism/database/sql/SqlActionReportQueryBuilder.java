@@ -1,6 +1,6 @@
 package me.botsko.prism.database.sql;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.ActionReportQuery;
@@ -63,7 +63,7 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
         final int colTextLen = 16;
         final int colIntLen = 12;
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
-                Il8n.formatMessage("actionreport-crafting", playerName)));
+                Il8nHelper.formatMessage("actionreport-crafting", playerName)));
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));

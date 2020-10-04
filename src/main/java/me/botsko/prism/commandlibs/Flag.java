@@ -1,21 +1,21 @@
 package me.botsko.prism.commandlibs;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import org.bukkit.permissions.Permissible;
 
 public enum Flag {
-    DRAIN(Il8n.getRawMessage("flag-drain")),
-    DRAIN_LAVA(Il8n.getRawMessage("flag-drain-lava")),
-    DRAIN_WATER(Il8n.getRawMessage("flag-drain-water")),
-    EXTENDED(Il8n.getRawMessage("flag-extended")),
-    NO_EXT(Il8n.getRawMessage("flag-no-extinguish")),
-    NO_ITEMCLEAR(Il8n.getRawMessage("flag-no-item-clear")),
-    PER_PAGE("-per-page=#", Il8n.getRawMessage("flag-result-per-page")),
-    NO_GROUP(Il8n.getRawMessage("flag-no-group")),
-    OVERWRITE(Il8n.getRawMessage("flag-overwrite")),
-    SHARE("-share=player1[,player2...]", Il8n.getRawMessage("flag-share-result")),
-    PASTE(Il8n.getRawMessage("flag-paste")),
-    NO_PHYS(Il8n.getRawMessage("flag-no-physics"));
+    DRAIN(Il8nHelper.getRawMessage("flag-drain")),
+    DRAIN_LAVA(Il8nHelper.getRawMessage("flag-drain-lava")),
+    DRAIN_WATER(Il8nHelper.getRawMessage("flag-drain-water")),
+    EXTENDED(Il8nHelper.getRawMessage("flag-extended")),
+    NO_EXT(Il8nHelper.getRawMessage("flag-no-extinguish")),
+    NO_ITEMCLEAR(Il8nHelper.getRawMessage("flag-no-item-clear")),
+    PER_PAGE("-per-page=#", Il8nHelper.getRawMessage("flag-result-per-page")),
+    NO_GROUP(Il8nHelper.getRawMessage("flag-no-group")),
+    OVERWRITE(Il8nHelper.getRawMessage("flag-overwrite")),
+    SHARE("-share=player1[,player2...]", Il8nHelper.getRawMessage("flag-share-result")),
+    PASTE(Il8nHelper.getRawMessage("flag-paste")),
+    NO_PHYS(Il8nHelper.getRawMessage("flag-no-physics"));
 
     private final String description;
     private final String permission;

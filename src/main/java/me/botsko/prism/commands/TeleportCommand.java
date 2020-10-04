@@ -1,7 +1,7 @@
 package me.botsko.prism.commands;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -149,7 +149,7 @@ public class TeleportCommand implements SubHandler {
     private void sendTeleportCompleteMessage(boolean success, Player player, Handler destinationAction) {
         if (success) {
             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                    Il8n.getMessage("teleport.complete")
+                    Il8nHelper.getMessage("teleport.complete")
                             .replaceText("<actionType>",
                                     Component.text(
                                             destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))

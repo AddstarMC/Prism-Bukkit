@@ -13,20 +13,9 @@ import java.util.Map;
  * Created by benjamincharlton on 25/02/2020.
  */
 public class ActionMeter {
+
     private static final Map<String, DripMeter> meter = new HashMap<>();
     private static boolean monitoring = false;
-
-    /**
-     * Returns a map of Metrics for the actions.
-     *
-     * @return Map
-     */
-    public static Map<String, Integer> getMetricMeter() {
-        Map<String, Integer> out = new HashMap<>(metricMeter);
-        metricMeter.clear();
-        return ImmutableMap.copyOf(out);
-    }
-
     private static final Map<String, Integer> metricMeter = new HashMap<>();
 
     static {
@@ -50,6 +39,17 @@ public class ActionMeter {
             Prism.log("Action Meter metrics enabled. " + meter.size() + " metrics registered");
             monitoring = true;
         }
+    }
+
+    /**
+     * Returns a map of Metrics for the actions.
+     *
+     * @return Map
+     */
+    public static Map<String, Integer> getMetricMeter() {
+        Map<String, Integer> out = new HashMap<>(metricMeter);
+        metricMeter.clear();
+        return ImmutableMap.copyOf(out);
     }
 
     static void addClass(Class<? extends Handler> clazz) {

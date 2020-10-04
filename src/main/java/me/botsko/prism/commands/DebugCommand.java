@@ -1,7 +1,7 @@
 package me.botsko.prism.commands;
 
 import com.zaxxer.hikari.HikariDataSource;
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -47,7 +47,7 @@ public class DebugCommand implements SubHandler {
                     break;
             }
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
-                    Component.text(Il8n.getRawMessage("debug-msg") + " " + Prism.isDebug())));
+                    Component.text(Il8nHelper.getRawMessage("debug-msg") + " " + Prism.isDebug())));
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> createPaste(
@@ -136,7 +136,7 @@ public class DebugCommand implements SubHandler {
         if (result.getPaste().isPresent()) {
             String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerMsg(Il8n.getMessage("paste-output")
+                    Prism.messenger.playerMsg(Il8nHelper.getMessage("paste-output")
                             .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
                                     Component.text()
                                             .content(pasteUrl)
@@ -145,7 +145,7 @@ public class DebugCommand implements SubHandler {
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                           Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
-                                  Il8n.getMessage("delete-key")
+                                  Il8nHelper.getMessage("delete-key")
                                           .replaceFirstText(Pattern.compile("<deletekey>"), builder ->
                                                   Component.text()
                                                           .content(s)
@@ -155,7 +155,7 @@ public class DebugCommand implements SubHandler {
             );
         } else {
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerError(Il8n.getMessage("debug-paste-error")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("debug-paste-error")));
         }
     }
 

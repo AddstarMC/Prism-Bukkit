@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -44,7 +44,7 @@ public class RollbackCommand extends AbstractCommand {
             if (!results.getActionResults().isEmpty()) {
 
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("rollback-start")));
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("rollback-start")));
 
                 // Perform rollback on the main thread
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -55,7 +55,7 @@ public class RollbackCommand extends AbstractCommand {
 
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("rollback-error")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("rollback-error")));
             }
         });
     }

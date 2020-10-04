@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -62,12 +62,12 @@ public class DrainCommand implements SubHandler {
         }
 
         TextComponent.Builder builder = Component.text()
-                .append(Il8n.formatMessage("command-drain-lookup", drainType, radius));
+                .append(Il8nHelper.formatMessage("command-drain-lookup", drainType, radius));
         String key = "command-drain-lookup-water";
         if (drainType.equals("lava")) {
             key = "command-drain-lookup-lava";
         }
-        builder.append(Component.text(" ")).append(Il8n.getMessage(key).color(NamedTextColor.GRAY));
+        builder.append(Component.text(" ")).append(Il8nHelper.getMessage(key).color(NamedTextColor.GRAY));
 
         Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(builder.build()));
 
@@ -84,10 +84,10 @@ public class DrainCommand implements SubHandler {
 
             // @todo remove the extra space in msg
             Component out = Prism.messenger
-                    .playerHeaderMsg(Il8n.formatMessage("command-drain-lookup-result",
+                    .playerHeaderMsg(Il8nHelper.formatMessage("command-drain-lookup-result",
                             blockStateChanges.size(), drainType))
                     .append(Component.newline())
-                    .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-drain-result-undo")));
+                    .append(Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("command-drain-result-undo")));
             Prism.messenger.sendMessage(call.getSender(), out);
 
             // Trigger the event
@@ -96,7 +96,7 @@ public class DrainCommand implements SubHandler {
 
         } else {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("command-drain-result-empty")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("command-drain-result-empty")));
         }
     }
 
@@ -111,19 +111,19 @@ public class DrainCommand implements SubHandler {
             if (_tmp_radius > 0) {
                 if (_tmp_radius > plugin.getConfig().getInt("prism.drain.max-radius")) {
                     Prism.messenger.sendMessage(call.getPlayer(),
-                            Prism.messenger.playerError(Il8n.getMessage("exceed-max-radius")));
+                            Prism.messenger.playerError(Il8nHelper.getMessage("exceed-max-radius")));
                     return 0;
                 } else {
                     return _tmp_radius;
                 }
             } else {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
-                        Il8n.getMessage("radius-small")));
+                        Il8nHelper.getMessage("radius-small")));
                 return 0;
             }
         } else {
             Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
-                    Il8n.getMessage("radius-not-numeric")));
+                    Il8nHelper.getMessage("radius-not-numeric")));
             return 0;
         }
     }

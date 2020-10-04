@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -45,7 +45,7 @@ public abstract class AbstractCommand implements SubHandler {
         for (String perm : permissions) {
             if (!sender.hasPermission(perm)) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8n.getMessage("no-permission")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("no-permission")));
                 return true;
             }
         }

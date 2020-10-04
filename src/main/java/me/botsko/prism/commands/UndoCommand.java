@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -89,7 +89,7 @@ public class UndoCommand implements SubHandler {
             if (!results.getActionResults().isEmpty()) {
 
                 audience
-                        .sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-undo-complete")));
+                        .sendMessage(Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("command-undo-complete")));
 
                 final Previewable rb = new Undo(plugin, call.getPlayer(), results.getActionResults(), parameters,
                         new PrismApplierCallback());
@@ -115,10 +115,10 @@ public class UndoCommand implements SubHandler {
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
                 audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                        Il8n.formatMessage("lookup-header-message",
+                        Il8nHelper.formatMessage("lookup-header-message",
                                 results.getTotalResults(), 1, results.getTotalPages())));
                 audience.sendMessage(
-                        Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-undo-help")));
+                        Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("command-undo-help")));
 
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {

@@ -48,7 +48,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 public class ItemStackAction extends GenericAction {
 
@@ -170,44 +169,75 @@ public class ItemStackAction extends GenericAction {
             }
         }
         if (meta instanceof FireworkEffectMeta) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            if (fireworkMeta.hasEffect()) {
-                final FireworkEffect effect = fireworkMeta.getEffect();
-                if (effect != null) {
-                    if (!effect.getColors().isEmpty()) {
-                        final int[] effectColors = new int[effect.getColors().size()];
-                        int i = 0;
-                        for (final Color effectColor : effect.getColors()) {
-                            effectColors[i] = effectColor.asRGB();
-                            i++;
-                        }
-                        actionData.effectColors = effectColors;
-                    }
-
-                    if (!effect.getFadeColors().isEmpty()) {
-                        final int[] fadeColors = new int[effect.getColors().size()];
-                        final int i = 0;
-                        for (final Color fadeColor : effect.getFadeColors()) {
-                            fadeColors[i] = fadeColor.asRGB();
-                        }
-                        actionData.fadeColors = fadeColors;
-                    }
-                    if (effect.hasFlicker()) {
-                        actionData.hasFlicker = true;
-                    }
-                    if (effect.hasTrail()) {
-                        actionData.hasTrail = true;
-                    }
-                }
-            }
+            applyFireWorksMetaToActionData(meta);
         }
         if (meta instanceof BannerMeta) {
             List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
             Map<String, String> stringyPatterns = new HashMap<>();
             patterns.forEach(
-                  pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+                    pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
             actionData.bannerMeta = stringyPatterns;
         }
+    }
+
+    private void applyFireWorksMetaToActionData(ItemMeta meta) {
+        final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
+        if (fireworkMeta.hasEffect()) {
+            final FireworkEffect effect = fireworkMeta.getEffect();
+            if (effect != null) {
+                if (!effect.getColors().isEmpty()) {
+                    final int[] effectColors = new int[effect.getColors().size()];
+                    int i = 0;
+                    for (final Color effectColor : effect.getColors()) {
+                        effectColors[i] = effectColor.asRGB();
+                        i++;
+                    }
+                    actionData.effectColors = effectColors;
+                }
+
+                if (!effect.getFadeColors().isEmpty()) {
+                    final int[] fadeColors = new int[effect.getColors().size()];
+                    final int i = 0;
+                    for (final Color fadeColor : effect.getFadeColors()) {
+                        fadeColors[i] = fadeColor.asRGB();
+                    }
+                    actionData.fadeColors = fadeColors;
+                }
+                if (effect.hasFlicker()) {
+                    actionData.hasFlicker = true;
+                }
+                if (effect.hasTrail()) {
+                    actionData.hasTrail = true;
+                }
+            }
+        }
+    }
+
+    private static ItemStack deserializeFireWorksMeta(ItemStack item, ItemMeta meta, ItemStackActionData actionData) {
+
+        final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
+        final Builder effect = FireworkEffect.builder();
+
+        for (int i = 0; i < actionData.effectColors.length; i++) {
+            effect.withColor(Color.fromRGB(actionData.effectColors[i]));
+        }
+        fireworkMeta.setEffect(effect.build());
+
+        if (actionData.fadeColors != null) {
+            for (int i = 0; i < actionData.fadeColors.length; i++) {
+                effect.withFade(Color.fromRGB(actionData.fadeColors[i]));
+            }
+            fireworkMeta.setEffect(effect.build());
+        }
+        if (actionData.hasFlicker) {
+            effect.flicker(true);
+        }
+        if (actionData.hasTrail) {
+            effect.trail(true);
+        }
+        fireworkMeta.setEffect(effect.build());
+        item.setItemMeta(fireworkMeta);
+        return item;
     }
 
     public void setSlot(String slot) {
@@ -269,28 +299,8 @@ public class ItemStackAction extends GenericAction {
         }
         if (meta instanceof FireworkEffectMeta && actionData.effectColors != null
                 && actionData.effectColors.length > 0) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            final Builder effect = FireworkEffect.builder();
 
-            for (int i = 0; i < actionData.effectColors.length; i++) {
-                effect.withColor(Color.fromRGB(actionData.effectColors[i]));
-            }
-            fireworkMeta.setEffect(effect.build());
-
-            if (actionData.fadeColors != null) {
-                for (int i = 0; i < actionData.fadeColors.length; i++) {
-                    effect.withFade(Color.fromRGB(actionData.fadeColors[i]));
-                }
-                fireworkMeta.setEffect(effect.build());
-            }
-            if (actionData.hasFlicker) {
-                effect.flicker(true);
-            }
-            if (actionData.hasTrail) {
-                effect.trail(true);
-            }
-            fireworkMeta.setEffect(effect.build());
-            item.setItemMeta(fireworkMeta);
+            item = deserializeFireWorksMeta(item, meta, actionData);
         }
         if (meta instanceof BannerMeta && actionData.bannerMeta != null) {
             Map<String, String> stringStringMap = actionData.bannerMeta;

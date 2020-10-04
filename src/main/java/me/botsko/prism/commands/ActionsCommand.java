@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -39,7 +39,7 @@ public class ActionsCommand implements SubHandler {
 
         Prism.messenger.sendMessage(sender,
                 Prism.messenger.playerHeaderMsg(
-                        Component.text("--- " + Il8n.getRawMessage("action-list-header") + "---")
+                        Component.text("--- " + Il8nHelper.getRawMessage("action-list-header") + "---")
                                 .color(NamedTextColor.GOLD)));
         // Build short list
         final List<String> shortNames = new ArrayList<>();
@@ -64,7 +64,7 @@ public class ActionsCommand implements SubHandler {
             i++;
         }
         Prism.messenger.sendMessage(sender, Prism.messenger
-                .playerMsg(Il8n.getMessage("action-alias", ": ").color(NamedTextColor.LIGHT_PURPLE)
+                .playerMsg(Il8nHelper.getMessage("action-alias", ": ").color(NamedTextColor.LIGHT_PURPLE)
                         .append(Component.text(actionList.toString()))));
         // Build display of full actions
         actionList = new StringBuilder();
@@ -77,7 +77,7 @@ public class ActionsCommand implements SubHandler {
             i++;
         }
         Prism.messenger.sendMessage(sender, Prism.messenger
-                .playerMsg(Il8n.getMessage("full-action-alias", ": ")
+                .playerMsg(Il8nHelper.getMessage("full-action-alias", ": ")
                         .append(Component.text(actionList.toString()))));
 
     }

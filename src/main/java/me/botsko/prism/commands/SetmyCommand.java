@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.settings.Settings;
@@ -85,7 +85,7 @@ public class SetmyCommand extends AbstractCommand {
                 return;
             }
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("invalid-arguments")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
             return;
         }
 
@@ -101,7 +101,7 @@ public class SetmyCommand extends AbstractCommand {
                         setWand = itemMaterials.get(0);
                     } else {
                         Prism.getAudiences().sender(call.getPlayer())
-                                .sendMessage(Prism.messenger.playerError(Il8n.getMessage("item-no-match")));
+                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("item-no-match")));
                         return;
                     }
                 }
@@ -121,7 +121,7 @@ public class SetmyCommand extends AbstractCommand {
             }
         }
         Prism.messenger.sendMessage(call.getPlayer(),
-                Prism.messenger.playerError(Il8n.getMessage("invalid-arguments")));
+                Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
     }
 
     @Override

@@ -1,7 +1,7 @@
 package me.botsko.prism.text;
 
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
@@ -23,7 +23,7 @@ public class ReplaceableTextComponent {
     }
 
     public static ReplaceableTextComponent builder(@PropertyKey(resourceBundle = "languages.message") String key) {
-        return new ReplaceableTextComponent(Il8n.getMessage(key));
+        return new ReplaceableTextComponent(Il8nHelper.getMessage(key));
     }
 
     /**

@@ -1,6 +1,6 @@
 package me.botsko.prism.wands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.MatchRule;
@@ -97,7 +97,7 @@ public class InspectorWand extends QueryWandBase {
                                 .build().colorIfAbsent(NamedTextColor.GOLD)));
                 if (results.getActionResults().size() > 5) {
                     Prism.messenger.sendMessage(player,
-                            Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup.result.header",
+                            Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup.result.header",
                                     results.getTotalResults(), 1, results.getTotalPages())));
                 }
                 for (final me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()) {

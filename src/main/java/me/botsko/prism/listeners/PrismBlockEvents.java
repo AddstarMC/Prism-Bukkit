@@ -47,8 +47,14 @@ import java.util.function.Consumer;
 
 public class PrismBlockEvents extends BaseListener {
 
+    private final Cache<Location, PlayerBed> weakCache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(30, TimeUnit.SECONDS)
+            .build();
+
     /**
      * Constructor.
+     *
      * @param plugin Prism.
      */
     public PrismBlockEvents(Prism plugin) {
@@ -359,11 +365,6 @@ public class PrismBlockEvents extends BaseListener {
         contructBlockEvent("bed-explode", source, affected);
         weakCache.invalidate(event.getBlock().getLocation());
     }
-
-    private final Cache<Location, PlayerBed> weakCache = CacheBuilder
-            .newBuilder()
-            .expireAfterWrite(30, TimeUnit.SECONDS)
-            .build();
 
     /**
      * Tracks players entering a bed  and where its not possible cache's it in case of explosion.

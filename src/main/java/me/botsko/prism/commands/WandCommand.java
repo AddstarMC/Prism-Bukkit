@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.settings.Settings;
@@ -45,7 +45,7 @@ public class WandCommand extends AbstractCommand {
         if (!isInspect) {
             if (call.getArgs().length < 2) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError(Il8n.getMessage("wand-error-type")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("wand-error-type")));
                 return;
             }
             type = call.getArg(1);
@@ -108,9 +108,9 @@ public class WandCommand extends AbstractCommand {
         if (ItemUtils.isBadWand(itemMaterial)) {
             final String itemNameFinal = itemName;
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("wand-bad")
+                    Prism.messenger.playerError(Il8nHelper.getMessage("wand-bad")
                             .replaceText(Pattern.compile("<itemName>"),
-                                  builder -> Component.text().content(itemNameFinal))));
+                                    builder -> Component.text().content(itemNameFinal))));
             return;
         }
 
@@ -178,46 +178,46 @@ public class WandCommand extends AbstractCommand {
                 break;
             default:
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError(Il8n.getMessage("wand-invalid")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("wand-invalid")));
                 return;
         }
         constructWand(call, enabled, itemMaterial, mode, wand, isInspect, oldWand);
     }
 
     private void constructWand(CallInfo call, boolean enabled,
-                               Material itemMaterial, String mode, Wand wand,
+                               final Material itemMaterial, String mode, Wand wand,
                                boolean isInspect,
                                Wand oldWand) {
-
+        Material item = itemMaterial;
         final PlayerInventory inv = call.getPlayer().getInventory();
         if (enabled) {
 
-            if (itemMaterial == null) {
+            if (item == null) {
                 if (Objects.equals(mode, "block")) {
-                    itemMaterial = Material.SPRUCE_LOG;
+                    item = Material.SPRUCE_LOG;
                 } else if (Objects.equals(mode, "item")) {
-                    itemMaterial = Material.STICK;
+                    item = Material.STICK;
                 } else {
-                    itemMaterial = Material.AIR;
+                    item = Material.AIR;
                 }
             }
 
             wand.setWandMode(mode);
-            wand.setItem(itemMaterial);
+            wand.setItem(item);
 
-            Prism.debug("Wand activated for player - mode: " + mode + " Item:" + itemMaterial);
+            Prism.debug("Wand activated for player - mode: " + mode + " Item:" + item);
 
             // Move any existing item to the hand, otherwise give it to them
             if (plugin.getConfig().getBoolean("prism.wands.auto-equip")) {
-                if (!InventoryUtils.moveItemToHand(inv, itemMaterial)) {
+                if (!InventoryUtils.moveItemToHand(inv, item)) {
                     // Store the item they're holding, if any
                     wand.setOriginallyHeldItem(inv.getItemInMainHand());
                     // They don't have the item, so we need to give them an item
-                    if (InventoryUtils.handItemToPlayer(inv, new ItemStack(itemMaterial, 1))) {
+                    if (InventoryUtils.handItemToPlayer(inv, new ItemStack(item, 1))) {
                         wand.setItemWasGiven(true);
                     } else {
                         Prism.messenger.sendMessage(call.getPlayer(),
-                                Prism.messenger.playerError(Il8n.getMessage("wand-inventory-full")));
+                                Prism.messenger.playerError(Il8nHelper.getMessage("wand-inventory-full")));
                     }
                 }
                 InventoryUtils.updateInventory(call.getPlayer());
@@ -233,7 +233,7 @@ public class WandCommand extends AbstractCommand {
                     // was
                     // successful
                     Prism.messenger.sendMessage(call.getPlayer(),
-                            Prism.messenger.playerError(Il8n.getMessage("wand-params-few")));
+                            Prism.messenger.playerError(Il8nHelper.getMessage("wand-params-few")));
                 }
             }
 
@@ -253,22 +253,22 @@ public class WandCommand extends AbstractCommand {
                                final String parameters) {
         final TextComponent state;
         if (status) {
-            state = Il8n.getMessage("enabled").color(NamedTextColor.GREEN);
+            state = Il8nHelper.getMessage("enabled").color(NamedTextColor.GREEN);
         } else {
-            state = Il8n.getMessage("disabled").color(NamedTextColor.RED);
+            state = Il8nHelper.getMessage("disabled").color(NamedTextColor.RED);
         }
         TextComponent out = Prism.messenger
-                .playerHeaderMsg(Il8n.getMessage(wandStatusMessageKey)
+                .playerHeaderMsg(Il8nHelper.getMessage(wandStatusMessageKey)
                         .replaceText(Pattern.compile("<status>"),
-                              builder -> Component.text()
+                                builder -> Component.text()
                                         .append(state)));
         if (status) {
             out.append(Component.newline())
-                    .append(Il8n.getMessage("wand-item-type")
+                    .append(Il8nHelper.getMessage("wand-item-type")
                             .replaceText(Pattern.compile("<itemType>"),
-                                  builder -> Component.text().content(wandType))
+                                    builder -> Component.text().content(wandType))
                             .replaceText(Pattern.compile("<parameters"),
-                                  builder -> Component.text().content(parameters)));
+                                    builder -> Component.text().content(parameters)));
         }
         Prism.messenger.sendMessage(sender, out);
 

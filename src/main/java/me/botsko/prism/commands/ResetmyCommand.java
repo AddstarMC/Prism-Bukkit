@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.settings.Settings;
@@ -34,13 +34,13 @@ public class ResetmyCommand extends AbstractCommand {
 
         if (setType != null && !setType.equalsIgnoreCase("wand")) {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("invalid-arguments")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
             return;
         }
 
         if (!plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8n.getMessage("wand-personal-blocked")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("wand-personal-blocked")));
         }
         if (checkNoPermissions(call.getPlayer(), "prism.rollback", "prism.restore", "prism.wand.*",
                 "prism.wand.inspect", "prism.wand.profile", "prism.wand.rollback",
@@ -54,7 +54,7 @@ public class ResetmyCommand extends AbstractCommand {
             Prism.playersWithActiveTools.remove(call.getPlayer().getName());
             Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                     .playerHeaderMsg(ReplaceableTextComponent.builder("wand-current")
-                            .replace("<status", Il8n.getRawMessage("disabled"),
+                            .replace("<status", Il8nHelper.getRawMessage("disabled"),
                                     Style.style(NamedTextColor.RED))
                             .build()));
         }
@@ -62,7 +62,7 @@ public class ResetmyCommand extends AbstractCommand {
         Settings.deleteSetting("wand.item", call.getPlayer());
         Settings.deleteSetting("wand.mode", call.getPlayer());
         Prism.messenger.sendMessage(call.getPlayer(),
-                Prism.messenger.playerHeaderMsg(Il8n.getMessage("wand-reset")));
+                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("wand-reset")));
     }
 
     @Override

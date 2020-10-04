@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -67,9 +67,9 @@ public class NearCommand implements SubHandler {
             if (!results.getActionResults().isEmpty()) {
                 Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerSubduedHeaderMsg(
-                                Il8n.formatMessage("near-result-report", parameters.getRadius())));
+                                Il8nHelper.formatMessage("near-result-report", parameters.getRadius())));
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message",
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup-header-message",
                                 results.getTotalResults(), 1, results.getTotalPages())));
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {

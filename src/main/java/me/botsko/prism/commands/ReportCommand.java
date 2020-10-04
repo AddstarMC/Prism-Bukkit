@@ -1,7 +1,7 @@
 package me.botsko.prism.commands;
 
 import com.zaxxer.hikari.HikariDataSource;
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -58,7 +58,7 @@ public class ReportCommand extends AbstractCommand {
 
         if (call.getArgs().length < 2) {
             Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Prism.messenger.playerError(Il8n.getMessage("report-error")));
+                    .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("report-error")));
             return;
         }
 
@@ -77,13 +77,13 @@ public class ReportCommand extends AbstractCommand {
 
             if (call.getArgs().length < 3) {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("report-sum-error")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-sum-error")));
                 return;
             }
 
             if (call.getArgs().length < 4) {
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8n.getMessage("report-player-error")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
                 return;
             }
 
@@ -113,7 +113,8 @@ public class ReportCommand extends AbstractCommand {
 
     private void queueReport(CommandSender sender) {
 
-        Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(Il8n.getMessage("report-queue-header")));
+        Prism.messenger.sendMessage(sender,
+                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("report-queue-header")));
 
         Prism.messenger.sendMessage(sender,
                 Prism.messenger.playerMsg(ReplaceableTextComponent.builder("report-actions-queue")
@@ -123,7 +124,7 @@ public class ReportCommand extends AbstractCommand {
         final ConcurrentSkipListMap<Long, QueueStats.TaskRunInfo> runs = plugin.queueStats.getRecentRunCounts();
         if (runs.size() > 0) {
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerHeaderMsg(Il8n.getMessage("report-queue-recent")));
+                    Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("report-queue-recent")));
             for (final Entry<Long, QueueStats.TaskRunInfo> entry : runs.entrySet()) {
                 final String time = new SimpleDateFormat("HH:mm:ss").format(entry.getKey());
                 Prism.messenger.sendMessage(sender,
@@ -137,7 +138,8 @@ public class ReportCommand extends AbstractCommand {
 
     private void databaseReport(CommandSender sender) {
 
-        Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(Il8n.getMessage("report-database-header")));
+        Prism.messenger.sendMessage(sender, Prism.messenger.playerHeaderMsg(
+                Il8nHelper.getMessage("report-database-header")));
 
         Prism.messenger.sendMessage(sender, Prism.messenger
                 .playerMsg(ReplaceableTextComponent.builder("report-database-failureCount")
@@ -163,25 +165,25 @@ public class ReportCommand extends AbstractCommand {
 
         if (recorderActive) {
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerSuccess(Il8n.getMessage("report-recorder-running")));
+                    Prism.messenger.playerSuccess(Il8nHelper.getMessage("report-recorder-running")));
         } else {
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerError(Il8n.getMessage("report-recorder-stopped")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("report-recorder-stopped")));
         }
 
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("report-recorder-readiness")));
+                Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("report-recorder-readiness")));
 
         try (Connection conn = Prism.getPrismDataSource().getConnection()) {
             if (conn == null) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8n.getMessage("pool-no-valid")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("pool-no-valid")));
             } else if (conn.isClosed()) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8n.getMessage("pool-connection-closed")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("pool-connection-closed")));
             } else if (conn.isValid(5)) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerSuccess(Il8n.getMessage("pool-valid-connection")));
+                        Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
             }
         } catch (final SQLException e) {
             Prism.messenger.sendMessage(sender, Prism.messenger
@@ -200,7 +202,7 @@ public class ReportCommand extends AbstractCommand {
                 PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
         if (parameters == null) {
             Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Prism.messenger.playerError(Il8n.getMessage("report-player-error")));
+                    .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
             return;
         }
         // No actions
@@ -222,14 +224,14 @@ public class ReportCommand extends AbstractCommand {
             Prism.getAudiences().sender(call.getSender())
                     .sendMessage(
                             Prism.messenger.playerError(
-                                    Il8n.getMessage("report-actions-invalid")));
+                                    Il8nHelper.getMessage("report-actions-invalid")));
             return true;
         }
         // Verify single player name for now
         final Map<String, MatchRule> players = parameters.getPlayerNames();
         if (players.size() != 1) {
             Prism.messenger.sendMessage(call.getSender(),
-                    Prism.messenger.playerError(Il8n.getMessage("single-player-only")));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("single-player-only")));
             return true;
         }
         return false;

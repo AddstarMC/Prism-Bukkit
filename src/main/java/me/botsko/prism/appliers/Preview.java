@@ -1,6 +1,6 @@
 package me.botsko.prism.appliers;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.Handler;
@@ -102,7 +102,7 @@ public class Preview implements Previewable {
             }
         }
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-cancel")));
+                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("preview-cancel")));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class Preview implements Previewable {
             return;
         }
         Prism.messenger.sendMessage(sender,
-                Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
+                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("preview-apply-start")));
         setIsPreview(false);
         changesAppliedCount = 0;
         skippedBlockCount = 0;
@@ -179,7 +179,7 @@ public class Preview implements Previewable {
 
             if (worldChangeQueue.isEmpty()) {
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8n.getMessage("preview-no-actions")));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("preview-no-actions")));
                 return;
             }
 

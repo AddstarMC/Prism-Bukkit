@@ -21,7 +21,6 @@ public class SettingCommands extends AbstractCommand {
                     return;
                 default:
                     //todo add some feedback
-                    return;
             }
         }
         //todo add feedback

@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Flag;
@@ -35,11 +35,11 @@ public class FlagsCommand implements SubHandler {
     private void help(CommandSender s) {
         Audience sender = Prism.getAudiences().sender(s);
         Prism.messenger.sendMessage(s, Prism.messenger.playerHeaderMsg(
-                Il8n.getMessage("flag-help-header").color(NamedTextColor.GOLD)));
+                Il8nHelper.getMessage("flag-help-header").color(NamedTextColor.GOLD)));
         Prism.messenger.sendMessage(s, Prism.messenger.playerMsg(
-                Il8n.getMessage("flag-help-1").color(NamedTextColor.GRAY)));
+                Il8nHelper.getMessage("flag-help-1").color(NamedTextColor.GRAY)));
         Prism.messenger.sendMessage(s, Prism.messenger
-                .playerMsg(Il8n.getMessage("flag-help-2")));
+                .playerMsg(Il8nHelper.getMessage("flag-help-2")));
         for (final Flag flag : Flag.values()) {
             sender.sendMessage(Prism.messenger.playerMsg(
                     Component.text().content(flag.getUsage().replace("_", "-"))

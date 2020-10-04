@@ -1,6 +1,6 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Il8n;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -58,7 +58,7 @@ public class LookupCommand implements SubHandler {
             final List<String> defaultsUsed = parameters.getDefaultsUsed();
             StringBuilder defaultsReminder = new StringBuilder();
             if (!defaultsUsed.isEmpty()) {
-                defaultsReminder.append(Il8n.getRawMessage("queryparameter.defaults.prefix"));
+                defaultsReminder.append(Il8nHelper.getRawMessage("queryparameter.defaults.prefix"));
                 for (final String d : defaultsUsed) {
                     defaultsReminder.append(" ").append(d);
                 }
@@ -84,7 +84,7 @@ public class LookupCommand implements SubHandler {
                 if (!isSender) {
                     Prism.messenger.sendMessage(player, Prism.messenger
                             .playerHeaderMsg(
-                                    Il8n.getMessage("lookup-share-message")
+                                    Il8nHelper.getMessage("lookup-share-message")
                                             .color(NamedTextColor.GOLD)
                                             .replaceText(Pattern.compile("<sender>"), builder ->
                                                     Component.text().content(call.getSender().getName())
@@ -92,7 +92,7 @@ public class LookupCommand implements SubHandler {
                                                             .decoration(TextDecoration.ITALIC,
                                                                     TextDecoration.State.TRUE), 1)));
                 } else if (sharingWithPlayers.length() > 0) {
-                    Component component = Il8n.getMessage("lookup-share-to-message")
+                    Component component = Il8nHelper.getMessage("lookup-share-to-message")
                             .color(NamedTextColor.GOLD)
                             .replaceText(Pattern.compile("<players>"), builder ->
                                     Component.text().content(playersList)
@@ -104,7 +104,7 @@ public class LookupCommand implements SubHandler {
                 if (!results.getActionResults().isEmpty()) {
                     Prism.messenger.sendMessage(player,
                             Prism.messenger.playerHeaderMsg(
-                                    Il8n.formatMessage("lookup-header-message",
+                                    Il8nHelper.formatMessage("lookup-header-message",
                                             results.getTotalResults(), 1, results.getTotalPages())));
                     if ((defaultsReminder.length() > 0) && isSender) {
                         Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
@@ -127,7 +127,7 @@ public class LookupCommand implements SubHandler {
                         MiscUtils.sendPageButtons(results, player);
                     } else {
                         Prism.messenger.sendMessage(player, Prism.messenger
-                                .playerError(Il8n.getMessage("no-pagination-found")));
+                                .playerError(Il8nHelper.getMessage("no-pagination-found")));
                     }
                     if (parameters.hasFlag(Flag.PASTE)) {
                         StringBuilder paste = new StringBuilder();

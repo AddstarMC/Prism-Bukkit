@@ -701,7 +701,7 @@ public class Prism extends JavaPlugin {
                     final Player player = result.getPlayer();
                     if (player.isOnline()) {
                         Prism.messenger.sendMessage(player,
-                                Prism.messenger.playerHeaderMsg(Il8n.getMessage("cancel-preview-forgotten")));
+                                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("cancel-preview-forgotten")));
                     }
                     playerActivePreviews.remove(query.getKey());
                 }
