@@ -175,7 +175,7 @@ public class ItemStackAction extends GenericAction {
             List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
             Map<String, String> stringyPatterns = new HashMap<>();
             patterns.forEach(
-                    pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+                  pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
             actionData.bannerMeta = stringyPatterns;
         }
     }
@@ -490,12 +490,12 @@ public class ItemStackAction extends GenericAction {
                                         || (getActionType().getName().equals("item-insert")
                                         && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
                                     if (atPoint.getType() == Material.AIR) {
-                                        InventoryUtils.setEquipment(stand.getEquipment(), eSlot, item);
+                                        InventoryUtils.setEquipment(stand.getEquipment(), actualSlot, item);
                                         result = ChangeResultType.APPLIED;
                                         break;
                                     }
                                 } else if (atPoint.getType() != Material.AIR) {
-                                    InventoryUtils.setEquipment(stand.getEquipment(), eSlot, null);
+                                    InventoryUtils.setEquipment(stand.getEquipment(), actualSlot, null);
                                     result = ChangeResultType.APPLIED;
                                     break;
                                 }
