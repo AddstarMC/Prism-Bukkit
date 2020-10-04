@@ -84,7 +84,8 @@ public class DrainCommand implements SubHandler {
 
             // @todo remove the extra space in msg
             Component out = Prism.messenger
-                    .playerHeaderMsg(Il8n.formatMessage("command-drain-lookup-result", blockStateChanges.size(), drainType))
+                    .playerHeaderMsg(Il8n.formatMessage("command-drain-lookup-result",
+                            blockStateChanges.size(), drainType))
                     .append(Component.newline())
                     .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-drain-result-undo")));
             Prism.messenger.sendMessage(call.getSender(), out);

@@ -13,6 +13,7 @@ public interface Wand {
     void playerRightClick(Player player, Location loc);
 
     void playerRightClick(Player player, Entity entity);
+
     void setItemWasGiven(boolean given);
 
     boolean itemWasGiven();

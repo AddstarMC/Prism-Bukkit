@@ -105,6 +105,6 @@ public class ConfigBase {
      * @param config FileConfig
      */
     protected void write(String filename, FileConfiguration config) {
-            saveConfig(filename, config);
+        saveConfig(filename, config);
     }
 }

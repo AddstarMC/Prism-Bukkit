@@ -20,7 +20,8 @@ public class ZombieVillagerSerlializer extends EntitySerializer {
 
     @Override
     protected void niceName(StringBuilder sb, int start) {
-        if (profession != null)
+        if (profession != null) {
             sb.insert(start, MiscUtils.niceName(profession)).insert(start + profession.length(), ' ');
+        }
     }
 }

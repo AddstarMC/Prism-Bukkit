@@ -10,6 +10,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
+import net.kyori.adventure.text.Component;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;

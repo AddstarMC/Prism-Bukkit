@@ -93,7 +93,9 @@ public class PreviewCommand extends AbstractCommand {
                 }
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
                 audience.sendMessage(Prism.messenger
-                        .playerSubduedHeaderMsg(Il8n.getMessage("queryparameter.defaults.prefix",defaultsReminder.toString())));
+                        .playerSubduedHeaderMsg(
+                                Il8n.getMessage("queryparameter.defaults.prefix",
+                                        defaultsReminder.toString())));
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
                     // Perform preview
@@ -101,11 +103,13 @@ public class PreviewCommand extends AbstractCommand {
                     final QueryResult results = aq.lookup(parameters, call.getPlayer());
 
                     // Rollback
-                    if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")) {
+                    if (call.getArg(1).equalsIgnoreCase("rollback")
+                            || call.getArg(1).equalsIgnoreCase("rb")) {
                         parameters.setProcessType(PrismProcessType.ROLLBACK);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                                    Il8n.getMessage("preview-apply-start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -118,11 +122,13 @@ public class PreviewCommand extends AbstractCommand {
                         }
                     }
                     // Restore
-                    if (call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")) {
+                    if (call.getArg(1).equalsIgnoreCase("restore")
+                            || call.getArg(1).equalsIgnoreCase("rs")) {
                         parameters.setProcessType(PrismProcessType.RESTORE);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                                    Il8n.getMessage("preview-apply-start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {

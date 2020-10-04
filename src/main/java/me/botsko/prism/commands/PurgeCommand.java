@@ -6,6 +6,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 
@@ -30,7 +31,7 @@ public class PurgeCommand implements SubHandler {
         if (call.getArgs().length < 1) {
             Prism.messenger.sendMessage(call.getSender(),
                     Prism.messenger.playerHeaderMsg(Component.text().content("Prism")
-                            .append(" v" + plugin.getPrismVersion()).color(NamedTextColor.GRAY)
+                            .append(Component.text(" v" + plugin.getPrismVersion()).color(NamedTextColor.GRAY))
                             .build()));
             sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(ReplaceableTextComponent.builder("purge-report")
                     .replace("<taskCount>", plugin.getSchedulePool().getTaskCount())

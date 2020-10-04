@@ -12,20 +12,20 @@ import java.util.List;
 
 public class PrismCustomEvents implements Listener {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
+     * Create a custom event listener.
+     *
+     * @param plugin Prism
      */
     public PrismCustomEvents(Prism plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * @param event
+     * On Custom action.
+     * @param event PrismCustomPlayerActionEvent.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCustomPlayerAction(final PrismCustomPlayerActionEvent event) {

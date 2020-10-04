@@ -10,14 +10,17 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-final public class PurgeManager implements Runnable {
+public final class PurgeManager implements Runnable {
 
     private final List<String> purgeRules;
     private final Prism plugin;
     public BukkitTask deleteTask;
 
     /**
-     * @param purgeRules
+     * Create a purge manager.
+     *
+     * @param plugin     Prism.
+     * @param purgeRules list of rules.
      */
     public PurgeManager(Prism plugin, List<String> purgeRules) {
         this.plugin = plugin;
@@ -25,7 +28,7 @@ final public class PurgeManager implements Runnable {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void run() {
@@ -57,21 +60,22 @@ final public class PurgeManager implements Runnable {
             if (paramList.size() > 0) {
 
 
-                int purge_tick_delay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
-                if (purge_tick_delay < 1) {
-                    purge_tick_delay = 20;
+                int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
+                if (purgeTickDelay < 1) {
+                    purgeTickDelay = 20;
                 }
 
-				/*
-				  We're going to cycle through the param rules, one rule at a time in a single
-				  async task. This task will reschedule itself when each purge cycle has
-				  completed and records remain
-				 */
+                /*
+                  We're going to cycle through the param rules, one rule at a time in a single
+                  async task. This task will reschedule itself when each purge cycle has
+                  completed and records remain
+                 */
                 Prism.log(
-                        "Beginning prism database purge cycle. Will be performed in batches so we don't tie up the db...");
+                        "Beginning prism database purge cycle. "
+                                + "Will be performed in batches so we don't tie up the db...");
                 deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
-                        new PurgeTask(plugin, paramList, purge_tick_delay, new LogPurgeCallback()),
-                        purge_tick_delay);
+                        new PurgeTask(plugin, paramList, purgeTickDelay, new LogPurgeCallback()),
+                        purgeTickDelay);
 
             }
         } else {

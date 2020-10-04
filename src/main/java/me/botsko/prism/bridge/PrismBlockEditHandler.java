@@ -6,6 +6,11 @@ import com.sk89q.worldedit.util.eventbus.Subscribe;
 import org.bukkit.Bukkit;
 
 public class PrismBlockEditHandler {
+    /**
+     * Wrap and edit session so it can be logged.
+     *
+     * @param event EditSessionEvent
+     */
     @Subscribe
     public void wrapForLogging(EditSessionEvent event) {
         Actor actor = event.getActor();

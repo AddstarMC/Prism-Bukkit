@@ -49,7 +49,8 @@ public class SetmyCommand extends AbstractCommand {
         // Check for any wand permissions. @todo There should be some central
         // way to handle this - some way to centralize it at least
         if (checkNoPermissions(call.getPlayer(), "prism.rollback", "prism.restore",
-                "prism.wand.*", "prism.wand.inspect", "prism.wand.profile", "prism.wand.rollback", "prism.wand.restore")) {
+                "prism.wand.*", "prism.wand.inspect", "prism.wand.profile", "prism.wand.rollback",
+                "prism.wand.restore")) {
             return;
         }
 

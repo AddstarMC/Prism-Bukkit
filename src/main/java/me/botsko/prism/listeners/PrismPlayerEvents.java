@@ -11,6 +11,7 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -417,7 +418,7 @@ public class PrismPlayerEvents implements Listener {
                     case CAKE:
                         recordCakeEat(block, player);
                         break;
-                        case JUNGLE_LOG:
+                    case JUNGLE_LOG:
                         recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
                         break;
                     case RAIL:
@@ -432,7 +433,8 @@ public class PrismPlayerEvents implements Listener {
                             if (!Prism.getIgnore().event("tnt-prime", player)) {
                                 return;
                             }
-                            RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", hand.getType(), block, player));
+                            RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime",
+                                    hand.getType(), block, player));
                         }
                         break;
                     default:

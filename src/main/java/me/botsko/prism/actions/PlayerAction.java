@@ -5,7 +5,7 @@ public class PlayerAction extends GenericAction {
     private String extraInfo;
 
     /**
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public String getNiceName() {

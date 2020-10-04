@@ -9,20 +9,20 @@ import java.util.TreeMap;
 public class TimeTaken {
 
     protected final Prism plugin;
-    /**
-     *
-     */
+
     protected final TreeMap<Long, String> eventsTimed = new TreeMap<>();
 
     /**
-     * @param plugin
+     * Constructor.
+     * @param plugin Prism
      */
     public TimeTaken(Prism plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * @return
+     * Get the timestamp.
+     * @return long
      */
     protected long getTimestamp() {
         final Calendar lCDateTime = Calendar.getInstance();
@@ -30,30 +30,26 @@ public class TimeTaken {
     }
 
     /**
-     * @param eventname
+     * Get the event.
+     * @param eventname String
      */
     public void recordTimedEvent(String eventname) {
-        if (!plugin.getConfig().getBoolean("prism.debug"))
+        if (!plugin.getConfig().getBoolean("prism.debug")) {
             return;
+        }
         eventsTimed.put(getTimestamp(), eventname);
     }
 
-    /**
-     *
-     */
     protected void resetEventList() {
         eventsTimed.clear();
     }
 
-    /**
-     * @return
-     */
     protected TreeMap<Long, String> getEventsTimedList() {
         return eventsTimed;
     }
 
     /**
-     *
+     * Print the record.
      */
     public void printTimeRecord() {
 

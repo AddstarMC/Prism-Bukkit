@@ -115,7 +115,8 @@ public class UndoCommand implements SubHandler {
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
                 audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                        Il8n.formatMessage("lookup-header-message", results.getTotalResults(), 1, results.getTotalPages())));
+                        Il8n.formatMessage("lookup-header-message",
+                                results.getTotalResults(), 1, results.getTotalPages())));
                 audience.sendMessage(
                         Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-undo-help")));
 

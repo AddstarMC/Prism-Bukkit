@@ -187,7 +187,7 @@ public class Preview implements Previewable {
             final int currentQueueOffset = blockChangesRead;
             if (currentQueueOffset < worldChangeQueue.size()) {
                 for (final Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset);
-                     iterator.hasNext(); ) {
+                      iterator.hasNext();) {
                     final Handler a = iterator.next();
                     if (isPreview) {
                         blockChangesRead++;

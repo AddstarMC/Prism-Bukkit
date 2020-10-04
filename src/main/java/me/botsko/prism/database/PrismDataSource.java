@@ -48,7 +48,7 @@ public interface PrismDataSource {
 
     SelectQuery createSelectQuery();
 
-    SelectIdQuery createSelectIDQuery();
+    SelectIdQuery createSelectIdQuery();
 
     DeleteQuery createDeleteQuery();
 

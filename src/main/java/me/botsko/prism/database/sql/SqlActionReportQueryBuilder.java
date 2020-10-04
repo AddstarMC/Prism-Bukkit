@@ -78,7 +78,8 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
 
                 final String colAlias = TypeUtils.padStringRight(action, colTextLen);
                 final String colPlaced = TypeUtils.padStringRight("" + count, colIntLen);
-                builder.append(Component.text(colAlias).color(TextColor.color(0x158258)).append(Component.text(colPlaced, NamedTextColor.GREEN)));
+                builder.append(Component.text(colAlias).color(TextColor.color(0x158258))
+                        .append(Component.text(colPlaced, NamedTextColor.GREEN)));
 
             }
             Prism.messenger.sendMessage(sender, builder.build());

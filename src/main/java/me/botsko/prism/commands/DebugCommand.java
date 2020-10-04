@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.database.PrismDataSource;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;

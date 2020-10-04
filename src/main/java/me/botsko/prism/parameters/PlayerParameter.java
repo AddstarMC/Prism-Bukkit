@@ -13,14 +13,14 @@ import java.util.regex.Pattern;
 public class PlayerParameter extends SimplePrismParameterHandler {
 
     /**
-     *
+     * A parameter that handles a player.
      */
     public PlayerParameter() {
         super("Player", Pattern.compile("[~|!]?[\\w,]+"), "p");
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
@@ -56,8 +56,9 @@ public class PlayerParameter extends SimplePrismParameterHandler {
         partialName = partialName.toLowerCase();
         final List<String> completions = new ArrayList<>();
         for (final Player player : Bukkit.getOnlinePlayers()) {
-            if (player.getName().toLowerCase().startsWith(partialName))
+            if (player.getName().toLowerCase().startsWith(partialName)) {
                 completions.add(prefix + player.getName());
+            }
         }
         return completions;
     }

@@ -59,29 +59,29 @@ public class ActionMessage {
                 .build();
         Component result = out.replaceFirstText(Pattern.compile("<prefix>"), builder -> getPosNegPrefix())
                 .replaceFirstText(Pattern.compile("<index>"),
-                        builder -> builder.content("[" + index + "] ")
+                      builder -> builder.content("[" + index + "] ")
                                 .color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<target>"),
-                        builder -> Component.text().content(handler.getSourceName())
+                      builder -> Component.text().content(handler.getSourceName())
                                 .color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                        builder -> Component.text().content(getDescription(action))
+                      builder -> Component.text().content(getDescription(action))
                                 .color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor(action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
-                        builder -> Component.text().content(action.getName()))
+                      builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),
-                        builder -> Component.text().append(getExtendedInfo()))
+                      builder -> Component.text().append(getExtendedInfo()))
                 .replaceFirstText(Pattern.compile("<timeDiff>"),
-                        builder -> Component.text().append(getTimeDiff()))
+                      builder -> Component.text().append(getTimeDiff()))
                 .replaceFirstText(Pattern.compile("<count>"),
-                        builder -> Component.text().append(getCount()))
+                      builder -> Component.text().append(getCount()))
                 .replaceFirstText(Pattern.compile("<actionType>"),
-                        builder -> Component.text()
-                                .content("(a:" + action.getShortName() + ")")
-                                .color(NamedTextColor.GRAY))
+                      builder -> Component.text()
+                             .content("(a:" + action.getShortName() + ")")
+                             .color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<handlerId>"),
-                        builder -> Component.text(handler.getId()).toBuilder()
+                      builder -> Component.text(handler.getId()).toBuilder()
                                 .color(NamedTextColor.GRAY));
         return Component.text()
                 .content("")
@@ -108,13 +108,13 @@ public class ActionMessage {
             out = out.append(Component.newline());
             Component line2 = Component.text().content(format2).build()
                     .replaceFirstText(Pattern.compile("<handlerId>"),
-                            builder -> Component.text(handler.getId()).toBuilder()
+                          builder -> Component.text(handler.getId()).toBuilder()
                                     .color(NamedTextColor.GRAY))
                     .replaceFirstText(Pattern.compile("<dateTime>"),
-                            builder -> Component.text()
+                          builder -> Component.text()
                                     .content(handler.getDisplayDate() + " " + handler.getDisplayTime()))
                     .replaceFirstText(Pattern.compile("<location>"),
-                            builder -> Component.text().content(getFormattedLocation()));
+                          builder -> Component.text().content(getFormattedLocation()));
             out = out.append(line2);
         }
         return out;

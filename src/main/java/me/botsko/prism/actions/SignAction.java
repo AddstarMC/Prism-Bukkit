@@ -15,14 +15,13 @@ import java.util.Objects;
 
 public class SignAction extends GenericAction {
 
-    /**
-     *
-     */
     protected SignChangeActionData actionData;
 
     /**
-     * @param block
-     * @param lines
+     * Set the block.
+     *
+     * @param block Block
+     * @param lines String[]
      */
     public void setBlock(Block block, String[] lines) {
 
@@ -30,7 +29,7 @@ public class SignAction extends GenericAction {
         actionData = new SignChangeActionData();
 
         if (block != null) {
-            actionData.sign_type = block.getType().name();
+            actionData.signType = block.getType().name();
 
             if (block.getBlockData() instanceof Directional) {
                 actionData.facing = ((Directional) block.getBlockData()).getFacing();
@@ -62,25 +61,27 @@ public class SignAction extends GenericAction {
     }
 
     /**
-     * @return
+     * Get Lines.
+     * @return String[]
      */
     public String[] getLines() {
         return actionData.lines;
     }
 
     /**
-     * @return
+     * Get the sign type.
+     * @return Material
      */
     public Material getSignType() {
-        if (actionData.sign_type != null) {
-            final Material m = Material.matchMaterial(actionData.sign_type);
+        if (actionData.signType != null) {
+            final Material m = Material.matchMaterial(actionData.signType);
             if (m != null) {
                 return m;
             }
         }
 
         // Could be legacy (x - 1.13) wall sign
-        if (Objects.equals(actionData.sign_type, "WALL_SIGN")) {
+        if (Objects.equals(actionData.signType, "WALL_SIGN")) {
             return Material.OAK_WALL_SIGN;
         }
 
@@ -89,14 +90,15 @@ public class SignAction extends GenericAction {
     }
 
     /**
-     * @return
+     * Get the blockface.
+     * @return BlockFace.
      */
     public BlockFace getFacing() {
         return actionData.facing;
     }
 
     /**
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public String getNiceName() {
@@ -111,7 +113,7 @@ public class SignAction extends GenericAction {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
@@ -152,7 +154,7 @@ public class SignAction extends GenericAction {
 
     public static class SignChangeActionData {
         public String[] lines;
-        public String sign_type;
+        public String signType;
         public BlockFace facing;
     }
 }

@@ -344,7 +344,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     @Override
-    public SelectIdQuery createSelectIDQuery() {
+    public SelectIdQuery createSelectIdQuery() {
         return new SqlSelectIdQueryBuilder(this);
     }
 

@@ -2,6 +2,7 @@ package me.botsko.prism.appliers;
 
 import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;

@@ -19,7 +19,8 @@ public class ParrotSerializer extends EntitySerializer {
 
     @Override
     protected void niceName(StringBuilder sb, int start) {
-        if (var != null)
+        if (var != null) {
             sb.insert(start, MiscUtils.niceName(var)).insert(start + var.length(), ' ');
+        }
     }
 }

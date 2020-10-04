@@ -61,11 +61,11 @@ public class RollbackWand extends QueryWandBase {
 
     @Override
     public void setItemWasGiven(boolean given) {
-        this.item_given = given;
+        this.itemGiven = given;
     }
 
     @Override
     public boolean itemWasGiven() {
-        return item_given;
+        return itemGiven;
     }
 }

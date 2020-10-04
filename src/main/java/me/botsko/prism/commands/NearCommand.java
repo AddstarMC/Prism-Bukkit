@@ -69,7 +69,8 @@ public class NearCommand implements SubHandler {
                         Prism.messenger.playerSubduedHeaderMsg(
                                 Il8n.formatMessage("near-result-report", parameters.getRadius())));
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message", results.getTotalResults(), 1, results.getTotalPages())));
+                        Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message",
+                                results.getTotalResults(), 1, results.getTotalPages())));
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {
                     int resultCount = results.getIndexOfFirstResult();

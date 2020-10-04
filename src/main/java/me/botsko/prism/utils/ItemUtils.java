@@ -159,14 +159,13 @@ public class ItemUtils {
         if (!isSameType(a, b)) {
             return false;
         }
-        // Display name
-        if (metaA.getDisplayName() != null) {
-            if (!metaA.getDisplayName().equals(metaB.getDisplayName()))
-                return false;
-        } else {
-            if (metaB.getDisplayName() != null) {
-                return false;
-            }
+        if (metaA == null && metaB == null) {
+            return true;
+        } else if (metaA == null || metaB == null) {
+            return false;
+        }
+        if (!metaA.getDisplayName().equals(metaB.getDisplayName())) {
+            return false;
         }
 
         // Coloring
@@ -227,7 +226,7 @@ public class ItemUtils {
             for (int page = 0; page < bookA.getPages().size(); page++) {
                 String pageContentA = bookA.getPages().get(page);
                 if (pageContentA != null && !pageContentA.equals(bookB.getPages().get(page))) {
-                        return false;
+                    return false;
                 }
             }
         }
@@ -401,7 +400,6 @@ public class ItemUtils {
      * @return String %
      * @todo this is buggy, wth?
      */
-    @SuppressWarnings("unused")
     public static String getUsedDurabilityPercentage(ItemStack item) {
 
         short currentDurability = (short) getItemDamage(item);
@@ -420,7 +418,6 @@ public class ItemUtils {
      *
      * @return String
      */
-    @SuppressWarnings("unused")
     public static String getDurabilityPercentage(ItemStack item) {
 
         short currentDurability = (short) getItemDamage(item);

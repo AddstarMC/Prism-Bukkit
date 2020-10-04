@@ -16,10 +16,12 @@ import org.bukkit.util.Vector;
 public class WorldEditBridge {
 
     /**
-     * @param plugin
-     * @param player
-     * @param parameters
-     * @return
+     * Worldedit bridge.
+     *
+     * @param plugin     Prism
+     * @param player     Player
+     * @param parameters {@link QueryParameters}
+     * @return boolean.
      */
     public static boolean getSelectedArea(Plugin plugin, Player player, QueryParameters parameters) {
         // Get selected area
@@ -28,8 +30,12 @@ public class WorldEditBridge {
             final BukkitPlayer lp = BukkitAdapter.adapt(player);
             final World lw = lp.getWorld();
             LocalSession session = WorldEdit.getInstance().getSessionManager().getIfPresent(lp);
-            if (session != null) region = session.getSelection(lw);
-            if (region == null) return false;
+            if (session != null) {
+                region = session.getSelection(lw);
+            }
+            if (region == null) {
+                return false;
+            }
             final Vector minLoc = new Vector(region.getMinimumPoint().getX(), region.getMinimumPoint().getY(),
                     region.getMinimumPoint().getZ());
             final Vector maxLoc = new Vector(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(),

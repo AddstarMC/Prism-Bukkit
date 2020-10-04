@@ -31,6 +31,12 @@ public class Messenger {
         this.audienceProvider = provider;
     }
 
+    /**
+     * Send a message.
+     *
+     * @param sender  CommandSender
+     * @param message {@link Component}
+     */
     public void sendMessage(CommandSender sender, Component message) {
         if (sender instanceof ConsoleCommandSender) {
             audienceProvider.console().sendMessage(message);

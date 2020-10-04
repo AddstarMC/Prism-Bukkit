@@ -18,7 +18,9 @@ import java.util.ArrayList;
 public class PrismMiscEvents implements Listener {
 
     /**
-     * @param event
+     * PrismBlocksDrainEvent.
+     *
+     * @param event PrismBlocksDrainEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksDrainEvent(final PrismBlocksDrainEvent event) {
@@ -49,7 +51,8 @@ public class PrismMiscEvents implements Listener {
     }
 
     /**
-     * @param event
+     * PrismBlocksExtinguishEvent.
+     * @param event PrismBlocksExtinguishEvent.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPrismBlocksExtinguishEvent(final PrismBlocksExtinguishEvent event) {

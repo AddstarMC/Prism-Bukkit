@@ -42,6 +42,8 @@ public class PrismRollbackAction extends BlockChangeAction {
     }
 
     /**
+     * Get the parent rollback id.
+     *
      * @return the parentId
      */
     public long getParentId() {

@@ -16,6 +16,11 @@ public class ActionMeter {
     private static final Map<String, DripMeter> meter = new HashMap<>();
     private static boolean monitoring = false;
 
+    /**
+     * Returns a map of Metrics for the actions.
+     *
+     * @return Map
+     */
     public static Map<String, Integer> getMetricMeter() {
         Map<String, Integer> out = new HashMap<>(metricMeter);
         metricMeter.clear();

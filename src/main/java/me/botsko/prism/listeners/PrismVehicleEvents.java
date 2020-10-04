@@ -26,13 +26,18 @@ public class PrismVehicleEvents implements Listener {
 
     /**
      * Constructor.
+     *
      * @param plugin Prism
      */
     public PrismVehicleEvents(Prism plugin) {
         this.plugin = plugin;
     }
 
-
+    /**
+     * VehicleCreateEvent.
+     *
+     * @param event VehicleCreateEvent
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleCreate(final VehicleCreateEvent event) {
 
@@ -45,16 +50,23 @@ public class PrismVehicleEvents implements Listener {
         try {
             uuid = UUID.fromString(value);
         } catch (Exception ignored) {
+            //ignored.
         }
         final OfflinePlayer player = uuid != null ? Bukkit.getOfflinePlayer(uuid) : null;
         if (player != null) {
             // TODO: name ref
-            if (!Prism.getIgnore().event("vehicle-place", loc.getWorld(), player.getName()))
+            if (!Prism.getIgnore().event("vehicle-place", loc.getWorld(), player.getName())) {
                 return;
+            }
             RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-place", vehicle, player));
         }
     }
 
+    /**
+     * VehicleDestroyEvent.
+     *
+     * @param event VehicleDestroyEvent
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleDestroy(final VehicleDestroyEvent event) {
 
@@ -62,46 +74,59 @@ public class PrismVehicleEvents implements Listener {
         final Entity attacker = event.getAttacker();
         // Was it broken by an attack
         if (attacker != null) {
-            handlePlayerAction(attacker,vehicle,"vehicle-break");
+            handlePlayerAction(attacker, vehicle, "vehicle-break");
         } else {
 
             // Otherwise its driver was reckless
             final List<Entity> passengers = vehicle.getPassengers();
             if (!passengers.isEmpty()) {
                 Entity passenger = passengers.get(0);
-                handlePlayerAction(passenger,vehicle,"vehicle-break");
+                handlePlayerAction(passenger, vehicle, "vehicle-break");
             }
         }
     }
 
+    /**
+     * VehicleEnterEvent.
+     *
+     * @param event VehicleEnterEvent
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleEnter(final VehicleEnterEvent event) {
         final Vehicle vehicle = event.getVehicle();
         final Entity entity = event.getEntered();
-        handlePlayerAction(entity,vehicle,"vehicle-enter");
+        handlePlayerAction(entity, vehicle, "vehicle-enter");
     }
 
+    /**
+     * VehicleExitEvent.
+     *
+     * @param event VehicleExitEvent
+     */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onVehicleExit(final VehicleExitEvent event) {
 
         final Vehicle vehicle = event.getVehicle();
         final Entity entity = event.getExited();
-        handlePlayerAction(entity,vehicle,"vehicle-exit","vehicle-enter");
+        handlePlayerAction(entity, vehicle, "vehicle-exit", "vehicle-enter");
     }
 
-    private void handlePlayerAction(Entity entity, Vehicle vehicle, String action){
-        handlePlayerAction(entity,vehicle,action,action);
+    private void handlePlayerAction(Entity entity, Vehicle vehicle, String action) {
+        handlePlayerAction(entity, vehicle, action, action);
     }
 
-    private void handlePlayerAction(Entity entity, Vehicle vehicle, String action, String customCheck){
+    private void handlePlayerAction(Entity entity, Vehicle vehicle, String action, String customCheck) {
         if (entity instanceof Player) {
-            if (!Prism.getIgnore().event(customCheck, ((Player) entity)))
+            if (!Prism.getIgnore().event(customCheck, ((Player) entity))) {
                 return;
+            }
             RecordingQueue.addToQueue(ActionFactory.createVehicle(action, vehicle, (Player) entity));
         } else {
-            if (!Prism.getIgnore().event(customCheck, entity.getWorld()))
+            if (!Prism.getIgnore().event(customCheck, entity.getWorld())) {
                 return;
-            RecordingQueue.addToQueue(ActionFactory.createVehicle(action, vehicle, entity.getType().name().toLowerCase()));
+            }
+            RecordingQueue.addToQueue(ActionFactory.createVehicle(action, vehicle,
+                    entity.getType().name().toLowerCase()));
         }
     }
 }

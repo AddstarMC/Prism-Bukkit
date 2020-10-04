@@ -14,7 +14,9 @@ import org.bukkit.inventory.InventoryHolder;
 public class PrismInventoryMoveItemEvent implements Listener {
 
     /**
-     * @param event
+     * InventoryMoveEvent.
+     *
+     * @param event InventoryMoveEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryMoveItem(final InventoryMoveItemEvent event) {

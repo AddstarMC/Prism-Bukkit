@@ -77,7 +77,6 @@ public class MaterialTag implements Tag<Material> {
     /**
      * Constructor.
      * @param materialTags Tag
-     * @return MaterialTag
      */
     @SafeVarargs
     public MaterialTag(Tag<Material>... materialTags) {
@@ -89,7 +88,6 @@ public class MaterialTag implements Tag<Material> {
      * Constructor.
      * add new Material to the group.
      * @param materials Materials
-     * @return MaterialTag
      */
     public MaterialTag(Material... materials) {
         this.materials = EnumSet.noneOf(Material.class);
@@ -101,7 +99,6 @@ public class MaterialTag implements Tag<Material> {
      * add  Material via matching.
      * @param segment Sting
      * @param mode MatchMode
-     * @return MaterialTag
      */
     public MaterialTag(String segment, MatchMode mode) {
         this.materials = EnumSet.noneOf(Material.class);
@@ -133,6 +130,13 @@ public class MaterialTag implements Tag<Material> {
         return this;
     }
 
+    /**
+     * Append a segment and mode.
+     *
+     * @param segment String
+     * @param mode    MatchMode
+     * @return MaterialTag
+     */
     public MaterialTag append(String segment, MatchMode mode) {
         segment = segment.toUpperCase();
 
@@ -167,6 +171,12 @@ public class MaterialTag implements Tag<Material> {
         return this;
     }
 
+    /**
+     * Exclude certain materials.
+     *
+     * @param materials Materials to exclude
+     * @return MaterialTag.
+     */
     public MaterialTag exclude(Material... materials) {
         for (Material m : materials) {
             this.materials.remove(m);
@@ -175,6 +185,12 @@ public class MaterialTag implements Tag<Material> {
         return this;
     }
 
+    /**
+     * Exclude certain materials.
+     *
+     * @param materialTags Materials to exclude
+     * @return MaterialTag.
+     */
     @SafeVarargs
     public final MaterialTag exclude(Tag<Material>... materialTags) {
         for (Tag<Material> materialTag : materialTags) {
@@ -183,6 +199,7 @@ public class MaterialTag implements Tag<Material> {
 
         return this;
     }
+
     /**
      * Exclude Tags from this group.
      * @param segment String

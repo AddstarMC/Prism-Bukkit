@@ -204,7 +204,8 @@ public class ItemStackAction extends GenericAction {
         if (meta instanceof BannerMeta) {
             List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
             Map<String, String> stringyPatterns = new HashMap<>();
-            patterns.forEach(pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+            patterns.forEach(
+                  pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
             actionData.bannerMeta = stringyPatterns;
         }
     }
@@ -410,6 +411,7 @@ public class ItemStackAction extends GenericAction {
                     try {
                         eSlot = EquipmentSlot.valueOf(slot);
                     } catch (IllegalArgumentException ignored) {
+                        //ignored
                     }
                     // Prism.log("   eSlot: " + eSlot);
 
@@ -417,6 +419,7 @@ public class ItemStackAction extends GenericAction {
                     try {
                         fSlot = BlockFace.valueOf(slot);
                     } catch (IllegalArgumentException ignored) {
+                        //ignored
                     }
                     // Prism.log("   fSlot: " + fSlot);
 
@@ -502,6 +505,7 @@ public class ItemStackAction extends GenericAction {
                 try {
                     iSlot = Integer.parseInt(getActionData().slot);
                 } catch (IllegalArgumentException ignored) {
+                    //ignored
                 }
 
                 // Rolling back a:remove or a:drop should place the item into

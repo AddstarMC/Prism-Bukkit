@@ -151,7 +151,8 @@ public class TeleportCommand implements SubHandler {
             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
                     Il8n.getMessage("teleport.complete")
                             .replaceText("<actionType>",
-                                    Component.text(destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))
+                                    Component.text(
+                                            destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))
                             .replaceText("<source>",
                                     Component.text(destinationAction.getSourceName()).color(NamedTextColor.WHITE))
                             .replaceText("<timeSince>",

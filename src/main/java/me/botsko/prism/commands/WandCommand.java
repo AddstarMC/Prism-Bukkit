@@ -12,6 +12,7 @@ import me.botsko.prism.wands.QueryWandBase;
 import me.botsko.prism.wands.RestoreWand;
 import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
@@ -109,7 +110,7 @@ public class WandCommand extends AbstractCommand {
             Prism.messenger.sendMessage(call.getPlayer(),
                     Prism.messenger.playerError(Il8n.getMessage("wand-bad")
                             .replaceText(Pattern.compile("<itemName>"),
-                                    builder -> Component.text().content(itemNameFinal))));
+                                  builder -> Component.text().content(itemNameFinal))));
             return;
         }
 
@@ -259,15 +260,15 @@ public class WandCommand extends AbstractCommand {
         TextComponent out = Prism.messenger
                 .playerHeaderMsg(Il8n.getMessage(wandStatusMessageKey)
                         .replaceText(Pattern.compile("<status>"),
-                                builder -> Component.text()
+                              builder -> Component.text()
                                         .append(state)));
         if (status) {
             out.append(Component.newline())
                     .append(Il8n.getMessage("wand-item-type")
                             .replaceText(Pattern.compile("<itemType>"),
-                                    builder -> Component.text().content(wandType))
+                                  builder -> Component.text().content(wandType))
                             .replaceText(Pattern.compile("<parameters"),
-                                    builder -> Component.text().content(parameters)));
+                                  builder -> Component.text().content(parameters)));
         }
         Prism.messenger.sendMessage(sender, out);
 

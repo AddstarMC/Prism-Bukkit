@@ -347,13 +347,14 @@ public class PrismBlockEvents extends BaseListener {
         if (!Prism.getIgnore().event("bed-explode", event.getBlock())) {
             return;
         }
-        List<Block> affected = event.blockList();
-        PlayerBed playerBed = weakCache.getIfPresent(event.getBlock().getLocation());//while it might be nice to check that its a bed - the block is already air
+        //while it might be nice to check that its a bed - the block is already air
+        PlayerBed playerBed = weakCache.getIfPresent(event.getBlock().getLocation());
         if (playerBed == null) {
             return;
         }
         String source;
         source = playerBed.player.getName();
+        List<Block> affected = event.blockList();
         RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode", playerBed.bed, playerBed.player));
         contructBlockEvent("bed-explode", source, affected);
         weakCache.invalidate(event.getBlock().getLocation());
@@ -371,7 +372,8 @@ public class PrismBlockEvents extends BaseListener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onBedEnter(PlayerBedEnterEvent enterEvent) {
         if (enterEvent.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.NOT_POSSIBLE_HERE) {
-            weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(), enterEvent.getBed().getState()));
+            weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(),
+                    enterEvent.getBed().getState()));
         }
         if (!Prism.getIgnore().event("block-use", enterEvent.getBed())) {
             return;

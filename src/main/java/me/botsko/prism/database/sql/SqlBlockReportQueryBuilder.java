@@ -81,7 +81,9 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
 
         ) {
             Prism.messenger.sendMessage(sender, Prism.messenger
-                    .playerHeaderMsg(Il8n.getMessage("report-block-changes").replaceText("<player>", Component.text(playerName).color(NamedTextColor.DARK_AQUA))));
+                    .playerHeaderMsg(Il8n.getMessage("report-block-changes")
+                            .replaceText("<player>",
+                                    Component.text(playerName).color(NamedTextColor.DARK_AQUA))));
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(Component.text(TypeUtils.padStringRight("Block", colTextLen)
                             + TypeUtils.padStringRight("Placed", colIntLen)

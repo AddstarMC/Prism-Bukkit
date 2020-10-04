@@ -26,35 +26,79 @@ public class ReplaceableTextComponent {
         return new ReplaceableTextComponent(Il8n.getMessage(key));
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key       String
+     * @param content   String
+     * @param withStyle Style
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replace(String key, String content, Style withStyle) {
         this.component = component.replaceText(Pattern.compile(key),
-                builder -> Component.text().content(content).style(withStyle));
+            builder -> Component.text().content(content).style(withStyle));
         return this;
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key     String
+     * @param content String
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replace(String key, String content) {
         replace(key, content, Style.empty());
         return this;
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key       String
+     * @param content   Object
+     * @param withStyle Style
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replace(String key, Object content, Style withStyle) {
         replace(key, String.valueOf(content), withStyle);
         return this;
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key     String
+     * @param content Object
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replace(String key, Object content) {
         replace(key, String.valueOf(content), Style.empty());
         return this;
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key     String
+     * @param content Object
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replaceFirst(String key, Object content) {
         replaceFirst(key, String.valueOf(content));
         return this;
     }
 
+    /**
+     * Replace Text with style.
+     *
+     * @param key     String
+     * @param content Object
+     * @return ReplaceableTextComponent
+     */
     public ReplaceableTextComponent replaceFirst(String key, String content) {
         this.component = component.replaceFirstText(Pattern.compile(key),
-                builder -> Component.text().content(content));
+            builder -> Component.text().content(content));
         return this;
     }
 

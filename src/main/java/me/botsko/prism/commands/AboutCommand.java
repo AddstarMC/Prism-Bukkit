@@ -28,11 +28,11 @@ public class AboutCommand implements SubHandler {
                 Prism.messenger.playerHeaderMsg(
                         Il8n.getMessage("about-header")
                                 .replaceText(Pattern.compile("<author>"),
-                                        builder -> Component.text()
-                                                .content("The AddstarMC Network")
-                                                .color(NamedTextColor.GOLD))
+                                    builder -> Component.text()
+                                             .content("The AddstarMC Network")
+                                             .color(NamedTextColor.GOLD))
                                 .replaceText(Pattern.compile("<version>"),
-                                        builder -> Component.text().content(plugin.getPrismVersion()))));
+                                    builder -> Component.text().content(plugin.getPrismVersion()))));
         Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerSubduedHeaderMsg(
                 Component.text().content("Help: ")
                         .append(Component.text("/pr ?")

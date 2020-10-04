@@ -2,6 +2,7 @@ package me.botsko.prism.monitors;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.MiscUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
