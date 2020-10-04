@@ -260,8 +260,7 @@ public class WandCommand extends AbstractCommand {
         TextComponent out = Prism.messenger
                 .playerHeaderMsg(Il8nHelper.getMessage(wandStatusMessageKey)
                         .replaceText(Pattern.compile("<status>"),
-                                builder -> Component.text()
-                                        .append(state)));
+                                builder -> Component.text().append(state)));
         if (status) {
             out.append(Component.newline())
                     .append(Il8nHelper.getMessage("wand-item-type")
