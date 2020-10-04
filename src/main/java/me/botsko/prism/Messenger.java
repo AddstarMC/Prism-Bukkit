@@ -15,10 +15,10 @@ public class Messenger {
 
     private final AudienceProvider audienceProvider;
     private final String pluginName;
-    private static final TextColor defaultColor = TextColor.of(0xb5bcc7);
-    private static final TextColor headerColor = TextColor.of(0xb597ba);
-    private static final TextColor error = TextColor.of(0x6e1017);
-    private static final TextColor success = TextColor.of(0x4fab55);
+    private static final TextColor defaultColor = TextColor.color(0xb5bcc7);
+    private static final TextColor headerColor = TextColor.color(0xb597ba);
+    private static final TextColor error = TextColor.color(0x6e1017);
+    private static final TextColor success = TextColor.color(0x4fab55);
 
     /**
      * Build the class.
@@ -35,7 +35,7 @@ public class Messenger {
         if (sender instanceof ConsoleCommandSender) {
             audienceProvider.console().sendMessage(message);
         } else {
-            ((BukkitAudiences) audienceProvider).audience(sender).sendMessage(message.colorIfAbsent(defaultColor));
+            ((BukkitAudiences) audienceProvider).sender(sender).sendMessage(message.colorIfAbsent(defaultColor));
         }
     }
 
@@ -47,13 +47,13 @@ public class Messenger {
      */
     public TextComponent playerHeaderMsg(Component msg) {
         if (msg != null) {
-            return TextComponent.builder()
+            return Component.text()
                     .content(pluginName + " ")
                     .color(headerColor)
                     .append(msg.colorIfAbsent(NamedTextColor.WHITE))
                     .build();
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     @Deprecated
@@ -69,13 +69,13 @@ public class Messenger {
      */
     public TextComponent playerSubduedHeaderMsg(Component msg) {
         if (msg != null) {
-            return TextComponent.builder()
+            return Component.text()
                     .content(pluginName + " ")
                     .color(headerColor)
                     .append(msg.colorIfAbsent(defaultColor))
                     .build();
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     @Deprecated
@@ -108,7 +108,7 @@ public class Messenger {
         if (msg != null) {
             return msg.colorIfAbsent(defaultColor);
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     /**
@@ -119,11 +119,11 @@ public class Messenger {
      * @return String.
      */
     public TextComponent playerHelp(String cmd, String help) {
-        return TextComponent.builder()
+        return Component.text()
                 .content("/prism ").color(defaultColor)
                 .build()
-                .append(TextComponent.of(cmd).color(headerColor)
-                        .append(TextComponent.of(" - " + help).color(NamedTextColor.WHITE)));
+                .append(Component.text(cmd).color(headerColor)
+                        .append(Component.text(" - " + help).color(NamedTextColor.WHITE)));
     }
 
     /**
@@ -133,7 +133,7 @@ public class Messenger {
      * @return String.
      */
     public TextComponent playerError(Component msg) {
-        return TextComponent.builder()
+        return Component.text()
                 .content(pluginName + " ")
                 .color(headerColor)
                 .append(msg.colorIfAbsent(error))
@@ -141,7 +141,7 @@ public class Messenger {
     }
 
     public TextComponent playerError(String msg) {
-        return playerError(TextComponent.of(msg));
+        return playerError(Component.text(msg));
     }
 
     /**
@@ -152,9 +152,9 @@ public class Messenger {
      */
     public TextComponent playerSuccess(String msg) {
         if (msg != null) {
-            return playerSuccess(TextComponent.of(msg));
+            return playerSuccess(Component.text(msg));
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     /**
@@ -165,13 +165,13 @@ public class Messenger {
      */
     public TextComponent playerSuccess(TextComponent msg) {
         if (msg != null) {
-            return TextComponent.builder()
+            return Component.text()
                     .content(pluginName + " ")
                     .color(headerColor)
                     .append(msg.colorIfAbsent(success))
                     .build();
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
 }

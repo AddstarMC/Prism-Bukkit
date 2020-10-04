@@ -79,7 +79,7 @@ public class SetmyCommand extends AbstractCommand {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(
                         ReplaceableTextComponent.builder("setWandMode")
                                 .replace("<wandMode>", setWandMode,
-                                        Style.builder().color(NamedTextColor.GREEN).build())
+                                        Style.style(NamedTextColor.GREEN))
                                 .build()));
                 return;
             }
@@ -99,7 +99,7 @@ public class SetmyCommand extends AbstractCommand {
                     if (itemMaterials.size() > 0) {
                         setWand = itemMaterials.get(0);
                     } else {
-                        Prism.getAudiences().audience(call.getPlayer())
+                        Prism.getAudiences().sender(call.getPlayer())
                                 .sendMessage(Prism.messenger.playerError(Il8n.getMessage("item-no-match")));
                         return;
                     }

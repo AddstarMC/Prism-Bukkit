@@ -14,7 +14,6 @@ import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.ChatColor;
@@ -88,7 +87,7 @@ public class LookupCommand implements SubHandler {
                                     Il8n.getMessage("lookup-share-message")
                                             .color(NamedTextColor.GOLD)
                                             .replaceText(Pattern.compile("<sender>"), builder ->
-                                                    TextComponent.builder().content(call.getSender().getName())
+                                                    Component.text().content(call.getSender().getName())
                                                             .color(NamedTextColor.YELLOW)
                                                             .decoration(TextDecoration.ITALIC,
                                                                     TextDecoration.State.TRUE), 1)));
@@ -96,7 +95,7 @@ public class LookupCommand implements SubHandler {
                     Component component = Il8n.getMessage("lookup-share-to-message")
                             .color(NamedTextColor.GOLD)
                             .replaceText(Pattern.compile("<players>"), builder ->
-                                    TextComponent.builder().content(playersList)
+                                    Component.text().content(playersList)
                                             .color(NamedTextColor.YELLOW)
                                             .decoration(TextDecoration.ITALIC,
                                                     TextDecoration.State.TRUE), 1);
@@ -107,7 +106,7 @@ public class LookupCommand implements SubHandler {
                             Prism.messenger.playerHeaderMsg(Il8n.formatMessage("lookup-header-message", results.getTotalResults(), 1, results.getTotalPages())));
                     if ((defaultsReminder.length() > 0) && isSender) {
                         Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                                TextComponent.of(defaultsReminder.toString())));
+                                Component.text(defaultsReminder.toString())));
                     }
                     final List<Handler> paginated = results.getPaginatedActionResults();
                     if (paginated != null) {
@@ -139,7 +138,7 @@ public class LookupCommand implements SubHandler {
                     if (defaultsReminder.length() > 0) {
                         if (isSender) {
                             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                                    TextComponent.of(defaultsReminder.toString())));
+                                    Component.text(defaultsReminder.toString())));
                         }
                     }
                     if (isSender) {

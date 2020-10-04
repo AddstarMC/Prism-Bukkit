@@ -54,7 +54,7 @@ public class ActionMessage {
 
     private TextComponent getMainMessage(ActionType action, String format1) {
         final TextColor highlight = NamedTextColor.DARK_AQUA;
-        TextComponent out = TextComponent.builder()
+        TextComponent out = Component.text()
                 .content(format1)
                 .build();
         Component result = out.replaceFirstText(Pattern.compile("<prefix>"), builder -> getPosNegPrefix())
@@ -62,31 +62,31 @@ public class ActionMessage {
                         builder -> builder.content("[" + index + "] ")
                                 .color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<target>"),
-                        builder -> TextComponent.builder().content(handler.getSourceName())
+                        builder -> Component.text().content(handler.getSourceName())
                                 .color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                        builder -> TextComponent.builder().content(getDescription(action))
+                        builder -> Component.text().content(getDescription(action))
                                 .color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor(action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
-                        builder -> TextComponent.builder().content(action.getName()))
+                        builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),
-                        builder -> TextComponent.builder().append(getExtendedInfo()))
+                        builder -> Component.text().append(getExtendedInfo()))
                 .replaceFirstText(Pattern.compile("<timeDiff>"),
-                        builder -> TextComponent.builder().append(getTimeDiff()))
+                        builder -> Component.text().append(getTimeDiff()))
                 .replaceFirstText(Pattern.compile("<count>"),
-                        builder -> TextComponent.builder().append(getCount()))
+                        builder -> Component.text().append(getCount()))
                 .replaceFirstText(Pattern.compile("<actionType>"),
-                        builder -> TextComponent.builder()
+                        builder -> Component.text()
                                 .content("(a:" + action.getShortName() + ")")
                                 .color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<handlerId>"),
-                        builder -> TextComponent.of(handler.getId()).toBuilder()
+                        builder -> Component.text(handler.getId()).toBuilder()
                                 .color(NamedTextColor.GRAY));
-        return TextComponent.builder()
+        return Component.text()
                 .content("")
                 .append(result)
-                .hoverEvent(HoverEvent.showText(TextComponent.of("Click to teleport")
+                .hoverEvent(HoverEvent.showText(Component.text("Click to teleport")
                         .color(NamedTextColor.DARK_AQUA)))
                 .clickEvent(ClickEvent.runCommand("/pr tp " + index))
                 .build();
@@ -105,16 +105,16 @@ public class ActionMessage {
         ActionType action = handler.getActionType();
         TextComponent out = getMainMessage(action, format1);
         if (showExtended) {
-            out = out.append(TextComponent.newline());
-            Component line2 = TextComponent.builder().content(format2).build()
+            out = out.append(Component.newline());
+            Component line2 = Component.text().content(format2).build()
                     .replaceFirstText(Pattern.compile("<handlerId>"),
-                            builder -> TextComponent.of(handler.getId()).toBuilder()
+                            builder -> Component.text(handler.getId()).toBuilder()
                                     .color(NamedTextColor.GRAY))
                     .replaceFirstText(Pattern.compile("<dateTime>"),
-                            builder -> TextComponent.builder()
+                            builder -> Component.text()
                                     .content(handler.getDisplayDate() + " " + handler.getDisplayTime()))
                     .replaceFirstText(Pattern.compile("<location>"),
-                            builder -> TextComponent.builder().content(getFormattedLocation()));
+                            builder -> Component.text().content(getFormattedLocation()));
             out = out.append(line2);
         }
         return out;
@@ -140,9 +140,9 @@ public class ActionMessage {
 
     private TextComponent getExtendedInfo() {
         if (showExtended && (handler.getMaterial() != Material.AIR)) {
-            return TextComponent.of(handler.getMaterial() + Utilities.dataString(handler.getBlockData()));
+            return Component.text(handler.getMaterial() + Utilities.dataString(handler.getBlockData()));
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     private TextComponent.Builder getActor(ActionType action, TextColor highlight) {
@@ -161,33 +161,33 @@ public class ActionMessage {
                 target = "water";
             }
         }
-        return TextComponent.builder()
+        return Component.text()
                 .content(target)
                 .color(highlight);
     }
 
     private TextComponent getCount() {
         if (handler.getAggregateCount() > 1) {
-            return TextComponent.of(" x" + handler.getAggregateCount());
+            return Component.text(" x" + handler.getAggregateCount());
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     private TextComponent getTimeDiff() {
         // Time since
         if (!handler.getTimeSince().isEmpty()) {
-            return TextComponent.builder().content(handler.getTimeSince()).color(NamedTextColor.WHITE).build();
+            return Component.text().content(handler.getTimeSince()).color(NamedTextColor.WHITE).build();
         } else {
-            return TextComponent.empty();
+            return Component.empty();
         }
     }
 
     private TextComponent.Builder getPosNegPrefix() {
         if (handler.getActionType().doesCreateBlock() || handler.getActionType().getName().equals("item-insert")
                 || handler.getActionType().getName().equals("sign-change")) {
-            return TextComponent.builder().content("+").color(NamedTextColor.GREEN);
+            return Component.text().content("+").color(NamedTextColor.GREEN);
         } else {
-            return TextComponent.builder().content("-").color(NamedTextColor.RED);
+            return Component.text().content("-").color(NamedTextColor.RED);
         }
     }
 }

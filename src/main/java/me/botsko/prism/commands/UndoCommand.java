@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -35,7 +36,7 @@ public class UndoCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        final Audience audience = Prism.getAudiences().audience(call.getPlayer());
+        final Audience audience = Prism.getAudiences().player(call.getPlayer());
         if (call.getArgs().length > 1) {
 
             final ActionsQuery aq = new ActionsQuery(plugin);
@@ -88,7 +89,7 @@ public class UndoCommand implements SubHandler {
             if (!results.getActionResults().isEmpty()) {
 
                 audience
-                        .sendMessage(Prism.messenger.playerHeaderMsg("Undoing..." + ChatColor.GRAY + " Abandon ship!"));
+                        .sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-undo-complete")));
 
                 final Previewable rb = new Undo(plugin, call.getPlayer(), results.getActionResults(), parameters,
                         new PrismApplierCallback());
@@ -114,9 +115,10 @@ public class UndoCommand implements SubHandler {
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
                 audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                        "Showing " + results.getTotalResults() + " results. Page 1 of " + results.getTotalPages()));
+                        Il8n.formatMessage("lookup-header-message", results.getTotalResults(), 1, results.getTotalPages())));
                 audience.sendMessage(
-                        Prism.messenger.playerSubduedHeaderMsg("Use /prism undo [id] to reverse a process"));
+                        Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-undo-help")));
+
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {
                     for (final Handler a : paginated) {

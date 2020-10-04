@@ -27,7 +27,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Painting;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
@@ -50,7 +49,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ItemStackAction extends GenericAction {
 
@@ -296,15 +294,12 @@ public class ItemStackAction extends GenericAction {
         if (meta instanceof BannerMeta && actionData.bannerMeta != null) {
             Map<String, String> stringStringMap = actionData.bannerMeta;
             List<Pattern> patterns = new ArrayList<>();
-            stringStringMap.forEach(new BiConsumer<String, String>() {
-                @Override
-                public void accept(String patternIdentifier, String dyeName) {
-                    PatternType type = PatternType.getByIdentifier(patternIdentifier);
-                    DyeColor color = DyeColor.valueOf(dyeName);
-                    if (type != null && color != null) {
-                        Pattern p = new Pattern(color, type);
-                        patterns.add(p);
-                    }
+            stringStringMap.forEach((patternIdentifier, dyeName) -> {
+                PatternType type = PatternType.getByIdentifier(patternIdentifier);
+                DyeColor color = DyeColor.valueOf(dyeName);
+                if (type != null && color != null) {
+                    Pattern p = new Pattern(color, type);
+                    patterns.add(p);
                 }
             });
             ((BannerMeta) meta).setPatterns(patterns);

@@ -100,7 +100,7 @@ public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
         // Prepare database
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement st = conn.prepareStatement(query);
+                PreparedStatement st = conn.prepareStatement(query)
         ) {
             // Add player index to speed up player lookups.
             st.executeUpdate(query);

@@ -764,11 +764,11 @@ public class Prism extends JavaPlugin {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
-                    TextComponent prefix = TextComponent.builder().content("[!]")
+                    TextComponent prefix = Component.text().content("[!]")
                             .color(NamedTextColor.RED)
                             .append(msg)
                             .build();
-                    audiences.audience(p).sendMessage(prefix);
+                    audiences.player(p).sendMessage(prefix);
                 }
             }
         }

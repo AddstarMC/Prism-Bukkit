@@ -15,7 +15,7 @@ import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.utils.MiscUtils;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
@@ -57,7 +57,7 @@ public class ReportCommand extends AbstractCommand {
     public void handle(CallInfo call) {
 
         if (call.getArgs().length < 2) {
-            Prism.getAudiences().audience(call.getSender())
+            Prism.getAudiences().sender(call.getSender())
                     .sendMessage(Prism.messenger.playerError(Il8n.getMessage("report-error")));
             return;
         }
@@ -127,9 +127,9 @@ public class ReportCommand extends AbstractCommand {
             for (final Entry<Long, QueueStats.TaskRunInfo> entry : runs.entrySet()) {
                 final String time = new SimpleDateFormat("HH:mm:ss").format(entry.getKey());
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerMsg(TextComponent.builder()
+                        Prism.messenger.playerMsg(Component.text()
                                 .content(time + " ").color(NamedTextColor.GRAY)
-                                .append(TextComponent.of(entry.getValue().getRecords()))
+                                .append(Component.text(entry.getValue().getRecords()))
                                 .build()));
             }
         }
@@ -199,7 +199,7 @@ public class ReportCommand extends AbstractCommand {
         final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
                 PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
         if (parameters == null) {
-            Prism.getAudiences().audience(call.getSender())
+            Prism.getAudiences().sender(call.getSender())
                     .sendMessage(Prism.messenger.playerError(Il8n.getMessage("report-player-error")));
             return;
         }
@@ -219,7 +219,7 @@ public class ReportCommand extends AbstractCommand {
 
     private boolean checkParams(QueryParameters parameters, CallInfo call) {
         if (!parameters.getActionTypes().isEmpty()) {
-            Prism.getAudiences().audience(call.getSender())
+            Prism.getAudiences().sender(call.getSender())
                     .sendMessage(
                             Prism.messenger.playerError(
                                     Il8n.getMessage("report-actions-invalid")));

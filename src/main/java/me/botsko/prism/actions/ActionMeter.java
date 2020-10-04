@@ -22,7 +22,7 @@ public class ActionMeter {
         return ImmutableMap.copyOf(out);
     }
 
-    private static Map<String, Integer> metricMeter = new HashMap<>();
+    private static final Map<String, Integer> metricMeter = new HashMap<>();
 
     static {
         if (Prism.getInstance().monitoring) {

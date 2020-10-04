@@ -2,7 +2,6 @@ package me.botsko.prism.purge;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import org.bukkit.command.CommandSender;
 

@@ -67,7 +67,7 @@ public class ExtinguishCommand implements SubHandler {
             plugin.getServer().getPluginManager().callEvent(event);
 
         } else {
-            Prism.getAudiences().audience(call.getPlayer())
+            Prism.getAudiences().player(call.getPlayer())
                     .sendMessage(
                             Prism.messenger.playerError(Il8n.getMessage("no-fires-found")));
         }

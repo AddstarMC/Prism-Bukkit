@@ -61,13 +61,13 @@ public class DrainCommand implements SubHandler {
             return;
         }
 
-        TextComponent.Builder builder = TextComponent.builder()
+        TextComponent.Builder builder = Component.text()
                 .append(Il8n.formatMessage("command-drain-lookup", drainType, radius));
         String key = "command-drain-lookup-water";
         if (drainType.equals("lava")) {
             key = "command-drain-lookup-lava";
         }
-        builder.append(TextComponent.of(" ")).append(Il8n.getMessage(key).color(NamedTextColor.GRAY));
+        builder.append(Component.text(" ")).append(Il8n.getMessage(key).color(NamedTextColor.GRAY));
 
         Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(builder.build()));
 
@@ -85,7 +85,7 @@ public class DrainCommand implements SubHandler {
             // @todo remove the extra space in msg
             Component out = Prism.messenger
                     .playerHeaderMsg(Il8n.formatMessage("command-drain-lookup-result", blockStateChanges.size(), drainType))
-                    .append(TextComponent.newline())
+                    .append(Component.newline())
                     .append(Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("command-drain-result-undo")));
             Prism.messenger.sendMessage(call.getSender(), out);
 

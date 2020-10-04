@@ -109,7 +109,7 @@ public class WandCommand extends AbstractCommand {
             Prism.messenger.sendMessage(call.getPlayer(),
                     Prism.messenger.playerError(Il8n.getMessage("wand-bad")
                             .replaceText(Pattern.compile("<itemName>"),
-                                    builder -> TextComponent.builder().content(itemNameFinal))));
+                                    builder -> Component.text().content(itemNameFinal))));
             return;
         }
 
@@ -259,15 +259,15 @@ public class WandCommand extends AbstractCommand {
         TextComponent out = Prism.messenger
                 .playerHeaderMsg(Il8n.getMessage(wandStatusMessageKey)
                         .replaceText(Pattern.compile("<status>"),
-                                builder -> TextComponent.builder()
+                                builder -> Component.text()
                                         .append(state)));
         if (status) {
-            out.append(TextComponent.newline())
+            out.append(Component.newline())
                     .append(Il8n.getMessage("wand-item-type")
                             .replaceText(Pattern.compile("<itemType>"),
-                                    builder -> TextComponent.builder().content(wandType))
+                                    builder -> Component.text().content(wandType))
                             .replaceText(Pattern.compile("<parameters"),
-                                    builder -> TextComponent.builder().content(parameters)));
+                                    builder -> Component.text().content(parameters)));
         }
         Prism.messenger.sendMessage(sender, out);
 

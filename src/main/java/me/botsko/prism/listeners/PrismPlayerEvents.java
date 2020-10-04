@@ -27,10 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -84,7 +81,7 @@ public class PrismPlayerEvents implements Listener {
             if (illegalCommands.contains(primaryCmd)) {
                 final String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: "
                         + cmd;
-                TextComponent send = TextComponent.of(msg);
+                TextComponent send = Component.text(msg);
                 Prism.messenger.sendMessage(player,
                         Prism.messenger.playerError("Sorry, this command is not available in-game."));
                 plugin.alertPlayers(null, send);

@@ -154,7 +154,7 @@ public class Preview implements Previewable {
                                     .replace("<player>", player.getDisplayName())
                                     .replace("<processsType>", processType.name().toLowerCase())
                                     .replace("<originalCommand>", parameters.getOriginalCommand(),
-                                            Style.builder().color(NamedTextColor.GRAY).build())
+                                            Style.style(NamedTextColor.GRAY))
                                     .build().colorIfAbsent(NamedTextColor.WHITE));
                         }
                     }

@@ -6,7 +6,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.database.PrismDataSource;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -47,7 +46,7 @@ public class DebugCommand implements SubHandler {
                     break;
             }
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
-                    TextComponent.of(Il8n.getRawMessage("debug-msg") + " " + Prism.isDebug())));
+                    Component.text(Il8n.getRawMessage("debug-msg") + " " + Prism.isDebug())));
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> createPaste(
@@ -138,7 +137,7 @@ public class DebugCommand implements SubHandler {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(Il8n.getMessage("paste-output")
                             .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
-                                    TextComponent.builder()
+                                    Component.text()
                                             .content(pasteUrl)
                                             .clickEvent(ClickEvent.openUrl(pasteUrl)))));
             Prism.log("Paste Created :" + pasteUrl);
@@ -147,7 +146,7 @@ public class DebugCommand implements SubHandler {
                           Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
                                   Il8n.getMessage("delete-key")
                                           .replaceFirstText(Pattern.compile("<deletekey>"), builder ->
-                                                  TextComponent.builder()
+                                                  Component.text()
                                                           .content(s)
                                                           .clickEvent(ClickEvent.copyToClipboard(s)))));
                           Prism.log("Deletion Key:" + s);

@@ -55,7 +55,7 @@ public class ResetmyCommand extends AbstractCommand {
             Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                     .playerHeaderMsg(ReplaceableTextComponent.builder("wand-current")
                             .replace("<status", Il8n.getRawMessage("disabled"),
-                                    Style.builder().color(NamedTextColor.RED).build())
+                                    Style.style(NamedTextColor.RED))
                             .build()));
         }
 

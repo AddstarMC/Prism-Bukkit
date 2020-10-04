@@ -9,7 +9,6 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;

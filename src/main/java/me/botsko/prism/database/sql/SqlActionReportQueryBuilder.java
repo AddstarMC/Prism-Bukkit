@@ -6,10 +6,10 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.TypeUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.sql.Connection;
@@ -63,25 +63,25 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
         final int colTextLen = 16;
         final int colIntLen = 12;
         Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
-                Il8n.formatMessage("actionreport.crafting",playerName)));
+                Il8n.formatMessage("actionreport-crafting", playerName)));
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement(getQuery(parameters, shouldGroup));
                 ResultSet rs = s.executeQuery()
         ) {
-            TextComponent.Builder builder = TextComponent.builder();
-            builder.append(TextComponent.of(TypeUtils.padStringRight("Action", colTextLen),NamedTextColor.GRAY))
-                    .append(TextComponent.of(TypeUtils.padStringRight("Count", colIntLen),NamedTextColor.GRAY));
+            TextComponent.Builder builder = Component.text();
+            builder.append(Component.text(TypeUtils.padStringRight("Action", colTextLen), NamedTextColor.GRAY))
+                    .append(Component.text(TypeUtils.padStringRight("Count", colIntLen), NamedTextColor.GRAY));
             while (rs.next()) {
                 final String action = rs.getString(2);
                 final int count = rs.getInt(1);
 
                 final String colAlias = TypeUtils.padStringRight(action, colTextLen);
                 final String colPlaced = TypeUtils.padStringRight("" + count, colIntLen);
-                builder.append(TextComponent.of(colAlias).color(TextColor.of(0x158258)).append(TextComponent.of(colPlaced, NamedTextColor.GREEN)));
+                builder.append(Component.text(colAlias).color(TextColor.color(0x158258)).append(Component.text(colPlaced, NamedTextColor.GREEN)));
 
             }
-            Prism.messenger.sendMessage(sender,builder.build());
+            Prism.messenger.sendMessage(sender, builder.build());
 
         } catch (final SQLException e) {
             dataSource.handleDataSourceException(e);

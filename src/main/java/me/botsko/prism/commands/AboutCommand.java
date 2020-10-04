@@ -4,7 +4,7 @@ import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
@@ -28,27 +28,27 @@ public class AboutCommand implements SubHandler {
                 Prism.messenger.playerHeaderMsg(
                         Il8n.getMessage("about-header")
                                 .replaceText(Pattern.compile("<author>"),
-                                        builder -> TextComponent.builder()
+                                        builder -> Component.text()
                                                 .content("The AddstarMC Network")
                                                 .color(NamedTextColor.GOLD))
                                 .replaceText(Pattern.compile("<version>"),
-                                        builder -> TextComponent.builder().content(plugin.getPrismVersion()))));
+                                        builder -> Component.text().content(plugin.getPrismVersion()))));
         Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerSubduedHeaderMsg(
-                TextComponent.builder().content("Help: ")
-                        .append(TextComponent.of("/pr ?")
+                Component.text().content("Help: ")
+                        .append(Component.text("/pr ?")
                                 .color(NamedTextColor.WHITE))
                         .build()));
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerSubduedHeaderMsg(
-                        TextComponent.builder().content("Discord: ")
-                                .append(TextComponent.of("https://discord.gg/Y9Qx3V")
+                        Component.text().content("Discord: ")
+                                .append(Component.text("https://discord.gg/Y9Qx3V")
                                         .color(NamedTextColor.WHITE))
                                 .clickEvent(ClickEvent.openUrl("https://discord.gg/Y9Qx3V"))
                                 .build()));
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerSubduedHeaderMsg(
-                        TextComponent.builder().content("Wiki: ")
-                                .append(TextComponent.of("https://github.com/AddstarMC/Prism-Bukkit/wiki")
+                        Component.text().content("Wiki: ")
+                                .append(Component.text("https://github.com/AddstarMC/Prism-Bukkit/wiki")
                                         .color(NamedTextColor.WHITE))
                                 .clickEvent(ClickEvent.openUrl("https://github.com/AddstarMC/Prism-Bukkit/wiki"))
                                 .build()));

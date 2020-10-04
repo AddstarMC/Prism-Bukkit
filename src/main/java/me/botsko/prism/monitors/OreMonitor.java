@@ -6,6 +6,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -80,11 +81,11 @@ public class OreMonitor {
                 final String msg = player.getName() + " found " + count + " "
                         + getOreNiceName(block) + " " + light + "% light";
                 final TextComponent component =
-                        TextComponent.builder().content(msg)
+                        Component.text().content(msg)
                                 .color(getOreColor(block))
                                 .hoverEvent(
-                                        HoverEvent.of(HoverEvent.Action.SHOW_ITEM,
-                                                new HoverEvent.ShowItem(Key.of(
+                                        HoverEvent.hoverEvent(HoverEvent.Action.SHOW_ITEM,
+                                                HoverEvent.ShowItem.of(Key.key(
                                                         block.getType().getKey().toString()), 1)))
                                 .build();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {

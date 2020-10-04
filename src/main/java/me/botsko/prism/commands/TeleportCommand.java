@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
 import io.papermc.lib.PaperLib;
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -9,7 +10,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -147,9 +149,13 @@ public class TeleportCommand implements SubHandler {
     private void sendTeleportCompleteMessage(boolean success, Player player, Handler destinationAction) {
         if (success) {
             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                    "Teleporting... " + ChatColor.WHITE + destinationAction.getActionType().getName() + ChatColor.GRAY
-                            + " by " + ChatColor.WHITE + destinationAction.getSourceName() + ChatColor.GRAY
-                            + ", " + ChatColor.WHITE + destinationAction.getTimeSince()));
+                    Il8n.getMessage("teleport.complete")
+                            .replaceText("<actionType>",
+                                    Component.text(destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))
+                            .replaceText("<source>",
+                                    Component.text(destinationAction.getSourceName()).color(NamedTextColor.WHITE))
+                            .replaceText("<timeSince>",
+                                    Component.text(destinationAction.getTimeSince()).color(NamedTextColor.WHITE))));
         } else {
             Prism.messenger.sendMessage(player,
                     Prism.messenger.playerError("Prism teleportation failed"));

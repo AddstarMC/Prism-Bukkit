@@ -3,7 +3,6 @@ package me.botsko.prism.measurement;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.function.BiConsumer;
 
 public class QueueStats {
 

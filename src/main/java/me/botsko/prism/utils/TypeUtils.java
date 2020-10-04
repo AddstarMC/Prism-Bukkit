@@ -3,7 +3,6 @@ package me.botsko.prism.utils;
 import com.sk89q.worldedit.util.formatting.text.serializer.plain.PlainComponentSerializer;
 import me.botsko.prism.Prism;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;

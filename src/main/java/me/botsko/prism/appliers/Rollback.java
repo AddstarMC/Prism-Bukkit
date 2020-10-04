@@ -9,7 +9,6 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class Rollback extends Preview {
     public void apply() {
 
         if (player != null) {
-            Audience audience = Prism.getAudiences().audience(player);
+            Audience audience = Prism.getAudiences().player(player);
             // Remove any fire at this location
             if (plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback")
                     && parameters.getActionTypes().containsKey("block-burn")) {
@@ -62,7 +61,7 @@ public class Rollback extends Preview {
                     final int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
                     if (removed > 0) {
                         audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                                Il8n.formatMessage("rollback.removedDrops",removed)));
+                                Il8n.formatMessage("rollback-removedDrops", removed)));
                     }
                 }
             }
@@ -80,7 +79,7 @@ public class Rollback extends Preview {
             }
             if (drained != null && drained.size() > 0) {
                 audience.sendMessage(
-                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("drained.done")));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-drain-done")));
             }
         }
 

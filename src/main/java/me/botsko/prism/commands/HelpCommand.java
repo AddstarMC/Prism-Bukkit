@@ -5,7 +5,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
@@ -38,7 +37,7 @@ public class HelpCommand implements SubHandler {
      * @param s CommandSender
      */
     protected void help(CommandSender s) {
-        Audience sender = Prism.getAudiences().audience(s);
+        Audience sender = Prism.getAudiences().sender(s);
         if (failed) {
             sender.sendMessage(
                     Prism.messenger.playerHeaderMsg(Il8n.getMessage("prism-disabled-header")
@@ -49,15 +48,15 @@ public class HelpCommand implements SubHandler {
             sender.sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("discord", ":")
                             .color(NamedTextColor.WHITE)
-                            .append(TextComponent.of("https://discord.gg/Y9Qx3V"))));
+                            .append(Component.text("https://discord.gg/Y9Qx3V"))));
             sender.sendMessage(
                     Prism.messenger.playerSubduedHeaderMsg(Il8n.getMessage("wiki", ":")
                             .color(NamedTextColor.WHITE)
-                            .append(TextComponent.of("https://github.com/AddstarMC/Prism-Bukkit/wiki"))));
+                            .append(Component.text("https://github.com/AddstarMC/Prism-Bukkit/wiki"))));
             return;
         }
         sender.sendMessage(Prism.messenger.playerHeaderMsg(
-                TextComponent.of("--- Basic Usage ---").color(NamedTextColor.GOLD)));
+                Component.text("--- Basic Usage ---").color(NamedTextColor.GOLD)));
         sender.sendMessage(Prism.messenger.playerHelp("i", Il8n.getRawMessage("help-inspector-wand")));
         sender.sendMessage(Prism.messenger.playerHelp("(l|lookup) (params)", Il8n.getRawMessage("help-lookup")));
         sender.sendMessage(Prism.messenger.playerHelp("tp (#|id:#)", Il8n.getRawMessage("help-teleport")));

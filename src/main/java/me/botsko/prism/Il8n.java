@@ -1,11 +1,9 @@
 package me.botsko.prism;
 
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import org.jetbrains.annotations.PropertyKey;
 
-import java.util.Formatter;
 import java.util.MissingFormatArgumentException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -35,7 +33,7 @@ public class Il8n {
      */
     public static TextComponent getMessage(@PropertyKey(resourceBundle = "languages.message") String key,
                                            String extra) {
-        return TextComponent.of(getRawMessage(key + extra));
+        return Component.text(getRawMessage(key + extra));
     }
 
     /**
@@ -64,15 +62,15 @@ public class Il8n {
     public static TextComponent formatMessage(@PropertyKey(resourceBundle = "languages.message") String key,
                                               Object... args) {
         if (resourceBundle == null) {
-            return TextComponent.of(key);
+            return Component.text(key);
         }
         try {
             String format = resourceBundle.getString(key);
             String out = String.format(format, args);
-            return TextComponent.of(out);
+            return Component.text(out);
         } catch (MissingResourceException e) {
             Prism.log("Missing Resource " + e.getMessage());
-            return TextComponent.of(key);
+            return Component.text(key);
         } catch (MissingFormatArgumentException e) {
             Prism.log("Missing Format Argument " + e.getMessage());
             return getMessage(key);

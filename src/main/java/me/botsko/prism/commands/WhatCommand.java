@@ -6,6 +6,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.ItemUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
@@ -33,18 +34,18 @@ public class WhatCommand extends Executor {
                 Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerHeaderMsg(Il8n.getMessage("what-header",":")));
                 // TODO: Better material formatting
-                TextComponent out =  TextComponent.builder()
-                        .append(Il8n.getMessage("what-item-name",": ").color(NamedTextColor.DARK_AQUA))
-                        .append(TextComponent.of(item.getType().toString().toLowerCase()))
-                        .append(TextComponent.newline())
-                        .append(Il8n.getMessage("what-alias",": ").color(NamedTextColor.DARK_AQUA))
-                        .append(TextComponent.of(Prism.getItems().getAlias(item.getType(),null)))
-                        .append(TextComponent.newline())
-                        .append(Il8n.getMessage("what-id",": "))
-                        .append(TextComponent.of(item.getType().toString()))
-                        .append(TextComponent.newline())
-                        .append(Il8n.getMessage("what-display-name",": ").color(NamedTextColor.DARK_AQUA))
-                        .append(TextComponent.of(ItemUtils.getItemFullNiceName(item)))
+                TextComponent out = Component.text()
+                        .append(Il8n.getMessage("what-item-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(item.getType().toString().toLowerCase()))
+                        .append(Component.newline())
+                        .append(Il8n.getMessage("what-alias", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(Prism.getItems().getAlias(item.getType(), null)))
+                        .append(Component.newline())
+                        .append(Il8n.getMessage("what-id", ": "))
+                        .append(Component.text(item.getType().toString()))
+                        .append(Component.newline())
+                        .append(Il8n.getMessage("what-display-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(ItemUtils.getItemFullNiceName(item)))
                         .colorIfAbsent(NamedTextColor.WHITE)
                         .build();
                 Prism.messenger.sendMessage(call.getPlayer(),out);

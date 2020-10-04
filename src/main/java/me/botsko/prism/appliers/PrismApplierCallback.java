@@ -25,7 +25,7 @@ public class PrismApplierCallback implements ApplierCallback {
                 }
             }
         }
-        TextComponent.Builder builder = TextComponent.builder();
+        TextComponent.Builder builder = Component.text();
 
         // Send player success messages
         if (result.getProcessType().equals(PrismProcessType.ROLLBACK)) {
@@ -34,22 +34,22 @@ public class PrismApplierCallback implements ApplierCallback {
             if (!result.isPreview()) {
                 builder.append(Il8n.formatMessage("applier-rollback-start", result.getChangesApplied()));
                 if (result.getChangesSkipped() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesApplied() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.getMessage("applier-rollback-done"));
                 }
             } else {
                 // Build the results message
                 builder.append(Il8n.formatMessage("applier-rollback-preview-start", result.getChangesPlanned()));
                 if (result.getChangesSkipped() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesPlanned() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.formatMessage("applier-preview-done", result.getChangesSkipped()));
                 }
                 // Let me know there's no need to cancel/apply
@@ -65,11 +65,11 @@ public class PrismApplierCallback implements ApplierCallback {
                 // Build the results message
                 builder.append(Il8n.formatMessage("applier-restore-start", result.getChangesApplied()));
                 if (result.getChangesSkipped() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesApplied() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.getMessage("applier-restore-done"));
                 }
 
@@ -81,7 +81,7 @@ public class PrismApplierCallback implements ApplierCallback {
                     builder.append(Il8n.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesPlanned() > 0) {
-                    builder.append(TextComponent.of(" "));
+                    builder.append(Component.text(" "));
                     builder.append(Il8n.formatMessage("applier-preview-done", result.getChangesSkipped()));
                 }
                 // Let me know there's no need to cancel/apply
@@ -96,12 +96,12 @@ public class PrismApplierCallback implements ApplierCallback {
             builder.append(Il8n.formatMessage("applier-undo-start", result.getChangesApplied()));
             // Build the results message
             if (result.getChangesSkipped() > 0) {
-                builder.append(TextComponent.of(" "));
+                builder.append(Component.text(" "));
 
                 builder.append(Il8n.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
             }
             if (result.getChangesApplied() > 0) {
-                builder.append(TextComponent.of(" "));
+                builder.append(Component.text(" "));
                 builder.append(Il8n.getMessage("applier-undo-done"));
             }
         }

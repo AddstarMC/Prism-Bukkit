@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8n;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -44,7 +45,7 @@ public class ViewCommand implements SubHandler {
 
                 // Close
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg("Reset your current view."));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-view-close")));
                 plugin.playerActiveViews.remove(playerName);
 
             } else {
@@ -58,14 +59,14 @@ public class ViewCommand implements SubHandler {
                 plugin.playerActiveViews.put(playerName, blocks);
 
                 Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerHeaderMsg("Showing current chunk boundaries."));
+                        Prism.messenger.playerHeaderMsg(Il8n.getMessage("command-view-chunks")));
 
             }
             return;
         }
 
         Prism.messenger.sendMessage(call.getSender(),
-                Prism.messenger.playerError("Invalid view option. Use /prism ? for help."));
+                Prism.messenger.playerError(Il8n.getMessage("invalid-command")));
 
     }
 

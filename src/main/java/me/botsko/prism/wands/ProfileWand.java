@@ -29,7 +29,7 @@ public class ProfileWand extends WandBase {
     @Override
     public void playerRightClick(Player player, Entity entity) {
         if (entity != null) {
-            Audience sender = Prism.getAudiences().audience(player);
+            Audience sender = Prism.getAudiences().player(player);
             sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-entity")));
             sender.sendMessage(Il8n.formatMessage("profile-detail",
                     entity.getType().toString().toLowerCase(),
@@ -45,7 +45,7 @@ public class ProfileWand extends WandBase {
     protected void showLocationProfile(Player player, Location loc) {
 
         final Block block = loc.getBlock();
-        Audience sender = Prism.getAudiences().audience(player);
+        Audience sender = Prism.getAudiences().player(player);
 
         sender.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("profile-location")));
         BlockData data = block.getBlockData();

@@ -28,7 +28,7 @@ public class ReplaceableTextComponent {
 
     public ReplaceableTextComponent replace(String key, String content, Style withStyle) {
         this.component = component.replaceText(Pattern.compile(key),
-                builder -> TextComponent.builder().content(content).style(withStyle));
+                builder -> Component.text().content(content).style(withStyle));
         return this;
     }
 
@@ -54,7 +54,7 @@ public class ReplaceableTextComponent {
 
     public ReplaceableTextComponent replaceFirst(String key, String content) {
         this.component = component.replaceFirstText(Pattern.compile(key),
-                builder -> TextComponent.builder().content(content));
+                builder -> Component.text().content(content));
         return this;
     }
 

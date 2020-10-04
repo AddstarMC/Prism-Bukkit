@@ -121,7 +121,7 @@ public class MiscUtils {
         if (!Prism.getInstance().getConfig().getBoolean("prism.paste.enable")) {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerError(
-                            TextComponent.of("Paste.gg support is currently disabled by config.")));
+                            Component.text("Paste.gg support is currently disabled by config.")));
             return;
         }
         ZonedDateTime expire = ZonedDateTime.now().plusMinutes(60);
@@ -145,9 +145,9 @@ public class MiscUtils {
             String message = result.getMessage().isPresent() ? result.getMessage().get() : "";
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerError(
-                            TextComponent.of("Unable to paste results (")
-                                    .append(TextComponent.of(message).color(NamedTextColor.YELLOW))
-                                    .append(TextComponent.of(")."))
+                            Component.text("Unable to paste results (")
+                                    .append(Component.text(message).color(NamedTextColor.YELLOW))
+                                    .append(Component.text(")."))
                     ));
         }
 
@@ -255,9 +255,9 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getPreviousButton() {
-        return TextComponent.builder().content(" [<< Prev]")
+        return Component.text().content(" [<< Prev]")
                 .color(TextColor.fromHexString("#ef9696"))
-                .hoverEvent(HoverEvent.showText(TextComponent.of("Click to view the previous page")))
+                .hoverEvent(HoverEvent.showText(Component.text("Click to view the previous page")))
                 .clickEvent(ClickEvent.runCommand("/pr pg p"))
                 .build();
     }
@@ -268,7 +268,7 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getNextButton() {
-        return TextComponent.builder().content("           ")
+        return Component.text().content("           ")
                 .color(TextColor.fromHexString("#01a960"))
                 .append(MiscUtils::getNextButtonComponent)
                 .build();
@@ -280,8 +280,8 @@ public class MiscUtils {
      * @return BaseComponent.
      */
     private static TextComponent getNextButtonComponent() {
-        return TextComponent.builder().content("[Next >>]")
-                .hoverEvent(HoverEvent.showText(TextComponent.of("Click to view the next page")))
+        return Component.text().content("[Next >>]")
+                .hoverEvent(HoverEvent.showText(Component.text("Click to view the next page")))
                 .color(TextColor.fromHexString("#01a960"))
                 .clickEvent(ClickEvent.runCommand("/pr pg n"))
                 .build();
@@ -293,10 +293,10 @@ public class MiscUtils {
      * @return BaseComponent.
      */
     public static TextComponent getPrevNextButtons() {
-        TextComponent divider = TextComponent.builder().content(" | ")
+        TextComponent divider = Component.text().content(" | ")
                 .color(TextColor.fromHexString("#969696"))
                 .build();
-        return TextComponent.builder()
+        return Component.text()
                 .append(getPreviousButton())
                 .append(divider)
                 .append(getNextButton())

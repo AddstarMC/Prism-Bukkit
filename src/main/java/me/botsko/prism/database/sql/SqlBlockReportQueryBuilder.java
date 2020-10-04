@@ -7,7 +7,8 @@ import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -80,11 +81,11 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
 
         ) {
             Prism.messenger.sendMessage(sender, Prism.messenger
-                    .playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName));
+                    .playerHeaderMsg(Il8n.getMessage("report-block-changes").replaceText("<player>", Component.text(playerName).color(NamedTextColor.DARK_AQUA))));
             Prism.messenger.sendMessage(sender,
-                    Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Block", colTextLen)
+                    Prism.messenger.playerMsg(Component.text(TypeUtils.padStringRight("Block", colTextLen)
                             + TypeUtils.padStringRight("Placed", colIntLen)
-                            + TypeUtils.padStringRight("Broken", colIntLen)));
+                            + TypeUtils.padStringRight("Broken", colIntLen))));
             while (rs.next()) {
                 int blockId = rs.getInt(1);
                 MaterialAliases.MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
@@ -113,8 +114,10 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 final String colBroken = TypeUtils.padStringRight("" + broken, colIntLen);
 
                 Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerMsg(ChatColor.DARK_AQUA + colAlias
-                                + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
+                        Prism.messenger.playerMsg(
+                                Component.text(colAlias).color(NamedTextColor.DARK_AQUA)
+                                        .append(Component.text(colPlaced).color(NamedTextColor.GREEN))
+                                        .append(Component.text(colBroken).color(NamedTextColor.RED))));
 
             }
         } catch (SQLException e) {

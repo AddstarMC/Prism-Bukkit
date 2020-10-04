@@ -43,7 +43,7 @@ public class PreviewCommand extends AbstractCommand {
 
     @Override
     public void handle(final CallInfo call) {
-        final Audience audience = Prism.getAudiences().audience(call.getPlayer());
+        final Audience audience = Prism.getAudiences().sender(call.getPlayer());
         if (call.getArgs().length >= 2) {
 
             if (call.getArg(1).equalsIgnoreCase("apply")) {
@@ -105,7 +105,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.ROLLBACK);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview.start")));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -122,7 +122,7 @@ public class PreviewCommand extends AbstractCommand {
                         parameters.setProcessType(PrismProcessType.RESTORE);
                         if (!results.getActionResults().isEmpty()) {
 
-                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview.start")));
+                            audience.sendMessage(Prism.messenger.playerHeaderMsg(Il8n.getMessage("preview-apply-start")));
 
                             // Perform preview on the main thread
                             plugin.getServer().getScheduler().runTask(plugin, () -> {
