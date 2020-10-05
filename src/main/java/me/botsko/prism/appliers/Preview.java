@@ -152,7 +152,7 @@ public class Preview implements Previewable {
                         if (cmd != null) {
                             plugin.alertPlayers(player, ReplaceableTextComponent.builder("notify-staff")
                                     .replace("<player>", player.getDisplayName())
-                                    .replace("<processsType>", processType.name().toLowerCase())
+                                    .replace("<processType>", processType.name().toLowerCase())
                                     .replace("<originalCommand>", parameters.getOriginalCommand(),
                                             Style.style(NamedTextColor.GRAY))
                                     .build().colorIfAbsent(NamedTextColor.WHITE));

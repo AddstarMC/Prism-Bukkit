@@ -134,14 +134,14 @@ public class DebugCommand implements SubHandler {
                         new PasteContent(PasteContent.ContentType.TEXT, pLog)))
                 .build();
         if (result.getPaste().isPresent()) {
-            String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();
+            String pasteUrl = "https://paste.gg/" + result.getPaste().get().getId();
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(Il8nHelper.getMessage("paste-output")
                             .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
                                     Component.text()
                                             .content(pasteUrl)
                                             .clickEvent(ClickEvent.openUrl(pasteUrl)))));
-            Prism.log("Paste Created :" + pasteUrl);
+            Prism.log("Paste Created : " + pasteUrl);
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                           Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
