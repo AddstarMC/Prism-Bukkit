@@ -298,8 +298,11 @@ public class PrismEntityEvents extends BaseListener {
             if (Prism.getIgnore().event("item-drop", p)) {
                 if (!event.getDrops().isEmpty()) {
                     for (final ItemStack i : event.getDrops()) {
-                        RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i, i.getAmount(), -1, null,
-                                p.getLocation(), p));
+                        if (i != null) {
+                            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", i,
+                                    i.getAmount(), -1, null, p.getLocation(), p
+                            ));
+                        }
                     }
                 }
             }
