@@ -14,7 +14,9 @@ import org.bukkit.inventory.InventoryHolder;
 public class PrismInventoryMoveItemEvent implements Listener {
 
     /**
-     * @param event
+     * InventoryMoveEvent.
+     *
+     * @param event InventoryMoveEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryMoveItem(final InventoryMoveItemEvent event) {
@@ -30,8 +32,9 @@ public class PrismInventoryMoveItemEvent implements Listener {
                 containerLoc = eventChest.getLocation();
             }
 
-            if (containerLoc == null)
+            if (containerLoc == null) {
                 return;
+            }
 
             String invName = event.getSource().getType().name().toLowerCase();
 
@@ -50,8 +53,9 @@ public class PrismInventoryMoveItemEvent implements Listener {
                 containerLoc = eventChest.getLocation();
             }
 
-            if (containerLoc == null)
+            if (containerLoc == null) {
                 return;
+            }
 
             String invName = event.getDestination().getType().name().toLowerCase();
 

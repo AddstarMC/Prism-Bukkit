@@ -8,14 +8,11 @@ import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
-import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Bisected;
-import org.bukkit.block.data.type.Door;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
@@ -32,7 +29,6 @@ import org.bukkit.entity.Wither;
 import org.bukkit.entity.minecart.PoweredMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityBreakDoorEvent;
@@ -68,16 +64,14 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
-public class PrismEntityEvents implements Listener {
-
-    private final Prism plugin;
+public class PrismEntityEvents extends BaseListener {
 
     /**
      * Constructor.
      * @param plugin Plugin
      */
     public PrismEntityEvents(Prism plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     /**
@@ -624,7 +618,7 @@ public class PrismEntityEvents implements Listener {
         try {
             player = Bukkit.getPlayer(UUID.fromString(value));
         } catch (Exception ignored) {
-
+            //ignored.
         }
 
         // Track the hanging item break
@@ -820,36 +814,7 @@ public class PrismEntityEvents implements Listener {
             }
             name = "magic";
         }
-        // Also log item-removes from chests that are blown up
-        final PrismBlockEvents be = new PrismBlockEvents(plugin);
-        for (Block block : event.blockList()) {
-
-            // don't bother record upper doors.
-            if (MaterialTag.DOORS.isTagged(block.getType())
-                    && ((Door) block.getState().getBlockData()).getHalf() == Bisected.Half.TOP) {
-                continue;
-            }
-
-            // Change handling a bit if it's a long block
-            final Block sibling = Utilities.getSiblingForDoubleLengthBlock(block);
-            if (sibling != null && !block.getType().equals(Material.CHEST)
-                    && !block.getType().equals(Material.TRAPPED_CHEST)) {
-                block = sibling;
-            }
-
-            // log items removed from container
-            // note: done before the container so a "rewind" for rollback will
-            // work properly
-            final Block b2 = block;
-            final String source = name;
-            be.forEachItem(block, (i, s) -> RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove",
-                    i, i.getAmount(), 0, null, b2.getLocation(), source)));
-            // be.logItemRemoveFromDestroyedContainer( name, block );
-            RecordingQueue.addToQueue(ActionFactory.createBlock(action, block, source));
-            // look for relationships
-            be.logBlockRelationshipsForBlock(source, block);
-
-        }
+        contructBlockEvent(action,name,event.blockList());
     }
 
     private String followTntTrail(Entity initial) {

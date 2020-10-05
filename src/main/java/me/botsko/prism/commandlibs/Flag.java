@@ -1,20 +1,21 @@
 package me.botsko.prism.commandlibs;
 
+import me.botsko.prism.Il8nHelper;
 import org.bukkit.permissions.Permissible;
 
 public enum Flag {
-    DRAIN("Drain liquid along with a rollback."),
-    DRAIN_LAVA("Drain only lava along with a rollback."),
-    DRAIN_WATER("Drain only water along with a rollback."),
-    EXTENDED("Shows the extended lookup results (timestamp, coords, id, etc)."),
-    NO_EXT("Do not extinguish fires on burn rollbacks."),
-    NO_ITEMCLEAR("Do not clear drops on explosion rollback."),
-    PER_PAGE("-per-page=#", "Set results per-page for current lookup."),
-    NO_GROUP("Disables grouping of related actions."),
-    OVERWRITE("Forces rb/rs to not skip blocks if something unexpected is at location."),
-    SHARE("-share=player1[,player2...]", "Share a lookup result with another player."),
-    PASTE("Share your results with a paste service and return the link"),
-    NO_PHYS("Don't update physics during rollback");
+    DRAIN(Il8nHelper.getRawMessage("flag-drain")),
+    DRAIN_LAVA(Il8nHelper.getRawMessage("flag-drain-lava")),
+    DRAIN_WATER(Il8nHelper.getRawMessage("flag-drain-water")),
+    EXTENDED(Il8nHelper.getRawMessage("flag-extended")),
+    NO_EXT(Il8nHelper.getRawMessage("flag-no-extinguish")),
+    NO_ITEMCLEAR(Il8nHelper.getRawMessage("flag-no-item-clear")),
+    PER_PAGE("-per-page=#", Il8nHelper.getRawMessage("flag-result-per-page")),
+    NO_GROUP(Il8nHelper.getRawMessage("flag-no-group")),
+    OVERWRITE(Il8nHelper.getRawMessage("flag-overwrite")),
+    SHARE("-share=player1[,player2...]", Il8nHelper.getRawMessage("flag-share-result")),
+    PASTE(Il8nHelper.getRawMessage("flag-paste")),
+    NO_PHYS(Il8nHelper.getRawMessage("flag-no-physics"));
 
     private final String description;
     private final String permission;

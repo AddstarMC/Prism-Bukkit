@@ -1,32 +1,29 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.wands.Wand;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 
 import java.util.List;
 
-public class ResetmyCommand implements SubHandler {
+public class ResetmyCommand extends AbstractCommand {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public ResetmyCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Handle the command
-     */
     @Override
     public void handle(CallInfo call) {
 
@@ -35,44 +32,37 @@ public class ResetmyCommand implements SubHandler {
             setType = call.getArg(1);
         }
 
-		/*
-		  Inspector wand
-		 */
         if (setType != null && !setType.equalsIgnoreCase("wand")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
             return;
         }
 
         if (!plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
-            call.getPlayer().sendMessage(
-                    Prism.messenger.playerError("Sorry, but personalizing the wand is currently not allowed."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("wand-personal-blocked")));
         }
-
-        // Check for any wand permissions. @todo There should be some central
-        // way to handle this - some way to centralize it at least
-        if (!call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.restore")
-                && !call.getPlayer().hasPermission("prism.wand.*")
-                && !call.getPlayer().hasPermission("prism.wand.inspect")
-                && !call.getPlayer().hasPermission("prism.wand.profile")
-                && !call.getPlayer().hasPermission("prism.wand.rollback")
-                && !call.getPlayer().hasPermission("prism.wand.restore")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
+        if (checkNoPermissions(call.getPlayer(), "prism.rollback", "prism.restore", "prism.wand.*",
+                "prism.wand.inspect", "prism.wand.profile", "prism.wand.rollback",
+                "prism.wand.restore")) {
             return;
         }
-
         // Disable any current wand
         if (Prism.playersWithActiveTools.containsKey(call.getPlayer().getName())) {
             final Wand oldwand = Prism.playersWithActiveTools.get(call.getPlayer().getName());
             oldwand.disable(call.getPlayer());
             Prism.playersWithActiveTools.remove(call.getPlayer().getName());
-            call.getPlayer().sendMessage(Prism.messenger
-                    .playerHeaderMsg("Current wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
+            Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
+                    .playerHeaderMsg(ReplaceableTextComponent.builder("wand-current")
+                            .replace("<status", Il8nHelper.getRawMessage("disabled"),
+                                    Style.style(NamedTextColor.RED))
+                            .build()));
         }
 
         Settings.deleteSetting("wand.item", call.getPlayer());
         Settings.deleteSetting("wand.mode", call.getPlayer());
-        call.getPlayer().sendMessage(
-                Prism.messenger.playerHeaderMsg("Your personal wand settings have been reset to server defaults."));
+        Prism.messenger.sendMessage(call.getPlayer(),
+                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("wand-reset")));
     }
 
     @Override

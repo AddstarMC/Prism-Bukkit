@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -35,20 +36,20 @@ public class ExtinguishCommand implements SubHandler {
                 final int _tmp_radius = Integer.parseInt(call.getArg(1));
                 if (_tmp_radius > 0) {
                     if (_tmp_radius > plugin.getConfig().getInt("prism.ex.max-radius")) {
-                        call.getPlayer().sendMessage(Prism.messenger.playerError("Radius exceeds max set in config."));
+                        Prism.messenger.sendMessage(call.getPlayer(),
+                                Prism.messenger.playerError(Il8nHelper.getMessage("radius-max")));
                         return;
                     } else {
                         radius = _tmp_radius;
                     }
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError(
-                            "Radius must be greater than zero. Or leave it off to use the default. "
-                                    + "Use /prism ? for help."));
+                    Prism.messenger.sendMessage(call.getPlayer(),
+                            Prism.messenger.playerError(Il8nHelper.getMessage("radius-small")));
                     return;
                 }
             } else {
-                call.getPlayer().sendMessage(Prism.messenger.playerError(
-                        "Radius must be a number. Or leave it off to use the default. Use /prism ? for help."));
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
+                        Il8nHelper.getMessage("radius-not-numeric")));
                 return;
             }
         }
@@ -57,7 +58,8 @@ public class ExtinguishCommand implements SubHandler {
                 radius);
         if (!blockStateChanges.isEmpty()) {
 
-            call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Extinguished nearby fire! Cool!"));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("fire-extinguished-sucess")));
 
             // Trigger the event
             final PrismBlocksExtinguishEvent event = new PrismBlocksExtinguishEvent(blockStateChanges, call.getPlayer(),
@@ -65,8 +67,9 @@ public class ExtinguishCommand implements SubHandler {
             plugin.getServer().getPluginManager().callEvent(event);
 
         } else {
-            call.getPlayer()
-                    .sendMessage(Prism.messenger.playerError("No fires found within that radius to extinguish."));
+            Prism.getAudiences().player(call.getPlayer())
+                    .sendMessage(
+                            Prism.messenger.playerError(Il8nHelper.getMessage("no-fires-found")));
         }
     }
 

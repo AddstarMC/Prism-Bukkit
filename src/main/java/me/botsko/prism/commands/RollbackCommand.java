@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -9,6 +10,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
+import me.botsko.prism.text.ReplaceableTextComponent;
 
 import java.util.List;
 
@@ -31,14 +33,18 @@ public class RollbackCommand extends AbstractCommand {
         parameters.setProcessType(PrismProcessType.ROLLBACK);
         parameters.setStringFromRawArgs(call.getArgs(), 1);
         StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-        call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg(ReplaceableTextComponent.builder("rollback-prepare")
+                        .replace("<defaults>", defaultsReminder)
+                        .build()));
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getSender());
             if (!results.getActionResults().isEmpty()) {
 
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Beginning rollback..."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("rollback-start")));
 
                 // Perform rollback on the main thread
                 plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -48,8 +54,8 @@ public class RollbackCommand extends AbstractCommand {
                 });
 
             } else {
-                call.getSender().sendMessage(
-                        Prism.messenger.playerError("Nothing found to rollback. Try using /prism l (args) first."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(Il8nHelper.getMessage("rollback-error")));
             }
         });
     }

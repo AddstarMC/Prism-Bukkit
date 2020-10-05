@@ -58,7 +58,7 @@ public abstract class QueryWandBase extends WandBase {
         }
     }
 
-     QueryResult getResult(QueryParameters params, Player player) {
+    QueryResult getResult(QueryParameters params, Player player) {
         boolean timeDefault = false;
         for (final String _default : params.getDefaultsUsed()) {
             if (_default.startsWith("t:")) {
@@ -72,19 +72,17 @@ public abstract class QueryWandBase extends WandBase {
 
         // Query
         final ActionsQuery aq = new ActionsQuery(plugin);
-         return aq.lookup(params, player);
+        return aq.lookup(params, player);
     }
-    QueryParameters checkQueryParams(Block block, QueryParameters parameters, Player player){
 
+    QueryParameters checkQueryParams(Block block, QueryParameters parameters, Player player) {
         plugin.eventTimer.recordTimedEvent("rollback wand used");
-
-        // Build params
         QueryParameters params;
         try {
             params = parameters.clone();
         } catch (final CloneNotSupportedException ex) {
             params = new QueryParameters();
-            player.sendMessage(
+            Prism.messenger.sendMessage(player,
                     Prism.messenger.playerError("Error retrieving parameters. Checking with default parameters."));
         }
         params.setWorld(player.getWorld().getName());
@@ -92,6 +90,7 @@ public abstract class QueryWandBase extends WandBase {
         params.setLimit(1);
         return params;
     }
+
     /**
      * Get the {@link #parameters} set from {@link #setParameters}.
      *

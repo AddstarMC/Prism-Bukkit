@@ -1,11 +1,14 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.ItemUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -14,38 +17,38 @@ import java.util.List;
 public class WhatCommand extends Executor {
 
     /**
-     * @param prism
+     * Constructor.
+     *
+     * @param prism Plugin
      */
     public WhatCommand(Plugin prism) {
         super(prism, "command", "prism");
         setupCommands();
     }
 
-    /**
-     *
-     */
     private void setupCommands() {
-		/*
-		  /what
-		 */
         addSub("what", "prism.what").setHandler(new SubHandler() {
             @Override
             public void handle(CallInfo call) {
                 final ItemStack item = call.getPlayer().getInventory().getItemInMainHand();
-
-                call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Item Profile:"));
-
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("what-header", ":")));
                 // TODO: Better material formatting
-                String line1 = ChatColor.WHITE + "Name: " + ChatColor.DARK_AQUA
-                        + item.getType().toString().toLowerCase();
-                line1 += ChatColor.WHITE + " Prism Alias: " + ChatColor.DARK_AQUA
-                        + Prism.getItems().getAlias(item.getType(), null);
-                line1 += ChatColor.WHITE + " ID: " + ChatColor.DARK_AQUA + item.getType();
-
-                call.getPlayer().sendMessage(Prism.messenger.playerMsg(line1));
-                call.getPlayer().sendMessage(Prism.messenger.playerMsg(ChatColor.WHITE + "Full Display Name: "
-                        + ChatColor.DARK_AQUA + ItemUtils.getItemFullNiceName(item)));
-
+                TextComponent out = Component.text()
+                        .append(Il8nHelper.getMessage("what-item-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(item.getType().toString().toLowerCase()))
+                        .append(Component.newline())
+                        .append(Il8nHelper.getMessage("what-alias", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(Prism.getItems().getAlias(item.getType(), null)))
+                        .append(Component.newline())
+                        .append(Il8nHelper.getMessage("what-id", ": "))
+                        .append(Component.text(item.getType().toString()))
+                        .append(Component.newline())
+                        .append(Il8nHelper.getMessage("what-display-name", ": ").color(NamedTextColor.DARK_AQUA))
+                        .append(Component.text(ItemUtils.getItemFullNiceName(item)))
+                        .colorIfAbsent(NamedTextColor.WHITE)
+                        .build();
+                Prism.messenger.sendMessage(call.getPlayer(),out);
             }
 
             @Override

@@ -34,8 +34,9 @@ public class SqlIdMapQuery implements IdMapQuery {
     private final PrismDataSource dataSource;
 
     /**
-     * Constructor
-     * @param dataSource  PrismDataSource
+     * Constructor.
+     *
+     * @param dataSource PrismDataSource
      */
     public SqlIdMapQuery(PrismDataSource dataSource) {
         this.dataSource = dataSource;
@@ -51,7 +52,7 @@ public class SqlIdMapQuery implements IdMapQuery {
     }
 
     /**
-     * Find material and consume it
+     * Find material and consume it.
      * @param blockId int
      * @param blockSubid int
      * @param success BiConsumer
@@ -125,7 +126,7 @@ public class SqlIdMapQuery implements IdMapQuery {
     }
 
     /**
-     * Find and consume
+     * Find and consume.
      * @param material String
      * @param success Consumer
      * @param failure Runnable
@@ -171,7 +172,7 @@ public class SqlIdMapQuery implements IdMapQuery {
             try (PreparedStatement st = conn.prepareStatement(query)) {
                 st.setString(1, material);
                 st.setString(2, stateLike);
-                handleIdResult(st,success,failure);
+                handleIdResult(st, success, failure);
             }
         } catch (final SQLException e) {
             Prism.warn("Database connection error: ", e);
@@ -179,7 +180,8 @@ public class SqlIdMapQuery implements IdMapQuery {
         }
     }
 
-    private void handleIdResult(PreparedStatement st, Consumer<List<IntPair>> success, Runnable failure) throws SQLException{
+    private void handleIdResult(PreparedStatement st, Consumer<List<IntPair>> success,
+                                Runnable failure) throws SQLException {
         try (ResultSet rs = st.executeQuery()) {
             List<IntPair> ids = new ArrayList<>();
 
@@ -256,6 +258,12 @@ public class SqlIdMapQuery implements IdMapQuery {
         }
     }
 
+    /**
+     * map material to id.
+     * @param material Material
+     * @param state State
+     * @return int.
+     */
     public int mapAutoId(String material, String state) {
         Validate.notNull(material, "Material cannot be null");
         Validate.notNull(state, "State cannot be null");

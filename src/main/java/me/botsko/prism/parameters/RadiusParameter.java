@@ -84,7 +84,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
             int radius = MiscUtils.clampRadius(player, desiredRadius, query.getProcessType(), config);
             if (desiredRadius != radius) {
                 if (sender != null) {
-                    sender.sendMessage(
+                    Prism.messenger.sendMessage(sender,
                             Prism.messenger.playerError("Forcing radius to " + radius + " as allowed by config."));
                 }
             }

@@ -5,12 +5,13 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.utils.MiscUtils;
-import me.botsko.prism.utils.TypeUtils;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Item;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -79,12 +80,14 @@ public class OreMonitor {
                 final String count = foundores.size() + (foundores.size() >= thresholdMax ? "+" : "");
                 final String msg = player.getName() + " found " + count + " "
                         + getOreNiceName(block) + " " + light + "% light";
-                final TextComponent component = new TextComponent(msg);
-                component.setColor(getOreColor(block));
-                HoverEvent hoverBlock = new HoverEvent(HoverEvent.Action.SHOW_ITEM,
-                        new Item(block.getBlockData().getMaterial().getKey().toString(),
-                                1, null));
-                component.setHoverEvent(hoverBlock);
+                final TextComponent component =
+                        Component.text().content(msg)
+                                .color(getOreColor(block))
+                                .hoverEvent(
+                                        HoverEvent.hoverEvent(HoverEvent.Action.SHOW_ITEM,
+                                                HoverEvent.ShowItem.of(Key.key(
+                                                        block.getType().getKey().toString()), 1)))
+                                .build();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                     // check if block placed
                     boolean wasplaced = false;
@@ -102,14 +105,12 @@ public class OreMonitor {
                     }
 
                     if (!wasplaced) {
-                        List<BaseComponent> send = new ArrayList<>();
-                        send.add(component);
                         // Alert staff
-                        plugin.alertPlayers(null, send);
+                        plugin.alertPlayers(null, component);
 
                         // Log to console
                         if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
-                            Prism.log(TypeUtils.colorize(msg));
+                            Prism.log(PlainComponentSerializer.plain().serialize(component));
                         }
 
                         // Log to commands
@@ -127,14 +128,14 @@ public class OreMonitor {
      * @param block Block
      * @return String
      */
-    private ChatColor getOreColor(Block block) {
+    private TextColor getOreColor(Block block) {
         if (isWatched(block)) {
-            ChatColor color = Prism.getAlertedOres().get(block.getType());
+            TextColor color = Prism.getAlertedOres().get(block.getType());
             if (color != null) {
                 return color;
             }
         }
-        return ChatColor.WHITE;
+        return NamedTextColor.WHITE;
     }
 
     /**

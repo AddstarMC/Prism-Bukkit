@@ -1,7 +1,6 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
-import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -49,7 +48,7 @@ public interface PrismDataSource {
 
     SelectQuery createSelectQuery();
 
-    SelectIdQuery createSelectIDQuery();
+    SelectIdQuery createSelectIdQuery();
 
     DeleteQuery createDeleteQuery();
 

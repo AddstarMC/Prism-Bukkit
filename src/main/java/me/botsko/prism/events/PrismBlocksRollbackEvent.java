@@ -34,7 +34,7 @@ public class PrismBlocksRollbackEvent extends Event {
     }
 
     /**
-     * ArrayList
+     * ArrayList.
      *
      * @return the originalBlock  List BlockStateChange
      */
@@ -43,7 +43,7 @@ public class PrismBlocksRollbackEvent extends Event {
     }
 
     /**
-     * Player
+     * Player.
      *
      * @return the onBehalfOf Player
      */
@@ -52,7 +52,7 @@ public class PrismBlocksRollbackEvent extends Event {
     }
 
     /**
-     * QueryParameters
+     * QueryParameters.
      *
      * @return QueryParameters
      */
@@ -61,7 +61,7 @@ public class PrismBlocksRollbackEvent extends Event {
     }
 
     /**
-     * ApplierResult
+     * ApplierResult.
      *
      * @return ApplierResult
      */

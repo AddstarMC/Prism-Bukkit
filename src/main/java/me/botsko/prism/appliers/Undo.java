@@ -10,21 +10,17 @@ import java.util.List;
 public class Undo extends Preview {
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public Undo(Prism plugin, Player player, List<Handler> results, QueryParameters parameters,
                 ApplierCallback callback) {
         super(plugin, player, results, parameters, callback);
     }
 
-    /**
-     * Set preview move and then do a rollback
-     *
-     * @return
-     */
     @Override
     public void preview() {
-        player.sendMessage(Prism.messenger.playerError("You can't preview an undo."));
+        Prism.messenger.sendMessage(player, Prism.messenger.playerError("You can't preview an undo."));
     }
 }

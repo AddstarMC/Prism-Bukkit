@@ -7,7 +7,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 
-abstract public class QueryBuilder {
+public abstract class QueryBuilder {
     protected final String tableNameData;
     protected final String tableNameDataExtra;
     protected PrismDataSource dataSource;
@@ -19,7 +19,7 @@ abstract public class QueryBuilder {
     protected boolean shouldPause;
 
     /**
-     *
+     * Build a query.
      */
     public QueryBuilder(PrismDataSource dataSource) {
         this.dataSource = dataSource;
@@ -39,15 +39,17 @@ abstract public class QueryBuilder {
     /**
      * Setting this will cause the recording queue to be unable to process while the query is running.
      *
-     * @param shouldPause
+     * @param shouldPause boolean
      */
     public void setShouldPause(boolean shouldPause) {
         this.shouldPause = shouldPause;
     }
 
     /**
-     * @param parameters
-     * @param shouldGroup
+     * Get the query.
+     *
+     * @param parameters  QueryParams.
+     * @param shouldGroup if grouped.
      * @return
      */
     public String getQuery(@Nullable QueryParameters parameters, boolean shouldGroup) {
@@ -67,43 +69,29 @@ abstract public class QueryBuilder {
 
     }
 
-    /**
-     *
-     */
     protected String select() {
         return "";
     }
 
-    /**
-     *
-     */
     protected String where() {
         return "";
     }
 
-    /**
-     *
-     */
     protected String group() {
         return "";
     }
 
-    /**
-     *
-     */
     protected String order() {
         return "";
     }
 
-    /**
-     *
-     */
     protected String limit() {
         return "";
     }
 
     /**
-     * @param condition
+     * Add a condition.
+     * @param condition String.
      */
     protected void addCondition(String condition) {
         if (!condition.isEmpty()) {

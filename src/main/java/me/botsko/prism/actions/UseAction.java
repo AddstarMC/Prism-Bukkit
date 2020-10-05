@@ -14,7 +14,7 @@ public class UseAction extends GenericAction {
     }
 
     /**
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public String getNiceName() {

@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
@@ -21,7 +22,6 @@ public class NearCommand implements SubHandler {
     /**
      * Constructor.
      * @param plugin Prism
-     * @return command
      */
     public NearCommand(Prism plugin) {
         this.plugin = plugin;
@@ -43,13 +43,13 @@ public class NearCommand implements SubHandler {
                 if (_tmp_radius > 0) {
                     radius = _tmp_radius;
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError(
+                    Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
                             "Radius must be greater than zero. Or leave it off to use the default. "
                                     + "Use /prism ? for help."));
                     return;
                 }
             } else {
-                call.getPlayer().sendMessage(Prism.messenger.playerError(
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
                         "Radius must be a number. Or leave it off to use the default."
                                 + " Use /prism ? for help."));
                 return;
@@ -65,10 +65,12 @@ public class NearCommand implements SubHandler {
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {
-                call.getPlayer().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-                        "All changes within " + parameters.getRadius() + " blocks of you..."));
-                call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Showing " + results.getTotalResults()
-                        + " results. Page 1 of " + results.getTotalPages()));
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerSubduedHeaderMsg(
+                                Il8nHelper.formatMessage("near-result-report", parameters.getRadius())));
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup-header-message",
+                                results.getTotalResults(), 1, results.getTotalPages())));
                 final List<Handler> paginated = results.getPaginatedActionResults();
                 if (paginated != null) {
                     int resultCount = results.getIndexOfFirstResult();
@@ -88,11 +90,12 @@ public class NearCommand implements SubHandler {
                     plugin.eventTimer.printTimeRecord();
 
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger
+                    Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                             .playerError("Pagination can't find anything. Do you have the right page number?"));
                 }
             } else {
-                call.getPlayer().sendMessage(Prism.messenger.playerError("Couldn't find anything."));
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerError("Couldn't find anything."));
             }
         });
     }

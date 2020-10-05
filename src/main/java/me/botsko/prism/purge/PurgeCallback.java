@@ -3,6 +3,6 @@ package me.botsko.prism.purge;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 public interface PurgeCallback {
-    void cycle(QueryParameters param, int cycle_rows_affected, int total_records_affected,
-               boolean cycle_complete, long max_cycle_time);
+    void cycle(QueryParameters param, int cycleRowsAffected, int totalRecordsAffected,
+               boolean cycleComplete, long maxCycleTime);
 }

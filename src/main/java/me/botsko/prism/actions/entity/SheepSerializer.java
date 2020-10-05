@@ -20,7 +20,8 @@ public class SheepSerializer extends EntitySerializer {
 
     @Override
     protected void niceName(StringBuilder sb, int start) {
-        if (color != null)
+        if (color != null) {
             sb.insert(start, MiscUtils.niceName(color)).insert(start + color.length(), ' ');
+        }
     }
 }

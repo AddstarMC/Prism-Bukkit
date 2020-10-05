@@ -13,14 +13,14 @@ import java.util.regex.Pattern;
 public class SinceParameter extends SimplePrismParameterHandler {
 
     /**
-     *
+     * Time since parameter.
      */
     public SinceParameter() {
         super("Since", Pattern.compile("[\\w]+"), "t", "since");
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void process(QueryParameters query, String alias, String input, CommandSender sender) {
@@ -38,13 +38,14 @@ public class SinceParameter extends SimplePrismParameterHandler {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public void defaultTo(QueryParameters query, CommandSender sender) {
 
-        if (query.getProcessType().equals(PrismProcessType.DELETE))
+        if (query.getProcessType().equals(PrismProcessType.DELETE)) {
             return;
+        }
 
         if (!query.getFoundArgs().contains("before") && !query.getFoundArgs().contains("since")) {
 

@@ -8,14 +8,21 @@ import org.bukkit.entity.Player;
 
 public class WandUtils {
 
+    /**
+     * True if uses wand on click.
+     * @param player Player
+     * @param loc Location.
+     * @return boolean
+     */
     public static boolean playerUsesWandOnClick(Player player, Location loc) {
 
         if (Prism.playersWithActiveTools.containsKey(player.getName())) {
 
             final Wand wand = Prism.playersWithActiveTools.get(player.getName());
 
-            if (wand == null)
+            if (wand == null) {
                 return false;
+            }
 
             final Material item = wand.getItem();
             if (player.getInventory().getItemInMainHand().getType() == item) {

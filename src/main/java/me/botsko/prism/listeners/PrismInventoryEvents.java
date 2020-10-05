@@ -6,20 +6,26 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.Handler;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 public class PrismInventoryEvents implements Listener {
 
@@ -112,6 +118,59 @@ public class PrismInventoryEvents implements Listener {
                         rawSlot, null, containerLoc, player));
             }
         }
+    }
+
+    /**
+     * EnchantItemEvent.
+     *
+     * @param event EnchantItemEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEnchantItem(final EnchantItemEvent event) {
+        if (!Prism.getIgnore().event("enchant-item", event.getEnchanter())) {
+            return;
+        }
+        final Player player = event.getEnchanter();
+        RecordingQueue.addToQueue(ActionFactory.createItemStack("enchant-item", event.getItem(),
+                event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player));
+    }
+
+    /**
+     * Handle Crafting.
+     * @param prepareItemCraftEvent event.
+     */
+    @EventHandler(priority = EventPriority.MONITOR,ignoreCancelled = true)
+    public void onPrepareCraftItem(PrepareItemCraftEvent prepareItemCraftEvent) {
+        if (Prism.getIgnore().event("craft-item")) {
+            return;
+        }
+        List<HumanEntity> recordable = prepareItemCraftEvent.getViewers().stream().filter(humanEntity -> {
+            if (humanEntity instanceof Player) {
+                return Prism.getIgnore().event("craft-item", (Player) humanEntity);
+            }
+            return false;
+        }).collect(Collectors.toList());
+        if (recordable.size() > 0) {
+            //todo
+            Prism.debug("PrepareCraftEvent: " + prepareItemCraftEvent.toString());
+        }
+
+    }
+
+    /**
+     * CraftItemEvent.
+     *
+     * @param event CraftItemEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onCraftItem(final CraftItemEvent event) {
+        final Player player = (Player) event.getWhoClicked();
+        if (!Prism.getIgnore().event("craft-item", player)) {
+            return;
+        }
+        final ItemStack item = event.getRecipe().getResult();
+        RecordingQueue.addToQueue(
+                ActionFactory.createItemStack("craft-item", item, 1, -1, null, player.getLocation(), player));
     }
 
     /**

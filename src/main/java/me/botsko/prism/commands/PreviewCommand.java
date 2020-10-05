@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -13,6 +14,7 @@ import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.utils.MiscUtils;
+import net.kyori.adventure.audience.Audience;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,7 @@ public class PreviewCommand extends AbstractCommand {
 
     @Override
     public void handle(final CallInfo call) {
+        final Audience audience = Prism.getAudiences().sender(call.getPlayer());
         if (call.getArgs().length >= 2) {
 
             if (call.getArg(1).equalsIgnoreCase("apply")) {
@@ -49,7 +52,7 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().apply_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
                 }
                 return;
             }
@@ -60,14 +63,14 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().cancel_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    call.getPlayer().sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
                 }
                 return;
             }
 
             // Ensure no current preview is waiting
             if (plugin.playerActivePreviews.containsKey(call.getPlayer().getName())) {
-                call.getPlayer().sendMessage(Prism.messenger
+                audience.sendMessage(Prism.messenger
                         .playerError("You have an existing preview pending. Please apply or cancel before moving on."));
                 return;
             }
@@ -84,14 +87,15 @@ public class PreviewCommand extends AbstractCommand {
                 parameters.setStringFromRawArgs(call.getArgs(), 1);
 
                 if (parameters.getActionTypes().containsKey("world-edit")) {
-                    call.getPlayer().sendMessage(Prism.messenger
+                    audience.sendMessage(Prism.messenger
                             .playerError("Prism does not support previews for WorldEdit rollbacks/restores yet."));
                     return;
                 }
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-                call.getPlayer()
-                        .sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
-
+                audience.sendMessage(Prism.messenger
+                        .playerSubduedHeaderMsg(
+                                Il8nHelper.getMessage("queryparameter.defaults.prefix",
+                                        defaultsReminder.toString())));
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
                     // Perform preview
@@ -99,45 +103,59 @@ public class PreviewCommand extends AbstractCommand {
                     final QueryResult results = aq.lookup(parameters, call.getPlayer());
 
                     // Rollback
-                    if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("rb")) {
-                        parameters.setProcessType(PrismProcessType.ROLLBACK);
-                        if (!results.getActionResults().isEmpty()) {
-
-                            call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
-
-                            // Perform preview on the main thread
-                            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                                final Previewable rs = new Rollback(plugin, call.getPlayer(),
-                                        results.getActionResults(), parameters, new PrismApplierCallback());
-                                rs.preview();
-                            });
-                        } else {
-                            call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
-                        }
+                    if (call.getArg(1).equalsIgnoreCase("rollback")
+                            || call.getArg(1).equalsIgnoreCase("rb")) {
+                        handleRollBack(call, parameters, results, audience);
+                        assert (parameters.getProcessType() == PrismProcessType.ROLLBACK); //todo remove debug
                     }
                     // Restore
-                    if (call.getArg(1).equalsIgnoreCase("restore") || call.getArg(1).equalsIgnoreCase("rs")) {
-                        parameters.setProcessType(PrismProcessType.RESTORE);
-                        if (!results.getActionResults().isEmpty()) {
-
-                            call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg("Beginning preview..."));
-
-                            // Perform preview on the main thread
-                            plugin.getServer().getScheduler().runTask(plugin, () -> {
-                                final Previewable rs = new Restore(plugin, call.getPlayer(),
-                                        results.getActionResults(), parameters, new PrismApplierCallback());
-                                rs.preview();
-                            });
-                        } else {
-                            call.getPlayer().sendMessage(Prism.messenger.playerError("Nothing found to preview."));
-                        }
+                    if (call.getArg(1).equalsIgnoreCase("restore")
+                            || call.getArg(1).equalsIgnoreCase("rs")) {
+                        handleRestore(call, parameters, results, audience);
+                        assert (parameters.getProcessType() == PrismProcessType.RESTORE);//todo remove debug
                     }
                 });
                 return;
             }
+            audience.sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
+        }
+    }
 
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
+    private void handleRestore(CallInfo call, QueryParameters parameters, QueryResult results, Audience audience) {
+        parameters.setProcessType(PrismProcessType.RESTORE);
+        if (!results.getActionResults().isEmpty()) {
 
+            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                    Il8nHelper.getMessage("preview-apply-start")));
+
+            // Perform preview on the main thread
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                final Previewable rs = new Restore(plugin, call.getPlayer(),
+                        results.getActionResults(), parameters, new PrismApplierCallback());
+                rs.preview();
+            });
+        } else {
+            audience.sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("preview-no-actions")));
+        }
+    }
+
+
+    private void handleRollBack(final CallInfo call, final QueryParameters parameters,
+                                final QueryResult results, final Audience audience) {
+        parameters.setProcessType(PrismProcessType.ROLLBACK);
+        if (!results.getActionResults().isEmpty()) {
+
+            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+                    Il8nHelper.getMessage("preview-apply-start")));
+
+            // Perform preview on the main thread
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                final Previewable rs = new Rollback(plugin, call.getPlayer(),
+                        results.getActionResults(), parameters, new PrismApplierCallback());
+                rs.preview();
+            });
+        } else {
+            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
         }
     }
 

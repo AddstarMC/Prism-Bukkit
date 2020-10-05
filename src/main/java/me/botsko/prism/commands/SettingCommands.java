@@ -1,7 +1,5 @@
 package me.botsko.prism.commands;
 
-import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.commandlibs.CallInfo;
 
@@ -23,7 +21,6 @@ public class SettingCommands extends AbstractCommand {
                     return;
                 default:
                     //todo add some feedback
-                    return;
             }
         }
         //todo add feedback

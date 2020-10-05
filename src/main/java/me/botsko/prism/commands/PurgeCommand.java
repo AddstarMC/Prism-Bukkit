@@ -1,10 +1,14 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
+import me.botsko.prism.text.ReplaceableTextComponent;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,19 +27,21 @@ public class PurgeCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
+        Audience sender = Prism.getAudiences().sender(call.getSender());
         if (call.getArgs().length < 1) {
-            call.getSender().sendMessage(
-                    Prism.messenger.playerHeaderMsg("Prism" + ChatColor.GRAY + " v"
-                            + plugin.getPrismVersion()));
-            call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purges Scheduled: " + ChatColor.WHITE + plugin.getSchedulePool().getTaskCount()));
-            call.getSender().sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Purges Run : " + ChatColor.WHITE + plugin.getSchedulePool().getCompletedTaskCount()));
-            call.getSender().sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Pool String: " + ChatColor.WHITE + plugin.getSchedulePool().toString()));
+            Prism.messenger.sendMessage(call.getSender(),
+                    Prism.messenger.playerHeaderMsg(Component.text().content("Prism")
+                            .append(Component.text(" v" + plugin.getPrismVersion()).color(NamedTextColor.GRAY))
+                            .build()));
+            sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(ReplaceableTextComponent.builder("purge-report")
+                    .replace("<taskCount>", plugin.getSchedulePool().getTaskCount())
+                    .replace("<purgesComplete>", plugin.getSchedulePool().getCompletedTaskCount())
+                    .replace("<poolString>", plugin.getSchedulePool().toString())
+                    .build()));
         } else {
             if (Objects.equals(call.getArgs()[0], "execute")) {
-                call.getSender().sendMessage(
-                        Prism.messenger.playerHeaderMsg("Prism" + ChatColor.GRAY + " Executing Purge Run"));
+                sender.sendMessage(
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("purge-execute")));
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, plugin.getPurgeManager());
             }
         }

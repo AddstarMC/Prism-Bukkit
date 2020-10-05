@@ -1,12 +1,14 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -67,8 +69,8 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
         for (String name : parameters.getPlayerNames().keySet()) {
             playerName = name;
         }
-        sender.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-                "Crafting block change report for " + ChatColor.DARK_AQUA + playerName + "..."));
+        Prism.messenger.sendMessage(sender, Prism.messenger.playerSubduedHeaderMsg(
+                Il8nHelper.formatMessage("actionreport-blockChange", playerName)));
 
         final int colTextLen = 20;
         final int colIntLen = 12;
@@ -78,12 +80,14 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 ResultSet rs = s.executeQuery()
 
         ) {
-            sender.sendMessage(Prism.messenger
-                    .playerHeaderMsg("Total block changes for " + ChatColor.DARK_AQUA + playerName));
-            sender.sendMessage(
-                    Prism.messenger.playerMsg(ChatColor.GRAY + TypeUtils.padStringRight("Block", colTextLen)
+            Prism.messenger.sendMessage(sender, Prism.messenger
+                    .playerHeaderMsg(Il8nHelper.getMessage("report-block-changes")
+                            .replaceText("<player>",
+                                    Component.text(playerName).color(NamedTextColor.DARK_AQUA))));
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerMsg(Component.text(TypeUtils.padStringRight("Block", colTextLen)
                             + TypeUtils.padStringRight("Placed", colIntLen)
-                            + TypeUtils.padStringRight("Broken", colIntLen)));
+                            + TypeUtils.padStringRight("Broken", colIntLen))));
             while (rs.next()) {
                 int blockId = rs.getInt(1);
                 MaterialAliases.MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
@@ -111,8 +115,11 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 final String colPlaced = TypeUtils.padStringRight("" + placed, colIntLen);
                 final String colBroken = TypeUtils.padStringRight("" + broken, colIntLen);
 
-                sender.sendMessage(Prism.messenger.playerMsg(ChatColor.DARK_AQUA + colAlias
-                        + ChatColor.GREEN + colPlaced + " " + ChatColor.RED + colBroken));
+                Prism.messenger.sendMessage(sender,
+                        Prism.messenger.playerMsg(
+                                Component.text(colAlias).color(NamedTextColor.DARK_AQUA)
+                                        .append(Component.text(colPlaced).color(NamedTextColor.GREEN))
+                                        .append(Component.text(colBroken).color(NamedTextColor.RED))));
 
             }
         } catch (SQLException e) {

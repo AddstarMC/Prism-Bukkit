@@ -148,12 +148,12 @@ public class PlayerIdentification {
             prismPlayer.setName(name);
             updatePlayer(prismPlayer);
         }
-        if (!uuid.equals(prismPlayer.getUUID())) {
+        if (!uuid.equals(prismPlayer.getUuid())) {
             Prism.log("Player UUID for " + name + " does not match our cache! " + uuid
-                    + " versus cache of " + prismPlayer.getUUID());
+                    + " versus cache of " + prismPlayer.getUuid());
 
             // Update anyway...
-            prismPlayer.setUUID(uuid);
+            prismPlayer.setUuid(uuid);
             updatePlayer(prismPlayer);
 
         }
@@ -241,14 +241,14 @@ public class PlayerIdentification {
                         + "players (player,player_uuid) VALUES (?,UNHEX(?))", Statement.RETURN_GENERATED_KEYS)
                 ) {
             s.setString(1, fakePlayer.getName());
-            s.setString(2, uuidToDbString(fakePlayer.getUUID()));
+            s.setString(2, uuidToDbString(fakePlayer.getUuid()));
             s.executeUpdate();
 
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 fakePlayer.setId(rs.getInt(1));
                 Prism.debug("Saved and loaded fake player " + fakePlayer.getName() + " into the cache.");
-                Prism.prismPlayers.put(fakePlayer.getUUID(), fakePlayer);
+                Prism.prismPlayers.put(fakePlayer.getUuid(), fakePlayer);
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
@@ -272,7 +272,7 @@ public class PlayerIdentification {
                                 + "player_uuid = UNHEX(?) WHERE player_id = ?")
                 ) {
             s.setString(1, prismPlayer.getName());
-            s.setString(2, uuidToDbString(prismPlayer.getUUID()));
+            s.setString(2, uuidToDbString(prismPlayer.getUuid()));
             s.setInt(3, prismPlayer.getId());
             s.executeUpdate();
         } catch (SQLException e) {

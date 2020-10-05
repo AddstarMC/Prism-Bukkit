@@ -2,14 +2,13 @@ package me.botsko.prism.monitors;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.MiscUtils;
-import me.botsko.prism.utils.TypeUtils;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,19 +40,18 @@ public class UseMonitor {
         }
         count++;
         countedEvents.put(playername, count);
-
-        msg = ChatColor.GRAY + playername + " " + msg;
+        TextComponent out = Component.text()
+                .content(playername + " " + msg)
+                .color(NamedTextColor.GRAY)
+                .build();
         if (count == 5) {
-            msg = playername + " continues - pausing warnings.";
+            out.append(Component.text(playername + " continues - pausing warnings.")
+                    .color(NamedTextColor.GRAY));
         }
-        List<BaseComponent> send = new ArrayList<>();
-        TextComponent c = new TextComponent(msg);
-        c.setColor(net.md_5.bungee.api.ChatColor.GRAY);
-        send.add(c);
         if (count <= 5) {
             if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
-                plugin.alertPlayers(null, send);
-                Prism.log(TypeUtils.colorize(msg));
+                plugin.alertPlayers(null, out);
+                Prism.log(PlainComponentSerializer.plain().serialize(out));
             }
 
             // Log to commands

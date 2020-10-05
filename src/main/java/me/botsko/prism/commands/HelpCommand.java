@@ -1,9 +1,12 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
@@ -32,62 +35,71 @@ public class HelpCommand implements SubHandler {
     /**
      * Displays help.
      *
-     * @param sender CommandSender
+     * @param s CommandSender
      */
-    protected void help(CommandSender sender) {
+    protected void help(CommandSender s) {
+        Audience sender = Prism.getAudiences().sender(s);
         if (failed) {
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Prism Disabled ---"));
-            sender.sendMessage(Prism.messenger.playerMsg("Prism is running in a disabled mode because the"
-                    + " database could not be connected. \n Please seek help by running /prism debug and perusing"
-                    + " the contents to help with errors.  "));
             sender.sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Discord: " + ChatColor.WHITE
-                            + "https://discord.gg/Y9Qx3V"));
+                    Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("prism-disabled-header")
+                            .color(NamedTextColor.GOLD)));
             sender.sendMessage(
-                    Prism.messenger.playerSubduedHeaderMsg("Wiki: " + ChatColor.WHITE
-                            + "https://github.com/AddstarMC/Prism-Bukkit/wiki\n"));
+                    Prism.messenger.playerMsg(Il8nHelper.getMessage("prism-disabled-content")
+                            .color(NamedTextColor.GOLD)));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("discord", ":")
+                            .color(NamedTextColor.WHITE)
+                            .append(Component.text("https://discord.gg/Y9Qx3V"))));
+            sender.sendMessage(
+                    Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("wiki", ":")
+                            .color(NamedTextColor.WHITE)
+                            .append(Component.text("https://github.com/AddstarMC/Prism-Bukkit/wiki"))));
             return;
         }
-        //todo explain Settings Command
-        sender.sendMessage(Prism.messenger.playerHeaderMsg(ChatColor.GOLD + "--- Basic Usage ---"));
-
-        sender.sendMessage(Prism.messenger.playerHelp("i", "Toggle the inspector wand."));
-        sender.sendMessage(Prism.messenger.playerHelp("(l|lookup) (params)", "Search the database."));
-        sender.sendMessage(Prism.messenger.playerHelp("tp (#|id:#)", "Teleport to a lookup result."));
-        sender.sendMessage(Prism.messenger.playerHelp("near", "Find all changes nearby."));
-        sender.sendMessage(Prism.messenger.playerHelp("pg (#|next|prev)", "Navigate lookup results."));
-        sender.sendMessage(Prism.messenger.playerHelp("params", "List parameter help."));
-        sender.sendMessage(Prism.messenger.playerHelp("actions", "List actions."));
-        sender.sendMessage(Prism.messenger.playerHelp("flags", "List possible applier flags."));
-        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) (rollback|rb) (params)", "Preview a rollback."));
-        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) (restore|rs) (params)", "Preview a restoration."));
-        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) apply", "Apply the last preview."));
-        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) cancel", "Cancel the last preview."));
-        sender.sendMessage(Prism.messenger.playerHelp("(rollback|rb) (params)", "Rollback changes."));
-        sender.sendMessage(Prism.messenger.playerHelp("(restore|rs) (params)", "Re-apply changes."));
-        sender.sendMessage(Prism.messenger.playerHelp("(w|wand) profile", "Toggle the profile wand."));
-        sender.sendMessage(Prism.messenger.playerHelp("(w|wand) rollback", "Toggle the rollback wand."));
-        sender.sendMessage(Prism.messenger.playerHelp("(w|wand) restore", "Toggle the restore wand."));
-        sender.sendMessage(Prism.messenger.playerHelp("(w|wand) off", "Disable current wand."));
-        sender.sendMessage(Prism.messenger.playerHelp("undo", "Undo a drain."));
-        sender.sendMessage(Prism.messenger.playerHelp("ex (r)", "Extinguish fires within a (r)adius."));
-        sender.sendMessage(Prism.messenger.playerHelp("drain (r)", "Drain water/lava within a (r)adius."));
+        sender.sendMessage(Prism.messenger.playerHeaderMsg(
+                Component.text("--- Basic Usage ---").color(NamedTextColor.GOLD)));
         sender.sendMessage(
-                Prism.messenger.playerHelp("delete (params)", "Purge records based on (params). No defaults!"));
+                Prism.messenger.playerHelp("i", Il8nHelper.getRawMessage("help-inspector-wand")));
         sender.sendMessage(
-                Prism.messenger.playerHelp("setmy wand mode (hand|item|block)", "Set your personal wand mode."));
+                Prism.messenger.playerHelp("(l|lookup) (params)", Il8nHelper.getRawMessage("help-lookup")));
         sender.sendMessage(
-                Prism.messenger.playerHelp("setmy wand item (item id)", "Set your personal wand item/block id:subid."));
+                Prism.messenger.playerHelp("tp (#|id:#)", Il8nHelper.getRawMessage("help-teleport")));
         sender.sendMessage(
-                Prism.messenger.playerHelp("resetmy (wand)", "Reset your custom wand settings to server defaults."));
-        sender.sendMessage(Prism.messenger.playerHelp("(rp|report) queue", "Display statistics on current queues."));
-        sender.sendMessage(Prism.messenger.playerHelp("(rp|report) db", "Display basic database connection stats."));
-        sender.sendMessage(Prism.messenger.playerHelp("(rp|report) sum (blocks|actions) (params)",
-                "Display summary reports for a player"));
-        sender.sendMessage(Prism.messenger.playerHelp("about", "Show Prism credits."));
-        sender.sendMessage(Prism.messenger.playerHelp("recorder cancel", "Stops recorder. Use with caution."));
-        sender.sendMessage(Prism.messenger.playerHelp("recorder start", "Starts recorder if it's stopped"));
-        sender.sendMessage(Prism.messenger.playerHelp("reload", "Reload config/language files."));
+                Prism.messenger.playerHelp("near", Il8nHelper.getRawMessage("help-near")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("pg (#|next|prev)", Il8nHelper.getRawMessage("help-pg-nav")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("params", Il8nHelper.getRawMessage("help-params")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("actions", Il8nHelper.getRawMessage("help-action-list")));
+        sender.sendMessage(Prism.messenger.playerHelp("flags", Il8nHelper.getRawMessage("help-flag-list")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(preview|pv) (rollback|rb) (params)",
+                        Il8nHelper.getRawMessage("help-rollback-preview")));
+        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) (restore|rs) (params)",
+                Il8nHelper.getRawMessage("help-restore-preview")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(preview|pv) apply", Il8nHelper.getRawMessage("help-apply-preview")));
+        sender.sendMessage(Prism.messenger.playerHelp("(preview|pv) cancel",
+                Il8nHelper.getRawMessage("help-cancel-preview")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(rollback|rb) (params)", Il8nHelper.getRawMessage("help-rollback")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(restore|rs) (params)", Il8nHelper.getRawMessage("help-restore")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(w|wand) profile", Il8nHelper.getRawMessage("help-profile-wand")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(w|wand) rollback", Il8nHelper.getRawMessage("help-rollback-wand")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(w|wand) restore", Il8nHelper.getRawMessage("help-restore-wand")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("(w|wand) off", Il8nHelper.getRawMessage("help-wand-off")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("undo", Il8nHelper.getRawMessage("help-undo")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("ex (r)", Il8nHelper.getRawMessage("help-extinguish-radius")));
+        sender.sendMessage(
+                Prism.messenger.playerHelp("drain (r)", Il8nHelper.getRawMessage("help-drain-radius")));
 
     }
 }

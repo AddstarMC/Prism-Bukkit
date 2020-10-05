@@ -44,7 +44,7 @@ public class RestoreWand extends QueryWandBase {
     protected void restore(Player player, Location loc) {
 
         final Block block = loc.getBlock();
-        QueryParameters params =checkQueryParams(block,parameters,player);
+        QueryParameters params = checkQueryParams(block, parameters, player);
         params.setProcessType(PrismProcessType.RESTORE);
         final QueryResult results = getResult(params, player);
         if (!results.getActionResults().isEmpty()) {
@@ -55,7 +55,8 @@ public class RestoreWand extends QueryWandBase {
             final String space_name = (block.getType().equals(Material.AIR) ? "space"
                     : block.getType().toString().replaceAll("_", " ").toLowerCase()
                     + (block.getType().toString().endsWith("BLOCK") ? "" : " block"));
-            player.sendMessage(Prism.messenger.playerError("Nothing to restore for this " + space_name + " found."));
+            Prism.messenger.sendMessage(player,
+                    Prism.messenger.playerError("Nothing to restore for this " + space_name + " found."));
         }
     }
 

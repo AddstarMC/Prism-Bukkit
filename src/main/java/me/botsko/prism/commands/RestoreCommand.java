@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -10,6 +11,7 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -33,7 +35,9 @@ public class RestoreCommand extends AbstractCommand {
         parameters.setProcessType(PrismProcessType.RESTORE);
         parameters.setStringFromRawArgs(call.getArgs(), 1);
         StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-        call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Preparing results..." + defaultsReminder));
+        Prism.messenger.sendMessage(call.getSender(),
+                Prism.messenger.playerSubduedHeaderMsg(ReplaceableTextComponent.builder("restore-prepare")
+                        .replace("<defaults>", defaultsReminder).build()));
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
@@ -41,13 +45,16 @@ public class RestoreCommand extends AbstractCommand {
             final QueryResult results = aq.lookup(parameters, call.getSender());
             if (!results.getActionResults().isEmpty()) {
 
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Restoring changes..."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("restore-start")));
 
                 // Inform nearby players
                 if (call.getSender() instanceof Player) {
                     final Player player = (Player) call.getSender();
-                    plugin.notifyNearby(player, parameters.getRadius(),
-                            player.getDisplayName() + " is re-applying block changes nearby. Just so you know.");
+                    plugin.notifyNearby(player, parameters.getRadius(), ReplaceableTextComponent
+                            .builder("block-changes-near")
+                            .replace("<player>", player.getDisplayName())
+                            .build());
                 }
 
                 // Perform restore on the main thread
@@ -58,8 +65,8 @@ public class RestoreCommand extends AbstractCommand {
                 });
 
             } else {
-                call.getSender().sendMessage(
-                        Prism.messenger.playerError("Nothing found to restore. Try using /prism l (args) first."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(Il8nHelper.getMessage("restore-error")));
             }
         });
     }

@@ -1,6 +1,7 @@
 package me.botsko.prism.commands;
 
 import io.papermc.lib.PaperLib;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -9,7 +10,8 @@ import me.botsko.prism.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
@@ -40,7 +42,7 @@ public class TeleportCommand implements SubHandler {
             keyName = call.getSender().getName();
         }
         if (!plugin.cachedQueries.containsKey(keyName) && !call.getArg(1).contains("id:")) {
-            call.getSender().sendMessage(Prism.messenger.playerError(
+            Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerError(
                     "There's no saved query to use results from. Maybe they expired? Try your lookup again."));
             return;
         }
@@ -70,13 +72,13 @@ public class TeleportCommand implements SubHandler {
             }
         } else {
             if (!TypeUtils.isNumeric(ident)) {
-                call.getPlayer().sendMessage(Prism.messenger
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
                         .playerError("You must provide a numeric result number or record ID to teleport to."));
                 return;
             }
             recordId = Integer.parseInt(ident);
             if (recordId <= 0) {
-                call.getPlayer().sendMessage(
+                Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerError("Result number or record ID must be greater than zero."));
                 return;
             }
@@ -95,7 +97,8 @@ public class TeleportCommand implements SubHandler {
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(params, call.getPlayer());
             if (results.getActionResults().isEmpty()) {
-                call.getPlayer().sendMessage(Prism.messenger.playerError("No records exists with this ID."));
+                Prism.messenger.sendMessage(call.getPlayer(),
+                        Prism.messenger.playerError("No records exists with this ID."));
                 return;
             }
 
@@ -108,7 +111,7 @@ public class TeleportCommand implements SubHandler {
             final QueryResult results = plugin.cachedQueries.get(keyName);
 
             if (recordId > results.getActionResults().size()) {
-                call.getPlayer().sendMessage(Prism.messenger.playerError(
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
                         "No records exists at this index. Did you mean /pr tp id:" + recordId + " instead?"));
                 return;
             }
@@ -128,7 +131,7 @@ public class TeleportCommand implements SubHandler {
         if (destinationAction != null) {
             final World world = destinationAction.getLoc().getWorld();
             if (world == null) {
-                call.getPlayer().sendMessage(
+                Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerError("Action record occurred in world we can't find anymore."));
                 return;
             }
@@ -145,12 +148,18 @@ public class TeleportCommand implements SubHandler {
 
     private void sendTeleportCompleteMessage(boolean success, Player player, Handler destinationAction) {
         if (success) {
-            player.sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-                    "Teleporting... " + ChatColor.WHITE + destinationAction.getActionType().getName() + ChatColor.GRAY
-                            + " by " + ChatColor.WHITE + destinationAction.getSourceName() + ChatColor.GRAY
-                            + ", " + ChatColor.WHITE + destinationAction.getTimeSince()));
+            Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
+                    Il8nHelper.getMessage("teleport.complete")
+                            .replaceText("<actionType>",
+                                    Component.text(
+                                            destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))
+                            .replaceText("<source>",
+                                    Component.text(destinationAction.getSourceName()).color(NamedTextColor.WHITE))
+                            .replaceText("<timeSince>",
+                                    Component.text(destinationAction.getTimeSince()).color(NamedTextColor.WHITE))));
         } else {
-            player.sendMessage(Prism.messenger.playerError("Prism teleportation failed"));
+            Prism.messenger.sendMessage(player,
+                    Prism.messenger.playerError("Prism teleportation failed"));
         }
     }
 

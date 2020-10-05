@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import au.com.addstar.dripreporter.DripMeter;
+import com.google.common.collect.ImmutableMap;
 import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 
@@ -12,30 +13,48 @@ import java.util.Map;
  * Created by benjamincharlton on 25/02/2020.
  */
 public class ActionMeter {
+
     private static final Map<String, DripMeter> meter = new HashMap<>();
-    private static  boolean monitoring = false;
+    private static boolean monitoring = false;
+    private static final Map<String, Integer> metricMeter = new HashMap<>();
 
     static {
         if (Prism.getInstance().monitoring) {
-            meter.put("UnknownHandler",getMeter(Handler.class));
-            meter.put(GenericAction.class.getSimpleName(), getMeter(GenericAction.class));
-            meter.put(EntityAction.class.getSimpleName(), getMeter(EntityAction.class));
-            meter.put(BlockAction.class.getSimpleName(),getMeter(BlockAction.class));
-            meter.put(BlockChangeAction.class.getSimpleName(), getMeter(BlockChangeAction.class));
-            meter.put(ItemStackAction.class.getSimpleName(), getMeter(ItemStackAction.class));
-            meter.put(BlockShiftAction.class.getSimpleName(), getMeter(BlockShiftAction.class));
-            meter.put(EntityTravelAction.class.getSimpleName(), getMeter(EntityTravelAction.class));
-            meter.put(GrowAction.class.getSimpleName(), getMeter(GrowAction.class));
-            meter.put(HangingItemAction.class.getSimpleName(), getMeter(HangingItemAction.class));
-            meter.put(PlayerAction.class.getSimpleName(),getMeter(PlayerAction.class));
-            meter.put(PlayerDeathAction.class.getSimpleName(), getMeter(PlayerDeathAction.class));
-            meter.put(PrismProcessAction.class.getSimpleName(), getMeter(PrismProcessAction.class));
-            meter.put(PrismRollbackAction.class.getSimpleName(),getMeter(PrismRollbackAction.class));
-            meter.put(SignAction.class.getSimpleName(), getMeter(SignAction.class));
-            meter.put(VehicleAction.class.getSimpleName(), getMeter(VehicleAction.class));
+            addClass(GenericAction.class);
+            addClass(EntityAction.class);
+            addClass(BlockAction.class);
+            addClass(BlockChangeAction.class);
+            addClass(ItemStackAction.class);
+            addClass(BlockShiftAction.class);
+            addClass(EntityTravelAction.class);
+            addClass(GrowAction.class);
+            addClass(HangingItemAction.class);
+            addClass(PlayerAction.class);
+            addClass(PlayerDeathAction.class);
+            addClass(PrismProcessAction.class);
+            addClass(PrismRollbackAction.class);
+            addClass(SignAction.class);
+            addClass(VehicleAction.class);
+            meter.put("UnknownHandler", getMeter(Handler.class));
             Prism.log("Action Meter metrics enabled. " + meter.size() + " metrics registered");
             monitoring = true;
         }
+    }
+
+    /**
+     * Returns a map of Metrics for the actions.
+     *
+     * @return Map
+     */
+    public static Map<String, Integer> getMetricMeter() {
+        Map<String, Integer> out = new HashMap<>(metricMeter);
+        metricMeter.clear();
+        return ImmutableMap.copyOf(out);
+    }
+
+    static void addClass(Class<? extends Handler> clazz) {
+        meter.put(clazz.getSimpleName(), getMeter(clazz));
+        metricMeter.put(clazz.getSimpleName(), 0);
     }
 
     @SuppressWarnings("rawtypes")
@@ -54,8 +73,12 @@ public class ActionMeter {
         // Initializes the static class
     }
 
-    @SuppressWarnings("rawtypes")
-    public static void mark(Class clazz) {
+    /**
+     * Mark a event.
+     *
+     * @param clazz Class
+     */
+    public static void mark(Class<? extends Handler> clazz) {
         if (monitoring) {
             DripMeter m = meter.get(clazz.getSimpleName());
             if (m == null) {
@@ -65,5 +88,11 @@ public class ActionMeter {
                 m.mark();
             }
         }
+        Integer value = metricMeter.getOrDefault(clazz.getSimpleName(), 0);
+        metricMeter.put(clazz.getSimpleName(), (value + 1));
+    }
+
+    public static void flushMetric() {
+        metricMeter.clear();
     }
 }

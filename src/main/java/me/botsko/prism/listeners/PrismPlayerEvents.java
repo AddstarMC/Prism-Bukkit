@@ -11,8 +11,8 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,9 +28,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
@@ -46,7 +44,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,9 +82,9 @@ public class PrismPlayerEvents implements Listener {
             if (illegalCommands.contains(primaryCmd)) {
                 final String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: "
                         + cmd;
-                List<BaseComponent> send = new ArrayList<>();
-                send.add(new TextComponent(msg));
-                player.sendMessage(Prism.messenger.playerError("Sorry, this command is not available in-game."));
+                TextComponent send = Component.text(msg);
+                Prism.messenger.sendMessage(player,
+                        Prism.messenger.playerError("Sorry, this command is not available in-game."));
                 plugin.alertPlayers(null, send);
                 event.setCancelled(true);
                 // Log to console
@@ -129,13 +126,13 @@ public class PrismPlayerEvents implements Listener {
         final boolean doNotTrackJoin = !Prism.getIgnore().event("player-join", player);
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             // Lookup player for cache reasons
-            PlayerIdentification.cachePrismPlayer(uuid,name);
-            Bukkit.getScheduler().runTask(Prism.getInstance(),() -> {
+            PlayerIdentification.cachePrismPlayer(uuid, name);
+            Bukkit.getScheduler().runTask(Prism.getInstance(), () -> {
                 if (doNotTrackJoin) {
                     return;
                 }
                 String ip = null;
-                if (trackIp  && player.getAddress() != null) { //player may have disconnected.
+                if (trackIp && player.getAddress() != null) { //player may have disconnected.
                     ip = player.getAddress().getAddress().getHostAddress();
                 }
                 RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", player, ip));
@@ -346,36 +343,6 @@ public class PrismPlayerEvents implements Listener {
         }
     }
 
-    /**
-     * EnchantItemEvent.
-     *
-     * @param event EnchantItemEvent
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onEnchantItem(final EnchantItemEvent event) {
-        if (!Prism.getIgnore().event("enchant-item", event.getEnchanter())) {
-            return;
-        }
-        final Player player = event.getEnchanter();
-        RecordingQueue.addToQueue(ActionFactory.createItemStack("enchant-item", event.getItem(),
-                event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player));
-    }
-
-    /**
-     * CraftItemEvent.
-     *
-     * @param event CraftItemEvent
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onCraftItem(final CraftItemEvent event) {
-        final Player player = (Player) event.getWhoClicked();
-        if (!Prism.getIgnore().event("craft-item", player)) {
-            return;
-        }
-        final ItemStack item = event.getRecipe().getResult();
-        RecordingQueue.addToQueue(
-                ActionFactory.createItemStack("craft-item", item, 1, -1, null, player.getLocation(), player));
-    }
 
     /**
      * PlayerInteractEvent.
@@ -430,113 +397,50 @@ public class PrismPlayerEvents implements Listener {
         // Doors, buttons, containers, etc may only be opened with a right-click
         // as of 1.4
         if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
             String coordKey;
-            switch (block.getType()) {
-                case FURNACE:
-                case DISPENSER:
-                case CHEST:
-                case ENDER_CHEST:
-                case ENCHANTING_TABLE:
-                case ANVIL:
-                case BREWING_STAND:
-                case TRAPPED_CHEST:
-                case HOPPER:
-                case DROPPER:
-                    if (!Prism.getIgnore().event("container-access", player)) {
-                        return;
-                    }
-                    RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
-                    break;
-                case JUKEBOX:
-                    recordDiscInsert(block, player);
-                    break;
-                case CAKE:
-                    recordCakeEat(block, player);
-                    break;
-                case OAK_DOOR:
-                case ACACIA_DOOR:
-                case BIRCH_DOOR:
-                case DARK_OAK_DOOR:
-                case JUNGLE_DOOR:
-                case SPRUCE_DOOR:
-                case OAK_TRAPDOOR:
-                case SPRUCE_TRAPDOOR:
-                case BIRCH_TRAPDOOR:
-                case JUNGLE_TRAPDOOR:
-                case ACACIA_TRAPDOOR:
-                case DARK_OAK_TRAPDOOR:
-                case OAK_FENCE_GATE:
-                case SPRUCE_FENCE_GATE:
-                case BIRCH_FENCE_GATE:
-                case JUNGLE_FENCE_GATE:
-                case ACACIA_FENCE_GATE:
-                case DARK_OAK_FENCE_GATE:
-                case LEVER:
-                case STONE_BUTTON:
-                case OAK_BUTTON:
-                case SPRUCE_BUTTON:
-                case BIRCH_BUTTON:
-                case JUNGLE_BUTTON:
-                case ACACIA_BUTTON:
-                case DARK_OAK_BUTTON:
-                    if (!Prism.getIgnore().event("block-use", player)) {
-                        return;
-                    }
-                    RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
-                    break;
-                case JUNGLE_LOG:
-                    recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
-                    break;
-                case WHEAT:
-                case GRASS:
-                case MELON_STEM:
-                case PUMPKIN_STEM:
-                case OAK_SAPLING:
-                case SPRUCE_SAPLING:
-                case BIRCH_SAPLING:
-                case JUNGLE_SAPLING:
-                case ACACIA_SAPLING:
-                case DARK_OAK_SAPLING:
-                case CARROT:
-                case POTATO:
-                case BEETROOT:
-                case BAMBOO_SAPLING:
-                case KELP:
-                case SWEET_BERRY_BUSH:
-                case SUGAR_CANE:
-                case TALL_GRASS:
-                case DANDELION:
-                case SUNFLOWER:
-                case PEONY:
-                case LILAC:
-                case ROSE_BUSH:
-                case ALLIUM:
-                case BLUE_ORCHID:
-                case ORANGE_TULIP:
-                case RED_TULIP:
-                case WHITE_TULIP:
-                    recordBoneMealEvent(block, hand, player);
-                    break;
-                case RAIL:
-                case DETECTOR_RAIL:
-                case POWERED_RAIL:
-                case ACTIVATOR_RAIL:
-                    coordKey = block.getX() + ":" + block.getY() + ":" + block.getZ();
-                    plugin.preplannedVehiclePlacement.put(coordKey, player.getUniqueId().toString());
-                    break;
-                case TNT:
-                    if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
-                        if (!Prism.getIgnore().event("tnt-prime", player)) {
-                            return;
+            if (MaterialTag.CONTAINERS.isTagged(block.getType())) {
+                if (!Prism.getIgnore().event("container-access", player)) {
+                    return;
+                }
+                RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
+            } else if (MaterialTag.USABLE.isTagged(block.getType())) {
+                if (!Prism.getIgnore().event("block-use", player)) {
+                    return;
+                }
+                RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
+            } else if (MaterialTag.GROWABLE.isTagged(block.getType())) {
+                recordBoneMealEvent(block, hand, player);
+            } else {
+                switch (block.getType()) {
+                    case JUKEBOX:
+                        recordDiscInsert(block, player);
+                        break;
+                    case CAKE:
+                        recordCakeEat(block, player);
+                        break;
+                    case JUNGLE_LOG:
+                        recordCocoaPlantEvent(block, hand, event.getBlockFace(), player);
+                        break;
+                    case RAIL:
+                    case DETECTOR_RAIL:
+                    case POWERED_RAIL:
+                    case ACTIVATOR_RAIL:
+                        coordKey = block.getX() + ":" + block.getY() + ":" + block.getZ();
+                        plugin.preplannedVehiclePlacement.put(coordKey, player.getUniqueId().toString());
+                        break;
+                    case TNT:
+                        if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
+                            if (!Prism.getIgnore().event("tnt-prime", player)) {
+                                return;
+                            }
+                            RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime",
+                                    hand.getType(), block, player));
                         }
-                        RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime", hand.getType(), block, player));
-                    }
-                    break;
-                default:
-                    break;
+                        break;
+                    default:
+                        break;
+                }
             }
-
             // if they're holding a spawner egg
             if (MaterialTag.SPAWN_EGGS.isTagged(hand.getType())) {
                 recordMonsterEggUse(block, hand, player);
@@ -608,9 +512,9 @@ public class PrismPlayerEvents implements Listener {
     /**
      * recordBoneMealEvent.
      *
-     * @param block       Block
-     * @param inhand      ItemStack
-     * @param player      Player
+     * @param block  Block
+     * @param inhand ItemStack
+     * @param player Player
      */
     private void recordBoneMealEvent(Block block, ItemStack inhand, Player player) {
         if (inhand.getType() == Material.BONE_MEAL) {
@@ -639,9 +543,9 @@ public class PrismPlayerEvents implements Listener {
     /**
      * recordRocketLaunch.
      *
-     * @param block       Block
-     * @param inhand      ItemStack
-     * @param player      Player
+     * @param block  Block
+     * @param inhand ItemStack
+     * @param player Player
      */
     private void recordRocketLaunch(Block block, ItemStack inhand, Player player) {
         if (!Prism.getIgnore().event("firework-launch", block)) {
@@ -698,6 +602,7 @@ public class PrismPlayerEvents implements Listener {
 
     /**
      * PlayerInteractEntityEvent.
+     *
      * @param event PlayerInteractEntityEvent
      */
     @EventHandler(priority = EventPriority.HIGHEST)

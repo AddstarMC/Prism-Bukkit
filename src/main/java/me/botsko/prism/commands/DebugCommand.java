@@ -1,10 +1,13 @@
 package me.botsko.prism.commands;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.database.PrismDataSource;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -42,11 +46,12 @@ public class DebugCommand implements SubHandler {
                 default:
                     break;
             }
-            call.getSender().sendMessage("Prism Debug:" + Prism.isDebug());
+            Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
+                    Component.text(Il8nHelper.getRawMessage("debug-msg") + " " + Prism.isDebug())));
             return;
         }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> createPaste(
-                    call.getSender()));
+                call.getSender()));
     }
 
     private String getFile(Path file) {
@@ -129,19 +134,28 @@ public class DebugCommand implements SubHandler {
                         new PasteContent(PasteContent.ContentType.TEXT, pLog)))
                 .build();
         if (result.getPaste().isPresent()) {
-            String pasteUrl = " https://paste.gg/" + result.getPaste().get().getId();
-            sender.sendMessage(" Output Complete: paste available on "
-                    + pasteUrl);
-            Prism.log("Paste Created :" + pasteUrl);
+            String pasteUrl = "https://paste.gg/" + result.getPaste().get().getId();
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerMsg(Il8nHelper.getMessage("paste-output")
+                            .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
+                                    Component.text()
+                                            .content(pasteUrl)
+                                            .clickEvent(ClickEvent.openUrl(pasteUrl)))));
+            Prism.log("Paste Created : " + pasteUrl);
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
-                      sender.sendMessage(" Deletion Key: " + s);
-                      Prism.log("Deletion Key:" + s);
+                          Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
+                                  Il8nHelper.getMessage("delete-key")
+                                          .replaceFirstText(Pattern.compile("<deletekey>"), builder ->
+                                                  Component.text()
+                                                          .content(s)
+                                                          .clickEvent(ClickEvent.copyToClipboard(s)))));
+                          Prism.log("Deletion Key:" + s);
                   }
             );
         } else {
-            sender.sendMessage("Could not Report results.  Please ask support for other methods"
-                    + " of providing information");
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerError(Il8nHelper.getMessage("debug-paste-error")));
         }
     }
 

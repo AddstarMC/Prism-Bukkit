@@ -13,8 +13,10 @@ import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Nameable;
 import org.bukkit.Tag;
+import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -22,6 +24,8 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
@@ -34,6 +38,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.CHEST;
@@ -121,6 +130,16 @@ public class BlockAction extends GenericAction {
                     signActionData.lines = sign.getLines();
                     actionData = signActionData;
                 }
+                if (Tag.BANNERS.isTagged(state.getType())) {
+                    final BannerActionData bannerActionData = new BannerActionData();
+                    final Banner banner = (Banner) state;
+                    bannerActionData.patterns = new HashMap<>();
+                    setBlockRotation(state, bannerActionData);
+
+                    banner.getPatterns().forEach(pattern ->
+                            bannerActionData.patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
+                    actionData = bannerActionData;
+                }
                 break;
         }
         if (state instanceof Nameable && ((Nameable) state).getCustomName() != null) {
@@ -131,13 +150,13 @@ public class BlockAction extends GenericAction {
         }
     }
 
-    private void setBlockRotation(BlockState block, SkullActionData skullActionData) {
+    private void setBlockRotation(BlockState block, RotatableActionData rotatableActionData) {
         if (block.getBlockData() instanceof Rotatable) {
             final Rotatable r = (Rotatable) block.getBlockData();
-            skullActionData.rotation = r.getRotation().toString();
+            rotatableActionData.rotation = r.getRotation().toString();
         } else {
             final Directional d = (Directional) block.getBlockData();
-            skullActionData.rotation = d.getFacing().name().toLowerCase();
+            rotatableActionData.rotation = d.getFacing().name().toLowerCase();
         }
     }
 
@@ -155,7 +174,9 @@ public class BlockAction extends GenericAction {
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
-            if (getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD) {
+            if (Tag.BANNERS.isTagged(getMaterial())) {
+                actionData = gson().fromJson(data, BannerActionData.class);
+            } else if (getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD) {
                 actionData = gson().fromJson(data, SkullActionData.class);
             } else if (getMaterial() == SPAWNER) {
                 actionData = gson().fromJson(data, SpawnerActionData.class);
@@ -165,7 +186,7 @@ public class BlockAction extends GenericAction {
                 actionData = new CommandActionData();
                 ((CommandActionData) actionData).command = data;
             } else {
-                actionData = gson().fromJson(data,BlockActionData.class);
+                actionData = gson().fromJson(data, BlockActionData.class);
             }
         }
     }
@@ -314,7 +335,7 @@ public class BlockAction extends GenericAction {
      * @return ChangeResult.
      */
     private @NotNull ChangeResult handleApply(final Block block, final BlockState originalBlock,
-                                     final QueryParameters parameters, final boolean cancelIfBadPlace) {
+                                              final QueryParameters parameters, final boolean cancelIfBadPlace) {
         BlockState state = block.getState();
         // If lily pad, check that block below is water. Be sure
         // it's set to stationary water so the lily pad will sit
@@ -355,7 +376,9 @@ public class BlockAction extends GenericAction {
                     && blockActionData instanceof SkullActionData) {
                 return handleSkulls(block, blockActionData, originalBlock);
             }
-
+            if (Tag.BANNERS.isTagged(getMaterial()) && blockActionData instanceof BannerActionData) {
+                return handleBanners(block, blockActionData, originalBlock);
+            }
             if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
 
                 final SpawnerActionData s = (SpawnerActionData) blockActionData;
@@ -451,7 +474,42 @@ public class BlockAction extends GenericAction {
         if (sibling != null) {
             sibling.update(true, physics);
         }
-        return new ChangeResult(ChangeResultType.APPLIED,new BlockStateChange(originalBlock,state));
+        return new ChangeResult(ChangeResultType.APPLIED, new BlockStateChange(originalBlock, state));
+    }
+
+    private ChangeResult handleBanners(Block block, BlockActionData blockActionData, BlockState originalBlock) {
+        block.setType(getMaterial());
+        BlockState state = block.getState();
+        final BannerActionData actionData = (BannerActionData) blockActionData;
+        setBlockRotatable(state, actionData);
+        state = block.getState();
+        if (!actionData.patterns.isEmpty()) {
+            final Banner banner = (Banner) state;
+            List<Pattern> patternsList = new ArrayList<>();
+            actionData.patterns.forEach((s, s2) -> {
+                PatternType type = PatternType.valueOf(s);
+                DyeColor color = DyeColor.valueOf(s2.toUpperCase());
+                Pattern p = new Pattern(color, type);
+                patternsList.add(p);
+            });
+            banner.setPatterns(patternsList);
+            banner.update();
+        }
+        BlockStateChange stateChange = new BlockStateChange(originalBlock, state);
+        return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+    }
+
+    private void setBlockRotatable(BlockState state, RotatableActionData actionData) {
+        if (state.getBlockData() instanceof Rotatable) {
+            final Rotatable r = (Rotatable) state.getBlockData();
+            r.setRotation(actionData.getRotation());
+            state.setBlockData(r);
+        } else {
+            final Directional d = (Directional) state.getBlockData();
+            d.setFacing(actionData.getRotation());
+            state.setBlockData(d);
+        }
+        state.update();
     }
 
     private @NotNull ChangeResult handleSkulls(final Block block, BlockActionData blockActionData,
@@ -459,16 +517,7 @@ public class BlockAction extends GenericAction {
         block.setType(getMaterial());
         BlockState state = block.getState();
         final SkullActionData s = (SkullActionData) blockActionData;
-
-        if (state.getBlockData() instanceof Rotatable) {
-            final Rotatable r = (Rotatable) state.getBlockData();
-            r.setRotation(s.getRotation());
-            state.setBlockData(r);
-        } else {
-            final Directional d = (Directional) state.getBlockData();
-            d.setFacing(s.getRotation());
-            state.setBlockData(d);
-        }
+        setBlockRotatable(state, s);
         state = block.getState();
 
         if (!s.owner.isEmpty()) {
@@ -555,16 +604,8 @@ public class BlockAction extends GenericAction {
         }
     }
 
-    /**
-     * SkullActionData.
-     *
-     * @author botskonet
-     */
-    public static class SkullActionData extends BlockActionData {
-
+    public static class RotatableActionData extends BlockActionData {
         String rotation;
-        String owner;
-        String skullType;
 
         BlockFace getRotation() {
             if (rotation != null) {
@@ -572,6 +613,19 @@ public class BlockAction extends GenericAction {
             }
             return null;
         }
+
+    }
+
+    /**
+     * SkullActionData.
+     *
+     * @author botskonet
+     */
+    public static class SkullActionData extends RotatableActionData {
+
+        String owner;
+        String skullType;
+
     }
 
     /**
@@ -583,4 +637,9 @@ public class BlockAction extends GenericAction {
     public static class SignActionData extends BlockActionData {
         String[] lines;
     }
+
+    public static class BannerActionData extends RotatableActionData {
+        Map<String, String> patterns;
+    }
+
 }

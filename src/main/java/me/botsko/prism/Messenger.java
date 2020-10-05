@@ -1,10 +1,24 @@
 package me.botsko.prism;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.platform.AudienceProvider;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 
 public class Messenger {
 
+
+    private final AudienceProvider audienceProvider;
     private final String pluginName;
+    private static final TextColor defaultColor = TextColor.color(0xb5bcc7);
+    private static final TextColor headerColor = TextColor.color(0xb597ba);
+    private static final TextColor error = TextColor.color(0x6e1017);
+    private static final TextColor success = TextColor.color(0x4fab55);
 
     /**
      * Build the class.
@@ -12,8 +26,23 @@ public class Messenger {
      * @param pluginName String
      */
     @SuppressWarnings("WeakerAccess")
-    public Messenger(String pluginName) {
+    public Messenger(String pluginName, AudienceProvider provider) {
         this.pluginName = pluginName;
+        this.audienceProvider = provider;
+    }
+
+    /**
+     * Send a message.
+     *
+     * @param sender  CommandSender
+     * @param message {@link Component}
+     */
+    public void sendMessage(CommandSender sender, Component message) {
+        if (sender instanceof ConsoleCommandSender) {
+            audienceProvider.console().sendMessage(message);
+        } else {
+            ((BukkitAudiences) audienceProvider).sender(sender).sendMessage(message.colorIfAbsent(defaultColor));
+        }
     }
 
     /**
@@ -22,11 +51,20 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerHeaderMsg(String msg) {
+    public TextComponent playerHeaderMsg(Component msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.WHITE + msg;
+            return Component.text()
+                    .content(pluginName + " ")
+                    .color(headerColor)
+                    .append(msg.colorIfAbsent(NamedTextColor.WHITE))
+                    .build();
         }
-        return "";
+        return Component.empty();
+    }
+
+    @Deprecated
+    public TextComponent playerHeaderMsg(String msg) {
+        return this.playerHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
     }
 
     /**
@@ -35,11 +73,20 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerSubduedHeaderMsg(String msg) {
+    public TextComponent playerSubduedHeaderMsg(Component msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.GRAY + msg;
+            return Component.text()
+                    .content(pluginName + " ")
+                    .color(headerColor)
+                    .append(msg.colorIfAbsent(defaultColor))
+                    .build();
         }
-        return "";
+        return Component.empty();
+    }
+
+    @Deprecated
+    public TextComponent playerSubduedHeaderMsg(String msg) {
+        return playerSubduedHeaderMsg(LegacyComponentSerializer.legacySection().deserialize(msg));
     }
 
     /**
@@ -48,26 +95,26 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerMsg(String msg) {
+    @Deprecated
+    public Component playerMsg(String msg) {
         if (msg != null) {
-            return ChatColor.WHITE + msg;
+            Component component = LegacyComponentSerializer.legacySection().deserialize(msg);
+            return playerMsg(component);
         }
-        return "";
+        return TextComponent.empty();
     }
 
     /**
-     * Get the message String[].
+     * Get the message colored white by default.
      *
-     * @param msg the message to prefix.
-     * @return String[].
+     * @param msg TextComponent
+     * @return TextComponent
      */
-    public String[] playerMsg(String[] msg) {
+    public Component playerMsg(Component msg) {
         if (msg != null) {
-            for (int i = 0; i < msg.length; i++) {
-                msg[i] = playerMsg(msg[i]);
-            }
+            return msg.colorIfAbsent(defaultColor);
         }
-        return msg;
+        return Component.empty();
     }
 
     /**
@@ -77,8 +124,12 @@ public class Messenger {
      * @param help - a message.
      * @return String.
      */
-    public String playerHelp(String cmd, String help) {
-        return ChatColor.GRAY + "/prism " + ChatColor.LIGHT_PURPLE + cmd + ChatColor.WHITE + " - " + help;
+    public TextComponent playerHelp(String cmd, String help) {
+        return Component.text()
+                .content("/prism ").color(defaultColor)
+                .build()
+                .append(Component.text(cmd).color(headerColor)
+                        .append(Component.text(" - " + help).color(NamedTextColor.WHITE)));
     }
 
     /**
@@ -87,11 +138,16 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerError(String msg) {
-        if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.RED + msg;
-        }
-        return "";
+    public TextComponent playerError(Component msg) {
+        return Component.text()
+                .content(pluginName + " ")
+                .color(headerColor)
+                .append(msg.colorIfAbsent(error))
+                .build();
+    }
+
+    public TextComponent playerError(String msg) {
+        return playerError(Component.text(msg));
     }
 
     /**
@@ -100,11 +156,28 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public String playerSuccess(String msg) {
+    public TextComponent playerSuccess(String msg) {
         if (msg != null) {
-            return ChatColor.LIGHT_PURPLE + pluginName + " // " + ChatColor.GREEN + msg;
+            return playerSuccess(Component.text(msg));
         }
-        return "";
+        return Component.empty();
+    }
+
+    /**
+     * Get the Success message.
+     *
+     * @param msg the message to prefix.
+     * @return String.
+     */
+    public TextComponent playerSuccess(TextComponent msg) {
+        if (msg != null) {
+            return Component.text()
+                    .content(pluginName + " ")
+                    .color(headerColor)
+                    .append(msg.colorIfAbsent(success))
+                    .build();
+        }
+        return Component.empty();
     }
 
 }

@@ -44,8 +44,9 @@ public class PrismPlayer {
      * Set id.
      */
     public void setId(int newId) {
-        if (playerId > 0)
+        if (playerId > 0) {
             throw new IllegalArgumentException("Cannot overwrite PrismPlayer primary key.");
+        }
         playerId = newId;
     }
 
@@ -66,16 +67,17 @@ public class PrismPlayer {
 
     /**
      * Get Uuid.
+     *
      * @return Uuid
      */
-    public UUID getUUID() {
+    public UUID getUuid() {
         return playerUuid;
     }
 
     /**
      * Set Uuid.
      */
-    public void setUUID(UUID uuid) {
+    public void setUuid(UUID uuid) {
         playerUuid = uuid;
     }
 }

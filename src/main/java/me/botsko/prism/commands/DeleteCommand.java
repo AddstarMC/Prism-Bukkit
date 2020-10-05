@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -9,11 +10,12 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.regex.Pattern;
 
 public class DeleteCommand extends AbstractCommand {
 
@@ -36,9 +38,11 @@ public class DeleteCommand extends AbstractCommand {
         if (call.getArgs().length > 1 && call.getArg(1).equals("cancel")) {
             if (plugin.getPurgeManager().deleteTask != null) {
                 plugin.getPurgeManager().deleteTask.cancel();
-                call.getSender().sendMessage(Prism.messenger.playerMsg("Current purge tasks have been canceled."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerMsg(Il8nHelper.getMessage("cancel-purge")));
             } else {
-                call.getSender().sendMessage(Prism.messenger.playerError("No purge task is currently running."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(Il8nHelper.getMessage("no-purge-running")));
             }
             return;
         }
@@ -50,9 +54,12 @@ public class DeleteCommand extends AbstractCommand {
                         + " wiped the live queue before it could be written to the database. "
                         + RecordingQueue.getQueue().size() + " events lost.");
                 RecordingQueue.getQueue().clear();
-                call.getSender().sendMessage(Prism.messenger.playerSuccess("Unwritten data in queue cleared."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerSuccess(Il8nHelper.getMessage("clear-queue")));
             } else {
-                call.getSender().sendMessage(Prism.messenger.playerError("Event queue is empty, nothing to wipe."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(
+                                Il8nHelper.getMessage("event-queue-clear")));
             }
             return;
         }
@@ -68,10 +75,13 @@ public class DeleteCommand extends AbstractCommand {
         StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
         if (parameters.getFoundArgs().size() > 0) {
 
-            call.getSender().sendMessage(Prism.messenger.playerSubduedHeaderMsg("Purging data..." + defaultsReminder));
-            call.getSender().sendMessage(Prism.messenger
-                    .playerHeaderMsg("Starting purge cycle." + ChatColor.GRAY + " No one will ever know..."));
-
+            Prism.messenger.sendMessage(call.getSender(),
+                    Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("purge-data")
+                            .replaceFirstText(Pattern.compile("<defaults>"), builder ->
+                                    Component.text()
+                                            .content(defaultsReminder.toString()))));
+            Prism.messenger.sendMessage(call.getSender(), Prism.messenger
+                    .playerHeaderMsg(Il8nHelper.getMessage("start-purge")));
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
                 if (purgeTickDelay < 1) {
@@ -97,7 +107,8 @@ public class DeleteCommand extends AbstractCommand {
                         new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));
             });
         } else {
-            call.getSender().sendMessage(Prism.messenger.playerError("You must supply at least one parameter."));
+            Prism.messenger.sendMessage(call.getSender(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("no-parameter")));
         }
     }
 

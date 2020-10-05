@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.utils.block.Utilities;
+import org.bukkit.Art;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Hanging;
@@ -27,6 +28,9 @@ public class HangingItemAction extends GenericAction {
         if (hanging != null) {
             this.actionData.type = hanging.getType().name().toLowerCase();
             this.actionData.direction = hanging.getAttachedFace().name().toLowerCase();
+            if (hanging instanceof Painting) {
+                this.actionData.art = ((Painting) hanging).getArt().name();
+            }
             setLoc(hanging.getLocation().getBlock().getLocation());
         }
     }
@@ -50,6 +54,7 @@ public class HangingItemAction extends GenericAction {
 
     /**
      * Get Type.
+     *
      * @return String
      */
     @SuppressWarnings("WeakerAccess")
@@ -57,8 +62,13 @@ public class HangingItemAction extends GenericAction {
         return actionData.type;
     }
 
+    public String getArt() {
+        return actionData.art;
+    }
+
     /**
      * Get Direction.
+     *
      * @return BlockFace
      */
     @SuppressWarnings("WeakerAccess")
@@ -115,8 +125,12 @@ public class HangingItemAction extends GenericAction {
                 hangingItem.setFacingDirection(attachedFace, true);
                 return new ChangeResult(ChangeResultType.APPLIED, null); //no change recorded
             } else if (getHangingType().equals("painting")) {
-                final Hanging hangingItem = getWorld().spawn(loc, Painting.class);
+                final Painting hangingItem = getWorld().spawn(loc, Painting.class);
                 hangingItem.setFacingDirection(getDirection(), true);
+                Art art = Art.getByName(getArt());
+                if (art != null) {
+                    hangingItem.setArt(art);
+                }
                 return new ChangeResult(ChangeResultType.APPLIED, null); //no change recorded
             }
         } catch (final IllegalArgumentException e) {
@@ -129,5 +143,6 @@ public class HangingItemAction extends GenericAction {
     public static class HangingItemActionData {
         public String type;
         public String direction;
+        public String art;
     }
 }

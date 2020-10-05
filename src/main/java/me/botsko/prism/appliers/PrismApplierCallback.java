@@ -1,7 +1,9 @@
 package me.botsko.prism.appliers;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -11,9 +13,6 @@ import java.util.Map.Entry;
 
 public class PrismApplierCallback implements ApplierCallback {
 
-    /**
-     *
-     */
     @Override
     public void handle(CommandSender sender, ApplierResult result) {
 
@@ -22,100 +21,96 @@ public class PrismApplierCallback implements ApplierCallback {
         if (!entitiesMoved.isEmpty()) {
             for (final Entry<Entity, Integer> entry : entitiesMoved.entrySet()) {
                 if (entry.getKey() instanceof Player) {
-                    entry.getKey().sendMessage(Prism.messenger.playerSubduedHeaderMsg(
-                            "Moved you " + entry.getValue() + " blocks to safety due to a rollback."));
+                    Prism.messenger.sendMessage(entry.getKey(), Prism.messenger.playerSubduedHeaderMsg(
+                            Il8nHelper.formatMessage("prism-move-safety", entry.getValue())));
                 }
             }
         }
+        TextComponent.Builder builder = Component.text();
 
         // Send player success messages
         if (result.getProcessType().equals(PrismProcessType.ROLLBACK)) {
 
             // Build the results message
             if (!result.isPreview()) {
-
-                String msg = result.getChangesApplied() + " reversals.";
+                builder.append(Il8nHelper.formatMessage("applier-rollback-start", result.getChangesApplied()));
                 if (result.getChangesSkipped() > 0) {
-                    msg += " " + result.getChangesSkipped() + " skipped.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesApplied() > 0) {
-                    msg += ChatColor.GRAY + " It's like it never happened.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.getMessage("applier-rollback-done"));
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
-
             } else {
-
                 // Build the results message
-                String msg = "At least " + result.getChangesPlanned() + " planned reversals.";
+                builder.append(Il8nHelper.formatMessage("applier-rollback-preview-start", result.getChangesPlanned()));
                 if (result.getChangesSkipped() > 0) {
-                    msg += " " + result.getChangesSkipped() + " skipped.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesPlanned() > 0) {
-                    msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.formatMessage("applier-preview-done", result.getChangesSkipped()));
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
-
                 // Let me know there's no need to cancel/apply
                 if (result.getChangesPlanned() == 0) {
-                    sender.sendMessage(Prism.messenger
-                            .playerHeaderMsg(ChatColor.GRAY + "Nothing to rollback, preview canceled for you."));
+                    builder.append(Il8nHelper.getMessage("preview-no-actions"));
                 }
             }
         }
-
         // Build the results message
         if (result.getProcessType().equals(PrismProcessType.RESTORE)) {
             if (!result.isPreview()) {
 
                 // Build the results message
-                String msg = result.getChangesApplied() + " events restored.";
+                builder.append(Il8nHelper.formatMessage("applier-restore-start", result.getChangesApplied()));
                 if (result.getChangesSkipped() > 0) {
-                    msg += " " + result.getChangesSkipped() + " skipped.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesApplied() > 0) {
-                    msg += ChatColor.GRAY + " It's like it was always there.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.getMessage("applier-restore-done"));
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
 
             } else {
 
                 // Build the results message
-                String msg = result.getChangesPlanned() + " planned restorations.";
+                builder.append(Il8nHelper.formatMessage("applier-restore-preview-start", result.getChangesPlanned()));
                 if (result.getChangesSkipped() > 0) {
-                    msg += " " + result.getChangesSkipped() + " skipped.";
+                    builder.append(Il8nHelper.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
                 }
                 if (result.getChangesPlanned() > 0) {
-                    msg += ChatColor.GRAY + " Use /prism preview apply to confirm.";
+                    builder.append(Component.text(" "));
+                    builder.append(Il8nHelper.formatMessage("applier-preview-done", result.getChangesSkipped()));
                 }
-                sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
-
                 // Let me know there's no need to cancel/apply
                 if (result.getChangesPlanned() == 0) {
-                    sender.sendMessage(Prism.messenger
-                            .playerHeaderMsg(ChatColor.GRAY + "Nothing to restore, preview canceled for you."));
+                    builder.append(Il8nHelper.getMessage("preview-no-actions"));
                 }
             }
         }
 
         // Build the results message
         if (result.getProcessType().equals(PrismProcessType.UNDO)) {
-
+            builder.append(Il8nHelper.formatMessage("applier-undo-start", result.getChangesApplied()));
             // Build the results message
-            String msg = result.getChangesApplied() + " changes undone.";
             if (result.getChangesSkipped() > 0) {
-                msg += " " + result.getChangesSkipped() + " skipped.";
+                builder.append(Component.text(" "));
+
+                builder.append(Il8nHelper.formatMessage("applier-changes-skipped", result.getChangesSkipped()));
             }
             if (result.getChangesApplied() > 0) {
-                msg += ChatColor.GRAY + " If anyone asks, you never did that.";
+                builder.append(Component.text(" "));
+                builder.append(Il8nHelper.getMessage("applier-undo-done"));
             }
-            sender.sendMessage(Prism.messenger.playerHeaderMsg(msg));
-
         }
-
+        Prism.messenger.sendMessage(sender,builder.build());
         // Notify shared players of previews
         for (final CommandSender sharedPlayer : result.getParameters().getSharedPlayers()) {
-            sharedPlayer.sendMessage(Prism.messenger.playerHeaderMsg(
-                    "A preview is being shared with you: " + result.getParameters().getOriginalCommand()));
+            Prism.messenger.sendMessage(sharedPlayer, Prism.messenger.playerHeaderMsg(
+                    Il8nHelper.formatMessage("applier-preview-shared", result.getParameters().getOriginalCommand())));
         }
     }
 }

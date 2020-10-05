@@ -17,7 +17,8 @@ public class VehicleAction extends GenericAction {
     private String vehicleName;
 
     /**
-     * @param vehicle
+     * Set the vehicle.
+     * @param vehicle Entity
      */
     public void setVehicle(Entity vehicle) {
 
@@ -37,7 +38,7 @@ public class VehicleAction extends GenericAction {
     }
 
     /**
-     * @return
+     * {@inheritDoc}
      */
     @Override
     public String getNiceName() {
@@ -60,7 +61,7 @@ public class VehicleAction extends GenericAction {
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     @Override
     public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
@@ -87,6 +88,8 @@ public class VehicleAction extends GenericAction {
             case "boat":
                 vehicle = getWorld().spawn(getLoc(), Boat.class);
                 break;
+            default:
+                //null
         }
         if (vehicle != null) {
             return new ChangeResult(ChangeResultType.APPLIED, null);

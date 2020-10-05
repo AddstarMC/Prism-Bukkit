@@ -1,35 +1,32 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.settings.Settings;
+import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.wands.Wand;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SetmyCommand implements SubHandler {
+public class SetmyCommand extends AbstractCommand {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
-     * @param plugin
-     * @return
+     * Constructor.
+     *
+     * @param plugin Prism
      */
     public SetmyCommand(Prism plugin) {
         this.plugin = plugin;
     }
 
-    /**
-     * Handle the command
-     */
     @Override
     public void handle(CallInfo call) {
 
@@ -38,28 +35,22 @@ public class SetmyCommand implements SubHandler {
             setType = call.getArg(1);
         }
 
-		/*
-		  Inspector wand
-		 */
         if (setType != null && !setType.equalsIgnoreCase("wand")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
             return;
         }
 
         if (!plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
-            call.getPlayer().sendMessage(
+            Prism.messenger.sendMessage(call.getPlayer(),
                     Prism.messenger.playerError("Sorry, but personalizing the wand is currently not allowed."));
         }
 
         // Check for any wand permissions. @todo There should be some central
         // way to handle this - some way to centralize it at least
-        if (!call.getPlayer().hasPermission("prism.rollback") && !call.getPlayer().hasPermission("prism.restore")
-                && !call.getPlayer().hasPermission("prism.wand.*")
-                && !call.getPlayer().hasPermission("prism.wand.inspect")
-                && !call.getPlayer().hasPermission("prism.wand.profile")
-                && !call.getPlayer().hasPermission("prism.wand.rollback")
-                && !call.getPlayer().hasPermission("prism.wand.restore")) {
-            call.getPlayer().sendMessage(Prism.messenger.playerError("You do not have permission for this."));
+        if (checkNoPermissions(call.getPlayer(), "prism.rollback", "prism.restore",
+                "prism.wand.*", "prism.wand.inspect", "prism.wand.profile", "prism.wand.rollback",
+                "prism.wand.restore")) {
             return;
         }
 
@@ -68,8 +59,7 @@ public class SetmyCommand implements SubHandler {
             final Wand oldwand = Prism.playersWithActiveTools.get(call.getPlayer().getName());
             oldwand.disable(call.getPlayer());
             Prism.playersWithActiveTools.remove(call.getPlayer().getName());
-            call.getPlayer().sendMessage(Prism.messenger
-                    .playerHeaderMsg("Current wand " + ChatColor.RED + "disabled" + ChatColor.WHITE + "."));
+            WandCommand.sendWandStatus(call.getPlayer(), "wand-current", false, "", "");
         }
 
         String setSubType = null;
@@ -77,9 +67,6 @@ public class SetmyCommand implements SubHandler {
             setSubType = call.getArg(2).toLowerCase();
         }
 
-		/*
-		  Set your custom wand mode to "hand", "item", or "block"
-		 */
         if (setSubType != null && setSubType.equals("mode")) {
 
             String setWandMode = null;
@@ -89,19 +76,19 @@ public class SetmyCommand implements SubHandler {
             if (setWandMode != null
                     && (setWandMode.equals("hand") || setWandMode.equals("item") || setWandMode.equals("block"))) {
                 Settings.saveSetting("wand.mode", setWandMode, call.getPlayer());
-                // Delete the item so we don't confuse people.
                 Settings.deleteSetting("wand.item", call.getPlayer());
-                call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
-                        "Changed your personal wand to " + ChatColor.GREEN + setWandMode + ChatColor.WHITE + " mode."));
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(
+                        ReplaceableTextComponent.builder("setWandMode")
+                                .replace("<wandMode>", setWandMode,
+                                        Style.style(NamedTextColor.GREEN))
+                                .build()));
                 return;
             }
-            call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
             return;
         }
 
-		/*
-		  Set your custom wand item for either "item" or "block" modes
-		 */
         if (setSubType != null && setSubType.equals("item")) {
             if (call.getArgs().length >= 4) {
                 String wandString = call.getArg(3);
@@ -113,25 +100,28 @@ public class SetmyCommand implements SubHandler {
                     if (itemMaterials.size() > 0) {
                         setWand = itemMaterials.get(0);
                     } else {
-                        call.getPlayer()
-                                .sendMessage(Prism.messenger.playerError("There's no item matching that name."));
+                        Prism.getAudiences().sender(call.getPlayer())
+                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("item-no-match")));
                         return;
                     }
                 }
 
                 if (ItemUtils.isBadWand(setWand)) {
-                    call.getPlayer().sendMessage(
-                            Prism.messenger.playerError("Sorry, but you may not use " + wandString + " for a wand."));
+                    Prism.messenger.sendMessage(call.getPlayer(),
+                            Prism.messenger.playerError(ReplaceableTextComponent.builder("wand-bad")
+                                    .replace("<itemName>", wandString).build()));
                     return;
                 }
 
                 Settings.saveSetting("wand.item", wandString, call.getPlayer());
-                call.getPlayer().sendMessage(Prism.messenger.playerHeaderMsg(
-                        "Changed your personal wand item to " + ChatColor.GREEN + wandString + ChatColor.WHITE + "."));
+                Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(
+                        ReplaceableTextComponent.builder("wand-item-change").replace("<itemName>", wandString)
+                                .build()));
                 return;
             }
         }
-        call.getPlayer().sendMessage(Prism.messenger.playerError("Invalid arguments. Use /prism ? for help."));
+        Prism.messenger.sendMessage(call.getPlayer(),
+                Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
     }
 
     @Override

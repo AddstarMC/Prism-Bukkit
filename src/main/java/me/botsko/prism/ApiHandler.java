@@ -5,7 +5,6 @@ import au.com.addstar.dripreporter.DripReporterApi;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.measurement.QueueStats;
@@ -61,7 +60,7 @@ public class ApiHandler {
                 WorldEdit.getInstance().getEventBus().register(new PrismBlockEditHandler());
                 Prism.log("WorldEdit found. Associated features enabled.");
             } catch (Throwable error) {
-                Prism.log("Required WorldEdit version is 6.0.0 or greater!"
+                Prism.log("Required WorldEdit version is 7.1.0 or greater!"
                         + " Certain optional features of Prism disabled.");
                 Prism.debug(error.getMessage());
             }

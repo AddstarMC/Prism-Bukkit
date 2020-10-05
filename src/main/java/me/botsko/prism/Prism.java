@@ -8,6 +8,7 @@ import me.botsko.prism.actionlibs.InternalAffairs;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.QueueDrain;
 import me.botsko.prism.actionlibs.RecordingTask;
+import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
@@ -44,9 +45,11 @@ import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.wands.Wand;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -89,16 +92,16 @@ import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin {
 
-    private static final HashMap<Material, ChatColor> alertedOres = new HashMap<>();
+    private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
     private static final Logger log = Logger.getLogger("Minecraft");
-    private static Logger prismLog;
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     public static Messenger messenger;
     public static FileConfiguration config;
-    public static ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
-    public static HashMap<String, Integer> prismWorlds = new HashMap<>();
-    public static HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+    public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
+    public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
+    public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
     public static HashMap<String, Integer> prismActions = new HashMap<>();
+    private static Logger prismLog;
     private static List<Material> illegalBlocks;
     private static List<EntityType> illegalEntities;
     private static PrismDataSource prismDataSource = null;
@@ -110,21 +113,22 @@ public class Prism extends JavaPlugin {
     private static Ignore ignore;
     private static Prism instance;
     private static boolean debug = false;
+    private static BukkitTask debugWatcher;
+    private static BukkitAudiences audiences;
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
-    public Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+    public final Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
     public TimeTaken eventTimer;
     public QueueStats queueStats;
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
-    private static BukkitTask debugWatcher;
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
@@ -136,7 +140,7 @@ public class Prism extends JavaPlugin {
      * need to track players right-clicking rails with minecart vehicles, or water
      * for boats.
      */
-    public ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
@@ -147,6 +151,14 @@ public class Prism extends JavaPlugin {
 
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+    }
+
+    public static BukkitAudiences getAudiences() {
+        return audiences;
+    }
+
+    public static boolean isDebug() {
+        return debug;
     }
 
     /**
@@ -170,10 +182,6 @@ public class Prism extends JavaPlugin {
                 debugWatcher.cancel();
             }
         }
-    }
-
-    public static boolean isDebug() {
-        return debug;
     }
 
     public static PrismDataSource getPrismDataSource() {
@@ -216,7 +224,7 @@ public class Prism extends JavaPlugin {
      *
      * @return list
      */
-    public static HashMap<Material, ChatColor> getAlertedOres() {
+    public static HashMap<Material, TextColor> getAlertedOres() {
         return alertedOres;
     }
 
@@ -282,7 +290,6 @@ public class Prism extends JavaPlugin {
      *
      * @return PrismParameterHandler
      */
-    @SuppressWarnings("unused")
     public static PrismParameterHandler getParameter(String name) {
         return paramHandlers.get(name);
     }
@@ -308,8 +315,8 @@ public class Prism extends JavaPlugin {
     }
 
     public static void warn(String message, Exception e) {
-        log.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
-        prismLog.log(Level.WARNING,"[" + getPrismName() + "] " + message,e);
+        log.log(Level.WARNING, "[" + getPrismName() + "] " + message, e);
+        prismLog.log(Level.WARNING, "[" + getPrismName() + "] " + message, e);
     }
 
     /**
@@ -364,7 +371,8 @@ public class Prism extends JavaPlugin {
         prismLog = createPrismLogger();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
-        messenger = new Messenger(pluginName);
+        audiences = BukkitAudiences.create(this);
+        messenger = new Messenger(pluginName, Prism.getAudiences());
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
@@ -446,7 +454,7 @@ public class Prism extends JavaPlugin {
     private Logger createPrismLogger() {
         Logger result = Logger.getLogger("PrismLogger");
         result.setUseParentHandlers(false);
-        for (Handler handler :result.getHandlers()) {
+        for (Handler handler : result.getHandlers()) {
             result.removeHandler(handler);
         }
         try {
@@ -615,7 +623,7 @@ public class Prism extends JavaPlugin {
                     Prism.log("Could not match alert block:" + key + " color:" + colorString);
                     continue;
                 }
-                ChatColor color = TypeUtils.from(colorString);
+                TextColor color = TypeUtils.from(colorString);
                 alertedOres.put(m, color);
             }
         }
@@ -635,6 +643,9 @@ public class Prism extends JavaPlugin {
             if (!metrics.isEnabled()) {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
+            Metrics.MultiLineChart blockBreaksHour =
+                    new Metrics.MultiLineChart("//TODO", ActionMeter::getMetricMeter);
+            metrics.addCustomChart(blockBreaksHour);
         }
     }
 
@@ -660,6 +671,7 @@ public class Prism extends JavaPlugin {
     /**
      * Clears the Query Cache.
      */
+    @SuppressWarnings("WeakerAccess")
     public void endExpiredQueryCaches() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             final java.util.Date date = new java.util.Date();
@@ -688,7 +700,8 @@ public class Prism extends JavaPlugin {
 
                     final Player player = result.getPlayer();
                     if (player.isOnline()) {
-                        player.sendMessage(Prism.messenger.playerHeaderMsg("Canceling forgotten preview."));
+                        Prism.messenger.sendMessage(player,
+                                Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("cancel-preview-forgotten")));
                     }
                     playerActivePreviews.remove(query.getKey());
                 }
@@ -747,16 +760,15 @@ public class Prism extends JavaPlugin {
      *
      * @param msg String
      */
-    public void alertPlayers(Player player, List<BaseComponent> msg) {
+    public void alertPlayers(Player player, Component msg) {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
-                    List<BaseComponent> finalMessage = new ArrayList<>();
-                    TextComponent prefix = new TextComponent("[!]");
-                    prefix.setColor(net.md_5.bungee.api.ChatColor.RED);
-                    finalMessage.add(prefix);
-                    finalMessage.addAll(msg);
-                    p.spigot().sendMessage(finalMessage.toArray(new BaseComponent[0]));
+                    TextComponent prefix = Component.text().content("[!]")
+                            .color(NamedTextColor.RED)
+                            .append(msg)
+                            .build();
+                    audiences.player(p).sendMessage(prefix);
                 }
             }
         }
@@ -769,7 +781,7 @@ public class Prism extends JavaPlugin {
      * @param radius int
      * @param msg    String
      */
-    public void notifyNearby(Player player, int radius, String msg) {
+    public void notifyNearby(Player player, int radius, Component msg) {
         if (!getConfig().getBoolean("prism.appliers.notify-nearby.enabled")) {
             return;
         }
@@ -779,7 +791,7 @@ public class Prism extends JavaPlugin {
             if (!p.getUniqueId().equals(player.getUniqueId())
                     && player.getWorld().equals(p.getWorld())
                     && player.getLocation().distanceSquared(p.getLocation()) <= distance) {
-                p.sendMessage(messenger.playerHeaderMsg(msg));
+                Prism.messenger.sendMessage(p, messenger.playerHeaderMsg(msg));
             }
         }
     }

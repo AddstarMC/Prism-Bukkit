@@ -54,17 +54,18 @@ public class RollbackWand extends QueryWandBase {
             final String space_name = (block.getType().equals(Material.AIR) ? "space"
                     : block.getType().toString().replaceAll("_", " ").toLowerCase()
                     + (block.getType().toString().endsWith("BLOCK") ? "" : " block"));
-            player.sendMessage(Prism.messenger.playerError("Nothing to rollback for this " + space_name + " found."));
+            Prism.messenger.sendMessage(player,
+                    Prism.messenger.playerError("Nothing to rollback for this " + space_name + " found."));
         }
     }
 
     @Override
     public void setItemWasGiven(boolean given) {
-        this.item_given = given;
+        this.itemGiven = given;
     }
 
     @Override
     public boolean itemWasGiven() {
-        return item_given;
+        return itemGiven;
     }
 }

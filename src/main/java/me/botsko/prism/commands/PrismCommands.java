@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.Executor;
@@ -35,10 +36,11 @@ public class PrismCommands extends Executor {
             public void handle(CallInfo call) {
                 prism.reloadConfig();
                 prism.loadConfig();
-                call.getSender().sendMessage(Prism.messenger.playerHeaderMsg("Configuration reloaded successfully."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("prism-reload-success")));
                 if (failed) {
-                    call.getSender().sendMessage(Prism.messenger
-                            .playerHeaderMsg("The server will need restarting to activate the database"));
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("prism-reload-failed")));
                 }
             }
 
@@ -74,6 +76,7 @@ public class PrismCommands extends Executor {
         addSub("recorder", "prism.recorder").allowConsole().setHandler(new RecorderCommand(prism));
         addSub("undo", "prism.rollback").setHandler(new UndoCommand(prism));
         addSub(new String[]{"view", "v"}, "prism.view").setMinArgs(1).setHandler(new ViewCommand(prism));
+        addSub("purge", "prism.purge").allowConsole().setHandler(new PurgeCommand(prism));
     }
 
 }

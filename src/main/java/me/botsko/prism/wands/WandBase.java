@@ -8,81 +8,85 @@ import org.bukkit.inventory.PlayerInventory;
 
 public abstract class WandBase implements Wand {
 
-    /**
-     *
-     */
-    protected boolean item_given = false;
+    protected boolean itemGiven = false;
 
-    /**
-     *
-     */
-    protected String wand_mode;
+    protected String wandMode;
 
-    /**
-     *
-     */
     protected Material item = Material.AIR;
 
-    /**
-     *
-     */
-    protected ItemStack original_item;
+    protected ItemStack originalItem;
 
     /**
+     * Set the item has been given.
      *
+     * @param given boolean.
      */
     public void setItemWasGiven(boolean given) {
-        this.item_given = given;
+        this.itemGiven = given;
     }
 
     /**
-     *
+     * True if it was given.
+     * @return boolean.
      */
     public boolean itemWasGiven() {
-        return item_given;
+        return itemGiven;
     }
 
     /**
-     *
+     * Get the wand mode.
+     * @return String.
      */
     public String getWandMode() {
-        return wand_mode;
+        return wandMode;
     }
 
     /**
-     * @param mode
+     * Set the wand mode.
+     *
+     * @param mode String
      */
     public void setWandMode(String mode) {
-        wand_mode = mode;
+        wandMode = mode;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Material getItem() {
         return item;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void setItem(Material material) {
         item = material;
     }
 
     /**
-     * @param key
+     * Get from key.
+     *
+     * @param key String
      */
     public void setItemFromKey(String key) {
         item = Material.matchMaterial(key);
     }
 
     /**
-     * @param item
+     * Set original item.
+     * @param item ItemStack
      */
     public void setOriginallyHeldItem(ItemStack item) {
         if (item.getType() != Material.AIR) {
-            original_item = item;
+            originalItem = item;
         }
     }
 
     /**
-     *
+     * {@inheritDoc}
      */
     public void disable(Player player) {
         final PlayerInventory inv = player.getInventory();
@@ -99,8 +103,8 @@ public abstract class WandBase implements Wand {
                 InventoryUtils.updateInventory(player);
             }
         }
-        if (original_item != null) {
-            InventoryUtils.moveItemToHand(inv, original_item.getType());
+        if (originalItem != null) {
+            InventoryUtils.moveItemToHand(inv, originalItem.getType());
         }
     }
 }

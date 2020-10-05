@@ -10,6 +10,7 @@ import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Builder;
 import org.bukkit.Location;
@@ -18,6 +19,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -29,6 +32,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
@@ -36,8 +40,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -163,37 +169,75 @@ public class ItemStackAction extends GenericAction {
             }
         }
         if (meta instanceof FireworkEffectMeta) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            if (fireworkMeta.hasEffect()) {
-                final FireworkEffect effect = fireworkMeta.getEffect();
-                if (effect != null) {
-                    if (!effect.getColors().isEmpty()) {
-                        final int[] effectColors = new int[effect.getColors().size()];
-                        int i = 0;
-                        for (final Color effectColor : effect.getColors()) {
-                            effectColors[i] = effectColor.asRGB();
-                            i++;
-                        }
-                        actionData.effectColors = effectColors;
-                    }
+            applyFireWorksMetaToActionData(meta);
+        }
+        if (meta instanceof BannerMeta) {
+            List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
+            Map<String, String> stringyPatterns = new HashMap<>();
+            patterns.forEach(
+                  pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+            actionData.bannerMeta = stringyPatterns;
+        }
+    }
 
-                    if (!effect.getFadeColors().isEmpty()) {
-                        final int[] fadeColors = new int[effect.getColors().size()];
-                        final int i = 0;
-                        for (final Color fadeColor : effect.getFadeColors()) {
-                            fadeColors[i] = fadeColor.asRGB();
-                        }
-                        actionData.fadeColors = fadeColors;
+    private void applyFireWorksMetaToActionData(ItemMeta meta) {
+        final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
+        if (fireworkMeta.hasEffect()) {
+            final FireworkEffect effect = fireworkMeta.getEffect();
+            if (effect != null) {
+                if (!effect.getColors().isEmpty()) {
+                    final int[] effectColors = new int[effect.getColors().size()];
+                    int i = 0;
+                    for (final Color effectColor : effect.getColors()) {
+                        effectColors[i] = effectColor.asRGB();
+                        i++;
                     }
-                    if (effect.hasFlicker()) {
-                        actionData.hasFlicker = true;
+                    actionData.effectColors = effectColors;
+                }
+
+                if (!effect.getFadeColors().isEmpty()) {
+                    final int[] fadeColors = new int[effect.getColors().size()];
+                    final int i = 0;
+                    for (final Color fadeColor : effect.getFadeColors()) {
+                        fadeColors[i] = fadeColor.asRGB();
                     }
-                    if (effect.hasTrail()) {
-                        actionData.hasTrail = true;
-                    }
+                    actionData.fadeColors = fadeColors;
+                }
+                if (effect.hasFlicker()) {
+                    actionData.hasFlicker = true;
+                }
+                if (effect.hasTrail()) {
+                    actionData.hasTrail = true;
                 }
             }
         }
+    }
+
+    private static ItemStack deserializeFireWorksMeta(ItemStack item, ItemMeta meta, ItemStackActionData actionData) {
+
+        final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
+        final Builder effect = FireworkEffect.builder();
+
+        for (int i = 0; i < actionData.effectColors.length; i++) {
+            effect.withColor(Color.fromRGB(actionData.effectColors[i]));
+        }
+        fireworkMeta.setEffect(effect.build());
+
+        if (actionData.fadeColors != null) {
+            for (int i = 0; i < actionData.fadeColors.length; i++) {
+                effect.withFade(Color.fromRGB(actionData.fadeColors[i]));
+            }
+            fireworkMeta.setEffect(effect.build());
+        }
+        if (actionData.hasFlicker) {
+            effect.flicker(true);
+        }
+        if (actionData.hasTrail) {
+            effect.trail(true);
+        }
+        fireworkMeta.setEffect(effect.build());
+        item.setItemMeta(fireworkMeta);
+        return item;
     }
 
     public void setSlot(String slot) {
@@ -235,7 +279,7 @@ public class ItemStackAction extends GenericAction {
             }
         }
 
-        ItemMeta meta = item.hasItemMeta() ? item.getItemMeta() : null;
+        ItemMeta meta = item.getItemMeta();
 
         // Leather color
         if (meta instanceof LeatherArmorMeta && actionData.color > 0) {
@@ -255,28 +299,21 @@ public class ItemStackAction extends GenericAction {
         }
         if (meta instanceof FireworkEffectMeta && actionData.effectColors != null
                 && actionData.effectColors.length > 0) {
-            final FireworkEffectMeta fireworkMeta = (FireworkEffectMeta) meta;
-            final Builder effect = FireworkEffect.builder();
 
-            for (int i = 0; i < actionData.effectColors.length; i++) {
-                effect.withColor(Color.fromRGB(actionData.effectColors[i]));
-            }
-            fireworkMeta.setEffect(effect.build());
-
-            if (actionData.fadeColors != null) {
-                for (int i = 0; i < actionData.fadeColors.length; i++) {
-                    effect.withFade(Color.fromRGB(actionData.fadeColors[i]));
+            item = deserializeFireWorksMeta(item, meta, actionData);
+        }
+        if (meta instanceof BannerMeta && actionData.bannerMeta != null) {
+            Map<String, String> stringStringMap = actionData.bannerMeta;
+            List<Pattern> patterns = new ArrayList<>();
+            stringStringMap.forEach((patternIdentifier, dyeName) -> {
+                PatternType type = PatternType.getByIdentifier(patternIdentifier);
+                DyeColor color = DyeColor.valueOf(dyeName);
+                if (type != null && color != null) {
+                    Pattern p = new Pattern(color, type);
+                    patterns.add(p);
                 }
-                fireworkMeta.setEffect(effect.build());
-            }
-            if (actionData.hasFlicker) {
-                effect.flicker(true);
-            }
-            if (actionData.hasTrail) {
-                effect.trail(true);
-            }
-            fireworkMeta.setEffect(effect.build());
-            item.setItemMeta(fireworkMeta);
+            });
+            ((BannerMeta) meta).setPatterns(patterns);
         }
 
         if (actionData.name != null) {
@@ -384,6 +421,7 @@ public class ItemStackAction extends GenericAction {
                     try {
                         eSlot = EquipmentSlot.valueOf(slot);
                     } catch (IllegalArgumentException ignored) {
+                        //ignored
                     }
                     // Prism.log("   eSlot: " + eSlot);
 
@@ -391,6 +429,7 @@ public class ItemStackAction extends GenericAction {
                     try {
                         fSlot = BlockFace.valueOf(slot);
                     } catch (IllegalArgumentException ignored) {
+                        //ignored
                     }
                     // Prism.log("   fSlot: " + fSlot);
 
@@ -451,12 +490,12 @@ public class ItemStackAction extends GenericAction {
                                         || (getActionType().getName().equals("item-insert")
                                         && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
                                     if (atPoint.getType() == Material.AIR) {
-                                        InventoryUtils.setEquipment(stand.getEquipment(), eSlot, item);
+                                        InventoryUtils.setEquipment(stand.getEquipment(), actualSlot, item);
                                         result = ChangeResultType.APPLIED;
                                         break;
                                     }
                                 } else if (atPoint.getType() != Material.AIR) {
-                                    InventoryUtils.setEquipment(stand.getEquipment(), eSlot, null);
+                                    InventoryUtils.setEquipment(stand.getEquipment(), actualSlot, null);
                                     result = ChangeResultType.APPLIED;
                                     break;
                                 }
@@ -476,6 +515,7 @@ public class ItemStackAction extends GenericAction {
                 try {
                     iSlot = Integer.parseInt(getActionData().slot);
                 } catch (IllegalArgumentException ignored) {
+                    //ignored
                 }
 
                 // Rolling back a:remove or a:drop should place the item into
@@ -607,5 +647,7 @@ public class ItemStackAction extends GenericAction {
         public boolean hasFlicker;
         public boolean hasTrail;
         public short durability = 0;
+        public Map<String, String> bannerMeta;
+
     }
 }

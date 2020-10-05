@@ -7,7 +7,9 @@ import org.bukkit.event.Listener;
 public class PrismRollbackEvents implements Listener {
 
     /**
-     * @param event
+     * PrismBlocksRollbackEvent.
+     *
+     * @param event PrismBlocksRollbackEvent
      */
     @EventHandler
     public void onPrismBlocksRollbackEvent(final PrismBlocksRollbackEvent event) {

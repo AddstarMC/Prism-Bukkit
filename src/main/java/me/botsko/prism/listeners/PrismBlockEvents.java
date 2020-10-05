@@ -1,5 +1,7 @@
 package me.botsko.prism.listeners;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -19,10 +21,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockDispenseEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -33,24 +35,30 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class PrismBlockEvents implements Listener {
+public class PrismBlockEvents extends BaseListener {
 
-    private final Prism plugin;
+    private final Cache<Location, PlayerBed> weakCache = CacheBuilder
+            .newBuilder()
+            .expireAfterWrite(30, TimeUnit.SECONDS)
+            .build();
 
     /**
      * Constructor.
+     *
      * @param plugin Prism.
      */
     public PrismBlockEvents(Prism plugin) {
-        this.plugin = plugin;
+        super(plugin);
     }
 
     /**
@@ -337,6 +345,44 @@ public class PrismBlockEvents implements Listener {
     }
 
     /**
+     * Primarily for tracking bed explosions in the nether and end.
+     * @param event BlockExplodeEvent
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onBlockExplode(BlockExplodeEvent event) {
+        if (!Prism.getIgnore().event("bed-explode", event.getBlock())) {
+            return;
+        }
+        //while it might be nice to check that its a bed - the block is already air
+        PlayerBed playerBed = weakCache.getIfPresent(event.getBlock().getLocation());
+        if (playerBed == null) {
+            return;
+        }
+        String source;
+        source = playerBed.player.getName();
+        List<Block> affected = event.blockList();
+        RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode", playerBed.bed, playerBed.player));
+        contructBlockEvent("bed-explode", source, affected);
+        weakCache.invalidate(event.getBlock().getLocation());
+    }
+
+    /**
+     * Tracks players entering a bed  and where its not possible cache's it in case of explosion.
+     * @param enterEvent PlayerBedEnterEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBedEnter(PlayerBedEnterEvent enterEvent) {
+        if (enterEvent.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.NOT_POSSIBLE_HERE) {
+            weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(),
+                    enterEvent.getBed().getState()));
+        }
+        if (!Prism.getIgnore().event("block-use", enterEvent.getBed())) {
+            return;
+        }
+        RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", enterEvent.getBed(), enterEvent.getPlayer()));
+    }
+
+    /**
      * BlockBurnEvent.
      * @param event BlockBurnEvent
      */
@@ -545,6 +591,16 @@ public class PrismBlockEvents implements Listener {
             if (Prism.getIgnore().event("lava-flow", event.getBlock())) {
                 RecordingQueue.addToQueue(ActionFactory.createBlock("lava-flow", event.getBlock(), "Lava"));
             }
+        }
+    }
+
+    private static class PlayerBed {
+        Player player;
+        BlockState bed;
+
+        public PlayerBed(Player player, BlockState bed) {
+            this.player = player;
+            this.bed = bed;
         }
     }
 }

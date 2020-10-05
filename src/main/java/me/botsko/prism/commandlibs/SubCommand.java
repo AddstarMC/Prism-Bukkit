@@ -11,8 +11,10 @@ public final class SubCommand {
     private SubHandler handler = null;
 
     /**
-     * @param commandAliases
-     * @param permissionNodes
+     * Create subcommand.
+     *
+     * @param commandAliases  String[]
+     * @param permissionNodes String[]
      */
     public SubCommand(String[] commandAliases, String[] permissionNodes) {
         this.commandAliases = commandAliases;
@@ -20,9 +22,10 @@ public final class SubCommand {
     }
 
     /**
-     * @param commandAliases
-     * @param permissionNodes
-     * @param handler
+     * Create subcommand.
+     * @param commandAliases String[]
+     * @param permissionNodes String[]
+     * @param handler SubHandler.
      */
     public SubCommand(String[] commandAliases, String[] permissionNodes, SubHandler handler) {
         this(commandAliases, permissionNodes);
@@ -30,7 +33,8 @@ public final class SubCommand {
     }
 
     /**
-     * @return
+     * Set allow console true.
+     * @return SubCOmmand
      */
     public SubCommand allowConsole() {
         this.allowConsole = true;
@@ -38,22 +42,25 @@ public final class SubCommand {
     }
 
     /**
-     * @return
+     * If console allowed.
+     * @return boolean.
      */
     public boolean isConsoleAllowed() {
         return this.allowConsole;
     }
 
     /**
-     * @return
+     * Min Args.
+     * @return int
      */
     public int getMinArgs() {
         return minArgs;
     }
 
     /**
-     * @param minArgs
-     * @return
+     * Set min args.
+     * @param minArgs int
+     * @return Subcommand.
      */
     public SubCommand setMinArgs(int minArgs) {
         this.minArgs = minArgs;
@@ -61,15 +68,17 @@ public final class SubCommand {
     }
 
     /**
-     * @return
+     * Get handler.
+     * @return {@link SubHandler}
      */
     public SubHandler getHandler() {
         return handler;
     }
 
     /**
-     * @param handler
-     * @return
+     * Set handler.
+     * @param handler SubHandler
+     * @return this
      */
     public SubCommand setHandler(SubHandler handler) {
         this.handler = handler;
@@ -77,7 +86,8 @@ public final class SubCommand {
     }
 
     /**
-     * @return
+     * If has perm.
+     * @return boolean
      */
     public boolean playerHasPermission(Player player) {
         for (String node : permissionNodes) {
@@ -85,8 +95,9 @@ public final class SubCommand {
                 return true;
             }
             // Also check for global nodes
-            if (node.contains("*"))
+            if (node.contains("*")) {
                 continue;
+            }
 
             int index = node.lastIndexOf('.');
             while (index != -1) {
@@ -101,14 +112,16 @@ public final class SubCommand {
     }
 
     /**
-     * @param permissionNodes
+     * Set permission nodes to check.
+     * @param permissionNodes String[]
      */
     public void setPermNodes(String[] permissionNodes) {
         this.permissionNodes = permissionNodes;
     }
 
     /**
-     * @return aliases
+     * Get aliases.
+     * @return aliases String[]
      */
     public String[] getAliases() {
         return this.commandAliases;

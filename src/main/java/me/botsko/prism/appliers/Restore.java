@@ -10,8 +10,9 @@ import java.util.Collection;
 public class Restore extends Preview {
 
     /**
-     * @param plugin
-     * @return
+     * Create a restore.
+     *
+     * @param plugin Prism
      */
     public Restore(Prism plugin, CommandSender sender, Collection<Handler> results, QueryParameters parameters,
                    ApplierCallback callback) {
@@ -19,9 +20,7 @@ public class Restore extends Preview {
     }
 
     /**
-     * Set preview move and then do a rollback
-     *
-     * @return
+     * Set preview move and then do a rollback.
      */
     @Override
     public void preview() {

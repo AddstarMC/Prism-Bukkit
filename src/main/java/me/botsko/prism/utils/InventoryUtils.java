@@ -87,13 +87,13 @@ public class InventoryUtils {
                 return equipment.getChestplate();
             case HEAD:
                 return equipment.getHelmet();
+            default:
+                throw new IllegalArgumentException("EquipmentSlot " + slot.name() + " not recognised");
         }
-
-        throw new IllegalArgumentException("EquipmentSlot " + slot.name() + " not recognised");
     }
 
     /**
-     * Set the ItemStack for  Slot
+     * Set the ItemStack for  Slot.
      * @param equipment EntityEquipment
      * @param slot EquipmentSlot
      * @param item ItemStack
@@ -118,6 +118,9 @@ public class InventoryUtils {
             case HEAD:
                 equipment.setHelmet(item);
                 break;
+            default:
+                //should never be hit
+                break;
         }
     }
 
@@ -133,8 +136,9 @@ public class InventoryUtils {
      */
     public static boolean playerArmorIsEmpty(Player p) {
         for (ItemStack item : p.getInventory().getArmorContents()) {
-            if (item != null && !item.getType().equals(Material.AIR))
+            if (item != null && !item.getType().equals(Material.AIR)) {
                 return false;
+            }
         }
         return true;
     }
@@ -174,8 +178,9 @@ public class InventoryUtils {
 
         for (int slot = 0; slot < player.getInventory().getSize(); slot++) {
             ItemStack item = player.getInventory().getItem(slot);
-            if (item == null)
+            if (item == null) {
                 continue;
+            }
             if (ItemUtils.equals(item, itemDefinition)) {
 
                 // check how many items we need
@@ -185,16 +190,15 @@ public class InventoryUtils {
                 if (diff > item.getAmount()) {
                     quantityFound += item.getAmount();
                     player.getInventory().clear(slot);
-                }
-                // Only need a portion
-                else {
+                } else {
                     quantityFound += diff;
                     item.setAmount(item.getAmount() - diff);
                     player.getInventory().setItem(slot, item);
                 }
             }
-            if (desiredQuantity == quantityFound)
+            if (desiredQuantity == quantityFound) {
                 break;
+            }
         }
 
         itemDefinition.setAmount(quantityFound);

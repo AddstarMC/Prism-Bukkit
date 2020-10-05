@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.commandlibs.CallInfo;
 
@@ -8,9 +9,6 @@ import java.util.List;
 
 public class RecorderCommand extends AbstractCommand {
 
-    /**
-     *
-     */
     private final Prism plugin;
 
     /**
@@ -21,14 +19,12 @@ public class RecorderCommand extends AbstractCommand {
         this.plugin = plugin;
     }
 
-    /**
-     * Handle the command
-     */
     @Override
     public void handle(final CallInfo call) {
 
         if (call.getArgs().length <= 1) {
-            call.getSender().sendMessage(Prism.messenger.playerError("Invalid command. Use /pr ? for help"));
+            Prism.messenger.sendMessage(call.getSender(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-command")));
             return;
         }
 
@@ -39,11 +35,13 @@ public class RecorderCommand extends AbstractCommand {
             if (recorderActive) {
                 plugin.recordingTask.cancel();
                 plugin.recordingTask = null;
-                call.getSender().sendMessage(Prism.messenger.playerMsg("Current recording task has been canceled."));
-                call.getSender().sendMessage(Prism.messenger
-                        .playerError("WARNING: Actions will collect until queue until recorder restarted manually."));
+                Prism.messenger.sendMessage(call.getSender(), Prism.messenger
+                        .playerMsg(Il8nHelper.getMessage("recorder-stopped")));
+                Prism.messenger.sendMessage(call.getSender(), Prism.messenger
+                        .playerError(Il8nHelper.getMessage("recorder-stopped-warn")));
             } else {
-                call.getSender().sendMessage(Prism.messenger.playerError("No recording task is currently running."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-recorder-stopped")));
             }
             return;
         }
@@ -51,37 +49,32 @@ public class RecorderCommand extends AbstractCommand {
         // Allow for force-restarting recorders
         if (call.getArg(1).equals("start")) {
             if (recorderActive) {
-                call.getSender().sendMessage(
-                        Prism.messenger.playerError("Recording tasks are currently running. Cannot start."));
+                Prism.messenger.sendMessage(call.getSender(),
+                        Prism.messenger.playerError(Il8nHelper.getMessage("report-already-running")));
             } else {
 
                 // Run db tests...
-                call.getSender().sendMessage(Prism.messenger.playerMsg("Validating database connections..."));
+                Prism.getAudiences().sender(call.getSender())
+                        .sendMessage(Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
 
-                // Attempt to get db
-                Connection conn = null;
-                try {
-
-                    conn = Prism.getPrismDataSource().getConnection();
+                try (
+                        Connection conn = Prism.getPrismDataSource().getConnection()
+                ) {
                     if (conn == null || conn.isClosed()) {
-                        call.getSender().sendMessage(Prism.messenger.playerError(
-                                "Valid database connection could not be found. Check the db/console and try again."));
+                        Prism.getAudiences().sender(call.getSender())
+                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
                         return;
                     }
 
-                    call.getSender().sendMessage(Prism.messenger.playerSuccess("Valid connection found. Yay!"));
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
 
-                    call.getSender().sendMessage(Prism.messenger.playerMsg("Restarting recordering tasks..."));
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerMsg(Il8nHelper.getMessage("recorder-restarting")));
                     plugin.actionRecorderTask();
 
                 } catch (final Exception e) {
                     e.printStackTrace();
-                } finally {
-                    if (conn != null)
-                        try {
-                            conn.close();
-                        } catch (final Exception ignored) {
-                        }
                 }
             }
         }

@@ -13,8 +13,6 @@ import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.SettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
@@ -346,7 +344,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     @Override
-    public SelectIdQuery createSelectIDQuery() {
+    public SelectIdQuery createSelectIdQuery() {
         return new SqlSelectIdQueryBuilder(this);
     }
 

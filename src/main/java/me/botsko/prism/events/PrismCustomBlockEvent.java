@@ -7,6 +7,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+
 @SuppressWarnings("unused")
 public class PrismCustomBlockEvent extends Event {
 

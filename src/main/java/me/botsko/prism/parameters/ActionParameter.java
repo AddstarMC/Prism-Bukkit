@@ -70,14 +70,17 @@ public class ActionParameter extends SimplePrismParameterHandler {
                         } else {
                             message += noPermission.get(0) + ".";
                         }
-                        sender.sendMessage(Prism.messenger.playerError(message));
+                        Prism.messenger.sendMessage(sender, Prism.messenger.playerError(message));
                     }
 
                 } else {
                     if (sender != null) {
-                        sender.sendMessage(Prism.messenger.playerError("Ignoring action '" + action.replace("!", "")
-                                + "' because it's unrecognized. Did you mean '"
-                                + LevenshteinDistance.getClosestAction(action) + "'? Type '/prism params' for help."));
+                        Prism.messenger.sendMessage(sender,
+                                Prism.messenger.playerError("Ignoring action '"
+                                        + action.replace("!", "")
+                                        + "' because it's unrecognized. Did you mean '"
+                                        + LevenshteinDistance.getClosestAction(action)
+                                        + "'? Type '/prism params' for help."));
                     }
                 }
             }

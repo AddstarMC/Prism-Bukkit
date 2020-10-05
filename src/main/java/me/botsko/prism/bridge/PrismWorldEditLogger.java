@@ -21,6 +21,13 @@ public class PrismWorldEditLogger extends AbstractDelegateExtent {
     private final Actor player;
     private final World world;
 
+    /**
+     * Constructor.
+     *
+     * @param player Actor
+     * @param extent Extent
+     * @param world  World
+     */
     public PrismWorldEditLogger(Actor player, Extent extent, World world) {
         super(extent);
         this.player = player;

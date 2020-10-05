@@ -5,7 +5,8 @@ import org.bukkit.block.BlockState;
 public class GrowAction extends BlockAction {
 
     /**
-     * @param state
+     * Set the block state.
+     * @param state BlockState
      */
     public void setBlock(BlockState state) {
         if (state != null) {
