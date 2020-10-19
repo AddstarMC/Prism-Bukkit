@@ -54,19 +54,14 @@ public class ActionMessage {
 
     private TextComponent getMainMessage(ActionType action, String format1) {
         final TextColor highlight = NamedTextColor.DARK_AQUA;
-        TextComponent out = Component.text()
-                .content(format1)
-                .build();
+        TextComponent out = Component.text().content(format1).build();
         Component result = out.replaceFirstText(Pattern.compile("<prefix>"), builder -> getPosNegPrefix())
                 .replaceFirstText(Pattern.compile("<index>"),
-                      builder -> builder.content("[" + index + "] ")
-                                .color(NamedTextColor.GRAY))
+                      builder -> builder.content("[" + index + "] ").color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<target>"),
-                      builder -> Component.text().content(handler.getSourceName())
-                                .color(highlight))
+                      builder -> Component.text().content(handler.getSourceName()).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                      builder -> Component.text().content(getDescription(action))
-                                .color(NamedTextColor.WHITE))
+                      builder -> Component.text().content(getDescription(action)).color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor(action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
                       builder -> Component.text().content(action.getName()))

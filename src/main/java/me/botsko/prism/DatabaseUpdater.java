@@ -6,7 +6,7 @@ import me.botsko.prism.settings.Settings;
 
 import java.util.ArrayList;
 
-public class Updater {
+public class DatabaseUpdater {
 
 
     protected final Prism plugin;
@@ -18,7 +18,7 @@ public class Updater {
      *
      * @param plugin Prism.
      */
-    Updater(Prism plugin) {
+    DatabaseUpdater(Prism plugin) {
         this.plugin = plugin;
         PrismDataSourceUpdater prismDataSourceUpdater = PrismDatabaseFactory.createUpdater(Prism.config);
         updates.add(prismDataSourceUpdater::v1_to_v2);

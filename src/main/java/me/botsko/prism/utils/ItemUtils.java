@@ -28,7 +28,7 @@ import java.util.Objects;
 public class ItemUtils {
 
     private static final EnumSet<Material> badWands = EnumSet.of(Material.WATER, Material.LAVA, Material.FIRE,
-            Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
+          Material.FLINT_AND_STEEL, Material.NETHER_PORTAL, Material.END_PORTAL);
 
     public static boolean isBadWand(Material material) {
         return badWands.contains(material);
@@ -36,6 +36,7 @@ public class ItemUtils {
 
     /**
      * Returns name as lowercase and adds a durability to the end.
+     *
      * @param stack ItemStack
      * @return String
      */
@@ -55,7 +56,7 @@ public class ItemUtils {
     /**
      * Sets an item as damaged by the amount given as the second param.
      *
-     * @param stack ItemStack
+     * @param stack  ItemStack
      * @param damage Integer
      */
     public static void setItemDamage(ItemStack stack, int damage) {
@@ -71,6 +72,7 @@ public class ItemUtils {
 
     /**
      * Get the amount an item is damaged or 0.
+     *
      * @param stack ItemStack
      * @return int
      */
@@ -88,7 +90,8 @@ public class ItemUtils {
 
     /**
      * Converts a lowercase string into an item  formatted as
-     *  'materialname[:itemdamage]'.
+     * 'materialname[:itemdamage]'.
+     *
      * @param smallString String
      * @return ItemStack
      */
@@ -106,7 +109,7 @@ public class ItemUtils {
                         return stack;
                     } catch (NumberFormatException e) {
                         Prism.debug(" Item could not have damage parsed. Data:" + smallString + " Error:"
-                                + e.getMessage());
+                              + e.getMessage());
                     }
                 }
                 return new ItemStack(mat, 1);
@@ -117,6 +120,7 @@ public class ItemUtils {
 
     /**
      * Check is a valid item ( not null or air).
+     *
      * @param item ItemStack
      * @return bool
      */
@@ -127,6 +131,7 @@ public class ItemUtils {
 
     /**
      * Check ItemStack are the same Type.
+     *
      * @param a ItemStack
      * @param b ItemStack
      * @return bool
@@ -146,6 +151,7 @@ public class ItemUtils {
      * 7. Bookmeta - title , page count and author
      * 8. PotionMeta - checked
      * 9 FireworkMeta including effect meta.
+     *
      * @param a Itemstack
      * @param b ItemStack
      * @return bool
@@ -265,8 +271,8 @@ public class ItemUtils {
             }
 
             return skullA.hasOwner()
-                    && Objects.requireNonNull(skullA.getOwningPlayer()).getUniqueId()
-                    .equals(Objects.requireNonNull(skullB.getOwningPlayer()).getUniqueId());
+                  && Objects.requireNonNull(skullA.getOwningPlayer()).getUniqueId()
+                  .equals(Objects.requireNonNull(skullB.getOwningPlayer()).getUniqueId());
         }
 
         // Potions
@@ -365,6 +371,7 @@ public class ItemUtils {
 
     /**
      * Checks if 2 sets are different.
+     *
      * @param a Map
      * @param b Map
      * @return bool
@@ -397,6 +404,7 @@ public class ItemUtils {
 
     /**
      * Return the % used durabilility.
+     *
      * @return String %
      * @todo this is buggy, wth?
      */
@@ -405,7 +413,7 @@ public class ItemUtils {
         short currentDurability = (short) getItemDamage(item);
         short maxDurability = item.getType().getMaxDurability();
         if (currentDurability > 0 && maxDurability > 0 && currentDurability != maxDurability) {
-            double diff = ((currentDurability / maxDurability) * 100);
+            double diff = (((float)currentDurability / (float)maxDurability) * 100);
             if (diff > 0) {
                 return Math.floor(diff) + "%";
             }
@@ -442,7 +450,7 @@ public class ItemUtils {
     public static String getItemFullNiceName(ItemStack item) {
 
         StringBuilder itemName = new StringBuilder(item.getType().name().toLowerCase(Locale.ENGLISH)
-                .replace('_', ' '));
+              .replace('_', ' '));
 
         ItemMeta meta = null;
 
@@ -470,13 +478,13 @@ public class ItemUtils {
             EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
             if (bookEnchantments.hasStoredEnchants()) {
                 Map<Enchantment, Integer> enchs = bookEnchantments.getStoredEnchants();
-                applyEnchantments(enchs,itemName);
+                applyEnchantments(enchs, itemName);
             }
         }
 
         // Enchantments
         Map<Enchantment, Integer> enchs = item.getEnchantments();
-        applyEnchantments(enchs,itemName);
+        applyEnchantments(enchs, itemName);
 
         // Fireworks
         if (meta instanceof FireworkEffectMeta) {
@@ -514,6 +522,7 @@ public class ItemUtils {
 
     /**
      * Modifies the passed String builder with a list of enchants.
+     *
      * @param enchants Map
      * @param itemName Current StringBuilder
      */
@@ -523,7 +532,7 @@ public class ItemUtils {
             itemName.append(" with");
             for (Map.Entry<Enchantment, Integer> ench : enchants.entrySet()) {
                 itemName.append(" ").append(
-                        EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue()));
+                      EnchantmentUtils.getClientSideEnchantmentName(ench.getKey(), ench.getValue()));
                 itemName.append(i < enchants.size() ? ", " : "");
                 i++;
             }
@@ -544,6 +553,9 @@ public class ItemUtils {
         }
         // Has meta
         ItemMeta im = item.getItemMeta();
+        if (im == null) {
+            return true;
+        }
         return !im.hasDisplayName() && !im.hasEnchants() && !im.hasLore();
     }
 
@@ -554,7 +566,9 @@ public class ItemUtils {
      * @param itemStack The item to drop
      */
     public static void dropItem(Location location, ItemStack itemStack) {
-        location.getWorld().dropItemNaturally(location, itemStack);
+        if (location.getWorld() != null) {
+            location.getWorld().dropItemNaturally(location, itemStack);
+        }
     }
 
     /**

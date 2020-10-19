@@ -50,8 +50,7 @@
 		<plugin.version>${project.version}-${build.number}</plugin.version>
 		<build.number />
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spigot.api.version>1.16</spigot.api.version>
-		<bukkit.version>1.16.2-R0.1-SNAPSHOT</bukkit.version>
+		<spigot.api.version>1.16</spigot.api.version>		<bukkit.version>1.16.2-R0.1-SNAPSHOT</bukkit.version>
 		<test.mysql.host>localhost</test.mysql.host>
 		<test.mysql.user>prism</test.mysql.user>
 		<test.mysql.password>prism</test.mysql.password>
@@ -73,7 +72,7 @@
 		<dependency>
 			<groupId>net.kyori</groupId>
 			<artifactId>adventure-api</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
+			<version>4.1.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.checkerframework</groupId>
@@ -101,7 +100,7 @@
 		<dependency>
 			<groupId>net.kyori</groupId>
 			<artifactId>adventure-text-serializer-plain</artifactId>
-			<version>4.0.0-SNAPSHOT</version>
+			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -189,6 +188,11 @@
 			<artifactId>junit</artifactId>
 			<version>4.13</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>3.6.0</version>
 		</dependency>
 	</dependencies>
 	<repositories>

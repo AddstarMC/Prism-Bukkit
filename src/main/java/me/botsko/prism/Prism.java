@@ -45,6 +45,7 @@ import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.wands.Wand;
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -444,7 +445,7 @@ public class Prism extends JavaPlugin {
                 }
             }
             // Apply any updates
-            final Updater up = new Updater(this);
+            final DatabaseUpdater up = new DatabaseUpdater(this);
             up.applyUpdates();
             Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
             updating.cancel();
@@ -764,11 +765,10 @@ public class Prism extends JavaPlugin {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
-                    TextComponent prefix = Component.text().content("[!]")
+                    TextComponent prefix = Component.text("[!]")
                             .color(NamedTextColor.RED)
-                            .append(msg)
-                            .build();
-                    audiences.player(p).sendMessage(prefix);
+                            .append(msg);
+                    audiences.player(p).sendMessage(Identity.nil(),prefix);
                 }
             }
         }

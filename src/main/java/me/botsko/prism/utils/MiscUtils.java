@@ -256,11 +256,10 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getPreviousButton() {
-        return Component.text().content(" [<< Prev]")
+        return Component.text(" [<< Prev]")
                 .color(TextColor.fromHexString("#ef9696"))
                 .hoverEvent(HoverEvent.showText(Component.text("Click to view the previous page")))
-                .clickEvent(ClickEvent.runCommand("/pr pg p"))
-                .build();
+                .clickEvent(ClickEvent.runCommand("/pr pg p"));
     }
 
     /**
@@ -269,10 +268,9 @@ public class MiscUtils {
      * @return TextComponent
      */
     public static TextComponent getNextButton() {
-        return Component.text().content("           ")
+        return Component.text("           ")
                 .color(TextColor.fromHexString("#01a960"))
-                .append(MiscUtils::getNextButtonComponent)
-                .build();
+                .append(MiscUtils::getNextButtonComponent);
     }
 
     /**
@@ -281,11 +279,10 @@ public class MiscUtils {
      * @return BaseComponent.
      */
     private static TextComponent getNextButtonComponent() {
-        return Component.text().content("[Next >>]")
+        return Component.text("[Next >>]")
                 .hoverEvent(HoverEvent.showText(Component.text("Click to view the next page")))
                 .color(TextColor.fromHexString("#01a960"))
-                .clickEvent(ClickEvent.runCommand("/pr pg n"))
-                .build();
+                .clickEvent(ClickEvent.runCommand("/pr pg n"));
     }
 
     /**
@@ -294,13 +291,11 @@ public class MiscUtils {
      * @return BaseComponent.
      */
     public static TextComponent getPrevNextButtons() {
-        TextComponent divider = Component.text().content(" | ")
-                .color(TextColor.fromHexString("#969696"))
-                .build();
+        TextComponent divider = Component.text(" | ")
+                .color(TextColor.fromHexString("#969696"));
         return Component.text()
                 .append(getPreviousButton())
                 .append(divider)
-                .append(getNextButton())
-                .build();
+                .append(getNextButton()).build();
     }
 }

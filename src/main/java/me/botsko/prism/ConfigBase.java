@@ -17,6 +17,7 @@ public class ConfigBase {
 
     /**
      * Constructor.
+     *
      * @param plugin Prism
      */
     ConfigBase(Plugin plugin) {
@@ -66,8 +67,9 @@ public class ConfigBase {
 
     /**
      * Loads the config.
+     *
      * @param defaultFolder default folder
-     * @param filename filename
+     * @param filename      filename
      * @return FileConfig.
      */
     private FileConfiguration loadConfig(String defaultFolder, String filename) {
@@ -86,8 +88,9 @@ public class ConfigBase {
 
     /**
      * Save the Config.
+     *
      * @param filename the file name to save as
-     * @param config FileConfig to save
+     * @param config   FileConfig to save
      */
     protected void saveConfig(String filename, FileConfiguration config) {
         final File file = getFilename(filename);
@@ -101,8 +104,9 @@ public class ConfigBase {
 
     /**
      * Write to file.
+     *
      * @param filename String
-     * @param config FileConfig
+     * @param config   FileConfig
      */
     protected void write(String filename, FileConfiguration config) {
         saveConfig(filename, config);

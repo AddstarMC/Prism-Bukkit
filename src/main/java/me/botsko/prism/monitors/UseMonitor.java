@@ -40,10 +40,8 @@ public class UseMonitor {
         }
         count++;
         countedEvents.put(playername, count);
-        TextComponent out = Component.text()
-                .content(playername + " " + msg)
-                .color(NamedTextColor.GRAY)
-                .build();
+        TextComponent out = Component.text(playername + " " + msg)
+                .color(NamedTextColor.GRAY);
         if (count == 5) {
             out.append(Component.text(playername + " continues - pausing warnings.")
                     .color(NamedTextColor.GRAY));

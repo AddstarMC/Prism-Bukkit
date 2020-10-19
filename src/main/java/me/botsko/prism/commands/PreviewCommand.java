@@ -52,7 +52,8 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().apply_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    Prism.messenger.sendMessage(call.getPlayer(),
+                          Prism.messenger.playerError("You have no preview pending."));
                 }
                 return;
             }
@@ -63,15 +64,16 @@ public class PreviewCommand extends AbstractCommand {
                     previewSession.getPreviewer().cancel_preview();
                     plugin.playerActivePreviews.remove(call.getPlayer().getName());
                 } else {
-                    audience.sendMessage(Prism.messenger.playerError("You have no preview pending."));
+                    Prism.messenger.sendMessage(call.getPlayer(),Prism.messenger.playerError(
+                          Il8nHelper.getMessage("preview-none-pending")));
                 }
                 return;
             }
 
             // Ensure no current preview is waiting
             if (plugin.playerActivePreviews.containsKey(call.getPlayer().getName())) {
-                audience.sendMessage(Prism.messenger
-                        .playerError("You have an existing preview pending. Please apply or cancel before moving on."));
+                Prism.messenger.sendMessage(call.getPlayer(),Prism.messenger
+                        .playerError(Il8nHelper.getMessage("preview-pending")));
                 return;
             }
 
@@ -87,12 +89,12 @@ public class PreviewCommand extends AbstractCommand {
                 parameters.setStringFromRawArgs(call.getArgs(), 1);
 
                 if (parameters.getActionTypes().containsKey("world-edit")) {
-                    audience.sendMessage(Prism.messenger
-                            .playerError("Prism does not support previews for WorldEdit rollbacks/restores yet."));
+                    Prism.messenger.sendMessage(call.getPlayer(),Prism.messenger
+                            .playerError(Il8nHelper.getMessage("preview-worldedit-unsupported")));
                     return;
                 }
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
-                audience.sendMessage(Prism.messenger
+                Prism.messenger.sendMessage(call.getPlayer(),Prism.messenger
                         .playerSubduedHeaderMsg(
                                 Il8nHelper.getMessage("queryparameter.defaults.prefix",
                                         defaultsReminder.toString())));
@@ -117,7 +119,8 @@ public class PreviewCommand extends AbstractCommand {
                 });
                 return;
             }
-            audience.sendMessage(Prism.messenger.playerError("Invalid command. Check /prism ? for help."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                  Prism.messenger.playerError(Il8nHelper.getMessage("invalid-command")));
         }
     }
 
@@ -125,7 +128,8 @@ public class PreviewCommand extends AbstractCommand {
         parameters.setProcessType(PrismProcessType.RESTORE);
         if (!results.getActionResults().isEmpty()) {
 
-            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+            Prism.messenger.sendMessage(call.getPlayer(),
+                  Prism.messenger.playerHeaderMsg(
                     Il8nHelper.getMessage("preview-apply-start")));
 
             // Perform preview on the main thread
@@ -135,7 +139,8 @@ public class PreviewCommand extends AbstractCommand {
                 rs.preview();
             });
         } else {
-            audience.sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("preview-no-actions")));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                  Prism.messenger.playerError(Il8nHelper.getMessage("preview-no-actions")));
         }
     }
 
@@ -155,7 +160,8 @@ public class PreviewCommand extends AbstractCommand {
                 rs.preview();
             });
         } else {
-            audience.sendMessage(Prism.messenger.playerError("Nothing found to preview."));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                  Prism.messenger.playerError("Nothing found to preview."));
         }
     }
 

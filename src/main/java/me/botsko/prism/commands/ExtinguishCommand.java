@@ -8,6 +8,7 @@ import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.events.PrismBlocksExtinguishEvent;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
+import net.kyori.adventure.identity.Identity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class ExtinguishCommand implements SubHandler {
 
         } else {
             Prism.getAudiences().player(call.getPlayer())
-                    .sendMessage(
+                    .sendMessage(Identity.nil(),
                             Prism.messenger.playerError(Il8nHelper.getMessage("no-fires-found")));
         }
     }

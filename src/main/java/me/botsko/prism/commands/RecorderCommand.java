@@ -54,15 +54,15 @@ public class RecorderCommand extends AbstractCommand {
             } else {
 
                 // Run db tests...
-                Prism.getAudiences().sender(call.getSender())
-                        .sendMessage(Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
+                Prism.messenger.sendMessage(call.getSender(),
+                      Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
 
                 try (
                         Connection conn = Prism.getPrismDataSource().getConnection()
                 ) {
                     if (conn == null || conn.isClosed()) {
-                        Prism.getAudiences().sender(call.getSender())
-                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
+                        Prism.messenger.sendMessage(call.getSender(),
+                              Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
                         return;
                     }
 

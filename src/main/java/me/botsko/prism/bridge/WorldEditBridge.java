@@ -41,9 +41,9 @@ public class WorldEditBridge {
             final Vector maxLoc = new Vector(region.getMaximumPoint().getX(), region.getMaximumPoint().getY(),
                     region.getMaximumPoint().getZ());
             final Region sel = session.getRegionSelector(lw).getRegion();
-            final double lRadius = (sel.getLength() + 1) / 2;
-            final double wRadius = (sel.getWidth() + 1) / 2;
-            final double hRadius = (sel.getHeight() + 1) / 2;
+            final double lRadius = ((float)sel.getLength() + 1) / 2;
+            final double wRadius = ((float)sel.getWidth() + 1) / 2;
+            final double hRadius = ((float)sel.getHeight() + 1) / 2;
 
             String procType = "applier";
             if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {

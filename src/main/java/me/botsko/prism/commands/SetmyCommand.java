@@ -100,8 +100,8 @@ public class SetmyCommand extends AbstractCommand {
                     if (itemMaterials.size() > 0) {
                         setWand = itemMaterials.get(0);
                     } else {
-                        Prism.getAudiences().sender(call.getPlayer())
-                                .sendMessage(Prism.messenger.playerError(Il8nHelper.getMessage("item-no-match")));
+                        Prism.messenger.sendMessage(call.getPlayer(),
+                              Prism.messenger.playerError(Il8nHelper.getMessage("item-no-match")));
                         return;
                     }
                 }

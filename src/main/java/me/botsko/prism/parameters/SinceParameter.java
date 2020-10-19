@@ -52,7 +52,7 @@ public class SinceParameter extends SimplePrismParameterHandler {
             final FileConfiguration config = Bukkit.getPluginManager().getPlugin("Prism").getConfig();
 
             Long date = DateUtil.translateTimeStringToDate(config.getString("prism.queries.default-time-since"));
-            if (date == 0) {
+            if (date <= 0L) {
                 Prism.log("Error - date range configuration for prism.time-since is not valid");
                 date = DateUtil.translateTimeStringToDate("3d");
             }

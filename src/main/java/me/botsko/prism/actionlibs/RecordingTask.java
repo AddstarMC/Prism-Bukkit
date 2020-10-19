@@ -139,9 +139,6 @@ public class RecordingTask implements Runnable {
             long batchProcessedEnd = System.currentTimeMillis();
             long batchRunTime = batchProcessedEnd - batchDoneTime;
             plugin.queueStats.addRunInfo(new QueueStats.TaskRunInfo(actionsRecorded,batchingTime,batchRunTime));
-            if (Prism.getInstance().monitoring) {
-                //TODO ADD MONITORING TO METRICS.
-            }
         }
     }
 

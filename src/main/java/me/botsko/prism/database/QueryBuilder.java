@@ -15,7 +15,7 @@ public abstract class QueryBuilder {
     protected Collection<String> conditions = new ArrayList<>();
     protected QueryParameters parameters;
     protected boolean shouldGroup;
-    protected String prefix = "prism_";
+    protected String prefix;
     protected boolean shouldPause;
 
     /**
@@ -50,7 +50,7 @@ public abstract class QueryBuilder {
      *
      * @param parameters  QueryParams.
      * @param shouldGroup if grouped.
-     * @return
+     * @return String with query
      */
     public String getQuery(@Nullable QueryParameters parameters, boolean shouldGroup) {
 

@@ -3,7 +3,6 @@ package me.botsko.prism.text;
 
 import me.botsko.prism.Il8nHelper;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.Style;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -17,11 +16,20 @@ public class ReplaceableTextComponent {
 
     private Component component;
 
-
-    private ReplaceableTextComponent(TextComponent component) {
+    /**
+     * Helper Class to assist with replacement during Il8n.  May be removed when Adventure library
+     * provides its own methods.
+     * @param component Component.
+     */
+    private ReplaceableTextComponent(Component component) {
         this.component = component;
     }
 
+    /**
+     * Static builder.
+     * @param key Il8n key
+     * @return ReplaceableTextComponent
+     */
     public static ReplaceableTextComponent builder(@PropertyKey(resourceBundle = "languages.message") String key) {
         return new ReplaceableTextComponent(Il8nHelper.getMessage(key));
     }
@@ -102,6 +110,10 @@ public class ReplaceableTextComponent {
         return this;
     }
 
+    /**
+     * Build the Component.
+     * @return Component
+     */
     public Component build() {
         return component;
     }

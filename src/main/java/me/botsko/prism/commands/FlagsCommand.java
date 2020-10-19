@@ -41,11 +41,10 @@ public class FlagsCommand implements SubHandler {
         Prism.messenger.sendMessage(s, Prism.messenger
                 .playerMsg(Il8nHelper.getMessage("flag-help-2")));
         for (final Flag flag : Flag.values()) {
-            sender.sendMessage(Prism.messenger.playerMsg(
-                    Component.text().content(flag.getUsage().replace("_", "-"))
+            Prism.messenger.sendMessage(s,Prism.messenger.playerMsg(
+                    Component.text(flag.getUsage().replace("_", "-"))
                             .color(NamedTextColor.LIGHT_PURPLE)
-                            .append(Component.text(" " + flag.getDescription()))
-                            .build()));
+                            .append(Component.text(" " + flag.getDescription()))));
         }
     }
 }

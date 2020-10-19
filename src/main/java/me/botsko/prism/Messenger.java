@@ -1,5 +1,6 @@
 package me.botsko.prism;
 
+import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.platform.AudienceProvider;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -39,9 +40,10 @@ public class Messenger {
      */
     public void sendMessage(CommandSender sender, Component message) {
         if (sender instanceof ConsoleCommandSender) {
-            audienceProvider.console().sendMessage(message);
+            audienceProvider.console().sendMessage(Identity.nil(),message);
         } else {
-            ((BukkitAudiences) audienceProvider).sender(sender).sendMessage(message.colorIfAbsent(defaultColor));
+            ((BukkitAudiences) audienceProvider).sender(sender).sendMessage(Identity.nil(),
+                  message.colorIfAbsent(defaultColor));
         }
     }
 
@@ -53,11 +55,9 @@ public class Messenger {
      */
     public TextComponent playerHeaderMsg(Component msg) {
         if (msg != null) {
-            return Component.text()
-                    .content(pluginName + " ")
+            return Component.text(pluginName + " ")
                     .color(headerColor)
-                    .append(msg.colorIfAbsent(NamedTextColor.WHITE))
-                    .build();
+                    .append(msg.colorIfAbsent(NamedTextColor.WHITE));
         }
         return Component.empty();
     }
@@ -75,11 +75,9 @@ public class Messenger {
      */
     public TextComponent playerSubduedHeaderMsg(Component msg) {
         if (msg != null) {
-            return Component.text()
-                    .content(pluginName + " ")
+            return Component.text(pluginName + " ")
                     .color(headerColor)
-                    .append(msg.colorIfAbsent(defaultColor))
-                    .build();
+                    .append(msg.colorIfAbsent(defaultColor));
         }
         return Component.empty();
     }
@@ -101,7 +99,7 @@ public class Messenger {
             Component component = LegacyComponentSerializer.legacySection().deserialize(msg);
             return playerMsg(component);
         }
-        return TextComponent.empty();
+        return Component.empty();
     }
 
     /**
@@ -125,9 +123,7 @@ public class Messenger {
      * @return String.
      */
     public TextComponent playerHelp(String cmd, String help) {
-        return Component.text()
-                .content("/prism ").color(defaultColor)
-                .build()
+        return Component.text("/prism ").color(defaultColor)
                 .append(Component.text(cmd).color(headerColor)
                         .append(Component.text(" - " + help).color(NamedTextColor.WHITE)));
     }
@@ -139,11 +135,9 @@ public class Messenger {
      * @return String.
      */
     public TextComponent playerError(Component msg) {
-        return Component.text()
-                .content(pluginName + " ")
+        return Component.text(pluginName + " ")
                 .color(headerColor)
-                .append(msg.colorIfAbsent(error))
-                .build();
+                .append(msg.colorIfAbsent(error));
     }
 
     public TextComponent playerError(String msg) {
@@ -169,15 +163,21 @@ public class Messenger {
      * @param msg the message to prefix.
      * @return String.
      */
-    public TextComponent playerSuccess(TextComponent msg) {
+    public TextComponent playerSuccess(Component msg) {
         if (msg != null) {
-            return Component.text()
-                    .content(pluginName + " ")
+            return Component.text(pluginName + " ")
                     .color(headerColor)
-                    .append(msg.colorIfAbsent(success))
-                    .build();
+                    .append(msg.colorIfAbsent(success));
         }
         return Component.empty();
+    }
+
+    /**
+     * Send a message to console.
+     * @param msg the message.
+     */
+    public void sendConsoleMessage(Component msg) {
+        audienceProvider.console().sendMessage(Identity.nil(),msg);
     }
 
 }

@@ -34,10 +34,9 @@ public class AboutCommand implements SubHandler {
                                 .replaceText(Pattern.compile("<version>"),
                                     builder -> Component.text().content(plugin.getPrismVersion()))));
         Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerSubduedHeaderMsg(
-                Component.text().content("Help: ")
+                Component.text("Help: ")
                         .append(Component.text("/pr ?")
-                                .color(NamedTextColor.WHITE))
-                        .build()));
+                                .color(NamedTextColor.WHITE))));
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerSubduedHeaderMsg(
                         Component.text().content("Discord: ")

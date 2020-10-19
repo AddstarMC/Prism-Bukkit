@@ -10,6 +10,7 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
+import net.kyori.adventure.identity.Identity;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -50,7 +51,8 @@ public class PageCommand implements SubHandler {
 
         if (call.getArgs().length != 2) {
             Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Prism.messenger.playerError("Please specify a page number. Like /prism page 2"));
+                    .sendMessage(Identity.nil(),
+                          Prism.messenger.playerError("Please specify a page number. Like /prism page 2"));
             return;
         }
 

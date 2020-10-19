@@ -43,7 +43,7 @@ public final class PurgeManager implements Runnable {
 
                 // Process and validate all of the arguments
                 final QueryParameters parameters = PreprocessArgs.process(plugin, null, purgeArgs.split(" "),
-                        PrismProcessType.DELETE, 0, false);
+                      PrismProcessType.DELETE, 0, false);
 
                 if (parameters == null) {
                     Prism.log("Invalid parameters for database purge: " + purgeArgs);

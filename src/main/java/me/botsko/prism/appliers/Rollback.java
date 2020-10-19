@@ -47,7 +47,7 @@ public class Rollback extends Preview {
                     final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(player.getLocation(),
                             parameters.getRadius());
                     if (!blockStateChanges.isEmpty()) {
-                        audience.sendMessage(Prism.messenger
+                        Prism.messenger.sendMessage(player,Prism.messenger
                                 .playerHeaderMsg(Il8nHelper.getMessage("fire-extinguished-sucess")));
                     }
                 }
@@ -60,8 +60,8 @@ public class Rollback extends Preview {
                 if (!parameters.hasFlag(Flag.NO_ITEMCLEAR)) {
                     final int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
                     if (removed > 0) {
-                        audience.sendMessage(Prism.messenger.playerHeaderMsg(
-                                Il8nHelper.formatMessage("rollback-removedDrops", removed)));
+                        Prism.messenger.sendMessage(player,Prism.messenger.playerHeaderMsg(
+                              Il8nHelper.formatMessage("rollback-removedDrops",removed)));
                     }
                 }
             }
@@ -78,7 +78,7 @@ public class Rollback extends Preview {
                 drained = Utilities.drainWater(player.getLocation(), parameters.getRadius());
             }
             if (drained != null && drained.size() > 0) {
-                audience.sendMessage(
+                Prism.messenger.sendMessage(player,
                         Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("command-drain-done")));
             }
         }
