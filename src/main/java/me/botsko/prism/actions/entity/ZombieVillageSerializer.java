@@ -5,7 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.ZombieVillager;
 
-public class ZombieVillagerSerlializer extends EntitySerializer {
+public class ZombieVillageSerializer extends EntitySerializer {
     protected String profession = null;
 
     @Override

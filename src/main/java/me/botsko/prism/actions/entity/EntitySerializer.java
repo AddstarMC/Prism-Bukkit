@@ -3,6 +3,7 @@ package me.botsko.prism.actions.entity;
 import com.google.gson.annotations.SerializedName;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
@@ -12,20 +13,31 @@ import org.bukkit.entity.Sittable;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class EntitySerializer {
     //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;
-
+    
     @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
-
+    
+    private Map<String,PrismItemStack> equipment = new HashMap<>();
+    
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
 
     @SerializedName(value = "tamingOwner", alternate = "taming_owner")
     protected String tamingOwner = null;
+
     protected String newColor = null;
 
     @SerializedName(value = "customDesc", alternate = "custom_desc")
@@ -53,7 +65,18 @@ public class EntitySerializer {
 
         // Get custom name
         customName = entity.getCustomName();
-
+        if (entity instanceof LivingEntity) {
+            EntityEquipment inv = ((LivingEntity) entity).getEquipment();
+            if (inv != null) {
+                for (EquipmentSlot slot: EquipmentSlot.values()) {
+                    ItemStack s = inv.getItem(slot);
+                    if (s.getType() == Material.AIR) {
+                        continue;
+                    }
+                    equipment.put(slot.name(),PrismItemStack.fromBukkit(inv.getItem(slot)));
+                }
+            }
+        }
         // Get animal age
         if (entity instanceof Ageable) {
             isAdult = ((Ageable) entity).isAdult();
@@ -85,7 +108,7 @@ public class EntitySerializer {
                 customDesc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
             }
         }
-
+        
         serializer(entity);
     }
 
@@ -98,8 +121,19 @@ public class EntitySerializer {
      */
     public final void deserialize(Entity entity) {
         // Get custom name
-        if (entity instanceof LivingEntity && customName != null) {
+        if (customName != null) {
             entity.setCustomName(customName);
+        }
+        if (entity instanceof LivingEntity) {
+            EntityEquipment inv = ((LivingEntity) entity).getEquipment();
+            if (inv != null) {
+                equipment.forEach(
+                      (s, prismItemStack) -> {
+                          if (prismItemStack != null) {
+                              inv.setItem(EquipmentSlot.valueOf(s), prismItemStack.toBukkit());
+                          }
+                      });
+            }
         }
 
         // Get animal age
