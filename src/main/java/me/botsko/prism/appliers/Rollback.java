@@ -39,7 +39,6 @@ public class Rollback extends Preview {
     public void apply() {
 
         if (player != null) {
-            Audience audience = Prism.getAudiences().player(player);
             // Remove any fire at this location
             if (plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback")
                     && parameters.getActionTypes().containsKey("block-burn")) {
@@ -83,7 +82,7 @@ public class Rollback extends Preview {
             }
         }
 
-        // Give the results to the changequeue
+        // Give the results to the change queue
         super.apply();
 
     }
