@@ -30,7 +30,7 @@ public class EntitySerializer {
     @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
     
-    private Map<String,PrismItemStack> equipment = new HashMap<>();
+    protected Map<String,PrismItemStack> equipment = new HashMap<>();
     
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;

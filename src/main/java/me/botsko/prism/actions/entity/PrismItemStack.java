@@ -7,7 +7,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import javax.annotation.Nonnull;
 
 /**
  * Created for the Prism-Bukkit Project.
