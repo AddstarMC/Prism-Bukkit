@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.Prism;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.actions.Handler;
 
@@ -23,7 +24,8 @@ public class RecordingQueue {
         if (a == null) {
             return;
         }
-        if (a.getSourceName().trim().isEmpty()) {
+        if (a.getSourceName() == null || a.getSourceName().trim().isEmpty()) {
+            Prism.debug("Handler dropped Source empty - " + a.toString());
             return;
         }
         queue.add(a);

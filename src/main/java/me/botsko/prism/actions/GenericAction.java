@@ -13,6 +13,7 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
 import java.util.UUID;
@@ -207,6 +208,7 @@ public abstract class GenericAction implements Handler {
     public void setPlayer(AnimalTamer player) {
         if (player != null) {
             setUuid(player.getUniqueId());
+            this.sourceName = player.getName();
         }
     }
 
@@ -216,11 +218,10 @@ public abstract class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#getPlayerName()
      */
     @Override
-    public String getSourceName() {
+    public @Nullable String getSourceName() {
         if (sourceName != null) {
             return sourceName;
         }
-
         return Bukkit.getOfflinePlayer(playerUuid).getName();
     }
 

@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public interface Handler {
 
     Location getLoc();
 
-    String getSourceName();
+    @Nullable String getSourceName();
 
     void setSourceName(String name);
 
