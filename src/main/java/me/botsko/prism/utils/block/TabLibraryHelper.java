@@ -57,7 +57,6 @@ public class TabLibraryHelper {
             Material.LEVER,
             Material.REDSTONE_WALL_TORCH,
             Material.NETHER_PORTAL,
-            Material.BEACON,
             Material.VINE,
             Material.COCOA,
             Material.TRIPWIRE_HOOK,
