@@ -1,5 +1,6 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
+import me.botsko.prism.serializers.items.ItemStackSerializer;
 import org.bukkit.entity.AbstractVillager;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class AbstractVillagerSerializer extends EntitySerializer {
 
-    protected List<PrismItemStack> inventory = new ArrayList<>();
+    protected List<ItemStackSerializer> inventory = new ArrayList<>();
 
 
     @Override
@@ -21,7 +22,7 @@ public class AbstractVillagerSerializer extends EntitySerializer {
         super.serializer(entity);
         ((AbstractVillager) entity).getInventory().forEach(itemStack -> {
             if (itemStack != null) {
-                inventory.add(PrismItemStack.fromBukkit(itemStack));
+                inventory.add(ItemStackSerializer.createItemStackSerialized(itemStack));
             }
         });
     }

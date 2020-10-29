@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.serializers.SerializationHandler;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Art;
 import org.bukkit.Location;
@@ -42,13 +43,13 @@ public class HangingItemAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return gson().toJson(actionData);
+        return SerializationHandler.gson().toJson(actionData);
     }
 
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
-            actionData = gson().fromJson(data, HangingItemActionData.class);
+            actionData = SerializationHandler.gson().fromJson(data, HangingItemActionData.class);
         }
     }
 

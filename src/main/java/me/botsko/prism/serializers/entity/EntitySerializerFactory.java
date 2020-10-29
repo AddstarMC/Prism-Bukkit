@@ -1,4 +1,4 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import org.bukkit.entity.EntityType;
 

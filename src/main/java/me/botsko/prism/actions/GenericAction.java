@@ -6,6 +6,9 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.serializers.SerializationHandler;
+import me.botsko.prism.serializers.items.ItemStackDataDeserializer;
+import me.botsko.prism.serializers.items.ItemStackSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,7 +24,6 @@ import java.util.UUID;
 public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
-    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private boolean canceled = false;
     private ActionType type;
 
@@ -47,10 +49,7 @@ public abstract class GenericAction implements Handler {
 
     public GenericAction() {
         epoch = System.currentTimeMillis() / 1000;
-    }
 
-    protected static Gson gson() {
-        return GenericAction.gson;
     }
 
     @Override
@@ -138,9 +137,9 @@ public abstract class GenericAction implements Handler {
         long period = 24 * 60 * 60;
 
         final long[] diff = {
-              diffInSeconds / period,
-              (diffInSeconds / (period /= 24)) % 24,
-              (diffInSeconds / (period /= 60)) % 60
+                diffInSeconds / period,
+                (diffInSeconds / (period /= 24)) % 24,
+                (diffInSeconds / (period /= 60)) % 60
         };
 
         StringBuilder timeAgo = new StringBuilder();

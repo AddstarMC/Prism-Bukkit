@@ -1,6 +1,7 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import com.google.gson.annotations.SerializedName;
+import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.Material;
@@ -28,7 +29,7 @@ public class EntitySerializer {
     @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
     
-    protected Map<String,PrismItemStack> equipment = new HashMap<>();
+    protected Map<String, ItemStackSerializer> equipment = new HashMap<>();
     
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
@@ -71,7 +72,7 @@ public class EntitySerializer {
                     if (s.getType() == Material.AIR) {
                         continue;
                     }
-                    equipment.put(slot.name(),PrismItemStack.fromBukkit(inv.getItem(slot)));
+                    equipment.put(slot.name(),ItemStackSerializer.createItemStackSerialized(inv.getItem(slot)));
                 }
             }
         }

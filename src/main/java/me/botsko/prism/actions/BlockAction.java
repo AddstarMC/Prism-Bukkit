@@ -7,6 +7,7 @@ import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.serializers.SerializationHandler;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
@@ -168,25 +169,25 @@ public class BlockAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return gson().toJson(actionData);
+        return SerializationHandler.gson().toJson(actionData);
     }
 
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
             if (Tag.BANNERS.isTagged(getMaterial())) {
-                actionData = gson().fromJson(data, BannerActionData.class);
+                actionData = SerializationHandler.gson().fromJson(data, BannerActionData.class);
             } else if (getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD) {
-                actionData = gson().fromJson(data, SkullActionData.class);
+                actionData = SerializationHandler.gson().fromJson(data, SkullActionData.class);
             } else if (getMaterial() == SPAWNER) {
-                actionData = gson().fromJson(data, SpawnerActionData.class);
+                actionData = SerializationHandler.gson().fromJson(data, SpawnerActionData.class);
             } else if (Tag.SIGNS.isTagged(getMaterial())) {
-                actionData = gson().fromJson(data, SignActionData.class);
+                actionData = SerializationHandler.gson().fromJson(data, SignActionData.class);
             } else if (getMaterial() == COMMAND_BLOCK) {
                 actionData = new CommandActionData();
                 ((CommandActionData) actionData).command = data;
             } else {
-                actionData = gson().fromJson(data, BlockActionData.class);
+                actionData = SerializationHandler.gson().fromJson(data, BlockActionData.class);
             }
         }
     }

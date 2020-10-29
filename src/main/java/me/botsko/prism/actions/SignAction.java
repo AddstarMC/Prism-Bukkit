@@ -3,6 +3,7 @@ package me.botsko.prism.actions;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.serializers.SerializationHandler;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -46,7 +47,7 @@ public class SignAction extends GenericAction {
     @Override
     public void deserialize(String data) {
         if (data != null && !data.isEmpty()) {
-            actionData = gson().fromJson(data, SignChangeActionData.class);
+            actionData = SerializationHandler.gson().fromJson(data, SignChangeActionData.class);
         }
     }
 
@@ -57,7 +58,7 @@ public class SignAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return gson().toJson(actionData);
+        return SerializationHandler.gson().toJson(actionData);
     }
 
     /**

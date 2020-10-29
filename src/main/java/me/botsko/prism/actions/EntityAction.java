@@ -3,8 +3,9 @@ package me.botsko.prism.actions;
 import com.google.gson.JsonObject;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.entity.EntitySerializer;
-import me.botsko.prism.actions.entity.EntitySerializerFactory;
+import me.botsko.prism.serializers.SerializationHandler;
+import me.botsko.prism.serializers.entity.EntitySerializer;
+import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import org.bukkit.Location;
@@ -67,14 +68,14 @@ public class EntityAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return gson().toJson(serializer);
+        return SerializationHandler.gson().toJson(serializer);
     }
 
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
-            String entityName = gson().fromJson(data, JsonObject.class).get("entityName").getAsString();
-            serializer = gson().fromJson(data, EntitySerializerFactory.getSerializingClass(getEntityType(entityName)));
+            String entityName = SerializationHandler.gson().fromJson(data, JsonObject.class).get("entityName").getAsString();
+            serializer = SerializationHandler.gson().fromJson(data, EntitySerializerFactory.getSerializingClass(getEntityType(entityName)));
         }
     }
 

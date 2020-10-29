@@ -1,21 +1,21 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Wolf;
+import org.bukkit.entity.Sheep;
 
-public class WolfSerializer extends EntitySerializer {
+public class SheepSerializer extends EntitySerializer {
     protected String color = null;
 
     @Override
     protected void serializer(Entity entity) {
-        color = ((Wolf) entity).getCollarColor().name().toLowerCase();
+        color = ((Sheep) entity).getColor().name().toLowerCase();
     }
 
     @Override
     protected void deserializer(Entity entity) {
-        ((Wolf) entity).setCollarColor(MiscUtils.getEnum(color, DyeColor.RED));
+        ((Sheep) entity).setColor(MiscUtils.getEnum(color, DyeColor.WHITE));
     }
 
     @Override

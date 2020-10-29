@@ -1,21 +1,20 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Parrot;
 
-public class CatSerializer extends EntitySerializer {
+public class ParrotSerializer extends EntitySerializer {
     protected String var = null;
 
     @Override
     protected void serializer(Entity entity) {
-        var = ((Cat) entity).getCatType().name().toLowerCase();
+        var = ((Parrot) entity).getVariant().name().toLowerCase();
     }
 
     @Override
     protected void deserializer(Entity entity) {
-        Cat.Type type = MiscUtils.getEnum(var, Cat.Type.ALL_BLACK);
-        ((Cat) entity).setCatType(type);
+        ((Parrot) entity).setVariant(MiscUtils.getEnum(var, Parrot.Variant.RED));
     }
 
     @Override
