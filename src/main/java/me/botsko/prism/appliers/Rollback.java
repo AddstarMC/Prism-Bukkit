@@ -82,7 +82,7 @@ public class Rollback extends Preview {
             }
         }
 
-        // Give the results to the changequeue
+        // Give the results to the change queue
         super.apply();
 
     }

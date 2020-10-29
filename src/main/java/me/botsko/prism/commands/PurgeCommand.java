@@ -27,7 +27,6 @@ public class PurgeCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        Audience sender = Prism.getAudiences().sender(call.getSender());
         if (call.getArgs().length < 1) {
             Prism.messenger.sendMessage(call.getSender(),
                     Prism.messenger.playerHeaderMsg(Component.text("Prism")
