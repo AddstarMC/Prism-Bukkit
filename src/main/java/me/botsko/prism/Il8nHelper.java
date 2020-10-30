@@ -2,6 +2,7 @@ package me.botsko.prism;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.util.UTF8ResourceBundleControl;
 import org.jetbrains.annotations.PropertyKey;
 
@@ -34,7 +35,7 @@ public class Il8nHelper {
      */
     public static TextComponent getMessage(@PropertyKey(resourceBundle = "languages.message") String key,
                                            String extra) {
-        return Component.text(getRawMessage(key + extra));
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(getRawMessage(key + extra));
     }
 
     /**
@@ -68,7 +69,7 @@ public class Il8nHelper {
         try {
             String format = resourceBundle.getString(key);
             String out = String.format(format, args);
-            return Component.text(out);
+            return LegacyComponentSerializer.legacyAmpersand().deserialize(out);
         } catch (MissingResourceException e) {
             Prism.log("Missing Resource " + e.getMessage());
             return Component.text(key);

@@ -765,9 +765,7 @@ public class Prism extends JavaPlugin {
         for (final Player p : getServer().getOnlinePlayers()) {
             if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
                 if (p.hasPermission("prism.alerts")) {
-                    TextComponent prefix = Component.text("[!]")
-                            .color(NamedTextColor.RED)
-                            .append(msg);
+                    TextComponent prefix = Il8nHelper.getMessage("alert-prefix").append(msg);
                     audiences.player(p).sendMessage(Identity.nil(),prefix);
                 }
             }
