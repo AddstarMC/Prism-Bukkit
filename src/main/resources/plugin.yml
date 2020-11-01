@@ -215,6 +215,8 @@ permissions:
         default: false
     prism.ignore.tracking.xp-pickup:
         default: false
+    prism.override-max-lookup-radius:
+        default: op
     prism.parameters.*:
         default: op
         children:

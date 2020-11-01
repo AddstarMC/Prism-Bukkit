@@ -8,10 +8,13 @@ import me.botsko.prism.serializers.entity.EntitySerializer;
 import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.serializers.entity.VillagerSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class EntityAction extends GenericAction {
@@ -103,7 +106,13 @@ public class EntityAction extends GenericAction {
             if (!isPreview) {
                 final Location loc = getLoc().add(0.5, 0.0, 0.5);
                 if (entityType.getEntityClass() != null && loc.getWorld() != null) {
-                    loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> serializer.deserialize(entity));
+                    Prism.debug("Spawning on Rollback: " + SerializationHandler.gson().toJson(serializer));
+                    Entity e = loc.getWorld().spawnEntity(loc, entityType, CreatureSpawnEvent.SpawnReason.CUSTOM,
+                            entity -> serializer.deserialize(entity));
+                    serializer.deserialize(e);//apply serializer to e;
+                    VillagerSerializer out = new VillagerSerializer();
+                    out.serialize(e);
+                    Prism.debug("Spawned on Rollback: " + SerializationHandler.gson().toJson(out));
                 } else {
                     return new ChangeResult(ChangeResultType.SKIPPED, null);
                 }

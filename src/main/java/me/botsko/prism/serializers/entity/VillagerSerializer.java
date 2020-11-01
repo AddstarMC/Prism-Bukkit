@@ -10,6 +10,7 @@ import org.bukkit.inventory.MerchantRecipe;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class VillagerSerializer extends AbstractVillagerSerializer {
 
@@ -45,10 +46,14 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
         ((Villager) entity).setVillagerExperience(villagerXp);
         ((Villager) entity).setVillagerType(MiscUtils.getEnum(type, Villager.Type.PLAINS));
         List<MerchantRecipe> bukkitRecipes = new ArrayList<>();
-        recipes.forEach(villagerRecipe -> bukkitRecipes.add(
-              new MerchantRecipe(villagerRecipe.result.toBukkit(), villagerRecipe.currentUses,
-              villagerRecipe.maxUses, villagerRecipe.experienceReward, villagerRecipe.villagerXp,
-              villagerRecipe.priceMultiplier)));
+        recipes.forEach(villagerRecipe -> {
+            MerchantRecipe recipe = new MerchantRecipe(villagerRecipe.result.toBukkit(), villagerRecipe.currentUses,
+                    villagerRecipe.maxUses, villagerRecipe.experienceReward, villagerRecipe.villagerXp,
+                    villagerRecipe.priceMultiplier);
+            villagerRecipe.ingredient.forEach(itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
+            bukkitRecipes.add(recipe);
+
+        });
         ((Villager) entity).setRecipes(bukkitRecipes);
     }
 

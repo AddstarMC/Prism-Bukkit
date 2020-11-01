@@ -123,7 +123,7 @@ public class ItemStackAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return SerializationHandler.gson().toJson(actionData);
+        return SerializationHandler.gson().toJson(actionData,ItemStackSerializer.class);
     }
 
     @Override

@@ -49,16 +49,16 @@ public class MiscUtils {
 
         // Safety checks for max lookup radius
         int maxLookupRadius = config.getInt("prism.queries.max-lookup-radius");
-        if (maxLookupRadius <= 0) {
+        if (maxLookupRadius <= 0.99) {
             maxLookupRadius = 5;
-            Prism.log("Max lookup radius may not be lower than one. Using safe inputue of five.");
+            Prism.log("Max lookup radius may not be lower than one. Using safe input of five.");
         }
 
         // Safety checks for max applier radius
         int maxApplierRadius = config.getInt("prism.queries.max-applier-radius");
-        if (maxApplierRadius <= 0) {
+        if (maxApplierRadius <= 0.99) {
             maxApplierRadius = 5;
-            Prism.log("Max applier radius may not be lower than one. Using safe inputue of five.");
+            Prism.log("Max applier radius may not be lower than one. Using safe input of five.");
         }
 
         // Does the radius exceed the configured max?

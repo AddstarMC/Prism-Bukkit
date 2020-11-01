@@ -93,7 +93,11 @@ public class TypeUtils {
             }
         }
         if (hex.length() != 7 && !hex.startsWith("#")) {
-            Prism.log("Could not decode:" + hex);
+            Prism.log("Could not decode as hex:" + hex);
+            TextColor color = NamedTextColor.NAMES.value(hex);
+                if (color != null) {
+                    return color;
+                }
             return NamedTextColor.WHITE;
         }
         TextColor color = TextColor.fromHexString(hex);
@@ -101,7 +105,6 @@ public class TypeUtils {
             return NamedTextColor.WHITE;
         }
         return color;
-
     }
 
     /**

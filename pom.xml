@@ -57,12 +57,12 @@
 		<test.mysql.database>prism</test.mysql.database>
 	</properties>
 	<dependencies>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<version>${bukkit.version}</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>io.papermc</groupId>
 			<artifactId>paperlib</artifactId>
@@ -141,10 +141,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- linked to Paper dependency-->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.30</version>
+			<version>1.7.25</version>
 		</dependency>
 		<dependency>
 			<!-- linked to Paper/Spigots dependency-->
@@ -179,8 +180,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.github.seeseemelk</groupId>
-			<artifactId>MockBukkit</artifactId>
-			<version>v1.15-593aa2e63c-1</version>
+			<artifactId>MockBukkit-v1.16</artifactId>
+			<version>0.5.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -189,11 +190,11 @@
 			<version>4.13.1</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
 			<version>3.6.0</version>
-		</dependency>
+		</dependency>-->
 	</dependencies>
 	<repositories>
 		<repository>
@@ -307,7 +308,7 @@
 					</relocation>
 					<relocation>
 						<pattern>net.kyori</pattern>
-						<shadedPattern>com.botsko.prism.libs.adventure</shadedPattern>
+						<shadedPattern>com.botsko.prism.libs</shadedPattern>
 					</relocation>
 				</relocations>
 			</configuration>

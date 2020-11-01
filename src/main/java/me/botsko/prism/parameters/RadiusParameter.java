@@ -1,6 +1,7 @@
 package me.botsko.prism.parameters;
 
 import me.botsko.prism.ApiHandler;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.PrismProcessType;
@@ -154,12 +155,12 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                     // Do they have permission to override the global lookup radius
                     if (query.getProcessType().equals(PrismProcessType.LOOKUP)
                             && !player.hasPermission("prism.override-max-lookup-radius")) {
-                        throw new IllegalArgumentException("You do not have permission to override the max radius.");
+                        throw new IllegalArgumentException(Il8nHelper.getRawMessage("parameter-radius-override-no-permission"));
                     }
                     // Do they have permission to override the global applier radius
                     if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
                             && !player.hasPermission("prism.override-max-applier-radius")) {
-                        throw new IllegalArgumentException("You do not have permission to override the max radius.");
+                        throw new IllegalArgumentException(Il8nHelper.getRawMessage("parameter-radius-override-no-permission"));
                     }
                     // Use the world defined in the w: param
                     if (query.getWorld() != null) {
@@ -176,12 +177,12 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                     // Do they have permission to override the global lookup radius
                     if (query.getProcessType().equals(PrismProcessType.LOOKUP)
                             && !player.hasPermission("prism.override-max-lookup-radius")) {
-                        throw new IllegalArgumentException("You do not have permission to override the max radius.");
+                        throw new IllegalArgumentException(Il8nHelper.getRawMessage("parameter-radius-override-no-permission"));
                     }
                     // Do they have permission to override the global applier radius
                     if (!query.getProcessType().equals(PrismProcessType.LOOKUP)
                             && !player.hasPermission("prism.override-max-applier-radius")) {
-                        throw new IllegalArgumentException("You do not have permission to override the max radius.");
+                        throw new IllegalArgumentException(Il8nHelper.getRawMessage("parameter-radius-override-no-permission"));
                     }
                     // Either they have permission or player is null
                     query.setWorld(null);
