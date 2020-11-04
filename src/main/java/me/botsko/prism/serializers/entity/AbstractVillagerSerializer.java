@@ -33,7 +33,6 @@ public class AbstractVillagerSerializer extends EntitySerializer {
         List<ItemStack> items = new ArrayList<>();
         inventory.forEach(prismItemStack -> items.add(prismItemStack.toBukkit()));
         ((AbstractVillager) entity).getInventory().setContents(items.toArray(new ItemStack[0]));
-
     }
 
 }

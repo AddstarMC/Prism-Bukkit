@@ -104,6 +104,9 @@ public class MiscUtils {
     }
 
     public static String niceName(String in) {
+        if(in == null) {
+            return "";
+        }
         String[] parts = in.replace('_', ' ').trim().split("", 2);
         return parts[0].toUpperCase() + parts[1].toLowerCase();
     }

@@ -5,6 +5,8 @@ import org.bukkit.DyeColor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Wolf;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class WolfSerializer extends EntitySerializer {
     protected String color = null;
 
@@ -19,9 +21,7 @@ public class WolfSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
-        if (color != null) {
-            sb.insert(start, MiscUtils.niceName(color)).insert(start + color.length(), ' ');
-        }
+    protected void niceName(AtomicReference<String> name) {
+        name.set(name.get().replace("<prefix",MiscUtils.niceName(color)));
     }
 }

@@ -4,6 +4,8 @@ import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Panda;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class PandaSerializer extends EntitySerializer {
     protected String mainGene = null;
     protected String hiddenGene = null;
@@ -23,7 +25,7 @@ public class PandaSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
+    protected void niceName(AtomicReference<String> name) {
         if (mainGene != null && hiddenGene != null) {
             String niceName;
             if ("weak".equals(mainGene) && !"weak".equals(hiddenGene)) {
@@ -33,7 +35,7 @@ public class PandaSerializer extends EntitySerializer {
             } else {
                 niceName = mainGene;
             }
-            sb.insert(start, MiscUtils.niceName(niceName)).insert(start + niceName.length(), ' ');
+            name.set(name.get().replace("<prefix",MiscUtils.niceName(niceName)));
         }
     }
 }

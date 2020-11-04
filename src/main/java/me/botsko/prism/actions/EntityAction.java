@@ -107,12 +107,19 @@ public class EntityAction extends GenericAction {
                 final Location loc = getLoc().add(0.5, 0.0, 0.5);
                 if (entityType.getEntityClass() != null && loc.getWorld() != null) {
                     Prism.debug("Spawning on Rollback: " + SerializationHandler.gson().toJson(serializer));
-                    Entity e = loc.getWorld().spawnEntity(loc, entityType, CreatureSpawnEvent.SpawnReason.CUSTOM,
-                            entity -> serializer.deserialize(entity));
-                    serializer.deserialize(e);//apply serializer to e;
-                    VillagerSerializer out = new VillagerSerializer();
-                    out.serialize(e);
-                    Prism.debug("Spawned on Rollback: " + SerializationHandler.gson().toJson(out));
+                    Entity e = loc.getWorld().spawnEntity(loc, entityType);
+                    Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
+                        Entity ent = Bukkit.getEntity(e.getUniqueId());
+                        if (ent == null) {
+                            Prism.debug("Spawned on Rollback: null");
+                            return;
+                        }
+                        serializer.deserialize(ent);
+                        VillagerSerializer out = new VillagerSerializer();
+                        Entity newEnt = Bukkit.getEntity(ent.getUniqueId());
+                        out.serialize(newEnt);
+                        Prism.debug("Spawned on Rollback: " + SerializationHandler.gson().toJson(out));
+                    },1);
                 } else {
                     return new ChangeResult(ChangeResultType.SKIPPED, null);
                 }

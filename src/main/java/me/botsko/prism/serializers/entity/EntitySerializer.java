@@ -1,6 +1,7 @@
 package me.botsko.prism.serializers.entity;
 
 import com.google.gson.annotations.SerializedName;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
@@ -20,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class EntitySerializer {
     //@todo remove alternates after 2.1.7 release
@@ -55,6 +57,7 @@ public class EntitySerializer {
         newColor = color;
     }
 
+    private final static transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
     /**
      * Serialize entity.
      * @param entity Entity.
@@ -162,36 +165,34 @@ public class EntitySerializer {
 
     @Override
     public final String toString() {
-        StringBuilder sb = new StringBuilder();
-        int index = 0;
+        String format = NAME_FORMAT;
         if (tamingOwner != null) {
-
             OfflinePlayer player = EntityUtils.offlineOf(tamingOwner);
             if (player != null) {
-                String str = player.getName() + "'s ";
-                sb.append(str);
-                index = str.length();
+                format = format.replace("<owner>",player.getName() + "'s");
             }
         }
 
         if (Boolean.FALSE.equals(isAdult)) {
-            sb.append("baby ");
+            format = format.replace("<isAdult>","baby");
         }
-
-        sb.append(MiscUtils.niceName(entityName));
-
-        if (newColor != null) {
-            sb.append(' ').append(MiscUtils.niceName(newColor));
-        }
-
+        format = format.replace("<type>",MiscUtils.niceName(entityName));
+        format = format.replace("<colour>",MiscUtils.niceName(newColor));
         if (customName != null) {
-            sb.append(" named ").append(customName);
+            format = format.replace("<customName>",customName);
         }
-
-        niceName(sb, index);
-        return sb.toString();
+        AtomicReference<String> name = new AtomicReference<>(format);
+        niceName(name);
+        format = name.get()
+                .replace("<isAdult>","")
+                .replace("<colour>","")
+                .replace("<owner>","")
+                .replace("<prefix>","")
+                .replace("<suffix>","")
+                .replace("<customName>","");
+        return format;
     }
 
-    protected void niceName(StringBuilder sb, int start) {
+    protected void niceName(AtomicReference<String> name) {
     }
 }

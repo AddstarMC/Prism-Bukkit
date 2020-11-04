@@ -4,6 +4,8 @@ import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Parrot;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ParrotSerializer extends EntitySerializer {
     protected String var = null;
 
@@ -18,9 +20,7 @@ public class ParrotSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
-        if (var != null) {
-            sb.insert(start, MiscUtils.niceName(var)).insert(start + var.length(), ' ');
-        }
+    protected void niceName(AtomicReference<String> name) {
+        name.set(name.get().replace("<prefix",MiscUtils.niceName(var)));
     }
 }

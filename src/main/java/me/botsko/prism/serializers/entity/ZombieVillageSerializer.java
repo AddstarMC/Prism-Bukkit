@@ -5,6 +5,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.ZombieVillager;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ZombieVillageSerializer extends EntitySerializer {
     protected String profession = null;
 
@@ -19,9 +21,9 @@ public class ZombieVillageSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
-        if (profession != null) {
-            sb.insert(start, MiscUtils.niceName(profession)).insert(start + profession.length(), ' ');
-        }
+    protected void niceName(AtomicReference<String> name) {
+        name.set(name.get()
+                .replace("<suffix>","(" + MiscUtils.niceName(profession) + ")")
+        );
     }
 }

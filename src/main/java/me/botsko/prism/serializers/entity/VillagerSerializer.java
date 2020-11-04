@@ -10,6 +10,7 @@ import org.bukkit.inventory.MerchantRecipe;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public class VillagerSerializer extends AbstractVillagerSerializer {
@@ -58,11 +59,11 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
-        if (profession != null) {
-            String detail = MiscUtils.niceName(type) + " " + MiscUtils.niceName(profession + " ");
-            sb.insert(start, detail);
-        }
+    protected void niceName(AtomicReference<String> name) {
+        name.set(name.get()
+                .replace("<prefix",MiscUtils.niceName(type))
+                .replace("<suffix>","(" + MiscUtils.niceName(profession) + ")")
+        );
     }
 
     public static class VillagerRecipe {

@@ -161,7 +161,7 @@ public class WandCommand extends AbstractCommand {
                 break;
             case "restore":
             case "rs":
-                if (checkNoPermissions(call.getPlayer(), "prism.restor", "prism.wand.restore")) {
+                if (checkNoPermissions(call.getPlayer(), "prism.restore", "prism.wand.restore")) {
                     return;
                 }
                 if (oldWand instanceof RestoreWand) {

@@ -11,6 +11,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse;
 import org.bukkit.entity.Llama;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class AbstractHorseSerializer extends EntitySerializer {
     protected String horseColor = null;
     protected String style = null;
@@ -100,15 +102,10 @@ public class AbstractHorseSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
-        if (horseColor != null) {
-            sb.insert(start, MiscUtils.niceName(horseColor)).insert(start + horseColor.length(), ' ');
-            start += horseColor.length() + 1;
-        }
-
-        if (style != null) {
-            sb.insert(start, MiscUtils.niceName(style)).insert(start + style.length(), ' ');
-            // start += style.length() + 1;
-        }
+    protected void niceName(AtomicReference<String> name) {
+        String out = name.get()
+                .replace("<prefix>",MiscUtils.niceName(horseColor)
+                        + " " + MiscUtils.niceName(style));
+        name.set(out);
     }
 }
