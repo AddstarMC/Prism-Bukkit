@@ -5,7 +5,7 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.serializers.SerializationHandler;
+import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.ItemUtils;
@@ -107,7 +107,7 @@ public class ItemStackAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return SerializationHandler.gson().toJson(actionData,ItemStackSerializer.class);
+        return SerializationHelper.gson().toJson(actionData,ItemStackSerializer.class);
     }
 
     @Override

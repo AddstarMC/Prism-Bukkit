@@ -3,7 +3,7 @@ package me.botsko.prism.actions;
 import com.google.gson.JsonObject;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.serializers.SerializationHandler;
+import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.entity.EntitySerializer;
 import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.appliers.ChangeResult;
@@ -68,14 +68,14 @@ public class EntityAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return SerializationHandler.gson().toJson(serializer);
+        return SerializationHelper.gson().toJson(serializer);
     }
 
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
-            String entityName = SerializationHandler.gson().fromJson(data, JsonObject.class).get("entityName").getAsString();
-            serializer = SerializationHandler.gson().fromJson(data, EntitySerializerFactory.getSerializingClass(getEntityType(entityName)));
+            String entityName = SerializationHelper.gson().fromJson(data, JsonObject.class).get("entityName").getAsString();
+            serializer = SerializationHelper.gson().fromJson(data, EntitySerializerFactory.getSerializingClass(getEntityType(entityName)));
         }
     }
 
@@ -103,7 +103,7 @@ public class EntityAction extends GenericAction {
             if (!isPreview) {
                 final Location loc = getLoc().add(0.5, 0.0, 0.5);
                 if (entityType.getEntityClass() != null && loc.getWorld() != null) {
-                    Prism.debug("Spawning on Rollback: " + SerializationHandler.gson().toJson(serializer));
+                    Prism.debug("Spawning on Rollback: " + SerializationHelper.gson().toJson(serializer));
                     loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> serializer.deserialize(entity));
                     //todo this doesnt work for some reason in terms of applying serializations on spawn....
                     // Villagers dont seem to appear as per professions would require.

@@ -1,7 +1,7 @@
 package me.botsko.prism.serializers.items;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.serializers.SerializationHandler;
+import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.ItemUtils;
 import org.bukkit.Bukkit;
@@ -263,7 +263,7 @@ public class ItemStackSerializer {
         if (data == null || !data.startsWith("{")) {
             return null;
         }
-        return SerializationHandler.gson().fromJson(data, ItemStackSerializer.class);
+        return SerializationHelper.gson().fromJson(data, ItemStackSerializer.class);
     }
 
     private ItemStack applyFireWorksMeta(ItemStack item, ItemMeta meta) {

@@ -9,11 +9,13 @@ import me.botsko.prism.serializers.items.StorageItemStackSerializer;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 30/10/2020.
  */
-public class SerializationHandler {
+public class SerializationHelper {
     private static final Gson gson;
+
     static {
         GsonBuilder builder = new GsonBuilder().disableHtmlEscaping();
-        RuntimeTypeAdapterFactory<ItemStackSerializer> factory = RuntimeTypeAdapterFactory.of(ItemStackSerializer.class,"objectType");
+        RuntimeTypeAdapterFactory<ItemStackSerializer> factory = RuntimeTypeAdapterFactory
+                .of(ItemStackSerializer.class,"objectType");
         factory.registerSubtype(ItemStackSerializer.class);
         factory.registerSubtype(StorageItemStackSerializer.class);
         builder.registerTypeAdapterFactory(factory);

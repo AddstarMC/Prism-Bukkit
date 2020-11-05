@@ -5,9 +5,10 @@ package me.botsko.prism.serializers.items;
  * Created by benjamincharlton on 2/11/2020.
  */
 public class TestClass {
-    public StorageItemStackSerializer storage;
 
-    public TestClass() {
+    protected StorageItemStackSerializer storage;
+
+    protected TestClass() {
         this.storage = new StorageItemStackSerializer();
         storage.amt = 2;
         storage.material = "CHEST";

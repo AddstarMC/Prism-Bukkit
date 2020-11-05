@@ -16,12 +16,6 @@ package me.botsko.prism.serializers;
  * limitations under the License.
  */
 
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,6 +27,10 @@ import com.google.gson.internal.Streams;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Adapts values whose runtime type may differ from their declaration type. This
@@ -59,6 +57,7 @@ import com.google.gson.stream.JsonWriter;
  *     Shape topShape;
  *   }
  * }</pre>
+ *
  * <p>Without additional type information, the serialized JSON is ambiguous. Is
  * the bottom shape in this drawing a rectangle or a diamond? <pre>   {@code
  *   {
@@ -145,7 +144,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * {@code maintainType} flag decide if the type will be stored in pojo or not.
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName, boolean maintainType) {
-        return new RuntimeTypeAdapterFactory<T>(baseType, typeFieldName, maintainType);
+        return new RuntimeTypeAdapterFactory<>(baseType, typeFieldName, maintainType);
     }
 
     /**
@@ -153,7 +152,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * typeFieldName} as the type field name. Type field names are case sensitive.
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType, String typeFieldName) {
-        return new RuntimeTypeAdapterFactory<T>(baseType, typeFieldName, false);
+        return new RuntimeTypeAdapterFactory<>(baseType, typeFieldName, false);
     }
 
     /**
@@ -161,7 +160,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * the type field name.
      */
     public static <T> RuntimeTypeAdapterFactory<T> of(Class<T> baseType) {
-        return new RuntimeTypeAdapterFactory<T>(baseType, "type", false);
+        return new RuntimeTypeAdapterFactory<>(baseType, "type", false);
     }
 
     /**
@@ -169,7 +168,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or {@code label}
-     *     have already been registered on this type adapter.
+     *                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type, String label) {
         if (type == null || label == null) {
@@ -188,12 +187,19 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
      * name}. Labels are case sensitive.
      *
      * @throws IllegalArgumentException if either {@code type} or its simple name
-     *     have already been registered on this type adapter.
+     *                                  have already been registered on this type adapter.
      */
     public RuntimeTypeAdapterFactory<T> registerSubtype(Class<? extends T> type) {
         return registerSubtype(type, type.getSimpleName());
     }
 
+    /**
+     * Create  a new TypeAdapter from the factory.
+     * @param gson {@link Gson}
+     * @param type TypeToken
+     * @param <R> The Class group
+     * @return TypeAdapter
+     */
     public <R> TypeAdapter<R> create(Gson gson, TypeToken<R> type) {
         if (!subtypeToLabel.containsKey(type.getRawType())) {
             return null;
@@ -208,9 +214,14 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
             labelToDelegate.put(entry.getKey(), delegate);
             subtypeToDelegate.put(entry.getValue(), delegate);
         }
+        return createTypeAdapter(labelToDelegate,subtypeToDelegate);
+    }
 
+    private <R> TypeAdapter<R> createTypeAdapter(Map<String, TypeAdapter<?>> labelToDelegate,
+                                                 Map<Class<?>, TypeAdapter<?>> subtypeToDelegate) {
         return new TypeAdapter<R>() {
-            @Override public R read(JsonReader in) throws IOException {
+            @Override
+            public R read(JsonReader in) throws JsonParseException {
                 JsonElement jsonElement = Streams.parse(in);
                 JsonElement labelJsonElement;
                 if (maintainType) {
@@ -235,9 +246,9 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                 return delegate.fromJsonTree(jsonElement);
             }
 
-            @Override public void write(JsonWriter out, R value) throws IOException {
+            @Override
+            public void write(JsonWriter out, R value) throws IOException {
                 Class<?> srcType = value.getClass();
-                String label = subtypeToLabel.get(srcType);
                 @SuppressWarnings("unchecked") // registration requires that subtype extends T
                 TypeAdapter<R> delegate = (TypeAdapter<R>) subtypeToDelegate.get(srcType);
                 if (delegate == null) {
@@ -257,6 +268,7 @@ public final class RuntimeTypeAdapterFactory<T> implements TypeAdapterFactory {
                     throw new JsonParseException("cannot serialize " + srcType.getName()
                             + " because it already defines a field named " + typeFieldName);
                 }
+                String label = subtypeToLabel.get(srcType);
                 clone.add(typeFieldName, new JsonPrimitive(label));
 
                 for (Map.Entry<String, JsonElement> e : jsonObject.entrySet()) {

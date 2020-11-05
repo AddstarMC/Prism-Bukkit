@@ -24,23 +24,19 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EntitySerializer {
+    private final static transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
     //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;
-    
     @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
-    
+    @SerializedName(value = "equipment")
     protected Map<String, ItemStackSerializer> equipment = new HashMap<>();
-    
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
-
     @SerializedName(value = "tamingOwner", alternate = "taming_owner")
     protected String tamingOwner = null;
-
     protected String newColor = null;
-
     @SerializedName(value = "customDesc", alternate = "custom_desc")
     protected String customDesc = null;
 
@@ -52,14 +48,9 @@ public class EntitySerializer {
         return customDesc;
     }
 
-    // Le sigh
-    public final void setNewColor(String color) {
-        newColor = color;
-    }
-
-    private final static transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
     /**
      * Serialize entity.
+     *
      * @param entity Entity.
      */
     public final void serialize(Entity entity) {
@@ -70,12 +61,12 @@ public class EntitySerializer {
         if (entity instanceof LivingEntity) {
             EntityEquipment inv = ((LivingEntity) entity).getEquipment();
             if (inv != null) {
-                for (EquipmentSlot slot: EquipmentSlot.values()) {
+                for (EquipmentSlot slot : EquipmentSlot.values()) {
                     ItemStack s = inv.getItem(slot);
                     if (s.getType() == Material.AIR) {
                         continue;
                     }
-                    equipment.put(slot.name(),ItemStackSerializer.createItemStackSerialized(inv.getItem(slot)));
+                    equipment.put(slot.name(), ItemStackSerializer.createItemStackSerialized(inv.getItem(slot)));
                 }
             }
         }
@@ -110,8 +101,16 @@ public class EntitySerializer {
                 customDesc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
             }
         }
-        
+
         serializer(entity);
+    }
+
+    /**
+     * Set a new Color.
+     * @param color String
+     */
+    public final void setNewColor(String color) {
+        newColor = color;
     }
 
     protected void serializer(Entity entity) {
@@ -119,6 +118,7 @@ public class EntitySerializer {
 
     /**
      * Deserialize.
+     *
      * @param entity Entity
      */
     public final void deserialize(Entity entity) {
@@ -129,12 +129,11 @@ public class EntitySerializer {
         if (entity instanceof LivingEntity) {
             EntityEquipment inv = ((LivingEntity) entity).getEquipment();
             if (inv != null) {
-                equipment.forEach(
-                      (s, prismItemStack) -> {
-                          if (prismItemStack != null) {
-                              inv.setItem(EquipmentSlot.valueOf(s), prismItemStack.toBukkit());
-                          }
-                      });
+                equipment.forEach((s, prismItemStack) -> {
+                    if (prismItemStack != null) {
+                        inv.setItem(EquipmentSlot.valueOf(s), prismItemStack.toBukkit());
+                    }
+                });
             }
         }
 
@@ -169,27 +168,27 @@ public class EntitySerializer {
         if (tamingOwner != null) {
             OfflinePlayer player = EntityUtils.offlineOf(tamingOwner);
             if (player != null) {
-                format = format.replace("<owner>",player.getName() + "'s");
+                format = format.replace("<owner>", player.getName() + "'s");
             }
         }
 
         if (Boolean.FALSE.equals(isAdult)) {
-            format = format.replace("<isAdult>","baby");
+            format = format.replace("<isAdult>", "baby");
         }
-        format = format.replace("<type>",MiscUtils.niceName(entityName));
-        format = format.replace("<colour>",MiscUtils.niceName(newColor));
+        format = format.replace("<type>", MiscUtils.niceName(entityName));
+        format = format.replace("<colour>", MiscUtils.niceName(newColor));
         if (customName != null) {
-            format = format.replace("<customName>",customName);
+            format = format.replace("<customName>", customName);
         }
         AtomicReference<String> name = new AtomicReference<>(format);
         niceName(name);
         format = name.get()
-                .replace("<isAdult>","")
-                .replace("<colour>","")
-                .replace("<owner>","")
-                .replace("<prefix>","")
-                .replace("<suffix>","")
-                .replace("<customName>","");
+                .replace("<isAdult>", "")
+                .replace("<colour>", "")
+                .replace("<owner>", "")
+                .replace("<prefix>", "")
+                .replace("<suffix>", "")
+                .replace("<customName>", "");
         return format;
     }
 
