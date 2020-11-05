@@ -8,13 +8,10 @@ import me.botsko.prism.serializers.entity.EntitySerializer;
 import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.appliers.ChangeResult;
 import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.serializers.entity.VillagerSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class EntityAction extends GenericAction {
@@ -107,19 +104,9 @@ public class EntityAction extends GenericAction {
                 final Location loc = getLoc().add(0.5, 0.0, 0.5);
                 if (entityType.getEntityClass() != null && loc.getWorld() != null) {
                     Prism.debug("Spawning on Rollback: " + SerializationHandler.gson().toJson(serializer));
-                    Entity e = loc.getWorld().spawnEntity(loc, entityType);
-                    Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
-                        Entity ent = Bukkit.getEntity(e.getUniqueId());
-                        if (ent == null) {
-                            Prism.debug("Spawned on Rollback: null");
-                            return;
-                        }
-                        serializer.deserialize(ent);
-                        VillagerSerializer out = new VillagerSerializer();
-                        Entity newEnt = Bukkit.getEntity(ent.getUniqueId());
-                        out.serialize(newEnt);
-                        Prism.debug("Spawned on Rollback: " + SerializationHandler.gson().toJson(out));
-                    },1);
+                    loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> serializer.deserialize(entity));
+                    //todo this doesnt work for some reason in terms of applying serializations on spawn....
+                    // Villagers dont seem to appear as per professions would require.
                 } else {
                     return new ChangeResult(ChangeResultType.SKIPPED, null);
                 }
