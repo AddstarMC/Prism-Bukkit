@@ -8,23 +8,13 @@ import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.serializers.SerializationHelper;
+import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Nameable;
-import org.bukkit.Tag;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.block.data.Bisected;
@@ -38,12 +28,15 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.CHEST;
@@ -130,8 +123,7 @@ public class BlockAction extends GenericAction {
                     final Sign sign = (Sign) state;
                     signActionData.lines = sign.getLines();
                     actionData = signActionData;
-                }
-                if (Tag.BANNERS.isTagged(state.getType())) {
+                } else if (Tag.BANNERS.isTagged(state.getType())) {
                     final BannerActionData bannerActionData = new BannerActionData();
                     final Banner banner = (Banner) state;
                     bannerActionData.patterns = new HashMap<>();
@@ -140,6 +132,16 @@ public class BlockAction extends GenericAction {
                     banner.getPatterns().forEach(pattern ->
                             bannerActionData.patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
                     actionData = bannerActionData;
+                } else if (Tag.SHULKER_BOXES.isTagged(state.getType())) {
+                    InventoryHolder box = (InventoryHolder) state;
+                    ShulkerActionData shulkerActionData = new ShulkerActionData();
+                    box.getInventory().forEach(itemStack -> {
+                        if (itemStack != null && itemStack.getType() != AIR) {
+                            ItemStackSerializer serializer = ItemStackSerializer.createItemStackSerialized(itemStack);
+                            shulkerActionData.items.add(serializer);
+                        }
+                    });
+                    actionData = shulkerActionData;
                 }
                 break;
         }
@@ -184,8 +186,9 @@ public class BlockAction extends GenericAction {
             } else if (Tag.SIGNS.isTagged(getMaterial())) {
                 actionData = SerializationHelper.gson().fromJson(data, SignActionData.class);
             } else if (getMaterial() == COMMAND_BLOCK) {
-                actionData = new CommandActionData();
-                ((CommandActionData) actionData).command = data;
+                actionData = SerializationHelper.gson().fromJson(data,CommandActionData.class);
+            } else if (Tag.SHULKER_BOXES.isTagged(getMaterial())) {
+                actionData = SerializationHelper.gson().fromJson(data,ShulkerActionData.class);
             } else {
                 actionData = SerializationHelper.gson().fromJson(data, BlockActionData.class);
             }
@@ -377,6 +380,9 @@ public class BlockAction extends GenericAction {
                     && blockActionData instanceof SkullActionData) {
                 return handleSkulls(block, blockActionData, originalBlock);
             }
+            if (Tag.SHULKER_BOXES.isTagged(getMaterial()) && blockActionData instanceof ShulkerActionData) {
+                return handleShulkers(block, (ShulkerActionData) blockActionData,originalBlock);
+            }
             if (Tag.BANNERS.isTagged(getMaterial()) && blockActionData instanceof BannerActionData) {
                 return handleBanners(block, blockActionData, originalBlock);
             }
@@ -476,6 +482,21 @@ public class BlockAction extends GenericAction {
             sibling.update(true, physics);
         }
         return new ChangeResult(ChangeResultType.APPLIED, new BlockStateChange(originalBlock, state));
+    }
+
+    private ChangeResult handleShulkers(Block block, ShulkerActionData blockActionData, BlockState originalBlock) {
+        block.setType(getMaterial());
+        ShulkerBox state = (ShulkerBox) block.getState();
+        if (blockActionData.items.size() > 0) {
+            blockActionData.items.forEach(itemStackSerializer -> {
+                if (itemStackSerializer != null) {
+                    state.getInventory().addItem(itemStackSerializer.toBukkit());
+                }
+            });
+        }
+        state.update();
+        return new ChangeResult(ChangeResultType.APPLIED,new BlockStateChange(originalBlock,state));
+
     }
 
     private ChangeResult handleBanners(Block block, BlockActionData blockActionData, BlockState originalBlock) {
@@ -641,6 +662,10 @@ public class BlockAction extends GenericAction {
 
     public static class BannerActionData extends RotatableActionData {
         Map<String, String> patterns;
+    }
+
+    public static class ShulkerActionData extends BlockActionData {
+        List<ItemStackSerializer> items = new ArrayList<>();
     }
 
 }
