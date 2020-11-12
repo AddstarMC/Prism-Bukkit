@@ -44,7 +44,8 @@ public class ItemStackAction extends GenericAction {
      */
     private short tempDurability = -1;
 
-    private static ItemStackSerializer createItemStackActionData(ItemStack item, @Nullable  Map<Enchantment, Integer> enchantments) {
+    private static ItemStackSerializer createItemStackActionData(ItemStack item,
+                                                                 @Nullable  Map<Enchantment, Integer> enchantments) {
         ItemStackSerializer data = ItemStackSerializer.createItemStackSerialized(item);
         //overwrite actionData with provided enchants.
         if (enchantments != null && !enchantments.isEmpty()) {

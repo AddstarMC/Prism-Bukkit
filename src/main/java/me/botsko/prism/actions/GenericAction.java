@@ -132,9 +132,9 @@ public abstract class GenericAction implements Handler {
         long period = 24 * 60 * 60;
 
         final long[] diff = {
-                diffInSeconds / period,
-                (diffInSeconds / (period /= 24)) % 24,
-                (diffInSeconds / (period /= 60)) % 60
+              diffInSeconds / period,
+              (diffInSeconds / (period /= 24)) % 24,
+              (diffInSeconds / (period /= 60)) % 60
         };
 
         StringBuilder timeAgo = new StringBuilder();

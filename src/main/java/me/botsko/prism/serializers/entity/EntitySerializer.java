@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class EntitySerializer {
-    private final static transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
+    private static final transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
     //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;

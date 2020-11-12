@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class AbstractVillagerSerializer extends EntitySerializer {
 
-    protected List<ItemStackSerializer> inventory = new ArrayList<>();
+    protected final List<ItemStackSerializer> inventory = new ArrayList<>();
 
 
     @Override

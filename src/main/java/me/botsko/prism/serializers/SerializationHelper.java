@@ -21,6 +21,11 @@ public class SerializationHelper {
         builder.registerTypeAdapterFactory(factory);
         gson = builder.create();
     }
+
+    /**
+     * Gson.
+     * @return gson.
+     */
     public static Gson gson() {
         return gson;
     }

@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
@@ -15,6 +16,10 @@ import org.bukkit.Material;
 import java.util.regex.Pattern;
 
 public class ActionMessage {
+
+    private static final String format1 = Il8nHelper.getRawMessage("result-message-format-normal");
+    private static final String format2line1 = Il8nHelper.getRawMessage("result-message-format-extended-1");
+    private static final String format2line2 = Il8nHelper.getRawMessage("result-message-format-extended-2");
 
     protected final Handler handler;
 
@@ -46,8 +51,6 @@ public class ActionMessage {
      * @return String
      */
     public String getRawMessage() {
-        String format1 = "<prefix> <handlerId> <target> <actor> <extendedInfo> <actorNice> <count>"
-                + " <timeDiff> <location>";
         ActionType action = handler.getActionType();
         return PlainComponentSerializer.plain().serialize(getMainMessage(action, format1));
     }
@@ -59,7 +62,9 @@ public class ActionMessage {
                 .replaceFirstText(Pattern.compile("<index>"),
                       builder -> builder.content("[" + index + "] ").color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<target>"),
-                      builder -> Component.text().content(handler.getSourceName()).color(highlight))
+                      builder -> Component.text().content(
+                              handler.getSourceName() == null ? "NULL" : handler.getSourceName()
+                      ).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
                       builder -> Component.text().content(getDescription(action)).color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor(action, highlight))
@@ -94,14 +99,11 @@ public class ActionMessage {
      * @return String[]
      */
     public TextComponent getMessage() {
-        String format1 =
-                "<prefix> <index> <target> <description> <actorNice> <extendedInfo> <count> <timeDiff> <actionType>";
-        String format2 = "-<handlerId>- <dateTime> - <location>";
         ActionType action = handler.getActionType();
-        TextComponent out = getMainMessage(action, format1);
+        TextComponent out = getMainMessage(action, format2line1);
         if (showExtended) {
             out = out.append(Component.newline());
-            Component line2 = Component.text().content(format2).build()
+            Component line2 = Component.text().content(format2line2).build()
                     .replaceFirstText(Pattern.compile("<handlerId>"),
                           builder -> Component.text(handler.getId()).toBuilder()
                                     .color(NamedTextColor.GRAY))

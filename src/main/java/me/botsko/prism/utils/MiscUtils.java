@@ -103,8 +103,13 @@ public class MiscUtils {
         return fallback;
     }
 
+    /**
+     * Nice name for a String.
+     * @param in String
+     * @return String
+     */
     public static String niceName(String in) {
-        if(in == null) {
+        if (in == null) {
             return "";
         }
         String[] parts = in.replace('_', ' ').trim().split("", 2);

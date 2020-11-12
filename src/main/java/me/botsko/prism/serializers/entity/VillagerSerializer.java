@@ -7,11 +7,9 @@ import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.MerchantRecipe;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 public class VillagerSerializer extends AbstractVillagerSerializer {
 
@@ -30,7 +28,8 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
             final VillagerRecipe r = new VillagerRecipe();
             r.result = ItemStackSerializer.createItemStackSerialized(recipe.getResult());
             r.ingredient = new ArrayList<>();
-            recipe.getIngredients().forEach(rec -> r.ingredient.add(ItemStackSerializer.createItemStackSerialized(rec)));
+            recipe.getIngredients().forEach(rec -> r.ingredient.add(
+                    ItemStackSerializer.createItemStackSerialized(rec)));
             r.experienceReward = recipe.hasExperienceReward();
             r.maxUses = recipe.getMaxUses();
             r.currentUses = recipe.getUses();
@@ -51,7 +50,8 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
             MerchantRecipe recipe = new MerchantRecipe(villagerRecipe.result.toBukkit(), villagerRecipe.currentUses,
                     villagerRecipe.maxUses, villagerRecipe.experienceReward, villagerRecipe.villagerXp,
                     villagerRecipe.priceMultiplier);
-            villagerRecipe.ingredient.forEach(itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
+            villagerRecipe.ingredient.forEach(
+                  itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
             bukkitRecipes.add(recipe);
 
         });

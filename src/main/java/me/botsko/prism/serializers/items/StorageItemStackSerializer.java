@@ -21,7 +21,7 @@ public class StorageItemStackSerializer extends ItemStackSerializer {
     public ItemStack toBukkit() {
         ItemStack item =  super.toBukkit();
         ItemMeta meta = item.getItemMeta();
-        if( meta instanceof BlockStateMeta) {
+        if (meta instanceof BlockStateMeta) {
             BlockState state = ((BlockStateMeta) meta).getBlockState();
             if (state instanceof Container) {
                 Inventory inv = ((Container) state).getInventory();

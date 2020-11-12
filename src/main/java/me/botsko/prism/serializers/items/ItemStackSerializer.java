@@ -56,6 +56,11 @@ public class ItemStackSerializer {
     public Map<String, String> bannerMeta;
     public String material;
 
+    /**
+     * Creates a serialized item from a bukkit stack
+     * @param item ItemStack
+     * @return ItemStackSerializer
+     */
     public static ItemStackSerializer createItemStackSerialized(ItemStack item) {
         if (item == null || item.getAmount() <= 0) {
             return null;
@@ -138,7 +143,7 @@ public class ItemStackSerializer {
             List<Pattern> patterns = ((BannerMeta) meta).getPatterns();
             Map<String, String> stringyPatterns = new HashMap<>();
             patterns.forEach(
-                    pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
+                  pattern -> stringyPatterns.put(pattern.getPattern().getIdentifier(), pattern.getColor().name()));
             data.bannerMeta = stringyPatterns;
         }
         return data;
@@ -177,10 +182,15 @@ public class ItemStackSerializer {
         }
     }
 
+    /**
+     * Convert back to Bukkit Item.
+     * @return Itemstack.
+     */
     public ItemStack toBukkit() {
         Material m = Material.matchMaterial(material);
-        if (m == null)
+        if (m == null) {
             return null;
+        }
         ItemStack item = new ItemStack(m, amt);
 
         ItemUtils.setItemDamage(item, durability);
@@ -246,9 +256,9 @@ public class ItemStackSerializer {
                         Pattern p = new Pattern(color, type);
                         patterns.add(p);
                     }
-                } catch (IllegalArgumentException e){
-                    Prism.debug("Found illegal DyeColor stored in serialized banner: "+e.getMessage());
-                    Prism.debug("Data:  " +bannerMeta.toString());
+                } catch (IllegalArgumentException e) {
+                    Prism.debug("Found illegal DyeColor stored in serialized banner: " + e.getMessage());
+                    Prism.debug("Data:  " + bannerMeta.toString());
                 }
             });
             ((BannerMeta) meta).setPatterns(patterns);
@@ -259,6 +269,11 @@ public class ItemStackSerializer {
         return item;
     }
 
+    /**
+     * Create a ItemStackSerializer from a data string.
+     * @param data String
+     * @return ItemStackSerializer
+     */
     public static ItemStackSerializer deserialize(String data) {
         if (data == null || !data.startsWith("{")) {
             return null;

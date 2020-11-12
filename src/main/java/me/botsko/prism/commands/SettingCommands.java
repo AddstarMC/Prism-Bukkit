@@ -1,8 +1,11 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
+import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.commandlibs.CallInfo;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,10 +20,12 @@ public class SettingCommands extends AbstractCommand {
                 case "batchsize":
                     int actions = Integer.parseInt(call.getArg(1));
                     RecordingTask.setActionsPerInsert(actions);
-                    //todo add some feedback
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Il8nHelper.formatMessage("settings-batch-insert",actions));
                     return;
                 default:
-                    //todo add some feedback
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Il8nHelper.getMessage("invalid-command"));
             }
         }
         //todo add feedback
@@ -28,6 +33,9 @@ public class SettingCommands extends AbstractCommand {
 
     @Override
     public List<String> handleComplete(CallInfo call) {
+        if (call.getArgs().length == 1) {
+            return Collections.singletonList("batchsize");
+        }
         return null;
     }
 }
