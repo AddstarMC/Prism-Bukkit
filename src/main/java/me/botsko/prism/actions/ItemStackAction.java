@@ -38,7 +38,10 @@ import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.FireworkEffectMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,6 +131,11 @@ public class ItemStackAction extends GenericAction {
             if (skull.hasOwner()) {
                 actionData.owner = Objects.requireNonNull(skull.getOwningPlayer()).getUniqueId().toString();
             }
+        } else if (meta instanceof PotionMeta) {
+            final PotionMeta potion = (PotionMeta) meta;
+            actionData.potionType = potion.getBasePotionData().getType().toString().toLowerCase();
+            actionData.potionExtended = potion.getBasePotionData().isExtended();
+            actionData.potionUpgraded = potion.getBasePotionData().isUpgraded();
         }
 
         // Written books
@@ -296,6 +304,11 @@ public class ItemStackAction extends GenericAction {
             bookMeta.setTitle(actionData.title);
             bookMeta.setPages(actionData.content);
             item.setItemMeta(bookMeta);
+        } else if (meta instanceof PotionMeta) {
+            final PotionType potionType = PotionType.valueOf(actionData.potionType.toUpperCase());
+            final PotionMeta potionMeta = (PotionMeta) meta;
+            potionMeta.setBasePotionData(new PotionData(potionType, actionData.potionExtended,
+                    actionData.potionUpgraded));
         }
         if (meta instanceof FireworkEffectMeta && actionData.effectColors != null
                 && actionData.effectColors.length > 0) {
@@ -648,6 +661,8 @@ public class ItemStackAction extends GenericAction {
         public boolean hasTrail;
         public short durability = 0;
         public Map<String, String> bannerMeta;
-
+        public String potionType;
+        public boolean potionExtended;
+        public boolean potionUpgraded;
     }
 }
