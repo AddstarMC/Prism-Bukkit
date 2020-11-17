@@ -18,14 +18,9 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
-import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.EnchantmentStorageMeta;
-import org.bukkit.inventory.meta.FireworkEffectMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.inventory.meta.*;
+import org.bukkit.potion.PotionData;
+import org.bukkit.potion.PotionType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +50,9 @@ public class ItemStackSerializer {
     public short durability = 0;
     public Map<String, String> bannerMeta;
     public String material;
+    public String potionType;
+    public boolean potionExtended;
+    public boolean potionUpgraded;
 
     /**
      * Creates a serialized item from a bukkit stack
@@ -96,6 +94,11 @@ public class ItemStackSerializer {
             if (skull.hasOwner()) {
                 data.owner = Objects.requireNonNull(skull.getOwningPlayer()).getUniqueId().toString();
             }
+        } else if (meta instanceof PotionMeta) {
+            final PotionMeta potion = (PotionMeta) meta;
+            data.potionType = potion.getBasePotionData().getType().toString().toLowerCase();
+            data.potionExtended = potion.getBasePotionData().isExtended();
+            data.potionUpgraded = potion.getBasePotionData().isUpgraded();
         }
 
         // Written books
@@ -262,6 +265,11 @@ public class ItemStackSerializer {
                 }
             });
             ((BannerMeta) meta).setPatterns(patterns);
+        } else if (meta instanceof PotionMeta) {
+            final PotionType potionType = PotionType.valueOf(this.potionType.toUpperCase());
+            final PotionMeta potionMeta = (PotionMeta) meta;
+            potionMeta.setBasePotionData(new PotionData(potionType, potionExtended,
+                    potionUpgraded));
         }
         if (meta != null) {
             item.setItemMeta(meta);
