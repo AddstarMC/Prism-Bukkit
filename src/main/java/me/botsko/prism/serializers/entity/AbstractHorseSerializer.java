@@ -13,43 +13,19 @@ import org.bukkit.entity.Llama;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class AbstractHorseSerializer extends EntitySerializer {
-    protected String horseColor = null;
-    protected String style = null;
+public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySerializer<T> {
     protected String saddle = null;
-    protected String armor = null;
-    protected Boolean chest = null;
     protected int dom = 0;
     protected int maxDom = 20;
     protected double jump = 1.0;
     protected double maxHealth = 20.0;
     protected double movementSpeed = 0.2;
 
-    @Override
-    protected void serializer(Entity entity) {
-        final AbstractHorse h = (AbstractHorse) entity;
-
-        // TODO: Cleanup
-        if (entity.getType() == EntityType.HORSE) {
-            Horse horse = (Horse) h;
-            horseColor = horse.getColor().name();
-            style = horse.getStyle().name();
-            saddle = ItemUtils.smallString(horse.getInventory().getSaddle());
-            armor = ItemUtils.smallString(horse.getInventory().getArmor());
-        } else if (entity.getType() == EntityType.LLAMA) {
-            Llama llama = (Llama) h;
-            horseColor = llama.getColor().name();
-            saddle = ItemUtils.smallString(llama.getInventory().getDecor());
-        } else if (entity.getType() == EntityType.MULE || entity.getType() == EntityType.DONKEY
-                || entity.getType() == EntityType.ZOMBIE_HORSE || entity.getType() == EntityType.SKELETON_HORSE) {
-            // Actually a saddle
-            saddle = ItemUtils.smallString(h.getInventory().getItem(0));
-        }
-
-        if (entity instanceof ChestedHorse) {
-            chest = ((ChestedHorse) entity).isCarryingChest();
-        }
-        dom = h.getDomestication();
+     public void serialize(T entity) {
+         super.serialize(entity);
+        final AbstractHorse h = entity;
+         saddle = ItemUtils.smallString(h.getInventory().getSaddle());
+         dom = h.getDomestication();
         maxDom = h.getMaxDomestication();
         jump = h.getJumpStrength();
         maxHealth = h.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
@@ -61,35 +37,13 @@ public class AbstractHorseSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        final AbstractHorse h = (AbstractHorse) entity;
-
-        if (entity.getType() == EntityType.HORSE) {
-            Horse horse = (Horse) h;
-            Horse.Color color = MiscUtils.getEnum(horseColor, Horse.Color.WHITE);
-            Horse.Style vstyle = MiscUtils.getEnum(style, Horse.Style.NONE);
-            horse.setColor(color);
-            horse.setStyle(vstyle);
-            horse.getInventory().setSaddle(ItemUtils.itemOf(saddle));
-            horse.getInventory().setArmor(ItemUtils.itemOf(armor));
-        } else if (entity.getType() == EntityType.LLAMA) {
-            Llama llama = (Llama) h;
-            Llama.Color color = MiscUtils.getEnum(horseColor, Llama.Color.CREAMY);
-            llama.setColor(color);
-            llama.getInventory().setDecor(ItemUtils.itemOf(saddle));
-        } else if (entity.getType() == EntityType.DONKEY || entity.getType() == EntityType.MULE
-                || entity.getType() == EntityType.ZOMBIE_HORSE || entity.getType() == EntityType.SKELETON_HORSE) {
-            h.getInventory().setItem(0, ItemUtils.itemOf(saddle));
-        }
-
-        if (entity instanceof ChestedHorse) {
-            ((ChestedHorse) h).setCarryingChest(Boolean.TRUE.equals(chest));
-        }
-
+    public void deserialize(T entity) {
+         super.deserialize(entity);
+        final AbstractHorse h = entity;
+        h.getInventory().setSaddle(ItemUtils.itemOf(saddle));
         maxDom = Math.max(1, maxDom);
         dom = Math.min(Math.max(0, dom), maxDom);
         jump = Math.min(Math.max(0.0, jump), 2.0);
-
         h.setDomestication(dom);
         h.setMaxDomestication(maxDom);
         h.setJumpStrength(jump);
@@ -101,11 +55,8 @@ public class AbstractHorseSerializer extends EntitySerializer {
         }
     }
 
-    @Override
-    protected void niceName(AtomicReference<String> name) {
-        String out = name.get()
-                .replace("<prefix>",MiscUtils.niceName(horseColor)
-                        + " " + MiscUtils.niceName(style));
-        name.set(out);
+    protected String getPrefix() {
+        return super.getPrefix();
     }
+
 }

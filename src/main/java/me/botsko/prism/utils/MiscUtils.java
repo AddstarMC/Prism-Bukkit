@@ -103,6 +103,16 @@ public class MiscUtils {
         return fallback;
     }
 
+    public static <T extends Enum<T>> T getEnum(String from, Class<T> enumClass) {
+        if (from != null) {
+            try {
+                return Enum.valueOf(enumClass, from.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                Prism.debug(e.getMessage());
+            }
+        }
+        return null;
+    }
     /**
      * Nice name for a String.
      * @param in String

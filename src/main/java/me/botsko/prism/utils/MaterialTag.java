@@ -10,10 +10,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class MaterialTag implements Tag<Material> {
-    public static final Tag<Material> DYES = new MaterialTag(Material.INK_SAC, Material.RED_DYE, Material.GREEN_DYE,
-            Material.COCOA_BEANS, Material.LAPIS_LAZULI, Material.PURPLE_DYE, Material.CYAN_DYE,
-            Material.LIGHT_GRAY_DYE, Material.GRAY_DYE, Material.PINK_DYE, Material.LIME_DYE, Material.YELLOW_DYE,
-            Material.LIGHT_BLUE_DYE, Material.MAGENTA_DYE, Material.ORANGE_DYE, Material.BONE_MEAL);
+    public static final Tag<Material> DYES = new MaterialTag("_DYE",MatchMode.SUFFIX);
     public static final MaterialTag CORAL_WALL_FANS = new MaterialTag(Material.DEAD_BRAIN_CORAL_WALL_FAN,
             Material.DEAD_BUBBLE_CORAL_WALL_FAN, Material.DEAD_FIRE_CORAL_WALL_FAN, Material.DEAD_HORN_CORAL_WALL_FAN,
             Material.DEAD_TUBE_CORAL_WALL_FAN, Material.DEAD_BRAIN_CORAL_WALL_FAN,

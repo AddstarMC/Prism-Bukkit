@@ -8,23 +8,23 @@ import org.bukkit.entity.Entity;
  * Created for the Prism-Bukkit Project.
  * Created by Narimm on 20/10/2020.
  */
-public class EndermanSerializer extends EntitySerializer {
+public class EndermanSerializer extends EntitySerializer<Enderman> {
 
     private String blockData;
 
     @Override
-    protected void serializer(Entity entity) {
-        super.serializer(entity);
-        if (((Enderman) entity).getCarriedBlock() != null) {
-            blockData = ((Enderman) entity).getCarriedBlock().toString();
+    public void serialize(Enderman entity) {
+        super.serialize(entity);
+        if (entity.getCarriedBlock() != null) {
+            blockData = entity.getCarriedBlock().toString();
         }
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        super.deserializer(entity);
+    public void deserialize(Enderman entity) {
+        super.deserialize(entity);
         if (blockData != null) {
-            ((Enderman) entity).setCarriedBlock(Bukkit.createBlockData(blockData));
+            entity.setCarriedBlock(Bukkit.createBlockData(blockData));
         }
     }
 }

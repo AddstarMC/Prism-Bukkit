@@ -2,16 +2,14 @@ package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.MerchantRecipe;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class VillagerSerializer extends AbstractVillagerSerializer {
+public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
 
     protected String type = null;
     protected String profession = null;
@@ -19,12 +17,12 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
     protected List<VillagerRecipe> recipes = new ArrayList<>();
 
     @Override
-    protected void serializer(Entity entity) {
-        super.serializer(entity);
-        type = ((Villager) entity).getVillagerType().name().toLowerCase();
-        profession = ((Villager) entity).getProfession().name().toLowerCase();
-        villagerXp = ((Villager) entity).getVillagerExperience();
-        for (MerchantRecipe recipe : ((Villager) entity).getRecipes()) {
+    public void serialize(Villager entity) {
+        super.serialize(entity);
+        type = entity.getVillagerType().name().toLowerCase();
+        profession = entity.getProfession().name().toLowerCase();
+        villagerXp = entity.getVillagerExperience();
+        for (MerchantRecipe recipe : entity.getRecipes()) {
             final VillagerRecipe r = new VillagerRecipe();
             r.result = ItemStackSerializer.createItemStackSerialized(recipe.getResult());
             r.ingredient = new ArrayList<>();
@@ -40,11 +38,11 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        super.deserializer(entity);
-        ((Villager) entity).setProfession(MiscUtils.getEnum(profession, Profession.FARMER));
-        ((Villager) entity).setVillagerExperience(villagerXp);
-        ((Villager) entity).setVillagerType(MiscUtils.getEnum(type, Villager.Type.PLAINS));
+    public void deserialize(Villager entity) {
+        super.deserialize(entity);
+        entity.setProfession(MiscUtils.getEnum(profession, Profession.FARMER));
+        entity.setVillagerExperience(villagerXp);
+        entity.setVillagerType(MiscUtils.getEnum(type, Villager.Type.PLAINS));
         List<MerchantRecipe> bukkitRecipes = new ArrayList<>();
         recipes.forEach(villagerRecipe -> {
             MerchantRecipe recipe = new MerchantRecipe(villagerRecipe.result.toBukkit(), villagerRecipe.currentUses,
@@ -55,15 +53,17 @@ public class VillagerSerializer extends AbstractVillagerSerializer {
             bukkitRecipes.add(recipe);
 
         });
-        ((Villager) entity).setRecipes(bukkitRecipes);
+        entity.setRecipes(bukkitRecipes);
     }
 
     @Override
-    protected void niceName(AtomicReference<String> name) {
-        name.set(name.get()
-                .replace("<prefix",MiscUtils.niceName(type))
-                .replace("<suffix>","(" + MiscUtils.niceName(profession) + ")")
-        );
+    protected String getPrefix() {
+        return super.getPrefix() + MiscUtils.niceName(type);
+    }
+
+    @Override
+    protected String getSuffix() {
+        return super.getSuffix() + "(" + MiscUtils.niceName(profession) + ")";
     }
 
     public static class VillagerRecipe {

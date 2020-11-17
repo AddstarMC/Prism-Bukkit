@@ -6,21 +6,21 @@ import org.bukkit.entity.Parrot;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ParrotSerializer extends EntitySerializer {
+public class ParrotSerializer extends TameEntitySerializer<Parrot> {
     protected String var = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        var = ((Parrot) entity).getVariant().name().toLowerCase();
+    public void serialize(Parrot entity) {
+        var = entity.getVariant().name().toLowerCase();
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        ((Parrot) entity).setVariant(MiscUtils.getEnum(var, Parrot.Variant.RED));
+    public void deserialize(Parrot entity) {
+        entity.setVariant(MiscUtils.getEnum(var, Parrot.Variant.RED));
     }
 
     @Override
-    protected void niceName(AtomicReference<String> name) {
-        name.set(name.get().replace("<prefix",MiscUtils.niceName(var)));
+    protected String getPrefix() {
+        return super.getPrefix() + MiscUtils.niceName(var);
     }
 }

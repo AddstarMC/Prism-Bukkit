@@ -12,15 +12,15 @@ import java.util.List;
  * Created for the Prism-Bukkit Project.
  * Created by Narimm on 20/10/2020.
  */
-public class AbstractVillagerSerializer extends EntitySerializer {
+public class AbstractVillagerSerializer<T extends AbstractVillager> extends EntitySerializer<T> {
 
     protected final List<ItemStackSerializer> inventory = new ArrayList<>();
 
 
     @Override
-    protected void serializer(Entity entity) {
-        super.serializer(entity);
-        ((AbstractVillager) entity).getInventory().forEach(itemStack -> {
+    public void serialize(T entity) {
+        super.serialize(entity);
+        entity.getInventory().forEach(itemStack -> {
             if (itemStack != null) {
                 inventory.add(ItemStackSerializer.createItemStackSerialized(itemStack));
             }
@@ -28,11 +28,11 @@ public class AbstractVillagerSerializer extends EntitySerializer {
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        super.deserializer(entity);
+    public void deserialize(T entity) {
+        super.deserialize(entity);
         List<ItemStack> items = new ArrayList<>();
         inventory.forEach(prismItemStack -> items.add(prismItemStack.toBukkit()));
-        ((AbstractVillager) entity).getInventory().setContents(items.toArray(new ItemStack[0]));
+        entity.getInventory().setContents(items.toArray(new ItemStack[0]));
     }
 
 }

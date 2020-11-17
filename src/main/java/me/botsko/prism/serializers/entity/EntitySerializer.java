@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class EntitySerializer {
-    private static final transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
+public class EntitySerializer<T extends Entity> implements EntitySerializerInterface<T> {
+    protected static final transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
     //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;
@@ -34,9 +34,6 @@ public class EntitySerializer {
     protected Map<String, ItemStackSerializer> equipment = new HashMap<>();
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
-    @SerializedName(value = "tamingOwner", alternate = "taming_owner")
-    protected String tamingOwner = null;
-    protected String newColor = null;
     @SerializedName(value = "customDesc", alternate = "custom_desc")
     protected String customDesc = null;
 
@@ -53,7 +50,7 @@ public class EntitySerializer {
      *
      * @param entity Entity.
      */
-    public final void serialize(Entity entity) {
+    public void serialize(T entity) {
         entityName = entity.getType().name().toLowerCase();
 
         // Get custom name
@@ -74,17 +71,6 @@ public class EntitySerializer {
         if (entity instanceof Ageable) {
             isAdult = ((Ageable) entity).isAdult();
         }
-
-        // Owner
-        if (entity instanceof Tameable) {
-            final Tameable mob = (Tameable) entity;
-            if (mob.getOwner() != null) {
-                tamingOwner = mob.getOwner().getUniqueId().toString();
-            } else if (mob.isTamed()) {
-                tamingOwner = "-none-";
-            }
-        }
-
         // Sitting
         if (entity instanceof Sittable) {
             sitting = ((Sittable) entity).isSitting();
@@ -101,19 +87,6 @@ public class EntitySerializer {
                 customDesc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
             }
         }
-
-        serializer(entity);
-    }
-
-    /**
-     * Set a new Color.
-     * @param color String
-     */
-    public final void setNewColor(String color) {
-        newColor = color;
-    }
-
-    protected void serializer(Entity entity) {
     }
 
     /**
@@ -121,7 +94,7 @@ public class EntitySerializer {
      *
      * @param entity Entity
      */
-    public final void deserialize(Entity entity) {
+    public void deserialize(T entity) {
         // Get custom name
         if (customName != null) {
             entity.setCustomName(customName);
@@ -146,37 +119,25 @@ public class EntitySerializer {
                 age.setAdult();
             }
         }
-        // Owner
-        if (entity instanceof Tameable) {
-            ((Tameable) entity).setOwner(EntityUtils.offlineOf(tamingOwner));
-        }
 
         // Sitting
         if (entity instanceof Sittable) {
             ((Sittable) entity).setSitting(Boolean.TRUE.equals(sitting));
         }
 
-        deserializer(entity);
-    }
-
-    protected void deserializer(Entity entity) {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         String format = NAME_FORMAT;
-        if (tamingOwner != null) {
-            OfflinePlayer player = EntityUtils.offlineOf(tamingOwner);
-            if (player != null) {
-                format = format.replace("<owner>", player.getName() + "'s");
-            }
-        }
+        return format(format);
+    }
 
+    protected String format(String format) {
         if (Boolean.FALSE.equals(isAdult)) {
             format = format.replace("<isAdult>", "baby");
         }
         format = format.replace("<type>", MiscUtils.niceName(entityName));
-        format = format.replace("<colour>", MiscUtils.niceName(newColor));
         if (customName != null) {
             format = format.replace("<customName>", customName);
         }
@@ -192,6 +153,18 @@ public class EntitySerializer {
         return format;
     }
 
-    protected void niceName(AtomicReference<String> name) {
+    protected String getPrefix() {
+        return "";
+    }
+
+    protected final void niceName(AtomicReference<String> name) {
+        String out = name.get()
+                .replace("<prefix>",getPrefix())
+                .replace("<suffix>",getSuffix());
+        name.set(out);
+    }
+
+    protected String getSuffix() {
+        return "";
     }
 }

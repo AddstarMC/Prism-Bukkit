@@ -7,21 +7,30 @@ import org.bukkit.entity.Sheep;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SheepSerializer extends EntitySerializer {
+public class SheepSerializer extends EntitySerializer<Sheep> {
+
+    public void setColor(DyeColor color) {
+        this.color = color.name().toLowerCase();
+    }
+
     protected String color = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        color = ((Sheep) entity).getColor().name().toLowerCase();
+    public void serialize(Sheep entity) {
+        if(entity.getColor() != null) {
+            color = entity.getColor().name().toLowerCase();
+        } else {
+            color = DyeColor.WHITE.name().toLowerCase();
+        }
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        ((Sheep) entity).setColor(MiscUtils.getEnum(color, DyeColor.WHITE));
+    public void deserialize(Sheep entity) {
+        entity.setColor(MiscUtils.getEnum(color, DyeColor.WHITE));
     }
 
     @Override
-    protected void niceName(AtomicReference<String> name) {
-        name.set(name.get().replace("<prefix",MiscUtils.niceName(color)));
+    protected String getPrefix() {
+        return super.getPrefix() + MiscUtils.niceName(color);
     }
 }

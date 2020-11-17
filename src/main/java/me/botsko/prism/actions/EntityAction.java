@@ -8,6 +8,9 @@ import me.botsko.prism.appliers.ChangeResultType;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.entity.EntitySerializer;
 import me.botsko.prism.serializers.entity.EntitySerializerFactory;
+import me.botsko.prism.serializers.entity.EntitySerializerInterface;
+import me.botsko.prism.serializers.entity.SheepSerializer;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -16,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EntityAction extends GenericAction {
 
-    private EntitySerializer serializer;
+    private EntitySerializerInterface serializer;
 
     /**
      * Constructor.
@@ -40,15 +43,16 @@ public class EntityAction extends GenericAction {
      * @param entity Entity
      * @param dyeUsed String
      */
-    public void setEntity(Entity entity, String dyeUsed) {
+    public void setEntity(Entity entity, DyeColor dyeUsed) {
 
         // Build an object for the specific details of this action
         if (entity != null && entity.getType() != null && entity.getType().name() != null) {
             setLoc(entity.getLocation());
-
             serializer = EntitySerializerFactory.getSerializer(entity.getType());
             serializer.serialize(entity);
-            serializer.setNewColor(dyeUsed);
+            if (serializer instanceof SheepSerializer) {
+                ((SheepSerializer) serializer).setColor(dyeUsed);
+            }
         }
     }
 

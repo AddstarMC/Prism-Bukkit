@@ -6,28 +6,30 @@ import org.bukkit.entity.Panda;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PandaSerializer extends EntitySerializer {
+public class PandaSerializer extends EntitySerializer<Panda> {
     protected String mainGene = null;
     protected String hiddenGene = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        mainGene = ((Panda) entity).getMainGene().name().toLowerCase();
-        hiddenGene = ((Panda) entity).getHiddenGene().name().toLowerCase();
+    public void serialize(Panda entity) {
+        super.serialize(entity);
+        mainGene = entity.getMainGene().name().toLowerCase();
+        hiddenGene = entity.getHiddenGene().name().toLowerCase();
     }
 
     @Override
-    protected void deserializer(Entity entity) {
+    public void deserialize(Panda entity) {
+        super.deserialize(entity);
         Panda.Gene mainPandaGene = MiscUtils.getEnum(mainGene, Panda.Gene.NORMAL);
         Panda.Gene hiddenPandaGene = MiscUtils.getEnum(hiddenGene, Panda.Gene.NORMAL);
-        ((Panda) entity).setMainGene(mainPandaGene);
-        ((Panda) entity).setHiddenGene(hiddenPandaGene);
+        entity.setMainGene(mainPandaGene);
+        entity.setHiddenGene(hiddenPandaGene);
     }
 
     @Override
-    protected void niceName(AtomicReference<String> name) {
+    protected String getPrefix() {
+        String niceName = null;
         if (mainGene != null && hiddenGene != null) {
-            String niceName;
             if ("weak".equals(mainGene) && !"weak".equals(hiddenGene)) {
                 niceName = "normal";
             } else if ("brown".equals(mainGene) && !"brown".equals(hiddenGene)) {
@@ -35,7 +37,8 @@ public class PandaSerializer extends EntitySerializer {
             } else {
                 niceName = mainGene;
             }
-            name.set(name.get().replace("<prefix",MiscUtils.niceName(niceName)));
         }
+        return super.getPrefix() + MiscUtils.niceName(niceName);
+
     }
 }

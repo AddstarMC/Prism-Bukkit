@@ -7,23 +7,24 @@ import org.bukkit.entity.ZombieVillager;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class ZombieVillageSerializer extends EntitySerializer {
+public class ZombieVillageSerializer extends EntitySerializer<ZombieVillager> {
     protected String profession = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        profession = ((ZombieVillager) entity).getVillagerProfession().name().toLowerCase();
+    public void serialize(ZombieVillager entity) {
+        super.serialize(entity);
+        if (entity.getVillagerProfession() != null) {
+            profession = entity.getVillagerProfession().name().toLowerCase();
+        }
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        ((ZombieVillager) entity).setVillagerProfession(MiscUtils.getEnum(profession, Profession.FARMER));
+    public void deserialize(ZombieVillager entity) {
+        super.deserialize(entity);
+        entity.setVillagerProfession(MiscUtils.getEnum(profession, Profession.class));
     }
 
-    @Override
-    protected void niceName(AtomicReference<String> name) {
-        name.set(name.get()
-                .replace("<suffix>","(" + MiscUtils.niceName(profession) + ")")
-        );
+    protected String getSuffix() {
+        return "(" + MiscUtils.niceName(profession) + ")";
     }
 }

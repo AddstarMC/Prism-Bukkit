@@ -7,21 +7,23 @@ import org.bukkit.entity.Wolf;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public class WolfSerializer extends EntitySerializer {
+public class WolfSerializer extends TameEntitySerializer<Wolf> {
     protected String color = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        color = ((Wolf) entity).getCollarColor().name().toLowerCase();
+    public void serialize(Wolf entity) {
+        super.serialize(entity);
+        color = entity.getCollarColor().name().toLowerCase();
     }
 
     @Override
-    protected void deserializer(Entity entity) {
-        ((Wolf) entity).setCollarColor(MiscUtils.getEnum(color, DyeColor.RED));
+    public void deserialize(Wolf entity) {
+        super.serialize(entity);
+        entity.setCollarColor(MiscUtils.getEnum(color, DyeColor.RED));
     }
 
     @Override
-    protected void niceName(AtomicReference<String> name) {
-        name.set(name.get().replace("<prefix",MiscUtils.niceName(color)));
+    protected String getPrefix() {
+        return MiscUtils.niceName(color);
     }
 }
