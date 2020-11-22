@@ -2,6 +2,7 @@ package me.botsko.prism.utils;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
+import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +24,7 @@ class UtilitiesTest {
 
     @BeforeEach
     public void setUp() {
-        server = MockBukkit.mock();
+        server = TestHelper.setup();
     }
     
     @Test
