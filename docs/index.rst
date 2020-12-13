@@ -6,11 +6,12 @@
 Welcome to Prism for Bukkit's documentation!
 ============================================
 
-.. toctree::
+..  toctree::
    :maxdepth: 2
    :caption: Contents:
-   getting-started.rst
-   advanced-config.rst
+
+   getting-started
+   advanced-config
 
 
 Indices and tables
