@@ -17,7 +17,7 @@ Recommendation:
 
 Advanced Database Configurations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Prism uses Hikari database pooling - please see Hikari for configuration options - changes can be made in  `Hikari.properties <https://github.com/brettwooldridge/HikariCP/wiki/>`.
+Prism uses Hikari database pooling - please see Hikari for configuration options - changes can be made in  `Hikari.properties <https://github.com/brettwooldridge/HikariCP/wiki/>`_.
 
 Faster Event Logging
 ^^^^^^^^^^^^^^^^^^^^

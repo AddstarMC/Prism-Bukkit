@@ -10,8 +10,11 @@ Welcome to Prism for Bukkit's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   getting-started
-   advanced-config
+   Welcome
+   Getting Started <getting-started>
+   Advanced Configuration <advanced-config>
+   Permissions <permissions>
+   Commands <commands>
 
 
 Indices and tables
