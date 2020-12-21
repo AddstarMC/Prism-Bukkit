@@ -1,7 +1,5 @@
 package me.botsko.prism.actions;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionType;
 import me.botsko.prism.actionlibs.QueryParameters;
@@ -21,7 +19,6 @@ import java.util.UUID;
 public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
-    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
     private boolean canceled = false;
     private ActionType type;
 
@@ -47,10 +44,7 @@ public abstract class GenericAction implements Handler {
 
     public GenericAction() {
         epoch = System.currentTimeMillis() / 1000;
-    }
 
-    protected static Gson gson() {
-        return GenericAction.gson;
     }
 
     @Override

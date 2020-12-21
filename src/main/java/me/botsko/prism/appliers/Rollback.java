@@ -8,7 +8,6 @@ import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.events.BlockStateChange;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.block.Utilities;
-import net.kyori.adventure.audience.Audience;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;

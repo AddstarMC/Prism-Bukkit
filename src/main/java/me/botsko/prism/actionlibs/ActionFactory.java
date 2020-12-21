@@ -17,6 +17,7 @@ import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
 import me.botsko.prism.appliers.PrismProcessType;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -180,7 +181,7 @@ public class ActionFactory {
      * @param dyeUsed    string
      * @return Handler
      */
-    public static Handler createEntity(String actionType, Entity entity, OfflinePlayer player, String dyeUsed) {
+    public static Handler createEntity(String actionType, Entity entity, OfflinePlayer player, DyeColor dyeUsed) {
         final EntityAction a = new EntityAction();
         a.setActionType(actionType);
         a.setPlayer(player);
@@ -198,7 +199,7 @@ public class ActionFactory {
      * @return Handler
      */
     @SuppressWarnings("WeakerAccess")
-    public static Handler createEntity(String actionType, Entity entity, String nonPlayer, String dyeUsed) {
+    public static Handler createEntity(String actionType, Entity entity, String nonPlayer, DyeColor dyeUsed) {
         final Handler a = createEntity(actionType, entity, (OfflinePlayer) null, dyeUsed);
         a.setSourceName(nonPlayer);
         return a;

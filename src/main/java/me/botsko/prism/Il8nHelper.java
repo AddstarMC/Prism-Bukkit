@@ -55,9 +55,10 @@ public class Il8nHelper {
     }
 
     /**
-     * Produces a TexComponent that can accept typical java String.format type replacement before its created.
-     * @param key Il8n key
-     * @param args Object to insert.
+     * Produces a TexComponent that can accept typical java String.format type replacement before its created.  This
+     * uses {@link java.util.Formatter}  printf-style format strings.
+     * @param key Il8n key containing printf style formatting marks
+     * @param args Objects to insert.
      * @return TextComponent
      */
     public static TextComponent formatMessage(@PropertyKey(resourceBundle = "languages.message") String key,

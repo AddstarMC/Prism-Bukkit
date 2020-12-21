@@ -43,7 +43,7 @@ public class TeleportCommand implements SubHandler {
         }
         if (!plugin.cachedQueries.containsKey(keyName) && !call.getArg(1).contains("id:")) {
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerError(
-                    "There's no saved query to use results from. Maybe they expired? Try your lookup again."));
+                    Il8nHelper.getRawMessage("lookup-data-empty")));
             return;
         }
 
@@ -73,13 +73,13 @@ public class TeleportCommand implements SubHandler {
         } else {
             if (!TypeUtils.isNumeric(ident)) {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger
-                        .playerError("You must provide a numeric result number or record ID to teleport to."));
+                        .playerError(Il8nHelper.getRawMessage("teleport-no-id")));
                 return;
             }
             recordId = Integer.parseInt(ident);
             if (recordId <= 0) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("Result number or record ID must be greater than zero."));
+                        Prism.messenger.playerError(Il8nHelper.getRawMessage("teleport-id-zero")));
                 return;
             }
         }
@@ -98,7 +98,7 @@ public class TeleportCommand implements SubHandler {
             final QueryResult results = aq.lookup(params, call.getPlayer());
             if (results.getActionResults().isEmpty()) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("No records exists with this ID."));
+                        Prism.messenger.playerError(Il8nHelper.getRawMessage("teleport-id-notfound")));
                 return;
             }
 
@@ -112,7 +112,7 @@ public class TeleportCommand implements SubHandler {
 
             if (recordId > results.getActionResults().size()) {
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerError(
-                        "No records exists at this index. Did you mean /pr tp id:" + recordId + " instead?"));
+                        Il8nHelper.formatMessage("teleport-id-notfound-option",recordId)));
                 return;
             }
 
@@ -132,7 +132,7 @@ public class TeleportCommand implements SubHandler {
             final World world = destinationAction.getLoc().getWorld();
             if (world == null) {
                 Prism.messenger.sendMessage(call.getPlayer(),
-                        Prism.messenger.playerError("Action record occurred in world we can't find anymore."));
+                        Prism.messenger.playerError(Il8nHelper.getMessage("teleport-worldNotFound")));
                 return;
             }
             if (PaperLib.isPaper()) {
@@ -149,7 +149,7 @@ public class TeleportCommand implements SubHandler {
     private void sendTeleportCompleteMessage(boolean success, Player player, Handler destinationAction) {
         if (success) {
             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
-                    Il8nHelper.getMessage("teleport.complete")
+                    Il8nHelper.getMessage("teleport-complete")
                             .replaceText("<actionType>",
                                     Component.text(
                                             destinationAction.getActionType().getName()).color(NamedTextColor.WHITE))
@@ -159,7 +159,7 @@ public class TeleportCommand implements SubHandler {
                                     Component.text(destinationAction.getTimeSince()).color(NamedTextColor.WHITE))));
         } else {
             Prism.messenger.sendMessage(player,
-                    Prism.messenger.playerError("Prism teleportation failed"));
+                    Prism.messenger.playerError(Il8nHelper.getMessage("teleport-failed")));
         }
     }
 

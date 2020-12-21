@@ -9,6 +9,7 @@ import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.WandUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -54,11 +55,16 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Colorable;
+import org.bukkit.material.Dye;
+import org.bukkit.material.FlowerPot;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.projectiles.BlockProjectileSource;
 import org.bukkit.projectiles.ProjectileSource;
 import org.bukkit.util.Vector;
 
+import java.awt.*;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
@@ -68,6 +74,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * Constructor.
+     *
      * @param plugin Plugin
      */
     public PrismEntityEvents(Prism plugin) {
@@ -76,6 +83,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityDamageByEntityEvent.
+     *
      * @param event EntityDamageByEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -113,6 +121,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityDeathEvent.
+     *
      * @param event EntityDeathEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -221,65 +230,6 @@ public class PrismEntityEvents extends BaseListener {
 
                 RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity, name));
             }
-
-            /*
-             * if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) { final
-             * EntityDamageByEntityEvent entityDamageByEntityEvent =
-             * (EntityDamageByEntityEvent) entity .getLastDamageCause();
-             *
-             * // Mob killed by player if (entityDamageByEntityEvent.getDamager() instanceof
-             * Player) { final Player player = (Player)
-             * entityDamageByEntityEvent.getDamager(); if
-             * (!Prism.getIgnore().event("player-kill", player)) return;
-             * RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill", entity,
-             * player));
-             *
-             * } // Mob shot by an arrow from a player else if
-             * (entityDamageByEntityEvent.getDamager() instanceof Arrow) { final Arrow arrow
-             * = (Arrow) entityDamageByEntityEvent.getDamager();
-             *
-             * if (arrow.getShooter() instanceof Player) { final Player player = (Player)
-             * arrow.getShooter(); if (!Prism.getIgnore().event("player-kill", player))
-             * return; RecordingQueue.addToQueue(ActionFactory.createEntity("player-kill",
-             * entity, player));
-             *
-             * } else if (arrow.getShooter() instanceof LivingEntity) { final Entity damager
-             * = (Entity) arrow.getShooter(); String name = "unknown"; if (damager != null)
-             * { name = damager.getType().name().toLowerCase(); }
-             *
-             * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
-             * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
-             * name)); } else if (arrow.getShooter() instanceof BlockProjectileSource) {
-             *
-             * final Block damager = (Block)
-             * ((BlockProjectileSource)arrow.getShooter()).getBlock();
-             *
-             * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
-             *
-             * String name = "block:" + damager.getType().name().toLowerCase();
-             *
-             * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
-             * name)); } } else { // Mob died by another mob final Entity damager =
-             * entityDamageByEntityEvent.getDamager(); String name = "unknown"; if (damager
-             * != null) { name = damager.getType().name().toLowerCase(); }
-             *
-             * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
-             * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
-             * name)); } } else {
-             *
-             * if (!Prism.getIgnore().event("entity-kill", entity.getWorld())) return;
-             *
-             * String killer = "unknown"; final EntityDamageEvent damage =
-             * entity.getLastDamageCause(); if (damage != null) { final DamageCause cause =
-             * damage.getCause(); if (cause != null) { killer = cause.name().toLowerCase();
-             * } }
-             *
-             * // Record the death as natural
-             * RecordingQueue.addToQueue(ActionFactory.createEntity("entity-kill", entity,
-             * killer));
-             *
-             * }
-             */
         } else {
 
             // Determine who died and what the exact cause was
@@ -308,6 +258,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * CreatureSpawnEvent.
+     *
      * @param event CreatureSpawnEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -324,6 +275,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityTargetEvent.
+     *
      * @param event EntityTargetEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -341,6 +293,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PlayerShearEntityEvent.
+     *
      * @param event PlayerShearEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -353,6 +306,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PlayerInteractAtEntityEvent.
+     *
      * @param event PlayerInteractAtEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -421,6 +375,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PlayerInteractEntityEvent.
+     *
      * @param event PlayerInteractEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -455,7 +410,7 @@ public class PrismEntityEvents extends BaseListener {
             }
         }
 
-        if (hand != null) {
+        if (hand != null && !hand.getType().isAir()) {
             // if they're holding coal (or charcoal, a subitem) and they click a
             // powered minecart
             if (hand.getType() == Material.COAL && e instanceof PoweredMinecart) {
@@ -472,16 +427,19 @@ public class PrismEntityEvents extends BaseListener {
             }
             // Only track the event on sheep, when player holds dye
             if (MaterialTag.DYES.isTagged(hand.getType()) && e.getType() == EntityType.SHEEP) {
-                final String newColor = Prism.getItems().getAlias(hand.getType(), null);
+                String stringColor = hand.getType().name().replace("_DYE", "");
+                DyeColor color = DyeColor.valueOf(stringColor);
                 RecordingQueue.addToQueue(
                         ActionFactory.createEntity("entity-dye", event.getRightClicked(), event.getPlayer(),
-                                newColor));
+                                color));
             }
         }
     }
 
+
     /**
      * EntityBreakDoorEvent.
+     *
      * @param event EntityBreakDoorEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -495,6 +453,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PlayerLeashEntityEvent.
+     *
      * @param event PlayerLeashEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -507,6 +466,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PlayerUnleashEntityEvent.
+     *
      * @param event PlayerUnleashEntityEvent.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -519,6 +479,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityUnleashEvent.
+     *
      * @param event EntityUnleashEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -532,6 +493,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * PotionSplashEvent.
+     *
      * @param event PotionSplashEvent.
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -564,6 +526,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * HangingPlaceEvent.
+     *
      * @param event HangingPlaceEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -651,6 +614,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * HangingBreakByEntityEvent.
+     *
      * @param event HangingBreakByEntityEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -693,6 +657,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityChangeBlockEvent.
+     *
      * @param event EntityChangeBlockEvent
      */
 
@@ -743,6 +708,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityBlockFormEvent.
+     *
      * @param event EntityBlockFormEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -755,7 +721,7 @@ public class PrismEntityEvents extends BaseListener {
         final BlockState newState = event.getNewState();
 
         if (event.getEntity() instanceof Player) {
-            final Player player = (Player)event.getEntity();
+            final Player player = (Player) event.getEntity();
             RecordingQueue.addToQueue(ActionFactory.createBlockChange("entity-form", loc, block.getType(),
                     block.getBlockData(), newState.getType(), newState.getBlockData(), player));
         } else {
@@ -767,6 +733,7 @@ public class PrismEntityEvents extends BaseListener {
 
     /**
      * EntityExplodeEvent.
+     *
      * @param event EntityExplodeEvent
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -814,7 +781,7 @@ public class PrismEntityEvents extends BaseListener {
             }
             name = "magic";
         }
-        contructBlockEvent(action,name,event.blockList());
+        contructBlockEvent(action, name, event.blockList());
     }
 
     private String followTntTrail(Entity initial) {

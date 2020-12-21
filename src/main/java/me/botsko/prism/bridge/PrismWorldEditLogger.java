@@ -35,7 +35,7 @@ public class PrismWorldEditLogger extends AbstractDelegateExtent {
     }
 
     @Override
-    public boolean setBlock(BlockVector3 pt, BlockStateHolder newBlock) throws WorldEditException {
+    public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 pt, B newBlock) throws WorldEditException {
         if (Prism.config.getBoolean("prism.tracking.world-edit")) {
             Location loc = BukkitAdapter.adapt(world, pt);
             Block oldBlock = loc.getBlock();

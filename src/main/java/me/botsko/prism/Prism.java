@@ -152,6 +152,7 @@ public class Prism extends JavaPlugin {
 
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+        instance = this;
     }
 
     public static BukkitAudiences getAudiences() {
@@ -170,6 +171,7 @@ public class Prism extends JavaPlugin {
     public static void setDebug(boolean debug) {
         Prism.debug = debug;
         if (debug && (debugWatcher == null || debugWatcher.isCancelled())) {
+            Prism.log("ALERT : Prism has debug mode enabled - LOGS will rapidly grow!!!");
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.hasPermission("prism.debug")) {

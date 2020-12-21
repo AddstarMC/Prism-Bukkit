@@ -1,31 +1,35 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Panda;
 
-public class PandaSerializer extends EntitySerializer {
+import java.util.concurrent.atomic.AtomicReference;
+
+public class PandaSerializer extends EntitySerializer<Panda> {
     protected String mainGene = null;
     protected String hiddenGene = null;
 
     @Override
-    protected void serializer(Entity entity) {
-        mainGene = ((Panda) entity).getMainGene().name().toLowerCase();
-        hiddenGene = ((Panda) entity).getHiddenGene().name().toLowerCase();
+    public void serialize(Panda entity) {
+        super.serialize(entity);
+        mainGene = entity.getMainGene().name().toLowerCase();
+        hiddenGene = entity.getHiddenGene().name().toLowerCase();
     }
 
     @Override
-    protected void deserializer(Entity entity) {
+    public void deserialize(Panda entity) {
+        super.deserialize(entity);
         Panda.Gene mainPandaGene = MiscUtils.getEnum(mainGene, Panda.Gene.NORMAL);
         Panda.Gene hiddenPandaGene = MiscUtils.getEnum(hiddenGene, Panda.Gene.NORMAL);
-        ((Panda) entity).setMainGene(mainPandaGene);
-        ((Panda) entity).setHiddenGene(hiddenPandaGene);
+        entity.setMainGene(mainPandaGene);
+        entity.setHiddenGene(hiddenPandaGene);
     }
 
     @Override
-    protected void niceName(StringBuilder sb, int start) {
+    protected String getPrefix() {
+        String niceName = null;
         if (mainGene != null && hiddenGene != null) {
-            String niceName;
             if ("weak".equals(mainGene) && !"weak".equals(hiddenGene)) {
                 niceName = "normal";
             } else if ("brown".equals(mainGene) && !"brown".equals(hiddenGene)) {
@@ -33,7 +37,8 @@ public class PandaSerializer extends EntitySerializer {
             } else {
                 niceName = mainGene;
             }
-            sb.insert(start, MiscUtils.niceName(niceName)).insert(start + niceName.length(), ' ');
         }
+        return super.getPrefix() + MiscUtils.niceName(niceName);
+
     }
 }
