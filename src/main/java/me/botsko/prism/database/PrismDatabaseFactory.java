@@ -2,6 +2,7 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
+import me.botsko.prism.database.mysql.PrismHikariDataSource;
 import me.botsko.prism.database.sql.SqlPrismDataSourceUpdater;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -48,14 +49,15 @@ public class PrismDatabaseFactory {
         if (configuration == null) {
             return null;
         }
-        String dataSource = configuration.getString("datasource", "mysql");
+        String dataSource = configuration.getString("datasource");
         if (dataSource == null) {
             return null;
         }
+        ConfigurationSection section;
         switch (dataSource) {
             case "mysql":
                 Prism.log("Attempting to configure datasource as " + dataSource);
-                ConfigurationSection section = configuration.getConfigurationSection("prism.mysql");
+                section = configuration.getConfigurationSection("prism.mysql");
                 database = new MySqlPrismDataSource(section);
                 return database;
             case "derby":
@@ -64,8 +66,13 @@ public class PrismDatabaseFactory {
             case "sqlite":
                 Prism.warn("ERROR: This version of Prism no longer supports SQLite. Please use MySQL.");
                 return null;
+            case "hikari":
+                Prism.log("Attempting to configure datasource as hikari");
+                section = configuration.getConfigurationSection("prism.datasource");
+                database = new PrismHikariDataSource(null);
+                Prism.log("HIKARI: prism will configure itself using the hikari parameters");
             default:
-                Prism.log("Attempting to configure datasource as " + null);
+                Prism.log("Attempting to configure datasource as null");
                 return null;
         }
 
