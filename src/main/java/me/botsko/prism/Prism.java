@@ -14,6 +14,7 @@ import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
+import me.botsko.prism.listeners.PaperListeners;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
@@ -130,6 +131,7 @@ public class Prism extends JavaPlugin {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
+    public static boolean isPaper = true;
     /**
      * We store a basic index of hanging entities we anticipate will fall, so that
      * when they do fall we can attribute them to the player who broke the original
@@ -379,6 +381,7 @@ public class Prism extends JavaPlugin {
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
             PaperLib.suggestPaper(this);
         }
+        isPaper = PaperLib.isPaper();
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
@@ -503,6 +506,10 @@ public class Prism extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
+            if(isPaper) {
+                //register listeners that only work with paper.
+                getServer().getPluginManager().registerEvents(new PaperListeners(this), this);
+            }
             getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 
