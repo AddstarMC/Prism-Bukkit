@@ -3,6 +3,7 @@ package me.botsko.prism.players;
 import me.botsko.prism.Prism;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,12 +119,15 @@ public class PlayerIdentification {
 
         // Lookup by UUID
         prismPlayer = lookupByUuid(uuid);
+        // does the name match
         if (prismPlayer != null) {
             return prismPlayer;
         }
 
         // Still not found, try looking them up by name
         prismPlayer = lookupByName(name);
+        // now check if the uuid is the same as the one logging in ...if it isnt we likely need to
+        // create a new player and update the old one with a new name
         return prismPlayer;
 
     }
@@ -145,11 +149,23 @@ public class PlayerIdentification {
 
     private static PrismPlayer comparePlayerToCache(final String name, final UUID uuid, PrismPlayer prismPlayer) {
         if (!name.equals(prismPlayer.getName())) {
+            //ok but now names can be used so lets check if an existing player uses that name
+            PrismPlayer test = lookupByName(name);
+            if (test != null) {
+                Prism.warn("Player UUID for " + name + " conflicts with another player: " + test.getUuid()
+                        + " we are attempting to update the that UUID with a new name before allowing this cache.");
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(test.getUuid());
+                test.setName(offlinePlayer.getName());
+                if (test.getName().equals(name)){
+                    Prism.warn("Players appear to have the same name - generally this is impossible with online servers.");
+                }
+                updatePlayer(test);
+            }
             prismPlayer.setName(name);
             updatePlayer(prismPlayer);
         }
         if (!uuid.equals(prismPlayer.getUuid())) {
-            Prism.log("Player UUID for " + name + " does not match our cache! " + uuid
+            Prism.warn("Player UUID for " + name + " does not match our cache! " + uuid
                     + " versus cache of " + prismPlayer.getUuid());
 
             // Update anyway...
