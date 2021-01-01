@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -197,6 +198,18 @@ public class PrismPlayerEvents implements Listener {
         RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", event.getItemDrop().getItemStack(),
                 event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(),
                 event.getPlayer()));
+    }
+
+    /**
+     * Track players changing game modes
+     * @param event PlayerGameModeChangeEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeSwitch(PlayerGameModeChangeEvent event) {
+        if (!Prism.getIgnore().event("player-gamemodechange", event.getPlayer())) {
+            return;
+        }
+        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange", event.getPlayer(), event.getNewGameMode().toString()));
     }
 
     /**

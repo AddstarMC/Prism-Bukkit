@@ -251,6 +251,8 @@ public class ActionRegistry {
                 EntityAction.class, Il8nHelper.getRawMessage("killed")));
         registerAction(new ActionType("player-quit", false, false, false,
                 PlayerAction.class, Il8nHelper.getRawMessage("quit")));
+        registerAction(new ActionType("player-gamemodechange", false, false, false,
+                PlayerAction.class, Il8nHelper.getRawMessage("changed game mode")));
         registerAction(new ActionType("player-teleport", false, false, false,
                 EntityTravelAction.class, Il8nHelper.getRawMessage("teleported")));
         registerAction(new ActionType("potion-splash", false, false, false,
