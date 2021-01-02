@@ -17,39 +17,41 @@ import java.util.Set;
  */
 class HikariHelper {
 
-    public static void createPropertiesFile(File propFile,HikariConfig dbConfig, boolean skipCoreValue) {
-            dbConfig.setPoolName("prism");
-            Properties prop = new Properties();
-            if(skipCoreValue) {
-                Set<String> keys = PropertyElf.getPropertyNames(HikariConfig.class);
-                for (String k : keys) {
-                    if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)
-                            || "dataSourceProperties".equals(k) || "healthCheckProperties".equals(k)) {
-                        continue;
-                    }
-                    Object out = PropertyElf.getProperty(k, dbConfig);
-                    if (out != null) {
-                        prop.setProperty(k, out.toString());
-                    }
+    public static void createPropertiesFile(File propFile, HikariConfig dbConfig, boolean skipCoreValue) {
+        dbConfig.setPoolName("prism");
+        Properties prop = new Properties();
+        Set<String> keys = PropertyElf.getPropertyNames(HikariConfig.class);
+        for (String k : keys) {
+            if (skipCoreValue) {
+                if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)) {
+                    continue;
                 }
             }
-            Properties datasourceProps = dbConfig.getDataSourceProperties();
-            for (String name : datasourceProps.stringPropertyNames()) {
-                String val = datasourceProps.getProperty(name);
-                if (val != null) {
-                    prop.setProperty("dataSource." + name, val);
-                }
+            if ("dataSourceProperties".equals(k) || "healthCheckProperties".equals(k)) {
+                continue;
             }
-            try {
-                if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
-                    Prism.log("Prism Directory couldn't be created");
-                }
-                OutputStream out = new FileOutputStream(propFile);
-                prop.store(out, "Prism Hikari Datasource Properties for"
-                        + " advanced database Configuration");
-                Prism.log("Database Configuration saved to - " + propFile.getPath());
-            } catch (IOException e) {
-                Prism.log("Could not save Hikari.properties - " + e.getMessage());
+            Object out = PropertyElf.getProperty(k, dbConfig);
+            if (out != null) {
+                prop.setProperty(k, out.toString());
             }
         }
+        Properties datasourceProps = dbConfig.getDataSourceProperties();
+        for (String name : datasourceProps.stringPropertyNames()) {
+            String val = datasourceProps.getProperty(name);
+            if (val != null) {
+                prop.setProperty("dataSource." + name, val);
+            }
+        }
+        try {
+            if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
+                Prism.log("Prism Directory couldn't be created");
+            }
+            OutputStream out = new FileOutputStream(propFile);
+            prop.store(out, "Prism Hikari Datasource Properties for"
+                    + " advanced database Configuration");
+            Prism.log("Database Configuration saved to - " + propFile.getPath());
+        } catch (IOException e) {
+            Prism.log("Could not save Hikari.properties - " + e.getMessage());
+        }
+    }
 }

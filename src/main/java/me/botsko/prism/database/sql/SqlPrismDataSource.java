@@ -52,6 +52,10 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
         createDataSource();
     }
 
+    public static void updateDefaultConfig(ConfigurationSection section) {
+        section.addDefault("useNonStandardSql", false);
+    }
+
     @Override
     public boolean isPaused() {
         return paused;

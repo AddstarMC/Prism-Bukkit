@@ -70,9 +70,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
      */
     public static void updateDefaultConfig(ConfigurationSection section) {
         section.addDefault("hostname", "127.0.0.1");
-        section.addDefault("username", "root");
-        section.addDefault("password", "");
-        section.addDefault("databaseName", "minecraft");
+        section.addDefault("username", "prism");
+        section.addDefault("password", "prism");
+        section.addDefault("databaseName", "prism");
         section.addDefault("prefix", "prism_");
         section.addDefault("port", "3306");
         section.addDefault("useNonStandardSql", true);

@@ -25,7 +25,7 @@ public class RecordingTask implements Runnable {
      */
     public RecordingTask(Prism plugin) {
         this.plugin = plugin;
-        actionsPerInsert = plugin.getConfig().getInt("prism.database.actions-per-insert-batch");
+        actionsPerInsert = plugin.getConfig().getInt("prism.query.actions-per-insert-batch");
     }
 
     /**
@@ -77,7 +77,7 @@ public class RecordingTask implements Runnable {
                     }
                     RecordingManager.failedDbConnectionCount++;
                     if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
-                            .getInt("prism.database.max-failures-before-wait")) {
+                            .getInt("prism.query.max-failures-before-wait")) {
                         Prism.log("Too many problems connecting. Giving up for a bit.");
                         scheduleNextRecording();
                     }
@@ -163,7 +163,7 @@ public class RecordingTask implements Runnable {
 
         // If we have too many rejected connections, increase the schedule
         if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
-                .getInt("prism.database.max-failures-before-wait")) {
+                .getInt("prism.query.max-failures-before-wait")) {
             return RecordingManager.failedDbConnectionCount * 20;
         }
 

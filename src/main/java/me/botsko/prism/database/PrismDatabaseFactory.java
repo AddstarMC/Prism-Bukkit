@@ -3,8 +3,10 @@ package me.botsko.prism.database;
 import me.botsko.prism.Prism;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 import me.botsko.prism.database.mysql.PrismHikariDataSource;
+import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlPrismDataSourceUpdater;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 
@@ -20,24 +22,51 @@ public class PrismDatabaseFactory {
      * Create a config.
      * @param configuration ConfigurationSection
      */
-    public static void createDefaultConfig(ConfigurationSection configuration) {
-        ConfigurationSection mysql;
-        if (configuration.contains("prism.mysql")) {
-            mysql = configuration.getConfigurationSection("prism.mysql");
-            if (mysql == null) {
-                mysql = configuration.createSection("prism.mysql");
+    public static void createDefaultConfig(final ConfigurationSection configuration) {
+        ConfigurationSection dataSourceSection;
+        ConfigurationSection  dataSourceProperties;
+        if(configuration.isConfigurationSection("datasource")) {
+            dataSourceSection = configuration.getConfigurationSection("datasource");
+            dataSourceSection.addDefault("type","mysql");
+            if (!dataSourceSection.isConfigurationSection("properties")) {
+                dataSourceProperties = dataSourceSection.createSection("properties");
+            } else {
+                dataSourceProperties = dataSourceSection.getConfigurationSection("properties");
             }
         } else {
-            mysql = configuration.createSection("prism.mysql");
+            String type = configuration.getString("datasource");//gets the old datasource.
+            dataSourceSection = configuration.createSection("datasource");
+            if(type != null) {
+                dataSourceSection.set("type", type);
+            } else {
+                dataSourceSection.addDefault("type", "mysql");
+            }
+            dataSourceProperties = dataSourceSection.createSection("properties");
         }
-        MySqlPrismDataSource.updateDefaultConfig(mysql);
-        addDatabaseDefaults(mysql);
+        String dataType = dataSourceSection.getString("type","mysql");
+        updateDataSourceProperties(dataType,dataSourceProperties);
+        addDatabaseDefaults(configuration);
+    }
+
+    private static void updateDataSourceProperties(@Nullable final String type, final ConfigurationSection configuration) {
+        String test = type;
+        if (test  == null) {
+            test = "mysql";
+        }
+        switch (test) {
+            case "mysql":
+                MySqlPrismDataSource.updateDefaultConfig(configuration);
+                break;
+            case "hikari":
+            default:
+                SqlPrismDataSource.updateDefaultConfig(configuration);
+        }
     }
 
     private static void addDatabaseDefaults(ConfigurationSection section) {
-        section.addDefault("database.max-failures-before-wait", 5);
-        section.addDefault("database.actions-per-insert-batch", 300);
-        section.addDefault("database.force-write-queue-on-shutdown", true);
+        section.addDefault("query.max-failures-before-wait", 5);
+        section.addDefault("query.actions-per-insert-batch", 300);
+        section.addDefault("query.force-write-queue-on-shutdown", true);
     }
 
     /**
@@ -49,33 +78,47 @@ public class PrismDatabaseFactory {
         if (configuration == null) {
             return null;
         }
-        String dataSource = configuration.getString("datasource");
+        String dataSource;
+        ConfigurationSection dataSourceProperties;
+
+        if (configuration.isConfigurationSection("datasource")) {
+            ConfigurationSection dataSourceSection = configuration.getConfigurationSection("datasource");
+            if (dataSourceSection != null) {  //in case they didnt update the config.
+                dataSource = dataSourceSection.getString("type");
+                dataSourceProperties = dataSourceSection.getConfigurationSection("properties");
+            } else {
+                //old config style
+                dataSource = configuration.getString("datasource");
+                dataSourceProperties = configuration.getConfigurationSection("prism."+dataSource);
+            }
+        } else {
+            //old config style
+            dataSource = configuration.getString("datasource");
+            dataSourceProperties = configuration.getConfigurationSection("prism."+dataSource);
+        }
         if (dataSource == null) {
             return null;
         }
-        ConfigurationSection section;
         switch (dataSource) {
             case "mysql":
-                Prism.log("Attempting to configure datasource as " + dataSource);
-                section = configuration.getConfigurationSection("prism.mysql");
-                database = new MySqlPrismDataSource(section);
-                return database;
-            case "derby":
-                Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use MySQL.");
-                return null;
+                Prism.log("Attempting to configure datasource as mysql");
+                database = new MySqlPrismDataSource(dataSourceProperties);
+                break;
             case "sqlite":
-                Prism.warn("ERROR: This version of Prism no longer supports SQLite. Please use MySQL.");
-                return null;
+                Prism.warn("ERROR: This version of Prism no longer supports SQLite.");
+                break;
+            case "derby":
+                Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use Hikari.");
             case "hikari":
-                Prism.log("Attempting to configure datasource as hikari");
-                section = configuration.getConfigurationSection("prism.datasource");
-                database = new PrismHikariDataSource(null);
-                Prism.log("HIKARI: prism will configure itself using the hikari parameters");
             default:
-                Prism.log("Attempting to configure datasource as null");
-                return null;
+                Prism.log("Attempting to configure datasource as " +dataSource);
+                Prism.warn("ERROR: This version of Prism no longer supports "+dataSource);
+                Prism.log("Attempting to configure datasource as hikari");
+                database = new PrismHikariDataSource(dataSourceProperties);
+                Prism.log("HIKARI: prism will configure itself using the hikari parameters");
+                break;
         }
-
+        return database;
     }
 
     /**
@@ -87,7 +130,7 @@ public class PrismDatabaseFactory {
         if (configuration == null) {
             return null;
         }
-        String dataSource = configuration.getString("datasource", "mysql");
+        String dataSource = configuration.getString("type", "mysql");
         if (dataSource == null) {
             return null;
         }
@@ -95,7 +138,7 @@ public class PrismDatabaseFactory {
             case "mysql":
             case "derby":
             case "sqlite":
-                return new SqlPrismDataSourceUpdater((MySqlPrismDataSource) database);
+                return new SqlPrismDataSourceUpdater(database);
             default:
                 return null;
         }

@@ -412,6 +412,7 @@ public class Prism extends JavaPlugin {
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
+            prismDataSource = PrismDatabaseFactory.createDataSource(config);
             Connection testConnection;
             if (prismDataSource != null) {
                 testConnection = prismDataSource.getConnection();
@@ -808,7 +809,7 @@ public class Prism extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if (getConfig().getBoolean("prism.database.force-write-queue-on-shutdown")) {
+        if (getConfig().getBoolean("prism.query.force-write-queue-on-shutdown")) {
             final QueueDrain drainer = new QueueDrain(this);
             drainer.forceDrainQueue();
         }

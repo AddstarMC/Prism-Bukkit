@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 
@@ -13,10 +14,10 @@ import java.sql.Statement;
  * Created by benjamincharlton on 5/04/2019.
  */
 public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
-    private final MySqlPrismDataSource dataSource;
+    private final PrismDataSource dataSource;
     private static String  prefix = "prism_";
 
-    public SqlPrismDataSourceUpdater(MySqlPrismDataSource dataSource) {
+    public SqlPrismDataSourceUpdater(PrismDataSource dataSource) {
         this.dataSource = dataSource;
         prefix = this.dataSource.getPrefix();
     }

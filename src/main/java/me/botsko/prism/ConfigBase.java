@@ -29,23 +29,6 @@ public class ConfigBase {
         return config;
     }
 
-    /**
-     * Loads language configuration.
-     *
-     * @return FileConfig
-     */
-    @SuppressWarnings("unused")
-    public FileConfiguration getLang(String langString) {
-
-        String langFile = langString;
-        if (langFile == null) {
-            langFile = "en-us";
-        }
-
-        // Read the base config
-        return loadConfig("languages/", langFile);
-
-    }
 
     /**
      * Returns base directory for config.
