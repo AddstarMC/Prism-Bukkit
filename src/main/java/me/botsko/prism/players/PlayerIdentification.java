@@ -156,8 +156,9 @@ public class PlayerIdentification {
                         + " we are attempting to update the that UUID with a new name before allowing this cache.");
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(test.getUuid());
                 test.setName(offlinePlayer.getName());
-                if (test.getName().equals(name)){
-                    Prism.warn("Players appear to have the same name - generally this is impossible with online servers.");
+                if (test.getName().equals(name)) {
+                    Prism.warn("Players appear to have the same name "
+                            + "- generally this is impossible with online servers.");
                 }
                 updatePlayer(test);
             }

@@ -201,7 +201,8 @@ public class PrismPlayerEvents implements Listener {
     }
 
     /**
-     * Track players changing game modes
+     * Track players changing game modes.
+     *
      * @param event PlayerGameModeChangeEvent
      */
     @EventHandler(priority = EventPriority.MONITOR)
@@ -209,7 +210,8 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event("player-gamemodechange", event.getPlayer())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange", event.getPlayer(), event.getNewGameMode().toString()));
+        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange",
+                event.getPlayer(), event.getNewGameMode().toString()));
     }
 
     /**
