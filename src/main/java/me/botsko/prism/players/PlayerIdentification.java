@@ -1,7 +1,7 @@
 package me.botsko.prism.players;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.database.sql.SqlPlayerIdentificationBuilder;
+import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class PlayerIdentification {
             Prism.prismPlayers.put(uuid, prismPlayer);
             return;
         }
-        SqlPlayerIdentificationBuilder.addPlayer(name, uuid);
+        SqlPlayerIdentificationHelper.addPlayer(name, uuid);
     }
 
     /**
@@ -47,7 +47,7 @@ public class PlayerIdentification {
         }
 
         // Player is fake, create a record for them
-        prismPlayer = SqlPlayerIdentificationBuilder.addFakePlayer(playerName);
+        prismPlayer = SqlPlayerIdentificationHelper.addFakePlayer(playerName);
 
         return prismPlayer;
 
@@ -72,7 +72,7 @@ public class PlayerIdentification {
 
         // Player not online, we need to go to cache
 
-        return SqlPlayerIdentificationBuilder.lookupByName(playerName);
+        return SqlPlayerIdentificationHelper.lookupByName(playerName);
 
     }
 
@@ -93,16 +93,16 @@ public class PlayerIdentification {
         }
 
         // Lookup by UUID
-        prismPlayer = SqlPlayerIdentificationBuilder.lookupByUuid(uuid);
+        prismPlayer = SqlPlayerIdentificationHelper.lookupByUuid(uuid);
         if (prismPlayer != null) {
             if (!prismPlayer.getName().equals(name)) {
                 prismPlayer.setName(name);
-                SqlPlayerIdentificationBuilder.updatePlayer(prismPlayer);
+                SqlPlayerIdentificationHelper.updatePlayer(prismPlayer);
             }
             return prismPlayer;
         }
         // Still not found, try looking them up by name
-        prismPlayer = SqlPlayerIdentificationBuilder.lookupByName(name);
+        prismPlayer = SqlPlayerIdentificationHelper.lookupByName(name);
         prismPlayer = comparePlayerToCache(name, uuid, prismPlayer);
         // now check if the uuid is the same as the one logging in ...if it isn't we likely need to
         // create a new player and update the old one with a new name
@@ -123,13 +123,14 @@ public class PlayerIdentification {
      * @return PrismPlayer
      */
 
-    private static @Nullable PrismPlayer comparePlayerToCache(final String name, final UUID uuid, PrismPlayer prismPlayer) {
+    private static @Nullable PrismPlayer comparePlayerToCache(final String name, final UUID uuid,
+                                                              PrismPlayer prismPlayer) {
         if (prismPlayer == null) {
             return null;
         }
         if (!name.equals(prismPlayer.getName())) {
             //ok but now names can be used so lets check if an existing player uses that name
-            PrismPlayer test = SqlPlayerIdentificationBuilder.lookupByName(name);
+            PrismPlayer test = SqlPlayerIdentificationHelper.lookupByName(name);
             if (test != null && test.getUuid() != prismPlayer.getUuid()) {
                 Prism.warn("Player UUID for " + name + " conflicts with another player: " + test.getUuid()
                         + " we are attempting to update that UUID with a new name before allowing this cache.");
@@ -139,10 +140,10 @@ public class PlayerIdentification {
                     Prism.warn("Players appear to have the same name "
                             + "- generally this is impossible with online servers.");
                 }
-                SqlPlayerIdentificationBuilder.updatePlayer(test);
+                SqlPlayerIdentificationHelper.updatePlayer(test);
             }
             prismPlayer.setName(name);
-            SqlPlayerIdentificationBuilder.updatePlayer(prismPlayer);
+            SqlPlayerIdentificationHelper.updatePlayer(prismPlayer);
         }
         if (!uuid.equals(prismPlayer.getUuid())) {
             Prism.warn("Player UUID for " + name + " does not match our cache! " + uuid
@@ -150,7 +151,7 @@ public class PlayerIdentification {
 
             // Update anyway...
             prismPlayer.setUuid(uuid);
-            SqlPlayerIdentificationBuilder.updatePlayer(prismPlayer);
+            SqlPlayerIdentificationHelper.updatePlayer(prismPlayer);
         }
         return prismPlayer;
     }

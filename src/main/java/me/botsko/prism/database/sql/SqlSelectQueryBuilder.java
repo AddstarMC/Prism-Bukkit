@@ -12,7 +12,6 @@ import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.measurement.TimeTaken;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.ItemUtils;
 import me.botsko.prism.utils.MaterialAliases.MaterialState;
@@ -638,7 +637,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     try {
                         // Calls UUID.fromString, must handle potential exceptions
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(
-                                SqlPlayerIdentificationBuilder.uuidFromDbString(rs.getString(14)));
+                                SqlPlayerIdentificationHelper.uuidFromDbString(rs.getString(14)));
 
                         // Fake player
                         if (offline.hasPlayedBefore()) {
