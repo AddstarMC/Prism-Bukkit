@@ -189,21 +189,22 @@ public class SqlPlayerIdentificationBuilder {
     /**
      * This method checks a players name does not exist in the database with a different UUID
      * if it does it will then update that player first before then updating the initial player.
+     *
      * @param prismPlayer PrismPlayer
      */
-     private static void checkAndUpdatePrismPlayer(PrismPlayer prismPlayer) {
+    private static void checkAndUpdatePrismPlayer(PrismPlayer prismPlayer) {
         PrismPlayer test = lookupByName(prismPlayer.getName());
         if (test != null && test.getUuid() != prismPlayer.getUuid()) {
             //there is an existing player with that name ...it will need updating this
             OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(test.getUuid());
-            if(offlinePlayer.getName() != null) {
+            if (offlinePlayer.getName() != null) {
                 if (offlinePlayer.getName().equals(prismPlayer.getName())) {
                     // 2 players with the same name - this is going to cause major issues.
                     Prism.warn("2 Players exist with the same name Prism cannot load both as per the name.");
                     Prism.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
                     Prism.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
                     Prism.warn("Player 2 will have the name set with a random index.");
-                    test.setName(offlinePlayer.getName()+"_"+offlinePlayer.getUniqueId().getMostSignificantBits());
+                    test.setName(offlinePlayer.getName() + "_" + offlinePlayer.getUniqueId().getMostSignificantBits());
                     updatePlayer(test);
                 }
                 test.setName(offlinePlayer.getName());

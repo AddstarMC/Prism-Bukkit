@@ -19,16 +19,16 @@ public class PlayerIdentification {
      * @param name String
      * @return {@link PrismPlayer}
      */
-    public static void cachePrismPlayer(UUID uuid,String name) {
+    public static void cachePrismPlayer(UUID uuid, String name) {
         PrismPlayer prismPlayer;
-        prismPlayer = getPrismPlayer(uuid,name);
+        prismPlayer = getPrismPlayer(uuid, name);
         if (prismPlayer != null) {
-            comparePlayerToCache(name,uuid, prismPlayer);
+            comparePlayerToCache(name, uuid, prismPlayer);
             Prism.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
             Prism.prismPlayers.put(uuid, prismPlayer);
             return;
         }
-        SqlPlayerIdentificationBuilder.addPlayer(name,uuid);
+        SqlPlayerIdentificationBuilder.addPlayer(name, uuid);
     }
 
     /**
@@ -58,6 +58,7 @@ public class PlayerIdentification {
      * found, returns 0.
      * Used by the recorder in determining proper foreign key
      * - Possibly performs db lookup.,
+     *
      * @param playerName String
      * @return PrismPlayer
      */
@@ -66,7 +67,7 @@ public class PlayerIdentification {
         Player player = Bukkit.getPlayer(playerName);
 
         if (player != null) {
-            return getPrismPlayer(player.getUniqueId(),player.getName());
+            return getPrismPlayer(player.getUniqueId(), player.getName());
         }
 
         // Player not online, we need to go to cache
@@ -93,7 +94,7 @@ public class PlayerIdentification {
 
         // Lookup by UUID
         prismPlayer = SqlPlayerIdentificationBuilder.lookupByUuid(uuid);
-        if(prismPlayer != null) {
+        if (prismPlayer != null) {
             if (!prismPlayer.getName().equals(name)) {
                 prismPlayer.setName(name);
                 SqlPlayerIdentificationBuilder.updatePlayer(prismPlayer);
@@ -102,7 +103,7 @@ public class PlayerIdentification {
         }
         // Still not found, try looking them up by name
         prismPlayer = SqlPlayerIdentificationBuilder.lookupByName(name);
-        prismPlayer = comparePlayerToCache(name,uuid,prismPlayer);
+        prismPlayer = comparePlayerToCache(name, uuid, prismPlayer);
         // now check if the uuid is the same as the one logging in ...if it isn't we likely need to
         // create a new player and update the old one with a new name
         return prismPlayer;
@@ -116,8 +117,8 @@ public class PlayerIdentification {
      * historical?)
      * If UUID is different, log an error.
      *
-     * @param name Player name
-     * @param uuid UUID player uuid
+     * @param name        Player name
+     * @param uuid        UUID player uuid
      * @param prismPlayer PrismPlayer
      * @return PrismPlayer
      */
@@ -145,7 +146,7 @@ public class PlayerIdentification {
         }
         if (!uuid.equals(prismPlayer.getUuid())) {
             Prism.warn("Player UUID for " + name + " does not match our cache! " + uuid
-                    + " versus cache of " + prismPlayer.getName() +" / " + prismPlayer.getUuid());
+                    + " versus cache of " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
 
             // Update anyway...
             prismPlayer.setUuid(uuid);
