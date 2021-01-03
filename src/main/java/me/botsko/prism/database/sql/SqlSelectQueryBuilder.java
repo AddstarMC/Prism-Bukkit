@@ -221,11 +221,11 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void blockCondition() {
         // Blocks
-        final Set<Material> blockfilters = parameters.getBlockFilters();
-        if (!blockfilters.isEmpty()) {
-            final String[] blockArr = new String[blockfilters.size()];
+        final Set<Material> blockFilters = parameters.getBlockFilters();
+        if (!blockFilters.isEmpty()) {
+            final String[] blockArr = new String[blockFilters.size()];
             int i = 0;
-            for (Material m : blockfilters) {
+            for (Material m : blockFilters) {
 
                 Set<IntPair> allIds = Prism.getItems().materialToAllIds(m);
 
@@ -416,7 +416,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return query;
     }
 
-    private String buildGroupConditions(String fieldname, String[] argValues, String matchFormat, String matchType,
+    private String buildGroupConditions(String fieldName, String[] argValues, String matchFormat, String matchType,
                                           String dataFormat) {
 
         StringBuilder where = new StringBuilder();
@@ -431,8 +431,8 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 if (c > 1 && c <= argValues.length) {
                     where.append(" ").append(matchType).append(" ");
                 }
-                fieldname = (fieldname == null ? "" : fieldname);
-                where.append(String.format(matchFormat, fieldname, String.format(dataFormat, val)));
+                fieldName = (fieldName == null ? "" : fieldName);
+                where.append(String.format(matchFormat, fieldName, String.format(dataFormat, val)));
                 c++;
             }
             where.append(")");
@@ -508,10 +508,6 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 if (actionType == null) {
                     continue;
                 }
-                // Prism.debug("Important: Action type '" + rs.getString(3)
-                // +
-                // "' has no official handling class, will be shown as generic."
-                // );
 
                 long rowId = 0;
 
@@ -642,7 +638,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     try {
                         // Calls UUID.fromString, must handle potential exceptions
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(
-                                PlayerIdentification.uuidFromDbString(rs.getString(14)));
+                                SqlPlayerIdentificationBuilder.uuidFromDbString(rs.getString(14)));
 
                         // Fake player
                         if (offline.hasPlayedBefore()) {

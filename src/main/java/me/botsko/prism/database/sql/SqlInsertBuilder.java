@@ -38,6 +38,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public long insertActionIntoDatabase(Handler a) {
         int worldId = 0;
@@ -51,7 +52,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             actionId = Prism.prismActions.get(a.getActionType().getName());
         }
 
-        PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getSourceName());
+        PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayerByNameFromCache(a.getSourceName());
         int playerId = prismPlayer.getId();
 
         if (worldId == 0 || actionId == 0 || playerId == 0) {
@@ -68,7 +69,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                 Connection con = dataSource.getConnection();
                 PreparedStatement s = con.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS)
         ) {
-            applytoInsert(s, a, actionId, playerId, worldId, newIds, oldIds, l);
+            applyToInsert(s, a, actionId, playerId, worldId, newIds, oldIds, l);
             s.executeUpdate();
             ResultSet generatedKeys = s.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -104,6 +105,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         batchStatement = batchConnection.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS);
     }
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public boolean addInsertionToBatch(Handler a) throws SQLException {
         if (batchStatement == null) {
@@ -119,7 +121,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             actionId = Prism.prismActions.get(a.getActionType().getName());
         }
 
-        PrismPlayer prismPlayer = PlayerIdentification.cachePrismPlayer(a.getSourceName());
+        PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayerByNameFromCache(a.getSourceName());
         int playerId = prismPlayer.getId();
 
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
@@ -128,7 +130,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         IntPair oldIds = Prism.getItems().materialToIds(a.getOldMaterial(),
                 Utilities.dataString(a.getOldBlockData()));
         Location l = a.getLoc();
-        applytoInsert(batchStatement, a, actionId, playerId, worldId, newIds, oldIds, l);
+        applyToInsert(batchStatement, a, actionId, playerId, worldId, newIds, oldIds, l);
         batchStatement.addBatch();
         extraDataQueue.add(a);
         return true;
@@ -141,7 +143,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
     public void processBatch() throws SQLException {
         if (batchStatement == null) {
             Prism.debug("Batch insert was null");
-            throw new SQLException("no batchstatement configured");
+            throw new SQLException("no batch statement configured");
         }
         batchStatement.executeBatch();
         batchConnection.commit();
@@ -207,7 +209,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         }
     }
 
-    private void applytoInsert(PreparedStatement s, Handler a, int actionId, int playerId, int worldId,
+    private void applyToInsert(PreparedStatement s, Handler a, int actionId, int playerId, int worldId,
                                IntPair newIds, IntPair oldIds, Location l) throws SQLException {
         s.setLong(1, a.getUnixEpoch());
         s.setInt(2, actionId);
