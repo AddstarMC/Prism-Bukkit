@@ -1,5 +1,6 @@
+**********************
 Advanced Configuration
-======================
+**********************
 We get technical here. If you're not sure what these recommendations refer to, please skip.
 
 Pool Exhaustion

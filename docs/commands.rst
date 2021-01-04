@@ -5,3 +5,4 @@ Prism Commands
    :glob:
 
    commands/*
+   parameters/*
