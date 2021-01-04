@@ -1,10 +1,12 @@
+*******
 Lookups
---------
+*******
 
 By default, Prism will begin tracking all sorts of events that happen in your worlds. Players making block changes, killing entities, transfers of items, and much more.
 Some of this data is purely informational, so you can find out who did something, and some of it is useful for rollbacks and restores.
 
-**Searching the Database**
+Searching the Database
+======================
 
 The first use is to be able to find the information you need. Prism comes with three tools to find the data from in-game, each with a different focus.
 
@@ -30,14 +32,14 @@ Lookup queries can be local to you, or even global if you so desire. Need to see
 It's almost limitless.
 
 Pagination
------------
+==========
 
 Most times, a lookup or near query returns a lot of information. We break this into pages for easier navigating.
 After any lookup or near query, use /prism page [page #] to skip to different pages of results. It simply uses the data from your last search and will expire after five minutes.
 Also available are /pr page next and /pr page prev.
 
 Teleporting
-------------
+============
 
 When you perform a lookup, the results will include an index number with every action. If using global or extended views, you'll also see the record ID.
 
