@@ -340,7 +340,7 @@ public class PlayerIdentification {
             while (rs.next()) {
                 PrismPlayer prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)),
                         rs.getString(2));
-                Prism.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+                Prism.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + "from DB the cache.");
                 Prism.prismPlayers.put(UUID.fromString(rs.getString(2)), prismPlayer);
             }
             rs.close();

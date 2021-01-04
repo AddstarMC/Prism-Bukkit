@@ -294,11 +294,13 @@ public class BlockAction extends GenericAction {
         }
 
         // On the blacklist (except an undo)
-        if (Prism.getIllegalBlocks().contains(getMaterial()) && !parameters.hasFlag(Flag.OVERWRITE)
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
-            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO."
-                    + block.getType().name());
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+        if (!parameters.hasFlag(Flag.OVERWRITE)) {
+            if (Prism.getIllegalBlocks().contains(getMaterial())
+                    && !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
+                Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO."
+                        + block.getType().name());
+                return new ChangeResult(ChangeResultType.SKIPPED, null);
+            }
         }
         // If we're not in a preview, actually apply this block
         // Capture the block before we change it
