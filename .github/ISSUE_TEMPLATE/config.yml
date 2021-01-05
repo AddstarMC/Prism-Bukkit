@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Support Request
-    url: discord://discord.gg/8KgkRBA
+    url: https://discord.gg/8KgkRBA
     about: You can obtain support here.
   - name: Latest Builds
     url: https://jenkins.addstar.com.au
