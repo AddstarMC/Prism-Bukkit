@@ -295,5 +295,13 @@ public class ActionRegistry {
                 BlockChangeAction.class, Il8nHelper.getRawMessage("edited")));
         registerAction(new ActionType("xp-pickup", false, false, false,
                 PlayerAction.class, Il8nHelper.getRawMessage("picked-up")));
+        if (Prism.isPaper) {
+            registerAction(new ActionType("target-hit", false, false, false,
+                    BlockAction.class, Il8nHelper.getRawMessage("hit and triggered")));
+            registerAction(new ActionType("player-trade", false, false, false,
+                    EntityAction.class, Il8nHelper.getRawMessage("traded with")));
+            registerAction(new ActionType("item-receive", false, true, true,
+                    ItemStackAction.class, Il8nHelper.getRawMessage("received")));
+        }
     }
 }
