@@ -6,7 +6,7 @@ Appliers
 ==========
 
 Preview
-=======
+-------
 
 Previewing a rollback or restore is **the safest way**.
 When you preview a rollback/restore, Prism queries the database with your given parameters, and shows those blocks changes/restorations to you only - it does not apply the rollback/restore to the world.
@@ -29,14 +29,14 @@ When you apply a preview, it's done exactly the same way but as a real rollback/
 Note: Only block changes are supported in preview mode. Item/entity/etc rollbacks won't show in a preview, but will still be rolled back correctly when the preview is applied._
 
 Rollback
-========
+--------
 
 Some expert users may be comfortable enough to rollback without a preview.
 Use `/prism rollback (params)`.
 Your changes will be applied immediately.
 
 Rollback Wand
--------------
+^^^^^^^^^^^^^
 
 Another wand type is a rollback wand.
 Like the inspector it's for use on a single block or empty space.
@@ -50,7 +50,7 @@ Useful for fixing minor griefs when you'd rather not worry about commands.
 _Note: The Prism team reminds you that if you allow rollbacks, especially of items removed from chests or entity kills, be aware that staff with access to do so have the capability to do so repeatedly. There's no absolute way to ensure an item or entity hasn't already been rolled back but you shouldn't have a problem because only staff can perform rollbacks and staff are by definition trusted. However, you can disable item removal rollbacks in the config._
 
 Restore
-=======
+-------
 
 Restoring is a way to re-apply changes that usually have been rolled back already.
 Essentially a method to reverse a rollback.
