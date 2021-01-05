@@ -382,6 +382,9 @@ public class Prism extends JavaPlugin {
             PaperLib.suggestPaper(this);
         }
         isPaper = PaperLib.isPaper();
+        if (isPaper) {
+            Prism.log("Optional Paper Events will be enabled.");
+        }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
             pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
