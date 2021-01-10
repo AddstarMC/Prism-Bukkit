@@ -14,6 +14,7 @@ import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
+import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
 import me.botsko.prism.listeners.PaperListeners;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
@@ -40,7 +41,6 @@ import me.botsko.prism.parameters.PrismParameterHandler;
 import me.botsko.prism.parameters.RadiusParameter;
 import me.botsko.prism.parameters.SinceParameter;
 import me.botsko.prism.parameters.WorldParameter;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
@@ -102,7 +102,7 @@ public class Prism extends JavaPlugin {
     public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
     public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
-    public static HashMap<String, Integer> prismActions = new HashMap<>();
+    public static final HashMap<String, Integer> prismActions = new HashMap<>();
     private static Logger prismLog;
     private static List<Material> illegalBlocks;
     private static List<EntityType> illegalEntities;
@@ -140,7 +140,7 @@ public class Prism extends JavaPlugin {
     public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
     /**
      * VehicleCreateEvents do not include the player/entity that created it, so we
-     * need to track players right-clicking rails with minecart vehicles, or water
+     * need to track players right-clicking rails with mine cart vehicles, or water
      * for boats.
      */
     public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
@@ -442,7 +442,7 @@ public class Prism extends JavaPlugin {
 
             // Cache world IDs
             prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-            PlayerIdentification.cacheOnlinePlayerPrimaryKeys(playerNames);
+            SqlPlayerIdentificationHelper.cacheOnlinePlayerPrimaryKeys(playerNames);
 
             // ensure current worlds are added
             for (final String w : worldNames) {
@@ -525,9 +525,6 @@ public class Prism extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
             }
 
-            // Assign listeners to our own events
-            // getServer().getPluginManager().registerEvents(new
-            // PrismRollbackEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
 
             // Add commands
@@ -649,8 +646,8 @@ public class Prism extends JavaPlugin {
         //bstats
         if (getConfig().getBoolean("prism.allow-metrics")) {
             Prism.log("Prism bStats metrics are enabled - thank you!");
-            int pluginid = 4365; // assigned by bstats.org
-            Metrics metrics = new Metrics(this, pluginid);
+            int pluginId = 4365; // assigned by bstats.org
+            Metrics metrics = new Metrics(this, pluginId);
             if (!metrics.isEnabled()) {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
