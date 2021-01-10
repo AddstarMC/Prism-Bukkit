@@ -252,7 +252,7 @@ public class ActionRegistry {
         registerAction(new ActionType("player-quit", false, false, false,
                 PlayerAction.class, Il8nHelper.getRawMessage("quit")));
         registerAction(new ActionType("player-gamemodechange", false, false, false,
-                PlayerAction.class, Il8nHelper.getRawMessage("changed-game-mode")));
+                PlayerAction.class, Il8nHelper.getRawMessage("changed_game_mode")));
         registerAction(new ActionType("player-teleport", false, false, false,
                 EntityTravelAction.class, Il8nHelper.getRawMessage("teleported")));
         registerAction(new ActionType("potion-splash", false, false, false,
@@ -299,9 +299,9 @@ public class ActionRegistry {
                 PlayerAction.class, Il8nHelper.getRawMessage("picked-up")));
         if (Prism.isPaper) {
             registerAction(new ActionType("target-hit", false, false, false,
-                    BlockAction.class, Il8nHelper.getRawMessage("hit and triggered")));
+                    BlockAction.class, Il8nHelper.getRawMessage("hit_and_triggered")));
             registerAction(new ActionType("player-trade", false, false, false,
-                    EntityAction.class, Il8nHelper.getRawMessage("traded with")));
+                    EntityAction.class, Il8nHelper.getRawMessage("traded_with")));
             registerAction(new ActionType("item-receive", false, true, true,
                     ItemStackAction.class, Il8nHelper.getRawMessage("received")));
         }
