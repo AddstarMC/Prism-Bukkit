@@ -17,7 +17,6 @@ public class PlayerIdentification {
      *
      * @param uuid Player uuid
      * @param name String
-     * @return {@link PrismPlayer}
      */
     public static void cachePrismPlayer(UUID uuid, String name) {
         PrismPlayer prismPlayer;

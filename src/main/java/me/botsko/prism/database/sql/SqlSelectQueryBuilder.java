@@ -415,7 +415,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return query;
     }
 
-    private String buildGroupConditions(String fieldName, String[] argValues, String matchFormat, String matchType,
+    private String buildGroupConditions(final String fieldName, String[] argValues, String matchFormat, String matchType,
                                           String dataFormat) {
 
         StringBuilder where = new StringBuilder();
@@ -430,8 +430,8 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 if (c > 1 && c <= argValues.length) {
                     where.append(" ").append(matchType).append(" ");
                 }
-                fieldName = (fieldName == null ? "" : fieldName);
-                where.append(String.format(matchFormat, fieldName, String.format(dataFormat, val)));
+                String field = (fieldName == null ? "" : fieldName);
+                where.append(String.format(matchFormat, field, String.format(dataFormat, val)));
                 c++;
             }
             where.append(")");

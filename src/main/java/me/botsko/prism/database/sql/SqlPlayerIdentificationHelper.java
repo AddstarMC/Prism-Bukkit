@@ -99,7 +99,6 @@ public class SqlPlayerIdentificationHelper {
      * Saves a real player's UUID and current Username to the `prism_players` table.
      * At this stage, we're pretty sure the UUID and username do not already exist.
      *
-     * @param name Player
      * @param uuid UUID
      * @return PrismPlayer
      */
