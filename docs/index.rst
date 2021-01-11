@@ -13,10 +13,11 @@ Welcome to Prism for Bukkit's documentation!
    Welcome
    Getting Started <getting-started>
    Features <features>
-   Advanced Configuration <advanced-config>
+   Advanced Configuration <configuration>
    Permissions <permissions>
    Commands <commands>
    Purging Excess Data <purging>
+   Prism API <api/Usage>
 
 
 Indices and tables
