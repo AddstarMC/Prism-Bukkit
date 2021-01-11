@@ -11,6 +11,12 @@ You may use them in any order.
 You can even define multiple arguments for most by separating them with a comma.
 Like ``a:break,place``
 
+A common complaint has been that players get the error:
+``You're missing valid actions. Use /prism ? for assistance.``
+
+Please apply the permissions node: ``prism.parameters.action.required`` - set this as negated - ie false. for the
+player in question.
+
 Parameter List
 ==============
 
