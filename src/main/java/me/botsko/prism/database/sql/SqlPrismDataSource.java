@@ -43,9 +43,17 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
      */
     public SqlPrismDataSource(ConfigurationSection section) {
         this.section = section;
-        setPrefix(section.getString("prefix"));
+        if(section == null){
+            setPrefix("");
+        } else {
+            setPrefix(section.getString("prefix"));
+        }
         setFile();
         createDataSource();
+    }
+
+    public static void updateDefaultConfig(ConfigurationSection section) {
+        section.addDefault("useNonStandardSql", false);
     }
 
     @Override
@@ -68,6 +76,9 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     public void setPrefix(String prefix) {
+        if(prefix == null){
+            this.prefix = "";
+        }
         this.prefix = prefix;
     }
 

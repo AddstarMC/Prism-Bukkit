@@ -21,6 +21,12 @@ project = 'Prism for Bukkit'
 copyright = '2020, AddstarMC,'
 author = 'Narimm'
 
+version = '2.1.8-SNAPSHOT'
+# The full version, including alpha/beta/rc tags
+release = version
+
+if release.endswith('-SNAPSHOT'):
+    tags.add('draft')
 
 # -- General configuration ---------------------------------------------------
 

@@ -2,6 +2,7 @@ package me.botsko.prism;
 
 import me.botsko.prism.database.PrismDatabaseFactory;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -29,7 +30,6 @@ public class PrismConfig extends ConfigBase {
     @Override
     public FileConfiguration getConfig() {
         config = super.getConfig();
-        config.addDefault("datasource", "mysql");
         // set defaults
         config.addDefault("prism.debug", false);
         config.addDefault("prism.preload-materials", false);
