@@ -151,11 +151,6 @@
             <version>5.1.42</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.16.1-R0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <build>
         <resources>
