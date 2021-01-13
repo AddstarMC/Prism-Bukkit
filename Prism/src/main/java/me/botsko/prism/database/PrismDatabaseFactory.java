@@ -36,7 +36,7 @@ public class PrismDatabaseFactory {
         } else {
             String type = configuration.getString("datasource");//gets the old datasource.
             dataSourceSection = configuration.createSection("datasource");
-            if(type != null) {
+            if (type != null) {
                 dataSourceSection.set("type", type);
             } else {
                 dataSourceSection.addDefault("type", "mysql");
@@ -48,7 +48,8 @@ public class PrismDatabaseFactory {
         addDatabaseDefaults(configuration);
     }
 
-    private static void updateDataSourceProperties(@Nullable final String type, final ConfigurationSection configuration) {
+    private static void updateDataSourceProperties(@Nullable final String type,
+                                                   final ConfigurationSection configuration) {
         String test = type;
         if (test  == null) {
             test = "mysql";

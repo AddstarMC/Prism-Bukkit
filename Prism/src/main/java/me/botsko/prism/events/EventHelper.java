@@ -29,11 +29,13 @@ public class EventHelper {
         return new PrismUnloadEvent();
     }
 
-    public static PrismDrainEvent createDrainEvent(ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius) {
+    public static PrismDrainEvent createDrainEvent(ArrayList<BlockStateChange> blockStateChanges,
+                                                   Player onBehalfOf, int radius) {
         return new PrismDrainEvent(blockStateChanges, onBehalfOf, radius);
     }
 
-    public static PrismExtinguishEvent createExtinguishEvent(ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius) {
+    public static PrismExtinguishEvent createExtinguishEvent(ArrayList<BlockStateChange> blockStateChanges,
+                                                             Player onBehalfOf, int radius) {
         return new PrismExtinguishEvent(blockStateChanges,onBehalfOf,radius);
     }
 }

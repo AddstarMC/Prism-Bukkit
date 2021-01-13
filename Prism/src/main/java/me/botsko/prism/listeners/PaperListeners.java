@@ -22,15 +22,20 @@ import org.bukkit.projectiles.ProjectileSource;
 public class PaperListeners implements Listener {
 
     Prism plugin;
+
     public PaperListeners(Prism plugin) {
         this.plugin = plugin;
     }
 
+    /**
+     * React to a target hit event.
+     * @param event the TargetHitEvent.
+     */
     @EventHandler(priority = EventPriority.MONITOR)
-    public void onTargetHitEvent(TargetHitEvent event){
+    public void onTargetHitEvent(TargetHitEvent event) {
         Projectile projectile = event.getEntity();
         ProjectileSource shooter = projectile.getShooter();
-        if(shooter instanceof Player) {
+        if (shooter instanceof Player) {
             if (!Prism.getIgnore().event("target-hit", (Player) shooter)) {
                 return;
             }

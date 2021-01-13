@@ -2,7 +2,7 @@ package me.botsko.prism.appliers;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collection;

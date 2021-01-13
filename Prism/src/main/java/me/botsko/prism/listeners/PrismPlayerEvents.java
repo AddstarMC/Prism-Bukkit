@@ -4,7 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;

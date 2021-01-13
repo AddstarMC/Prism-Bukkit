@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.measurement.QueueStats;
 

@@ -6,14 +6,16 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.api.actions.Handler;;
-import me.botsko.prism.commandlibs.CallInfo;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
 
 import java.util.List;
+
+;
 
 public class NearCommand implements SubHandler {
 

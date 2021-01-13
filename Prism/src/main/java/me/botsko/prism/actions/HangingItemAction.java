@@ -2,9 +2,9 @@ package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.appliers.ChangeResultImpl;
-import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Art;
 import org.bukkit.Location;

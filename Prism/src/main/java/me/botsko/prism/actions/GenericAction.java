@@ -8,8 +8,6 @@ import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResultImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

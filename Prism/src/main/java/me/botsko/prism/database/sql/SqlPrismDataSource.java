@@ -43,7 +43,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
      */
     public SqlPrismDataSource(ConfigurationSection section) {
         this.section = section;
-        if(section == null){
+        if (section == null) {
             setPrefix("");
         } else {
             setPrefix(section.getString("prefix"));
@@ -76,7 +76,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     public void setPrefix(String prefix) {
-        if(prefix == null){
+        if (prefix == null) {
             this.prefix = "";
         }
         this.prefix = prefix;

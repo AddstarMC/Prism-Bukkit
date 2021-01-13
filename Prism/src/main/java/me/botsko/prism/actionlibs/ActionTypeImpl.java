@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.api.actions.Handler;;
 import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Handler;
 
 public class ActionTypeImpl implements ActionType {
 

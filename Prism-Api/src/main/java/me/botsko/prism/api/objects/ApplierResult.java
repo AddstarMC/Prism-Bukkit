@@ -1,8 +1,8 @@
 package me.botsko.prism.api.objects;
 
+import me.botsko.prism.api.BlockStateChange;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.BlockStateChange;
 import org.bukkit.entity.Entity;
 
 import java.util.List;

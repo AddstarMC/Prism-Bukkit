@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.api.actions.ActionType;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -62,8 +62,10 @@ public class ActionMessage {
                 .replaceFirstText(Pattern.compile("<target>"),
                       builder -> Component.text().content(handler.getSourceName()).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                      builder -> Component.text().content(getDescription((ActionTypeImpl)action)).color(NamedTextColor.WHITE))
-                .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor((ActionTypeImpl)action, highlight))
+                      builder -> Component.text().content(getDescription((ActionTypeImpl)action))
+                              .color(NamedTextColor.WHITE))
+                .replaceFirstText(Pattern.compile("<actorNice>"),
+                        builder -> getActor((ActionTypeImpl)action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
                       builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),

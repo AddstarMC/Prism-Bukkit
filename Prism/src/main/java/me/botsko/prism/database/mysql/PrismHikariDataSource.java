@@ -21,6 +21,7 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
     private static HikariConfig dbConfig;
+
     static {
         if (propFile.exists()) {
             Prism.log("Configuring Hikari from " + propFile.getName());
@@ -43,6 +44,7 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
             HikariHelper.createPropertiesFile(propFile, dbConfig, false);
         }
     }
+
     /**
      * Create a dataSource.
      *

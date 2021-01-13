@@ -1,7 +1,7 @@
 package me.botsko.prism.parameters;
 
-import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.actions.MatchRule;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

@@ -57,7 +57,7 @@ public class HelpCommand implements SubHandler {
                         .append(
                               Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("wiki", ":")
                                     .color(NamedTextColor.WHITE)
-                                    .append(Component.text("https://github.com/AddstarMC/Prism-Bukkit/wiki")))));
+                                    .append(Component.text("https://prism-bukkit.readthedocs.io/")))));
             return;
         }
         sender.sendMessage(Identity.nil(),

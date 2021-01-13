@@ -1,13 +1,12 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.ChangeResult;
-import me.botsko.prism.api.PrismParameters;
-import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
