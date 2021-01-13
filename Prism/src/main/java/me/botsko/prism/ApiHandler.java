@@ -6,10 +6,8 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.ActionMeter;
-import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.bridge.PrismBlockEditHandler;
 import me.botsko.prism.measurement.QueueStats;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;

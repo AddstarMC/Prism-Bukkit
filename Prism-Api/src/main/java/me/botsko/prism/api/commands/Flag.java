@@ -1,7 +1,6 @@
 package me.botsko.prism.api.commands;
 
 import org.bukkit.permissions.Permissible;
-import org.jetbrains.annotations.PropertyKey;
 
 public enum Flag {
     DRAIN("flag-drain"),
