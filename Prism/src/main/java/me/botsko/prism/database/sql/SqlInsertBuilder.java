@@ -1,7 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;

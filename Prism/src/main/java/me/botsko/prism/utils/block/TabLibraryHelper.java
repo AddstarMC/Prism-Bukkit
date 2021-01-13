@@ -174,7 +174,6 @@ public class TabLibraryHelper {
      *
      * @param material Material 1
      * @param material Material 2
-     * @return
      */
     protected static final EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
 

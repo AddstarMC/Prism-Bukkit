@@ -9,7 +9,7 @@ import org.bukkit.block.BlockState;
 public interface BlockStateChange {
 
     /**
-     * The Original BlockState
+     * The Original BlockState.
      * @return BlockState
      */
     BlockState getOriginalBlock();

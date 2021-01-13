@@ -75,6 +75,10 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
         return prefix;
     }
 
+    /**
+     * Set the prefix for the data source.
+     * @param prefix String.
+     */
     public void setPrefix(String prefix) {
         if (prefix == null) {
             this.prefix = "";

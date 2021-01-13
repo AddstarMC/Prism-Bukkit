@@ -2,9 +2,9 @@ package me.botsko.prism.api;
 
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.MatchRule;
-import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.api.objects.MaterialState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

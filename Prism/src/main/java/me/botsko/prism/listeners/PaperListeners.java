@@ -44,6 +44,10 @@ public class PaperListeners implements Listener {
         }
     }
 
+    /**
+     * TradeEvent - Paper Only.
+     * @param event PlayerTradeEvent
+     */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTrade(PlayerTradeEvent event) {
         Player player = event.getPlayer();

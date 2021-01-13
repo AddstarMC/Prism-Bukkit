@@ -25,7 +25,7 @@ public class PrismDatabaseFactory {
     public static void createDefaultConfig(final ConfigurationSection configuration) {
         ConfigurationSection dataSourceSection;
         ConfigurationSection  dataSourceProperties;
-        if(configuration.isConfigurationSection("datasource")) {
+        if (configuration.isConfigurationSection("datasource")) {
             dataSourceSection = configuration.getConfigurationSection("datasource");
             dataSourceSection.addDefault("type","mysql");
             if (!dataSourceSection.isConfigurationSection("properties")) {
@@ -90,12 +90,12 @@ public class PrismDatabaseFactory {
             } else {
                 //old config style
                 dataSource = configuration.getString("datasource");
-                dataSourceProperties = configuration.getConfigurationSection("prism."+dataSource);
+                dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
             }
         } else {
             //old config style
             dataSource = configuration.getString("datasource");
-            dataSourceProperties = configuration.getConfigurationSection("prism."+dataSource);
+            dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
         }
         if (dataSource == null) {
             return null;
@@ -112,8 +112,8 @@ public class PrismDatabaseFactory {
                 Prism.warn("ERROR: This version of Prism no longer supports Derby. Please use Hikari.");
             case "hikari":
             default:
-                Prism.log("Attempting to configure datasource as " +dataSource);
-                Prism.warn("ERROR: This version of Prism no longer supports "+dataSource);
+                Prism.log("Attempting to configure datasource as " + dataSource);
+                Prism.warn("ERROR: This version of Prism no longer supports " + dataSource);
                 Prism.log("Attempting to configure datasource as hikari");
                 database = new PrismHikariDataSource(dataSourceProperties);
                 Prism.log("HIKARI: prism will configure itself using the hikari parameters");

@@ -6,7 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.api.actions.Handler;;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;

@@ -100,7 +100,6 @@ public class SqlPlayerIdentificationHelper {
      * At this stage, we're pretty sure the UUID and username do not already exist.
      *
      * @param uuid UUID
-     * @return PrismPlayer
      */
 
     public static void addPlayer(final String name, final UUID uuid) {

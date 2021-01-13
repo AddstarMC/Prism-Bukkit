@@ -36,7 +36,6 @@ public class Utilities {
      *
      * @param material Material 1
      * @param material Material 2
-     * @return
      */
     private static final EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
 

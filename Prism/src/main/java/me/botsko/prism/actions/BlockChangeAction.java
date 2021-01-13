@@ -55,8 +55,8 @@ public class BlockChangeAction extends BlockAction {
     }
 
     private ChangeResult placeBlock(Player player, PrismParameters parameters, boolean isPreview, String type,
-                                        Material oldMat, BlockData oldData, Material newMat, BlockData newData, Block block,
-                                        boolean isDeferred) {
+                                    Material oldMat, BlockData oldData, Material newMat,
+                                    BlockData newData, Block block, boolean isDeferred) {
 
         final BlockAction b = new BlockAction();
         b.setActionType(type);
