@@ -33,7 +33,6 @@ public class FlagsCommand implements SubHandler {
      * @param s CommandSender
      */
     private void help(CommandSender s) {
-        Audience sender = Prism.getAudiences().sender(s);
         Prism.messenger.sendMessage(s, Prism.messenger.playerHeaderMsg(
                 Il8nHelper.getMessage("flag-help-header").color(NamedTextColor.GOLD)));
         Prism.messenger.sendMessage(s, Prism.messenger.playerMsg(
@@ -44,7 +43,7 @@ public class FlagsCommand implements SubHandler {
             Prism.messenger.sendMessage(s,Prism.messenger.playerMsg(
                     Component.text(flag.getUsage().replace("_", "-"))
                             .color(NamedTextColor.LIGHT_PURPLE)
-                            .append(Component.text(" " + flag.getDescription()))));
+                            .append(Component.text(" " + Il8nHelper.getMessage(flag.getDescription())))));
         }
     }
 }

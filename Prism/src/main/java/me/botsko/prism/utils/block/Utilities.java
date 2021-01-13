@@ -1,5 +1,6 @@
 package me.botsko.prism.utils.block;
 
+import me.botsko.prism.api.BlockStateChange;
 import me.botsko.prism.events.BlockStateChangeImpl;
 import me.botsko.prism.utils.MaterialTag;
 import org.bukkit.Location;
@@ -83,7 +84,7 @@ public class Utilities {
      * @param radius integer
      */
     @SuppressWarnings("WeakerAccess")
-    public static ArrayList<BlockStateChangeImpl> removeMaterialFromRadius(Material mat, Location loc, int radius) {
+    public static ArrayList<BlockStateChange> removeMaterialFromRadius(Material mat, Location loc, int radius) {
         final Material[] materials = {mat};
         return removeMaterialsFromRadius(materials, loc, radius);
     }
@@ -127,9 +128,9 @@ public class Utilities {
      * @param radius    integer
      */
     @SuppressWarnings("WeakerAccess")
-    public static ArrayList<BlockStateChangeImpl> removeMaterialsFromRadius(Material[] materials, final Location loc,
+    public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, final Location loc,
                                                                             int radius) {
-        final ArrayList<BlockStateChangeImpl> blockStateChanges = new ArrayList<>();
+        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0 && materials != null && materials.length > 0) {
             final int x1 = loc.getBlockX();
             final int y1 = loc.getBlockY();
@@ -162,7 +163,7 @@ public class Utilities {
      * @param loc    The location you want to extinguish around
      * @param radius The radius around the location you are extinguish
      */
-    public static ArrayList<BlockStateChangeImpl> extinguish(Location loc, int radius) {
+    public static ArrayList<BlockStateChange> extinguish(Location loc, int radius) {
         return removeMaterialFromRadius(Material.FIRE, loc, radius);
     }
 
@@ -172,10 +173,10 @@ public class Utilities {
      * @param loc    Location
      * @param radius Radius
      */
-    public static ArrayList<BlockStateChangeImpl> drain(Location loc, int radius) {
+    public static ArrayList<BlockStateChange> drain(Location loc, int radius) {
         final Material[] materials = {Material.LAVA, Material.WATER};
 
-        ArrayList<BlockStateChangeImpl> result =  removeMaterialsFromRadius(materials, loc, radius);
+        ArrayList<BlockStateChange> result =  removeMaterialsFromRadius(materials, loc, radius);
         result.addAll(checkForWaterlogged(loc,radius));
         return result;
     }
@@ -186,7 +187,7 @@ public class Utilities {
      * @param loc    Location
      * @param radius Radius
      */
-    public static ArrayList<BlockStateChangeImpl> drainLava(Location loc, int radius) {
+    public static ArrayList<BlockStateChange> drainLava(Location loc, int radius) {
         final Material[] materials = {Material.LAVA};
         return removeMaterialsFromRadius(materials, loc, radius);
     }
@@ -197,7 +198,7 @@ public class Utilities {
      * @param loc    Location
      * @param radius integer
      */
-    public static ArrayList<BlockStateChangeImpl> drainWater(Location loc, int radius) {
+    public static ArrayList<BlockStateChange> drainWater(Location loc, int radius) {
         final Material[] materials = {Material.WATER};
         return removeMaterialsFromRadius(materials, loc, radius);
     }

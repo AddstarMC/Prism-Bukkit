@@ -14,8 +14,7 @@ import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.Result;
-import me.botsko.prism.api.events.PrismLoadedEvent;
-import me.botsko.prism.api.events.PrismUnloadEvent;
+import me.botsko.prism.events.EventHelper;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
@@ -71,7 +70,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -592,7 +590,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             }
 
             items.initMaterials(Material.AIR);
-            Bukkit.getPluginManager().callEvent(new PrismLoadedEvent(this));
+            Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(this));
         }
     }
 
@@ -816,7 +814,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     @Override
     public void onDisable() {
-        Bukkit.getPluginManager().callEvent(new PrismUnloadEvent());
+        Bukkit.getPluginManager().callEvent(EventHelper.createUnLoadEvent());
         if (getConfig().getBoolean("prism.query.force-write-queue-on-shutdown")) {
             final QueueDrain drainer = new QueueDrain(this);
             drainer.forceDrainQueue();

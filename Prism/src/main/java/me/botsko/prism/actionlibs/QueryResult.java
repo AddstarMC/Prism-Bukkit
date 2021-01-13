@@ -1,8 +1,8 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.api.actions.Handler;;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.Result;
+import me.botsko.prism.api.actions.Handler;
 
 import java.util.List;
 

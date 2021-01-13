@@ -2,10 +2,11 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.BlockStateChange;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.events.BlockStateChangeImpl;
-import me.botsko.prism.events.PrismBlocksDrainEvent;
+import me.botsko.prism.events.EventHelper;
+import me.botsko.prism.events.PrismDrainEvent;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
@@ -71,7 +72,7 @@ public class DrainCommand implements SubHandler {
 
         Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(builder.build()));
 
-        ArrayList<BlockStateChangeImpl> blockStateChanges = null;
+        ArrayList<BlockStateChange> blockStateChanges = null;
         if (drainType.isEmpty()) {
             blockStateChanges = Utilities.drain(call.getPlayer().getLocation(), radius);
         } else if (drainType.equals("water")) {
@@ -91,7 +92,7 @@ public class DrainCommand implements SubHandler {
             Prism.messenger.sendMessage(call.getSender(), out);
 
             // Trigger the event
-            final PrismBlocksDrainEvent event = new PrismBlocksDrainEvent(blockStateChanges, call.getPlayer(), radius);
+            final PrismDrainEvent event = EventHelper.createDrainEvent(blockStateChanges, call.getPlayer(), radius);
             plugin.getServer().getPluginManager().callEvent(event);
 
         } else {

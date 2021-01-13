@@ -2,10 +2,11 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.BlockStateChange;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
-import me.botsko.prism.events.BlockStateChangeImpl;
-import me.botsko.prism.events.PrismBlocksExtinguishEvent;
+import me.botsko.prism.events.EventHelper;
+import me.botsko.prism.events.PrismExtinguishEvent;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.identity.Identity;
@@ -55,7 +56,7 @@ public class ExtinguishCommand implements SubHandler {
             }
         }
 
-        final ArrayList<BlockStateChangeImpl> blockStateChanges = Utilities.extinguish(call.getPlayer().getLocation(),
+        final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(call.getPlayer().getLocation(),
                 radius);
         if (!blockStateChanges.isEmpty()) {
 
@@ -63,7 +64,7 @@ public class ExtinguishCommand implements SubHandler {
                     Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("fire-extinguished-sucess")));
 
             // Trigger the event
-            final PrismBlocksExtinguishEvent event = new PrismBlocksExtinguishEvent(blockStateChanges, call.getPlayer(),
+            final PrismExtinguishEvent event = EventHelper.createExtinguishEvent(blockStateChanges, call.getPlayer(),
                     radius);
             plugin.getServer().getPluginManager().callEvent(event);
 

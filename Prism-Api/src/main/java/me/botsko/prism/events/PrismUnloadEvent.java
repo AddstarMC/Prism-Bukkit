@@ -1,18 +1,19 @@
-package me.botsko.prism.api.events;
+package me.botsko.prism.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created for use for the Add5tar MC Minecraft server
- * Created by benjamincharlton on 10/01/2021.
+ * The Prism Unload Event is called when Prism has completely unloaded.
+ *
+ * @author Narimm
  */
 public class PrismUnloadEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
-    public PrismUnloadEvent() {
+    protected PrismUnloadEvent() {
     }
 
     @Override

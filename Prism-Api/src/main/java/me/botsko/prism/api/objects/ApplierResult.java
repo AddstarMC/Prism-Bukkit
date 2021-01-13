@@ -1,6 +1,5 @@
-package me.botsko.prism.appliers;
+package me.botsko.prism.api.objects;
 
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.BlockStateChange;
@@ -24,7 +23,7 @@ public class ApplierResult {
 
     private final List<BlockStateChange> blockStateChanges;
 
-    private final QueryParameters params;
+    private final PrismParameters params;
 
     /**
      * Constructor.
@@ -38,7 +37,7 @@ public class ApplierResult {
      * @param entitiesMoved     Map
      */
     public ApplierResult(boolean isPreview, int changesApplied, int changesSkipped, int changesPlanned,
-                         List<BlockStateChange> blockStateChanges, QueryParameters params,
+                         List<BlockStateChange> blockStateChanges, PrismParameters params,
                          Map<Entity, Integer> entitiesMoved) {
         this.changesApplied = changesApplied;
         this.changesSkipped = changesSkipped;

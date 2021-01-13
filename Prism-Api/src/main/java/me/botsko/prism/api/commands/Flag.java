@@ -1,6 +1,7 @@
 package me.botsko.prism.api.commands;
 
 import org.bukkit.permissions.Permissible;
+import org.jetbrains.annotations.PropertyKey;
 
 public enum Flag {
     DRAIN("flag-drain"),
@@ -23,7 +24,7 @@ public enum Flag {
     /**
      * Defaults {@link #usage} to -(flagname).
      *
-     * @param description string
+     * @param description string - generally this is a property Key found in Prism library.
      */
     Flag(String description) {
         this("", description); // We can't use this.name() in a constructor so

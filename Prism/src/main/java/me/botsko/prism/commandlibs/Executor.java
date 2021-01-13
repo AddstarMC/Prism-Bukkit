@@ -12,12 +12,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Executor implements CommandExecutor, TabCompleter {
 
     public final Plugin plugin;
 
-    private final java.util.Map<String, SubCommand> subCommands = new LinkedHashMap<>();
+    private final Map<String, SubCommand> subCommands = new LinkedHashMap<>();
     /**
      * Setting the executor to command mode allows it to handle all commands the
      * plugin watches for. SubCommand mode allows it to watch for commands that are
@@ -33,7 +34,6 @@ public class Executor implements CommandExecutor, TabCompleter {
      * @param mode String
      * @param permBase permission base
      */
-    @SuppressWarnings("unused")
     public Executor(Plugin plugin, @Nullable String mode, String permBase) {
         this.mode = (mode == null ? "command" : mode);
         this.plugin = plugin;

@@ -3,6 +3,7 @@ package me.botsko.prism.appliers;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.BlockStateChange;
 import me.botsko.prism.api.actions.Handler;;
 import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.events.BlockStateChangeImpl;
@@ -42,7 +43,7 @@ public class Rollback extends Preview {
             if (plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback")
                     && parameters.getActionTypes().containsKey("block-burn")) {
                 if (!parameters.hasFlag(Flag.NO_EXT)) {
-                    final ArrayList<BlockStateChangeImpl> blockStateChanges = Utilities.extinguish(player.getLocation(),
+                    final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(player.getLocation(),
                             parameters.getRadius());
                     if (!blockStateChanges.isEmpty()) {
                         Prism.messenger.sendMessage(player,Prism.messenger
@@ -65,7 +66,7 @@ public class Rollback extends Preview {
             }
 
             // Remove any liquid at this location
-            ArrayList<BlockStateChangeImpl> drained = null;
+            ArrayList<BlockStateChange> drained = null;
             if (parameters.hasFlag(Flag.DRAIN)) {
                 drained = Utilities.drain(player.getLocation(), parameters.getRadius());
             }

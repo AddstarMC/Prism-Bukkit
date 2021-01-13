@@ -1,4 +1,4 @@
-package me.botsko.prism.api.events;
+package me.botsko.prism.events;
 
 import me.botsko.prism.api.PrismApi;
 import org.bukkit.event.Event;
@@ -6,16 +6,22 @@ import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created for use for the Add5tar MC Minecraft server
- * Created by benjamincharlton on 10/01/2021.
+ * The Prism Load Event is called once Prism has finished loading.
+ *
+ * @author Narimm
  */
 public class PrismLoadedEvent extends Event {
 
-    private final static HandlerList handlers = new HandlerList();
-    private PrismApi api;
-    public PrismLoadedEvent(PrismApi api) {
+    private static final HandlerList handlers = new HandlerList();
+    private final PrismApi api;
+
+    protected PrismLoadedEvent(PrismApi api) {
         super(true);
         this.api = api;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 
     public PrismApi getApi() {
@@ -25,10 +31,6 @@ public class PrismLoadedEvent extends Event {
     @NotNull
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

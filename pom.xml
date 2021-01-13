@@ -11,6 +11,7 @@
         <module>Prism</module>
     </modules>
     <name>Prism-Parent</name>
+    <url>https://Prism-Bukkit.readthedocs.io/</url>
     <scm>
         <connection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</connection>
         <developerConnection>scm:git:git@github.com:AddstarMC/Prism-Bukkit.git</developerConnection>

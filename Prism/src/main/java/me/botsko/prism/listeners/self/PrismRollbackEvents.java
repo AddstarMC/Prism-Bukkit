@@ -1,6 +1,6 @@
 package me.botsko.prism.listeners.self;
 
-import me.botsko.prism.api.events.PrismRollBackEvent;
+import me.botsko.prism.events.PrismRollBackEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

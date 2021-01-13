@@ -1,5 +1,6 @@
 package me.botsko.prism.events;
 
+import me.botsko.prism.api.BlockStateChange;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -7,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
-public class PrismBlocksExtinguishEvent extends Event {
+public class PrismExtinguishEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
 
     protected final int radius;
 
-    private final ArrayList<BlockStateChangeImpl> blockStateChanges;
+    private final ArrayList<BlockStateChange> blockStateChanges;
 
     private final Player onBehalfOf;
 
@@ -24,14 +25,14 @@ public class PrismBlocksExtinguishEvent extends Event {
      * @param onBehalfOf        Player
      * @param radius            int
      */
-    public PrismBlocksExtinguishEvent(ArrayList<BlockStateChangeImpl> blockStateChanges, Player onBehalfOf, int radius) {
+    protected PrismExtinguishEvent(ArrayList<BlockStateChange> blockStateChanges, Player onBehalfOf, int radius) {
         this.blockStateChanges = blockStateChanges;
         this.onBehalfOf = onBehalfOf;
         this.radius = radius;
     }
 
 
-    public ArrayList<BlockStateChangeImpl> getBlockStateChanges() {
+    public ArrayList<BlockStateChange> getBlockStateChanges() {
         return blockStateChanges;
     }
 

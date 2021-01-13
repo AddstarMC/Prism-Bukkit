@@ -3,13 +3,13 @@ package me.botsko.prism.appliers;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.objects.ApplierResult;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 

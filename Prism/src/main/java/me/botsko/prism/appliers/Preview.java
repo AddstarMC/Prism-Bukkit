@@ -8,9 +8,10 @@ import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.actions.Handler;;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.events.PrismRollBackEvent;
+import me.botsko.prism.events.EventHelper;
+import me.botsko.prism.events.PrismRollBackEvent;
 import me.botsko.prism.api.BlockStateChange;
-import me.botsko.prism.events.PrismBlocksRollbackEventImpl;
+import me.botsko.prism.api.objects.ApplierResult;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
@@ -344,7 +345,7 @@ public class Preview implements Previewable {
 
         // Trigger the events
         if (processType.equals(PrismProcessType.ROLLBACK)) {
-            final PrismRollBackEvent event = new PrismBlocksRollbackEventImpl(blockStateChanges, player, parameters,
+            final PrismRollBackEvent event = EventHelper.createRollBackEvent(blockStateChanges, player, parameters,
                   results);
             plugin.getServer().getPluginManager().callEvent(event);
         }
