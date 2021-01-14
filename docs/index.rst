@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+############################################
 Welcome to Prism for Bukkit's documentation!
-============================================
+############################################
 
 ..  toctree::
    :maxdepth: 2
@@ -17,7 +18,7 @@ Welcome to Prism for Bukkit's documentation!
    Permissions <permissions>
    Commands <commands>
    Purging Excess Data <purging>
-   Prism API <api/Usage>
+   API Documentation <api/index>
 
 
 Indices and tables

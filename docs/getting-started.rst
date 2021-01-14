@@ -15,11 +15,11 @@ MySQL is software that you can install on your computer (works on Windows, Mac, 
 creates a database service - a very fast, efficient place for Prism (and many other plugins) to store data.
 Instructions for installed mysql.
 
-1. Mysql - https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/
+1. Mysql - https://dev.mysql.com/doc/mysql-installation-excerpt/5.7/en/ see :ref:`mysql`
 
-2. Mariadb - https://mariadb.com/kb/en/getting-installing-and-upgrading-mariadb/
+2. Mariadb - https://mariadb.com/kb/en/getting-installing-and-upgrading-mariadb/ see see :ref:`mariadb`
 
-3. Percona  - https://www.percona.com/doc/percona-server/5.7/installation.html
+3. Percona  - https://www.percona.com/doc/percona-server/5.7/installation.html  see :ref:`mysql`
 
 Step 1
 ------
@@ -33,6 +33,12 @@ localhost. Enter the username/password for the server, defaults to root and an e
 *If you setup your MySQL server yourself, you should know what the above information is. If you're
 using a mysql server setup by someone else (like on a shared hosting service), they will provide
 you the information.*
+
+Please see the relevant configuration section for your database type:
+
+1. Mysql see :ref:`mysql`
+2. MariaDB see see :ref:`mariadb`
+3. Other Databases: see :ref:`hikari`
 
 Recommendations
 ---------------

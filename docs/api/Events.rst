@@ -53,11 +53,11 @@ PrismRollbackEvent
     }
 
 Returns the Rollback events parameters and the player who called it and the BlockStateChanges that occurred.
-
 PrismExtinguishEvent
 ====================
 
 .. code:: java
+
     public class PrismExtinguishEvent extends Event {
         public ArrayList<BlockStateChange> getBlockStateChanges() {
             return blockStateChanges;
@@ -79,6 +79,7 @@ PrismDrainEvent
 ===============
 
 .. code:: java
+
     public class PrismBlocksDrainEvent extends Event {
 
         public ArrayList<BlockStateChange> getBlockStateChanges() {
