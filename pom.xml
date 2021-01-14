@@ -86,11 +86,17 @@
             <id>maven.addstar.com.au-snapshots</id>
             <name>addstar-maven-snapshots</name>
             <url>https://maven.addstar.com.au/artifactory/all-snapshot</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>maven.addstar.com.au</id>
             <name>addstar-maven-releases</name>
             <url>https://maven.addstar.com.au/artifactory/all-release</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
         <repository>
             <id>sk89q-repo</id>
