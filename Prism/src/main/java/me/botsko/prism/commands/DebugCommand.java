@@ -43,7 +43,8 @@ public class DebugCommand implements SubHandler {
                 case "off":
                     Prism.setDebug(false);
                     break;
-                default:
+                default: //toggle.
+                    Prism.setDebug(!Prism.isDebug());
                     break;
             }
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
@@ -66,16 +67,16 @@ public class DebugCommand implements SubHandler {
     private String getMainInfo() {
         StringBuilder mainInfo = new StringBuilder();
         mainInfo.append(Bukkit.getName()).append(" version: ").append(Bukkit.getServer()
-                .getVersion()).append('\n');
+                .getVersion()).append(System.lineSeparator());
         mainInfo.append("Plugin version: ").append(Prism.getInstance().getDescription()
-                .getVersion()).append('\n');
+                .getVersion()).append(System.lineSeparator());
         mainInfo.append("Java version: ").append(System.getProperty("java.version")).append('\n');
-        mainInfo.append('\n');
-        mainInfo.append("Plugins:\n");
+        mainInfo.append(System.lineSeparator());
+        mainInfo.append("Plugins:").append(System.lineSeparator());
         for (Plugin plugin : Bukkit.getPluginManager().getPlugins()) {
             mainInfo.append(' ').append(plugin.getName()).append(" - ").append(
-                    plugin.getDescription().getVersion()).append('\n');
-            mainInfo.append("  ").append(plugin.getDescription().getAuthors()).append('\n');
+                    plugin.getDescription().getVersion()).append(System.lineSeparator());
+            mainInfo.append("  ").append(plugin.getDescription().getAuthors()).append(System.lineSeparator());
         }
         return mainInfo.toString();
     }
@@ -84,25 +85,25 @@ public class DebugCommand implements SubHandler {
         PrismDataSource dataSource = Prism.getPrismDataSource();
         StringBuilder out = new StringBuilder();
         String name = dataSource.getClass().getName();
-        out.append("DataSource Name: ").append(name).append("\n");
+        out.append("DataSource Name: ").append(name).append(System.lineSeparator());
         if (dataSource.getDataSource() instanceof HikariDataSource) {
             HikariDataSource ds = (HikariDataSource) dataSource.getDataSource();
             out.append("Running: ").append(ds.isRunning())
                     .append("Total Connections: ")
                     .append(ds.getHikariPoolMXBean().getTotalConnections())
-                    .append("\n")
+                    .append(System.lineSeparator())
                     .append("Total Connections: ")
                     .append(ds.getHikariPoolMXBean().getActiveConnections())
-                    .append("\n");
+                    .append(System.lineSeparator());
         }
-        out.append("Illegal Blocks: \n");
+        out.append("Illegal Blocks:").append(System.lineSeparator());
         for (Material mat : Prism.getIllegalBlocks()) {
-            out.append("   ").append(mat.name()).append("\n");
+            out.append("   ").append(mat.name()).append(System.lineSeparator());
         }
-        out.append("Worlds Tracked: ").append(Prism.prismWorlds.size()).append("\n");
-        out.append("Players Tracked: ").append(Prism.prismPlayers.size()).append("\n");
+        out.append("Worlds Tracked: ").append(Prism.prismWorlds.size()).append(System.lineSeparator());
+        out.append("Players Tracked: ").append(Prism.prismPlayers.size()).append(System.lineSeparator());
         out.append("Players with Tools: ").append(Prism.playersWithActiveTools.size())
-                .append("\n");
+                .append(System.lineSeparator());
         return out.toString();
     }
 
