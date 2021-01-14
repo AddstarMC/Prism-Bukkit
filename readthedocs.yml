@@ -9,4 +9,6 @@ python:
     method: pip
     path: docs/
     extra_requirements:
-      - javasphinx
+      - sphinx-rtd-theme
+      - sphinx-tabs
+      - rstcheck # format checks
