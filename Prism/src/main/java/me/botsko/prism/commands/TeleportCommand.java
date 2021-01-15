@@ -167,4 +167,14 @@ public class TeleportCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-teleport")};
+    }
+
+    @Override
+    public String getRef() {
+        return "commands/lookup.html#teleporting";
+    }
 }

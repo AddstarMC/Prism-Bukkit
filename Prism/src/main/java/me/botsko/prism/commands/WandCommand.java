@@ -277,4 +277,19 @@ public class WandCommand extends AbstractCommand {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{
+                Il8nHelper.getRawMessage("help-inspector-wand"),
+                Il8nHelper.getRawMessage("help-restore-wand"),
+                Il8nHelper.getRawMessage("help-rollback-wand"),
+                Il8nHelper.getRawMessage("help-profile-wand"),
+        };
+    }
+
+    @Override
+    public String getRef() {
+        return "/wands.html";
+    }
 }

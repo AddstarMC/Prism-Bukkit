@@ -57,4 +57,14 @@ public class AboutCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-about")};
+    }
+
+    @Override
+    public String getRef() {
+        return ".html";
+    }
 }

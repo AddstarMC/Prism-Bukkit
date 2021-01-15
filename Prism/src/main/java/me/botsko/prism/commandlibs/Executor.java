@@ -10,9 +10,7 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Executor implements CommandExecutor, TabCompleter {
 
@@ -37,6 +35,11 @@ public class Executor implements CommandExecutor, TabCompleter {
     public Executor(Plugin plugin, @Nullable String mode, String permBase) {
         this.mode = (mode == null ? "command" : mode);
         this.plugin = plugin;
+    }
+
+    public final Collection<SubCommand> getSubCommands() {
+        Map<String, SubCommand> sorted = new TreeMap<>(subCommands);
+        return sorted.values();
     }
 
     @Override

@@ -77,6 +77,8 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -110,6 +112,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
     private static final Logger log = Logger.getLogger("Minecraft");
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
+    private static URL baseUrl = null;
     public static Messenger messenger;
     public static FileConfiguration config;
     public static boolean isPaper = true;
@@ -131,11 +134,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
     public final Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
-    /**
-     * VehicleCreateEvents do not include the player/entity that created it, so we
-     * need to track players right-clicking rails with mine cart vehicles, or water
-     * for boats.
-     */
+    private PrismCommands commands = null;
     public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
@@ -163,6 +162,11 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
+        try {
+            baseUrl = new URL("https://prism-bukkit.readthedocs.io/en/latest/");
+        } catch (MalformedURLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static BukkitAudiences getAudiences() {
@@ -370,6 +374,10 @@ public class Prism extends JavaPlugin implements PrismApi {
         return instance;
     }
 
+    public static URL getBaseUrl() {
+        return baseUrl;
+    }
+
     public ScheduledThreadPoolExecutor getSchedulePool() {
         return schedulePool;
     }
@@ -498,7 +506,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         if (isEnabled()) {
             PluginCommand command = getCommand("prism");
             if (command != null) {
-                PrismCommands commands = new PrismCommands(this, true);
+                commands = new PrismCommands(this, true);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
             } else {
@@ -540,7 +548,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Add commands
             PluginCommand command = getCommand("prism");
             if (command != null) {
-                PrismCommands commands = new PrismCommands(this, false);
+                commands = new PrismCommands(this, false);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
             } else {
@@ -890,5 +898,9 @@ public class Prism extends JavaPlugin implements PrismApi {
             super.publish(record);
             flush();
         }
+    }
+
+    public PrismCommands getCommands() {
+        return commands;
     }
 }
