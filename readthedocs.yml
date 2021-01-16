@@ -6,9 +6,4 @@ sphinx:
 python:
   version: 3.7
   install:
-    - method: pip
-    - path: docs/
-    - extra_requirements:
-       - sphinx-rtd-theme
-       - sphinx-tabs
-       - rstcheck # format checks
+    - requirements: docs/requirements.txt
