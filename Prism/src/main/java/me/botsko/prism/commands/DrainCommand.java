@@ -106,6 +106,16 @@ public class DrainCommand implements SubHandler {
         return null;
     }
 
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-drain-radius")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/drain.html";
+    }
+
     protected int validateRadius(CallInfo call, String radiusArg) {
         if (TypeUtils.isNumeric(radiusArg)) {
             final int _tmp_radius = Integer.parseInt(radiusArg);

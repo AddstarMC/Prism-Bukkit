@@ -1,5 +1,6 @@
 package me.botsko.prism.commands;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.commandlibs.CallInfo;
 
@@ -29,5 +30,15 @@ public class SettingCommands extends AbstractCommand {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-settings")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/settings.html";
     }
 }

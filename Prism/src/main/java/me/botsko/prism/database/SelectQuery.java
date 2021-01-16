@@ -1,6 +1,5 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.measurement.TimeTaken;

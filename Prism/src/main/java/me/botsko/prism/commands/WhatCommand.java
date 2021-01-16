@@ -55,6 +55,16 @@ public class WhatCommand extends Executor {
             public List<String> handleComplete(CallInfo call) {
                 return null;
             }
+
+            @Override
+            public String[] getHelp() {
+                return new String[]{Il8nHelper.getRawMessage("help-what")};
+            }
+
+            @Override
+            public String getRef() {
+                return ".html";
+            }
         });
     }
 }

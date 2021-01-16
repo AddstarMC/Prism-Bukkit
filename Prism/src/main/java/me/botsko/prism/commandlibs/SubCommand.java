@@ -1,5 +1,6 @@
 package me.botsko.prism.commandlibs;
 
+import me.botsko.prism.Prism;
 import org.bukkit.entity.Player;
 
 public final class SubCommand {
@@ -125,5 +126,22 @@ public final class SubCommand {
      */
     public String[] getAliases() {
         return this.commandAliases;
+    }
+
+    public String[] getHelp() {
+        return handler.getHelp();
+    }
+
+    /**
+     * Returns a URL for help for the command.
+     *
+     * @return String
+     */
+    public String getWebLink() {
+        if (handler != null) {
+            return Prism.getBaseUrl() + "commands" + handler.getRef();
+        } else {
+            return Prism.getBaseUrl();
+        }
     }
 }

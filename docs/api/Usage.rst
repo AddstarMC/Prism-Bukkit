@@ -1,7 +1,7 @@
 Hooking the API
 ===============
 
-This piece of code can be used to retrieve and store the api for later use.
+This piece of code can be used to retrieve and store the api for later use.  Typically you place the this call inside a Wrapper and check the plugin is present before loading the wrapper - this ensures you dont need to shade in Prism's api and cause dramas.
 
 .. code-block:: java
 
@@ -97,6 +97,7 @@ First, add the repository:
             <groupId>me.botsko</groupId>
             <artifactId>Prism-Api</artifactId>
             <version>2.1.8-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
    .. group-tab:: Gradle (Groovy)
@@ -104,5 +105,5 @@ First, add the repository:
       .. code:: groovy
 
          dependencies {
-            implementation "me.botsko:Prism-Api:2.1.8-SNAPSHOT"
+            provided "me.botsko:Prism-Api:2.1.8-SNAPSHOT"
          }

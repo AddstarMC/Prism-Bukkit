@@ -146,4 +146,14 @@ public class UndoCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-undo")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/undo.html";
+    }
 }

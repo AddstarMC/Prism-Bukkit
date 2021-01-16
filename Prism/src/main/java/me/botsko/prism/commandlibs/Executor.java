@@ -39,6 +39,10 @@ public class Executor implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
     }
 
+    public final Map<String,SubCommand> getSubCommands() {
+        return subCommands;
+    }
+
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String commandLabel,
                              @NotNull String[] args) {

@@ -79,4 +79,14 @@ public class ExtinguishCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-extinguish-radius")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/extinguish.html";
+    }
 }

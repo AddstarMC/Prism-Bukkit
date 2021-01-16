@@ -74,4 +74,14 @@ public class ViewCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("command-view-chunks")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/view.html";
+    }
 }

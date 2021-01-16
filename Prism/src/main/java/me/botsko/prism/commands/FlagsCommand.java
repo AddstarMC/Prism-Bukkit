@@ -26,6 +26,16 @@ public class FlagsCommand implements SubHandler {
         return null;
     }
 
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-flag-list")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/flags.html";
+    }
+
     /**
      * Display param help.
      *

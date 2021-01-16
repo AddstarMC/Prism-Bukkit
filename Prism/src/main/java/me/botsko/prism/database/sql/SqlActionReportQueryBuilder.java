@@ -2,7 +2,6 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.PrismDataSource;

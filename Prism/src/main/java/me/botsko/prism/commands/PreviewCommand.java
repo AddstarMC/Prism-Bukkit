@@ -172,4 +172,14 @@ public class PreviewCommand extends AbstractCommand {
         }
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-preview")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/preview.html";
+    }
 }

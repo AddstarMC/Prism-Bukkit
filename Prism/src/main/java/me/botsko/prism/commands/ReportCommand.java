@@ -112,6 +112,19 @@ public class ReportCommand extends AbstractCommand {
         return null;
     }
 
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-report-queue"),
+                Il8nHelper.getRawMessage("help-report-db"),
+                Il8nHelper.getRawMessage("help-report-player")
+        };
+    }
+
+    @Override
+    public String getRef() {
+        return ".html";
+    }
+
     private void queueReport(CommandSender sender) {
 
         Prism.messenger.sendMessage(sender,
