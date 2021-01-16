@@ -582,6 +582,11 @@ public class QueryParameters implements PrismParameters, Cloneable {
         return sharedPlayers;
     }
 
+    @Override
+    public String toString() {
+        return "Original Command: " + originalCommand;
+    }
+
     /**
      * Set the players you're sharing the lookup with.
      *

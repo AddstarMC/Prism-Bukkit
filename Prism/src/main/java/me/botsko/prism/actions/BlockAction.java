@@ -290,15 +290,15 @@ public class BlockAction extends GenericAction {
                 && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
-            Prism.debug("Block skipped due to being unacceptable for block place.: " + block.getType().name());
+            Prism.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         // On the blacklist (except an undo)
-        if (!parameters.hasFlag(Flag.OVERWRITE) || Prism.getIllegalBlocks().contains(getMaterial())
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
-            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO."
-                    + block.getType().name());
+        if ((Prism.getIllegalBlocks().contains(getMaterial())
+                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flag.OVERWRITE)) {
+            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
+                    + getMaterial().toString());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
         // If we're not in a preview, actually apply this block
