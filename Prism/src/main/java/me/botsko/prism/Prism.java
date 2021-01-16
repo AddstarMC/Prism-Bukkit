@@ -422,7 +422,6 @@ public class Prism extends JavaPlugin implements PrismApi {
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
             prismDataSource = PrismDatabaseFactory.createDataSource(config);
-            prismDataSource = PrismDatabaseFactory.createDataSource(config);
             Connection testConnection;
             if (prismDataSource != null) {
                 testConnection = prismDataSource.getConnection();
