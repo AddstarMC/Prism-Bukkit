@@ -22,7 +22,6 @@ Apply a Preview
 ^^^^^^^^^^^^^^^
 
 .. tip::
-  :name: Syntax
 
   /prism preview apply
 

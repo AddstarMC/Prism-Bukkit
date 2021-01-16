@@ -14,7 +14,6 @@ Setting / Resetting the Wand
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. tip::
-  :name: Syntax
 
   | /prism setmy [item | hand | block}
   | /prism resetmy

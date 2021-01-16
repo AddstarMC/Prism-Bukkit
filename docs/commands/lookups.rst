@@ -21,7 +21,6 @@ Lookup Command
 --------------
 
 .. tip::
-  :name: Syntax
 
   | /prism lookup <params> <flags>
   | /pr l <params> <flags>
@@ -34,7 +33,6 @@ It's almost limitless.
 Inspector (Wand)
 ----------------
 .. tip::
-  :name: Syntax
 
   | /prism i
 
@@ -46,7 +44,6 @@ Near
 ----
 
 .. tip::
-  :name: Syntax
 
   | /pr near
 
@@ -56,7 +53,6 @@ Excellent for an area with no specific/visible issues. For example you can't tel
 Pagination
 ----------
 .. tip::
-  :name: Syntax
 
   | /pr pg [<number> | next | prev]
 
@@ -69,7 +65,6 @@ Teleporting
 -----------
 
 .. tip::
-  :name: Syntax
 
   | /pr tp <number>
   | /pr tp next | prev
