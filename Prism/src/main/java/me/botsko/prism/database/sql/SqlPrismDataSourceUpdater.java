@@ -2,7 +2,6 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDataSourceUpdater;
-import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

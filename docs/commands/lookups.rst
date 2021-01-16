@@ -2,7 +2,6 @@ Lookups
 =======
 
 .. tip::
-  :name: Syntax
 
   | /prism lookup <params> <flags>
   | /pr l <params> <flags>

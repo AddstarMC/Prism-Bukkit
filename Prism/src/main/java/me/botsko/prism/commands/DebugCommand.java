@@ -164,4 +164,14 @@ public class DebugCommand implements SubHandler {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{"Debug Help"};
+    }
+
+    @Override
+    public String getRef() {
+        return ".html";
+    }
 }

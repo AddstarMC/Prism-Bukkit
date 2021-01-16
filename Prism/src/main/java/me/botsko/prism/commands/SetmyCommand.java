@@ -128,4 +128,14 @@ public class SetmyCommand extends AbstractCommand {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-wand-set")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/wand.html#setting-resetting-the-wand";
+    }
 }

@@ -75,4 +75,14 @@ public class RestoreCommand extends AbstractCommand {
     public List<String> handleComplete(CallInfo call) {
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-restore")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/restore.html";
+    }
 }

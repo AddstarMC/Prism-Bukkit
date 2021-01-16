@@ -24,6 +24,16 @@ public class ParamsCommand implements SubHandler {
         return null;
     }
 
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-params")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/parameters.html";
+    }
+
 
     private void help(CommandSender s) {
         TextComponent.Builder builder = Component.text()

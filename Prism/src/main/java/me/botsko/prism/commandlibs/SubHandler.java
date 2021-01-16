@@ -15,7 +15,7 @@ public interface SubHandler {
     String[] getHelp();
 
     /**
-     * This should return the web reference to documentation
+     * This should return the web reference to documentation.
      * @return String
      */
     String getRef();

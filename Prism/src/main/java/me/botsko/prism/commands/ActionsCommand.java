@@ -30,6 +30,16 @@ public class ActionsCommand implements SubHandler {
         return null;
     }
 
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-action-list")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/parameters.html#actions-list";
+    }
+
     /**
      * Display param help.
      *

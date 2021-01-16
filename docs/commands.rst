@@ -2,7 +2,6 @@ Prism Commands
 --------------
 
 ..  toctree::
-   :glob:
 
    Lookups<commands/lookups>
    Preview<commands/preview>
@@ -10,5 +9,18 @@ Prism Commands
    Restore<commands/restore>
    What does Skip Mean<commands/skipped>
    Undo<commands/undo>
+   Delete<commands/delete>
+   Wands<commands/wand>
+   Drain<commands/drain>
+   Extinguish<commands/extinguish>
+   View<commands/view>
+   Settings<commands/settings>
+   Purge<commands/purge>
 
-   parameters/*
+Parameters and Flags
+^^^^^^^^^^^^^^^^^^^^
+
+..  toctree::
+
+   Parameters<commands/parameters>
+   Flags<commands/flags>

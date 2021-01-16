@@ -1,7 +1,6 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.PrismParameters;
 
 import javax.annotation.Nullable;

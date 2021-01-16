@@ -84,4 +84,15 @@ public class RecorderCommand extends AbstractCommand {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-recorder-start"),
+                Il8nHelper.getRawMessage("help-recorder-stop")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/settings.html";
+    }
 }

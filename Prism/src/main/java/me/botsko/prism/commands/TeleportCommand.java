@@ -175,6 +175,6 @@ public class TeleportCommand implements SubHandler {
 
     @Override
     public String getRef() {
-        return "commands/lookup.html#teleporting";
+        return "/lookup.html#teleporting";
     }
 }

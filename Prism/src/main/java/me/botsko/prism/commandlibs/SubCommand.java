@@ -132,7 +132,16 @@ public final class SubCommand {
         return handler.getHelp();
     }
 
+    /**
+     * Returns a URL for help for the command.
+     *
+     * @return String
+     */
     public String getWebLink() {
-        return Prism.getBaseUrl().toString() + "commands" + handler.getRef();
+        if (handler != null) {
+            return Prism.getBaseUrl() + "commands" + handler.getRef();
+        } else {
+            return Prism.getBaseUrl();
+        }
     }
 }
