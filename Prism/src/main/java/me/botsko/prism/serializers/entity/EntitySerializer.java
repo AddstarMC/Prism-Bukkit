@@ -1,4 +1,4 @@
-package me.botsko.prism.actions.entity;
+package me.botsko.prism.serializers.entity;
 
 import com.google.gson.annotations.SerializedName;
 import me.botsko.prism.utils.EntityUtils;

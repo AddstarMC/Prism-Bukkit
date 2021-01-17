@@ -2,8 +2,8 @@ package me.botsko.prism.actions;
 
 import com.google.gson.JsonObject;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actions.entity.EntitySerializer;
-import me.botsko.prism.actions.entity.EntitySerializerFactory;
+import me.botsko.prism.serializers.entity.EntitySerializer;
+import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
