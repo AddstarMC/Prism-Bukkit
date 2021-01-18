@@ -2,18 +2,26 @@ package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.actionlibs.Ignore;
 import me.botsko.prism.actionlibs.InternalAffairs;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.QueueDrain;
 import me.botsko.prism.actionlibs.RecordingTask;
 import me.botsko.prism.actions.ActionMeter;
+import me.botsko.prism.api.PrismApi;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.Result;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
+import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
+import me.botsko.prism.events.EventHelper;
+import me.botsko.prism.listeners.PaperListeners;
 import me.botsko.prism.listeners.PrismBlockEvents;
 import me.botsko.prism.listeners.PrismCustomEvents;
 import me.botsko.prism.listeners.PrismEntityEvents;
@@ -39,7 +47,6 @@ import me.botsko.prism.parameters.PrismParameterHandler;
 import me.botsko.prism.parameters.RadiusParameter;
 import me.botsko.prism.parameters.SinceParameter;
 import me.botsko.prism.parameters.WorldParameter;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
@@ -57,6 +64,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -79,7 +87,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -91,17 +101,19 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
-public class Prism extends JavaPlugin {
+public class Prism extends JavaPlugin implements PrismApi {
 
-    private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
-    private static final Logger log = Logger.getLogger("Minecraft");
-    private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
-    public static Messenger messenger;
-    public static FileConfiguration config;
     public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
     public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
-    public static HashMap<String, Integer> prismActions = new HashMap<>();
+    public static final HashMap<String, Integer> prismActions = new HashMap<>();
+    private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
+    private static final Logger log = Logger.getLogger("Minecraft");
+    private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
+    private static String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
+    public static Messenger messenger;
+    public static FileConfiguration config;
+    public static boolean isPaper = true;
     private static Logger prismLog;
     private static List<Material> illegalBlocks;
     private static List<EntityType> illegalEntities;
@@ -116,15 +128,17 @@ public class Prism extends JavaPlugin {
     private static boolean debug = false;
     private static BukkitTask debugWatcher;
     private static BukkitAudiences audiences;
+    public final ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
+    public final Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
+    private PrismCommands commands = null;
+    public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
-    public final ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
-    public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
-    public final Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
     public TimeTaken eventTimer;
     public QueueStats queueStats;
     public BukkitTask recordingTask;
@@ -136,12 +150,6 @@ public class Prism extends JavaPlugin {
      * block.
      */
     public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
-    /**
-     * VehicleCreateEvents do not include the player/entity that created it, so we
-     * need to track players right-clicking rails with minecart vehicles, or water
-     * for boats.
-     */
-    public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
@@ -361,6 +369,10 @@ public class Prism extends JavaPlugin {
         return instance;
     }
 
+    public static String getBaseUrl() {
+        return baseUrl;
+    }
+
     public ScheduledThreadPoolExecutor getSchedulePool() {
         return schedulePool;
     }
@@ -380,6 +392,10 @@ public class Prism extends JavaPlugin {
         loadConfig();        // Load configuration, or install if new
         if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
             PaperLib.suggestPaper(this);
+        }
+        isPaper = PaperLib.isPaper();
+        if (isPaper) {
+            Prism.log("Optional Paper Events will be enabled.");
         }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
@@ -438,7 +454,7 @@ public class Prism extends JavaPlugin {
 
             // Cache world IDs
             prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-            PlayerIdentification.cacheOnlinePlayerPrimaryKeys(playerNames);
+            SqlPlayerIdentificationHelper.cacheOnlinePlayerPrimaryKeys(playerNames);
 
             // ensure current worlds are added
             for (final String w : worldNames) {
@@ -484,7 +500,7 @@ public class Prism extends JavaPlugin {
         if (isEnabled()) {
             PluginCommand command = getCommand("prism");
             if (command != null) {
-                PrismCommands commands = new PrismCommands(this,true);
+                commands = new PrismCommands(this, true);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
             } else {
@@ -505,6 +521,10 @@ public class Prism extends JavaPlugin {
             getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
+            if (isPaper) {
+                //register listeners that only work with paper.
+                getServer().getPluginManager().registerEvents(new PaperListeners(this), this);
+            }
             getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 
@@ -517,15 +537,12 @@ public class Prism extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
             }
 
-            // Assign listeners to our own events
-            // getServer().getPluginManager().registerEvents(new
-            // PrismRollbackEvents(), this);
             getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
 
             // Add commands
             PluginCommand command = getCommand("prism");
             if (command != null) {
-                PrismCommands commands = new PrismCommands(this,false);
+                commands = new PrismCommands(this, false);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
             } else {
@@ -580,6 +597,8 @@ public class Prism extends JavaPlugin {
             }
 
             items.initMaterials(Material.AIR);
+            Bukkit.getScheduler().runTaskAsynchronously(instance,
+                    () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
     }
 
@@ -641,8 +660,8 @@ public class Prism extends JavaPlugin {
         //bstats
         if (getConfig().getBoolean("prism.allow-metrics")) {
             Prism.log("Prism bStats metrics are enabled - thank you!");
-            int pluginid = 4365; // assigned by bstats.org
-            Metrics metrics = new Metrics(this, pluginid);
+            int pluginId = 4365; // assigned by bstats.org
+            Metrics metrics = new Metrics(this, pluginId);
             if (!metrics.isEnabled()) {
                 Prism.warn("bStats failed to initialise! Please check Prism/bStats configs.");
             }
@@ -770,7 +789,7 @@ public class Prism extends JavaPlugin {
                     TextComponent prefix = Il8nHelper.getMessage("alert-prefix")
                             .color(NamedTextColor.RED)
                             .append(msg);
-                    audiences.player(p).sendMessage(Identity.nil(),prefix);
+                    audiences.player(p).sendMessage(Identity.nil(), prefix);
                 }
             }
         }
@@ -803,7 +822,8 @@ public class Prism extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        if (getConfig().getBoolean("prism.database.force-write-queue-on-shutdown")) {
+        Bukkit.getPluginManager().callEvent(EventHelper.createUnLoadEvent());
+        if (getConfig().getBoolean("prism.query.force-write-queue-on-shutdown")) {
             final QueueDrain drainer = new QueueDrain(this);
             drainer.forceDrainQueue();
         }
@@ -821,6 +841,21 @@ public class Prism extends JavaPlugin {
             handler.close();
         }
         super.onDisable();
+    }
+
+    @Override
+    public PrismParameters createParameters() {
+        return new QueryParameters();
+    }
+
+    @Override
+    public Future<Result> performLookup(PrismParameters parameters, CommandSender sender) {
+        CompletableFuture<Result> resultCompletableFuture = new CompletableFuture<>();
+        Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
+            Result result = new ActionsQuery(Prism.getInstance()).lookup(parameters, sender);
+            resultCompletableFuture.complete(result);
+        });
+        return resultCompletableFuture;
     }
 
     private static class PrismFileHandler extends FileHandler {
@@ -858,5 +893,9 @@ public class Prism extends JavaPlugin {
             super.publish(record);
             flush();
         }
+    }
+
+    public PrismCommands getCommands() {
+        return commands;
     }
 }

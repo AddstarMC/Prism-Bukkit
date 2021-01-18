@@ -1,7 +1,7 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.measurement.TimeTaken;
 
 /**
@@ -10,9 +10,9 @@ import me.botsko.prism.measurement.TimeTaken;
  * Created by benjamincharlton on 5/04/2019.
  */
 public interface SelectQuery {
-    String getQuery(QueryParameters parameters, boolean shouldGroup);
+    String getQuery(PrismParameters parameters, boolean shouldGroup);
 
-    void setParameters(QueryParameters parameters);
+    void setParameters(PrismParameters parameters);
 
     void setShouldGroup(boolean shouldGroup);
 

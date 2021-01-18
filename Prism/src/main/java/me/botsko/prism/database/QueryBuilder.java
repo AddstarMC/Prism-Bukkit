@@ -1,7 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.PrismParameters;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ public abstract class QueryBuilder {
     protected PrismDataSource dataSource;
     protected Collection<String> columns = new ArrayList<>();
     protected Collection<String> conditions = new ArrayList<>();
-    protected QueryParameters parameters;
+    protected PrismParameters parameters;
     protected boolean shouldGroup;
     protected String prefix;
     protected boolean shouldPause;
@@ -28,7 +28,7 @@ public abstract class QueryBuilder {
         tableNameDataExtra = prefix + "data_extra";
     }
 
-    public void setParameters(QueryParameters parameters) {
+    public void setParameters(PrismParameters parameters) {
         this.parameters = parameters;
     }
 
@@ -52,7 +52,7 @@ public abstract class QueryBuilder {
      * @param shouldGroup if grouped.
      * @return String with query
      */
-    public String getQuery(@Nullable QueryParameters parameters, boolean shouldGroup) {
+    public String getQuery(@Nullable PrismParameters parameters, boolean shouldGroup) {
 
         this.parameters = parameters;
         this.shouldGroup = shouldGroup;

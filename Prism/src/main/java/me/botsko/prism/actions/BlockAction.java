@@ -1,12 +1,14 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.api.BlockStateChange;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.appliers.ChangeResultImpl;
+import me.botsko.prism.events.BlockStateChangeImpl;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
@@ -255,7 +257,7 @@ public class BlockAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         if (getActionType().doesCreateBlock()) {
             return removeBlock(player, parameters, isPreview, block);
@@ -265,7 +267,7 @@ public class BlockAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         if (getActionType().doesCreateBlock()) {
             return placeBlock(player, parameters, isPreview, block, false);
@@ -275,7 +277,7 @@ public class BlockAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
 
         final Block block = getWorld().getBlockAt(getLoc());
 
@@ -287,14 +289,14 @@ public class BlockAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyDeferred(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         return placeBlock(player, parameters, isPreview, block, true);
     }
 
-    ChangeResult placeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block,
-                            boolean isDeferred) {
-        BlockStateChange stateChange;
+    ChangeResult placeBlock(Player player, PrismParameters parameters, boolean isPreview, Block block,
+                                boolean isDeferred) {
+        BlockStateChangeImpl stateChange;
 
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
@@ -303,16 +305,16 @@ public class BlockAction extends GenericAction {
                 && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
-            Prism.debug("Block skipped due to being unacceptable for block place.: " + block.getType().name());
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            Prism.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         // On the blacklist (except an undo)
-        if (Prism.getIllegalBlocks().contains(getMaterial())
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) {
-            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO."
-                    + block.getType().name());
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+        if ((Prism.getIllegalBlocks().contains(getMaterial())
+                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flag.OVERWRITE)) {
+            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
+                    + getMaterial().toString());
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
         // If we're not in a preview, actually apply this block
         // Capture the block before we change it
@@ -324,7 +326,7 @@ public class BlockAction extends GenericAction {
             // Otherwise, save the state so we can cancel if needed
             // Note: we save the original state as both old/new so we can re-use
             // blockStateChanges
-            stateChange = new BlockStateChange(originalBlock, originalBlock);
+            stateChange = new BlockStateChangeImpl(originalBlock, originalBlock);
 
             // Preview it
             EntityUtils.sendBlockChange(player, block.getLocation(), getBlockData());
@@ -335,7 +337,7 @@ public class BlockAction extends GenericAction {
                     EntityUtils.sendBlockChange((Player) sharedPlayer, block.getLocation(), getBlockData());
                 }
             }
-            return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+            return new ChangeResultImpl(ChangeResultType.APPLIED, stateChange);
         }
     }
 
@@ -349,7 +351,7 @@ public class BlockAction extends GenericAction {
      * @return ChangeResult.
      */
     private @NotNull ChangeResult handleApply(final Block block, final BlockState originalBlock,
-                                              final QueryParameters parameters, final boolean cancelIfBadPlace) {
+                                                  final PrismParameters parameters, final boolean cancelIfBadPlace) {
         BlockState state = block.getState();
         // If lily pad, check that block below is water. Be sure
         // it's set to stationary water so the lily pad will sit
@@ -360,7 +362,7 @@ public class BlockAction extends GenericAction {
                     below.setType(WATER);
                 } else {
                     // Prism.debug("Lilypad skipped because no water exists below.");
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                    return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
                 break;
             case NETHER_PORTAL: // Only way is to set the portal on fire.
@@ -369,7 +371,7 @@ public class BlockAction extends GenericAction {
                     final Block above = obsidian.getRelative(BlockFace.UP);
                     if (!(above.getType() == NETHER_PORTAL)) {
                         above.setType(FIRE);
-                        return new ChangeResult(ChangeResultType.APPLIED, null);
+                        return new ChangeResultImpl(ChangeResultType.APPLIED, null);
                     }
                 }
                 break;
@@ -450,7 +452,7 @@ public class BlockAction extends GenericAction {
             if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
                 Prism.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
                         + getMaterial().name());
-                return new ChangeResult(ChangeResultType.SKIPPED, null);
+                return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
             sibling.setType(FARMLAND);
         }
@@ -465,7 +467,7 @@ public class BlockAction extends GenericAction {
                 if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(sibling.getType())) {
                     Prism.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
                             + getMaterial().name());
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                    return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
 
                 sibling.setType(block.getType());
@@ -491,10 +493,10 @@ public class BlockAction extends GenericAction {
         if (sibling != null) {
             sibling.update(true, physics);
         }
-        return new ChangeResult(ChangeResultType.APPLIED, new BlockStateChange(originalBlock, state));
+        return new ChangeResultImpl(ChangeResultType.APPLIED, new BlockStateChangeImpl(originalBlock, state));
     }
 
-    private ChangeResult handleShulkers(Block block, ShulkerActionData blockActionData, BlockState originalBlock) {
+    private ChangeResultImpl handleShulkers(Block block, ShulkerActionData blockActionData, BlockState originalBlock) {
         block.setType(getMaterial());
         ShulkerBox state = (ShulkerBox) block.getState();
         if (blockActionData.items.size() > 0) {
@@ -505,11 +507,11 @@ public class BlockAction extends GenericAction {
             });
         }
         state.update();
-        return new ChangeResult(ChangeResultType.APPLIED,new BlockStateChange(originalBlock,state));
+        return new ChangeResultImpl(ChangeResultType.APPLIED,new BlockStateChangeImpl(originalBlock,state));
 
     }
 
-    private ChangeResult handleBanners(Block block, BlockActionData blockActionData, BlockState originalBlock) {
+    private ChangeResultImpl handleBanners(Block block, BlockActionData blockActionData, BlockState originalBlock) {
         block.setType(getMaterial());
         BlockState state = block.getState();
         final BannerActionData actionData = (BannerActionData) blockActionData;
@@ -527,8 +529,8 @@ public class BlockAction extends GenericAction {
             banner.setPatterns(patternsList);
             banner.update();
         }
-        BlockStateChange stateChange = new BlockStateChange(originalBlock, state);
-        return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+        BlockStateChangeImpl stateChange = new BlockStateChangeImpl(originalBlock, state);
+        return new ChangeResultImpl(ChangeResultType.APPLIED, stateChange);
     }
 
     private void setBlockRotatable(BlockState state, RotatableActionData actionData) {
@@ -544,8 +546,8 @@ public class BlockAction extends GenericAction {
         state.update();
     }
 
-    private @NotNull ChangeResult handleSkulls(final Block block, BlockActionData blockActionData,
-                                               final BlockState originalBlock) {
+    private @NotNull ChangeResultImpl handleSkulls(final Block block, BlockActionData blockActionData,
+                                                   final BlockState originalBlock) {
         block.setType(getMaterial());
         BlockState state = block.getState();
         final SkullActionData s = (SkullActionData) blockActionData;
@@ -556,13 +558,13 @@ public class BlockAction extends GenericAction {
             final Skull skull = (Skull) state;
             skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf((s.owner))));
         }
-        BlockStateChange stateChange = new BlockStateChange(originalBlock, state);
-        return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+        BlockStateChangeImpl stateChange = new BlockStateChangeImpl(originalBlock, state);
+        return new ChangeResultImpl(ChangeResultType.APPLIED, stateChange);
     }
 
-    private ChangeResult removeBlock(Player player, QueryParameters parameters, boolean isPreview, Block block) {
+    private ChangeResult removeBlock(Player player, PrismParameters parameters, boolean isPreview, Block block) {
 
-        BlockStateChange stateChange;
+        BlockStateChangeImpl stateChange;
 
         if (!block.getType().equals(AIR)) {
 
@@ -570,7 +572,7 @@ public class BlockAction extends GenericAction {
             if (!Utilities.isAcceptableForBlockPlace(block.getType())
                     && !Utilities.areBlockIdsSameCoreItem(block.getType(), getMaterial())
                     && !parameters.hasFlag(Flag.OVERWRITE)) {
-                return new ChangeResult(ChangeResultType.SKIPPED, null);
+                return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
             // Capture the block before we change it
 
@@ -581,12 +583,12 @@ public class BlockAction extends GenericAction {
                 // Capture the new state
                 final BlockState newBlock = block.getState();
                 // Store the state change
-                stateChange = new BlockStateChange(originalBlock, newBlock);
+                stateChange = new BlockStateChangeImpl(originalBlock, newBlock);
             } else {
                 // Otherwise, save the state so we can cancel if needed
                 // Note: we save the original state as both old/new so we can
                 // re-use blockStateChanges
-                stateChange = new BlockStateChange(originalBlock, originalBlock);
+                stateChange = new BlockStateChangeImpl(originalBlock, originalBlock);
 
                 // Preview it
                 EntityUtils.sendBlockChange(player, block.getLocation(), Bukkit.createBlockData(AIR));
@@ -599,9 +601,9 @@ public class BlockAction extends GenericAction {
                     }
                 }
             }
-            return new ChangeResult(ChangeResultType.APPLIED, stateChange);
+            return new ChangeResultImpl(ChangeResultType.APPLIED, stateChange);
         }
-        return new ChangeResult(ChangeResultType.SKIPPED, null);
+        return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
     }
 
     /**

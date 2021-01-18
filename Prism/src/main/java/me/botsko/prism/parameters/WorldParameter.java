@@ -2,7 +2,7 @@ package me.botsko.prism.parameters;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;

@@ -1,6 +1,6 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.actions.Handler;
+import me.botsko.prism.api.actions.Handler;
 
 /**
  * Created for use for the Add5tar MC Minecraft server

@@ -1,6 +1,7 @@
 package me.botsko.prism.serializers.items;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.ItemUtils;
@@ -204,7 +205,7 @@ public class ItemStackSerializer {
         }
         ItemStack item = new ItemStack(m, amt);
 
-        ItemUtils.setItemDamage(item, durability);
+        MaterialState.setItemDamage(item, durability);
 
         // Restore enchantment
         if (enchs != null && enchs.length > 0) {

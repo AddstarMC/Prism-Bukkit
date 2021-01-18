@@ -4,7 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

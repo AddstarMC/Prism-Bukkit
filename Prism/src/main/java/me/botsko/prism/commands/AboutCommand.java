@@ -40,21 +40,31 @@ public class AboutCommand implements SubHandler {
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerSubduedHeaderMsg(
                         Component.text().content("Discord: ")
-                                .append(Component.text("https://discord.gg/Y9Qx3V")
+                                .append(Component.text(Il8nHelper.getRawMessage("discord-url"))
                                         .color(NamedTextColor.WHITE))
-                                .clickEvent(ClickEvent.openUrl("https://discord.gg/Y9Qx3V"))
+                                .clickEvent(ClickEvent.openUrl(Il8nHelper.getRawMessage("discord-url")))
                                 .build()));
         Prism.messenger.sendMessage(call.getSender(),
                 Prism.messenger.playerSubduedHeaderMsg(
                         Component.text().content("Wiki: ")
-                                .append(Component.text("https://github.com/AddstarMC/Prism-Bukkit/wiki")
+                                .append(Component.text(Il8nHelper.getRawMessage("wiki-url"))
                                         .color(NamedTextColor.WHITE))
-                                .clickEvent(ClickEvent.openUrl("https://github.com/AddstarMC/Prism-Bukkit/wiki"))
+                                .clickEvent(ClickEvent.openUrl(Il8nHelper.getRawMessage("wiki-url")))
                                 .build()));
     }
 
     @Override
     public List<String> handleComplete(CallInfo call) {
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-about")};
+    }
+
+    @Override
+    public String getRef() {
+        return ".html";
     }
 }

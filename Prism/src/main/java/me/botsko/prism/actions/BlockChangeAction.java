@@ -1,11 +1,12 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,36 +27,36 @@ public class BlockChangeAction extends BlockAction {
     }
 
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
-    public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
-    public ChangeResult applyDeferred(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyDeferred(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
         return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, true);
     }
 
-    private ChangeResult placeBlock(Player player, QueryParameters parameters, boolean isPreview, String type,
-                                    Material oldMat, BlockData oldData, Material newMat, BlockData newData, Block block,
-                                    boolean isDeferred) {
+    private ChangeResult placeBlock(Player player, PrismParameters parameters, boolean isPreview, String type,
+                                    Material oldMat, BlockData oldData, Material newMat,
+                                    BlockData newData, Block block, boolean isDeferred) {
 
         final BlockAction b = new BlockAction();
         b.setActionType(type);
@@ -75,12 +76,12 @@ public class BlockChangeAction extends BlockAction {
             b.setBlockData(oldData);
             return b.placeBlock(player, parameters, isPreview, block, isDeferred);
         }
-        return new ChangeResult(ChangeResultType.SKIPPED, null);
+        return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
     }
 
-    private ChangeResult processChange(Player player, QueryParameters parameters, boolean isPreview,
-                                       Material originalMaterial, Material replacedMaterial, BlockData replacedData,
-                                       Block currentBlock, boolean isDeferred, BlockAction action) {
+    private ChangeResult processChange(Player player, PrismParameters parameters, boolean isPreview,
+                                           Material originalMaterial, Material replacedMaterial, BlockData replacedData,
+                                           Block currentBlock, boolean isDeferred, BlockAction action) {
         if (Utilities.isAcceptableForBlockPlace(currentBlock.getType())
                 || Utilities.areBlockIdsSameCoreItem(currentBlock.getType(), originalMaterial) || isPreview
                 || parameters.hasFlag(Flag.OVERWRITE)) {
@@ -90,7 +91,7 @@ public class BlockChangeAction extends BlockAction {
         } else {
             Prism.debug("Skipped Change for " + parameters.getProcessType().name() + " because current-> "
                     + currentBlock.getType() + " != " + originalMaterial.name() + " <- what we think we will replace.");
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
     }
 }

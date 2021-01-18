@@ -1,7 +1,8 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.Il8nHelper;
-import me.botsko.prism.actions.Handler;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -66,8 +67,10 @@ public class ActionMessage {
                               handler.getSourceName() == null ? "NULL" : handler.getSourceName()
                       ).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                      builder -> Component.text().content(getDescription(action)).color(NamedTextColor.WHITE))
-                .replaceFirstText(Pattern.compile("<actorNice>"), builder -> getActor(action, highlight))
+                      builder -> Component.text().content(getDescription((ActionTypeImpl)action))
+                              .color(NamedTextColor.WHITE))
+                .replaceFirstText(Pattern.compile("<actorNice>"),
+                        builder -> getActor((ActionTypeImpl)action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
                       builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),
@@ -127,7 +130,7 @@ public class ActionMessage {
     }
 
 
-    private String getDescription(ActionType action) {
+    private String getDescription(ActionTypeImpl action) {
         String description = handler.getCustomDesc();
         if (description == null) {
             description = action.getNiceDescription();
@@ -142,7 +145,7 @@ public class ActionMessage {
         return Component.empty();
     }
 
-    private TextComponent.Builder getActor(ActionType action, TextColor highlight) {
+    private TextComponent.Builder getActor(ActionTypeImpl action, TextColor highlight) {
         String target = "unknown";
         if (action.getHandler() != null) {
             if (!handler.getNiceName().isEmpty()) {

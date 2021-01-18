@@ -1,8 +1,11 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.commandlibs.Flag;
-import me.botsko.prism.utils.MaterialAliases.MaterialState;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.api.objects.MaterialState;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -22,7 +25,7 @@ import java.util.Set;
  *
  * @author botskonet
  */
-public class QueryParameters implements Cloneable {
+public class QueryParameters implements PrismParameters, Cloneable {
 
     private final List<String> defaultsUsed = new ArrayList<>();
     private final List<Location> specificBlockLocations = new ArrayList<>();
@@ -577,6 +580,11 @@ public class QueryParameters implements Cloneable {
      */
     public List<CommandSender> getSharedPlayers() {
         return sharedPlayers;
+    }
+
+    @Override
+    public String toString() {
+        return "Original Command: " + originalCommand;
     }
 
     /**

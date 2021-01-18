@@ -5,7 +5,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.purge.PurgeTask;
@@ -115,5 +115,15 @@ public class DeleteCommand extends AbstractCommand {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-delete")};
+    }
+
+    @Override
+    public String getRef() {
+        return null;
     }
 }

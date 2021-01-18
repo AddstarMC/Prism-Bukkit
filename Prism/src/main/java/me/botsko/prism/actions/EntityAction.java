@@ -2,11 +2,11 @@ package me.botsko.prism.actions;
 
 import com.google.gson.JsonObject;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.serializers.SerializationHelper;
-import me.botsko.prism.serializers.entity.EntitySerializer;
 import me.botsko.prism.serializers.entity.EntitySerializerFactory;
 import me.botsko.prism.serializers.entity.EntitySerializerInterface;
 import me.botsko.prism.serializers.entity.SheepSerializer;
@@ -100,9 +100,9 @@ public class EntityAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         if (serializer == null) {
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         EntityType entityType = getEntityType(serializer.getEntityName());
@@ -115,15 +115,15 @@ public class EntityAction extends GenericAction {
                     //todo this doesnt work for some reason in terms of applying serializations on spawn....
                     // Villagers dont seem to appear as per professions would require.
                 } else {
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                    return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
-                return new ChangeResult(ChangeResultType.APPLIED, null);
+                return new ChangeResultImpl(ChangeResultType.APPLIED, null);
 
             } else {
-                return new ChangeResult(ChangeResultType.PLANNED, null);
+                return new ChangeResultImpl(ChangeResultType.PLANNED, null);
             }
         } else {
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
     }
 }

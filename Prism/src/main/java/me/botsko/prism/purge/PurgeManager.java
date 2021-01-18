@@ -2,7 +2,7 @@ package me.botsko.prism.purge;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;

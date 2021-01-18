@@ -1,6 +1,7 @@
 package me.botsko.prism.utils.block;
 
-import me.botsko.prism.events.BlockStateChange;
+import me.botsko.prism.api.BlockStateChange;
+import me.botsko.prism.events.BlockStateChangeImpl;
 import me.botsko.prism.utils.MaterialTag;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,7 +36,6 @@ public class Utilities {
      *
      * @param material Material 1
      * @param material Material 2
-     * @return
      */
     private static final EnumMap<Material, Material> baseMaterials = new EnumMap<>(Material.class);
 
@@ -88,8 +88,8 @@ public class Utilities {
         return removeMaterialsFromRadius(materials, loc, radius);
     }
 
-    private static ArrayList<BlockStateChange> checkForWaterlogged(final Location loc,int radius) {
-        final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
+    private static ArrayList<BlockStateChangeImpl> checkForWaterlogged(final Location loc, int radius) {
+        final ArrayList<BlockStateChangeImpl> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0) {
             final int x1 = loc.getBlockX();
             final int y1 = loc.getBlockY();
@@ -110,7 +110,7 @@ public class Utilities {
                             ((Waterlogged)modified).setWaterlogged(false);
                             testLocation.getBlock().setBlockData(modified);
                             final BlockState newBlock = testLocation.getBlock().getState();
-                            blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
+                            blockStateChanges.add(new BlockStateChangeImpl(originalBlock, newBlock));
                         }
                     }
                 }
@@ -128,7 +128,7 @@ public class Utilities {
      */
     @SuppressWarnings("WeakerAccess")
     public static ArrayList<BlockStateChange> removeMaterialsFromRadius(Material[] materials, final Location loc,
-                                                                        int radius) {
+                                                                            int radius) {
         final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
         if (loc != null && radius > 0 && materials != null && materials.length > 0) {
             final int x1 = loc.getBlockX();
@@ -147,7 +147,7 @@ public class Utilities {
                             final BlockState originalBlock = testLocation.getBlock().getState();
                             testLocation.getBlock().setType(Material.AIR);
                             final BlockState newBlock = testLocation.getBlock().getState();
-                            blockStateChanges.add(new BlockStateChange(originalBlock, newBlock));
+                            blockStateChanges.add(new BlockStateChangeImpl(originalBlock, newBlock));
                         }
                     }
                 }

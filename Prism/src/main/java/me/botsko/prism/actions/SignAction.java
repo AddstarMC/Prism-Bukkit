@@ -1,8 +1,9 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Material;
@@ -117,7 +118,7 @@ public class SignAction extends GenericAction {
      * {@inheritDoc}
      */
     @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
 
         final Block block = getWorld().getBlockAt(getLoc());
 
@@ -147,10 +148,10 @@ public class SignAction extends GenericAction {
                     }
                 }
                 sign.update(true, false);
-                return new ChangeResult(ChangeResultType.APPLIED, null);
+                return new ChangeResultImpl(ChangeResultType.APPLIED, null);
             }
         }
-        return new ChangeResult(ChangeResultType.SKIPPED, null);
+        return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
     }
 
     public static class SignChangeActionData {

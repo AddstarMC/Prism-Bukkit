@@ -1,12 +1,14 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.actions.Handler;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.Result;
+import me.botsko.prism.api.actions.Handler;
 
 import java.util.List;
 
-public class QueryResult {
+public class QueryResult implements Result {
 
-    protected final QueryParameters parameters;
+    protected final PrismParameters parameters;
     private final int totalResults;
     protected int page = 1;
     private final List<Handler> actionResults;
@@ -21,7 +23,7 @@ public class QueryResult {
      * @param actions    List of ActionHandlers
      * @param parameters params
      */
-    public QueryResult(List<Handler> actions, QueryParameters parameters) {
+    public QueryResult(List<Handler> actions, PrismParameters parameters) {
 
         this.actionResults = actions;
         this.parameters = parameters;
@@ -67,7 +69,7 @@ public class QueryResult {
      *
      * @return the parameters
      */
-    public QueryParameters getParameters() {
+    public PrismParameters getParameters() {
         return parameters;
     }
 

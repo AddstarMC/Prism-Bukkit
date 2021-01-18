@@ -1,6 +1,6 @@
 package me.botsko.prism.listeners.self;
 
-import me.botsko.prism.events.PrismBlocksRollbackEvent;
+import me.botsko.prism.events.PrismRollBackEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -12,7 +12,7 @@ public class PrismRollbackEvents implements Listener {
      * @param event PrismBlocksRollbackEvent
      */
     @EventHandler
-    public void onPrismBlocksRollbackEvent(final PrismBlocksRollbackEvent event) {
+    public void onPrismRollBackEvent(final PrismRollBackEvent event) {
 
         // // Get all block changes for this event
         // ArrayList<BlockStateChange> blockStateChanges =

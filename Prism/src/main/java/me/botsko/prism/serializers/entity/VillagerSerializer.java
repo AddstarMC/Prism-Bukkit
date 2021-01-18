@@ -49,7 +49,7 @@ public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
                     villagerRecipe.maxUses, villagerRecipe.experienceReward, villagerRecipe.villagerXp,
                     villagerRecipe.priceMultiplier);
             villagerRecipe.ingredient.forEach(
-                  itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
+                    itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
             bukkitRecipes.add(recipe);
 
         });

@@ -38,4 +38,14 @@ public class SettingCommands extends AbstractCommand {
         }
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-settings")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/settings.html";
+    }
 }

@@ -8,7 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;

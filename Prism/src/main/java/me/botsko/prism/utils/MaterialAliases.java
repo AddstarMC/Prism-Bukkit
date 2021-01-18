@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.sql.SqlIdMapQuery;
 import me.botsko.prism.utils.block.Utilities;
@@ -354,66 +355,4 @@ public class MaterialAliases {
         return itemIds;
     }
 
-    public static class MaterialState {
-        public Material material;
-        public String state;
-
-        protected MaterialState() {
-        }
-
-        public MaterialState(Material material, String state) {
-            this.material = material;
-            this.state = state;
-        }
-
-        /**
-         * Get BlockData.
-         *
-         * @return BlockData
-         */
-        public BlockData asBlockData() {
-            try {
-                BlockData data = Bukkit.createBlockData(material, state);
-
-                // In the event that we tried to get BlockData for an item and it returned air
-                if (data.getMaterial() == material) {
-                    return data;
-                }
-            } catch (IllegalArgumentException ignored) {
-                //ignored
-            }
-
-            return null;
-        }
-
-        /**
-         * Get as Item.
-         *
-         * @return ItemStack
-         */
-        public ItemStack asItem() {
-            ItemStack item = new ItemStack(material, 1);
-
-            if (!state.isEmpty()) {
-                try {
-                    ItemUtils.setItemDamage(item, Short.parseShort(state));
-                } catch (NumberFormatException ignored) {
-                    //ignored
-                }
-
-            }
-
-            return item;
-        }
-
-        @Override
-        public String toString() {
-            return material.name().toLowerCase(Locale.ENGLISH) + state;
-        }
-
-        @Override
-        public int hashCode() {
-            return toString().hashCode();
-        }
-    }
 }

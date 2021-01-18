@@ -4,9 +4,9 @@ import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Handler;
+import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
@@ -130,5 +130,15 @@ public class PageCommand implements SubHandler {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-pg-nav")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/lookups.html#pagination";
     }
 }

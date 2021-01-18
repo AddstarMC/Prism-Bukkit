@@ -2,20 +2,19 @@ package me.botsko.prism.database.sql;
 
 import com.google.gson.JsonSyntaxException;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionType;
-import me.botsko.prism.actionlibs.MatchRule;
+import me.botsko.prism.actionlibs.ActionTypeImpl;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.RecordingManager;
-import me.botsko.prism.actions.Handler;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.measurement.TimeTaken;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.ItemUtils;
-import me.botsko.prism.utils.MaterialAliases.MaterialState;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -150,7 +149,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void actionCondition() {
         // Action type
-        final HashMap<String, MatchRule> action_types = parameters.getActionTypes();
+        final Map<String, MatchRule> action_types = parameters.getActionTypes();
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
@@ -221,11 +220,11 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void blockCondition() {
         // Blocks
-        final Set<Material> blockfilters = parameters.getBlockFilters();
-        if (!blockfilters.isEmpty()) {
-            final String[] blockArr = new String[blockfilters.size()];
+        final Set<Material> blockFilters = parameters.getBlockFilters();
+        if (!blockFilters.isEmpty()) {
+            final String[] blockArr = new String[blockFilters.size()];
             int i = 0;
-            for (Material m : blockfilters) {
+            for (Material m : blockFilters) {
 
                 Set<IntPair> allIds = Prism.getItems().materialToAllIds(m);
 
@@ -416,23 +415,23 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         return query;
     }
 
-    private String buildGroupConditions(String fieldname, String[] argValues, String matchFormat, String matchType,
-                                          String dataFormat) {
+    private String buildGroupConditions(final String fieldName, String[] argValues, final String matchFormat,
+                                        final String matchType, final String dataFormat) {
 
         StringBuilder where = new StringBuilder();
-        matchFormat = (matchFormat == null ? "%s = %s" : matchFormat);
-        matchType = (matchType == null ? "AND" : matchType);
-        dataFormat = (dataFormat == null ? "%s" : dataFormat);
+        String format = (matchFormat == null ? "%s = %s" : matchFormat);
+        String match = (matchType == null ? "AND" : matchType);
+        String dataForm = (dataFormat == null ? "%s" : dataFormat);
 
-        if (argValues.length > 0 && !matchFormat.isEmpty()) {
+        if (argValues.length > 0 && !format.isEmpty()) {
             where.append("(");
             int c = 1;
             for (final String val : argValues) {
                 if (c > 1 && c <= argValues.length) {
-                    where.append(" ").append(matchType).append(" ");
+                    where.append(" ").append(match).append(" ");
                 }
-                fieldname = (fieldname == null ? "" : fieldname);
-                where.append(String.format(matchFormat, fieldname, String.format(dataFormat, val)));
+                String field = (fieldName == null ? "" : fieldName);
+                where.append(String.format(format, field, String.format(dataForm, val)));
                 c++;
             }
             where.append(")");
@@ -503,15 +502,11 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 }
 
                 // Get the action handler
-                final ActionType actionType = Prism.getActionRegistry().getAction(actionName);
+                final ActionTypeImpl actionType = Prism.getActionRegistry().getAction(actionName);
 
                 if (actionType == null) {
                     continue;
                 }
-                // Prism.debug("Important: Action type '" + rs.getString(3)
-                // +
-                // "' has no official handling class, will be shown as generic."
-                // );
 
                 long rowId = 0;
 
@@ -642,7 +637,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     try {
                         // Calls UUID.fromString, must handle potential exceptions
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(
-                                PlayerIdentification.uuidFromDbString(rs.getString(14)));
+                                SqlPlayerIdentificationHelper.uuidFromDbString(rs.getString(14)));
 
                         // Fake player
                         if (offline.hasPlayedBefore()) {

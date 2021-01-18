@@ -34,3 +34,4 @@ public class SheepSerializer extends EntitySerializer<Sheep> {
         return super.getPrefix() + MiscUtils.niceName(color);
     }
 }
+

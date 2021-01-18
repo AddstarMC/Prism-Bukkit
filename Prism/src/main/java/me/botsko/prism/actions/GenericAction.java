@@ -1,9 +1,11 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionType;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
+import me.botsko.prism.actionlibs.ActionTypeImpl;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Handler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -50,10 +52,6 @@ public abstract class GenericAction implements Handler {
     @Override
     public String getCustomDesc() {
         return null;
-    }
-
-    @Override
-    public void setCustomDesc(String description) {
     }
 
     /*
@@ -181,7 +179,7 @@ public abstract class GenericAction implements Handler {
     /**
      * Set the Action Type.
      *
-     * @param type {@link ActionType}
+     * @param type {@link ActionTypeImpl}
      */
     @Override
     public void setActionType(ActionType type) {
@@ -206,10 +204,8 @@ public abstract class GenericAction implements Handler {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#getPlayerName()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public @Nullable String getSourceName() {
@@ -219,10 +215,8 @@ public abstract class GenericAction implements Handler {
         return Bukkit.getOfflinePlayer(playerUuid).getName();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setPlayerName(java.lang.String)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setSourceName(String sourceName) {
@@ -230,21 +224,25 @@ public abstract class GenericAction implements Handler {
         this.playerUuid = null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public UUID getUuid() {
         return playerUuid;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setUuid(UUID uuid) {
         this.playerUuid = uuid;
         this.sourceName = null;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setX(double)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setX(double x) {
@@ -252,10 +250,8 @@ public abstract class GenericAction implements Handler {
         location.setX(x);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setY(double)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setY(double y) {
@@ -263,10 +259,8 @@ public abstract class GenericAction implements Handler {
         location.setY(y);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setZ(double)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setZ(double z) {
@@ -340,10 +334,8 @@ public abstract class GenericAction implements Handler {
         return blockData;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setBlockSubId(byte)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setBlockData(BlockData data) {
@@ -369,55 +361,56 @@ public abstract class GenericAction implements Handler {
         this.oldBlock = material;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#getOldBlockSubId()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public BlockData getOldBlockData() {
         return oldBlockData;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setOldBlockSubId(byte)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setOldBlockData(BlockData data) {
         this.oldBlockData = data;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public short getOldDurability() {
         return 0;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setOldDurability(short durability) {
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#getAggregateCount()
+    /**
+     * {@inheritDoc}
      */
     @Override
     public int getAggregateCount() {
         return aggregateCount;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see me.botsko.prism.actions.Handler#setAggregateCount(int)
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void setAggregateCount(int aggregateCount) {
         this.aggregateCount = aggregateCount;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isCanceled() {
         return canceled;
@@ -429,24 +422,55 @@ public abstract class GenericAction implements Handler {
         this.canceled = cancel;
     }
 
-
-    @Override
-    public ChangeResult applyRollback(Player player, QueryParameters params, boolean isPreview) {
+    /**
+     * Currently these methods are not made available in the api.  As they perform world
+     * changes.  This can be reviewed later.
+     *
+     * @param player Player
+     * @param parameters PrismParameters
+     * @param isPreview boolean
+     * @return ChangeResult
+     */
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         return null;
     }
 
-    @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    /**
+     * See above.
+     *
+     * @see GenericAction#applyRollback(Player, PrismParameters, boolean)
+     * @param player Player
+     * @param parameters PrismParameters
+     * @param isPreview boolean
+     * @return ChangeResult
+     */
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         return null;
     }
 
-    @Override
-    public ChangeResult applyUndo(Player player, QueryParameters parameters, boolean isPreview) {
+    /**
+     * See above.
+     *
+     * @see GenericAction#applyRollback(Player, PrismParameters, boolean)
+     * @param player Player
+     * @param parameters PrismParameters
+     * @param isPreview boolean
+     * @return ChangeResult
+     */
+    public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
         return null;
     }
 
-    @Override
-    public ChangeResult applyDeferred(Player player, QueryParameters params, boolean isPreview) {
+    /**
+     * See above.
+     *
+     * @see GenericAction#applyRollback(Player, PrismParameters, boolean)
+     * @param player Player
+     * @param parameters PrismParameters
+     * @param isPreview boolean
+     * @return ChangeResult
+     */
+    public ChangeResult applyDeferred(Player player, PrismParameters parameters, boolean isPreview) {
         return null;
     }
 }

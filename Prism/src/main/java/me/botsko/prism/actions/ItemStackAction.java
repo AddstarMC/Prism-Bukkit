@@ -1,10 +1,11 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.InventoryUtils;
@@ -150,25 +151,25 @@ public class ItemStackAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         return placeItems(player, parameters, isPreview);
     }
 
     @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         return placeItems(player, parameters, isPreview);
     }
 
-    protected ChangeResult placeItems(Player player, QueryParameters parameters, boolean isPreview) {
+    protected ChangeResult placeItems(Player player, PrismParameters parameters, boolean isPreview) {
 
         if (actionData == null) {
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         ChangeResultType result = ChangeResultType.SKIPPED;
 
         if (isPreview) {
-            return new ChangeResult(ChangeResultType.PLANNED, null);
+            return new ChangeResultImpl(ChangeResultType.PLANNED, null);
         }
 
         if (Prism.config.getBoolean("prism.appliers.allow-rollback-items-removed-from-container")) {
@@ -186,7 +187,7 @@ public class ItemStackAction extends GenericAction {
                 } else {
                     // Skip if the player isn't online
                     Prism.debug("Skipping inventory process because player is offline");
-                    return new ChangeResult(ChangeResultType.SKIPPED, null);
+                    return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
             } else {
                 if (block.getType().equals(Material.JUKEBOX)) {
@@ -409,7 +410,7 @@ public class ItemStackAction extends GenericAction {
                 }
             }
         }
-        return new ChangeResult(result, null);
+        return new ChangeResultImpl(result, null);
     }
 
 }

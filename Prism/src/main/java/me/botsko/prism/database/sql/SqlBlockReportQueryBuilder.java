@@ -2,10 +2,10 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.utils.TypeUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,7 +26,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
     }
 
     @Override
-    public String getQuery(QueryParameters parameters, boolean shouldGroup) {
+    public String getQuery(PrismParameters parameters, boolean shouldGroup) {
 
         this.parameters = parameters;
         this.shouldGroup = shouldGroup;
@@ -90,7 +90,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                             + TypeUtils.padStringRight("Broken", colIntLen))));
             while (rs.next()) {
                 int blockId = rs.getInt(1);
-                MaterialAliases.MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
+                MaterialState state = Prism.getItems().idsToMaterial(blockId, 0, true);
                 final String alias;
                 if (state == null) {
                     alias = "UnknownMaterial_BlockId_" + blockId;

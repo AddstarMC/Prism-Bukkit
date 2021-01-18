@@ -1,8 +1,9 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Minecart;
@@ -64,7 +65,7 @@ public class VehicleAction extends GenericAction {
      * {@inheritDoc}
      */
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         Entity vehicle = null;
         switch (vehicleName) {
             case "powered minecart":
@@ -92,8 +93,8 @@ public class VehicleAction extends GenericAction {
                 //null
         }
         if (vehicle != null) {
-            return new ChangeResult(ChangeResultType.APPLIED, null);
+            return new ChangeResultImpl(ChangeResultType.APPLIED, null);
         }
-        return new ChangeResult(ChangeResultType.SKIPPED, null);
+        return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
     }
 }

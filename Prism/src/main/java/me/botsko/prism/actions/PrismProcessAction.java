@@ -1,7 +1,7 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.serializers.SerializationHelper;
 
 public class PrismProcessAction extends GenericAction {

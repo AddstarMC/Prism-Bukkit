@@ -69,4 +69,14 @@ public class ResetmyCommand extends AbstractCommand {
     public List<String> handleComplete(CallInfo call) {
         return null;
     }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-wand-reset-default")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/wand.html#setting-resetting-the-wand";
+    }
 }

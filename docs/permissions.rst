@@ -1,0 +1,57 @@
+List of Prism permissions:
+--------------------------
+
+- ``prism.help`` - Users may see the prism help files.
+- ``prism.wand.*`` - Allow use of all wands.
+- ``prism.wand.inspect`` - Allow inspect wand. Auto if user has .lookup
+- ``prism.wand.profile`` - Allow profile wand. Auto if user has .lookup
+- ``prism.wand.rollback`` - Allow rollback wand. Auto if user has .rollback
+- ``prism.wand.restore`` - Allow restore wand. Auto if user has .restore
+- ``prism.setmy.wand`` - Allow user to set their personal wand prefs (if enabled via config). They must also have permission to a wand.
+- ``prism.lookup`` - Grants lookup, inspector, near permissions. Recommended for: Experienced players.
+- ``prism.lookup.paginate`` - Grants pagination access, without having lookup.
+- ``prism.parameters.*`` - Allow mods to use all lookup parameters. Children nodes are the parameter name, i.e. radius or player
+- ``prism.parameters.action``
+- ``prism.parameters.before``
+- ``prism.parameters.block``
+- ``prism.parameters.entity``
+- ``prism.parameters.id``
+- ``prism.parameters.keyword``
+- ``prism.parameters.player``
+- ``prism.parameters.radius``
+- ``prism.parameters.since``
+- ``prism.parameters.world``
+- ``prism.parameters.flag.*``
+- ``prism.parameters.flag.drain``
+- ``prism.parameters.flag.drain``-lava
+- ``prism.parameters.flag.drain``-water
+- ``prism.parameters.flag.extended``
+- ``prism.parameters.flag.no``-ext
+- ``prism.parameters.flag.no``-itemclear
+- ``prism.parameters.flag.per``-page
+- ``prism.parameters.flag.no``-group
+- ``prism.parameters.flag.overwrite``
+- ``prism.parameters.flag.share``
+- ``prism.parameters.flag.paste``
+- ``prism.extinguish`` - For removing fires in a radius. Recommended for: Experienced players.
+- ``prism.drain`` - Removing water/lava in a radius. Recommended for: Experienced players.
+- ``prism.preview`` - Grants permission to preview and then rollback/restore changes. Recommended for: Staff
+- ``prism.rollback`` - Grants permission to rollback changes. Recommended for: Experienced Staff
+- ``prism.restore`` - Grants permission to restore (reapply) changes. Recommended for: Experienced Staff
+- ``prism.tp`` - Teleport to a record ID. Recommended for: Experienced players.
+- ``prism.report`` - View reports. Recommended for: Staff
+- ``prism.reload`` - Grants config reload permission. Recommended for: OPs
+- ``prism.delete`` - Purge records from database via commands. Recommended for: OPs
+- ``prism.alerts`` - Alerts for ore finds, dangerous block placements.
+- ``prism.alerts.ores.ignore`` - Player with this perm will not trigger an ore alert.
+- ``prism.alerts.use.place.ignore`` - Player with this perm will not trigger a block place alert.
+- ``prism.alerts.use.break.ignore`` - Player with this perm will not trigger a block break alert.
+- ``prism.alerts.use.lighter.ignore`` - Player with this perm will not trigger a lighter use alert.
+- ``prism.alerts.use.lavabucket.ignore`` - Player with this perm will not trigger a lava bucket placement alert.
+- ``prism.alerts.ignore`` - Parent node for all alerts
+- ``prism.bypass``-use-alerts - Trusted players will be ignored for use alert feature.
+- ``prism.override``-max-lookup-radius - Allows a user to override the max lookup radius. Defaults to off, so it must explicitly be set.
+- ``prism.override``-max-applier-radius - Allows a user to override the max applier radius. Defaults to off, so it must explicitly be set.
+- ``prism.ignore.tracking.`` (action-type) - Ignore an action type for a specific group.
+- ``prism.view`` - Use the view commands
+- ``prism.*`` - Grants all permissions. Warning: Includes all of the ignore tracking permission nodes.

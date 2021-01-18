@@ -6,10 +6,10 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Handler;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
@@ -160,5 +160,15 @@ public class LookupCommand implements SubHandler {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-lookup")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/lookup.html";
     }
 }

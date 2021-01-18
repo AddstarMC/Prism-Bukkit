@@ -3,8 +3,9 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.PrismProcessAction;
-import me.botsko.prism.appliers.PrismProcessType;
-import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
@@ -44,7 +45,7 @@ public class ActionsQuery {
      * @param sender     sender
      * @return result.
      */
-    public QueryResult lookup(QueryParameters parameters, CommandSender sender) {
+    public QueryResult lookup(PrismParameters parameters, CommandSender sender) {
 
         Player player = null;
         if (sender instanceof Player) {

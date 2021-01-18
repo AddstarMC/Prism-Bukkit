@@ -4,7 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.BlockAction;
-import me.botsko.prism.actions.Handler;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
@@ -35,6 +35,7 @@ import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -197,6 +198,20 @@ public class PrismPlayerEvents implements Listener {
         RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", event.getItemDrop().getItemStack(),
                 event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(),
                 event.getPlayer()));
+    }
+
+    /**
+     * Track players changing game modes.
+     *
+     * @param event PlayerGameModeChangeEvent
+     */
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onGameModeSwitch(PlayerGameModeChangeEvent event) {
+        if (!Prism.getIgnore().event("player-gamemodechange", event.getPlayer())) {
+            return;
+        }
+        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange",
+                event.getPlayer(), event.getNewGameMode().toString()));
     }
 
     /**

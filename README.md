@@ -39,8 +39,8 @@ Attribution-NonCommercial-ShareAlike 3.0 Unported. Please see `LICENSE` or [this
 for the full license.
 
 [sponge]: https://github.com/prism/Prism
-[wiki]: https://github.com/AddstarMC/Prism-Bukkit/wiki
+[wiki]: https://prism-bukkit.readthedocs.io
 [license]: http://creativecommons.org/licenses/by-nc-sa/3.0/us/
 [addstarmc]: https://github.com/AddstarMC
-[moss]: https://discord.gg/8KgkRBA
+[moss]: https://discord.gg/V9hS3q7m
 [spigot]: https://www.spigotmc.org/resources/prism.75166/

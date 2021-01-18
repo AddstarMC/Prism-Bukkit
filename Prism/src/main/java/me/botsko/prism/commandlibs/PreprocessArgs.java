@@ -1,9 +1,9 @@
 package me.botsko.prism.commandlibs;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.parameters.PrismParameterHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

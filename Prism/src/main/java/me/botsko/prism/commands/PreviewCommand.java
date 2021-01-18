@@ -5,10 +5,10 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismApplierCallback;
-import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.appliers.Rollback;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -171,5 +171,15 @@ public class PreviewCommand extends AbstractCommand {
             return MiscUtils.getStartingWith(call.getArg(1), secondaries);
         }
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-preview")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/preview.html";
     }
 }

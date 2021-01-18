@@ -5,9 +5,9 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismApplierCallback;
-import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Restore;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
@@ -74,5 +74,15 @@ public class RestoreCommand extends AbstractCommand {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return PreprocessArgs.complete(call.getSender(), call.getArgs());
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-restore")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/restore.html";
     }
 }

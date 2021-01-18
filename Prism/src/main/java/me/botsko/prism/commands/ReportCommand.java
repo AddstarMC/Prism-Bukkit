@@ -3,11 +3,11 @@ package me.botsko.prism.commands;
 import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actionlibs.RecordingQueue;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.database.ActionReportQuery;
@@ -110,6 +110,19 @@ public class ReportCommand extends AbstractCommand {
             return PreprocessArgs.complete(call.getSender(), call.getArgs());
         }
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-report-queue"),
+                Il8nHelper.getRawMessage("help-report-db"),
+                Il8nHelper.getRawMessage("help-report-player")
+        };
+    }
+
+    @Override
+    public String getRef() {
+        return ".html";
     }
 
     private void queueReport(CommandSender sender) {

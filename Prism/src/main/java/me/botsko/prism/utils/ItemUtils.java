@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.objects.MaterialState;
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;
 import org.bukkit.Location;
@@ -54,23 +55,6 @@ public class ItemUtils {
     }
 
     /**
-     * Sets an item as damaged by the amount given as the second param.
-     *
-     * @param stack  ItemStack
-     * @param damage Integer
-     */
-    public static void setItemDamage(ItemStack stack, int damage) {
-        ItemMeta meta = Bukkit.getItemFactory().getItemMeta(stack.getType());
-
-        if (meta instanceof Damageable) {
-            Damageable d = (Damageable) meta;
-
-            d.setDamage(damage);
-            stack.setItemMeta(meta);
-        }
-    }
-
-    /**
      * Get the amount an item is damaged or 0.
      *
      * @param stack ItemStack
@@ -104,7 +88,7 @@ public class ItemUtils {
                 if (parts.length > 1) {
                     try {
                         ItemStack stack = new ItemStack(mat, 1);
-                        setItemDamage(stack, Short.parseShort(parts[1]));
+                        MaterialState.setItemDamage(stack, Short.parseShort(parts[1]));
 
                         return stack;
                     } catch (NumberFormatException e) {

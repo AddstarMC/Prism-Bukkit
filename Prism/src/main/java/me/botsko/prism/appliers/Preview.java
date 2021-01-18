@@ -3,9 +3,15 @@ package me.botsko.prism.appliers;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actions.Handler;
-import me.botsko.prism.events.BlockStateChange;
-import me.botsko.prism.events.PrismBlocksRollbackEvent;
+import me.botsko.prism.actions.GenericAction;
+import me.botsko.prism.api.BlockStateChange;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.objects.ApplierResult;
+import me.botsko.prism.events.EventHelper;
+import me.botsko.prism.events.PrismRollBackEvent;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.wands.RollbackWand;
@@ -33,7 +39,7 @@ public class Preview implements Previewable {
     protected final CommandSender sender;
     protected final Player player;
     protected final QueryParameters parameters;
-    protected final ArrayList<BlockStateChange> blockStateChanges = new ArrayList<>();
+    protected final List<BlockStateChange> blockStateChanges = new ArrayList<>();
     private final PrismProcessType processType;
     private final HashMap<Entity, Integer> entitiesMoved = new HashMap<>();
     private final List<Handler> worldChangeQueue = Collections.synchronizedList(new LinkedList<>());
@@ -208,14 +214,17 @@ public class Preview implements Previewable {
                     ChangeResult result = null;
 
                     try {
-                        if (processType.equals(PrismProcessType.ROLLBACK)) {
-                            result = a.applyRollback(player, parameters, isPreview);
-                        }
-                        if (processType.equals(PrismProcessType.RESTORE)) {
-                            result = a.applyRestore(player, parameters, isPreview);
-                        }
-                        if (processType.equals(PrismProcessType.UNDO)) {
-                            result = a.applyUndo(player, parameters, isPreview);
+                        if (a instanceof GenericAction) {
+                            GenericAction action = (GenericAction) a;
+                            if (processType.equals(PrismProcessType.ROLLBACK)) {
+                                result = action.applyRollback(player, parameters, isPreview);
+                            }
+                            if (processType.equals(PrismProcessType.RESTORE)) {
+                                result = action.applyRestore(player, parameters, isPreview);
+                            }
+                            if (processType.equals(PrismProcessType.UNDO)) {
+                                result = action.applyUndo(player, parameters, isPreview);
+                            }
                         }
 
                         if (result == null) {
@@ -336,7 +345,7 @@ public class Preview implements Previewable {
 
         // Trigger the events
         if (processType.equals(PrismProcessType.ROLLBACK)) {
-            final PrismBlocksRollbackEvent event = new PrismBlocksRollbackEvent(blockStateChanges, player, parameters,
+            final PrismRollBackEvent event = EventHelper.createRollBackEvent(blockStateChanges, player, parameters,
                   results);
             plugin.getServer().getPluginManager().callEvent(event);
         }

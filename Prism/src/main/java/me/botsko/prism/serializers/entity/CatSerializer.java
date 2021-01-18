@@ -24,3 +24,4 @@ public class CatSerializer extends TameEntitySerializer<Cat> {
         return MiscUtils.niceName(var);
     }
 }
+

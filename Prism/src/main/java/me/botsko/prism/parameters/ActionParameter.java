@@ -2,10 +2,10 @@ package me.botsko.prism.parameters;
 
 import com.google.common.base.Joiner;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionType;
-import me.botsko.prism.actionlibs.MatchRule;
+import me.botsko.prism.actionlibs.ActionTypeImpl;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.PrismProcessType;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
 
@@ -33,11 +33,11 @@ public class ActionParameter extends SimplePrismParameterHandler {
                 // Find all actions that match the action provided - whether the
                 // full name or
                 // short name.
-                final ArrayList<ActionType> actionTypes = Prism.getActionRegistry()
+                final ArrayList<ActionTypeImpl> actionTypes = Prism.getActionRegistry()
                         .getActionsByShortName(action.replace("!", ""));
                 if (!actionTypes.isEmpty()) {
                     List<String> noPermission = new ArrayList<>();
-                    for (final ActionType actionType : actionTypes) {
+                    for (final ActionTypeImpl actionType : actionTypes) {
 
                         // Ensure the action allows this process type
                         if ((query.getProcessType().equals(PrismProcessType.ROLLBACK) && !actionType.canRollback())

@@ -6,7 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Handler;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
@@ -166,5 +166,15 @@ public class TeleportCommand implements SubHandler {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-teleport")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/lookup.html#teleporting";
     }
 }

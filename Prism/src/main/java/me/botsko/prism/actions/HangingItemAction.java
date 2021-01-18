@@ -1,9 +1,10 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.appliers.ChangeResult;
-import me.botsko.prism.appliers.ChangeResultType;
+import me.botsko.prism.api.ChangeResult;
+import me.botsko.prism.api.ChangeResultType;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Art;
@@ -86,12 +87,12 @@ public class HangingItemAction extends GenericAction {
     }
 
     @Override
-    public ChangeResult applyRollback(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         return hangItem(player, parameters, isPreview);
     }
 
     @Override
-    public ChangeResult applyRestore(Player player, QueryParameters parameters, boolean isPreview) {
+    public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         return hangItem(player, parameters, isPreview);
     }
 
@@ -103,10 +104,10 @@ public class HangingItemAction extends GenericAction {
      * @return ChangeResult
      * @todo I am not sure this actual is used during preview?? also no rollback info is saved to undo this.
      */
-    private ChangeResult hangItem(Player player, QueryParameters parameters, boolean isPreview) {
+    private ChangeResult hangItem(Player player, PrismParameters parameters, boolean isPreview) {
         if (actionData == null) {
             Prism.debug(parameters.getProcessType() + "Skipped - Hanging action data was null");
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         final BlockFace attachedFace = getDirection();
@@ -118,13 +119,13 @@ public class HangingItemAction extends GenericAction {
         if (Utilities.materialMeansBlockDetachment(loc.getBlock().getType())) {
             Prism.debug(parameters.getProcessType() + "Hanging Skipped - block would detach: "
                     + loc.getBlock().getType());
-            return new ChangeResult(ChangeResultType.SKIPPED, null);
+            return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
         try {
             if (getHangingType().equals("item_frame")) {
                 final Hanging hangingItem = getWorld().spawn(loc, ItemFrame.class);
                 hangingItem.setFacingDirection(attachedFace, true);
-                return new ChangeResult(ChangeResultType.APPLIED, null); //no change recorded
+                return new ChangeResultImpl(ChangeResultType.APPLIED, null); //no change recorded
             } else if (getHangingType().equals("painting")) {
                 final Painting hangingItem = getWorld().spawn(loc, Painting.class);
                 hangingItem.setFacingDirection(getDirection(), true);
@@ -132,12 +133,12 @@ public class HangingItemAction extends GenericAction {
                 if (art != null) {
                     hangingItem.setArt(art);
                 }
-                return new ChangeResult(ChangeResultType.APPLIED, null); //no change recorded
+                return new ChangeResultImpl(ChangeResultType.APPLIED, null); //no change recorded
             }
         } catch (final IllegalArgumentException e) {
             // Something interfered with being able to place the painting
         }
-        return new ChangeResult(ChangeResultType.SKIPPED, null);
+        return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
     }
 
     @SuppressWarnings("WeakerAccess")

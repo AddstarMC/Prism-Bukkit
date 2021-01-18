@@ -21,11 +21,11 @@ public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySeri
     protected double maxHealth = 20.0;
     protected double movementSpeed = 0.2;
 
-     public void serialize(T entity) {
-         super.serialize(entity);
+    public void serialize(T entity) {
+        super.serialize(entity);
         final AbstractHorse h = entity;
-         saddle = ItemUtils.smallString(h.getInventory().getSaddle());
-         dom = h.getDomestication();
+        saddle = ItemUtils.smallString(h.getInventory().getSaddle());
+        dom = h.getDomestication();
         maxDom = h.getMaxDomestication();
         jump = h.getJumpStrength();
         maxHealth = h.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue();
@@ -38,7 +38,7 @@ public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySeri
 
     @Override
     public void deserialize(T entity) {
-         super.deserialize(entity);
+        super.deserialize(entity);
         final AbstractHorse h = entity;
         h.getInventory().setSaddle(ItemUtils.itemOf(saddle));
         maxDom = Math.max(1, maxDom);
@@ -60,3 +60,4 @@ public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySeri
     }
 
 }
+

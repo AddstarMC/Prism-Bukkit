@@ -3,10 +3,10 @@ package me.botsko.prism.wands;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
-import me.botsko.prism.actionlibs.MatchRule;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.api.actions.MatchRule;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -100,7 +100,8 @@ public class InspectorWand extends QueryWandBase {
                             Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup.result.header",
                                     results.getTotalResults(), 1, results.getTotalPages())));
                 }
-                for (final me.botsko.prism.actions.Handler a : results.getPaginatedActionResults()) {
+                for (final me.botsko.prism.api
+                        .actions.Handler a : results.getPaginatedActionResults()) {
                     final ActionMessage am = new ActionMessage(a);
                     if (parameters.hasFlag(Flag.EXTENDED)
                             || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {

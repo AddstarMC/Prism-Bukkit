@@ -6,14 +6,14 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actions.Handler;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismApplierCallback;
-import me.botsko.prism.appliers.PrismProcessType;
 import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
-import me.botsko.prism.commandlibs.Flag;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
 import net.kyori.adventure.audience.Audience;
@@ -145,5 +145,15 @@ public class UndoCommand implements SubHandler {
     @Override
     public List<String> handleComplete(CallInfo call) {
         return null;
+    }
+
+    @Override
+    public String[] getHelp() {
+        return new String[]{Il8nHelper.getRawMessage("help-undo")};
+    }
+
+    @Override
+    public String getRef() {
+        return "/undo.html";
     }
 }

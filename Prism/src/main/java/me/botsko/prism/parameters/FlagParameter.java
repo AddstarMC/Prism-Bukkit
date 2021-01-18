@@ -1,7 +1,7 @@
 package me.botsko.prism.parameters;
 
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.commandlibs.Flag;
+import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

@@ -2,7 +2,7 @@ package me.botsko.prism.parameters;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.utils.MaterialAliases.MaterialState;
+import me.botsko.prism.api.objects.MaterialState;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;

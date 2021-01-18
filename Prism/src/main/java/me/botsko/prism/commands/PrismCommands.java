@@ -48,6 +48,16 @@ public class PrismCommands extends Executor {
             public List<String> handleComplete(CallInfo call) {
                 return null;
             }
+
+            @Override
+            public String[] getHelp() {
+                return new String[]{Il8nHelper.getRawMessage("help-reload")};
+            }
+
+            @Override
+            public String getRef() {
+                return "";
+            }
         });
         if (failed) {
             return;
