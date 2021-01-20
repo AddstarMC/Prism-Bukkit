@@ -25,7 +25,7 @@ public abstract class BaseListener implements Listener {
         this.plugin = plugin;
     }
 
-    protected void contructBlockEvent(final String parentAction, final String cause, final List<Block> blockList) {
+    protected void contructBlockEvent(final String parentAction, final String cause, final Iterable<Block> blockList) {
         final PrismBlockEvents be = new PrismBlockEvents(plugin); //todo is this necessary?
         for (Block block : blockList) {
             // don't bother record upper doors.

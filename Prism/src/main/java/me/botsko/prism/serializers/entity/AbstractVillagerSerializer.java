@@ -5,6 +5,7 @@ import org.bukkit.entity.AbstractVillager;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
  */
 public class AbstractVillagerSerializer<T extends AbstractVillager> extends EntitySerializer<T> {
 
-    protected final List<ItemStackSerializer> inventory = new ArrayList<>();
+    protected final Collection<ItemStackSerializer> inventory = new ArrayList<>();
 
 
     @Override

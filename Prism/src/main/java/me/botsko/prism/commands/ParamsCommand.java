@@ -74,7 +74,7 @@ public class ParamsCommand implements SubHandler {
         Prism.messenger.sendMessage(s,builder.build());
     }
 
-    private static Component colourParamHelp(TextComponent message) {
+    private static Component colourParamHelp(Component message) {
         Pattern pattern = Pattern.compile("([abtrkpew]|id|since|before){1}:([\\[,<,a-z,0-9,>,|,:,\\],#]*)");
         return message.replaceText(pattern, builder -> builder.color(NamedTextColor.LIGHT_PURPLE));
     }

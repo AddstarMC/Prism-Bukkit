@@ -78,7 +78,10 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -656,7 +659,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     /**
      * Remove expired locations.
      */
-    public void removeExpiredLocations() {
+    private void removeExpiredLocations() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             final java.util.Date date = new java.util.Date();
             // Remove locations logged over five minute ago.

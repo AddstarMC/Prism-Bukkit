@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -89,7 +90,7 @@ public class TeleportCommand implements SubHandler {
         if (call.getArg(1).contains("id:")) {
 
             // Build params
-            final QueryParameters params = new QueryParameters();
+            final PrismParameters params = new QueryParameters();
             params.setWorld(call.getPlayer().getWorld().getName());
             params.setId(recordId);
 

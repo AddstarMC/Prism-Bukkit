@@ -1,5 +1,6 @@
 package me.botsko.prism.utils;
 
+import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -90,7 +91,7 @@ public class EnchantmentUtils {
      * @param level int
      * @return String
      */
-    public static String getClientSideEnchantmentName(Enchantment enchantment, int level) {
+    public static String getClientSideEnchantmentName(Keyed enchantment, int level) {
 
         String enchantName;
 

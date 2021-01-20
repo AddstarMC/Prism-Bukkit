@@ -8,6 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitPlayer;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -23,7 +24,7 @@ public class WorldEditBridge {
      * @param parameters {@link QueryParameters}
      * @return boolean.
      */
-    public static boolean getSelectedArea(Plugin plugin, Player player, QueryParameters parameters) {
+    public static boolean getSelectedArea(Plugin plugin, Player player, PrismParameters parameters) {
         // Get selected area
         Region region = null;
         try {

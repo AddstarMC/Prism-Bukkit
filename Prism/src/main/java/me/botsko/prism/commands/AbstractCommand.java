@@ -3,6 +3,7 @@ package me.botsko.prism.commands;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.commandlibs.SubHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 public abstract class AbstractCommand implements SubHandler {
 
-    final StringBuilder checkIfDefaultUsed(QueryParameters parameters) {
+    final StringBuilder checkIfDefaultUsed(PrismParameters parameters) {
         final List<String> defaultsUsed = parameters.getDefaultsUsed();
         StringBuilder defaultsReminder = new StringBuilder();
         if (!defaultsUsed.isEmpty()) {
