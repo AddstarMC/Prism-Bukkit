@@ -2,6 +2,7 @@ package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.BlockReportQuery;
@@ -35,7 +36,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     protected ConfigurationSection section;
     private boolean paused; //when set the datasource will not allow insertions;
     private SettingsQuery settingsQuery = null;
-    private String prefix = "prism_";
+    protected String prefix = "prism_";
 
     /**
      * Constructor.
@@ -71,6 +72,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     @Override
+
     public String getPrefix() {
         return prefix;
     }
@@ -93,10 +95,10 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 return database.getConnection();
             }
         } catch (SQLException e) {
-            Prism.log("Could not retrieve a connection - with exception");
+            PrismLogHandler.log("Could not retrieve a connection - with exception");
             return null;
         }
-        Prism.log("Could not retrieve a connection");
+        PrismLogHandler.log("Could not retrieve a connection");
         return null;
     }
 
@@ -138,15 +140,15 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 return;
             }
         } catch (final SQLException ignored) {
-            Prism.warn("Database rescue was unsuccessful.");
+            PrismLogHandler.warn("Database rescue was unsuccessful.");
         }
-        Prism.warn("Database connection error: " + e.getMessage());
+        PrismLogHandler.warn("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";
             msg[1] = "Try running `CHECK TABLE " + getPrefix() + "data` and then `REPAIR TABLE "
                     + getPrefix() + "data`.";
-            Prism.logSection(msg);
+            PrismLogHandler.logSection(msg);
         }
         e.printStackTrace();
     }
@@ -239,7 +241,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
         } catch (final SQLException e) {
             handleDataSourceException(e);
 
-            Prism.log("Database connection error: " + e.getMessage());
+            PrismLogHandler.log("Database connection error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -262,7 +264,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-                Prism.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
+                PrismLogHandler.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
                 Prism.prismActions.put(actionName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -283,11 +285,11 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
                 ResultSet rs = s.executeQuery()
                 ) {
             while (rs.next()) {
-                Prism.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+                PrismLogHandler.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
                 Prism.prismActions.put(rs.getString(2), rs.getInt(1));
             }
 
-            Prism.debug("Loaded " + Prism.prismActions.size() + " actions into the cache.");
+            PrismLogHandler.debug("Loaded " + Prism.prismActions.size() + " actions into the cache.");
 
         } catch (final SQLException e) {
             handleDataSourceException(e);
@@ -311,7 +313,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             while (rs.next()) {
                 prismWorlds.put(rs.getString(2), rs.getInt(1));
             }
-            Prism.debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
+            PrismLogHandler.debug("Loaded " + prismWorlds.size() + " worlds into the cache.");
         } catch (final SQLException e) {
             handleDataSourceException(e);
         }
@@ -334,7 +336,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-                Prism.log("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
+                PrismLogHandler.log("Registering new world to the database/cache: " + worldName + " " + rs.getInt(1));
                 Prism.prismWorlds.put(worldName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");

@@ -98,21 +98,21 @@ public class PurgeTask implements Runnable {
         long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
         plugin.maxCycleTime = Math.max(plugin.maxCycleTime, cycleTime);
 
-        Prism.debug("------------------- ");
-        Prism.debug("params: " + param.getOriginalCommand());
-        Prism.debug("minId: " + minId);
-        Prism.debug("maxId: " + maxId);
-        Prism.debug("newMinId: " + newMinId);
-        Prism.debug("cycleRowsAffected: " + cycleRowsAffected);
-        Prism.debug("cycleComplete: " + cycleComplete);
-        Prism.debug("plugin.total_records_affected: " + plugin.totalRecordsAffected);
-        Prism.debug("-------------------");
+        PrismLogHandler.debug("------------------- ");
+        PrismLogHandler.debug("params: " + param.getOriginalCommand());
+        PrismLogHandler.debug("minId: " + minId);
+        PrismLogHandler.debug("maxId: " + maxId);
+        PrismLogHandler.debug("newMinId: " + newMinId);
+        PrismLogHandler.debug("cycleRowsAffected: " + cycleRowsAffected);
+        PrismLogHandler.debug("cycleComplete: " + cycleComplete);
+        PrismLogHandler.debug("plugin.total_records_affected: " + plugin.totalRecordsAffected);
+        PrismLogHandler.debug("-------------------");
 
         // Send cycle to callback
         callback.cycle(param, cycleRowsAffected, plugin.totalRecordsAffected, cycleComplete, plugin.maxCycleTime);
 
         if (!plugin.isEnabled()) {
-            Prism.log("Can't schedule new purge tasks as plugin is now disabled. "
+            me.botsko.prism.PrismLogHandler.log("Can't schedule new purge tasks as plugin is now disabled. "
                             + "If you're shutting down the server, ignore me.");
             return;
         }
@@ -130,7 +130,7 @@ public class PurgeTask implements Runnable {
                 return;
             }
 
-            Prism.log("Moving on to next purge rule...");
+            me.botsko.prism.PrismLogHandler.log("Moving on to next purge rule...");
 
             // schedule a new task with next param
             plugin.getPurgeManager().deleteTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,

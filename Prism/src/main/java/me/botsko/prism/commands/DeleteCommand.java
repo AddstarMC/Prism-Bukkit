@@ -50,7 +50,7 @@ public class DeleteCommand extends AbstractCommand {
         // Allow for wiping live queue
         if (call.getArgs().length > 1 && call.getArg(1).equals("queue")) {
             if (RecordingQueue.getQueue().size() > 0) {
-                Prism.log("User " + call.getSender().getName()
+                me.botsko.prism.PrismLogHandler.log("User " + call.getSender().getName()
                         + " wiped the live queue before it could be written to the database. "
                         + RecordingQueue.getQueue().size() + " events lost.");
                 RecordingQueue.getQueue().clear();
@@ -100,8 +100,7 @@ public class DeleteCommand extends AbstractCommand {
                 final long[] extents = aq.getQueryExtents(parameters);
                 final long minId = extents[0];
                 final long maxId = extents[1];
-                Prism.log(
-                        "Beginning prism database purge cycle. Will be performed in batches so "
+                me.botsko.prism.PrismLogHandler.log("Beginning prism database purge cycle. Will be performed in batches so "
                                 + "we don't tie up the db...");
                 deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
                         new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));

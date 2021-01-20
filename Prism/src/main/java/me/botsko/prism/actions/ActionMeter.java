@@ -36,7 +36,7 @@ public class ActionMeter {
             addClass(SignAction.class);
             addClass(VehicleAction.class);
             meter.put("UnknownHandler", getMeter(Handler.class));
-            Prism.log("Action Meter metrics enabled. " + meter.size() + " metrics registered");
+            me.botsko.prism.PrismLogHandler.log("Action Meter metrics enabled. " + meter.size() + " metrics registered");
             monitoring = true;
         }
     }

@@ -93,7 +93,7 @@ public class TypeUtils {
             }
         }
         if (hex.length() != 7 && !hex.startsWith("#")) {
-            Prism.log("Could not decode as hex:" + hex);
+            me.botsko.prism.PrismLogHandler.log("Could not decode as hex:" + hex);
             TextColor color = NamedTextColor.NAMES.value(hex);
             if (color != null) {
                 return color;

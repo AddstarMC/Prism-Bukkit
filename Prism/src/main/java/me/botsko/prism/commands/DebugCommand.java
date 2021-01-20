@@ -142,7 +142,7 @@ public class DebugCommand implements SubHandler {
                                     Component.text()
                                             .content(pasteUrl)
                                             .clickEvent(ClickEvent.openUrl(pasteUrl)))));
-            Prism.log("Paste Created : " + pasteUrl);
+            me.botsko.prism.PrismLogHandler.log("Paste Created : " + pasteUrl);
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                           Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(
@@ -151,7 +151,7 @@ public class DebugCommand implements SubHandler {
                                                   Component.text()
                                                           .content(s)
                                                           .clickEvent(ClickEvent.copyToClipboard(s)))));
-                          Prism.log("Deletion Key:" + s);
+                          me.botsko.prism.PrismLogHandler.log("Deletion Key:" + s);
                   }
             );
         } else {

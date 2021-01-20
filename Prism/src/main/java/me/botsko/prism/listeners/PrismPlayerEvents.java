@@ -90,7 +90,7 @@ public class PrismPlayerEvents implements Listener {
                 event.setCancelled(true);
                 // Log to console
                 if (plugin.getConfig().getBoolean("prism.alerts.illegal-commands.log-to-console")) {
-                    Prism.log(msg);
+                    me.botsko.prism.PrismLogHandler.log(msg);
                 }
 
                 // Log to commands
@@ -397,7 +397,7 @@ public class PrismPlayerEvents implements Listener {
                 }
 
                 if ((event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.LEFT_CLICK_BLOCK)) {
-                    Prism.debug("Cancelling event for wand use.");
+                    PrismLogHandler.debug("Cancelling event for wand use.");
                     event.setCancelled(true);
                     InventoryUtils.updateInventory(player);
                     return;

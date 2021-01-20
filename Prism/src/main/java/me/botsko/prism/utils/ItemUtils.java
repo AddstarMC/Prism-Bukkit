@@ -92,7 +92,7 @@ public class ItemUtils {
 
                         return stack;
                     } catch (NumberFormatException e) {
-                        Prism.debug(" Item could not have damage parsed. Data:" + smallString + " Error:"
+                        PrismLogHandler.debug(" Item could not have damage parsed. Data:" + smallString + " Error:"
                               + e.getMessage());
                     }
                 }

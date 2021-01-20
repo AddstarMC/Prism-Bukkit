@@ -284,7 +284,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                 SQLWarning warning = st.getWarnings();
 
                 while (warning != null) {
-                    Prism.warn("sql Warning: " + warning.getMessage());
+                    me.botsko.prism.PrismLogHandler.warn("sql Warning: " + warning.getMessage());
                     warning = warning.getNextWarning();
                 }
 
@@ -293,7 +293,7 @@ public class SqlIdMapQuery implements IdMapQuery {
                     int autoInc = rs.getInt(1);
 
                     if (!success) {
-                        Prism.log("Failed id map: material=" + material + ", " + "state=" + state);
+                        me.botsko.prism.PrismLogHandler.log("Failed id map: material=" + material + ", " + "state=" + state);
                     }
 
                     return autoInc;

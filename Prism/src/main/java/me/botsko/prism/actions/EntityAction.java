@@ -48,7 +48,7 @@ public class EntityAction extends GenericAction {
         // Build an object for the specific details of this action
         if (entity != null && entity.getType() != null && entity.getType().name() != null) {
             setLoc(entity.getLocation());
-            serializer = EntitySerializerFactory.getSerializer(entity.getType());
+            serializer = EntitySerializerFactory.getSerializer(entity);
             serializer.serialize(entity);
             if (serializer instanceof SheepSerializer) {
                 ((SheepSerializer) serializer).setColor(dyeUsed);
@@ -81,8 +81,7 @@ public class EntityAction extends GenericAction {
             String entityName = SerializationHelper.gson()
                     .fromJson(data, JsonObject.class).get("entityName").getAsString();
             serializer = SerializationHelper.gson()
-                    .fromJson(data, EntitySerializerFactory
-                            .getSerializingClass(getEntityType(entityName)));
+                    .fromJson(data, EntitySerializerFactory.getSerializingClass(getEntityType(entityName)));
         }
     }
 
@@ -110,7 +109,7 @@ public class EntityAction extends GenericAction {
             if (!isPreview) {
                 final Location loc = getLoc().add(0.5, 0.0, 0.5);
                 if (entityType.getEntityClass() != null && loc.getWorld() != null) {
-                    Prism.debug("Spawning on Rollback: " + SerializationHelper.gson().toJson(serializer));
+                    PrismLogHandler.debug("Spawning on Rollback: " + SerializationHelper.gson().toJson(serializer));
                     loc.getWorld().spawn(loc, entityType.getEntityClass(), entity -> serializer.deserialize(entity));
                     //todo this doesnt work for some reason in terms of applying serializations on spawn....
                     // Villagers dont seem to appear as per professions would require.

@@ -49,7 +49,7 @@ public class Il8nHelper {
         try {
             return resourceBundle.getString(key);
         } catch (MissingResourceException e) {
-            Prism.log("Missing Resource " + e.getMessage());
+            PrismLogHandler.log("Missing Resource " + e.getMessage());
             return key;
         }
     }
@@ -71,10 +71,10 @@ public class Il8nHelper {
             String out = String.format(format, args);
             return Component.text(out);
         } catch (MissingResourceException e) {
-            Prism.log("Missing Resource " + e.getMessage());
+            PrismLogHandler.log("Missing Resource " + e.getMessage());
             return Component.text(key);
         } catch (MissingFormatArgumentException e) {
-            Prism.log("Missing Format Argument " + e.getMessage());
+            PrismLogHandler.log("Missing Format Argument " + e.getMessage());
             return getMessage(key);
         }
     }

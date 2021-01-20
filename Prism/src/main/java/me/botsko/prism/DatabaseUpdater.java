@@ -49,13 +49,13 @@ public class DatabaseUpdater {
             Runnable update = updates.get(i - 1);
 
             if (update != null) {
-                Prism.log("Updating prism schema v" + i + " to v" + (i + 1) + ". This make take a while.");
+                PrismLogHandler.log("Updating prism schema v" + i + " to v" + (i + 1) + ". This make take a while.");
                 update.run();
             }
         }
 
         // Save current version
         Settings.saveSetting("schema_ver", "" + currentDbSchemaVersion);
-        Prism.log("Update check complete: Schema v" + currentDbSchemaVersion);
+        PrismLogHandler.log("Update check complete: Schema v" + currentDbSchemaVersion);
     }
 }

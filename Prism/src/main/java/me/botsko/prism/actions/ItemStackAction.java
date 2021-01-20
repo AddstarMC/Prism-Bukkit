@@ -186,7 +186,7 @@ public class ItemStackAction extends GenericAction {
                     inventory = onlinePlayer.getInventory();
                 } else {
                     // Skip if the player isn't online
-                    Prism.debug("Skipping inventory process because player is offline");
+                    PrismLogHandler.debug("Skipping inventory process because player is offline");
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
             } else {
@@ -225,8 +225,8 @@ public class ItemStackAction extends GenericAction {
                         loc.setY(loc.getBlockY());
                         loc.setZ(loc.getBlockZ());
 
-                        Prism.debug(block.getLocation());
-                        Prism.debug(loc);
+                        PrismLogHandler.debug(block.getLocation());
+                        PrismLogHandler.debug(loc);
 
                         if (!block.getWorld().equals(e.getWorld())) {
                             continue;
@@ -344,7 +344,7 @@ public class ItemStackAction extends GenericAction {
                         final HashMap<Integer, ItemStack> leftovers = InventoryUtils.addItemToInventory(inventory,
                                 getItem());
                         if (leftovers.size() > 0) {
-                            Prism.debug("Skipping adding items because there are leftovers");
+                            PrismLogHandler.debug("Skipping adding items because there are leftovers");
                             result = ChangeResultType.SKIPPED;
                         } else {
                             result = ChangeResultType.APPLIED;

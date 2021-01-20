@@ -179,7 +179,7 @@ public class Preview implements Previewable {
         worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
             if (plugin.getConfig().getBoolean("prism.debug")) {
-                Prism.debug("World change queue size: " + worldChangeQueue.size());
+                PrismLogHandler.debug("World change queue size: " + worldChangeQueue.size());
             }
 
             if (worldChangeQueue.isEmpty()) {
@@ -257,7 +257,7 @@ public class Preview implements Previewable {
                             line += (' ' + message);
                         }
 
-                        Prism.log(line);
+                        me.botsko.prism.PrismLogHandler.log(line);
                         e.printStackTrace();
 
                         // Count as skipped, remove from queue
@@ -356,9 +356,9 @@ public class Preview implements Previewable {
         if (plugin.getConfig().getBoolean("prism.debug")) {
             // Flush timed data
             plugin.eventTimer.printTimeRecord();
-            Prism.debug("Changes: " + changesAppliedCount);
-            Prism.debug("Planned: " + changesPlannedCount);
-            Prism.debug("Skipped: " + skippedBlockCount);
+            PrismLogHandler.debug("Changes: " + changesAppliedCount);
+            PrismLogHandler.debug("Planned: " + changesPlannedCount);
+            PrismLogHandler.debug("Skipped: " + skippedBlockCount);
         }
     }
 }

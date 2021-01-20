@@ -110,7 +110,7 @@ public class OreMonitor {
 
                         // Log to console
                         if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
-                            Prism.log(PlainComponentSerializer.plain().serialize(component));
+                            me.botsko.prism.PrismLogHandler.log(PlainComponentSerializer.plain().serialize(component));
                         }
 
                         // Log to commands

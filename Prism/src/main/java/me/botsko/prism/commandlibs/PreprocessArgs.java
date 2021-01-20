@@ -87,7 +87,7 @@ public class PreprocessArgs {
                 Prism.messenger.sendMessage(sender, Prism.messenger
                         .playerError("You're missing valid parameters. Use /prism ? for assistance."));
             } else {
-                Prism.log("Missing valid parameters");
+                me.botsko.prism.PrismLogHandler.log("Missing valid parameters");
             }
             return null;
         }
@@ -114,7 +114,7 @@ public class PreprocessArgs {
                 if (sender != null) {
                     Prism.messenger.sendMessage(sender, Prism.messenger.playerError(e.getMessage()));
                 } else {
-                    Prism.log(e.getMessage());
+                    me.botsko.prism.PrismLogHandler.log(e.getMessage());
                 }
                 return null;
             }
@@ -194,7 +194,7 @@ public class PreprocessArgs {
                             Prism.messenger.playerError("Unrecognized parameter '"
                                     + arg + "'. Use /prism ? for help."));
                 } else {
-                    Prism.log("Unrecognized parameter '" + arg + "'");
+                    me.botsko.prism.PrismLogHandler.log("Unrecognized parameter '" + arg + "'");
                 }
                 break;
             case NoPermission:
@@ -203,7 +203,7 @@ public class PreprocessArgs {
                             Prism.messenger.playerError("No permission for parameter '"
                                     + arg + "', skipped."));
                 } else {
-                    Prism.log("No permission for parameter '" + arg + "'");
+                    me.botsko.prism.PrismLogHandler.log("No permission for parameter '" + arg + "'");
                 }
                 break;
             default:

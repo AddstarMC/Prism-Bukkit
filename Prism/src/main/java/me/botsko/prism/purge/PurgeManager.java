@@ -33,7 +33,7 @@ public final class PurgeManager implements Runnable {
     @Override
     public void run() {
 
-        Prism.log("Scheduled purge executor beginning new run...");
+        me.botsko.prism.PrismLogHandler.log("Scheduled purge executor beginning new run...");
 
         if (!purgeRules.isEmpty()) {
 
@@ -46,14 +46,14 @@ public final class PurgeManager implements Runnable {
                       PrismProcessType.DELETE, 0, false);
 
                 if (parameters == null) {
-                    Prism.log("Invalid parameters for database purge: " + purgeArgs);
+                    me.botsko.prism.PrismLogHandler.log("Invalid parameters for database purge: " + purgeArgs);
                     continue;
                 }
 
                 if (parameters.getFoundArgs().size() > 0) {
                     parameters.setStringFromRawArgs(purgeArgs.split(" "), 0);
                     paramList.add(parameters);
-                    Prism.log("Processed parameters for database purge: " + purgeArgs);
+                    me.botsko.prism.PrismLogHandler.log("Processed parameters for database purge: " + purgeArgs);
                 }
             }
 
@@ -70,8 +70,7 @@ public final class PurgeManager implements Runnable {
                   async task. This task will reschedule itself when each purge cycle has
                   completed and records remain
                  */
-                Prism.log(
-                        "Beginning prism database purge cycle. "
+                me.botsko.prism.PrismLogHandler.log("Beginning prism database purge cycle. "
                                 + "Will be performed in batches so we don't tie up the db...");
                 deleteTask = Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
                         new PurgeTask(plugin, paramList, purgeTickDelay, new LogPurgeCallback()),
@@ -79,7 +78,7 @@ public final class PurgeManager implements Runnable {
 
             }
         } else {
-            Prism.log("Purge rules are empty, not purging anything.");
+            me.botsko.prism.PrismLogHandler.log("Purge rules are empty, not purging anything.");
         }
     }
 }

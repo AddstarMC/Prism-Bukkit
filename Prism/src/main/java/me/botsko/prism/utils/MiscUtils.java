@@ -51,14 +51,14 @@ public class MiscUtils {
         int maxLookupRadius = config.getInt("prism.queries.max-lookup-radius");
         if (maxLookupRadius <= 0.99) {
             maxLookupRadius = 5;
-            Prism.log("Max lookup radius may not be lower than one. Using safe input of five.");
+            me.botsko.prism.PrismLogHandler.log("Max lookup radius may not be lower than one. Using safe input of five.");
         }
 
         // Safety checks for max applier radius
         int maxApplierRadius = config.getInt("prism.queries.max-applier-radius");
         if (maxApplierRadius <= 0.99) {
             maxApplierRadius = 5;
-            Prism.log("Max applier radius may not be lower than one. Using safe input of five.");
+            me.botsko.prism.PrismLogHandler.log("Max applier radius may not be lower than one. Using safe input of five.");
         }
 
         // Does the radius exceed the configured max?
@@ -97,7 +97,7 @@ public class MiscUtils {
             try {
                 return (T) Enum.valueOf(fallback.getClass(), from.toUpperCase());
             } catch (IllegalArgumentException e) {
-                Prism.debug(e.getMessage());
+                PrismLogHandler.debug(e.getMessage());
             }
         }
         return fallback;
@@ -108,7 +108,7 @@ public class MiscUtils {
             try {
                 return Enum.valueOf(enumClass, from.toUpperCase());
             } catch (IllegalArgumentException e) {
-                Prism.debug(e.getMessage());
+                PrismLogHandler.debug(e.getMessage());
             }
         }
         return null;

@@ -106,7 +106,7 @@ public class HangingItemAction extends GenericAction {
      */
     private ChangeResult hangItem(Player player, PrismParameters parameters, boolean isPreview) {
         if (actionData == null) {
-            Prism.debug(parameters.getProcessType() + "Skipped - Hanging action data was null");
+            PrismLogHandler.debug(parameters.getProcessType() + "Skipped - Hanging action data was null");
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
@@ -117,7 +117,7 @@ public class HangingItemAction extends GenericAction {
 
         // Ensure there's a block at this location that accepts an attachment
         if (Utilities.materialMeansBlockDetachment(loc.getBlock().getType())) {
-            Prism.debug(parameters.getProcessType() + "Hanging Skipped - block would detach: "
+            PrismLogHandler.debug(parameters.getProcessType() + "Hanging Skipped - block would detach: "
                     + loc.getBlock().getType());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }

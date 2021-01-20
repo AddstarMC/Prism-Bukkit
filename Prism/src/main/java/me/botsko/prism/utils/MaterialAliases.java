@@ -67,7 +67,7 @@ public class MaterialAliases {
             }
 
         } else {
-            Prism.warn("ERROR: The Item library was unable to load an internal item alias list.");
+            me.botsko.prism.PrismLogHandler.warn("ERROR: The Item library was unable to load an internal item alias list.");
         }
     }
 
@@ -178,7 +178,7 @@ public class MaterialAliases {
                   }
               }, () -> {
                   if (logMaterialErrors) {
-                      Prism.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
+                      me.botsko.prism.PrismLogHandler.log("matError: [" + blockId + ", " + blockSubId + "] -> ???");
                   }
               });
 

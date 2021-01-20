@@ -38,7 +38,7 @@ public class SqlActionReportQueryBuilder extends SqlSelectQueryBuilder implement
 
         query += ";";
 
-        Prism.debug(query);
+        PrismLogHandler.debug(query);
 
         return query;
 

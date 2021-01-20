@@ -269,8 +269,8 @@ public class ItemStackSerializer {
                         patterns.add(p);
                     }
                 } catch (IllegalArgumentException e) {
-                    Prism.debug("Found illegal DyeColor stored in serialized banner: " + e.getMessage());
-                    Prism.debug("Data:  " + bannerMeta.toString());
+                    PrismLogHandler.debug("Found illegal DyeColor stored in serialized banner: " + e.getMessage());
+                    PrismLogHandler.debug("Data:  " + bannerMeta.toString());
                 }
             });
             ((BannerMeta) meta).setPatterns(patterns);

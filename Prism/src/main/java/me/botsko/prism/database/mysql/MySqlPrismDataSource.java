@@ -32,8 +32,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
 
     static {
         if (propFile.exists()) {
-            Prism.log("Configuring Hikari from " + propFile.getName());
-            Prism.debug("This file will not save the jdbcURL, username or password - these are loaded"
+            me.botsko.prism.PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
+            PrismLogHandler.debug("This file will not save the jdbcURL, username or password - these are loaded"
                     + " by default from the standard prism configuration file.  If you set these "
                     + "explicitly in the properties file the settings in the standard config will be"
                     + "ignored.");
@@ -102,16 +102,16 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         if (Prism.getInstance().monitoring) {
             dbConfig.setMetricRegistry(ApiHandler.monitor.getRegistry());
             dbConfig.setHealthCheckRegistry(ApiHandler.monitor.getHealthRegistry());
-            Prism.log("Hikari is configured with Metric Reporting.");
+            me.botsko.prism.PrismLogHandler.log("Hikari is configured with Metric Reporting.");
         } else {
-            Prism.log("No metric recorder found to hook into Hikari.");
+            me.botsko.prism.PrismLogHandler.log("No metric recorder found to hook into Hikari.");
         }
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
-            Prism.warn("Hikari Pool did not Initialize: " + e.getMessage());
+            me.botsko.prism.PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
             database = null;
         }
         return this;
@@ -149,18 +149,18 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             rs1.next();
             String version = dbInfo.get("version");
             String versionComment = dbInfo.get("version_comment");
-            Prism.log("Prism detected you database is version:" + version + " / " + versionComment);
-            Prism.log("You have set nonStandardSql to " + nonStandardSql);
-            Prism.log("You are able to use non standard SQL");
+            me.botsko.prism.PrismLogHandler.log("Prism detected you database is version:" + version + " / " + versionComment);
+            me.botsko.prism.PrismLogHandler.log("You have set nonStandardSql to " + nonStandardSql);
+            me.botsko.prism.PrismLogHandler.log("You are able to use non standard SQL");
             if (!nonStandardSql) {
-                Prism.log("Prism will use standard sql queries");
+                me.botsko.prism.PrismLogHandler.log("Prism will use standard sql queries");
             }
         } catch (SQLNonTransientConnectionException e) {
-            Prism.warn(e.getMessage());
+            me.botsko.prism.PrismLogHandler.warn(e.getMessage());
         } catch (SQLException e) {
-            Prism.log("You are not able to use non standard Sql");
+            me.botsko.prism.PrismLogHandler.log("You are not able to use non standard Sql");
             if (nonStandardSql) {
-                Prism.log("This sounds like a configuration error.  If you have database access"
+                me.botsko.prism.PrismLogHandler.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");
             }
         }

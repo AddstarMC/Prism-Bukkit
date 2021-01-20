@@ -59,17 +59,17 @@ public class TimeTaken {
             if (timers.size() > 0) {
                 long lastTime = 0;
                 long total = 0;
-                Prism.debug("-- Timer information for last action: --");
+                PrismLogHandler.debug("-- Timer information for last action: --");
                 for (final Entry<Long, String> entry : timers.entrySet()) {
                     long diff = 0;
                     if (lastTime > 0) {
                         diff = entry.getKey() - lastTime;
                         total += diff;
                     }
-                    Prism.debug(entry.getValue() + " " + diff + "ms");
+                    PrismLogHandler.debug(entry.getValue() + " " + diff + "ms");
                     lastTime = entry.getKey();
                 }
-                Prism.debug("Total time: " + total + "ms");
+                PrismLogHandler.debug("Total time: " + total + "ms");
             }
         }
         plugin.eventTimer.resetEventList();

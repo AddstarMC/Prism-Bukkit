@@ -1,6 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.World;
@@ -50,7 +51,7 @@ public class Ignore {
                 || plugin.getConfig().getBoolean("prism.tracking." + actionTypeName)) {
             return true;
         } else {
-            Prism.debug("Ignoring Action Type: " + actionTypeName);
+            PrismLogHandler.debug("Ignoring Action Type: " + actionTypeName);
             return false;
         }
     }
@@ -83,7 +84,7 @@ public class Ignore {
         // Does the player have perms to ignore this action type?
         if (plugin.getConfig().getBoolean("prism.ignore.enable-perm-nodes")
                 && player.hasPermission("prism.ignore.tracking." + actionTypeName)) {
-            Prism.debug("Player has permission node to ignore " + actionTypeName);
+            PrismLogHandler.debug("Player has permission node to ignore " + actionTypeName);
             return false;
         }
 
@@ -100,20 +101,20 @@ public class Ignore {
     public boolean event(Player player) {
 
         if (player == null) {
-            Prism.debug("Player is null will be ignored");
+            PrismLogHandler.debug("Player is null will be ignored");
             return false;
         }
 
         // Should we ignore this player?
         if (ignorePlayers != null && ignorePlayers.contains(player.getName()) != ignorePlayersWhiteList) {
-            Prism.debug("Player is being ignored, per config: " + player.getName());
+            PrismLogHandler.debug("Player is being ignored, per config: " + player.getName());
             return false;
         }
 
         // Should we ignore this player for being in creative?
         if (ignoreCreative) {
             if (player.getGameMode().equals(GameMode.CREATIVE)) {
-                Prism.debug("Player is in creative mode, creative mode ignored: " + player.getName());
+                PrismLogHandler.debug("Player is in creative mode, creative mode ignored: " + player.getName());
                 return false;
             }
         }
@@ -143,7 +144,7 @@ public class Ignore {
 
         // Should we ignore this world?
         if (ignoreWorlds != null && ignoreWorlds.contains(world.getName()) != ignoreWorldsWhiteList) {
-            Prism.debug("World is being ignored, per config: " + world.getName());
+            PrismLogHandler.debug("World is being ignored, per config: " + world.getName());
             return false;
         }
 

@@ -89,7 +89,7 @@ public class BlockChangeAction extends BlockAction {
             action.setBlockData(replacedData);
             return action.placeBlock(player, parameters, isPreview, currentBlock, isDeferred);
         } else {
-            Prism.debug("Skipped Change for " + parameters.getProcessType().name() + " because current-> "
+            PrismLogHandler.debug("Skipped Change for " + parameters.getProcessType().name() + " because current-> "
                     + currentBlock.getType() + " != " + originalMaterial.name() + " <- what we think we will replace.");
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }

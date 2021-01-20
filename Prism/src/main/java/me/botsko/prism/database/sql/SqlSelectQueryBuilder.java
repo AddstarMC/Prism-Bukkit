@@ -496,7 +496,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     }
                 }
                 if (actionName.isEmpty()) {
-                    Prism.warn("Record contains action ID that doesn't exist in cache: " + actionId
+                    me.botsko.prism.PrismLogHandler.warn("Record contains action ID that doesn't exist in cache: " + actionId
                             + ", cacheSize=" + Prism.prismActions.size());
                     continue;
                 }
@@ -562,7 +562,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                                 newData = Bukkit.createBlockData(item.getType());
                             } catch (IllegalArgumentException e) {
                                 // This exception occurs, for example, with "ItemStack{DIAMOND_LEGGINGS x 1}"
-                                Prism.debug("IllegalArgumentException for record #" + rowId
+                                PrismLogHandler.debug("IllegalArgumentException for record #" + rowId
                                         + " calling createBlockData for " + item.toString());
                                 newData = null;
                             }
@@ -608,14 +608,14 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                             }
 
                             if (blockId > 0) {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                me.botsko.prism.PrismLogHandler.warn("Unable to convert record #" + rowId + " to material: "
                                         + "block_id=" + blockId + ", block_subid=" + blockSubId + itemMetadataDesc);
                             } else if (oldBlockId > 0) {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                me.botsko.prism.PrismLogHandler.warn("Unable to convert record #" + rowId + " to material: "
                                         + "old_block_id=" + oldBlockId + ", old_block_subid="
                                         + oldBlockSubId + itemMetadataDesc);
                             } else {
-                                Prism.warn("Unable to convert record #" + rowId + " to material: "
+                                me.botsko.prism.PrismLogHandler.warn("Unable to convert record #" + rowId + " to material: "
                                         + "block_id=0, old_block_id=0" + itemMetadataDesc);
                             }
                         }
@@ -662,9 +662,8 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             }
         } catch (NullPointerException e) {
             if (RecordingManager.failedDbConnectionCount == 0) {
-                Prism.log(
-                        "Prism database error. Connection missing. Leaving actions to log in queue.");
-                Prism.debug(e.getMessage());
+                me.botsko.prism.PrismLogHandler.log("Prism database error. Connection missing. Leaving actions to log in queue.");
+                PrismLogHandler.debug(e.getMessage());
             }
             RecordingManager.failedDbConnectionCount++;
 

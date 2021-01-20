@@ -49,7 +49,7 @@ public class UseMonitor {
         if (count <= 5) {
             if (plugin.getConfig().getBoolean("prism.alerts.uses.log-to-console")) {
                 plugin.alertPlayers(null, out);
-                Prism.log(PlainComponentSerializer.plain().serialize(out));
+                me.botsko.prism.PrismLogHandler.log(PlainComponentSerializer.plain().serialize(out));
             }
 
             // Log to commands

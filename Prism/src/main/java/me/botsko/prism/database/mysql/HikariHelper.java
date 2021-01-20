@@ -44,14 +44,14 @@ class HikariHelper {
         }
         try {
             if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
-                Prism.log("Prism Directory couldn't be created");
+                me.botsko.prism.PrismLogHandler.log("Prism Directory couldn't be created");
             }
             OutputStream out = new FileOutputStream(propFile);
             prop.store(out, "Prism Hikari Datasource Properties for"
                     + " advanced database Configuration");
-            Prism.log("Database Configuration saved to - " + propFile.getPath());
+            me.botsko.prism.PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
         } catch (IOException e) {
-            Prism.log("Could not save Hikari.properties - " + e.getMessage());
+            me.botsko.prism.PrismLogHandler.log("Could not save Hikari.properties - " + e.getMessage());
         }
     }
 }

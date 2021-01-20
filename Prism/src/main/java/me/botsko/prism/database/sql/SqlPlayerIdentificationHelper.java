@@ -118,7 +118,7 @@ public class SqlPlayerIdentificationHelper {
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 prismPlayer.setId(rs.getInt(1));
-                Prism.debug("Saved and loaded player " + name + " (" + uuid
+                PrismLogHandler.debug("Saved and loaded player " + name + " (" + uuid
                         + ") into the cache.");
                 Prism.prismPlayers.put(uuid,
                         new PrismPlayer(rs.getInt(1), uuid, name));
@@ -152,7 +152,7 @@ public class SqlPlayerIdentificationHelper {
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
                 fakePlayer.setId(rs.getInt(1));
-                Prism.debug("Saved and loaded fake player " + fakePlayer.getName() + " into the cache.");
+                PrismLogHandler.debug("Saved and loaded fake player " + fakePlayer.getName() + " into the cache.");
                 Prism.prismPlayers.put(fakePlayer.getUuid(), fakePlayer);
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -198,10 +198,10 @@ public class SqlPlayerIdentificationHelper {
             if (offlinePlayer.getName() != null) {
                 if (offlinePlayer.getName().equals(prismPlayer.getName())) {
                     // 2 players with the same name - this is going to cause major issues.
-                    Prism.warn("2 Players exist with the same name Prism cannot load both as per the name.");
-                    Prism.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
-                    Prism.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
-                    Prism.warn("Player 2 will have the name set with a random index.");
+                    me.botsko.prism.PrismLogHandler.warn("2 Players exist with the same name Prism cannot load both as per the name.");
+                    me.botsko.prism.PrismLogHandler.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
+                    me.botsko.prism.PrismLogHandler.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
+                    me.botsko.prism.PrismLogHandler.warn("Player 2 will have the name set with a random index.");
                     test.setName(offlinePlayer.getName() + "_" + offlinePlayer.getUniqueId().getMostSignificantBits());
                     updatePlayer(test);
                 }
@@ -225,7 +225,7 @@ public class SqlPlayerIdentificationHelper {
             while (rs.next()) {
                 PrismPlayer prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)),
                         rs.getString(2));
-                Prism.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+                PrismLogHandler.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
                 Prism.prismPlayers.put(UUID.fromString(rs.getString(2)), prismPlayer);
             }
             rs.close();

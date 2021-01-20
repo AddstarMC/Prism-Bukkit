@@ -1,6 +1,6 @@
 package me.botsko.prism.database.sql;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.AbstractSettingsQuery;
 import me.botsko.prism.database.SettingsQuery;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
             s.executeUpdate();
 
         } catch (final SQLException e) {
-            Prism.debug("Database Error:" + e.getMessage());
+            PrismLogHandler.debug("Database Error:" + e.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
             s2.setString(2, value);
             s2.executeUpdate();
         } catch (final SQLException e) {
-            Prism.debug("Database Error:" + e.getMessage());
+            PrismLogHandler.debug("Database Error:" + e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
             }
 
         } catch (final SQLException e) {
-            Prism.debug("Database Error:" + e.getMessage());
+            PrismLogHandler.debug("Database Error:" + e.getMessage());
         }
         return value;
     }

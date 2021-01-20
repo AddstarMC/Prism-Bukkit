@@ -305,14 +305,14 @@ public class BlockAction extends GenericAction {
                 && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
-            Prism.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
+            PrismLogHandler.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         // On the blacklist (except an undo)
         if ((Prism.getIllegalBlocks().contains(getMaterial())
                 && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flag.OVERWRITE)) {
-            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
+            PrismLogHandler.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
                     + getMaterial().toString());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
@@ -437,7 +437,7 @@ public class BlockAction extends GenericAction {
                 }
             }
         } else {
-            Prism.debug("BlockAction Data was null with " + parameters.toString());
+            PrismLogHandler.debug("BlockAction Data was null with " + parameters.toString());
         }
         // -----------------------------
         // Sibling logic marker
@@ -450,7 +450,7 @@ public class BlockAction extends GenericAction {
             sibling = block.getRelative(BlockFace.DOWN).getState();
 
             if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
-                Prism.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
+                PrismLogHandler.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
                         + getMaterial().name());
                 return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
@@ -465,7 +465,7 @@ public class BlockAction extends GenericAction {
                 sibling = s.getState();
 
                 if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(sibling.getType())) {
-                    Prism.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
+                    PrismLogHandler.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
                             + getMaterial().name());
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }

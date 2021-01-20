@@ -24,19 +24,19 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
 
     static {
         if (propFile.exists()) {
-            Prism.log("Configuring Hikari from " + propFile.getName());
+            me.botsko.prism.PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             dbConfig = new HikariConfig(propFile.getPath());
         } else {
-            Prism.log("You may need to adjust these settings for your setup.");
-            Prism.log("To set a table prefix you will need to create a config entry under");
-            Prism.log("prism:");
-            Prism.log("  datasource:");
-            Prism.log("    prefix: your-prefix");
+            me.botsko.prism.PrismLogHandler.log("You may need to adjust these settings for your setup.");
+            me.botsko.prism.PrismLogHandler.log("To set a table prefix you will need to create a config entry under");
+            me.botsko.prism.PrismLogHandler.log("prism:");
+            me.botsko.prism.PrismLogHandler.log("  datasource:");
+            me.botsko.prism.PrismLogHandler.log("    prefix: your-prefix");
             String jdbcUrl = "jdbc:mysql://localhost:3306/prism?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
-            Prism.log("Default jdbcUrl: " + jdbcUrl);
-            Prism.log("Default Username: username");
-            Prism.log("Default Password: password");
-            Prism.log("You will need to provide the required jar libraries that support your database.");
+            me.botsko.prism.PrismLogHandler.log("Default jdbcUrl: " + jdbcUrl);
+            me.botsko.prism.PrismLogHandler.log("Default Username: username");
+            me.botsko.prism.PrismLogHandler.log("Default Password: password");
+            me.botsko.prism.PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
             dbConfig = new HikariConfig();
             dbConfig.setJdbcUrl(jdbcUrl);
             dbConfig.setUsername("username");
@@ -62,7 +62,7 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
-            Prism.warn("Hikari Pool did not Initialize: " + e.getMessage());
+            me.botsko.prism.PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
             database = null;
         }
         return this;

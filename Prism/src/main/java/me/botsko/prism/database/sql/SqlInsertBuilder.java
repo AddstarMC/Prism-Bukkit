@@ -56,7 +56,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int playerId = prismPlayer.getId();
 
         if (worldId == 0 || actionId == 0 || playerId == 0) {
-            Prism.debug("Sql data error: Handler:" + a.toString());
+            PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));
@@ -142,12 +142,12 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
      */
     public void processBatch() throws SQLException {
         if (batchStatement == null) {
-            Prism.debug("Batch insert was null");
+            PrismLogHandler.debug("Batch insert was null");
             throw new SQLException("no batch statement configured");
         }
         batchStatement.executeBatch();
         batchConnection.commit();
-        Prism.debug("Batch insert was commit: " + System.currentTimeMillis());
+        PrismLogHandler.debug("Batch insert was commit: " + System.currentTimeMillis());
         processExtraData(batchStatement.getGeneratedKeys());
         batchConnection.close();
     }
@@ -171,7 +171,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             while (keys.next()) {
                 // @todo should not happen
                 if (i >= extraDataQueue.size()) {
-                    Prism.log("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
+                    me.botsko.prism.PrismLogHandler.log("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
                             + " because the queue doesn't have data for it.");
                     continue;
                 }
@@ -186,7 +186,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                         s.addBatch();
                     }
                 } else {
-                    Prism.debug("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
+                    PrismLogHandler.debug("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
                             + " because the queue doesn't have data for it.");
                 }
 
@@ -197,8 +197,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             s.executeBatch();
 
             if (conn.isClosed()) {
-                Prism.log(
-                        "Prism database error. We have to bail in the middle of building extra "
+                me.botsko.prism.PrismLogHandler.log("Prism database error. We have to bail in the middle of building extra "
                                 + "data bulk insert query.");
             } else {
                 conn.commit();

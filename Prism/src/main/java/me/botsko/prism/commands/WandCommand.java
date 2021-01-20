@@ -205,7 +205,7 @@ public class WandCommand extends AbstractCommand {
             wand.setWandMode(mode);
             wand.setItem(item);
 
-            Prism.debug("Wand activated for player - mode: " + mode + " Item:" + item);
+            PrismLogHandler.debug("Wand activated for player - mode: " + mode + " Item:" + item);
 
             // Move any existing item to the hand, otherwise give it to them
             if (plugin.getConfig().getBoolean("prism.wands.auto-equip")) {
