@@ -27,7 +27,7 @@ class EntitySerializerFactoryTest {
     @Test
     public void constructorTest(){
         EntitySerializerFactory factory = EntitySerializerFactory.get();
-        assertEquals(EntitySerializerFactory.getSerializer(EntityType.HORSE),AbstractHorseSerializer.class);
+        assertEquals(EntitySerializerFactory.getSerializingClass(EntityType.HORSE),HorseSerializer.class);
     }
 
 }
