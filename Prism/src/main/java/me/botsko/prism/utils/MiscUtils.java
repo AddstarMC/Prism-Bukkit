@@ -4,6 +4,7 @@ import com.google.common.base.CaseFormat;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.Result;
 import me.botsko.prism.api.actions.PrismProcessType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -188,7 +189,7 @@ public class MiscUtils {
      * @param results Results
      * @param player  Player
      */
-    public static void sendPageButtons(QueryResult results, CommandSender player) {
+    public static void sendPageButtons(Result results, CommandSender player) {
         if (player instanceof Player) {
             if (results.getPage() == 1) {
                 if (results.getTotalPages() > 1) {

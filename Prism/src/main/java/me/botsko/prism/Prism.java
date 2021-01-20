@@ -76,11 +76,9 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -93,12 +91,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.FileHandler;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin implements PrismApi {
@@ -108,7 +101,6 @@ public class Prism extends JavaPlugin implements PrismApi {
     public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
     public static final HashMap<String, Integer> prismActions = new HashMap<>();
     private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
-    private static final Logger log = Logger.getLogger("Minecraft");
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private static final String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
     private static PrismLogHandler logHandler;
@@ -666,7 +658,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     /**
      * Remove expired locations.
      */
-    public void removeExpiredLocations() {
+    private void removeExpiredLocations() {
         getServer().getScheduler().scheduleSyncRepeatingTask(this, () -> {
             final java.util.Date date = new java.util.Date();
             // Remove locations logged over five minute ago.

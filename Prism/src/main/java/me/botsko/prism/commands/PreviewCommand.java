@@ -5,6 +5,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.Result;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.appliers.Previewable;
@@ -124,7 +125,7 @@ public class PreviewCommand extends AbstractCommand {
         }
     }
 
-    private void handleRestore(CallInfo call, QueryParameters parameters, QueryResult results, Audience audience) {
+    private void handleRestore(CallInfo call, QueryParameters parameters, Result results, Audience audience) {
         parameters.setProcessType(PrismProcessType.RESTORE);
         if (!results.getActionResults().isEmpty()) {
 
@@ -146,7 +147,7 @@ public class PreviewCommand extends AbstractCommand {
 
 
     private void handleRollBack(final CallInfo call, final QueryParameters parameters,
-                                final QueryResult results, final Audience audience) {
+                                final Result results, final Audience audience) {
         parameters.setProcessType(PrismProcessType.ROLLBACK);
         if (!results.getActionResults().isEmpty()) {
 

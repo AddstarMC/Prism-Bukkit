@@ -7,6 +7,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
@@ -105,7 +106,7 @@ public class UndoCommand implements SubHandler {
 
             // Show the list
             // Process and validate all of the arguments
-            final QueryParameters parameters = new QueryParameters();
+            final PrismParameters parameters = new QueryParameters();
             parameters.setAllowNoRadius(true);
             parameters.addActionType("prism-process");
             parameters.addPlayerName(call.getPlayer().getName());

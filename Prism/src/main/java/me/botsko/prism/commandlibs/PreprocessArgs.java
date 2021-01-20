@@ -2,6 +2,7 @@ package me.botsko.prism.commandlibs;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.parameters.PrismParameterHandler;
@@ -148,7 +149,7 @@ public class PreprocessArgs {
      * @param arg String
      * @return ParseResult.
      */
-    private static ParseResult parseParam(Plugin plugin, CommandSender sender, QueryParameters parameters,
+    private static ParseResult parseParam(Plugin plugin, CommandSender sender, PrismParameters parameters,
                                           Map<String, PrismParameterHandler> registeredParams,
                                           Collection<String> foundArgsNames, Collection<MatchedParam> foundArgsList,
                                           String arg) {

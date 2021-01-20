@@ -45,10 +45,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.bukkit.Material.AIR;
 import static org.bukkit.Material.CHEST;
@@ -677,7 +674,7 @@ public class BlockAction extends GenericAction {
     }
 
     public static class ShulkerActionData extends BlockActionData {
-        final List<ItemStackSerializer> items = new ArrayList<>();
+        final Collection<ItemStackSerializer> items = new ArrayList<>();
     }
 
 }

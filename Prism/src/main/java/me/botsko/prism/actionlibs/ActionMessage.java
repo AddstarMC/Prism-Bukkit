@@ -145,7 +145,7 @@ public class ActionMessage {
         return Component.empty();
     }
 
-    private TextComponent.Builder getActor(ActionTypeImpl action, TextColor highlight) {
+    private TextComponent.Builder getActor(ActionType action, TextColor highlight) {
         String target = "unknown";
         if (action.getHandler() != null) {
             if (!handler.getNiceName().isEmpty()) {

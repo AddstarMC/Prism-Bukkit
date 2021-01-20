@@ -26,10 +26,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Hanging;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Vehicle;
+import org.bukkit.entity.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -46,7 +43,7 @@ public class ActionFactory {
      * @param block      the block
      * @param player     Offline Player
      */
-    public static Handler createBlock(String actionType, Block block, OfflinePlayer player) {
+    public static Handler createBlock(String actionType, Block block, AnimalTamer player) {
         final BlockAction a = new BlockAction();
         a.setActionType(actionType);
         a.setBlock(block);
@@ -76,7 +73,7 @@ public class ActionFactory {
      * @param player     Offline Player
      */
     @SuppressWarnings("WeakerAccess")
-    public static Handler createBlock(String actionType, BlockState state, OfflinePlayer player) {
+    public static Handler createBlock(String actionType, BlockState state, AnimalTamer player) {
         final BlockAction a = new BlockAction();
         a.setActionType(actionType);
         a.setBlock(state);
@@ -105,7 +102,7 @@ public class ActionFactory {
      * @param player     Offline Player
      */
     public static Handler createBlockChange(String actionType, Location loc, Material oldMat, BlockData oldData,
-                                            Material newMat, BlockData newData, OfflinePlayer player) {
+                                            Material newMat, BlockData newData, AnimalTamer player) {
         final BlockChangeAction a = new BlockChangeAction();
         a.setActionType(actionType);
         a.setMaterial(newMat);
@@ -181,7 +178,7 @@ public class ActionFactory {
      * @param dyeUsed    string
      * @return Handler
      */
-    public static Handler createEntity(String actionType, Entity entity, OfflinePlayer player, DyeColor dyeUsed) {
+    public static Handler createEntity(String actionType, Entity entity, AnimalTamer player, DyeColor dyeUsed) {
         final EntityAction a = new EntityAction();
         a.setActionType(actionType);
         a.setPlayer(player);
@@ -232,7 +229,7 @@ public class ActionFactory {
      * @param actionType the action
      * @param player     the player
      */
-    public static Handler createGrow(String actionType, BlockState blockstate, OfflinePlayer player) {
+    public static Handler createGrow(String actionType, BlockState blockstate, AnimalTamer player) {
         final GrowAction a = new GrowAction();
         a.setActionType(actionType);
         a.setBlock(blockstate);
@@ -262,7 +259,7 @@ public class ActionFactory {
      * @param player     player
      * @return Handler
      */
-    public static Handler createHangingItem(String actionType, Hanging hanging, OfflinePlayer player) {
+    public static Handler createHangingItem(String actionType, Hanging hanging, AnimalTamer player) {
         final HangingItemAction a = new HangingItemAction();
         a.setActionType(actionType);
         a.setHanging(hanging);
@@ -365,7 +362,7 @@ public class ActionFactory {
 
     private static ItemStackAction createItemStack(String actionType, ItemStack item, int quantity,
                                                    Map<Enchantment, Integer> enchantments,
-                                                   Location loc, OfflinePlayer player) {
+                                                   Location loc, AnimalTamer player) {
         final ItemStackAction a = new ItemStackAction();
         a.setActionType(actionType);
         a.setLoc(loc);
@@ -457,7 +454,7 @@ public class ActionFactory {
      * @return Handler
      */
     public static Handler createPrismRollback(String actionType, BlockState oldBlock, BlockState newBlock,
-                                              OfflinePlayer player, long parentId) {
+                                              AnimalTamer player, long parentId) {
         final PrismRollbackAction a = new PrismRollbackAction();
         a.setActionType(actionType);
         a.setPlayer(player);
@@ -473,7 +470,7 @@ public class ActionFactory {
      * @param block      the block acted on
      * @param player     the acting player
      */
-    public static Handler createSign(String actionType, Block block, String[] lines, OfflinePlayer player) {
+    public static Handler createSign(String actionType, Block block, String[] lines, AnimalTamer player) {
         final SignAction a = new SignAction();
         a.setActionType(actionType);
         a.setPlayer(player);
@@ -488,7 +485,7 @@ public class ActionFactory {
      * @param block      the block acted on
      * @param player     the acting player
      */
-    public static Handler createUse(String actionType, Material item, Block block, OfflinePlayer player) {
+    public static Handler createUse(String actionType, Material item, Block block, AnimalTamer player) {
         final UseAction a = new UseAction();
         a.setActionType(actionType);
         a.setPlayer(player);
@@ -503,7 +500,7 @@ public class ActionFactory {
      * @param actionType the action
      * @param player     the acting player
      */
-    public static Handler createVehicle(String actionType, Vehicle vehicle, OfflinePlayer player) {
+    public static Handler createVehicle(String actionType, Entity vehicle, AnimalTamer player) {
         final VehicleAction a = new VehicleAction();
         a.setActionType(actionType);
         a.setPlayer(player);

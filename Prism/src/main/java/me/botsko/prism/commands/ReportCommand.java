@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
@@ -234,7 +235,7 @@ public class ReportCommand extends AbstractCommand {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }
 
-    private boolean checkParams(QueryParameters parameters, CallInfo call) {
+    private boolean checkParams(PrismParameters parameters, CallInfo call) {
         if (!parameters.getActionTypes().isEmpty()) {
             Prism.getAudiences().sender(call.getSender())
                     .sendMessage(Identity.nil(),
