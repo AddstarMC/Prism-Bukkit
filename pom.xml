@@ -60,6 +60,7 @@
         <spigot.api.version>1.16</spigot.api.version>
         <bukkit.version>1.16.4-R0.1-SNAPSHOT</bukkit.version>
         <junit.version>5.5.0</junit.version>
+        <derby.version>10.15.2.0</derby.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
