@@ -59,19 +59,22 @@ public class DebugCommand implements SubHandler {
     private String getFile(Path file) {
         try {
             String out = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
-            out = removePatterns("hostname:(.*)\\n",out,"**secret.host**");
-            out = removePatterns("username:(.*)\\n",out,"**username**");
-            return removePatterns("password:(.*)\\n",out,"**password**");
+            out = removePatterns("hostname: (.*)\\n",out,"**secret.host**");
+            out = removePatterns("username: (.*)\\n",out,"**username**");
+            return removePatterns("password: (.*)\\n",out,"**password**");
         } catch (IOException e) {
             return ExceptionUtils.getFullStackTrace(e);
         }
 
     }
 
-    private String removePatterns(String patten, CharSequence haystack, String replacement) {
+    private String removePatterns(String patten, String haystack, String replacement) {
         Pattern p = Pattern.compile(patten);
         Matcher matcher = p.matcher(haystack);
-        return matcher.replaceAll(replacement);
+        while (matcher.find()) {
+            haystack = haystack.replaceFirst(matcher.group(1),replacement);
+        }
+        return haystack;
     }
 
     private String getMainInfo() {
