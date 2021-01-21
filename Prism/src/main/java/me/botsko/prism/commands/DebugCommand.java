@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -57,11 +58,20 @@ public class DebugCommand implements SubHandler {
 
     private String getFile(Path file) {
         try {
-            return new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            String out = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            out = removePatterns("hostname:(.*)\\n",out,"**secret.host**");
+            out = removePatterns("username:(.*)\\n",out,"**username**");
+            return removePatterns("password:(.*)\\n",out,"**password**");
         } catch (IOException e) {
             return ExceptionUtils.getFullStackTrace(e);
         }
 
+    }
+
+    private String removePatterns(String patten, CharSequence haystack, String replacement) {
+        Pattern p = Pattern.compile(patten);
+        Matcher matcher = p.matcher(haystack);
+        return matcher.replaceAll(replacement);
     }
 
     private String getMainInfo() {
