@@ -183,6 +183,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.tracking.spawnegg-use", true);
         config.addDefault("prism.tracking.target-hit", false);
         config.addDefault("prism.tracking.tnt-explode", true);
+        config.addDefault("prism.tracking.bed-explode", true);
         config.addDefault("prism.tracking.tnt-prime", true);
         config.addDefault("prism.tracking.tree-grow", true);
         config.addDefault("prism.tracking.vehicle-break", true);
