@@ -59,9 +59,9 @@ public class DebugCommand implements SubHandler {
     private String getFile(Path file) {
         try {
             String out = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
-            out = removePatterns("hostname: (.*)\\n",out,"**secret.host**");
-            out = removePatterns("username: (.*)\\n",out,"**username**");
-            return removePatterns("password: (.*)\\n",out,"**password**");
+            out = removePatterns("hostname: (.*)",out,"**secret.host**");
+            out = removePatterns("username: (.*)",out,"**username**");
+            return removePatterns("password: (.*)",out,"**password**");
         } catch (IOException e) {
             return ExceptionUtils.getFullStackTrace(e);
         }
