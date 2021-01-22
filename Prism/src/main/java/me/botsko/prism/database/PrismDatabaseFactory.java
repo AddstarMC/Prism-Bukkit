@@ -2,9 +2,10 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
-import me.botsko.prism.database.mysql.PrismHikariDataSource;
+import me.botsko.prism.database.mysql.MySqlPrismDataSourceUpdater;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
-import me.botsko.prism.database.sql.SqlPrismDataSourceUpdater;
+import me.botsko.prism.database.sql.derby.StandardSqlDataSourceUpdater;
+import me.botsko.prism.database.sql.derby.StandardSqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
@@ -104,21 +105,24 @@ public class PrismDatabaseFactory {
         }
         switch (dataSource) {
             case "mysql":
-                me.botsko.prism.PrismLogHandler.log("Attempting to configure datasource as mysql");
+                PrismLogHandler.log("Attempting to configure datasource as mysql");
                 database = new MySqlPrismDataSource(dataSourceProperties);
                 break;
             case "sqlite":
-                me.botsko.prism.PrismLogHandler.warn("ERROR: This version of Prism no longer supports SQLite.");
+                PrismLogHandler.warn("ERROR: This version of Prism no longer supports SQLite.");
+                database = null;
                 break;
-            case "derby":
-                me.botsko.prism.PrismLogHandler.warn("ERROR: This version of Prism no longer supports Derby. Please use Hikari.");
             case "hikari":
+            case "derby":
+                database = new StandardSqlPrismDataSource(dataSourceProperties);
+                PrismLogHandler.log("Attempting to configure datasource as " + dataSource);
+                PrismLogHandler.log("HIKARI: prism will configure itself using the hikari parameters");
+                break;
             default:
-                me.botsko.prism.PrismLogHandler.log("Attempting to configure datasource as " + dataSource);
-                me.botsko.prism.PrismLogHandler.warn("ERROR: This version of Prism no longer supports " + dataSource);
-                me.botsko.prism.PrismLogHandler.log("Attempting to configure datasource as hikari");
-                database = new PrismHikariDataSource(dataSourceProperties);
-                me.botsko.prism.PrismLogHandler.log("HIKARI: prism will configure itself using the hikari parameters");
+                PrismLogHandler.warn("ERROR: This version of Prism no longer supports " + dataSource);
+                PrismLogHandler.log("Attempting to configure datasource as hikari using derby");
+                database = new StandardSqlPrismDataSource(dataSourceProperties);
+                PrismLogHandler.log("HIKARI: prism will configure itself using the hikari parameters");
                 break;
         }
         return database;
@@ -140,9 +144,10 @@ public class PrismDatabaseFactory {
         }
         switch (dataSource) {
             case "mysql":
+                return new MySqlPrismDataSourceUpdater(database);
             case "derby":
+                return new StandardSqlDataSourceUpdater();
             case "sqlite":
-                return new SqlPrismDataSourceUpdater(database);
             default:
                 return null;
         }

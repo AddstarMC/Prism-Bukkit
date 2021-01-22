@@ -1,8 +1,8 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
-import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -61,30 +61,30 @@ public class ActionMessage {
         TextComponent out = Component.text().content(format1).build();
         Component result = out.replaceFirstText(Pattern.compile("<prefix>"), builder -> getPosNegPrefix())
                 .replaceFirstText(Pattern.compile("<index>"),
-                      builder -> builder.content("[" + index + "] ").color(NamedTextColor.GRAY))
+                        builder -> builder.content("[" + index + "] ").color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<target>"),
-                      builder -> Component.text().content(
-                              handler.getSourceName() == null ? "NULL" : handler.getSourceName()
-                      ).color(highlight))
+                        builder -> Component.text().content(
+                                handler.getSourceName() == null ? "NULL" : handler.getSourceName()
+                        ).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                      builder -> Component.text().content(getDescription((ActionTypeImpl)action))
-                              .color(NamedTextColor.WHITE))
+                        builder -> Component.text().content(getDescription((ActionTypeImpl) action))
+                                .color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"),
-                        builder -> getActor((ActionTypeImpl)action, highlight))
+                        builder -> getActor((ActionTypeImpl) action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
-                      builder -> Component.text().content(action.getName()))
+                        builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),
-                      builder -> Component.text().append(getExtendedInfo()))
+                        builder -> Component.text().append(getExtendedInfo()))
                 .replaceFirstText(Pattern.compile("<timeDiff>"),
-                      builder -> Component.text().append(getTimeDiff()))
+                        builder -> Component.text().append(getTimeDiff()))
                 .replaceFirstText(Pattern.compile("<count>"),
-                      builder -> Component.text().append(getCount()))
+                        builder -> Component.text().append(getCount()))
                 .replaceFirstText(Pattern.compile("<actionType>"),
-                      builder -> Component.text()
-                             .content("(a:" + action.getShortName() + ")")
-                             .color(NamedTextColor.GRAY))
+                        builder -> Component.text()
+                                .content("(a:" + action.getShortName() + ")")
+                                .color(NamedTextColor.GRAY))
                 .replaceFirstText(Pattern.compile("<handlerId>"),
-                      builder -> Component.text(handler.getId()).toBuilder()
+                        builder -> Component.text(handler.getId()).toBuilder()
                                 .color(NamedTextColor.GRAY));
         return Component.text()
                 .content("")
@@ -108,13 +108,13 @@ public class ActionMessage {
             out = out.append(Component.newline());
             Component line2 = Component.text().content(format2line2).build()
                     .replaceFirstText(Pattern.compile("<handlerId>"),
-                          builder -> Component.text(handler.getId()).toBuilder()
+                            builder -> Component.text(handler.getId()).toBuilder()
                                     .color(NamedTextColor.GRAY))
                     .replaceFirstText(Pattern.compile("<dateTime>"),
-                          builder -> Component.text()
+                            builder -> Component.text()
                                     .content(handler.getDisplayDate() + " " + handler.getDisplayTime()))
                     .replaceFirstText(Pattern.compile("<location>"),
-                          builder -> Component.text().content(getFormattedLocation()));
+                            builder -> Component.text().content(getFormattedLocation()));
             out = out.append(line2);
         }
         return out;

@@ -1,6 +1,6 @@
 package me.botsko.prism.parameters;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.utils.DateUtil;
@@ -53,7 +53,7 @@ public class SinceParameter extends SimplePrismParameterHandler {
 
             Long date = DateUtil.translateTimeStringToDate(config.getString("prism.queries.default-time-since"));
             if (date <= 0L) {
-                me.botsko.prism.PrismLogHandler.log("Error - date range configuration for prism.time-since is not valid");
+                PrismLogHandler.log("Error - date range configuration for prism.time-since is not valid");
                 date = DateUtil.translateTimeStringToDate("3d");
             }
             query.setSinceTime(date);

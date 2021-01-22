@@ -1,11 +1,8 @@
 package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.ZombieVillager;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ZombieVillageSerializer extends EntitySerializer<ZombieVillager> {
     protected String profession = null;

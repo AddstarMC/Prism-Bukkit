@@ -1,6 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.database.PrismDataSource;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
  * Created by Narimm on 1/06/2019.
  */
 public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
-    final ArrayList<Handler> extraDataQueue = new ArrayList<>();
+    private final ArrayList<Handler> extraDataQueue = new ArrayList<>();
     private PreparedStatement batchStatement;
     private Connection batchConnection;
 
@@ -38,7 +39,6 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("DuplicatedCode")
     @Override
     public long insertActionIntoDatabase(Handler a) {
         int worldId = 0;
@@ -80,8 +80,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                 if (serialData != null && !serialData.isEmpty()) {
 
                     try (
-                            PreparedStatement s2 = con.prepareStatement(
-                                    "INSERT INTO `" + prefix + "data_extra` (data_id, data) VALUES (?, ?)",
+                            PreparedStatement s2 = con.prepareStatement(getExtraDataQuery(),
                                     Statement.RETURN_GENERATED_KEYS)) {
                         s2.setLong(1, id);
                         s2.setString(2, serialData);
@@ -105,7 +104,6 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         batchStatement = batchConnection.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS);
     }
 
-    @SuppressWarnings("DuplicatedCode")
     @Override
     public boolean addInsertionToBatch(Handler a) throws SQLException {
         if (batchStatement == null) {
@@ -163,15 +161,14 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         }
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement s = conn.prepareStatement("INSERT INTO `"
-                        + prefix + "data_extra` (data_id,data) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS)
+                PreparedStatement s = conn.prepareStatement(getExtraDataQuery(), Statement.RETURN_GENERATED_KEYS)
         ) {
             conn.setAutoCommit(false);
             int i = 0;
             while (keys.next()) {
-                // @todo should not happen
+                // todo should not happen
                 if (i >= extraDataQueue.size()) {
-                    me.botsko.prism.PrismLogHandler.log("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
+                    PrismLogHandler.log("Skipping extra data for " + prefix + "data.id " + keys.getLong(1)
                             + " because the queue doesn't have data for it.");
                     continue;
                 }
@@ -197,7 +194,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             s.executeBatch();
 
             if (conn.isClosed()) {
-                me.botsko.prism.PrismLogHandler.log("Prism database error. We have to bail in the middle of building extra "
+                PrismLogHandler.log("Prism database error. We have to bail in the middle of building extra "
                                 + "data bulk insert query.");
             } else {
                 conn.commit();
@@ -229,4 +226,9 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                 + "data (epoch,action_id,player_id,world_id,block_id,block_subid,old_block_id,old_block_subid,"
                 + "x,y,z) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
     }
+
+    private String getExtraDataQuery() {
+        return "INSERT INTO " + prefix + "data_extra (data_id,data) VALUES (?,?)";
+    }
+
 }

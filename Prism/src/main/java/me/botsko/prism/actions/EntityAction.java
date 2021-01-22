@@ -2,6 +2,7 @@ package me.botsko.prism.actions;
 
 import com.google.gson.JsonObject;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
@@ -46,9 +47,11 @@ public class EntityAction extends GenericAction {
     public void setEntity(Entity entity, DyeColor dyeUsed) {
 
         // Build an object for the specific details of this action
-        if (entity != null && entity.getType() != null && entity.getType().name() != null) {
+        if (entity != null) {
+            entity.getType();
+            entity.getType();
             setLoc(entity.getLocation());
-            serializer = EntitySerializerFactory.getSerializer(entity);
+            serializer = EntitySerializerFactory.getSerializer(entity.getType());
             serializer.serialize(entity);
             if (serializer instanceof SheepSerializer) {
                 ((SheepSerializer) serializer).setColor(dyeUsed);

@@ -2,6 +2,7 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.InventoryUtils;

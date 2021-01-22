@@ -20,7 +20,8 @@ class ItemStackSerializerTest {
         serializer.name = "SOME_DIRT";
         String data = SerializationHelper.gson().toJson(serializer);
         String expected = "{\"objectType\":\"ItemStackSerializer\",\"amt\":1,\"name\":\"SOME_DIRT\",\"color\""
-                + ":0,\"slot\":\"-1\",\"hasFlicker\":false,\"hasTrail\":false,\"durability\":0,\"material\":\"DIRT\",\"potionExtended\":false,\"potionUpgraded\":false}";
+                + ":0,\"slot\":\"-1\",\"hasFlicker\":false,\"hasTrail\":false,\"durability\":0,\"material\":\"DIRT\""
+                + ",\"potionExtended\":false,\"potionUpgraded\":false}";
         assertEquals(expected,data);
         ItemStackSerializer out = SerializationHelper.gson().fromJson(expected,ItemStackSerializer.class);
         assertEquals(serializer.amt,out.amt);

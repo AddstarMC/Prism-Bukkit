@@ -1,6 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.measurement.QueueStats;
@@ -58,7 +59,7 @@ public class RecordingTask implements Runnable {
         }
         if (!RecordingQueue.getQueue().isEmpty()) {
             if (Prism.getPrismDataSource().isPaused()) {
-                me.botsko.prism.PrismLogHandler.log("Prism database paused. An external actor has paused database processing..."
+                PrismLogHandler.log("Prism database paused. An external actor has paused database processing..."
                                 + "scheduling next recording");
                 scheduleNextRecording();
                 return;
@@ -70,13 +71,13 @@ public class RecordingTask implements Runnable {
             ) {
                 if ((conn == null) || (conn.isClosed())) {
                     if (RecordingManager.failedDbConnectionCount == 0) {
-                        me.botsko.prism.PrismLogHandler.log("Prism database error. Connection should be there but it's not. "
+                        PrismLogHandler.log("Prism database error. Connection should be there but it's not. "
                                         + "Leaving actions to log in queue.");
                     }
                     RecordingManager.failedDbConnectionCount++;
                     if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
                             .getInt("prism.query.max-failures-before-wait")) {
-                        me.botsko.prism.PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
+                        PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
                         scheduleNextRecording();
                     }
                     PrismLogHandler.debug("Database connection still missing, incrementing count.");
@@ -177,7 +178,7 @@ public class RecordingTask implements Runnable {
      */
     private void scheduleNextRecording() {
         if (!plugin.isEnabled()) {
-            me.botsko.prism.PrismLogHandler.log("Can't schedule new recording tasks as plugin is now disabled. If you're shutting"
+            PrismLogHandler.log("Can't schedule new recording tasks as plugin is now disabled. If you're shutting"
                             + " down the server, ignore me.");
             return;
         }

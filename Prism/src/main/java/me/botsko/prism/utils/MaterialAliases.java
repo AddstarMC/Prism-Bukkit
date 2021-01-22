@@ -1,6 +1,7 @@
 package me.botsko.prism.utils;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.sql.SqlIdMapQuery;
@@ -67,7 +68,7 @@ public class MaterialAliases {
             }
 
         } else {
-            me.botsko.prism.PrismLogHandler.warn("ERROR: The Item library was unable to load an internal item alias list.");
+            PrismLogHandler.warn("ERROR: The Item library was unable to load an internal item alias list.");
         }
     }
 

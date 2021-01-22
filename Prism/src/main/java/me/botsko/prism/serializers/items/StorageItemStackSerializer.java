@@ -15,7 +15,7 @@ import java.util.List;
  * Created by benjamincharlton on 29/10/2020.
  */
 public class StorageItemStackSerializer extends ItemStackSerializer {
-    public List<ItemStackSerializer> inventoryContents = new ArrayList<>();
+    public final List<ItemStackSerializer> inventoryContents = new ArrayList<>();
 
     @Override
     public ItemStack toBukkit() {

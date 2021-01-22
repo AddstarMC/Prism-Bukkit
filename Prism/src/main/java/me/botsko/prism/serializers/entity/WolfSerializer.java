@@ -2,10 +2,7 @@ package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.DyeColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Wolf;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class WolfSerializer extends TameEntitySerializer<Wolf> {
     protected String color = null;

@@ -2,11 +2,8 @@ package me.botsko.prism.serializers.entity;
 
 import com.google.gson.annotations.SerializedName;
 import me.botsko.prism.utils.EntityUtils;
-import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Tameable;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created for the Prism-Bukkit Project.

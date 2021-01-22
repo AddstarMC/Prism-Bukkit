@@ -1,6 +1,7 @@
 package me.botsko.prism.players;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -40,7 +41,8 @@ public class PlayerIdentification {
         PrismPlayer prismPlayer = getPrismPlayer(playerName);
         if (prismPlayer != null) {
             // prismPlayer = comparePlayerToCache( player, prismPlayer );
-            PrismLogHandler.debug("Loaded player " + prismPlayer.getName() + ", id: " + prismPlayer.getId() + " into the cache.");
+            PrismLogHandler.debug("Loaded player " + prismPlayer.getName() + ", id: "
+                    + prismPlayer.getId() + " into the cache.");
             // Prism.prismPlayers.put( player.getUniqueId(), prismPlayer );
             return prismPlayer;
         }
@@ -131,12 +133,12 @@ public class PlayerIdentification {
             //ok but now names can be used so lets check if an existing player uses that name
             PrismPlayer test = SqlPlayerIdentificationHelper.lookupByName(name);
             if (test != null && test.getUuid() != prismPlayer.getUuid()) {
-                me.botsko.prism.PrismLogHandler.warn("Player UUID for " + name + " conflicts with another player: " + test.getUuid()
+                PrismLogHandler.warn("Player UUID for " + name + " conflicts with another player: " + test.getUuid()
                         + " we are attempting to update that UUID with a new name before allowing this cache.");
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(test.getUuid());
                 test.setName(offlinePlayer.getName());
                 if (test.getName().equals(name)) {
-                    me.botsko.prism.PrismLogHandler.warn("Players appear to have the same name "
+                    PrismLogHandler.warn("Players appear to have the same name "
                             + "- generally this is impossible with online servers.");
                 }
                 SqlPlayerIdentificationHelper.updatePlayer(test);
@@ -145,7 +147,7 @@ public class PlayerIdentification {
             SqlPlayerIdentificationHelper.updatePlayer(prismPlayer);
         }
         if (!uuid.equals(prismPlayer.getUuid())) {
-            me.botsko.prism.PrismLogHandler.warn("Player UUID for " + name + " does not match our cache! " + uuid
+            PrismLogHandler.warn("Player UUID for " + name + " does not match our cache! " + uuid
                     + " versus cache of " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
 
             // Update anyway...

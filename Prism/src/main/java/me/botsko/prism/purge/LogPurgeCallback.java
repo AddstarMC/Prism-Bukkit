@@ -1,6 +1,6 @@
 package me.botsko.prism.purge;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.QueryParameters;
 
 public class LogPurgeCallback implements PurgeCallback {
@@ -13,7 +13,8 @@ public class LogPurgeCallback implements PurgeCallback {
                       boolean cycleComplete, long maxCycleTime) {
         PrismLogHandler.debug("Purge cycle cleared " + cycleRowsAffected + " rows.");
         if (cycleComplete) {
-            me.botsko.prism.PrismLogHandler.log("Cleared " + totalRecordsAffected + " rows. Max cycle time " + maxCycleTime + " msec. Using:"
+            PrismLogHandler.log("Cleared " + totalRecordsAffected
+                    + " rows. Max cycle time " + maxCycleTime + " msec. Using:"
                     + param.getOriginalCommand());
         }
     }

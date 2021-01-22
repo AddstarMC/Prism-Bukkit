@@ -35,6 +35,7 @@ public class PrismTest {
         server.getPluginManager().clearEvents();
         server.getScheduler().performOneTick();
     }
+
     @AfterAll
     static void tearDownFinal() {
         TestHelper.shutdown();

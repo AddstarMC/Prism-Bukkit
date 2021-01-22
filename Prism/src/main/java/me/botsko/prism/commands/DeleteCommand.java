@@ -2,6 +2,7 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -100,7 +101,7 @@ public class DeleteCommand extends AbstractCommand {
                 final long[] extents = aq.getQueryExtents(parameters);
                 final long minId = extents[0];
                 final long maxId = extents[1];
-                me.botsko.prism.PrismLogHandler.log("Beginning prism database purge cycle. Will be performed in batches so "
+                PrismLogHandler.log("Beginning prism database purge cycle. Will be performed in batches so "
                                 + "we don't tie up the db...");
                 deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
                         new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));

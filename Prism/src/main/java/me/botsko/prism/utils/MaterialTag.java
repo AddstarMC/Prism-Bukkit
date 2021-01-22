@@ -1,8 +1,10 @@
 package me.botsko.prism.utils;
 
+import me.botsko.prism.Prism;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Tag;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -60,7 +62,7 @@ public class MaterialTag implements Tag<Material> {
     public static final MaterialTag GROWABLE = new MaterialTag(CROPS).append(PLANTS).append(Material.CACTUS)
             .append(Tag.SAPLINGS);
     private final EnumSet<Material> materials;
-    private final NamespacedKey key = null;
+    private final NamespacedKey key;
 
     /**
      * Constructor.
@@ -69,6 +71,7 @@ public class MaterialTag implements Tag<Material> {
     @SuppressWarnings("unused")
     public MaterialTag(EnumSet<Material> materials) {
         this.materials = materials.clone();
+        key = new NamespacedKey(Prism.getInstance(),"material_tags");
     }
 
     /**
@@ -79,6 +82,7 @@ public class MaterialTag implements Tag<Material> {
     public MaterialTag(Tag<Material>... materialTags) {
         this.materials = EnumSet.noneOf(Material.class);
         append(materialTags);
+        key = new NamespacedKey(Prism.getInstance(),"material_tags");
     }
 
     /**
@@ -89,6 +93,8 @@ public class MaterialTag implements Tag<Material> {
     public MaterialTag(Material... materials) {
         this.materials = EnumSet.noneOf(Material.class);
         append(materials);
+        key = new NamespacedKey(Prism.getInstance(),"material_tags");
+
     }
 
     /**
@@ -100,6 +106,8 @@ public class MaterialTag implements Tag<Material> {
     public MaterialTag(String segment, MatchMode mode) {
         this.materials = EnumSet.noneOf(Material.class);
         append(segment, mode);
+        key = new NamespacedKey(Prism.getInstance(),"material_tags");
+
     }
 
     @NotNull

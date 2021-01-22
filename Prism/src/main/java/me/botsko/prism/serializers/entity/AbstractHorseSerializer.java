@@ -1,17 +1,9 @@
 package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.ItemUtils;
-import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.AbstractHorse;
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Horse;
-import org.bukkit.entity.Llama;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySerializer<T> {
     protected String saddle = null;
@@ -21,6 +13,9 @@ public class AbstractHorseSerializer<T extends AbstractHorse> extends EntitySeri
     protected double maxHealth = 20.0;
     protected double movementSpeed = 0.2;
 
+    /**
+     * {@inheritDoc}
+     */
     public void serialize(T entity) {
         super.serialize(entity);
         final AbstractHorse h = entity;

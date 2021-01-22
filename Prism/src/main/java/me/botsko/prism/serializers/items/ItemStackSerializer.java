@@ -1,6 +1,6 @@
 package me.botsko.prism.serializers.items;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.utils.EntityUtils;
@@ -64,7 +64,7 @@ public class ItemStackSerializer {
     public boolean potionUpgraded;
 
     /**
-     * Creates a serialized item from a bukkit stack
+     * Creates a serialized item from a bukkit stack.
      * @param item ItemStack
      * @return ItemStackSerializer
      */

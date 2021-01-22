@@ -21,7 +21,7 @@ import org.bukkit.projectiles.ProjectileSource;
  */
 public class PaperListeners implements Listener {
 
-    Prism plugin;
+    final Prism plugin;
 
     public PaperListeners(Prism plugin) {
         this.plugin = plugin;

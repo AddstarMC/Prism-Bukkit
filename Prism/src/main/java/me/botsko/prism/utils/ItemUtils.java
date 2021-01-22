@@ -1,6 +1,6 @@
 package me.botsko.prism.utils;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.objects.MaterialState;
 import org.bukkit.Bukkit;
 import org.bukkit.FireworkEffect;

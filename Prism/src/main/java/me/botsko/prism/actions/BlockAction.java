@@ -1,7 +1,7 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.api.BlockStateChange;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
@@ -465,7 +465,8 @@ public class BlockAction extends GenericAction {
                 sibling = s.getState();
 
                 if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(sibling.getType())) {
-                    PrismLogHandler.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
+                    PrismLogHandler.debug(parameters.getProcessType().name()
+                            + " skipped due to lack of wrong sibling type for "
                             + getMaterial().name());
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }

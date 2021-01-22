@@ -15,7 +15,8 @@ public abstract class QueryBuilder {
     protected Collection<String> conditions = new ArrayList<>();
     protected PrismParameters parameters;
     protected boolean shouldGroup;
-    protected String prefix;
+    @SuppressWarnings("UnusedAssignment")
+    protected String prefix = "prism_";
     protected boolean shouldPause;
 
     /**

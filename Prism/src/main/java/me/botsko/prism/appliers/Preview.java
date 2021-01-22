@@ -2,6 +2,7 @@ package me.botsko.prism.appliers;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.api.BlockStateChange;

@@ -2,8 +2,10 @@ package me.botsko.prism.utils;
 
 import com.google.common.base.CaseFormat;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.Result;
 import me.botsko.prism.api.actions.PrismProcessType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -51,14 +53,14 @@ public class MiscUtils {
         int maxLookupRadius = config.getInt("prism.queries.max-lookup-radius");
         if (maxLookupRadius <= 0.99) {
             maxLookupRadius = 5;
-            me.botsko.prism.PrismLogHandler.log("Max lookup radius may not be lower than one. Using safe input of five.");
+            PrismLogHandler.log("Max lookup radius may not be lower than one. Using safe input of five.");
         }
 
         // Safety checks for max applier radius
         int maxApplierRadius = config.getInt("prism.queries.max-applier-radius");
         if (maxApplierRadius <= 0.99) {
             maxApplierRadius = 5;
-            me.botsko.prism.PrismLogHandler.log("Max applier radius may not be lower than one. Using safe input of five.");
+            PrismLogHandler.log("Max applier radius may not be lower than one. Using safe input of five.");
         }
 
         // Does the radius exceed the configured max?
@@ -103,6 +105,13 @@ public class MiscUtils {
         return fallback;
     }
 
+    /**
+     * Get the enum from the class.
+     * @param from String
+     * @param enumClass Class
+     * @param <T> Enum
+     * @return Enum
+     */
     public static <T extends Enum<T>> T getEnum(String from, Class<T> enumClass) {
         if (from != null) {
             try {
@@ -113,6 +122,7 @@ public class MiscUtils {
         }
         return null;
     }
+
     /**
      * Nice name for a String.
      * @param in String
@@ -188,7 +198,7 @@ public class MiscUtils {
      * @param results Results
      * @param player  Player
      */
-    public static void sendPageButtons(QueryResult results, CommandSender player) {
+    public static void sendPageButtons(Result results, CommandSender player) {
         if (player instanceof Player) {
             if (results.getPage() == 1) {
                 if (results.getTotalPages() > 1) {

@@ -1,6 +1,6 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.actions.Handler;
 

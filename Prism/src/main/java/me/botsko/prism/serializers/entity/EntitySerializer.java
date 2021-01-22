@@ -6,13 +6,11 @@ import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Sittable;
-import org.bukkit.entity.Tameable;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -31,7 +29,7 @@ public class EntitySerializer<T extends Entity> implements EntitySerializerInter
     @SerializedName(value = "entityName", alternate = "entity_name")
     protected String entityName = null;
     @SerializedName(value = "equipment")
-    protected Map<String, ItemStackSerializer> equipment = new HashMap<>();
+    protected final Map<String, ItemStackSerializer> equipment = new HashMap<>();
     @SerializedName(value = "customName", alternate = "custom_name")
     protected String customName = null;
     @SerializedName(value = "customDesc", alternate = "custom_desc")

@@ -2,7 +2,6 @@ package me.botsko.prism.serializers.entity;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Entity;
 
 /**
  * Created for the Prism-Bukkit Project.

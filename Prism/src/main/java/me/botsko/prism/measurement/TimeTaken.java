@@ -1,6 +1,7 @@
 package me.botsko.prism.measurement;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 
 import java.util.Calendar;
 import java.util.Map.Entry;

@@ -5,7 +5,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
+import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import me.botsko.prism.database.sql.SqlSettingsQuery;
@@ -14,10 +18,12 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientConnectionException;
+import java.sql.Statement;
 import java.util.HashMap;
 
 /**
@@ -35,7 +41,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
 
     static {
         if (propFile.exists()) {
-            me.botsko.prism.PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
+            PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             PrismLogHandler.debug("This file will not save the jdbcURL, username or password - these are loaded"
                     + " by default from the standard prism configuration file.  If you set these "
                     + "explicitly in the properties file the settings in the standard config will be"
@@ -66,6 +72,114 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
         detectNonStandardSql();
         name = "mysql";
+    }
+
+    /**
+     * Setub Db. to schema 8
+     * @param actionRegistry ActionReg.
+     */
+    public void setupDatabase(ActionRegistry actionRegistry) {
+        try (
+                Connection  conn = getConnection();
+                Statement st = conn.createStatement()
+        ) {
+            String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
+                    + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`action` varchar(25) NOT NULL,"
+                    + "PRIMARY KEY (`action_id`)," + "UNIQUE KEY `action` (`action`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // data
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` ("
+                    + "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
+                    + "`action_id` int(10) unsigned NOT NULL," + "`player_id` int(10) unsigned NOT NULL,"
+                    + "`world_id` int(10) unsigned NOT NULL," + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL,"
+                    + "`z` int(11) NOT NULL," + "`block_id` mediumint(5) DEFAULT NULL,"
+                    + "`block_subid` mediumint(5) DEFAULT NULL," + "`old_block_id` mediumint(5) DEFAULT NULL,"
+                    + "`old_block_subid` mediumint(5) DEFAULT NULL," + "PRIMARY KEY (`id`),"
+                    + "INDEX `epoch` (`epoch`),"
+                    + "INDEX  `location` (`world_id`, `x`, `z`, `y`, `action_id`),"
+                    + "INDEX  `player` (`player_id`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // extra prism data table (check if it exists first, so we can avoid
+            // re-adding foreign key stuff)
+            final DatabaseMetaData metadata = conn.getMetaData();
+            ResultSet resultSet;
+            resultSet = metadata.getTables(null, null, "" + prefix + "data_extra", null);
+            if (!resultSet.next()) {
+
+                // extra data
+                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
+                        + "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
+                        + "`data_id` bigint(20) unsigned NOT NULL,"
+                        + "`data` text NULL,"
+                        + "`te_data` text NULL,"
+                        + "PRIMARY KEY (`extra_id`),"
+                        + "INDEX `data_id` (`data_id`)"
+                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+                st.executeUpdate(query);
+
+                // add extra data delete cascade
+                query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
+                        + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix
+                        + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
+                st.executeUpdate(query);
+            }
+
+            // meta
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` ("
+                    + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`k` varchar(25) NOT NULL,"
+                    + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // players
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "players` ("
+                    + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
+                    + "`player_uuid` binary(16) NOT NULL," + "PRIMARY KEY (`player_id`),"
+                    + "UNIQUE KEY `player` (`player`)," + "UNIQUE KEY `player_uuid` (`player_uuid`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // worlds
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
+                    + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`world` varchar(255) NOT NULL,"
+                    + "PRIMARY KEY (`world_id`)," + "UNIQUE KEY `world` (`world`)"
+                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+
+            // actions
+            cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
+            // populate db
+            final String[] actions = actionRegistry.listAll();
+            for (final String a : actions) {
+                addActionName(a);
+            }
+
+            // id map
+            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` (" + "`material` varchar(63) NOT NULL,"
+                    + "`state` varchar(255) NOT NULL," + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
+                    + "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
+                    + "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            st.executeUpdate(query);
+            //finally check if this is a true setup and we are up to date.
+            DatabaseMetaData meta = conn.getMetaData();
+            ResultSet set = meta.getIndexInfo(null,null,prefix + "data",true,false);
+            while (set.next()) {
+                String columnName = resultSet.getString("COLUMN_NAME");
+                if ("player_id".equals(columnName)) {
+                    String indexName = resultSet.getString("INDEX_NAME");
+                    if ("player".equals(indexName)) {
+                        setDatabaseSchemaVersion(8);
+                    }
+                }
+            }
+        } catch (final SQLException e) {
+            handleDataSourceException(e);
+            PrismLogHandler.log("Database connection error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -113,16 +227,16 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         if (Prism.getInstance().monitoring) {
             dbConfig.setMetricRegistry(ApiHandler.monitor.getRegistry());
             dbConfig.setHealthCheckRegistry(ApiHandler.monitor.getHealthRegistry());
-            me.botsko.prism.PrismLogHandler.log("Hikari is configured with Metric Reporting.");
+            PrismLogHandler.log("Hikari is configured with Metric Reporting.");
         } else {
-            me.botsko.prism.PrismLogHandler.log("No metric recorder found to hook into Hikari.");
+            PrismLogHandler.log("No metric recorder found to hook into Hikari.");
         }
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
-            me.botsko.prism.PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
+            PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
             database = null;
         }
         return this;
@@ -160,18 +274,18 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             rs1.next();
             String version = dbInfo.get("version");
             String versionComment = dbInfo.get("version_comment");
-            me.botsko.prism.PrismLogHandler.log("Prism detected you database is version:" + version + " / " + versionComment);
-            me.botsko.prism.PrismLogHandler.log("You have set nonStandardSql to " + nonStandardSql);
-            me.botsko.prism.PrismLogHandler.log("You are able to use non standard SQL");
+            PrismLogHandler.log("Prism detected you database is version:" + version + " / " + versionComment);
+            PrismLogHandler.log("You have set nonStandardSql to " + nonStandardSql);
+            PrismLogHandler.log("You are able to use non standard SQL");
             if (!nonStandardSql) {
-                me.botsko.prism.PrismLogHandler.log("Prism will use standard sql queries");
+                PrismLogHandler.log("Prism will use standard sql queries");
             }
         } catch (SQLNonTransientConnectionException e) {
-            me.botsko.prism.PrismLogHandler.warn(e.getMessage());
+            PrismLogHandler.warn(e.getMessage());
         } catch (SQLException e) {
-            me.botsko.prism.PrismLogHandler.log("You are not able to use non standard Sql");
+            PrismLogHandler.log("You are not able to use non standard Sql");
             if (nonStandardSql) {
-                me.botsko.prism.PrismLogHandler.log("This sounds like a configuration error.  If you have database access"
+                PrismLogHandler.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");
             }
         }

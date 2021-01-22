@@ -1,6 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
@@ -198,10 +199,10 @@ public class SqlPlayerIdentificationHelper {
             if (offlinePlayer.getName() != null) {
                 if (offlinePlayer.getName().equals(prismPlayer.getName())) {
                     // 2 players with the same name - this is going to cause major issues.
-                    me.botsko.prism.PrismLogHandler.warn("2 Players exist with the same name Prism cannot load both as per the name.");
-                    me.botsko.prism.PrismLogHandler.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
-                    me.botsko.prism.PrismLogHandler.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
-                    me.botsko.prism.PrismLogHandler.warn("Player 2 will have the name set with a random index.");
+                    PrismLogHandler.warn("2 Players exist with the same name Prism cannot load both as per the name.");
+                    PrismLogHandler.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
+                    PrismLogHandler.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
+                    PrismLogHandler.warn("Player 2 will have the name set with a random index.");
                     test.setName(offlinePlayer.getName() + "_" + offlinePlayer.getUniqueId().getMostSignificantBits());
                     updatePlayer(test);
                 }

@@ -11,10 +11,10 @@ import java.util.List;
 
 public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
 
+    protected final List<VillagerRecipe> recipes = new ArrayList<>();
     protected String type = null;
     protected String profession = null;
     protected Integer villagerXp = 0;
-    protected List<VillagerRecipe> recipes = new ArrayList<>();
 
     @Override
     public void serialize(Villager entity) {
@@ -49,7 +49,7 @@ public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
                     villagerRecipe.maxUses, villagerRecipe.experienceReward, villagerRecipe.villagerXp,
                     villagerRecipe.priceMultiplier);
             villagerRecipe.ingredient.forEach(
-                    itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
+                  itemStackSerializer -> recipe.addIngredient(itemStackSerializer.toBukkit()));
             bukkitRecipes.add(recipe);
 
         });

@@ -595,8 +595,8 @@ public class PrismBlockEvents extends BaseListener {
     }
 
     private static class PlayerBed {
-        Player player;
-        BlockState bed;
+        final Player player;
+        final BlockState bed;
 
         public PlayerBed(Player player, BlockState bed) {
             this.player = player;

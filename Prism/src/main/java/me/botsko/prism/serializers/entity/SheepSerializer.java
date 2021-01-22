@@ -2,10 +2,7 @@ package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.DyeColor;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Sheep;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class SheepSerializer extends EntitySerializer<Sheep> {
 
@@ -17,7 +14,7 @@ public class SheepSerializer extends EntitySerializer<Sheep> {
 
     @Override
     public void serialize(Sheep entity) {
-        if(entity.getColor() != null) {
+        if (entity.getColor() != null) {
             color = entity.getColor().name().toLowerCase();
         } else {
             color = DyeColor.WHITE.name().toLowerCase();
