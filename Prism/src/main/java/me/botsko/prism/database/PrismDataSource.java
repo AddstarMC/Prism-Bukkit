@@ -58,6 +58,8 @@ public interface PrismDataSource {
 
     SettingsQuery createSettingsQuery();
 
+    void setDatabaseSchemaVersion(Integer ver);
+
     SelectProcessActionQuery createProcessQuery();
 
     InsertQuery getDataInsertionQuery();

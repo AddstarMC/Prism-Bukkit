@@ -3,7 +3,6 @@ package me.botsko.prism.database.sql;
 import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.DeleteQuery;
@@ -18,7 +17,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +31,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
 
     protected static HikariDataSource database = null;
     protected String name = "unconfigured";
-    protected ConfigurationSection section;
+    protected final ConfigurationSection section;
     private boolean paused; //when set the datasource will not allow insertions;
     private SettingsQuery settingsQuery = null;
     protected String prefix = "prism_";
@@ -154,99 +152,6 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     }
 
     /**
-     * Setub Db.
-     * @param actionRegistry ActionReg.
-     */
-    public void setupDatabase(ActionRegistry actionRegistry) {
-        try (
-                Connection  conn = getConnection();
-                Statement st = conn.createStatement()
-                ) {
-            String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
-                    + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`action` varchar(25) NOT NULL,"
-                    + "PRIMARY KEY (`action_id`)," + "UNIQUE KEY `action` (`action`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // data
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` ("
-                    + "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
-                    + "`action_id` int(10) unsigned NOT NULL," + "`player_id` int(10) unsigned NOT NULL,"
-                    + "`world_id` int(10) unsigned NOT NULL," + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL,"
-                    + "`z` int(11) NOT NULL," + "`block_id` mediumint(5) DEFAULT NULL,"
-                    + "`block_subid` mediumint(5) DEFAULT NULL," + "`old_block_id` mediumint(5) DEFAULT NULL,"
-                    + "`old_block_subid` mediumint(5) DEFAULT NULL," + "PRIMARY KEY (`id`)," + "KEY `epoch` (`epoch`),"
-                    + "KEY  `location` (`world_id`, `x`, `z`, `y`, `action_id`),"
-                    + "KEY  `player` (`player_id`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // extra prism data table (check if it exists first, so we can avoid
-            // re-adding foreign key stuff)
-            final DatabaseMetaData metadata = conn.getMetaData();
-            ResultSet resultSet;
-            resultSet = metadata.getTables(null, null, "" + prefix + "data_extra", null);
-            if (!resultSet.next()) {
-
-                // extra data
-                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
-                        + "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
-                        + "`data_id` bigint(20) unsigned NOT NULL," + "`data` text NULL," + "`te_data` text NULL,"
-                        + "PRIMARY KEY (`extra_id`)," + "KEY `data_id` (`data_id`)"
-                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-                st.executeUpdate(query);
-
-                // add extra data delete cascade
-                query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
-                        + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix
-                        + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
-                st.executeUpdate(query);
-            }
-
-            // meta
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` ("
-                    + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`k` varchar(25) NOT NULL,"
-                    + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // players
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "players` ("
-                    + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
-                    + "`player_uuid` binary(16) NOT NULL," + "PRIMARY KEY (`player_id`),"
-                    + "UNIQUE KEY `player` (`player`)," + "UNIQUE KEY `player_uuid` (`player_uuid`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // worlds
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
-                    + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`world` varchar(255) NOT NULL,"
-                    + "PRIMARY KEY (`world_id`)," + "UNIQUE KEY `world` (`world`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // actions
-            cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
-            // populate db
-            final String[] actions = actionRegistry.listAll();
-            for (final String a : actions) {
-                addActionName(a);
-            }
-
-            // id map
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` (" + "`material` varchar(63) NOT NULL,"
-                    + "`state` varchar(255) NOT NULL," + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
-                    + "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
-                    + "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-        } catch (final SQLException e) {
-            handleDataSourceException(e);
-
-            PrismLogHandler.log("Database connection error: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Add action to db.
      * @param actionName String
      */
@@ -264,7 +169,8 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-                PrismLogHandler.log("Registering new action type to the database/cache: " + actionName + " " + rs.getInt(1));
+                PrismLogHandler.log("Registering new action type to the database/cache: "
+                        + actionName + " " + rs.getInt(1));
                 Prism.prismActions.put(actionName, rs.getInt(1));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -386,6 +292,10 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             settingsQuery = new SqlSettingsQuery(this);
         }
         return settingsQuery;
+    }
+
+    public final void setDatabaseSchemaVersion(Integer ver) {
+        createSettingsQuery().saveSetting("schema_ver", ver.toString(),null);
     }
 
     @Override

@@ -16,7 +16,7 @@ import java.sql.SQLException;
  */
 public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQuery {
     private final SqlPrismDataSource dataSource;
-    private static String prefix = "prism_";
+    protected static String prefix = "prism_";
 
     public SqlSettingsQuery(SqlPrismDataSource dataSource) {
         this.dataSource = dataSource;
@@ -51,7 +51,7 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
         try (
                 Connection conn = dataSource.getConnection();
                 PreparedStatement s = conn.prepareStatement("DELETE FROM " + prefix + "meta WHERE k = ?");
-                PreparedStatement s2 = conn.prepareStatement("INSERT INTO " + prefix + "meta (k,v) VALUES (?,?)")
+                PreparedStatement s2 = conn.prepareStatement(getInsertQuery())
                 ) {
             s.setString(1, finalKey);
             s.executeUpdate();
@@ -75,7 +75,8 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
         }
         try (
                 Connection conn = dataSource.getConnection();
-                PreparedStatement s = conn.prepareStatement("SELECT v FROM " + prefix + "meta WHERE k = ? LIMIT 0,1")
+                PreparedStatement s =
+                        conn.prepareStatement(getSelectQuery())
         ) {
             s.setString(1, finalKey);
             rs = s.executeQuery();
@@ -88,5 +89,12 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
             PrismLogHandler.debug("Database Error:" + e.getMessage());
         }
         return value;
+    }
+
+    protected String getSelectQuery() {
+        return "SELECT v FROM " + prefix + "meta WHERE k = ? FETCH FIRST 1 row only;";
+    }
+    protected String getInsertQuery() {
+        return "INSERT INTO " + prefix + "meta (id, k , v) VALUES (DEFAULT,?,?)";
     }
 }

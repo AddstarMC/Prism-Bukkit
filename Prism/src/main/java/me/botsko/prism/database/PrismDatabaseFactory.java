@@ -1,6 +1,6 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 import me.botsko.prism.database.mysql.PrismHikariDataSource;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
@@ -20,14 +20,15 @@ public class PrismDatabaseFactory {
 
     /**
      * Create a config.
+     *
      * @param configuration ConfigurationSection
      */
     public static void createDefaultConfig(final ConfigurationSection configuration) {
         ConfigurationSection dataSourceSection;
-        ConfigurationSection  dataSourceProperties;
+        ConfigurationSection dataSourceProperties;
         if (configuration.isConfigurationSection("datasource")) {
             dataSourceSection = configuration.getConfigurationSection("datasource");
-            dataSourceSection.addDefault("type","mysql");
+            dataSourceSection.addDefault("type", "mysql");
             if (!dataSourceSection.isConfigurationSection("properties")) {
                 dataSourceProperties = dataSourceSection.createSection("properties");
             } else {
@@ -43,15 +44,15 @@ public class PrismDatabaseFactory {
             }
             dataSourceProperties = dataSourceSection.createSection("properties");
         }
-        String dataType = dataSourceSection.getString("type","mysql");
-        updateDataSourceProperties(dataType,dataSourceProperties);
+        String dataType = dataSourceSection.getString("type", "mysql");
+        updateDataSourceProperties(dataType, dataSourceProperties);
         addDatabaseDefaults(configuration);
     }
 
     private static void updateDataSourceProperties(@Nullable final String type,
                                                    final ConfigurationSection configuration) {
         String test = type;
-        if (test  == null) {
+        if (test == null) {
             test = "mysql";
         }
         switch (test) {
@@ -72,6 +73,7 @@ public class PrismDatabaseFactory {
 
     /**
      * Constuct Data source.
+     *
      * @param configuration ConfigurationSection
      * @return PrismDataSource
      */
@@ -124,6 +126,7 @@ public class PrismDatabaseFactory {
 
     /**
      * Create updater for datasource.
+     *
      * @param configuration ConfigurationSection
      * @return PrismDataSourceUpdater
      */

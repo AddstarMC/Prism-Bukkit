@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class DatabaseUpdater {
 
-
     protected final Prism plugin;
     private final int currentDbSchemaVersion = 8;
     private final ArrayList<Runnable> updates = new ArrayList<>(currentDbSchemaVersion);
@@ -55,7 +54,7 @@ public class DatabaseUpdater {
         }
 
         // Save current version
-        Settings.saveSetting("schema_ver", "" + currentDbSchemaVersion);
+        Prism.getPrismDataSource().setDatabaseSchemaVersion(currentDbSchemaVersion);
         PrismLogHandler.log("Update check complete: Schema v" + currentDbSchemaVersion);
     }
 }

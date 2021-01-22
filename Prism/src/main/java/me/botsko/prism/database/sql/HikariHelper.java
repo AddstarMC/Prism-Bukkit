@@ -1,8 +1,7 @@
-package me.botsko.prism.database.mysql;
+package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.util.PropertyElf;
-import me.botsko.prism.Prism;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,8 +14,14 @@ import java.util.Set;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 1/01/2021.
  */
-class HikariHelper {
+public class HikariHelper {
 
+    /**
+     * Creates the Standard Hikari Properties file.
+     * @param propFile File
+     * @param dbConfig HikariConfig
+     * @param skipCoreValue if true skips the jbdcurl and username and password.
+     */
     public static void createPropertiesFile(File propFile, HikariConfig dbConfig, boolean skipCoreValue) {
         dbConfig.setPoolName("prism");
         Properties prop = new Properties();

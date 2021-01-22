@@ -2,7 +2,6 @@ package me.botsko.prism.serializers.entity;
 
 import me.botsko.prism.serializers.items.ItemStackSerializer;
 import org.bukkit.entity.AbstractVillager;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

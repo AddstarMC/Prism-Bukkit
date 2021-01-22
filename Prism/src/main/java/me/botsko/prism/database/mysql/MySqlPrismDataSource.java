@@ -8,6 +8,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
+import me.botsko.prism.database.sql.SqlSettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,8 @@ import java.util.HashMap;
  * Created by Narimm on 5/04/2019.
  */
 public class MySqlPrismDataSource extends SqlPrismDataSource {
+
+    private SettingsQuery settingsQuery;
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
@@ -44,6 +47,14 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     private final Boolean nonStandardSql;
+
+    @Override
+    public SettingsQuery createSettingsQuery() {
+        if (settingsQuery == null) {
+            settingsQuery = new MySqlSettingsQuery(this);
+        }
+        return settingsQuery;
+    }
 
     /**
      * Create a dataSource.

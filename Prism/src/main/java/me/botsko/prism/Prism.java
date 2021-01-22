@@ -149,7 +149,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      * when they do fall we can attribute them to the player who broke the original
      * block.
      */
-    public ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
+    public final ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;

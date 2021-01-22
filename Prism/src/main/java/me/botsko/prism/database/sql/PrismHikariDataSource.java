@@ -1,10 +1,12 @@
-package me.botsko.prism.database.mysql;
+package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -16,7 +18,7 @@ import java.io.File;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 1/01/2021.
  */
-public class PrismHikariDataSource extends SqlPrismDataSource {
+public abstract class PrismHikariDataSource extends SqlPrismDataSource {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
@@ -24,19 +26,19 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
 
     static {
         if (propFile.exists()) {
-            me.botsko.prism.PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
+            PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             dbConfig = new HikariConfig(propFile.getPath());
         } else {
-            me.botsko.prism.PrismLogHandler.log("You may need to adjust these settings for your setup.");
-            me.botsko.prism.PrismLogHandler.log("To set a table prefix you will need to create a config entry under");
-            me.botsko.prism.PrismLogHandler.log("prism:");
-            me.botsko.prism.PrismLogHandler.log("  datasource:");
-            me.botsko.prism.PrismLogHandler.log("    prefix: your-prefix");
+            PrismLogHandler.log("You may need to adjust these settings for your setup.");
+            PrismLogHandler.log("To set a table prefix you will need to create a config entry under");
+            PrismLogHandler.log("prism:");
+            PrismLogHandler.log("  datasource:");
+            PrismLogHandler.log("    prefix: your-prefix");
             String jdbcUrl = "jdbc:mysql://localhost:3306/prism?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
-            me.botsko.prism.PrismLogHandler.log("Default jdbcUrl: " + jdbcUrl);
-            me.botsko.prism.PrismLogHandler.log("Default Username: username");
-            me.botsko.prism.PrismLogHandler.log("Default Password: password");
-            me.botsko.prism.PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
+            PrismLogHandler.log("Default jdbcUrl: " + jdbcUrl);
+            PrismLogHandler.log("Default Username: username");
+            PrismLogHandler.log("Default Password: password");
+            PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
             dbConfig = new HikariConfig();
             dbConfig.setJdbcUrl(jdbcUrl);
             dbConfig.setUsername("username");
@@ -62,7 +64,7 @@ public class PrismHikariDataSource extends SqlPrismDataSource {
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
-            me.botsko.prism.PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
+            PrismLogHandler.warn("Hikari Pool did not Initialize: " + e.getMessage());
             database = null;
         }
         return this;

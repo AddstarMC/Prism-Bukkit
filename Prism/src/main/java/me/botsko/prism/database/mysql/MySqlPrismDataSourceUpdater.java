@@ -1,4 +1,4 @@
-package me.botsko.prism.database.sql;
+package me.botsko.prism.database.mysql;
 
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDataSourceUpdater;
@@ -12,11 +12,11 @@ import java.sql.Statement;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 5/04/2019.
  */
-public class SqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
+public class MySqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
     private final PrismDataSource dataSource;
     private static String  prefix = "prism_";
 
-    public SqlPrismDataSourceUpdater(PrismDataSource dataSource) {
+    public MySqlPrismDataSourceUpdater(PrismDataSource dataSource) {
         this.dataSource = dataSource;
         prefix = this.dataSource.getPrefix();
     }
