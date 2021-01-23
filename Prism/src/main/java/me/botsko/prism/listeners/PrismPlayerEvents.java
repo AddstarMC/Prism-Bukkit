@@ -6,7 +6,6 @@ import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.api.actions.Handler;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.MiscUtils;
@@ -128,7 +127,7 @@ public class PrismPlayerEvents implements Listener {
         final boolean doNotTrackJoin = !Prism.getIgnore().event("player-join", player);
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             // Lookup player for cache reasons
-            PlayerIdentification.cachePrismPlayer(uuid, name);
+            Prism.getInstance().getPlayerIdentifier().cachePrismPlayer(uuid, name);
             Bukkit.getScheduler().runTask(Prism.getInstance(), () -> {
                 if (doNotTrackJoin) {
                     return;

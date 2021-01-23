@@ -93,8 +93,7 @@ public class ReplaceableTextComponent {
      * @return ReplaceableTextComponent
      */
     public ReplaceableTextComponent replaceFirst(String key, Object content) {
-        replaceFirst(key, String.valueOf(content));
-        return this;
+        return replaceFirst(key, String.valueOf(content));
     }
 
     /**

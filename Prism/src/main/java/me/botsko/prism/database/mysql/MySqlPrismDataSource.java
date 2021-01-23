@@ -7,12 +7,13 @@ import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PlayerIdentificationHelper;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.SettingsQuery;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
-import me.botsko.prism.database.sql.SqlSettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
@@ -62,6 +63,22 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         return settingsQuery;
     }
 
+    @Override
+    public PlayerIdentificationHelper getPlayerIdHelper() {
+        if (playerIdHelper == null) {
+            playerIdHelper = new MySqlPlayerIdentificationHelper();
+        }
+        return playerIdHelper;
+    }
+
+    @Override
+    public IdMapQuery getIdMapQuery() {
+        if (idMapQuery == null) {
+            idMapQuery = new MySqlIdMapQuery(this);
+        }
+        return idMapQuery;
+    }
+
     /**
      * Create a dataSource.
      *
@@ -76,11 +93,12 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
 
     /**
      * Setub Db. to schema 8
+     *
      * @param actionRegistry ActionReg.
      */
     public void setupDatabase(ActionRegistry actionRegistry) {
         try (
-                Connection  conn = getConnection();
+                Connection conn = getConnection();
                 Statement st = conn.createStatement()
         ) {
             String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
@@ -165,7 +183,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             st.executeUpdate(query);
             //finally check if this is a true setup and we are up to date.
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet set = meta.getIndexInfo(null,null,prefix + "data",true,false);
+            ResultSet set = meta.getIndexInfo(null, null, prefix + "data", true, false);
             while (set.next()) {
                 String columnName = resultSet.getString("COLUMN_NAME");
                 if ("player_id".equals(columnName)) {
@@ -208,7 +226,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig.setMinimumIdle(minIdle);
         }
         if (!propFile.exists()) {
-            HikariHelper.createPropertiesFile(propFile,dbConfig,true);
+            HikariHelper.createPropertiesFile(propFile, dbConfig, true);
         }
     }
 

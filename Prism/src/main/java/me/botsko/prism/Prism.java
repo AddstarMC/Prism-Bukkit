@@ -19,7 +19,6 @@ import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
-import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
 import me.botsko.prism.events.EventHelper;
 import me.botsko.prism.listeners.PaperListeners;
 import me.botsko.prism.listeners.PrismBlockEvents;
@@ -47,6 +46,7 @@ import me.botsko.prism.parameters.PrismParameterHandler;
 import me.botsko.prism.parameters.RadiusParameter;
 import me.botsko.prism.parameters.SinceParameter;
 import me.botsko.prism.parameters.WorldParameter;
+import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
@@ -91,7 +91,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin implements PrismApi {
@@ -101,13 +100,12 @@ public class Prism extends JavaPlugin implements PrismApi {
     public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
     public static final HashMap<String, Integer> prismActions = new HashMap<>();
     private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
-    private static final Logger log = Logger.getLogger("Minecraft");
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private static final String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
-    private static PrismLogHandler logHandler;
     public static Messenger messenger;
     public static FileConfiguration config;
     public static boolean isPaper = true;
+    private static PrismLogHandler logHandler;
     private static List<Material> illegalBlocks;
     private static List<EntityType> illegalEntities;
     private static PrismDataSource prismDataSource = null;
@@ -125,8 +123,13 @@ public class Prism extends JavaPlugin implements PrismApi {
     public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
     public final Map<Location, Long> alertedBlocks = new ConcurrentHashMap<>();
-    private PrismCommands commands = null;
     public final ConcurrentHashMap<String, String> preplannedVehiclePlacement = new ConcurrentHashMap<>();
+    /**
+     * We store a basic index of hanging entities we anticipate will fall, so that
+     * when they do fall we can attribute them to the player who broke the original
+     * block.
+     */
+    public final ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
     public boolean monitoring = false;
@@ -137,12 +140,8 @@ public class Prism extends JavaPlugin implements PrismApi {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
-    /**
-     * We store a basic index of hanging entities we anticipate will fall, so that
-     * when they do fall we can attribute them to the player who broke the original
-     * block.
-     */
-    public final ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
+    private PlayerIdentification playerIdentifier;
+    private PrismCommands commands = null;
     private String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
@@ -154,7 +153,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
-        this.getConfig().set("prism.allow-metrics",false);
+        this.getConfig().set("prism.allow-metrics", false);
     }
 
     public static BukkitAudiences getAudiences() {
@@ -307,6 +306,10 @@ public class Prism extends JavaPlugin implements PrismApi {
         return baseUrl;
     }
 
+    public PlayerIdentification getPlayerIdentifier() {
+        return playerIdentifier;
+    }
+
     public ScheduledThreadPoolExecutor getSchedulePool() {
         return schedulePool;
     }
@@ -383,13 +386,14 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
             actionRegistry = new ActionRegistry();
+            playerIdentifier = new PlayerIdentification();
 
             // Setup databases
             prismDataSource.setupDatabase(actionRegistry);
 
             // Cache world IDs
             prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-            SqlPlayerIdentificationHelper.cacheOnlinePlayerPrimaryKeys(playerNames);
+            prismDataSource.getPlayerIdHelper().cacheOnlinePlayerPrimaryKeys(playerNames);
 
             // ensure current worlds are added
             for (final String w : worldNames) {
@@ -404,7 +408,6 @@ public class Prism extends JavaPlugin implements PrismApi {
             updating.cancel();
         });
     }
-
 
 
     private void notifyDisabled() {
@@ -518,7 +521,7 @@ public class Prism extends JavaPlugin implements PrismApi {
 
             items.initMaterials(Material.AIR);
             Bukkit.getScheduler().runTaskAsynchronously(instance,
-                  () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
+                    () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
     }
 

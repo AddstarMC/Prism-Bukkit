@@ -6,7 +6,6 @@ import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
-import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.block.Utilities;
@@ -52,7 +51,8 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             actionId = Prism.prismActions.get(a.getActionType().getName());
         }
 
-        PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayerByNameFromCache(a.getSourceName());
+        PrismPlayer prismPlayer = Prism.getInstance().getPlayerIdentifier()
+                .getPrismPlayerByNameFromCache(a.getSourceName());
         int playerId = prismPlayer.getId();
 
         if (worldId == 0 || actionId == 0 || playerId == 0) {
@@ -119,7 +119,8 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             actionId = Prism.prismActions.get(a.getActionType().getName());
         }
 
-        PrismPlayer prismPlayer = PlayerIdentification.getPrismPlayerByNameFromCache(a.getSourceName());
+        PrismPlayer prismPlayer = Prism.getInstance().getPlayerIdentifier()
+                .getPrismPlayerByNameFromCache(a.getSourceName());
         int playerId = prismPlayer.getId();
 
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),

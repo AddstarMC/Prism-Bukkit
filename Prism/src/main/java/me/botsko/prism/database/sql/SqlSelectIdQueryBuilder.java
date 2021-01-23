@@ -2,6 +2,7 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectIdQuery;
+import org.intellij.lang.annotations.Language;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,6 +19,7 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
      * Constructor.
      * @param dataSource PrismDataSource
      */
+    @Language("Derby")
     private String select = "";
     private boolean pair = false;
 

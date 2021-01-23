@@ -2,6 +2,7 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
+import me.botsko.prism.database.PlayerIdentificationHelper;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
@@ -19,19 +20,18 @@ import java.util.UUID;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 3/01/2021.
  */
-public class SqlPlayerIdentificationHelper {
+public abstract class SqlPlayerIdentificationHelper implements PlayerIdentificationHelper {
 
-    private static String prefix = Prism.getPrismDataSource().getPrefix();
+    protected static String prefix = Prism.getPrismDataSource().getPrefix();
 
     /**
      * Loads `prism_players` ID for a player from the database.
      */
-    public static PrismPlayer lookupByUuid(UUID uuid) {
+    public PrismPlayer lookupByUuid(UUID uuid) {
         PrismPlayer prismPlayer = null;
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement("SELECT player_id, player, HEX(player_uuid) FROM " + prefix
-                        + "players WHERE player_uuid = UNHEX(?)")
+                PreparedStatement s = conn.prepareStatement(getSelectByUuid())
         ) {
             s.setString(1, uuidToDbString(uuid));
             ResultSet rs = s.executeQuery();
@@ -45,16 +45,19 @@ public class SqlPlayerIdentificationHelper {
         return prismPlayer;
     }
 
+    protected abstract String getSelectByUuid();
+
+    protected abstract String getSelectByName();
+
     /**
      * Loads `prism_players` ID for a player performs a db lookup.
      */
-    public static @Nullable PrismPlayer lookupByName(String playerName) {
+    public @Nullable PrismPlayer lookupByName(String playerName) {
         PrismPlayer prismPlayer = null;
 
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement(
-                        "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player = ?")
+                PreparedStatement s = conn.prepareStatement(getSelectByName())
 
         ) {
             s.setString(1, playerName);
@@ -103,13 +106,12 @@ public class SqlPlayerIdentificationHelper {
      * @param uuid UUID
      */
 
-    public static void addPlayer(final String name, final UUID uuid) {
+    public void addPlayer(final String name, final UUID uuid) {
         prefix = Prism.getPrismDataSource().getPrefix();
         PrismPlayer prismPlayer = new PrismPlayer(0, uuid, name);
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix
-                                + "players (player,player_uuid) VALUES (?,UNHEX(?))",
+                PreparedStatement s = conn.prepareStatement(getInsertPlayer(),
                         Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, name);
@@ -132,6 +134,8 @@ public class SqlPlayerIdentificationHelper {
         }
     }
 
+    protected abstract String getInsertPlayer();
+
     /**
      * Saves a fake player's name and generated UUID to the `prism_players` table.
      * At this stage, we're pretty sure the UUID and username do not already exist.
@@ -139,12 +143,11 @@ public class SqlPlayerIdentificationHelper {
      * @param playerName String
      * @return PrismPlayer
      */
-    public static PrismPlayer addFakePlayer(String playerName) {
+    public PrismPlayer addFakePlayer(String playerName) {
         PrismPlayer fakePlayer = new PrismPlayer(0, UUID.randomUUID(), playerName);
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix
-                        + "players (player,player_uuid) VALUES (?,UNHEX(?))", Statement.RETURN_GENERATED_KEYS)
+                PreparedStatement s = conn.prepareStatement(getInsertPlayer(), Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, fakePlayer.getName());
             s.setString(2, uuidToDbString(fakePlayer.getUuid()));
@@ -168,13 +171,11 @@ public class SqlPlayerIdentificationHelper {
     /**
      * Saves a player's UUID to the prism_players table.
      */
-    public static void updatePlayer(PrismPlayer prismPlayer) {
+    public void updatePlayer(PrismPlayer prismPlayer) {
         checkAndUpdatePrismPlayer(prismPlayer);
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement(
-                        "UPDATE " + prefix + "players SET player = ?, "
-                                + "player_uuid = UNHEX(?) WHERE player_id = ?")
+                PreparedStatement s = conn.prepareStatement(getUpdatePlayerSql())
         ) {
             s.setString(1, prismPlayer.getName());
             s.setString(2, uuidToDbString(prismPlayer.getUuid()));
@@ -185,13 +186,15 @@ public class SqlPlayerIdentificationHelper {
         }
     }
 
+    protected abstract String getUpdatePlayerSql();
+
     /**
      * This method checks a players name does not exist in the database with a different UUID
      * if it does it will then update that player first before then updating the initial player.
      *
      * @param prismPlayer PrismPlayer
      */
-    private static void checkAndUpdatePrismPlayer(PrismPlayer prismPlayer) {
+    private void checkAndUpdatePrismPlayer(PrismPlayer prismPlayer) {
         PrismPlayer test = lookupByName(prismPlayer.getName());
         if (test != null && test.getUuid() != prismPlayer.getUuid()) {
             //there is an existing player with that name ...it will need updating this
@@ -200,7 +203,8 @@ public class SqlPlayerIdentificationHelper {
                 if (offlinePlayer.getName().equals(prismPlayer.getName())) {
                     // 2 players with the same name - this is going to cause major issues.
                     PrismLogHandler.warn("2 Players exist with the same name Prism cannot load both as per the name.");
-                    PrismLogHandler.warn("Player 1(player to update): " + prismPlayer.getName() + " / " + prismPlayer.getUuid());
+                    PrismLogHandler.warn("Player 1(player to update): "
+                            + prismPlayer.getName() + " / " + prismPlayer.getUuid());
                     PrismLogHandler.warn("Player 2(existing): " + offlinePlayer.getName() + " / " + test.getUuid());
                     PrismLogHandler.warn("Player 2 will have the name set with a random index.");
                     test.setName(offlinePlayer.getName() + "_" + offlinePlayer.getUniqueId().getMostSignificantBits());
@@ -215,18 +219,18 @@ public class SqlPlayerIdentificationHelper {
     /**
      * Build-load all online players into cache.
      */
-    public static void cacheOnlinePlayerPrimaryKeys(String[] playerNames) {
+    public void cacheOnlinePlayerPrimaryKeys(String[] playerNames) {
         try (
                 Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement(
-                        "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player IN (?)")
+                PreparedStatement s = conn.prepareStatement(getSelectByNames())
         ) {
             s.setString(1, "'" + TypeUtils.join(playerNames, "','") + "'");
             ResultSet rs = s.executeQuery();
             while (rs.next()) {
                 PrismPlayer prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)),
                         rs.getString(2));
-                PrismLogHandler.debug("Loaded player " + rs.getString(2) + ", id: " + rs.getInt(1) + " into the cache.");
+                PrismLogHandler.debug("Loaded player " + rs.getString(2)
+                        + ", id: " + rs.getInt(1) + " into the cache.");
                 Prism.prismPlayers.put(UUID.fromString(rs.getString(2)), prismPlayer);
             }
             rs.close();
@@ -234,4 +238,6 @@ public class SqlPlayerIdentificationHelper {
             e.printStackTrace();
         }
     }
+
+    protected abstract String getSelectByNames();
 }

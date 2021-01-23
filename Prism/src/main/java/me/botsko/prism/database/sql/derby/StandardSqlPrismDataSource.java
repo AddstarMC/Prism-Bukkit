@@ -2,6 +2,10 @@ package me.botsko.prism.database.sql.derby;
 
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
 import me.botsko.prism.settings.Settings;
 import org.bukkit.configuration.ConfigurationSection;
@@ -194,4 +198,32 @@ public class StandardSqlPrismDataSource extends PrismHikariDataSource {
         }
         return false;
     }
+
+    @Override
+    public PlayerIdentificationHelper getPlayerIdHelper() {
+        if (playerIdHelper == null) {
+            playerIdHelper = new StandardSqlPlayerIdentificationHelper();
+        }
+        return playerIdHelper;
+    }
+
+    @Override
+    public IdMapQuery getIdMapQuery() {
+        if (idMapQuery == null) {
+            idMapQuery = new DerbySqlIdMapQuery(this);
+        }
+        return idMapQuery;
+    }
+
+    @Override
+    public SelectProcessActionQuery createProcessQuery() {
+        return new DerbySqlSelectProcessQuery(this);
+    }
+
+    @Override
+    public SelectQuery createSelectQuery() {
+        return new DerbySelectQueryBuilder(this);
+    }
+
+
 }

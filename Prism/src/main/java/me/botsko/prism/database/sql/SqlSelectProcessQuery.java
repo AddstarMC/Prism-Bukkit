@@ -19,7 +19,7 @@ import java.util.UUID;
  * Created by benjamincharlton on 6/04/2019.
  */
 public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements SelectProcessActionQuery {
-    private boolean getLastID;
+    protected boolean getLastID;
 
     /**
      * Constructor.
@@ -43,13 +43,12 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
             return "SELECT id FROM " + prefix + "data JOIN " + prefix + "players p ON p.player_id = " + prefix
                     + "data.player_id";
         }
-        String sql = "SELECT id, action, epoch, world, player, player_uuid, x, y, z, data FROM " + prefix
-                + "data d";
-        sql += " INNER JOIN " + prefix + "players p ON p.player_id = d.player_id ";
-        sql += " INNER JOIN " + prefix + "actions a ON a.action_id = d.action_id ";
-        sql += " INNER JOIN " + prefix + "worlds w ON w.world_id = d.world_id ";
-        sql += " LEFT JOIN " + prefix + "data_extra ex ON ex.data_id = d.id ";
-        return sql;
+        return "SELECT id, action, epoch, world, player, player_uuid, x, y, z, data FROM " + prefix
+                + "data d"
+                + " INNER JOIN " + prefix + "players p ON p.player_id = d.player_id "
+                + " INNER JOIN " + prefix + "actions a ON a.action_id = d.action_id "
+                + " INNER JOIN " + prefix + "worlds w ON w.world_id = d.world_id "
+                + " LEFT JOIN " + prefix + "data_extra ex ON ex.data_id = d.id ";
     }
 
     protected String where() {

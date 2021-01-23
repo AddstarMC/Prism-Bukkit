@@ -63,4 +63,8 @@ public interface PrismDataSource {
     SelectProcessActionQuery createProcessQuery();
 
     InsertQuery getDataInsertionQuery();
+
+    PlayerIdentificationHelper getPlayerIdHelper();
+
+    IdMapQuery getIdMapQuery();
 }

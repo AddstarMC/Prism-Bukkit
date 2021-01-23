@@ -4,7 +4,6 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.sql.SqlIdMapQuery;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,7 +30,7 @@ public class MaterialAliases {
     private final Map<String, String> matCache = new HashMap<>();
     private final Map<String, String> idCache = new HashMap<>();
     private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
-
+    IdMapQuery query = Prism.getPrismDataSource().getIdMapQuery();
     private final HashMap<String, String> itemAliases = new HashMap<>();
 
     /**
@@ -83,7 +82,6 @@ public class MaterialAliases {
      */
     public void initMaterials(Material... materials) {
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
-            SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
             for (Material m : materials) {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
                 String dataString;
@@ -110,8 +108,6 @@ public class MaterialAliases {
         if (ids != null) {
             return ids;
         }
-
-        IdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
 
         query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(
                 material, new HashSet<>(list)));
@@ -168,7 +164,6 @@ public class MaterialAliases {
         }
 
         MaterialState result = new MaterialState();
-        SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
 
         query.findMaterial(blockId, blockSubId,
               (material, state) -> {
@@ -222,7 +217,6 @@ public class MaterialAliases {
         }
 
         IntPair result = new IntPair(0, 0);
-        SqlIdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
         String materialName = material.name().toLowerCase(Locale.ENGLISH);
 
         synchronized (this) {
@@ -270,9 +264,6 @@ public class MaterialAliases {
         }
 
         String stateLike = likeString.toString();
-
-        IdMapQuery query = new SqlIdMapQuery(Prism.getPrismDataSource());
-
         Set<IntPair> ids = new HashSet<>();
         query.findAllIdsPartial(material.name().toLowerCase(Locale.ENGLISH), stateLike, ids::addAll);
 

@@ -7,7 +7,7 @@ import me.botsko.prism.database.sql.SqlSettingsQuery;
  * Created for the Prism-Bukkit Project.
  *
  * @author Narimm on
- * 22/01/2021.
+ * @since 22/01/2021
  */
 public class MySqlSettingsQuery extends SqlSettingsQuery {
 
