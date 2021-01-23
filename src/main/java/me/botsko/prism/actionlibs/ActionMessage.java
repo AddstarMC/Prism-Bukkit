@@ -158,9 +158,11 @@ public class ActionMessage {
 
             // Location
             Location l = handler.getLoc();
-            line2 += " - " + l.getWorld().getName() + " @ " + l.getBlockX() + " "
-                    + l.getBlockY() + " " + l.getBlockZ() + " ";
-
+            if (l != null) {
+                String worldName = (l.getWorld() != null) ? l.getWorld().getName() : "NULL";
+                line2 += " - " + worldName + " @ " + l.getBlockX() + " "
+                        + l.getBlockY() + " " + l.getBlockZ() + " ";
+            }
             msg[1] = line2;
         }
 
