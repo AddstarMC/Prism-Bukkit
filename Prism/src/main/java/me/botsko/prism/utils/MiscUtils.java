@@ -141,7 +141,7 @@ public class MiscUtils {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerSuccess("Successfully pasted results: "
                             + prismWebUrl
-                            + paste.getId()));
+                            + paste.getId()).clickEvent(ClickEvent.openUrl(prismWebUrl)));
         } else {
             String message = result.getMessage().isPresent() ? result.getMessage().get() : "";
             Prism.messenger.sendMessage(sender,
