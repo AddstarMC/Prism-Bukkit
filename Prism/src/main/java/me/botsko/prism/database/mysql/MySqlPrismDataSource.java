@@ -8,7 +8,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.SettingsQuery;
 import me.botsko.prism.database.sql.HikariHelper;
@@ -64,9 +64,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     @Override
-    public PlayerIdentificationHelper getPlayerIdHelper() {
+    public PlayerIdentificationQuery getPlayerIdHelper() {
         if (playerIdHelper == null) {
-            playerIdHelper = new MySqlPlayerIdentificationHelper();
+            playerIdHelper = new MySqlPlayerIdentificationQuery();
         }
         return playerIdHelper;
     }

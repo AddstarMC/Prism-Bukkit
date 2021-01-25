@@ -101,7 +101,7 @@ public class DebugCommand implements SubHandler {
             out.append("   ").append(mat.name()).append(System.lineSeparator());
         }
         out.append("Worlds Tracked: ").append(Prism.prismWorlds.size()).append(System.lineSeparator());
-        out.append("Players Tracked: ").append(Prism.prismPlayers.size()).append(System.lineSeparator());
+        out.append("Players Tracked: ").append(Prism.getPrismPlayers().size()).append(System.lineSeparator());
         out.append("Players with Tools: ").append(Prism.playersWithActiveTools.size())
                 .append(System.lineSeparator());
         return out.toString();

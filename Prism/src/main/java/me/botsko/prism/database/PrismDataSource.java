@@ -64,7 +64,7 @@ public interface PrismDataSource {
 
     InsertQuery getDataInsertionQuery();
 
-    PlayerIdentificationHelper getPlayerIdHelper();
+    PlayerIdentificationQuery getPlayerIdHelper();
 
     IdMapQuery getIdMapQuery();
 }

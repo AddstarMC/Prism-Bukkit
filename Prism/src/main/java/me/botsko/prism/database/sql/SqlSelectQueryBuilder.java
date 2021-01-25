@@ -638,7 +638,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     try {
                         // Calls UUID.fromString, must handle potential exceptions
                         OfflinePlayer offline = Bukkit.getOfflinePlayer(
-                                SqlPlayerIdentificationHelper.uuidFromDbString(rs.getString(14)));
+                                SqlPlayerIdentificationQuery.uuidFromDbString(rs.getString(14)));
 
                         // Fake player
                         if (offline.hasPlayedBefore()) {

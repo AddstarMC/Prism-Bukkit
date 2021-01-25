@@ -78,13 +78,8 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -97,7 +92,6 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
-    public static final HashMap<UUID, PrismPlayer> prismPlayers = new HashMap<>();
     public static final HashMap<String, Integer> prismActions = new HashMap<>();
     private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
@@ -386,7 +380,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
             actionRegistry = new ActionRegistry();
-            playerIdentifier = new PlayerIdentification();
+            playerIdentifier = new PlayerIdentification(Prism.getPrismDataSource());
 
             // Setup databases
             prismDataSource.setupDatabase(actionRegistry);
@@ -782,6 +776,17 @@ public class Prism extends JavaPlugin implements PrismApi {
             resultCompletableFuture.complete(result);
         });
         return resultCompletableFuture;
+    }
+
+    /**
+     * Get an instance of PrismPlayers if Prism initialized.
+     * @return Map
+     */
+    public static Map<UUID, PrismPlayer> getPrismPlayers() {
+        if (Prism.getInstance() == null) {
+            return Collections.emptyMap();
+        }
+        return Prism.getInstance().playerIdentifier.getPrismPlayers();
     }
 
     public PrismCommands getCommands() {

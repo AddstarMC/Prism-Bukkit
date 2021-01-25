@@ -1,12 +1,12 @@
 package me.botsko.prism.database.sql.derby;
 
-import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
+import me.botsko.prism.database.sql.SqlPlayerIdentificationQuery;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 23/01/2021.
  */
-public class StandardSqlPlayerIdentificationHelper extends SqlPlayerIdentificationHelper {
+public class DerbySqlPlayerIdentificationQuery extends SqlPlayerIdentificationQuery {
     @Override
     protected String getSelectByUuid() {
         return "SELECT player_id, player, player_uuid FROM " + prefix + "players WHERE player_uuid = ?";

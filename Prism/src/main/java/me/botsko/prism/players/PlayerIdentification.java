@@ -1,26 +1,28 @@
 package me.botsko.prism.players;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.PrismDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class PlayerIdentification {
 
-    private static PlayerIdentificationHelper playerIdHelper;
-
-    public PlayerIdentification() {
-        playerIdHelper = Prism.getPrismDataSource().getPlayerIdHelper();
-    }
+    public static final Map<UUID, PrismPlayer> prismPlayers = new HashMap<>();
+    private static PlayerIdentificationQuery playerIdHelper;
 
     public PlayerIdentification(PrismDataSource dataSource) {
         PlayerIdentification.playerIdHelper = dataSource.getPlayerIdHelper();
+    }
+
+    public Map<UUID, PrismPlayer> getPrismPlayers() {
+        return prismPlayers;
     }
 
     /**
@@ -36,7 +38,7 @@ public class PlayerIdentification {
         if (prismPlayer != null) {
             comparePlayerToCache(name, uuid, prismPlayer);
             PrismLogHandler.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
-            Prism.prismPlayers.put(uuid, prismPlayer);
+            prismPlayers.put(uuid, prismPlayer);
             return;
         }
         playerIdHelper.addPlayer(name, uuid);
@@ -99,7 +101,7 @@ public class PlayerIdentification {
 
         PrismPlayer prismPlayer;
         // Are they in the cache?
-        prismPlayer = Prism.prismPlayers.get(uuid);
+        prismPlayer = prismPlayers.get(uuid);
         if (prismPlayer != null) {
             return prismPlayer;
         }
@@ -136,7 +138,7 @@ public class PlayerIdentification {
      */
 
     private @Nullable PrismPlayer comparePlayerToCache(final String name, final UUID uuid,
-                                                              PrismPlayer prismPlayer) {
+                                                       PrismPlayer prismPlayer) {
         if (prismPlayer == null) {
             return null;
         }

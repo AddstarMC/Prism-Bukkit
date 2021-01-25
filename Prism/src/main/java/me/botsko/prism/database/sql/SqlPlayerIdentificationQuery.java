@@ -2,7 +2,7 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.Bukkit;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 3/01/2021.
  */
-public abstract class SqlPlayerIdentificationHelper implements PlayerIdentificationHelper {
+public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificationQuery {
 
     protected static String prefix = Prism.getPrismDataSource().getPrefix();
 
@@ -123,7 +123,7 @@ public abstract class SqlPlayerIdentificationHelper implements PlayerIdentificat
                 prismPlayer.setId(rs.getInt(1));
                 PrismLogHandler.debug("Saved and loaded player " + name + " (" + uuid
                         + ") into the cache.");
-                Prism.prismPlayers.put(uuid,
+                Prism.getPrismPlayers().put(uuid,
                         new PrismPlayer(rs.getInt(1), uuid, name));
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
@@ -157,7 +157,7 @@ public abstract class SqlPlayerIdentificationHelper implements PlayerIdentificat
             if (rs.next()) {
                 fakePlayer.setId(rs.getInt(1));
                 PrismLogHandler.debug("Saved and loaded fake player " + fakePlayer.getName() + " into the cache.");
-                Prism.prismPlayers.put(fakePlayer.getUuid(), fakePlayer);
+                Prism.getPrismPlayers().put(fakePlayer.getUuid(), fakePlayer);
             } else {
                 throw new SQLException("Insert statement failed - no generated key obtained.");
             }
@@ -231,7 +231,7 @@ public abstract class SqlPlayerIdentificationHelper implements PlayerIdentificat
                         rs.getString(2));
                 PrismLogHandler.debug("Loaded player " + rs.getString(2)
                         + ", id: " + rs.getInt(1) + " into the cache.");
-                Prism.prismPlayers.put(UUID.fromString(rs.getString(2)), prismPlayer);
+                Prism.getInstance().getPlayerIdentifier().getPrismPlayers().put(UUID.fromString(rs.getString(2)), prismPlayer);
             }
             rs.close();
         } catch (SQLException e) {

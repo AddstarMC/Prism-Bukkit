@@ -8,7 +8,7 @@ import java.util.UUID;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 22/01/2021.
  */
-public interface PlayerIdentificationHelper {
+public interface PlayerIdentificationQuery {
 
     void addPlayer(final String name, final UUID uuid);
 

@@ -1,12 +1,12 @@
 package me.botsko.prism.database.mysql;
 
-import me.botsko.prism.database.sql.SqlPlayerIdentificationHelper;
+import me.botsko.prism.database.sql.SqlPlayerIdentificationQuery;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 23/01/2021.
  */
-public class MySqlPlayerIdentificationHelper extends SqlPlayerIdentificationHelper {
+public class MySqlPlayerIdentificationQuery extends SqlPlayerIdentificationQuery {
 
     protected String getSelectByUuid() {
         return "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player_uuid = UNHEX(?)";

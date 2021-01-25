@@ -3,7 +3,7 @@ package me.botsko.prism.database.sql.derby;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
@@ -23,14 +23,14 @@ import java.util.HashSet;
  *
  * @author Narimm
  */
-public class StandardSqlPrismDataSource extends PrismHikariDataSource {
+public class DerbySqlPrismDataSource extends PrismHikariDataSource {
 
     /**
      * Constructor.
      *
      * @param section Config
      */
-    public StandardSqlPrismDataSource(ConfigurationSection section) {
+    public DerbySqlPrismDataSource(ConfigurationSection section) {
         super(section);
         name = "standardSql";
     }
@@ -200,9 +200,9 @@ public class StandardSqlPrismDataSource extends PrismHikariDataSource {
     }
 
     @Override
-    public PlayerIdentificationHelper getPlayerIdHelper() {
+    public PlayerIdentificationQuery getPlayerIdHelper() {
         if (playerIdHelper == null) {
-            playerIdHelper = new StandardSqlPlayerIdentificationHelper();
+            playerIdHelper = new DerbySqlPlayerIdentificationQuery();
         }
         return playerIdHelper;
     }

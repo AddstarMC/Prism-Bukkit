@@ -8,10 +8,10 @@ import me.botsko.prism.database.PrismDataSourceUpdater;
  * @author Narimm on
  * @since 22/01/2021.
  */
-public class StandardSqlDataSourceUpdater implements PrismDataSourceUpdater {
+public class DerbySqlDataSourceUpdater implements PrismDataSourceUpdater {
 
 
-    public StandardSqlDataSourceUpdater() {
+    public DerbySqlDataSourceUpdater() {
     }
 
     @Override

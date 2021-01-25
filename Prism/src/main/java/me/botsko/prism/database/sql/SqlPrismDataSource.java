@@ -8,7 +8,7 @@ import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.InsertQuery;
-import me.botsko.prism.database.PlayerIdentificationHelper;
+import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
@@ -37,7 +37,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
     private boolean paused; //when set the datasource will not allow insertions;
     private SettingsQuery settingsQuery = null;
     protected String prefix = "prism_";
-    protected PlayerIdentificationHelper playerIdHelper;
+    protected PlayerIdentificationQuery playerIdHelper;
     protected IdMapQuery idMapQuery;
 
 

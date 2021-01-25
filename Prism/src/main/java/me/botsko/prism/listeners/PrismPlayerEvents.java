@@ -151,7 +151,7 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerQuit(final PlayerQuitEvent event) {
 
         // Remove from primary key cache
-        Prism.prismPlayers.remove(event.getPlayer().getUniqueId());
+        plugin.getPlayerIdentifier().getPrismPlayers().remove(event.getPlayer().getUniqueId());
 
         // Track player quit
         if (!Prism.getIgnore().event("player-quit", event.getPlayer())) {

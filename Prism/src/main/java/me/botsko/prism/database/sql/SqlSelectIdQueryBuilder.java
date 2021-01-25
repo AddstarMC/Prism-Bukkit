@@ -19,7 +19,6 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
      * Constructor.
      * @param dataSource PrismDataSource
      */
-    @Language("Derby")
     private String select = "";
     private boolean pair = false;
 
