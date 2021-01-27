@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismTestPlugin;
 import me.botsko.prism.database.PrismDataSource;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,11 +20,13 @@ import java.util.Collection;
  */
 public class TestHelper {
 
+    private static JavaPlugin plugin;
+
     public static ServerMock setup() {
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
-        MockBukkit.load(PrismTestPlugin.class);
+        plugin = MockBukkit.load(PrismTestPlugin.class);
         server.getScheduler().waitAsyncTasksFinished();
         server.getScheduler().performTicks(100);
         return server;
@@ -50,11 +53,13 @@ public class TestHelper {
                     PreparedStatement statement = conn.prepareStatement(s);
                     statement.execute();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             });
         }
+        MockBukkit.getMock().getScheduler().cancelTasks(plugin);
         MockBukkit.getMock().getPluginManager().disablePlugins();
+        MockBukkit.getMock().shutdown();
         MockBukkit.unmock();
     }
 }
