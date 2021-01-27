@@ -7,14 +7,15 @@ import org.bukkit.entity.Villager.Profession;
 import org.bukkit.inventory.MerchantRecipe;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
 
-    protected final List<VillagerRecipe> recipes = new ArrayList<>();
     protected String type = null;
     protected String profession = null;
     protected Integer villagerXp = 0;
+    protected Collection<VillagerRecipe> recipes = new ArrayList<>();
 
     @Override
     public void serialize(Villager entity) {
