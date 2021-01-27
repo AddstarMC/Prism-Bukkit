@@ -238,7 +238,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
         if (Prism.prismWorlds.containsKey(worldName)) {
             return;
         }
-        String query = "INSERT INTO `" + prefix + "worlds` (world) VALUES (?)";
+        String query = "INSERT INTO " + prefix + "worlds (world) VALUES (?)";
         try (
                 Connection conn = database.getConnection();
                 PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)

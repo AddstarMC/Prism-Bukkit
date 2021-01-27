@@ -3,6 +3,7 @@ package me.botsko.prism;
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.settings.Settings;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 
@@ -17,9 +18,10 @@ public class DatabaseUpdater {
      *
      * @param plugin Prism.
      */
-    DatabaseUpdater(Prism plugin) {
+    public DatabaseUpdater(Prism plugin) {
         this.plugin = plugin;
-        PrismDataSourceUpdater prismDataSourceUpdater = PrismDatabaseFactory.createUpdater(Prism.config);
+        ConfigurationSection dataSourceConfig = plugin.getConfig().getConfigurationSection("datasource");
+        PrismDataSourceUpdater prismDataSourceUpdater = PrismDatabaseFactory.createUpdater(dataSourceConfig);
         updates.add(prismDataSourceUpdater::v1_to_v2);
         updates.add(prismDataSourceUpdater::v2_to_v3);
         updates.add(prismDataSourceUpdater::v3_to_v4);
@@ -40,7 +42,7 @@ public class DatabaseUpdater {
     /**
      * Run any queries lower than current currentDbSchemaVersion.
      */
-    void applyUpdates() {
+    public void applyUpdates() {
 
         int clientSchemaVer = getClientDbSchemaVersion();
 

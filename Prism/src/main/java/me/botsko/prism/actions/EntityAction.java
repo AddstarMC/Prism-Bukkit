@@ -51,7 +51,7 @@ public class EntityAction extends GenericAction {
             entity.getType();
             entity.getType();
             setLoc(entity.getLocation());
-            serializer = EntitySerializerFactory.getSerializer(entity.getType());
+            serializer = EntitySerializerFactory.getSerializer(entity);
             serializer.serialize(entity);
             if (serializer instanceof SheepSerializer) {
                 ((SheepSerializer) serializer).setColor(dyeUsed);

@@ -32,7 +32,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
      */
     public DerbySqlPrismDataSource(ConfigurationSection section) {
         super(section);
-        name = "standardSql";
+        name = "derby";
     }
 
     @Override
@@ -42,10 +42,12 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                 Statement st = conn.createStatement()
         ) {
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet res = meta.getTables(null, null, null, new String[]{"TABLE"});
+            ResultSet res = meta.getSchemas();
             Collection<String> tableNames = new HashSet<>();
             while (res.next()) {
-                String name = res.getString("TABLE_NAME");
+                String scheam = res.getString("TABLE_SCHEM");
+                String cat = res.getString("TABLE_CATALOG");
+
                 tableNames.add(name);
             }
             res.close();
@@ -69,7 +71,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
         } catch (final SQLException e) {
             handleDataSourceException(e);
 
-            me.botsko.prism.PrismLogHandler.log("Database connection error: " + e.getMessage());
+            PrismLogHandler.log("Database connection error: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -81,7 +83,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "action_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "action varchar(25) NOT NULL UNIQUE"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
             return true;
         } else {
@@ -107,11 +109,11 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "block_subid int DEFAULT NULL,"
                     + "old_block_id int DEFAULT NULL,"
                     + "old_block_subid int DEFAULT NULL"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
-            st.executeUpdate("CREATE INDEX epoch ON " + table2 + " (epoch);");
-            st.executeUpdate("CREATE INDEX location ON " + table2 + " (world_id, x, z, y, action_id);");
-            st.executeUpdate("CREATE INDEX player ON " + table2 + " (player_id);");
+            st.executeUpdate("CREATE INDEX epoch ON " + table2 + " (epoch)");
+            st.executeUpdate("CREATE INDEX location ON " + table2 + " (world_id, x, z, y, action_id)");
+            st.executeUpdate("CREATE INDEX player ON " + table2 + " (player_id)");
             return true;
 
         } else {
@@ -126,11 +128,11 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
             String query = "CREATE TABLE " + table3 + " ("
                     + "extra_id bigint NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                    + "data_id int NOT NULL CONSTRAINT " + prefix
+                    + "data_id bigint NOT NULL CONSTRAINT " + prefix
                     + "data_extra_ibfk_1 REFERENCES " + prefix + "data" + " (id) ON DELETE CASCADE ON UPDATE NO ACTION,"
                     + "data long varchar,"
                     + "te_data long varchar"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
             return true;
         } else {
@@ -146,7 +148,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "k varchar(25) NOT NULL,"
                     + "v varchar(255) NOT NULL"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
             return true;
         }
@@ -162,7 +164,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "player varchar(255) NOT NULL UNIQUE,"
                     + "player_uuid char(16) NOT NULL UNIQUE"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
             return true;
         }
@@ -176,7 +178,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "world_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "world varchar(255) NOT NULL UNIQUE"
-                    + ");";
+                    + ")";
             st.executeUpdate(query);
             return true;
         }
@@ -192,7 +194,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "block_id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
                     + "block_subid int NOT NULL DEFAULT 0,"
                     + "PRIMARY KEY (material, state),"
-                    + "UNIQUE (block_id, block_subid)" + ");";
+                    + "UNIQUE (block_id, block_subid)" + ")";
             st.executeUpdate(query);
             return true;
         }

@@ -46,8 +46,6 @@ public class PrismTest {
         assertFalse(Prism.isDebug());
         Prism.setDebug(true);
         assertTrue(Prism.isDebug());
-        server.getScheduler().waitAsyncTasksFinished();
-
     }
 
     @Test

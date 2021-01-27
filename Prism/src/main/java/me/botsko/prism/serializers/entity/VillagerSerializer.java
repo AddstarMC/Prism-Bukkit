@@ -15,7 +15,6 @@ public class VillagerSerializer extends AbstractVillagerSerializer<Villager> {
     protected String type = null;
     protected String profession = null;
     protected Integer villagerXp = 0;
-    protected List<VillagerRecipe> recipes = new ArrayList<>();
 
     @Override
     public void serialize(Villager entity) {

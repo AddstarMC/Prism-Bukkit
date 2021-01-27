@@ -6,8 +6,6 @@ import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.sql.HikariHelper;
-import me.botsko.prism.database.sql.SqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
@@ -22,7 +20,7 @@ public abstract class PrismHikariDataSource extends SqlPrismDataSource {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
-    private static final HikariConfig dbConfig;
+    protected static final HikariConfig dbConfig;
 
     static {
         if (propFile.exists()) {

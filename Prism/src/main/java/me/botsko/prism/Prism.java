@@ -79,10 +79,13 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -102,20 +105,20 @@ public class Prism extends JavaPlugin implements PrismApi {
     public static Messenger messenger;
     public static FileConfiguration config;
     public static boolean isPaper = true;
-    private static PrismLogHandler logHandler;
+    protected static PrismLogHandler logHandler;
     private static List<Material> illegalBlocks;
     private static List<EntityType> illegalEntities;
-    private static PrismDataSource prismDataSource = null;
-    private static String pluginName;
-    private static String pasteKey;
+    protected static PrismDataSource prismDataSource = null;
+    protected static String pluginName;
+    protected static String pasteKey;
     private static MaterialAliases items;
-    private static ActionRegistry actionRegistry;
-    private static HandlerRegistry handlerRegistry;
+    protected static ActionRegistry actionRegistry;
+    protected static HandlerRegistry handlerRegistry;
     private static Ignore ignore;
-    private static Prism instance;
-    private static boolean debug = false;
+    protected static Prism instance;
+    protected static boolean debug = false;
     private static BukkitTask debugWatcher;
-    private static BukkitAudiences audiences;
+    protected static BukkitAudiences audiences;
     public final ConcurrentHashMap<String, PreviewSession> playerActivePreviews = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<String, ArrayList<Block>> playerActiveViews = new ConcurrentHashMap<>();
     public final ConcurrentHashMap<String, QueryResult> cachedQueries = new ConcurrentHashMap<>();
@@ -137,9 +140,9 @@ public class Prism extends JavaPlugin implements PrismApi {
     public BukkitTask recordingTask;
     public int totalRecordsAffected = 0;
     public long maxCycleTime = 0;
-    private PlayerIdentification playerIdentifier;
+    protected PlayerIdentification playerIdentifier;
     private PrismCommands commands = null;
-    private String pluginVersion;
+    protected String pluginVersion;
     // private ScheduledFuture<?> scheduledPurgeExecutor;
     private PurgeManager purgeManager;
 
@@ -407,7 +410,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     }
 
 
-    private void notifyDisabled() {
+    protected void notifyDisabled() {
         final String[] dbDisabled = new String[3];
         dbDisabled[0] = "Prism will disable most commands because it couldn't connect to a database.";
         dbDisabled[1] = "If you're using MySQL, check your config. Be sure MySQL is running.";
@@ -416,7 +419,7 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     }
 
-    private void enableFailedDatabase() {
+    public void enableFailedDatabase() {
         if (isEnabled()) {
             PluginCommand command = getCommand("prism");
             if (command != null) {
@@ -430,7 +433,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
     }
 
-    private void enabled() {
+    public void enabled() {
         if (isEnabled()) {
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
@@ -572,7 +575,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         items = new MaterialAliases();
     }
 
-    private void checkPluginDependencies() {
+    protected void checkPluginDependencies() {
         //DripReporter
         ApiHandler.configureMonitor();
         // WorldEdit

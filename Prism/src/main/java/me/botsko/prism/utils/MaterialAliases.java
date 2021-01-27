@@ -30,7 +30,7 @@ public class MaterialAliases {
     private final Map<String, String> matCache = new HashMap<>();
     private final Map<String, String> idCache = new HashMap<>();
     private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
-    IdMapQuery query = Prism.getPrismDataSource().getIdMapQuery();
+    IdMapQuery query;
     private final HashMap<String, String> itemAliases = new HashMap<>();
 
     /**
@@ -43,7 +43,6 @@ public class MaterialAliases {
             System.out.println("Elixr: Loaded items directory");
             items = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
         }
-
 
         if (items != null) {
 
@@ -72,6 +71,7 @@ public class MaterialAliases {
     }
 
     public void initAllMaterials() {
+        query = Prism.getPrismDataSource().getIdMapQuery();
         initMaterials(Material.values());
     }
 

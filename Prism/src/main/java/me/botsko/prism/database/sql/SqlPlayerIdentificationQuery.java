@@ -220,22 +220,24 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
      * Build-load all online players into cache.
      */
     public void cacheOnlinePlayerPrimaryKeys(String[] playerNames) {
-        try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
-                PreparedStatement s = conn.prepareStatement(getSelectByNames())
-        ) {
-            s.setString(1, "'" + TypeUtils.join(playerNames, "','") + "'");
-            ResultSet rs = s.executeQuery();
-            while (rs.next()) {
-                PrismPlayer prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)),
-                        rs.getString(2));
-                PrismLogHandler.debug("Loaded player " + rs.getString(2)
-                        + ", id: " + rs.getInt(1) + " into the cache.");
-                Prism.getInstance().getPlayerIdentifier().getPrismPlayers().put(UUID.fromString(rs.getString(2)), prismPlayer);
+        if (playerNames.length > 0) {
+            try (
+                    Connection conn = Prism.getPrismDataSource().getConnection();
+                    PreparedStatement s = conn.prepareStatement(getSelectByNames())
+            ) {
+                s.setString(1, "'" + TypeUtils.join(playerNames, "','") + "'");
+                ResultSet rs = s.executeQuery();
+                while (rs.next()) {
+                    PrismPlayer prismPlayer = new PrismPlayer(rs.getInt(1), uuidFromDbString(rs.getString(3)),
+                            rs.getString(2));
+                    PrismLogHandler.debug("Loaded player " + rs.getString(2)
+                            + ", id: " + rs.getInt(1) + " into the cache.");
+                    Prism.getInstance().getPlayerIdentifier().getPrismPlayers().put(UUID.fromString(rs.getString(2)), prismPlayer);
+                }
+                rs.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            rs.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
