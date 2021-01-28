@@ -23,7 +23,7 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToAllIds() {
-        return "SELECT block_id, block_subid FROM" + prefix + "id_map WHERE material=?";
+        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=?";
     }
 
     protected  String getPartialToAllIds() {

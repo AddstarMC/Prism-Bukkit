@@ -68,6 +68,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -77,6 +78,7 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -527,8 +529,8 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Keep watch on db connections, other sanity
             launchInternalAffairs();
 
-            if (config.getBoolean("prism.preload-materials")) {
-                config.set("prism.preload-materials", false);
+            if (getConfig().getBoolean("prism.preload-materials")) {
+                getConfig().set("prism.preload-materials", false);
                 saveConfig();
                 PrismLogHandler.log("Preloading materials - This will take a while!");
 
@@ -536,7 +538,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 PrismLogHandler.log("Preloading complete!");
             }
 
-            items.initAllMaterials();
+            items.initMaterials(Material.DIRT);
             Bukkit.getScheduler().runTaskAsynchronously(instance,
                     () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
@@ -558,9 +560,9 @@ public class Prism extends JavaPlugin implements PrismApi {
         final PrismConfig mc = new PrismConfig(this);
         config = mc.saveDefaults();
         // Cache config arrays we check constantly
-        illegalBlocks = config.getStringList("prism.appliers.never-place-block").stream()
+        illegalBlocks = getConfig().getStringList("prism.appliers.never-place-block").stream()
                 .map(Material::matchMaterial).filter(Objects::nonNull).collect(Collectors.toList());
-        illegalEntities = config.getStringList("prism.appliers.never-spawn-entity")
+        illegalEntities = getConfig().getStringList("prism.appliers.never-spawn-entity")
                 .stream()
                 .map(s -> {
                     try {
@@ -573,7 +575,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        ConfigurationSection alertBlocks = config
+        ConfigurationSection alertBlocks = getConfig()
                 .getConfigurationSection("prism.alerts.ores.blocks");
         if (alertBlocks == null) {
             Configuration temp = config.getDefaults();

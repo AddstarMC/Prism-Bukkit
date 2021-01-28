@@ -12,6 +12,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -71,7 +73,6 @@ public class MaterialAliases {
     }
 
     public void initAllMaterials() {
-        query = Prism.getPrismDataSource().getIdMapQuery();
         initMaterials(Material.values());
     }
 
@@ -81,6 +82,7 @@ public class MaterialAliases {
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
+        query = Prism.getPrismDataSource().getIdMapQuery();
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             for (Material m : materials) {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
@@ -103,7 +105,8 @@ public class MaterialAliases {
 
     }
 
-    private Set<IntPair> getIdsOf(Material material) {
+    private @NotNull Set<IntPair> getIdsOf(Material material) {
+        query = Prism.getPrismDataSource().getIdMapQuery();
         Set<IntPair> ids = allIdsCache.get(material);
         if (ids != null) {
             return ids;
@@ -111,7 +114,7 @@ public class MaterialAliases {
 
         query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(
                 material, new HashSet<>(list)));
-        return allIdsCache.get(material);
+        return allIdsCache.getOrDefault(material,Collections.emptySet());
     }
 
     private void storeCache(Material material, String state, int blockId, int blockSubid) {

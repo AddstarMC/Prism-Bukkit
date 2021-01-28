@@ -27,36 +27,11 @@ public class TestHelper {
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
         plugin = MockBukkit.load(PrismTestPlugin.class);
-        server.getScheduler().waitAsyncTasksFinished();
-        server.getScheduler().performTicks(100);
+        server.getScheduler().performTicks(300);
         return server;
     }
 
     public static void shutdown() {
-        PrismDataSource dataSource = Prism.getPrismDataSource();
-        if (dataSource != null) {
-            Collection<String> sql = new ArrayList<>();
-            sql.add("DROP TABLE prism_actions");
-            sql.add("DROP TABLE prism_data");
-            sql.add("DROP TABLE prism_data_extra");
-            sql.add("DROP TABLE prism_meta");
-            sql.add("DROP TABLE prism_players");
-            sql.add("DROP TABLE prism_worlds");
-            sql.add("DROP TABLE prism_id_map");
-            sql.add("DROP TABLE prism_players");
-            sql.forEach(s -> {
-
-                try (
-                        Connection conn = Prism.getPrismDataSource()
-                                .getDataSource().getConnection()
-                ) {
-                    PreparedStatement statement = conn.prepareStatement(s);
-                    statement.execute();
-                } catch (SQLException e) {
-                    System.out.println(e.getMessage());
-                }
-            });
-        }
         MockBukkit.getMock().getScheduler().cancelTasks(plugin);
         MockBukkit.getMock().getPluginManager().disablePlugins();
         MockBukkit.getMock().shutdown();
