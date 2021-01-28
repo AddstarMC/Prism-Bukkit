@@ -22,10 +22,10 @@ public class ConfigBase {
      */
     ConfigBase(Plugin plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfig();
     }
 
     public FileConfiguration getConfig() {
-        config = plugin.getConfig();
         return config;
     }
 
@@ -55,7 +55,7 @@ public class ConfigBase {
      * @param filename      filename
      * @return FileConfig.
      */
-    private FileConfiguration loadConfig(String defaultFolder, String filename) {
+    protected FileConfiguration loadConfig(String defaultFolder, String filename) {
         final File file = getFilename(filename);
         if (file.exists()) {
             return YamlConfiguration.loadConfiguration(file);

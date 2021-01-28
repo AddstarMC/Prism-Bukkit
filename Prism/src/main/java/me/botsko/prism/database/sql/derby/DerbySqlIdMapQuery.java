@@ -19,11 +19,11 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToIds() {
-        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=? AND state=? LIMIT 1;";
+        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=? AND state=? FETCH FIRST ROW";
     }
 
     protected  String getToAllIds() {
-        return "SELECT block_id, block_subid FROM" + prefix + "id_map WHERE material=?;";
+        return "SELECT block_id, block_subid FROM" + prefix + "id_map WHERE material=?";
     }
 
     protected  String getPartialToAllIds() {
@@ -36,18 +36,18 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
 
     protected  String getMap() {
         return "INSERT INTO " + prefix + "id_map(material, state, block_id, block_subid) "
-                + "VALUES (?, ?, ?, ?);";
+                + "VALUES (?, ?, ?, ?)";
     }
 
     protected  String getAutomap() {
-        return "INSERT INTO " + prefix + "id_map(material, state) VALUES (?, ?);";
+        return "INSERT INTO " + prefix + "id_map(material, state) VALUES (?, ?)";
     }
 
     protected  String getRepair() {
-        return "UPDATE " + prefix + "id_map SET block_id=?, block_subid=? WHERE block_id=?;";
+        return "UPDATE " + prefix + "id_map SET block_id=?, block_subid=? WHERE block_id=?";
     }
 
     protected String getUnauto() {
-        return "ALTER TABLE " + prefix + "id_map AUTO_INCREMENT=?;";
+        return "ALTER TABLE " + prefix + "id_map AUTO_INCREMENT=?";
     }
 }

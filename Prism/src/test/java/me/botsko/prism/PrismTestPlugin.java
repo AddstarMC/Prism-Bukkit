@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * Created for the Prism-Bukkit Project.
  *
  * @author Narimm on
- * 25/01/2021.
+ * @since 25/01/2021
  */
 public class PrismTestPlugin extends Prism {
 
@@ -87,10 +87,12 @@ public class PrismTestPlugin extends Prism {
             }
         }, 100, 200);
         if (prismDataSource == null) {
-            prismDataSource = new TestPrismDataSource(config.getConfigurationSection("dataSource"));
+            prismDataSource =
+                    new TestPrismDataSource(config.getConfigurationSection(
+                            "dataSource"));
         }
         Connection testConnection;
-        if (prismDataSource != null) {
+        if (prismDataSource.getDataSource() != null) {
             testConnection = prismDataSource.getConnection();
             if (testConnection == null) {
                 notifyDisabled();
@@ -133,10 +135,6 @@ public class PrismTestPlugin extends Prism {
         up.applyUpdates();
         Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
         updating.cancel();
-    }
-
-    protected void setDataSource(PrismDataSource source) {
-        prismDataSource = source;
     }
 
 }

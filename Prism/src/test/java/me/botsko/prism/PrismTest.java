@@ -1,11 +1,18 @@
 package me.botsko.prism;
 
 import be.seeseemelk.mockbukkit.ServerMock;
+import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.testHelpers.TestHelper;
+import me.botsko.prism.utils.IntPair;
+import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Material;
+import org.bukkit.entity.EntityType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class PrismTest {
 
-    static ServerMock server;
     static boolean integrationTesting = false;
+    private static ServerMock server;
 
     @BeforeAll
     static void setUpAll() {
@@ -29,16 +36,16 @@ public class PrismTest {
         }
     }
 
+    @AfterAll
+    static void tearDownFinal() {
+        TestHelper.shutdown();
+    }
+
     @BeforeEach
     void setUp() {
         server.clearRecipes();
         server.getPluginManager().clearEvents();
         server.getScheduler().performOneTick();
-    }
-
-    @AfterAll
-    static void tearDownFinal() {
-        TestHelper.shutdown();
     }
 
     @Test
@@ -61,12 +68,40 @@ public class PrismTest {
     }
 
     @Test
-    void getPrismVersion() {
-        assertEquals(Prism.getInstance().getPrismVersion().substring(0,5),"2.1.8");
+    void getIllegalBlocks() {
+        assertNotNull(Prism.getIllegalBlocks());
+        assertTrue(Prism.getIllegalBlocks().contains(Material.LAVA));
     }
 
     @Test
-    void removeExpiredLocations() {
+    void getIllegalEntities() {
+        assertNotNull(Prism.getIllegalEntities());
+        assertTrue(Prism.getIllegalEntities().contains(EntityType.CREEPER));
     }
 
+    @Test
+    void getMaterialAliases() {
+        assertNotNull(Prism.getItems());
+        Collection<IntPair> ids = Prism.getItems().materialToAllIds(Material.DIRT);
+        assertNotNull(ids);
+
+    }
+
+    @Test
+    void getAlertedOres() {
+        assertEquals(TextColor.fromCSSHexString("#ffe17d"), Prism.getAlertedOres().get(Material.GOLD_ORE));
+    }
+
+    @Test
+    void getHandlerRegistry() {
+        assertNotNull(Prism.getHandlerRegistry());
+        BlockAction action = Prism.getHandlerRegistry().create(BlockAction.class);
+        assertNotNull(action.getTimeSince());
+        assertNotNull(action.getDisplayDate());
+    }
+
+    @Test
+    void getPrismVersion() {
+        assertEquals(Prism.getInstance().getPrismVersion().substring(0, 5), "2.1.8");
+    }
 }

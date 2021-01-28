@@ -7,14 +7,9 @@ import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
-import me.botsko.prism.settings.Settings;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -59,7 +54,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                             && setupTable5(st, tableNames)
                             && setupTable6(st, tableNames)
                             && setupTable7(st, tableNames)) {
-                Settings.saveSetting("schema_ver", Integer.toString(8));
+                setDatabaseSchemaVersion(8);
             }
             // actions
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to

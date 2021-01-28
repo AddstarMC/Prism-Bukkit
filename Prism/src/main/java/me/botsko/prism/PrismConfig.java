@@ -24,10 +24,9 @@ public class PrismConfig extends ConfigBase {
     }
 
     /**
-     * Get the fileConfig.
+     * Save the defaults.
      */
-    @Override
-    public FileConfiguration getConfig() {
+    public FileConfiguration saveDefaults() {
         config = super.getConfig();
         // set defaults
         config.addDefault("prism.debug", false);
@@ -278,7 +277,6 @@ public class PrismConfig extends ConfigBase {
         config.options().copyDefaults(true);
         // save the defaults/config
         super.write("config",config);
-
         return config;
 
     }

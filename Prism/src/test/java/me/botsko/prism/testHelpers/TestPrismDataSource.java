@@ -7,6 +7,8 @@ import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.Random;
+
 /**
  * Created for the Prism-Bukkit Project.
  *
@@ -14,7 +16,7 @@ import org.bukkit.configuration.ConfigurationSection;
  */
 public class TestPrismDataSource extends DerbySqlPrismDataSource {
 
-
+    private static Random random = new Random();
     /**
      * Constructor.
      *
@@ -26,7 +28,7 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
 
     @Override
     public PrismDataSource createDataSource() {
-        dbConfig.setJdbcUrl("jdbc:derby:memory:testdb;create=true");
+        dbConfig.setJdbcUrl("jdbc:derby:memory:test" + random.nextInt(100) + ";create=true");
         setPrefix("prism_");
         try {
             database = new HikariDataSource(dbConfig);
