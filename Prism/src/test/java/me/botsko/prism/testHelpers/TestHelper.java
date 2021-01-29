@@ -2,17 +2,13 @@ package me.botsko.prism.testHelpers;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import me.botsko.prism.Prism;
 import me.botsko.prism.PrismTestPlugin;
-import me.botsko.prism.database.PrismDataSource;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -20,21 +16,40 @@ import java.util.Collection;
  */
 public class TestHelper {
 
-    private static JavaPlugin plugin;
+    private JavaPlugin plugin;
 
-    public static ServerMock setup() {
+    public ServerMock setup() {
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
         plugin = MockBukkit.load(PrismTestPlugin.class);
-        server.getScheduler().performTicks(300);
+        server.getScheduler().performTicks(20);
         return server;
     }
 
-    public static void shutdown() {
+    public void shutdown() {
+        Path path = plugin.getDataFolder().toPath();
         MockBukkit.getMock().getScheduler().cancelTasks(plugin);
         MockBukkit.getMock().getPluginManager().disablePlugins();
+        try {
+
+            Files.list(path).forEach(path1 -> {
+                try {
+                    Files.delete(path1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            Files.delete(path);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         MockBukkit.getMock().shutdown();
         MockBukkit.unmock();
+    }
+
+    public static void shutdownHelper(TestHelper helper) {
+        helper.shutdown();
     }
 }

@@ -2,11 +2,15 @@ package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.util.PropertyElf;
+import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 
@@ -49,14 +53,30 @@ public class HikariHelper {
         }
         try {
             if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
-                me.botsko.prism.PrismLogHandler.log("Prism Directory couldn't be created");
+                PrismLogHandler.log("Prism Directory couldn't be created");
             }
             OutputStream out = new FileOutputStream(propFile);
             prop.store(out, "Prism Hikari Datasource Properties for"
-                    + " advanced database Configuration");
-            me.botsko.prism.PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
+                    + " advanced database Configuration - Updated: "
+                    + DateFormat.getInstance().format(new Date()));
+            PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
         } catch (IOException e) {
-            me.botsko.prism.PrismLogHandler.log("Could not save Hikari.properties - " + e.getMessage());
+            PrismLogHandler.log("Could not save Hikari.properties - " + e.getMessage());
         }
+    }
+
+    /**
+     * Saves the config to the default dataFolder.
+     *
+     * @param config
+     * @param skipCoreValues
+     */
+    public static void createPropertiesFile(HikariConfig config,boolean skipCoreValues){
+        File propFile = new File(Prism.getInstance().getDataFolder(), "hikari.properties");
+        if (propFile.exists()) {
+            HikariConfig old = new HikariConfig(propFile.getPath());
+            config.copyStateTo(old);
+        }
+        createPropertiesFile(propFile,config,skipCoreValues);
     }
 }

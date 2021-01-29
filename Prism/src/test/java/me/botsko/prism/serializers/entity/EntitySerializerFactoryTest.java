@@ -3,6 +3,7 @@ package me.botsko.prism.serializers.entity;
 import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.testHelpers.TestHelper;
 import org.bukkit.entity.EntityType;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -16,17 +17,23 @@ class EntitySerializerFactoryTest {
     /**
      * Required to avoid NPE.
      */
-    private ServerMock server;
+    private static TestHelper helper;
 
     @BeforeEach
     public void setUp() {
-        server = TestHelper.setup();
+        helper = new TestHelper();
+        ServerMock server = helper.setup();
     }
 
     @Test
-    public void constructorTest(){
+    public void constructorTest() {
         EntitySerializerFactory factory = EntitySerializerFactory.get();
         assertEquals(EntitySerializerFactory.getSerializingClass(EntityType.HORSE),HorseSerializer.class);
+    }
+
+    @AfterAll
+    public static void tearDownFinal() {
+        TestHelper.shutdownHelper(helper);
     }
 
 }

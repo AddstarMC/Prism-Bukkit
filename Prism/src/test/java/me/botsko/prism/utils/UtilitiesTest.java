@@ -1,10 +1,12 @@
 package me.botsko.prism.utils;
 
 import be.seeseemelk.mockbukkit.ServerMock;
+import me.botsko.prism.Prism;
 import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,16 +18,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class UtilitiesTest {
 
-    /**
-     * Required to avoid NPE.
-     */
-    private ServerMock server;
+    static boolean integrationTesting = false;
+    private static ServerMock server;
+    private static TestHelper helper;
 
-    @BeforeEach
-    public void setUp() {
-        server = TestHelper.setup();
+    @BeforeAll
+    static void setUpAll() {
+        helper = new TestHelper();
+        server = helper.setup();
+        if (Prism.getPrismDataSource().getDataSource() != null) {
+            integrationTesting = true;
+        }
     }
-    
+
+    @AfterAll
+    static void tearDownFinal() {
+        TestHelper.shutdownHelper(helper);
+    }
+
     @Test
     public void testAreBlockIdsSameCoreItem() {
         Material m1 = Material.DIRT;
@@ -34,7 +44,5 @@ class UtilitiesTest {
         m1 = Material.GRASS_BLOCK;
         assertTrue(Utilities.areBlockIdsSameCoreItem(m1,m2));
     }
-
-
 
 }

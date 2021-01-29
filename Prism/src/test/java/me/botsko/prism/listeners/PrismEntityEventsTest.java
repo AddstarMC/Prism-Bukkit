@@ -24,10 +24,12 @@ class PrismEntityEventsTest {
 
     static ServerMock server;
     static boolean integrationTesting = false;
+    private static TestHelper helper;
 
     @BeforeAll
     static void setUpAll() {
-        server = TestHelper.setup();
+        helper = new TestHelper();
+        server = helper.setup();
         if (Prism.getPrismDataSource().getDataSource() != null) {
             integrationTesting = true;
         }
@@ -42,7 +44,7 @@ class PrismEntityEventsTest {
 
     @AfterAll
     static void tearDownFinal() {
-        TestHelper.shutdown();
+        TestHelper.shutdownHelper(helper);
     }
 
     @Test

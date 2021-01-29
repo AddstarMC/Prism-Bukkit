@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -31,6 +32,7 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
         dbConfig.setJdbcUrl("jdbc:derby:memory:test" + random.nextInt(100) + ";create=true");
         setPrefix("prism_");
         try {
+            HikariHelper.createPropertiesFile(dbConfig,false);
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
             return this;

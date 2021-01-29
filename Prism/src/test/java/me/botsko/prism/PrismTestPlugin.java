@@ -55,35 +55,17 @@ public class PrismTestPlugin extends Prism {
         loadConfig();        // Load configuration, or install if new
         ConfigurationSection data = config.getConfigurationSection("datasource");
         data.set("type","derby");
-        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
-            PaperLib.suggestPaper(this);
-        }
         isPaper = PaperLib.isPaper();
-        if (isPaper) {
-            PrismLogHandler.log("Optional Paper Events will be enabled.");
-        }
         checkPluginDependencies();
-        if (getConfig().getBoolean("prism.paste.enable")) {
-            pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
-            if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
-                pasteKey = null;
-            } else {
-                PrismLogHandler.log("PasteApi is configured and available");
-            }
-        } else {
-            pasteKey = null;
-        }
+        pasteKey = null;
         final List<String> worldNames = getServer().getWorlds().stream()
                 .map(World::getName).collect(Collectors.toList());
-
-        final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
+        final String[] playerNames = getServer().getOnlinePlayers().stream()
                 .map(Player::getName).toArray(String[]::new);
-
         // init db async then call back to complete enable.
-        final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
+        final BukkitTask updating = getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
                 PrismLogHandler.warn("Prism is loading and updating the database; logging is NOT enabled");
-
             }
         }, 100, 200);
         if (prismDataSource == null) {

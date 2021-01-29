@@ -4,7 +4,6 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.IntPair;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.junit.jupiter.api.AfterAll;
@@ -14,10 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -27,10 +23,12 @@ public class PrismTest {
 
     static boolean integrationTesting = false;
     private static ServerMock server;
+    private static TestHelper helper;
 
     @BeforeAll
     static void setUpAll() {
-        server = TestHelper.setup();
+        helper = new TestHelper();
+        server = helper.setup();
         if (Prism.getPrismDataSource().getDataSource() != null) {
             integrationTesting = true;
         }
@@ -38,7 +36,7 @@ public class PrismTest {
 
     @AfterAll
     static void tearDownFinal() {
-        TestHelper.shutdown();
+        TestHelper.shutdownHelper(helper);
     }
 
     @BeforeEach
