@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.utils.MaterialTag;
@@ -375,6 +376,8 @@ public class PrismBlockEvents extends BaseListener {
         if (enterEvent.getBedEnterResult() == PlayerBedEnterEvent.BedEnterResult.NOT_POSSIBLE_HERE) {
             weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(),
                     enterEvent.getBed().getState()));
+            PrismLogHandler.log("Player attempted to enter bed: " + enterEvent.getPlayer().getName()
+                    + " @ " + enterEvent.getBed().getLocation().toString());
         }
         if (!Prism.getIgnore().event("block-use", enterEvent.getBed())) {
             return;
