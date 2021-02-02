@@ -8,6 +8,7 @@ import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.appliers.ChangeResultImpl;
+import me.botsko.prism.commands.Flags;
 import me.botsko.prism.events.BlockStateChangeImpl;
 import me.botsko.prism.serializers.SerializationHelper;
 import me.botsko.prism.serializers.items.ItemStackSerializer;
@@ -15,28 +16,12 @@ import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.DyeColor;
-import org.bukkit.Nameable;
-import org.bukkit.Tag;
-import org.bukkit.block.Banner;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
-import org.bukkit.block.CommandBlock;
-import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.block.Sign;
-import org.bukkit.block.Skull;
+import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.block.data.Bisected;
+import org.bukkit.block.data.*;
 import org.bukkit.block.data.Bisected.Half;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.Rotatable;
-import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
@@ -47,19 +32,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-import static org.bukkit.Material.AIR;
-import static org.bukkit.Material.CHEST;
-import static org.bukkit.Material.COMMAND_BLOCK;
-import static org.bukkit.Material.FARMLAND;
-import static org.bukkit.Material.FIRE;
-import static org.bukkit.Material.JUKEBOX;
-import static org.bukkit.Material.NETHER_PORTAL;
-import static org.bukkit.Material.OBSIDIAN;
-import static org.bukkit.Material.PLAYER_HEAD;
-import static org.bukkit.Material.PLAYER_WALL_HEAD;
-import static org.bukkit.Material.SPAWNER;
-import static org.bukkit.Material.TRAPPED_CHEST;
-import static org.bukkit.Material.WATER;
+import static org.bukkit.Material.*;
 
 
 public class BlockAction extends GenericAction {
@@ -299,7 +272,7 @@ public class BlockAction extends GenericAction {
         // (essentially liquid/air).
 
         final boolean cancelIfBadPlace = !getActionType().requiresHandler(BlockChangeAction.class)
-                && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
+                && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flags.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
             PrismLogHandler.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
@@ -308,7 +281,7 @@ public class BlockAction extends GenericAction {
 
         // On the blacklist (except an undo)
         if ((Prism.getIllegalBlocks().contains(getMaterial())
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flag.OVERWRITE)) {
+                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flags.OVERWRITE)) {
             PrismLogHandler.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
                     + getMaterial().toString());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
@@ -484,7 +457,7 @@ public class BlockAction extends GenericAction {
             }
         }
 
-        boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
+        boolean physics = !parameters.hasFlag(Flags.NO_PHYS);
 
         newState.update(true, physics);
 
@@ -569,7 +542,7 @@ public class BlockAction extends GenericAction {
             // Ensure it's acceptable to remove the current block
             if (!Utilities.isAcceptableForBlockPlace(block.getType())
                     && !Utilities.areBlockIdsSameCoreItem(block.getType(), getMaterial())
-                    && !parameters.hasFlag(Flag.OVERWRITE)) {
+                    && !parameters.hasFlag(Flags.OVERWRITE)) {
                 return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
             // Capture the block before we change it

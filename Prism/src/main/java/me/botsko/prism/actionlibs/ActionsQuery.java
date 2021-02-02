@@ -5,7 +5,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.commands.Flags;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
@@ -57,7 +57,7 @@ public class ActionsQuery {
             // What to default to
             shouldGroup = plugin.getConfig().getBoolean("prism.queries.lookup-auto-group");
             // Any overriding flags passed?
-            if (parameters.hasFlag(Flag.NO_GROUP) || parameters.hasFlag(Flag.EXTENDED)) {
+            if (parameters.hasFlag(Flags.NO_GROUP) || parameters.hasFlag(Flags.EXTENDED)) {
                 shouldGroup = false;
             }
         }
@@ -124,7 +124,7 @@ public class ActionsQuery {
      *
      * @param parameters params
      * @return id
-     * @deprecated use {@link this#getQueryExtents(QueryParameters)}
+     * @deprecated use {@link this#getQueryExtents(PrismParameters)}
      */
     @Deprecated
     public long getMinIdForQuery(PrismParameters parameters) {
@@ -141,7 +141,7 @@ public class ActionsQuery {
      *
      * @param parameters params
      * @return id
-     * @deprecated use {@link this#getQueryExtents(QueryParameters)}
+     * @deprecated use {@link this#getQueryExtents(PrismParameters)}
      */
     @Deprecated
     public long getMaxIdForQuery(PrismParameters parameters) {

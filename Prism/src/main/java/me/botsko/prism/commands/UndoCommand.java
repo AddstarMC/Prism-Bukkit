@@ -126,7 +126,7 @@ public class UndoCommand implements SubHandler {
                 if (paginated != null) {
                     for (final Handler a : paginated) {
                         final ActionMessage am = new ActionMessage(a);
-                        if (parameters.hasFlag(Flag.EXTENDED)
+                        if (parameters.hasFlag(Flags.EXTENDED)
                                 || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
                             am.showExtended();
                         }

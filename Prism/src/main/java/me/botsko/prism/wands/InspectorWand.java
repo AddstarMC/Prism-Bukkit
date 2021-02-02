@@ -6,7 +6,7 @@ import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.actions.MatchRule;
-import me.botsko.prism.api.commands.Flag;
+import me.botsko.prism.commands.Flags;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -103,7 +103,7 @@ public class InspectorWand extends QueryWandBase {
                 for (final me.botsko.prism.api
                         .actions.Handler a : results.getPaginatedActionResults()) {
                     final ActionMessage am = new ActionMessage(a);
-                    if (parameters.hasFlag(Flag.EXTENDED)
+                    if (parameters.hasFlag(Flags.EXTENDED)
                             || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
                         am.showExtended();
                     }

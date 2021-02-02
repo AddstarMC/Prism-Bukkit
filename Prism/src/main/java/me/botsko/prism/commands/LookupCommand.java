@@ -116,7 +116,7 @@ public class LookupCommand implements SubHandler {
                         int resultCount = results.getIndexOfFirstResult();
                         for (final Handler a : paginated) {
                             final ActionMessage am = new ActionMessage(a);
-                            if (parameters.hasFlag(Flag.EXTENDED)
+                            if (parameters.hasFlag(Flags.EXTENDED)
                                     || plugin.getConfig()
                                     .getBoolean("prism.messenger.always-show-extended")) {
                                 am.showExtended();
@@ -130,7 +130,7 @@ public class LookupCommand implements SubHandler {
                         Prism.messenger.sendMessage(player, Prism.messenger
                                 .playerError(Il8nHelper.getMessage("no-pagination-found")));
                     }
-                    if (parameters.hasFlag(Flag.PASTE)) {
+                    if (parameters.hasFlag(Flags.PASTE)) {
                         StringBuilder paste = new StringBuilder();
                         for (final Handler a : results.getActionResults()) {
                             paste.append(new ActionMessage(a).getRawMessage()).append("\r\n");
