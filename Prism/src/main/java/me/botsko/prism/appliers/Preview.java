@@ -203,11 +203,15 @@ public class Preview implements Previewable {
                         break;
                     }
                     if (processType.equals(PrismProcessType.ROLLBACK) && !a.getActionType().canRollback()) {
+                        PrismLogHandler.debug(a.getActionType().getName() + " (" + a.getId()
+                                + ") cannot be rolled back - preview Skipping");
                         iterator.remove();
                         continue;
                     }
 
                     if (processType.equals(PrismProcessType.RESTORE) && !a.getActionType().canRestore()) {
+                        PrismLogHandler.debug(a.getActionType().getName() + " (" + a.getId()
+                                + ") cannot be restored - preview Skipping");
                         iterator.remove();
                         continue;
                     }
@@ -258,7 +262,7 @@ public class Preview implements Previewable {
                             line += (' ' + message);
                         }
 
-                        me.botsko.prism.PrismLogHandler.log(line);
+                        PrismLogHandler.log(line);
                         e.printStackTrace();
 
                         // Count as skipped, remove from queue

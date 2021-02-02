@@ -33,7 +33,7 @@ public class QueryParameters implements PrismParameters, Cloneable {
     private final Set<MaterialState> materialStateFilters = new HashSet<>();
     private final Map<String, MatchRule> entityFilters = new HashMap<>();
     private final Map<String, MatchRule> playerNames = new HashMap<>();
-    private final EnumSet<Flag> flags = EnumSet.noneOf(Flag.class);
+    private final Set<Flag> flags = new HashSet<>();
     private final List<CommandSender> sharedPlayers = new ArrayList<>();
 
     private Set<String> foundArgs = new HashSet<>();

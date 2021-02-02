@@ -21,8 +21,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -188,24 +186,13 @@ public class ReportCommand extends AbstractCommand {
 
         Prism.messenger.sendMessage(sender,
                 Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("report-recorder-readiness")));
-
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
-            if (conn == null) {
-                Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8nHelper.getMessage("pool-no-valid")));
-            } else if (conn.isClosed()) {
-                Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerError(Il8nHelper.getMessage("pool-connection-closed")));
-            } else if (conn.isValid(5)) {
-                Prism.messenger.sendMessage(sender,
-                        Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
-            }
-        } catch (final SQLException e) {
-            Prism.messenger.sendMessage(sender, Prism.messenger
-                  .playerError(ReplaceableTextComponent.builder("exception-message")
-                        .replace("<message>", e.getLocalizedMessage())
-                        .build()));
-            e.printStackTrace();
+        StringBuilder builder = new StringBuilder();
+        if (Prism.getPrismDataSource().reportDataSource(builder)) {
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerSuccess(builder.toString()));
+        } else {
+            Prism.messenger.sendMessage(sender,
+                    Prism.messenger.playerError(builder.toString()));
         }
     }
 

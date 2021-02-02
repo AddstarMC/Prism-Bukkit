@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -32,7 +31,7 @@ public class MaterialAliases {
     private final Map<String, String> matCache = new HashMap<>();
     private final Map<String, String> idCache = new HashMap<>();
     private final Map<Material, Set<IntPair>> allIdsCache = new HashMap<>();
-    IdMapQuery query;
+    private IdMapQuery query;
     private final HashMap<String, String> itemAliases = new HashMap<>();
 
     /**
@@ -72,6 +71,15 @@ public class MaterialAliases {
         }
     }
 
+    private @NotNull IdMapQuery getQuery() {
+        if (query == null) {
+            query = Prism.getPrismDataSource().getIdMapQuery();
+        }
+        assert (query != null);
+        return query;
+
+    }
+
     public void initAllMaterials() {
         initMaterials(Material.values());
     }
@@ -82,7 +90,6 @@ public class MaterialAliases {
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
-        query = Prism.getPrismDataSource().getIdMapQuery();
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             for (Material m : materials) {
                 String matName = m.name().toLowerCase(Locale.ENGLISH);
@@ -94,7 +101,7 @@ public class MaterialAliases {
                     continue;
                 }
 
-                query.findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
+                getQuery().findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
                       (i, d) ->
                         storeCache(m, dataString, i, d), () -> {
                         int id = query.mapAutoId(matName, dataString);
@@ -106,13 +113,12 @@ public class MaterialAliases {
     }
 
     private @NotNull Set<IntPair> getIdsOf(Material material) {
-        query = Prism.getPrismDataSource().getIdMapQuery();
         Set<IntPair> ids = allIdsCache.get(material);
         if (ids != null) {
             return ids;
         }
 
-        query.findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(
+        getQuery().findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(
                 material, new HashSet<>(list)));
         return allIdsCache.getOrDefault(material,Collections.emptySet());
     }

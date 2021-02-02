@@ -4,7 +4,6 @@ import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.PrismTestPlugin;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
  */
 public class TestHelper {
 
-    private JavaPlugin plugin;
+    private PrismTestPlugin plugin;
 
     public ServerMock setup() {
         ServerMock server = MockBukkit.getOrCreateMock();
@@ -47,6 +46,10 @@ public class TestHelper {
         }
         MockBukkit.getMock().shutdown();
         MockBukkit.unmock();
+    }
+
+    public static boolean isEnabled(TestHelper helper) {
+        return  helper.plugin.isEnabled();
     }
 
     public static void shutdownHelper(TestHelper helper) {

@@ -2,9 +2,9 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.commandlibs.CallInfo;
 
-import java.sql.Connection;
 import java.util.List;
 
 public class RecorderCommand extends AbstractCommand {
@@ -52,29 +52,19 @@ public class RecorderCommand extends AbstractCommand {
                 Prism.messenger.sendMessage(call.getSender(),
                         Prism.messenger.playerError(Il8nHelper.getMessage("report-already-running")));
             } else {
-
-                // Run db tests...
                 Prism.messenger.sendMessage(call.getSender(),
                       Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
-
-                try (
-                        Connection conn = Prism.getPrismDataSource().getConnection()
-                ) {
-                    if (conn == null || conn.isClosed()) {
-                        Prism.messenger.sendMessage(call.getSender(),
-                              Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
-                        return;
-                    }
-
+                StringBuilder result = new StringBuilder();
+                if (Prism.getPrismDataSource().reportDataSource(result)) {
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
-
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerMsg(Il8nHelper.getMessage("recorder-restarting")));
                     plugin.actionRecorderTask();
-
-                } catch (final Exception e) {
-                    e.printStackTrace();
+                } else {
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));
+                    PrismLogHandler.warn(result.toString());
                 }
             }
         }

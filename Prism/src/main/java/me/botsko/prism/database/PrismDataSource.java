@@ -67,4 +67,10 @@ public interface PrismDataSource {
     PlayerIdentificationQuery getPlayerIdHelper();
 
     IdMapQuery getIdMapQuery();
+
+    default boolean reportDataSource(StringBuilder builder) {
+        return reportDataSource(builder,false);
+    }
+
+    boolean reportDataSource(StringBuilder builder, boolean toHandle);
 }

@@ -109,13 +109,11 @@ public class PreviewCommand extends AbstractCommand {
                     if (call.getArg(1).equalsIgnoreCase("rollback")
                             || call.getArg(1).equalsIgnoreCase("rb")) {
                         handleRollBack(call, parameters, results, audience);
-                        assert (parameters.getProcessType() == PrismProcessType.ROLLBACK); //todo remove debug
                     }
                     // Restore
                     if (call.getArg(1).equalsIgnoreCase("restore")
                             || call.getArg(1).equalsIgnoreCase("rs")) {
                         handleRestore(call, parameters, results, audience);
-                        assert (parameters.getProcessType() == PrismProcessType.RESTORE);//todo remove debug
                     }
                 });
                 return;

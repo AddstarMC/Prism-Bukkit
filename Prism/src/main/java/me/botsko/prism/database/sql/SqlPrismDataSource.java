@@ -1,34 +1,22 @@
 package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
+import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.ActionReportQuery;
-import me.botsko.prism.database.BlockReportQuery;
-import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.InsertQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.*;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Map;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 8/04/2019.
  */
+@SuppressWarnings("SqlResolve")
 public abstract class SqlPrismDataSource implements PrismDataSource {
 
     protected static HikariDataSource database = null;
@@ -310,5 +298,39 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
 
     public InsertQuery getDataInsertionQuery() {
         return new SqlInsertBuilder(this);
+    }
+
+    @Override
+    public boolean reportDataSource(StringBuilder builder, boolean toHandle) {
+        if (database == null) {
+            builder.append("Error: Database NULL ");
+            if (toHandle) {
+                builder.append(" -- Rebuilding ");
+                rebuildDataSource();
+            }
+            return false;
+        }
+        try (Connection conn = database.getConnection()) {
+            if (conn == null) {
+                builder.append(Il8nHelper.getMessage("pool-no-valid"));
+                return false;
+            } else if (conn.isClosed()) {
+                builder.append(Il8nHelper.getMessage("pool-connection-closed"));
+                return false;
+            } else if (conn.isValid(5)) {
+                builder.append(Il8nHelper.getMessage("pool-valid-connection")).append(" ");
+                builder.append(Il8nHelper.getMessage("recorder-restarting"));
+                return true;
+            }
+        } catch (final SQLException e) {
+            builder.append("Error: ").append(e.getMessage());
+            if (toHandle) {
+                handleDataSourceException(e);
+            } else {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        return true;
     }
 }

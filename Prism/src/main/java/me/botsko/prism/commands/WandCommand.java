@@ -166,12 +166,12 @@ public class WandCommand extends AbstractCommand {
                     return;
                 }
                 if (oldWand instanceof RestoreWand) {
-                    sendWandStatus(call.getPlayer(), "wand-current", false, wandOn, parameters.toString());
+                    sendWandStatus(call.getPlayer(), "wand-restore", false, wandOn, parameters.toString());
 
                 } else {
                     wand = new RestoreWand(plugin);
                     enabled = true;
-                    sendWandStatus(call.getPlayer(), "wand-current", true, wandOn, parameters.toString());
+                    sendWandStatus(call.getPlayer(), "wand-restore", true, wandOn, parameters.toString());
                 }
                 break;
             case "off":

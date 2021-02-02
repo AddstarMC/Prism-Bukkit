@@ -6,7 +6,6 @@ import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.measurement.QueueStats;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 public class RecordingTask implements Runnable {
@@ -66,28 +65,22 @@ public class RecordingTask implements Runnable {
             }
             long start = System.currentTimeMillis();
             PrismLogHandler.debug("Beginning batch insert from queue. " + start);
-            try (
-                    Connection conn = Prism.getPrismDataSource().getConnection()
-            ) {
-                if ((conn == null) || (conn.isClosed())) {
-                    if (RecordingManager.failedDbConnectionCount == 0) {
-                        PrismLogHandler.log("Prism database error. Connection should be there but it's not. "
-                                        + "Leaving actions to log in queue.");
-                    }
-                    RecordingManager.failedDbConnectionCount++;
-                    if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
-                            .getInt("prism.query.max-failures-before-wait")) {
-                        PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
-                        scheduleNextRecording();
-                    }
-                    PrismLogHandler.debug("Database connection still missing, incrementing count.");
-                    return;
-                } else {
-                    RecordingManager.failedDbConnectionCount = 0;
+            StringBuilder builder = new StringBuilder();
+            if (Prism.getPrismDataSource().reportDataSource(builder)) {
+                RecordingManager.failedDbConnectionCount = 0;
+            } else {
+                if (RecordingManager.failedDbConnectionCount == 0) {
+                    PrismLogHandler.log("Prism database error. Connection should be there but it's not. "
+                            + "Leaving actions to log in queue.");
+                    PrismLogHandler.log(builder.toString());
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-                Prism.getPrismDataSource().handleDataSourceException(e);
+                RecordingManager.failedDbConnectionCount++;
+                if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
+                        .getInt("prism.query.max-failures-before-wait")) {
+                    PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
+                    scheduleNextRecording();
+                }
+                PrismLogHandler.debug("Database connection still missing, incrementing count.");
                 return;
             }
             InsertQuery batchedQuery;

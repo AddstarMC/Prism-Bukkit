@@ -5,9 +5,6 @@ import me.botsko.prism.PrismLogHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class InternalAffairs implements Runnable {
 
     private final Prism plugin;
@@ -35,20 +32,10 @@ public class InternalAffairs implements Runnable {
 
         PrismLogHandler.log("[InternalAffairs] Recorder is NOT active... checking database");
 
-        // is db connection valid?
-        try (Connection conn = Prism.getPrismDataSource().getConnection()) {
-            if (conn == null) {
-                PrismLogHandler.log("[InternalAffairs] Pool returned NULL instead of a valid connection.");
-            } else if (conn.isClosed()) {
-                PrismLogHandler.log("[InternalAffairs] Pool returned an already closed connection.");
-            } else if (conn.isValid(5)) {
-                PrismLogHandler.log("[InternalAffairs] Pool returned valid connection!");
-                PrismLogHandler.log("[InternalAffairs] Restarting scheduled recorder tasks");
-                plugin.actionRecorderTask();
-            }
-        } catch (final SQLException e) {
-            PrismLogHandler.debug("[InternalAffairs] Error: " + e.getMessage());
-            e.printStackTrace();
+        StringBuilder result = new StringBuilder();
+        if (Prism.getPrismDataSource().reportDataSource(result)) {
+             PrismLogHandler.log("[Internal Affairs]" + result.toString());
+             plugin.actionRecorderTask();
         }
     }
 }

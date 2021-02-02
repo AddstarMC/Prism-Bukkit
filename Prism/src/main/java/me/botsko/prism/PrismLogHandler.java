@@ -62,6 +62,7 @@ public class PrismLogHandler implements Closeable {
         Logger log = getLogger();
         log.info("[" + getPrismName() + "] " + message);
         log.info(message);
+        prismLog.info(message);
     }
 
     /**
@@ -119,7 +120,9 @@ public class PrismLogHandler implements Closeable {
      */
     public static void debug(String message) {
         if (debug) {
-            log("- Debug - " + message);
+            String m = "- Debug - " + message;
+            //log(m);
+            prismLog.info(m);
         }
     }
 
@@ -140,6 +143,7 @@ public class PrismLogHandler implements Closeable {
         }
         try {
             File prismFileLog = Prism.getInstance().getDataFolder().toPath().resolve("prism.log").toFile();
+
             FileHandler handler = new PrismFileHandler(prismFileLog);
             result.addHandler(handler);
             result.setLevel(Level.CONFIG);
@@ -162,7 +166,7 @@ public class PrismLogHandler implements Closeable {
     private static class PrismFileHandler extends FileHandler {
 
         public PrismFileHandler(File file) throws IOException, SecurityException {
-            super(file.toString());
+            super(file.toString(),1000000,2);
             setFormatter(new SimpleFormatter() {
                 @Override
                 public synchronized String format(LogRecord lr) {

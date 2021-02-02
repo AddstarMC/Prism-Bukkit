@@ -4,9 +4,9 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.IntPair;
+import me.botsko.prism.utils.MaterialAliases;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,11 +32,6 @@ public class PrismTest {
         if (Prism.getPrismDataSource().getDataSource() != null) {
             integrationTesting = true;
         }
-    }
-
-    @AfterAll
-    static void tearDownFinal() {
-        TestHelper.shutdownHelper(helper);
     }
 
     @BeforeEach
@@ -79,8 +74,9 @@ public class PrismTest {
 
     @Test
     void getMaterialAliases() {
-        assertNotNull(Prism.getItems());
-        Collection<IntPair> ids = Prism.getItems().materialToAllIds(Material.DIRT);
+        MaterialAliases aliases = Prism.getItems();
+        assertNotNull(aliases);
+        Collection<IntPair> ids = aliases.materialToAllIds(Material.DIRT);
         assertNotNull(ids);
 
     }

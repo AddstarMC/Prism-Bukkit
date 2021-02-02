@@ -16,8 +16,6 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,27 +71,14 @@ public class PrismTestPlugin extends Prism {
                     new TestPrismDataSource(config.getConfigurationSection(
                             "dataSource"));
         }
-        Connection testConnection;
-        if (prismDataSource.getDataSource() != null) {
-            testConnection = prismDataSource.getConnection();
-            if (testConnection == null) {
-                notifyDisabled();
-                enableFailedDatabase();
-                updating.cancel();
-                return;
-            }
-            try {
-                testConnection.close();
-            } catch (final SQLException e) {
-                prismDataSource.handleDataSourceException(e);
-            }
-        } else {
+        StringBuilder builder = new StringBuilder();
+        if (!prismDataSource.reportDataSource(builder,true)) {
+            PrismLogHandler.warn(builder.toString());
             notifyDisabled();
             enableFailedDatabase();
             updating.cancel();
             return;
         }
-
         // Info needed for setup, init these here
         handlerRegistry = new HandlerRegistry();
         actionRegistry = new ActionRegistry();
