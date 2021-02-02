@@ -58,7 +58,8 @@ public class LookupCommand implements SubHandler {
             final List<String> defaultsUsed = parameters.getDefaultsUsed();
             StringBuilder defaultsReminder = new StringBuilder();
             if (!defaultsUsed.isEmpty()) {
-                defaultsReminder.append(Il8nHelper.getRawMessage("queryparameter.defaults.prefix"));
+                String prefix = Il8nHelper.getRawMessage("queryparameter-defaults-prefix");
+                defaultsReminder.append(prefix);
                 for (final String d : defaultsUsed) {
                     defaultsReminder.append(" ").append(d);
                 }
