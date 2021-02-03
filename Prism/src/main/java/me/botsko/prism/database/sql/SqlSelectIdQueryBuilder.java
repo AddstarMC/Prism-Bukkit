@@ -2,7 +2,6 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectIdQuery;
-import org.intellij.lang.annotations.Language;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,16 +38,16 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
 
     @Deprecated
     public void setMax() {
-        select = "SELECT max(id) FROM " + tableNameData + " ";
+        select = "SELECT MAX(id) FROM " + tableNameData + " ";
     }
 
     @Deprecated
     public void setMin() {
-        select = "SELECT min(id) FROM " + tableNameData + " ";
+        select = "SELECT MIN(id) FROM " + tableNameData + " ";
     }
 
     public void setMinMax() {
-        select = "SELECT min(id) as min, max(id) as max FROM " + tableNameData + " ";
+        select = "SELECT MIN(id), MAX(id) FROM " + tableNameData + " ";
         pair = true;
     }
 

@@ -158,7 +158,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                     + "player_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "player varchar(255) NOT NULL UNIQUE,"
-                    + "player_uuid char(16) NOT NULL UNIQUE"
+                    + "player_uuid char(32) NOT NULL UNIQUE"
                     + ")";
             st.executeUpdate(query);
             return true;

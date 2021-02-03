@@ -14,22 +14,22 @@ public class DerbySqlPlayerIdentificationQuery extends SqlPlayerIdentificationQu
 
     @Override
     protected String getSelectByName() {
-        return "SELECT player_id, player, HEX(player_uuid) FROM " + prefix + "players WHERE player = ?";
+        return "SELECT player_id, player, player_uuid FROM " + prefix + "players WHERE player = ?";
     }
 
     @Override
     protected String getInsertPlayer() {
-        return "SELECT player_id, player, player_uuid FROM " + prefix + "players WHERE player IN (?)";
-    }
-
-    @Override
-    protected String getUpdatePlayerSql() {
         return "INSERT INTO " + prefix + "players (player,player_uuid) VALUES (?,?)";
     }
 
     @Override
-    protected String getSelectByNames() {
+    protected String getUpdatePlayerSql() {
         return "UPDATE " + prefix + "players SET player = ?, "
                 + "player_uuid = ? WHERE player_id = ?";
+    }
+
+    @Override
+    protected String getSelectByNames() {
+        return "SELECT player_id, player, player_uuid FROM " + prefix + "players WHERE player IN (?)";
     }
 }

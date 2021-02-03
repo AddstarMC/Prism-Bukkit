@@ -64,7 +64,7 @@ public abstract class QueryBuilder {
 
         String query = select() + where() + group() + order() + limit();
 
-        query += ";";
+        //query += ";"; //optional for single queries anyway
         PrismLogHandler.debug(query);
         return query;
 
