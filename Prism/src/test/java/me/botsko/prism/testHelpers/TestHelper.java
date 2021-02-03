@@ -23,29 +23,31 @@ public class TestHelper {
         Metrics metrics = null;
         plugin = MockBukkit.load(PrismTestPlugin.class);
         server.getScheduler().performTicks(20);
+        
         return server;
     }
 
     public void shutdown() {
         Path path = plugin.getDataFolder().toPath();
-        MockBukkit.getMock().getScheduler().cancelTasks(plugin);
-        MockBukkit.getMock().getPluginManager().disablePlugins();
         try {
-
+            MockBukkit.unmock();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        try {
             Files.list(path).forEach(path1 -> {
                 try {
                     Files.delete(path1);
+                    System.out.println("Deleting " + path1.toString());
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             });
             Files.delete(path);
-
+            System.out.println("Deleting " + path.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-        MockBukkit.getMock().shutdown();
-        MockBukkit.unmock();
     }
 
     public static boolean isEnabled(TestHelper helper) {

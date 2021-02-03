@@ -4,12 +4,26 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.BlockReportQuery;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.InsertQuery;
+import me.botsko.prism.database.PlayerIdentificationQuery;
+import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 
 /**

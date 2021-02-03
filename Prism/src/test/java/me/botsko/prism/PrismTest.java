@@ -7,6 +7,7 @@ import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.MaterialAliases;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,11 @@ public class PrismTest {
         }
     }
 
+    @AfterAll
+    static void afterAll() {
+        TestHelper.shutdownHelper(helper);
+    }
+
     @BeforeEach
     void setUp() {
         server.clearRecipes();
@@ -43,6 +49,7 @@ public class PrismTest {
 
     @Test
     void setDebug() {
+        Prism.setDebug(false);
         assertFalse(Prism.isDebug());
         Prism.setDebug(true);
         assertTrue(Prism.isDebug());
