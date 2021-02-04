@@ -57,7 +57,8 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
         long id2 = 0;
         try (
                 Connection connection = dataSource.getDataSource().getConnection();
-                PreparedStatement s = connection.prepareStatement(getQuery(parameters, shouldGroup));
+                PreparedStatement s = connection.prepareStatement(getQuery(parameters, shouldGroup),
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
                 ResultSet rs = s.executeQuery()
         ) {
             if (rs.first()) {

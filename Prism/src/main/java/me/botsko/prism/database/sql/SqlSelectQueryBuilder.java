@@ -454,7 +454,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             if (equation == null) {
                 addCondition(tableNameData + ".epoch >= " + (dateFrom / 1000) + "");
             } else {
-                addCondition(tableNameData + ".epoch " + equation + " '" + (dateFrom / 1000) + "'");
+                addCondition(tableNameData + ".epoch " + equation + " " + (dateFrom / 1000) + "");
             }
         }
         return where;
