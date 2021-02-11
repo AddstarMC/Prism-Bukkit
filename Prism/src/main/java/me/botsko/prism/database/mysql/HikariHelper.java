@@ -42,15 +42,13 @@ class HikariHelper {
                 prop.setProperty("dataSource." + name, val);
             }
         }
-        try {
-            if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
+        try (OutputStream out = new FileOutputStream(propFile)) {
+            if ((!propFile.getParentFile().exists()) && (!propFile.getParentFile().mkdirs())) {
                 Prism.log("Prism Directory couldn't be created");
             }
-            OutputStream out = new FileOutputStream(propFile);
-            prop.store(out, "Prism Hikari Datasource Properties for"
-                    + " advanced database Configuration");
+            prop.store(out, "Prism Hikari Datasource Properties for" + " advanced database Configuration");
             Prism.log("Database Configuration saved to - " + propFile.getPath());
-        } catch (IOException e) {
+        } catch (java.io.IOException e) {
             Prism.log("Could not save Hikari.properties - " + e.getMessage());
         }
     }
