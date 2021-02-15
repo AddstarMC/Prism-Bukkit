@@ -641,11 +641,11 @@ public class PrismEntityEvents extends BaseListener {
             return;
         }
         // If an item frame, track it's contents
-        if (event.getEntity() instanceof ItemFrame) {
-            final ItemFrame frame = (ItemFrame) event.getEntity();
-            if (frame.getItem() != null) {
+        if (entity instanceof ItemFrame) {
+            final ItemFrame frame = (ItemFrame) entity;
+            if (frame.getItem() != null && frame.getItem().getType() != Material.AIR) {
                 RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", frame.getItem(),
-                        frame.getItem().getAmount(), -1, null, entity.getLocation(), breakingName));
+                        frame.getItem().getAmount(), -1, null, frame.getLocation(), breakingName));
             }
         }
     }

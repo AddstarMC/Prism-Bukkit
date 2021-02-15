@@ -73,22 +73,25 @@ public class DeathUtils {
         }
 
         // Causes of death for either entities or players
-        if (damageCause.equals(DamageCause.ENTITY_ATTACK)) {
-            return "mob";
-        } else if (damageCause.equals(DamageCause.PROJECTILE)) {
-            return "skeleton";
-        } else if (damageCause.equals(DamageCause.ENTITY_EXPLOSION)) {
-            return "creeper";
-        } else if (damageCause.equals(DamageCause.CONTACT)) {
-            return "cactus";
-        } else if (damageCause.equals(DamageCause.BLOCK_EXPLOSION)) {
-            return "tnt";
-        } else if (damageCause.equals(DamageCause.FIRE) || damageCause.equals(DamageCause.FIRE_TICK)) {
-            return "fire";
-        } else if (damageCause.equals(DamageCause.MAGIC)) {
-            return "potion";
+        switch (damageCause) {
+            case ENTITY_ATTACK:
+                return "mob";
+            case PROJECTILE:
+                return "skeleton";
+            case ENTITY_EXPLOSION:
+                return "creeper";
+            case CONTACT:
+                return "cactus";
+            case BLOCK_EXPLOSION:
+                return "tnt";
+            case FIRE:
+            case FIRE_TICK:
+                return "fire";
+            case MAGIC:
+                return "potion";
+            default:
+                return damageCause.name().toLowerCase();
         }
-        return damageCause.name().toLowerCase();
     }
 
     /**

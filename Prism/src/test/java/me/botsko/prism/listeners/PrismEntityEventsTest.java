@@ -37,6 +37,7 @@ class PrismEntityEventsTest {
 
     @BeforeEach
     void setUp() {
+        Prism.setDebug(true);
         server.clearRecipes();
         server.getPluginManager().clearEvents();
         server.getScheduler().performOneTick();
