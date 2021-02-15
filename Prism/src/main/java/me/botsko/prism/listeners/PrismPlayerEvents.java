@@ -86,7 +86,7 @@ public class PrismPlayerEvents implements Listener {
                 TextComponent send = Component.text(msg);
                 Prism.messenger.sendMessage(player,
                         Prism.messenger.playerError("Sorry, this command is not available in-game."));
-                plugin.alertPlayers(null, send);
+                plugin.alertPlayers(null, send, null);
                 event.setCancelled(true);
                 // Log to console
                 if (plugin.getConfig().getBoolean("prism.alerts.illegal-commands.log-to-console")) {
@@ -302,7 +302,7 @@ public class PrismPlayerEvents implements Listener {
         if (plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET
                 && !player.hasPermission("prism.alerts.use.lavabucket.ignore")
                 && !player.hasPermission("prism.alerts.ignore")) {
-            plugin.useMonitor.alertOnItemUse(player, "poured lava");
+            plugin.useMonitor.alertOnItemUse(player, "poured lava", "prism.alerts.use.lavabucket");
         }
     }
 
