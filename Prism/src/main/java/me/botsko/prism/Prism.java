@@ -20,7 +20,15 @@ import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
-import me.botsko.prism.listeners.*;
+import me.botsko.prism.listeners.PaperListeners;
+import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismCustomEvents;
+import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismInventoryEvents;
+import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
+import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismVehicleEvents;
+import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
@@ -97,7 +105,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public static FileConfiguration config;
     public static boolean isPaper = true;
     protected static PrismLogHandler logHandler;
-    protected static PrismDataSource prismDataSource = null;
+    protected PrismDataSource prismDataSource = null;
     protected static String pluginName;
     protected static String pasteKey;
     protected static ActionRegistry actionRegistry;
@@ -123,6 +131,12 @@ public class Prism extends JavaPlugin implements PrismApi {
     public final ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
     private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
     private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
+
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
+
+    private TaskManager taskManager;
     public boolean monitoring = false;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
@@ -178,8 +192,8 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
     }
 
-    public static PrismDataSource getPrismDataSource() {
-        return prismDataSource;
+    public PrismDataSource getPrismDataSource() {
+        return this.prismDataSource;
     }
 
     public static String getPasteKey() {
@@ -325,6 +339,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
+        taskManager = new TaskManager(Bukkit.getScheduler(),this);
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
         PrismLogHandler.log("Initializing Prism " + pluginVersion
@@ -382,7 +397,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
             actionRegistry = new ActionRegistry();
-            playerIdentifier = new PlayerIdentification(Prism.getPrismDataSource());
+            playerIdentifier = new PlayerIdentification(Prism.getInstance().getPrismDataSource());
 
             // Setup databases
             prismDataSource.setupDatabase(actionRegistry);
@@ -398,8 +413,8 @@ public class Prism extends JavaPlugin implements PrismApi {
                 }
             }
             // Apply any updates
-            final DatabaseUpdater up = new DatabaseUpdater(this);
-            up.applyUpdates();
+            final DatabaseUpdater up = new DatabaseUpdater(prismDataSource);
+            up.applyUpdates(prismDataSource);
             Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
             updating.cancel();
         });
@@ -432,14 +447,14 @@ public class Prism extends JavaPlugin implements PrismApi {
     }
 
     /**
-     * Enable post run
+     * Enable post run.
      */
     public void enabled() {
         if (isEnabled()) {
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
             ignore = new Ignore(this);
-
+            taskManager.run();
             // Assign event listeners
             getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
             getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
@@ -522,7 +537,7 @@ public class Prism extends JavaPlugin implements PrismApi {
 
             items.initMaterials(Material.DIRT);
             Bukkit.getScheduler().runTaskAsynchronously(instance,
-                    () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
+                  () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
     }
 
@@ -757,6 +772,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     @Override
     public void onDisable() {
+        taskManager.shutdown();
         Bukkit.getPluginManager().callEvent(EventHelper.createUnLoadEvent());
         if (getConfig().getBoolean("prism.query.force-write-queue-on-shutdown")) {
             final QueueDrain drainer = new QueueDrain(this);

@@ -33,7 +33,7 @@ public class InternalAffairs implements Runnable {
         PrismLogHandler.log("[InternalAffairs] Recorder is NOT active... checking database");
 
         StringBuilder result = new StringBuilder();
-        if (Prism.getPrismDataSource().reportDataSource(result)) {
+        if (Prism.getInstance().getPrismDataSource().reportDataSource(result)) {
              PrismLogHandler.log("[Internal Affairs]" + result.toString());
              plugin.actionRecorderTask();
         }

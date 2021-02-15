@@ -22,7 +22,7 @@ import java.util.UUID;
  */
 public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificationQuery {
 
-    protected static String prefix = Prism.getPrismDataSource().getPrefix();
+    protected static String prefix = Prism.getInstance().getPrismDataSource().getPrefix();
 
     /**
      * Loads `prism_players` ID for a player from the database.
@@ -30,7 +30,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
     public PrismPlayer lookupByUuid(UUID uuid) {
         PrismPlayer prismPlayer = null;
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getSelectByUuid())
         ) {
             s.setString(1, uuidToDbString(uuid));
@@ -56,7 +56,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
         PrismPlayer prismPlayer = null;
 
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getSelectByName())
 
         ) {
@@ -107,10 +107,10 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
      */
 
     public void addPlayer(final String name, final UUID uuid) {
-        prefix = Prism.getPrismDataSource().getPrefix();
+        prefix = Prism.getInstance().getPrismDataSource().getPrefix();
         PrismPlayer prismPlayer = new PrismPlayer(0, uuid, name);
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getInsertPlayer(),
                         Statement.RETURN_GENERATED_KEYS)
         ) {
@@ -146,7 +146,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
     public PrismPlayer addFakePlayer(String playerName) {
         PrismPlayer fakePlayer = new PrismPlayer(0, UUID.randomUUID(), playerName);
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getInsertPlayer(), Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, fakePlayer.getName());
@@ -174,7 +174,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
     public void updatePlayer(PrismPlayer prismPlayer) {
         checkAndUpdatePrismPlayer(prismPlayer);
         try (
-                Connection conn = Prism.getPrismDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(getUpdatePlayerSql())
         ) {
             s.setString(1, prismPlayer.getName());
@@ -222,7 +222,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
     public void cacheOnlinePlayerPrimaryKeys(String[] playerNames) {
         if (playerNames.length > 0) {
             try (
-                    Connection conn = Prism.getPrismDataSource().getConnection();
+                    Connection conn = Prism.getInstance().getPrismDataSource().getConnection();
                     PreparedStatement s = conn.prepareStatement(getSelectByNames())
             ) {
                 s.setString(1, "'" + TypeUtils.join(playerNames, "','") + "'");

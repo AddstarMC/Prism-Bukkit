@@ -31,7 +31,7 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToMat() {
-        return "SELECT material, state FROM " + prefix + "id_map WHERE block_id=? AND block_subid=? LIMIT 1;";
+        return "SELECT material, state FROM " + prefix + "id_map WHERE block_id=? AND block_subid=? FETCH FIRST ROW";
     }
 
     protected  String getMap() {

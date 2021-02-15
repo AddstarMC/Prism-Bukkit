@@ -16,7 +16,7 @@ import java.util.Set;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
- * Created by benjamincharlton on 1/01/2021.
+ * Created by Narimm on 1/01/2021.
  */
 public class HikariHelper {
 
@@ -68,10 +68,10 @@ public class HikariHelper {
     /**
      * Saves the config to the default dataFolder.
      *
-     * @param config
-     * @param skipCoreValues
+     * @param config HikariConfig
+     * @param skipCoreValues boolean
      */
-    public static void createPropertiesFile(HikariConfig config,boolean skipCoreValues){
+    public static void createPropertiesFile(HikariConfig config,boolean skipCoreValues) {
         File propFile = new File(Prism.getInstance().getDataFolder(), "hikari.properties");
         if (propFile.exists()) {
             HikariConfig old = new HikariConfig(propFile.getPath());

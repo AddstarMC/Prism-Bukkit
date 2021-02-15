@@ -73,7 +73,7 @@ public class MaterialAliases {
 
     private @NotNull IdMapQuery getQuery() {
         if (query == null) {
-            query = Prism.getPrismDataSource().getIdMapQuery();
+            query = Prism.getInstance().getPrismDataSource().getIdMapQuery();
         }
         assert (query != null);
         return query;

@@ -60,7 +60,7 @@ public class ActionRegistry {
         if (TypeUtils.subStrOccurences(actionType.getName(), "-") != 2) {
             throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.");
         }
-        Prism.getPrismDataSource().addActionName(actionType.getName());
+        Prism.getInstance().getPrismDataSource().addActionName(actionType.getName());
         registeredActions.put(actionType.getName(), actionType);
     }
 

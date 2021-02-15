@@ -25,8 +25,6 @@ public interface PrismDataSource {
 
     PrismDataSource createDataSource();
 
-    void setFile();
-
     void setupDatabase(ActionRegistry actionRegistry);
 
     Connection getConnection();
@@ -73,4 +71,6 @@ public interface PrismDataSource {
     }
 
     boolean reportDataSource(StringBuilder builder, boolean toHandle);
+
+    PrismDataSourceUpdater getUpdater();
 }

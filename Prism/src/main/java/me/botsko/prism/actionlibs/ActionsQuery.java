@@ -21,7 +21,7 @@ public class ActionsQuery {
 
     public ActionsQuery(Prism plugin) {
         this.plugin = plugin;
-        this.qb = Prism.getPrismDataSource().createSelectQuery();
+        this.qb = Prism.getInstance().getPrismDataSource().createSelectQuery();
     }
 
     /**
@@ -95,7 +95,7 @@ public class ActionsQuery {
      * @return long
      */
     public long getUsersLastPrismProcessId(String playername) {
-        SelectProcessActionQuery q = Prism.getPrismDataSource().createProcessQuery();
+        SelectProcessActionQuery q = Prism.getInstance().getPrismDataSource().createProcessQuery();
         PrismParameters parameters = new QueryParameters();
         parameters.setKeyword(playername);
         q.setParameters(parameters);
@@ -111,7 +111,7 @@ public class ActionsQuery {
      * @return Process Action
      */
     public PrismProcessAction getPrismProcessRecord(long id) {
-        SelectProcessActionQuery q = Prism.getPrismDataSource().createProcessQuery();
+        SelectProcessActionQuery q = Prism.getInstance().getPrismDataSource().createProcessQuery();
         PrismParameters parameters = new QueryParameters();
         parameters.setId(id);
         q.setParameters(parameters);
@@ -128,7 +128,7 @@ public class ActionsQuery {
      */
     @Deprecated
     public long getMinIdForQuery(PrismParameters parameters) {
-        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIdQuery();
+        final SelectIdQuery idQ = Prism.getInstance().getPrismDataSource().createSelectIdQuery();
         idQ.setMin();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);
@@ -145,7 +145,7 @@ public class ActionsQuery {
      */
     @Deprecated
     public long getMaxIdForQuery(PrismParameters parameters) {
-        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIdQuery();
+        final SelectIdQuery idQ = Prism.getInstance().getPrismDataSource().createSelectIdQuery();
         idQ.setMax();
         parameters.setMinPrimaryKey(0);
         parameters.setMaxPrimaryKey(0);
@@ -159,7 +159,7 @@ public class ActionsQuery {
      * @return array with minID at 0 and maxID at 1
      */
     public long[] getQueryExtents(PrismParameters parameters) {
-        final SelectIdQuery idQ = Prism.getPrismDataSource().createSelectIdQuery();
+        final SelectIdQuery idQ = Prism.getInstance().getPrismDataSource().createSelectIdQuery();
         idQ.setMinMax();
         parameters.setMaxPrimaryKey(0);
         parameters.setMinPrimaryKey(0);
@@ -174,7 +174,7 @@ public class ActionsQuery {
      * @return the number of rows deleted.
      */
     public int delete(PrismParameters parameters) {
-        final DeleteQuery dqb = Prism.getPrismDataSource().createDeleteQuery();
+        final DeleteQuery dqb = Prism.getInstance().getPrismDataSource().createDeleteQuery();
         dqb.setParameters(parameters);
         dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
         dqb.setShouldPause(shouldPauseDB); //will stop recording queue

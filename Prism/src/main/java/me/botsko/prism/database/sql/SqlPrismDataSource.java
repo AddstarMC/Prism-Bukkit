@@ -54,8 +54,6 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
         } else {
             setPrefix(section.getString("prefix"));
         }
-        setFile();
-        createDataSource();
     }
 
     public static void updateDefaultConfig(ConfigurationSection section) {

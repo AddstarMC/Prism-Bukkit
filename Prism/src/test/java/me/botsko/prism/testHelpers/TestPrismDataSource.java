@@ -1,7 +1,9 @@
 package me.botsko.prism.testHelpers;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
+import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.HikariHelper;
@@ -25,14 +27,20 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
      */
     public TestPrismDataSource(ConfigurationSection section) {
         super(section);
+        updateDefaultConfig(section);
     }
 
     @Override
     public PrismDataSource createDataSource() {
+        dbConfig = new HikariConfig();
+        dbConfig.setUsername("prism");
+        dbConfig.setPassword("password");
         dbConfig.setJdbcUrl("jdbc:derby:memory:test" + random.nextInt(100) + ";create=true");
         setPrefix("prism_");
         try {
-            HikariHelper.createPropertiesFile(dbConfig,false);
+            if (Prism.getInstance() != null) {
+                HikariHelper.createPropertiesFile(dbConfig,false);
+            }
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
             return this;
@@ -41,7 +49,6 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
             database = null;
         }
         return this;
-
     }
 }
 

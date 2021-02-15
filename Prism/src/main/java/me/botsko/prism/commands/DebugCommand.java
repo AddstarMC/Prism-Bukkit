@@ -88,7 +88,7 @@ public class DebugCommand implements SubHandler {
     }
 
     private String getDataSourceInfo() {
-        PrismDataSource dataSource = Prism.getPrismDataSource();
+        PrismDataSource dataSource = Prism.getInstance().getPrismDataSource();
         StringBuilder out = new StringBuilder();
         String name = dataSource.getClass().getName();
         out.append("DataSource Name: ").append(name).append(System.lineSeparator());

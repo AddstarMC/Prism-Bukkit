@@ -2,10 +2,9 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
-import me.botsko.prism.database.mysql.MySqlPrismDataSourceUpdater;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
-import me.botsko.prism.database.sql.derby.DerbySqlDataSourceUpdater;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
+import me.botsko.prism.settings.Settings;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,8 +13,6 @@ import org.jetbrains.annotations.Nullable;
  * Created by benjamincharlton on 4/04/2019.
  */
 public class PrismDatabaseFactory {
-
-    private static PrismDataSource database = null;
 
     /**
      * Create a config.
@@ -77,6 +74,7 @@ public class PrismDatabaseFactory {
      * @return PrismDataSource
      */
     public static PrismDataSource createDataSource(ConfigurationSection configuration) {
+        PrismDataSource database;
         if (configuration == null) {
             return null;
         }
@@ -108,7 +106,7 @@ public class PrismDatabaseFactory {
                 break;
             case "sqlite":
                 PrismLogHandler.warn("ERROR: This version of Prism no longer supports SQLite.");
-                database = null;
+                database = new NullDataSource();
                 break;
             case "hikari":
             case "derby":
@@ -123,32 +121,8 @@ public class PrismDatabaseFactory {
                 PrismLogHandler.log("HIKARI: prism will configure itself using the hikari parameters");
                 break;
         }
+        database.createDataSource();
+        Settings.setDataSource(database);
         return database;
     }
-
-    /**
-     * Create updater for datasource.
-     *
-     * @param configuration ConfigurationSection
-     * @return PrismDataSourceUpdater
-     */
-    public static PrismDataSourceUpdater createUpdater(ConfigurationSection configuration) {
-        if (configuration == null) {
-            return null;
-        }
-        String dataSource = configuration.getString("type", "mysql");
-        if (dataSource == null) {
-            return null;
-        }
-        switch (dataSource) {
-            case "mysql":
-                return new MySqlPrismDataSourceUpdater(database);
-            case "derby":
-                return new DerbySqlDataSourceUpdater();
-            case "sqlite":
-            default:
-                return null;
-        }
-    }
-
 }

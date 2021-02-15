@@ -26,7 +26,7 @@ class UtilitiesTest {
     static void setUpAll() {
         helper = new TestHelper();
         server = helper.setup();
-        if (Prism.getPrismDataSource().getDataSource() != null) {
+        if (Prism.getInstance().getPrismDataSource().getDataSource() != null) {
             integrationTesting = true;
         }
     }

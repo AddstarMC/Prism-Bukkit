@@ -55,7 +55,7 @@ public class RecorderCommand extends AbstractCommand {
                 Prism.messenger.sendMessage(call.getSender(),
                       Prism.messenger.playerMsg(Il8nHelper.getMessage("database-validating")));
                 StringBuilder result = new StringBuilder();
-                if (Prism.getPrismDataSource().reportDataSource(result)) {
+                if (Prism.getInstance().getPrismDataSource().reportDataSource(result)) {
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
                     Prism.messenger.sendMessage(call.getSender(),

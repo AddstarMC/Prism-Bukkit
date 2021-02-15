@@ -162,8 +162,8 @@ public class ReportCommand extends AbstractCommand {
               Prism.messenger.playerMsg(ReplaceableTextComponent.builder("report-actions-queue")
                     .replace("<size>", RecordingQueue.getQueueSize())
                     .build()));
-        if (Prism.getPrismDataSource().getDataSource() instanceof HikariDataSource) {
-            HikariDataSource ds = (HikariDataSource) Prism.getPrismDataSource().getDataSource();
+        if (Prism.getInstance().getPrismDataSource().getDataSource() instanceof HikariDataSource) {
+            HikariDataSource ds = (HikariDataSource) Prism.getInstance().getPrismDataSource().getDataSource();
             Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(ReplaceableTextComponent
                   .builder("report-hikari-props")
                   .replace("<total>", ds.getHikariPoolMXBean().getTotalConnections())
@@ -187,7 +187,7 @@ public class ReportCommand extends AbstractCommand {
         Prism.messenger.sendMessage(sender,
                 Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("report-recorder-readiness")));
         StringBuilder builder = new StringBuilder();
-        if (Prism.getPrismDataSource().reportDataSource(builder)) {
+        if (Prism.getInstance().getPrismDataSource().reportDataSource(builder)) {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerSuccess(builder.toString()));
         } else {
@@ -213,7 +213,7 @@ public class ReportCommand extends AbstractCommand {
             return;
         }
 
-        final BlockReportQuery reportQuery = Prism.getPrismDataSource().createBlockReportQuery();
+        final BlockReportQuery reportQuery = Prism.getInstance().getPrismDataSource().createBlockReportQuery();
         reportQuery.setParameters(parameters);
         /*
           Run the lookup itself in an async task so the lookup query isn't done on the
@@ -254,7 +254,7 @@ public class ReportCommand extends AbstractCommand {
         if (checkParams(parameters, call)) {
             return;
         }
-        final ActionReportQuery reportQuery = Prism.getPrismDataSource().createActionReportQuery();
+        final ActionReportQuery reportQuery = Prism.getInstance().getPrismDataSource().createActionReportQuery();
         reportQuery.setParameters(parameters);
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }

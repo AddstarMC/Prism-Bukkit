@@ -11,7 +11,7 @@ import me.botsko.prism.database.PrismDataSourceUpdater;
 public class DerbySqlDataSourceUpdater implements PrismDataSourceUpdater {
 
 
-    public DerbySqlDataSourceUpdater() {
+    protected DerbySqlDataSourceUpdater() {
     }
 
     @Override

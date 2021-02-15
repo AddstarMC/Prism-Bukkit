@@ -7,10 +7,7 @@ import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.*;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
@@ -18,13 +15,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 
 /**
@@ -33,14 +24,43 @@ import java.util.HashMap;
  */
 public class MySqlPrismDataSource extends SqlPrismDataSource {
 
-    private SettingsQuery settingsQuery;
-
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
-    private static final HikariConfig dbConfig;
+    private static HikariConfig dbConfig;
     private static final HashMap<String, String> dbInfo = new HashMap<>();
+    private final Boolean nonStandardSql;
+    private SettingsQuery settingsQuery;
 
-    static {
+    /**
+     * Create a dataSource.
+     *
+     * @param section Config
+     */
+    public MySqlPrismDataSource(ConfigurationSection section) {
+        super(section);
+        nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
+        detectNonStandardSql();
+        name = "mysql";
+
+    }
+
+    /**
+     * The adds the new requirements to an old configuration file.
+     *
+     * @param section a {@link ConfigurationSection}
+     */
+    public static void updateDefaultConfig(ConfigurationSection section) {
+        section.addDefault("hostname", "127.0.0.1");
+        section.addDefault("username", "prism");
+        section.addDefault("password", "prism");
+        section.addDefault("databaseName", "prism");
+        section.addDefault("prefix", "prism_");
+        section.addDefault("port", "3306");
+        section.addDefault("useNonStandardSql", true);
+        setupDefaultProperties(section);
+    }
+
+    private static void setupDefaultProperties(@Nonnull ConfigurationSection section) {
         if (propFile.exists()) {
             PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             PrismLogHandler.debug("This file will not save the jdbcURL, username or password - these are loaded"
@@ -50,10 +70,19 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig = new HikariConfig(propFile.getPath());
         } else {
             dbConfig = new HikariConfig();
+            int maxPool = section.getInt("database.max-pool-connections", 10);
+            int minIdle = section.getInt("database.min-idle-connections", 2);
+            dbConfig.addDataSourceProperty("maximumPoolSize", maxPool);
+            dbConfig.addDataSourceProperty("minimumIdle", minIdle);
+            dbConfig.setMaximumPoolSize(maxPool);
+            dbConfig.setMinimumIdle(minIdle);
+            dbConfig.addDataSourceProperty("cachePrepStmts",true);
+            dbConfig.addDataSourceProperty("prepStmtCacheSize",250);
+            dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit",2048);
+            dbConfig.addDataSourceProperty("useServerPrepStmts",true);
+            HikariHelper.createPropertiesFile(propFile, dbConfig, true);
         }
     }
-
-    private final Boolean nonStandardSql;
 
     @Override
     public SettingsQuery createSettingsQuery() {
@@ -79,16 +108,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         return idMapQuery;
     }
 
-    /**
-     * Create a dataSource.
-     *
-     * @param section Config
-     */
-    public MySqlPrismDataSource(ConfigurationSection section) {
-        super(section);
-        nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
-        detectNonStandardSql();
-        name = "mysql";
+    @Override
+    public PrismDataSourceUpdater getUpdater() {
+        return new MySqlPrismDataSourceUpdater(this);
     }
 
     /**
@@ -200,36 +222,6 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
         }
     }
 
-    /**
-     * The adds the new requirements to an old configuration file.
-     *
-     * @param section a {@link ConfigurationSection}
-     */
-    public static void updateDefaultConfig(ConfigurationSection section) {
-        section.addDefault("hostname", "127.0.0.1");
-        section.addDefault("username", "prism");
-        section.addDefault("password", "prism");
-        section.addDefault("databaseName", "prism");
-        section.addDefault("prefix", "prism_");
-        section.addDefault("port", "3306");
-        section.addDefault("useNonStandardSql", true);
-        setupDefaultProperties(section);
-    }
-
-    private static void setupDefaultProperties(@Nonnull ConfigurationSection section) {
-        int maxPool = section.getInt("database.max-pool-connections", 10);
-        int minIdle = section.getInt("database.min-idle-connections", 2);
-        if (maxPool > 0 && minIdle > 0 && !propFile.exists()) {
-            dbConfig.addDataSourceProperty("maximumPoolSize", maxPool);
-            dbConfig.addDataSourceProperty("minimumIdle", minIdle);
-            dbConfig.setMaximumPoolSize(maxPool);
-            dbConfig.setMinimumIdle(minIdle);
-        }
-        if (!propFile.exists()) {
-            HikariHelper.createPropertiesFile(propFile, dbConfig, true);
-        }
-    }
-
     @Override
     public MySqlPrismDataSource createDataSource() {
         if (dbConfig.getJdbcUrl() == null) {
@@ -258,11 +250,6 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             database = null;
         }
         return this;
-    }
-
-    @Override
-    public void setFile() {
-        //not required here.
     }
 
     @Override

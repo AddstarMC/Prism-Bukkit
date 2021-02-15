@@ -202,7 +202,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             }
         } catch (final SQLException e) {
             e.printStackTrace();
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            Prism.getInstance().getPrismDataSource().handleDataSourceException(e);
         }
     }
 

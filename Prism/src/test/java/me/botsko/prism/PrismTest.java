@@ -1,7 +1,10 @@
 package me.botsko.prism;
 
 import be.seeseemelk.mockbukkit.ServerMock;
+import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.MaterialAliases;
@@ -12,6 +15,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +37,7 @@ public class PrismTest {
     static void setUpAll() {
         helper = new TestHelper();
         server = helper.setup();
-        if (Prism.getPrismDataSource().getDataSource() != null) {
+        if (Prism.getInstance().getPrismDataSource().getDataSource() != null) {
             integrationTesting = true;
         }
     }
@@ -99,6 +106,41 @@ public class PrismTest {
         BlockAction action = Prism.getHandlerRegistry().create(BlockAction.class);
         assertNotNull(action.getTimeSince());
         assertNotNull(action.getDisplayDate());
+    }
+
+    @Test
+    void checkPurgeTask() {
+        SelectIdQuery query = Prism.getInstance().getPrismDataSource().createSelectIdQuery();
+        query.setMinMax();
+        PrismParameters parameters = new QueryParameters();
+        parameters.allowsNoRadius();
+        String out = query.getQuery(parameters,false);
+        executeQuery(out);
+        try {
+            DatabaseMetaData meta = Prism.getInstance().getPrismDataSource().getDataSource().getConnection().getMetaData();
+            ResultSet set = meta.getTables(null,null,"",null);
+            while(set.next()){
+                int count = set.getMetaData().getColumnCount();
+                for (int i = 0; i < count; i++) {
+                    String data = set.getString(i);
+                    String name = set.getMetaData().getColumnName(i);
+                    System.out.println(name + " : " + data);
+
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private ResultSet executeQuery(String query) {
+        try {
+            PreparedStatement statement = Prism.getInstance().getPrismDataSource().getDataSource().getConnection().prepareStatement(query);
+            return statement.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Test

@@ -35,7 +35,7 @@ public class RecordingTask implements Runnable {
      * @return rows affected.
      */
     public static long insertActionIntoDatabase(Handler a) {
-        return Prism.getPrismDataSource().getDataInsertionQuery().insertActionIntoDatabase(a);
+        return Prism.getInstance().getPrismDataSource().getDataInsertionQuery().insertActionIntoDatabase(a);
     }
 
     /**
@@ -57,7 +57,7 @@ public class RecordingTask implements Runnable {
             perBatch = 1000;
         }
         if (!RecordingQueue.getQueue().isEmpty()) {
-            if (Prism.getPrismDataSource().isPaused()) {
+            if (Prism.getInstance().getPrismDataSource().isPaused()) {
                 PrismLogHandler.log("Prism database paused. An external actor has paused database processing..."
                                 + "scheduling next recording");
                 scheduleNextRecording();
@@ -66,7 +66,7 @@ public class RecordingTask implements Runnable {
             long start = System.currentTimeMillis();
             PrismLogHandler.debug("Beginning batch insert from queue. " + start);
             StringBuilder builder = new StringBuilder();
-            if (Prism.getPrismDataSource().reportDataSource(builder)) {
+            if (Prism.getInstance().getPrismDataSource().reportDataSource(builder)) {
                 RecordingManager.failedDbConnectionCount = 0;
             } else {
                 if (RecordingManager.failedDbConnectionCount == 0) {
@@ -85,12 +85,12 @@ public class RecordingTask implements Runnable {
             }
             InsertQuery batchedQuery;
             try {
-                batchedQuery = Prism.getPrismDataSource().getDataInsertionQuery();
+                batchedQuery = Prism.getInstance().getPrismDataSource().getDataInsertionQuery();
                 batchedQuery.createBatch();
             } catch (Exception e) {
                 e.printStackTrace();
                 if (e instanceof SQLException) {
-                    Prism.getPrismDataSource().handleDataSourceException((SQLException) e);
+                    Prism.getInstance().getPrismDataSource().handleDataSourceException((SQLException) e);
                 }
                 PrismLogHandler.debug("Database connection issue;");
                 RecordingManager.failedDbConnectionCount++;
@@ -140,7 +140,7 @@ public class RecordingTask implements Runnable {
     @Override
     public void run() {
         if (RecordingManager.failedDbConnectionCount > 5) {
-            Prism.getPrismDataSource().rebuildDataSource(); // force rebuild pool after several failures
+            Prism.getInstance().getPrismDataSource().rebuildDataSource(); // force rebuild pool after several failures
         }
         save();
         scheduleNextRecording();

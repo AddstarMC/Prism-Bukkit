@@ -18,11 +18,26 @@ import java.io.File;
  */
 public abstract class PrismHikariDataSource extends SqlPrismDataSource {
 
-    private static final File propFile = new File(Prism.getInstance().getDataFolder(),
-            "hikari.properties");
-    protected static final HikariConfig dbConfig;
 
-    static {
+    private File propFile;
+    protected HikariConfig dbConfig;
+
+
+    /**
+     * Create a dataSource.
+     *
+     * @param section Config
+     */
+    public PrismHikariDataSource(ConfigurationSection section) {
+        super(section);
+        name = "hikari";
+    }
+
+    @Override
+    public PrismDataSource createDataSource() {
+        if (propFile == null ) {
+            propFile = new File(Prism.getInstance().getDataFolder(),"hikari.properties");
+        }
         if (propFile.exists()) {
             PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             dbConfig = new HikariConfig(propFile.getPath());
@@ -43,20 +58,6 @@ public abstract class PrismHikariDataSource extends SqlPrismDataSource {
             dbConfig.setPassword("password");
             HikariHelper.createPropertiesFile(propFile, dbConfig, false);
         }
-    }
-
-    /**
-     * Create a dataSource.
-     *
-     * @param section Config
-     */
-    public PrismHikariDataSource(ConfigurationSection section) {
-        super(section);
-        name = "hikari";
-    }
-
-    @Override
-    public PrismDataSource createDataSource() {
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
@@ -69,8 +70,6 @@ public abstract class PrismHikariDataSource extends SqlPrismDataSource {
 
     }
 
-    @Override
-    public void setFile() {
 
-    }
+
 }

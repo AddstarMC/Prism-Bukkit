@@ -98,8 +98,8 @@ public class PrismTestPlugin extends Prism {
             }
         }
         // Apply any updates
-        final DatabaseUpdater up = new DatabaseUpdater(this);
-        up.applyUpdates();
+        final DatabaseUpdater up = new DatabaseUpdater(prismDataSource);
+        up.applyUpdates(prismDataSource);
         Bukkit.getScheduler().runTask(instance, () -> instance.enabled());
         updating.cancel();
     }

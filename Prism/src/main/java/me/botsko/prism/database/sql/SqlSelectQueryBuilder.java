@@ -454,7 +454,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             if (equation == null) {
                 addCondition(tableNameData + ".epoch >= " + (dateFrom / 1000) + "");
             } else {
-                addCondition(tableNameData + ".epoch " + equation + " '" + (dateFrom / 1000) + "'");
+                addCondition(tableNameData + ".epoch " + equation + " " + (dateFrom / 1000));
             }
         }
         return where;
@@ -469,7 +469,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         eventTimer.recordTimedEvent("query started");
 
         try (
-                Connection conn = Prism.getPrismDataSource().getDataSource().getConnection();
+                Connection conn = Prism.getInstance().getPrismDataSource().getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(query);
                 ResultSet rs = s.executeQuery()
         ) {
@@ -671,7 +671,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             return new QueryResult(actions, parameters);
 
         } catch (SQLException e) {
-            Prism.getPrismDataSource().handleDataSourceException(e);
+            Prism.getInstance().getPrismDataSource().handleDataSourceException(e);
         }
         return new QueryResult(actions, parameters);
     }

@@ -16,7 +16,7 @@ public class MySqlPrismDataSourceUpdater implements PrismDataSourceUpdater {
     private final PrismDataSource dataSource;
     private static String  prefix = "prism_";
 
-    public MySqlPrismDataSourceUpdater(PrismDataSource dataSource) {
+    protected MySqlPrismDataSourceUpdater(PrismDataSource dataSource) {
         this.dataSource = dataSource;
         prefix = this.dataSource.getPrefix();
     }

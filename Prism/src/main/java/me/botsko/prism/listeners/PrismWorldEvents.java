@@ -52,7 +52,7 @@ public class PrismWorldEvents implements Listener {
         final String worldName = event.getWorld().getName();
 
         if (!Prism.prismWorlds.containsKey(worldName)) {
-            Prism.getPrismDataSource().addWorldName(worldName);
+            Prism.getInstance().getPrismDataSource().addWorldName(worldName);
         }
     }
 
