@@ -12,6 +12,7 @@ public class RecordingTask implements Runnable {
 
     private final Prism plugin;
     private static int actionsPerInsert;
+    private int maxFailures;
 
     public static void setActionsPerInsert(int adjust) {
         actionsPerInsert = adjust;
@@ -26,6 +27,8 @@ public class RecordingTask implements Runnable {
     public RecordingTask(Prism plugin) {
         this.plugin = plugin;
         actionsPerInsert = plugin.getConfig().getInt("prism.query.actions-per-insert-batch");
+        maxFailures = plugin.getConfig().getInt("prism.query.max-failures-before-wait");
+
     }
 
     /**
@@ -75,8 +78,7 @@ public class RecordingTask implements Runnable {
                     PrismLogHandler.log(builder.toString());
                 }
                 RecordingManager.failedDbConnectionCount++;
-                if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
-                        .getInt("prism.query.max-failures-before-wait")) {
+                if (RecordingManager.failedDbConnectionCount > maxFailures ) {
                     PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
                     scheduleNextRecording();
                 }

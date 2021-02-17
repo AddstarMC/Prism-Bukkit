@@ -42,7 +42,6 @@ public class PrismDatabaseFactory {
         }
         String dataType = dataSourceSection.getString("type", "mysql");
         updateDataSourceProperties(dataType, dataSourceProperties);
-        addDatabaseDefaults(configuration);
     }
 
     private static void updateDataSourceProperties(@Nullable final String type,
@@ -61,11 +60,6 @@ public class PrismDatabaseFactory {
         }
     }
 
-    private static void addDatabaseDefaults(ConfigurationSection section) {
-        section.addDefault("query.max-failures-before-wait", 5);
-        section.addDefault("query.actions-per-insert-batch", 300);
-        section.addDefault("query.force-write-queue-on-shutdown", true);
-    }
 
     /**
      * Constuct Data source.
