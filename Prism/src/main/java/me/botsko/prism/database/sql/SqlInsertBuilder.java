@@ -35,26 +35,35 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         super(dataSource);
     }
 
+    private int getWorldId(Handler a) {
+        String worldName = a.getLoc().getWorld().getName();
+        if (Prism.prismWorlds.containsKey(worldName)) {
+            return Prism.prismWorlds.get(worldName);
+        }
+        return 0;
+    }
+
+    private int getActionId(Handler a) {
+        if (Prism.prismActions.containsKey(a.getActionType().getName())) {
+            return Prism.prismActions.get(a.getActionType().getName());
+        }
+        return 0;
+    }
+
+    private int getPlayerId(Handler a) {
+        PrismPlayer prismPlayer = Prism.getInstance().getPlayerIdentifier()
+                .getPrismPlayerByNameFromCache(a.getSourceName());
+        return prismPlayer.getId();
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public long insertActionIntoDatabase(Handler a) {
-        int worldId = 0;
-        long id = 0;
-        String worldName = a.getLoc().getWorld().getName();
-        if (Prism.prismWorlds.containsKey(worldName)) {
-            worldId = Prism.prismWorlds.get(worldName);
-        }
-        int actionId = 0;
-        if (Prism.prismActions.containsKey(a.getActionType().getName())) {
-            actionId = Prism.prismActions.get(a.getActionType().getName());
-        }
-
-        PrismPlayer prismPlayer = Prism.getInstance().getPlayerIdentifier()
-                .getPrismPlayerByNameFromCache(a.getSourceName());
-        int playerId = prismPlayer.getId();
-
+        int worldId = getWorldId(a);
+        int actionId = getActionId(a);
+        int playerId = getPlayerId(a);
         if (worldId == 0 || actionId == 0 || playerId == 0) {
             PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
         }
@@ -64,7 +73,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                 Utilities.dataString(a.getOldBlockData()));
 
         Location l = a.getLoc();
-
+        long id = 0;
         try (
                 Connection con = dataSource.getConnection();
                 PreparedStatement s = con.prepareStatement(getQuery(), Statement.RETURN_GENERATED_KEYS)
@@ -109,19 +118,9 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         if (batchStatement == null) {
             return false;
         }
-        int worldId = 0;
-        String worldName = a.getLoc().getWorld().getName();
-        if (Prism.prismWorlds.containsKey(worldName)) {
-            worldId = Prism.prismWorlds.get(worldName);
-        }
-        int actionId = 0;
-        if (Prism.prismActions.containsKey(a.getActionType().getName())) {
-            actionId = Prism.prismActions.get(a.getActionType().getName());
-        }
-
-        PrismPlayer prismPlayer = Prism.getInstance().getPlayerIdentifier()
-                .getPrismPlayerByNameFromCache(a.getSourceName());
-        int playerId = prismPlayer.getId();
+        int worldId = getWorldId(a);
+        int actionId = getActionId(a);
+        int playerId = getPlayerId(a);
 
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));
@@ -144,11 +143,38 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             PrismLogHandler.debug("Batch insert was null");
             throw new SQLException("no batch statement configured");
         }
-        batchStatement.executeBatch();
+        long currentTime = System.currentTimeMillis();
+        int[] results =  batchStatement.executeBatch();
         batchConnection.commit();
-        PrismLogHandler.debug("Batch insert was commit: " + System.currentTimeMillis());
+        debugBatch("primary", results, currentTime);
         processExtraData(batchStatement.getGeneratedKeys());
         batchConnection.close();
+    }
+
+    private void debugBatch(String name, int[] results, long startTime) {
+        if (Prism.isDebug()) {
+            long time = System.currentTimeMillis();
+            int inserts = results.length;
+            int actual = 0;
+            int line = 0;
+            for (int i : results) {
+                switch (i) {
+                    case Statement.EXECUTE_FAILED:
+                        PrismLogHandler.log(name + "Item " + line + " / " + inserts + " failed to execute");
+                        break;
+                    case Statement.SUCCESS_NO_INFO:
+                        PrismLogHandler.log(name + "Item " + line + " / "
+                                + inserts + " was successful but no info was returned.");
+                        break;
+                    default:
+                        actual = actual + i;
+                }
+                line++;
+            }
+            PrismLogHandler.log(name + " Batch commit was complete @ " + time
+                    + " Taking: " + (time - startTime) + "ms");
+            PrismLogHandler.log(name + " Batch insert contained " + actual + " actual v " + inserts + " actions");
+        }
     }
 
     /**
@@ -156,7 +182,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
      * @param keys ResultSet
      * @throws SQLException SQLException.
      */
-    public void processExtraData(ResultSet keys) throws SQLException {
+    private void processExtraData(ResultSet keys) throws SQLException {
         if (extraDataQueue.isEmpty()) {
             return;
         }
@@ -192,14 +218,16 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             }
 
             // The main delay is here
-            s.executeBatch();
-
+            long startTime = System.currentTimeMillis();
+            int[] results = s.executeBatch();
             if (conn.isClosed()) {
                 PrismLogHandler.log("Prism database error. We have to bail in the middle of building extra "
                                 + "data bulk insert query.");
             } else {
                 conn.commit();
             }
+            debugBatch("Extra", results,startTime);
+
         } catch (final SQLException e) {
             e.printStackTrace();
             Prism.getInstance().getPrismDataSource().handleDataSourceException(e);
