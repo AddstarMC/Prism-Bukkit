@@ -388,12 +388,13 @@ public class Prism extends JavaPlugin implements PrismApi {
         messenger = new Messenger(pluginName, Prism.getAudiences());
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
-            PaperLib.suggestPaper(this);
-        }
         isPaper = PaperLib.isPaper();
         if (isPaper) {
             Prism.log("Optional Paper Events will be enabled.");
+        } else {
+            if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
+                Prism.log("Paper not detected - Optional Paper Events will NOT be enabled.");
+            }
         }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
