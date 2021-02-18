@@ -312,8 +312,8 @@ public class Prism extends JavaPlugin {
         messenger = new Messenger(pluginName);
         log("Initializing Prism " + pluginVersion + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
-            PaperLib.suggestPaper(this);
+        if ((!getConfig().getBoolean("prism.suppress-paper-message", false)) && (PaperLib.isPaper())) {
+            Prism.log("Paper not detected - Optional Paper Events will NOT be enabled.");
         }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
