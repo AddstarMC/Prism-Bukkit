@@ -175,8 +175,9 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     public static void setDebug(boolean debug) {
         Prism.debug = debug;
+        PrismLogHandler.setDebug(true);
         if (debug && (debugWatcher == null || debugWatcher.isCancelled())) {
-            PrismLogHandler.log("ALERT : Prism has debug mode enabled - LOGS will rapidly grow!!!");
+            PrismLogHandler.debug("ALERT : Prism has debug mode enabled - LOGS will rapidly grow!!!");
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.hasPermission("prism.debug")) {
