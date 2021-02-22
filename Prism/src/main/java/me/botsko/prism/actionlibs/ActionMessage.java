@@ -1,7 +1,7 @@
 package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Il8nHelper;
-import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Action;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.utils.block.Utilities;
 import net.kyori.adventure.text.Component;
@@ -52,11 +52,11 @@ public class ActionMessage {
      * @return String
      */
     public String getRawMessage() {
-        ActionType action = handler.getActionType();
+        Action action = handler.getActionType();
         return PlainComponentSerializer.plain().serialize(getMainMessage(action, format1));
     }
 
-    private TextComponent getMainMessage(ActionType action, String format1) {
+    private TextComponent getMainMessage(Action action, String format1) {
         final TextColor highlight = NamedTextColor.DARK_AQUA;
         TextComponent out = Component.text().content(format1).build();
         Component result = out.replaceFirstText(Pattern.compile("<prefix>"), builder -> getPosNegPrefix())
@@ -67,10 +67,10 @@ public class ActionMessage {
                                 handler.getSourceName() == null ? "NULL" : handler.getSourceName()
                         ).color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
-                        builder -> Component.text().content(getDescription((ActionTypeImpl) action))
+                        builder -> Component.text().content(getDescription((ActionImpl) action))
                                 .color(NamedTextColor.WHITE))
                 .replaceFirstText(Pattern.compile("<actorNice>"),
-                        builder -> getActor((ActionTypeImpl) action, highlight))
+                        builder -> getActor((ActionImpl) action, highlight))
                 .replaceFirstText(Pattern.compile("<actor>"),
                         builder -> Component.text().content(action.getName()))
                 .replaceFirstText(Pattern.compile("<extendedInfo>"),
@@ -102,7 +102,7 @@ public class ActionMessage {
      * @return String[]
      */
     public TextComponent getMessage() {
-        ActionType action = handler.getActionType();
+        Action action = handler.getActionType();
         TextComponent out = getMainMessage(action, format2line1);
         if (showExtended) {
             out = out.append(Component.newline());
@@ -130,7 +130,7 @@ public class ActionMessage {
     }
 
 
-    private String getDescription(ActionTypeImpl action) {
+    private String getDescription(ActionImpl action) {
         String description = handler.getCustomDesc();
         if (description == null) {
             description = action.getNiceDescription();
@@ -145,7 +145,7 @@ public class ActionMessage {
         return Component.empty();
     }
 
-    private TextComponent.Builder getActor(ActionType action, TextColor highlight) {
+    private TextComponent.Builder getActor(Action action, TextColor highlight) {
         String target = "unknown";
         if (action.getHandler() != null) {
             if (!handler.getNiceName().isEmpty()) {

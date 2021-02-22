@@ -1,47 +1,48 @@
 package me.botsko.prism.actionlibs;
 
+import me.botsko.prism.api.actions.Action;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 
-public class ActionTypeImpl implements ActionType {
+public class ActionImpl implements Action {
 
     private final boolean doesCreateBlock;
     private final boolean canRollback;
     private final boolean canRestore;
     private final Class<? extends Handler> handler;
     private final String niceDescription;
-    private final String name;
+    private final ActionType type;
 
     /**
      * Create An ActionType. -  it cant be restored rolled back and doesnt create a block.
      *
-     * @param name            Name
+     * @param type            Name
      * @param handler         Handler
      * @param niceDescription nice description.
      */
     @SuppressWarnings("unused")
-    public ActionTypeImpl(String name, Class<? extends Handler> handler, String niceDescription) {
-        this(name, false, false, false, handler, niceDescription);
+    public ActionImpl(ActionType type, Class<? extends Handler> handler, String niceDescription) {
+        this(type, false, false, false, handler, niceDescription);
     }
 
     /**
      * Create An ActionType.
      *
-     * @param name            Name
+     * @param type            Name
      * @param doesCreateBlock true if creates a block
      * @param canRollback     can we roll this back
      * @param canRestore      can it be restored
      * @param handler         Handler
      * @param niceDescription nice description.
      */
-    public ActionTypeImpl(String name, boolean doesCreateBlock, boolean canRollback, boolean canRestore,
+    public ActionImpl(ActionType type, boolean doesCreateBlock, boolean canRollback, boolean canRestore,
                           Class<? extends Handler> handler, String niceDescription) {
         this.doesCreateBlock = doesCreateBlock;
         this.canRollback = canRollback;
         this.canRestore = canRestore;
         this.handler = handler;
         this.niceDescription = niceDescription;
-        this.name = name;
+        this.type = type;
     }
 
     public boolean canRollback() {
@@ -80,7 +81,7 @@ public class ActionTypeImpl implements ActionType {
     }
 
     public String getName() {
-        return name;
+        return type.toString();
     }
 
     /**
@@ -88,11 +89,11 @@ public class ActionTypeImpl implements ActionType {
      * @return String
      */
     String getFamilyName() {
-        final String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");
+        final String[] _tmp = this.type.toString().toLowerCase().split("-(?!.*-.*)");
         if (_tmp.length == 2) {
             return _tmp[0];
         }
-        return name;
+        return type.toString();
     }
 
     /**
@@ -100,11 +101,11 @@ public class ActionTypeImpl implements ActionType {
      * @return String
      */
     public String getShortName() {
-        final String[] _tmp = this.name.toLowerCase().split("-(?!.*-.*)");
+        final String[] _tmp = this.type.toString().toLowerCase().split("-(?!.*-.*)");
         if (_tmp.length == 2) {
             return _tmp[1];
         }
-        return name;
+        return type.toString();
     }
 
 }

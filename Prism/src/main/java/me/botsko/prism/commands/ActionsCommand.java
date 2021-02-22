@@ -2,7 +2,7 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionTypeImpl;
+import me.botsko.prism.actionlibs.ActionImpl;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import net.kyori.adventure.text.Component;
@@ -53,8 +53,8 @@ public class ActionsCommand implements SubHandler {
                                 .color(NamedTextColor.GOLD)));
         // Build short list
         final List<String> shortNames = new ArrayList<>();
-        final TreeMap<String, ActionTypeImpl> actions = Prism.getActionRegistry().getRegisteredAction();
-        for (final Entry<String, ActionTypeImpl> entry : actions.entrySet()) {
+        final TreeMap<String, ActionImpl> actions = Prism.getActionRegistry().getRegisteredAction();
+        for (final Entry<String, ActionImpl> entry : actions.entrySet()) {
             if (entry.getKey().contains("prism")) {
                 continue;
             }
@@ -79,7 +79,7 @@ public class ActionsCommand implements SubHandler {
         // Build display of full actions
         actionList = new StringBuilder();
         i = 1;
-        for (final Entry<String, ActionTypeImpl> entry : actions.entrySet()) {
+        for (final Entry<String, ActionImpl> entry : actions.entrySet()) {
             if (entry.getKey().contains("prism")) {
                 continue;
             }

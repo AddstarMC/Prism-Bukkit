@@ -1,33 +1,103 @@
 package me.botsko.prism.api.actions;
 
 /**
- * Created for use for the Add5tar MC Minecraft server
- * Created by benjamincharlton on 10/01/2021.
+ * Created for Prism.
+ *
+ * @author Narimm on 22/02/2021
+ * @since 2.1.8
  */
-public interface ActionType {
+public enum ActionType {
+
+    BLOCK_BREAK("block-break"),
+    BLOCK_BURN("block-burn"),
+    BLOCK_DISPENSE("block-dispense"),
+    BLOCK_FADE("block-fade"),
+    BLOCK_FALL("block-fall"),
+    BLOCK_FORM("block-form"),
+    BLOCK_PLACE("block-place"),
+    BLOCK_SHIFT("block-shift"),
+    BLOCK_SPREAD("block-spread"),
+    BLOCK_USE("block-use"),
+    BONEMEAL_USE("bonemean-use"),
+    BUCKET_FILL("bucket-fill"),
+    CAKE_EAT("cake-eat"),
+    CONTAINER_ACCESS("container-access"),
+    CRAFT_ITEM("craft-item"),
+    ENCHANT_ITEM("enchant-item"),
+    CREEPER_EXPLODE("creeper-explode"),
+    DRAGON_EAT("dragon-eat"),
+    ENDERMAN_PICKUP("enderman-pickup"),
+    ENDERMAN_PLACE("enderman-place"),
+    ENTITY_BREAK("entity-break"),
+    ENTITY_DYE("entity-dye"),
+    ENTITY_EXPLODE("entity-explode"),
+    ENTITY_FOLLOW("entity-follow"),
+    ENTITY_FORM("entity-form"),
+    ENTITY_KILL("entity-kill"),
+    ENTITY_LEASH("entity-lease"),
+    ENTITY_SHEAR("entity-shear"),
+    ENTITY_UNLEASH("entity-unleash"),
+    FIREBALL("fireball"),
+    FIRE_SPREAD("fire-spread"),
+    FIREWORK_LAUNCH("firework-launch"),
+    HANGINGITEM_BREAK("hangingitem-break"),
+    HANGINGITEM_PLACE("hangingitem-place"),
+    ITEM_DROP("item-drop"),
+    ITEM_INSERT("item-insert"),
+    ITEM_PICKUP("item-pickup"),
+    ITEM_REMOVE("item-remove"),
+    ITEM_BREAK("item-break"),
+    ITEM_ROTATE("item-rotate"),
+    LAVA_BREAK("lava-break"),
+    LAVA_BUCKET("lava-bucket"),
+    LAVA_FLOW("lava-flow"),
+    LAVA_IGNITE("lava-ignite"),
+    LEAF_DECAY("leaf-decay"),
+    LIGHTER("lighter"),
+    LIGHTNING("lightning"),
+    MUSHROOM_GROW("mushroom-grow"),
+    PLAYER_CHAT("player-chat"),
+    PLAYER_COMMAND("player-command"),
+    PLAYER_DEATH("player-death"),
+    PLAYER_JOIN("player-join"),
+    PLAYER_QUIT("player-quit"),
+    PLAYER_GAMEMODECHANGE("player-gamemodechange"),
+    PLAYER_TELEPORT("player-teleport"),
+    POTION_SPLASH("potion-splash"),
+    PRISM_DRAIN("prism-drain"),
+    PRISM_EXTINGUISH("prism-extinguish"),
+    PRISM_PROCESS("prism-process"),
+    PRISM_ROLLBACK("prism-rollback"),
+    SHEEP_EAT("sheep-eat"),
+    SIGN_CHANGE("sign-change"),
+    SPAWNEGG_USE("spawnegg-use"),
+    TNT_EXPLODE("tnt-explode"),
+    BED_EXPLORE("bed-explode"),
+    TNT_PRIME("tnt-prime"),
+    TREE_GROW("tree-grow"),
+    VEHICLE_BREAK("vehicle-break"),
+    VEHICLE_ENTER("vehicle-enter"),
+    VEHICLE_EXIT("vehicle-exit"),
+    VEHICLE_PLACE("vehicle-place"),
+    WATER_BREAK("water-break"),
+    WATER_FLOW("water-flow"),
+    WORLD_EDIT("world-edit"),
+    XP_PICKUP("xp-pickup"),
+    TARGET_HIT("target-hit"),
+    PLAYER_TRADE("player-trade"),
+    ITEM_RECEIVE("item-receive");
 
 
-    boolean canRollback();
+    public String name;
 
-    boolean canRestore();
 
-    Class<? extends Handler> getHandler();
 
-    /**
-     *  Checks if an Action requires a specific handler.
-     * @param handler Handler
-     * @return boolean
-     */
-    boolean requiresHandler(Class<? extends Handler> handler);
+    ActionType(String name) {
+        this.name = name;
+    }
 
-    boolean doesCreateBlock();
-
-    String getName();
-
-    /**
-     * Get the Class Short name.
-     * @return String
-     */
-    String getShortName();
-
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -1,10 +1,10 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.ActionTypeImpl;
+import me.botsko.prism.actionlibs.ActionImpl;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.PrismParameters;
-import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Action;
 import me.botsko.prism.api.actions.Handler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -22,7 +22,7 @@ public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
     private boolean canceled = false;
-    private ActionType type;
+    private Action type;
 
     private long id;
 
@@ -161,7 +161,7 @@ public abstract class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#getType()
      */
     @Override
-    public ActionType getActionType() {
+    public Action getActionType() {
         return type;
     }
 
@@ -179,10 +179,10 @@ public abstract class GenericAction implements Handler {
     /**
      * Set the Action Type.
      *
-     * @param type {@link ActionTypeImpl}
+     * @param type {@link ActionImpl}
      */
     @Override
-    public void setActionType(ActionType type) {
+    public void setActionType(Action type) {
         this.type = type;
     }
 

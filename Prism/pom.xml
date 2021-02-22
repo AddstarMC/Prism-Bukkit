@@ -73,6 +73,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.spongepowered</groupId>
+            <artifactId>configurate-yaml</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>au.com.addstar.dripreporter</groupId>
             <artifactId>DripReporterAPI</artifactId>
             <version>1.0.2-SNAPSHOT</version>
