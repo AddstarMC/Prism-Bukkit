@@ -378,7 +378,7 @@ public class QueryParameters implements PrismParameters, Cloneable {
      */
     @SuppressWarnings("unused")
     public void removeActionType(ActionType a) {
-        actionTypeRules.remove(a.getName());
+        actionTypeRules.remove(a.name);
     }
 
     /**

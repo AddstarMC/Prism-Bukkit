@@ -1,5 +1,9 @@
 package me.botsko.prism.api.actions;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
+
 /**
  * Created for Prism.
  *
@@ -25,6 +29,7 @@ public enum ActionType {
     CRAFT_ITEM("craft-item"),
     ENCHANT_ITEM("enchant-item"),
     CREEPER_EXPLODE("creeper-explode"),
+    CROP_TRAMPLE("crop-trample"),
     DRAGON_EAT("dragon-eat"),
     ENDERMAN_PICKUP("enderman-pickup"),
     ENDERMAN_PLACE("enderman-place"),
@@ -33,6 +38,7 @@ public enum ActionType {
     ENTITY_EXPLODE("entity-explode"),
     ENTITY_FOLLOW("entity-follow"),
     ENTITY_FORM("entity-form"),
+    ENTITY_SPAWN("entity-spawn"),
     ENTITY_KILL("entity-kill"),
     ENTITY_LEASH("entity-lease"),
     ENTITY_SHEAR("entity-shear"),
@@ -61,6 +67,7 @@ public enum ActionType {
     PLAYER_DEATH("player-death"),
     PLAYER_JOIN("player-join"),
     PLAYER_QUIT("player-quit"),
+    PLAYER_KILL("player-kill"),
     PLAYER_GAMEMODECHANGE("player-gamemodechange"),
     PLAYER_TELEPORT("player-teleport"),
     POTION_SPLASH("potion-splash"),
@@ -72,7 +79,7 @@ public enum ActionType {
     SIGN_CHANGE("sign-change"),
     SPAWNEGG_USE("spawnegg-use"),
     TNT_EXPLODE("tnt-explode"),
-    BED_EXPLORE("bed-explode"),
+    BED_EXPLODE("bed-explode"),
     TNT_PRIME("tnt-prime"),
     TREE_GROW("tree-grow"),
     VEHICLE_BREAK("vehicle-break"),
@@ -81,23 +88,85 @@ public enum ActionType {
     VEHICLE_PLACE("vehicle-place"),
     WATER_BREAK("water-break"),
     WATER_FLOW("water-flow"),
+    WATER_BUCKET("water-bucket"),
     WORLD_EDIT("world-edit"),
     XP_PICKUP("xp-pickup"),
     TARGET_HIT("target-hit"),
     PLAYER_TRADE("player-trade"),
     ITEM_RECEIVE("item-receive");
 
+    private static Map<String, List<ActionType>> registeredShortNames = new HashMap<>();
+    private static Map<String, List<ActionType>> registeredFamilyNames = new HashMap<>();
+    private static EnumMap<ActionType, StringPair> names = new EnumMap<>(ActionType.class);
 
     public String name;
 
-
+    static {
+        for (ActionType type:ActionType.values()) {
+            String name = type.name;
+            final String[] _tmp = name.toLowerCase().split("-(?!.*-.*)");
+            if (_tmp.length == 2) {
+                String shortName = _tmp[1];
+                List<ActionType> shortType = registeredShortNames.getOrDefault(shortName,new ArrayList<>());
+                shortType.add(type);
+                registeredShortNames.put(shortName, shortType);
+                String familyName = _tmp[0];
+                List<ActionType> familyType = registeredFamilyNames.getOrDefault(familyName, new ArrayList<>());
+                familyType.add(type);
+                registeredShortNames.put(familyName, familyType);
+                names.put(type, new StringPair(familyName, shortName));
+            }
+        }
+    }
 
     ActionType(String name) {
         this.name = name;
+    }
+
+    public String getFamilyName() {
+        StringPair result = names.get(this);
+        if (result == null) {
+            return this.name;
+        }
+        return result.familyName;
+    }
+
+    public String getShortName() {
+        StringPair result = names.get(this);
+        if (result == null) {
+            return this.name;
+        }
+        return result.shortName;
+    }
+
+    @NotNull
+    public static List<ActionType> getByShortName(String name) {
+        return registeredShortNames.getOrDefault(name,Collections.emptyList());
+    }
+
+    public static Set<String> getShortNames() {
+        return registeredShortNames.keySet();
+    }
+
+
+    @NotNull
+    public static List<ActionType> getByFamilyName(String name) {
+        return registeredFamilyNames.getOrDefault(name,Collections.emptyList());
     }
 
     @Override
     public String toString() {
         return name;
     }
+
+    private static class StringPair {
+        protected String familyName;
+        protected String shortName;
+
+        public StringPair(String familyName, String shortName) {
+            this.familyName = familyName;
+            this.shortName = shortName;
+        }
+    }
+
 }

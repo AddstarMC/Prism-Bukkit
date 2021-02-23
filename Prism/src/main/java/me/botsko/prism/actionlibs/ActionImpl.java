@@ -58,6 +58,14 @@ public class ActionImpl implements Action {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ActionType getActionType() {
+        return type;
+    }
+
+    /**
      * Returns the nice name of the action.
      *
      * @return String
@@ -89,11 +97,7 @@ public class ActionImpl implements Action {
      * @return String
      */
     String getFamilyName() {
-        final String[] _tmp = this.type.toString().toLowerCase().split("-(?!.*-.*)");
-        if (_tmp.length == 2) {
-            return _tmp[0];
-        }
-        return type.toString();
+        return this.getActionType().getFamilyName();
     }
 
     /**
@@ -101,11 +105,7 @@ public class ActionImpl implements Action {
      * @return String
      */
     public String getShortName() {
-        final String[] _tmp = this.type.toString().toLowerCase().split("-(?!.*-.*)");
-        if (_tmp.length == 2) {
-            return _tmp[1];
-        }
-        return type.toString();
+        return this.getActionType().getShortName();
     }
 
 }

@@ -6,6 +6,7 @@ package me.botsko.prism.api.actions;
  */
 public interface Action {
 
+    ActionType getActionType();
 
     boolean canRollback();
 

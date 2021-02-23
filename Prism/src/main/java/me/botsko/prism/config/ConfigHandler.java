@@ -16,20 +16,36 @@ import java.nio.file.Path;
  */
 public class ConfigHandler {
 
+    private YamlConfigurationLoader.Builder builder =  YamlConfigurationLoader
+            .builder().nodeStyle(NodeStyle.BLOCK).indent(2);
+
+    private PrismConfig config;
     private ConfigurationNode main;
-    private PrismConfig prismDefaults;
-    private ConfigurationNode dataSourceConfig;
+    //private ConfigurationNode dataSourceConfig;
 
     public void loadConfiguration(Path path) {
-        YamlConfigurationLoader loader =  YamlConfigurationLoader
-                .builder().nodeStyle(NodeStyle.BLOCK).indent(4).path(path).build();
+        YamlConfigurationLoader loader =  builder.path(path).build();
         try {
             main = loader.load();
-            prismDefaults = main.node("prism").get(TypeToken.get(PrismConfig.class),new PrismConfig());
-            dataSourceConfig = main.node("datasource");
+            config = main.node("prism").get(TypeToken.get(PrismConfig.class),new PrismConfig());
+            //dataSourceConfig = main.node("datasource");
         } catch (ConfigurateException e) {
             e.printStackTrace();
         }
     }
 
+    public void saveConfiguration(Path path) {
+        YamlConfigurationLoader loader =  builder.path(path).build();
+        try {
+            main.node("prism").set(config);
+            loader.save(main);
+        } catch (ConfigurateException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public PrismConfig getConfig(){
+        return config;
+    }
 }

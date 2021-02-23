@@ -3,7 +3,7 @@ package me.botsko.prism.database.sql;
 import com.google.gson.JsonSyntaxException;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionTypeImpl;
+import me.botsko.prism.actionlibs.ActionImpl;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.RecordingManager;
 import me.botsko.prism.api.actions.Handler;
@@ -29,13 +29,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
@@ -503,7 +498,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 }
 
                 // Get the action handler
-                final ActionTypeImpl actionType = Prism.getActionRegistry().getAction(actionName);
+                final ActionImpl actionType = Prism.getActionRegistry().getAction(actionName);
 
                 if (actionType == null) {
                     continue;

@@ -1,11 +1,20 @@
 package me.botsko.prism.config;
 
+import me.botsko.prism.api.actions.ActionType;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created for Prism.
@@ -19,7 +28,7 @@ public class PrismConfig {
     @Setting("debug")
     public boolean debug = false;
 
-    @Setting("preleoad-materials")
+    @Setting("preload-materials")
     public boolean preloadMaterials = true;
 
     @Setting("paste")
@@ -28,24 +37,39 @@ public class PrismConfig {
     @Setting("wand")
     public WandConfig wandConfig = new WandConfig();
 
-    @Setting("query")
+    @Setting("queries")
     public ParameterConfig parameterConfig = new ParameterConfig();
 
     @Setting("near")
     public CommandDefault nearCommandCondig = new CommandDefault(5,100,100);
 
     @Setting("drain")
-    public CommandDefault drainCommandConfig = new CommandDefault(5,100,10);
+    public CommandDefault drainCommandConfig = new CommandDefault();
 
     @Setting("ex")
-    public CommandDefault extinguishCommandConfig = new CommandDefault(5,100,10);
+    public CommandDefault extinguishCommandConfig = new CommandDefault();
 
     @Setting("ignore")
     public IgnoreConfig ignoreConfig = new IgnoreConfig();
 
+    @Setting("purge")
+    public PurgeConfig purgeConfig = new PurgeConfig();
+
     @Setting("applier")
     public ApplierConfig applierConfig = new ApplierConfig();
 
+    @Setting("tracking")
+    public TrackingConfig trackingConfig = new TrackingConfig();
+
+    @Setting("do-not-track-commands")
+    public List<String> doNotTrackCommands = Arrays.asList("vanish","v","login","changepassword","register","unregister");
+
+
+    @Setting("alerts")
+    public AlertConfig alertConfig =  new AlertConfig();
+
+    @Setting("queue")
+    public QueueConfig queueConfig = new QueueConfig();
 
     @ConfigSerializable
     public static class PasteConfig {
@@ -82,6 +106,7 @@ public class PrismConfig {
 
     }
 
+    @ConfigSerializable
     public static class ParameterConfig {
 
         @Setting("default-radius")
@@ -113,24 +138,29 @@ public class PrismConfig {
 
     }
 
+    @ConfigSerializable
     public static class CommandDefault {
 
         @Setting("default-radius")
-        public int defaultRadius;
+        public int defaultRadius = 5;
 
         @Setting("max-results")
-        public int maxResults;
+        public int maxResults = 100;
 
         @Setting("max-radius")
-        public int maxRadius;
+        public int maxRadius = 10;
 
         protected CommandDefault(int defaultRadius, int maxResults, int maxRadius) {
             this.defaultRadius = defaultRadius;
             this.maxResults = maxResults;
             this.maxRadius = maxRadius;
         }
+
+        public CommandDefault() {
+        }
     }
 
+    @ConfigSerializable
     public static class IgnoreConfig {
 
         @Setting("enable-perm-nodes")
@@ -153,6 +183,7 @@ public class PrismConfig {
 
     }
 
+    @ConfigSerializable
     public static class PurgeConfig {
 
 
@@ -168,6 +199,7 @@ public class PrismConfig {
 
     }
 
+    @ConfigSerializable
     public static class ApplierConfig {
 
 
@@ -190,88 +222,159 @@ public class PrismConfig {
         public EnumSet<Material> neverPlace = EnumSet.of(Material.LAVA,Material.WATER);
         
     }
-    
-    public static class TrackingConfig {
-        public Map<String,Boolean> trackers = new HashMap<>();
 
-        public TrackingConfig() {
-            trackers.put("block-break", true);
-            trackers.put("block-burn", true);
-            trackers.put("block-dispense", true);
-            trackers.put("block-fade", true);
-            trackers.put("block-fall", true);
-            trackers.put("block-form", true);
-            trackers.put("block-place", true);
-            trackers.put("block-shift", true);
-            trackers.put("block-spread", true);
-            trackers.put("block-use", true);
-            trackers.put("bucket-fill", true);
-            trackers.put("bonemeal-use", true);
-            trackers.put("container-access", true);
-            trackers.put("cake-eat", true);
-            trackers.put("craft-item", false);
-            trackers.put("creeper-explode", true);
-            trackers.put("crop-trample", true);
-            trackers.put("dragon-eat", true);
-            trackers.put("enchant-item", false);
-            trackers.put("enderman-pickup", true);
-            trackers.put("enderman-place", true);
-            trackers.put("entity-break", true);
-            trackers.put("entity-dye", false);
-            trackers.put("entity-explode", true);
-            trackers.put("entity-follow", true);
-            trackers.put("entity-form", true);
-            trackers.put("entity-kill", true);
-            trackers.put("entity-leash", true);
-            trackers.put("entity-shear", true);
-            trackers.put("entity-spawn", true);
-            trackers.put("entity-unleash", true);
-            trackers.put("fireball", true);
-            trackers.put("fire-spread", false);
-            trackers.put("firework-launch", true);
-            trackers.put("hangingitem-break", true);
-            trackers.put("hangingitem-place", true);
-            trackers.put("item-drop", true);
-            trackers.put("item-insert", true);
-            trackers.put("item-pickup", true);
-            trackers.put("item-remove", true);
-            trackers.put("item-break", false);
-            trackers.put("item-rotate", true);
-            trackers.put("lava-break", true);
-            trackers.put("lava-bucket", true);
-            trackers.put("lava-flow", false);
-            trackers.put("lava-ignite", true);
-            trackers.put("leaf-decay", true);
-            trackers.put("lighter", true);
-            trackers.put("lightning", true);
-            trackers.put("mushroom-grow", true);
-            trackers.put("player-chat", false);
-            trackers.put("player-command", false);
-            trackers.put("player-death", true);
-            trackers.put("player-gamemodechange", false);
-            trackers.put("player-join", false);
-            trackers.put("player-kill", true);
-            trackers.put("player-quit", false);
-            trackers.put("player-teleport", false);
-            trackers.put("player-trade", false);
-            trackers.put("potion-splash", true);
-            trackers.put("sheep-eat", true);
-            trackers.put("sign-change", true);
-            trackers.put("spawnegg-use", true);
-            trackers.put("target-hit", false);
-            trackers.put("tnt-explode", true);
-            trackers.put("tnt-prime", true);
-            trackers.put("tree-grow", true);
-            trackers.put("vehicle-break", true);
-            trackers.put("vehicle-enter", true);
-            trackers.put("vehicle-exit", true);
-            trackers.put("vehicle-place", true);
-            trackers.put("water-break", true);
-            trackers.put("water-bucket", true);
-            trackers.put("water-flow", false);
-            trackers.put("world-edit", false);
-            trackers.put("xp-pickup", false);
+    @ConfigSerializable
+    public static class TrackingConfig {
+
+        public Map<ActionType,Boolean> trackers = new HashMap<>();
+
+        @Setting("player-ip-on-join")
+        public boolean playerIpOnJoin = false;
+
+        @Setting("hopper-item-events")
+        public boolean hopperItemEvents = false;
+
+
+        protected TrackingConfig() {
+            for (ActionType a:ActionType.values()) {
+                switch (a) {
+                    case CRAFT_ITEM:
+                    case ENCHANT_ITEM:
+                    case ENTITY_DYE:
+                    case FIRE_SPREAD:
+                    case ITEM_BREAK:
+                    case PLAYER_CHAT:
+                    case PLAYER_COMMAND:
+                    case PLAYER_GAMEMODECHANGE:
+                    case PLAYER_JOIN:
+                    case PLAYER_QUIT:
+                    case PLAYER_TRADE:
+                    case PLAYER_TELEPORT:
+                    case TARGET_HIT:
+                    case WATER_FLOW:
+                    case WORLD_EDIT:
+                    case XP_PICKUP:
+                        trackers.put(a,false);
+                        break;
+                    default:
+                        trackers.put(a,true);
+                }
+            }
         }
+    }
+
+
+    @ConfigSerializable
+    public static class AlertConfig {
+
+        @Setting("alert-staff-to-applied-process")
+        public boolean alertStaffToAppliedProcess = true;
+
+        @Setting("alert-player-about-self")
+        public boolean alertPlayerAboutSelf = true;
+
+        @Setting("ores")
+        public OreAlerts oreAlerts = new OreAlerts();
+
+        @Setting("illegal-commands")
+        public IllegalCommands illegalCommands = new IllegalCommands();
+
+        @Setting("uses")
+        public UsesConfig uses = new UsesConfig();
+
+        @Setting("vanilla-xray-enabled")
+        public boolean vanillaXray = true;
+
+
+        public abstract static class AlertBase {
+
+            @Setting("enabled")
+            public boolean enabled = true;
+
+            @Setting("log-to-console")
+            public boolean logToConsole = true;
+
+            @Setting("log-commands")
+            public List<String> logCommands = Collections.singletonList("examplecommand <alert>");
+
+        }
+
+        @ConfigSerializable
+        public static class OreAlerts extends AlertBase {
+
+            @Setting("blocks")
+            public Map<String, String> oreBlocks = new LinkedHashMap<>();
+
+            public OreAlerts() {
+                oreBlocks.put(Material.IRON_ORE.name().toLowerCase(), "#444444");
+                oreBlocks.put(Material.GOLD_ORE.name().toLowerCase(), "#ffe17d");
+                oreBlocks.put(Material.LAPIS_ORE.name().toLowerCase(), "#0670cc");
+                oreBlocks.put(Material.DIAMOND_ORE.name().toLowerCase(), "#04babd");
+                oreBlocks.put(Material.EMERALD_ORE.name().toLowerCase(), "#21bf60");
+                oreBlocks.put(Material.NETHER_GOLD_ORE.name().toLowerCase(), "#ff7308");
+                oreBlocks.put(Material.ANCIENT_DEBRIS.name().toLowerCase(), "#856d3e");
+            }
+
+        }
+
+        @ConfigSerializable
+        public static class IllegalCommands extends AlertBase {
+
+            @Setting("commands")
+            final List<String> illegalCommands = new ArrayList<>();
+
+            public IllegalCommands() {
+                enabled = false;
+                illegalCommands.add("op");
+                illegalCommands.add("deop");
+                illegalCommands.add("stop");
+                illegalCommands.add("reload");
+                illegalCommands.add("bukkit:op");
+                illegalCommands.add("bukkit:deop");
+                illegalCommands.add("bukkit:stop");
+                illegalCommands.add("bukkit:reload");
+                illegalCommands.add("minecraft:op");
+                illegalCommands.add("minecraft:deop");
+                illegalCommands.add("minecraft:stop");
+                illegalCommands.add("minecraft:reload");
+            }
+        }
+
+        @ConfigSerializable
+        public static class UsesConfig extends AlertBase {
+
+            public boolean lighter = true;
+
+            public boolean lava = true;
+
+            @Setting("item-placement")
+            public List<Material> monitorItems = new ArrayList<>();
+
+            @Setting("item-break")
+            public List<Material> breakItems = new ArrayList<>();
+
+            public UsesConfig() {
+                monitorItems.add(Material.BEDROCK);
+                monitorItems.add(Material.STICKY_PISTON);
+                monitorItems.add(Material.TNT);
+                monitorItems.add(Material.LAVA);
+                breakItems.addAll(monitorItems);
+            }
+        }
+    }
+
+    @ConfigSerializable
+    public static class QueueConfig {
+
+        @Setting("empty-tick-delay")
+        public int emptyTickDelay = 3;
+
+        @Setting("actions-per-insert-batch")
+        public int actionsPerBatch = 1000;
+
+        @Setting("force-write-queue-on-shutdown")
+        public boolean forceWriteOnClose= true;
+
     }
 
     public enum WandMode {
