@@ -1,15 +1,7 @@
 package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import me.botsko.prism.actionlibs.HandlerRegistry;
-import me.botsko.prism.actionlibs.Ignore;
-import me.botsko.prism.actionlibs.InternalAffairs;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actionlibs.QueueDrain;
-import me.botsko.prism.actionlibs.RecordingTask;
+import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
@@ -17,40 +9,21 @@ import me.botsko.prism.api.Result;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
+import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
-import me.botsko.prism.listeners.PaperListeners;
-import me.botsko.prism.listeners.PrismBlockEvents;
-import me.botsko.prism.listeners.PrismCustomEvents;
-import me.botsko.prism.listeners.PrismEntityEvents;
-import me.botsko.prism.listeners.PrismInventoryEvents;
-import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
-import me.botsko.prism.listeners.PrismPlayerEvents;
-import me.botsko.prism.listeners.PrismVehicleEvents;
-import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.listeners.*;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.ActionParameter;
-import me.botsko.prism.parameters.BeforeParameter;
-import me.botsko.prism.parameters.BlockParameter;
-import me.botsko.prism.parameters.EntityParameter;
-import me.botsko.prism.parameters.FlagParameter;
-import me.botsko.prism.parameters.IdParameter;
-import me.botsko.prism.parameters.KeywordParameter;
-import me.botsko.prism.parameters.PlayerParameter;
-import me.botsko.prism.parameters.PrismParameterHandler;
-import me.botsko.prism.parameters.RadiusParameter;
-import me.botsko.prism.parameters.SinceParameter;
-import me.botsko.prism.parameters.WorldParameter;
+import me.botsko.prism.parameters.*;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.purge.PurgeManager;
 import me.botsko.prism.utils.MaterialAliases;
-import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
@@ -66,9 +39,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -77,20 +47,11 @@ import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin implements PrismApi {
@@ -98,11 +59,12 @@ public class Prism extends JavaPlugin implements PrismApi {
     public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
     public static final HashMap<String, Integer> prismActions = new HashMap<>();
-    private static final HashMap<Material, TextColor> alertedOres = new HashMap<>();
+    private static final Map<Material, TextColor> alertedOres = new HashMap<>();
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private static final String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
     public static Messenger messenger;
-    public static FileConfiguration config;
+    private ConfigHandler configHandler;
+    public static me.botsko.prism.config.PrismConfig config;
     public static boolean isPaper = true;
     protected static PrismLogHandler logHandler;
     protected PrismDataSource prismDataSource = null;
@@ -113,8 +75,8 @@ public class Prism extends JavaPlugin implements PrismApi {
     protected static Prism instance;
     protected static boolean debug = false;
     protected static BukkitAudiences audiences;
-    private static List<Material> illegalBlocks;
-    private static List<EntityType> illegalEntities;
+    private static EnumSet<Material> illegalBlocks;
+    private static EnumSet<EntityType> illegalEntities;
     private static MaterialAliases items;
     private static Ignore ignore;
     private static BukkitTask debugWatcher;
@@ -215,7 +177,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      *
      * @return List of Blocks
      */
-    public static List<Material> getIllegalBlocks() {
+    public static EnumSet<Material> getIllegalBlocks() {
         return illegalBlocks;
     }
 
@@ -224,7 +186,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      *
      * @return List
      */
-    public static List<EntityType> getIllegalEntities() {
+    public static EnumSet<EntityType> getIllegalEntities() {
         return illegalEntities;
     }
 
@@ -233,7 +195,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      *
      * @return list
      */
-    public static HashMap<Material, TextColor> getAlertedOres() {
+    public static Map<Material, TextColor> getAlertedOres() {
         return alertedOres;
     }
 
@@ -355,7 +317,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
         checkPluginDependencies();
         if (getConfig().getBoolean("prism.paste.enable")) {
-            pasteKey = Prism.config.getString("prism.paste.api-key", "API KEY");
+            pasteKey = config.pasteConfig.apiKey;
             if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
                 pasteKey = null;
             } else {
@@ -555,46 +517,15 @@ public class Prism extends JavaPlugin implements PrismApi {
      * Load configuration and language files.
      */
     public void loadConfig() {
-        final PrismConfig mc = new PrismConfig(this);
-        config = mc.saveDefaults();
+        configHandler = new ConfigHandler();
+        Path path = Paths.get(getDataFolder().getPath(),"config.yml");
+        configHandler.loadConfiguration(path);
+        config = configHandler.getConfig();
         // Cache config arrays we check constantly
-        illegalBlocks = getConfig().getStringList("prism.appliers.never-place-block").stream()
-                .map(Material::matchMaterial).filter(Objects::nonNull).collect(Collectors.toList());
-        illegalEntities = getConfig().getStringList("prism.appliers.never-spawn-entity")
-                .stream()
-                .map(s -> {
-                    try {
-                        return EntityType.valueOf(s.toUpperCase());
-                    } catch (Exception e) {
-                        PrismLogHandler.debug(e.getMessage());
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        ConfigurationSection alertBlocks = getConfig()
-                .getConfigurationSection("prism.alerts.ores.blocks");
-        if (alertBlocks == null) {
-            Configuration temp = config.getDefaults();
-            if (temp != null) {
-                alertBlocks = temp.getConfigurationSection("prism.alerts.ores.blocks");
-            }
-        }
+        illegalBlocks = config.applierConfig.neverPlace;
+        illegalEntities = config.applierConfig.neverSpawn;
         alertedOres.clear();
-        if (alertBlocks != null) {
-            for (final String key : alertBlocks.getKeys(false)) {
-                Material m = Material.matchMaterial(key.toUpperCase());
-                String colorString = alertBlocks.getString(key);
-
-                if (m == null || colorString == null) {
-                    PrismLogHandler.log("Could not match alert block:" + key + " color:" + colorString);
-                    continue;
-                }
-                TextColor color = TypeUtils.from(colorString);
-                alertedOres.put(m, color);
-            }
-        }
+        alertedOres.putAll(config.alertConfig.oreAlerts.oreBlocks);
         items = new MaterialAliases();
     }
 
@@ -754,16 +685,14 @@ public class Prism extends JavaPlugin implements PrismApi {
      * @param msg    String
      */
     public void notifyNearby(Player player, int radius, Component msg) {
-        if (!getConfig().getBoolean("prism.appliers.notify-nearby.enabled")) {
-            return;
-        }
-        int distance = (radius
-                + config.getInt("prism.appliers.notify-nearby.additional-radius")) ^ 2;
-        for (final Player p : player.getServer().getOnlinePlayers()) {
-            if (!p.getUniqueId().equals(player.getUniqueId())
-                    && player.getWorld().equals(p.getWorld())
-                    && player.getLocation().distanceSquared(p.getLocation()) <= distance) {
-                Prism.messenger.sendMessage(p, messenger.playerHeaderMsg(msg));
+        if (config.applierConfig.notifyNearby) {
+            int distance = (radius + config.applierConfig.additionalNotifyRadius) ^ 2;
+            for (final Player p : player.getServer().getOnlinePlayers()) {
+                if (!p.getUniqueId().equals(player.getUniqueId())
+                        && player.getWorld().equals(p.getWorld())
+                        && player.getLocation().distanceSquared(p.getLocation()) <= distance) {
+                    Prism.messenger.sendMessage(p, messenger.playerHeaderMsg(msg));
+                }
             }
         }
     }

@@ -21,14 +21,14 @@ public class ConfigHandler {
 
     private PrismConfig config;
     private ConfigurationNode main;
-    //private ConfigurationNode dataSourceConfig;
+    private ConfigurationNode dataSourceConfig;
 
     public void loadConfiguration(Path path) {
         YamlConfigurationLoader loader =  builder.path(path).build();
         try {
             main = loader.load();
             config = main.node("prism").get(TypeToken.get(PrismConfig.class),new PrismConfig());
-            //dataSourceConfig = main.node("datasource");
+            dataSourceConfig = main.node("datasource");
         } catch (ConfigurateException e) {
             e.printStackTrace();
         }
@@ -38,12 +38,16 @@ public class ConfigHandler {
         YamlConfigurationLoader loader =  builder.path(path).build();
         try {
             main.node("prism").set(config);
+            main.node("datasource").from(dataSourceConfig);
             loader.save(main);
         } catch (ConfigurateException e) {
             e.printStackTrace();
         }
     }
 
+    public ConfigurationNode getDataSourceConfig() {
+        return dataSourceConfig;
+    }
 
     public PrismConfig getConfig(){
         return config;

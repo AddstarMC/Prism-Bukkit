@@ -1,6 +1,7 @@
 package me.botsko.prism.config;
 
 import me.botsko.prism.api.actions.ActionType;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
@@ -303,16 +304,16 @@ public class PrismConfig {
         public static class OreAlerts extends AlertBase {
 
             @Setting("blocks")
-            public Map<String, String> oreBlocks = new LinkedHashMap<>();
+            public Map<Material, TextColor> oreBlocks = new LinkedHashMap<>();
 
             public OreAlerts() {
-                oreBlocks.put(Material.IRON_ORE.name().toLowerCase(), "#444444");
-                oreBlocks.put(Material.GOLD_ORE.name().toLowerCase(), "#ffe17d");
-                oreBlocks.put(Material.LAPIS_ORE.name().toLowerCase(), "#0670cc");
-                oreBlocks.put(Material.DIAMOND_ORE.name().toLowerCase(), "#04babd");
-                oreBlocks.put(Material.EMERALD_ORE.name().toLowerCase(), "#21bf60");
-                oreBlocks.put(Material.NETHER_GOLD_ORE.name().toLowerCase(), "#ff7308");
-                oreBlocks.put(Material.ANCIENT_DEBRIS.name().toLowerCase(), "#856d3e");
+                oreBlocks.put(Material.IRON_ORE, TextColor.fromCSSHexString("#444444"));
+                oreBlocks.put(Material.GOLD_ORE, TextColor.fromCSSHexString("#ffe17d"));
+                oreBlocks.put(Material.LAPIS_ORE, TextColor.fromCSSHexString("#0670cc"));
+                oreBlocks.put(Material.DIAMOND_ORE, TextColor.fromCSSHexString("#04babd"));
+                oreBlocks.put(Material.EMERALD_ORE, TextColor.fromCSSHexString("#21bf60"));
+                oreBlocks.put(Material.NETHER_GOLD_ORE, TextColor.fromCSSHexString("#ff7308"));
+                oreBlocks.put(Material.ANCIENT_DEBRIS, TextColor.fromCSSHexString("#856d3e"));
             }
 
         }
