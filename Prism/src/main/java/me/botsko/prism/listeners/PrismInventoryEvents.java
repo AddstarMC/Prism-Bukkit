@@ -4,6 +4,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -44,9 +45,9 @@ public class PrismInventoryEvents implements Listener {
      */
     public PrismInventoryEvents(Prism plugin) {
         this.plugin = plugin;
-        this.trackingInsert = !Prism.getIgnore().event(INSERT);
-        this.trackingRemove = !Prism.getIgnore().event(REMOVE);
-        this.trackingBreaks = Prism.getIgnore().event(BREAK);
+        this.trackingInsert = !Prism.getIgnore().event(ActionType.ITEM_INSERT);
+        this.trackingRemove = !Prism.getIgnore().event(ActionType.ITEM_REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(ActionType.ITEM_BREAK);
 
     }
 
@@ -57,11 +58,11 @@ public class PrismInventoryEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryPickupItem(final InventoryPickupItemEvent event) {
 
-        if (!plugin.getConfig().getBoolean("prism.track-hopper-item-events")) {
+        if (!plugin.config.trackingConfig.hopperItemEvents) {
             return;
         }
 
-        if (!Prism.getIgnore().event("item-pickup")) {
+        if (!Prism.getIgnore().event(ActionType.ITEM_PICKUP)) {
             return;
         }
 
@@ -128,7 +129,7 @@ public class PrismInventoryEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEnchantItem(final EnchantItemEvent event) {
-        if (!Prism.getIgnore().event("enchant-item", event.getEnchanter())) {
+        if (!Prism.getIgnore().event(ActionType.ENCHANT_ITEM, event.getEnchanter())) {
             return;
         }
         final Player player = event.getEnchanter();
@@ -142,12 +143,12 @@ public class PrismInventoryEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR,ignoreCancelled = true)
     public void onPrepareCraftItem(PrepareItemCraftEvent prepareItemCraftEvent) {
-        if (Prism.getIgnore().event("craft-item")) {
+        if (Prism.getIgnore().event(ActionType.CRAFT_ITEM)) {
             return;
         }
         List<HumanEntity> recordable = prepareItemCraftEvent.getViewers().stream().filter(humanEntity -> {
             if (humanEntity instanceof Player) {
-                return Prism.getIgnore().event("craft-item", (Player) humanEntity);
+                return Prism.getIgnore().event(ActionType.CRAFT_ITEM, (Player) humanEntity);
             }
             return false;
         }).collect(Collectors.toList());
@@ -166,7 +167,7 @@ public class PrismInventoryEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onCraftItem(final CraftItemEvent event) {
         final Player player = (Player) event.getWhoClicked();
-        if (!Prism.getIgnore().event("craft-item", player)) {
+        if (!Prism.getIgnore().event(ActionType.CRAFT_ITEM, player)) {
             return;
         }
         final ItemStack item = event.getRecipe().getResult();
@@ -441,9 +442,9 @@ public class PrismInventoryEvents implements Listener {
     }
 
     private boolean notTrackingInsertAndRemove() {
-        this.trackingInsert = Prism.getIgnore().event(INSERT);
-        this.trackingRemove = Prism.getIgnore().event(REMOVE);
-        this.trackingBreaks = Prism.getIgnore().event(BREAK);
+        this.trackingInsert = Prism.getIgnore().event(ActionType.ITEM_INSERT);
+        this.trackingRemove = Prism.getIgnore().event(ActionType.ITEM_REMOVE);
+        this.trackingBreaks = Prism.getIgnore().event(ActionType.ITEM_BREAK);
 
         return !trackingInsert && !trackingRemove;
     }

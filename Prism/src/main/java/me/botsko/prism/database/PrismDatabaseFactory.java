@@ -7,6 +7,8 @@ import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import me.botsko.prism.settings.Settings;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -17,46 +19,28 @@ public class PrismDatabaseFactory {
     /**
      * Create a config.
      *
-     * @param configuration ConfigurationSection
+     * @param dataSourceSection ConfigurationSection
      */
-    public static void createDefaultConfig(final ConfigurationSection configuration) {
-        ConfigurationSection dataSourceSection;
-        ConfigurationSection dataSourceProperties;
-        if (configuration.isConfigurationSection("datasource")) {
-            dataSourceSection = configuration.getConfigurationSection("datasource");
-            dataSourceSection.addDefault("type", "mysql");
-            if (!dataSourceSection.isConfigurationSection("properties")) {
-                dataSourceProperties = dataSourceSection.createSection("properties");
-            } else {
-                dataSourceProperties = dataSourceSection.getConfigurationSection("properties");
-            }
-        } else {
-            String type = configuration.getString("datasource");//gets the old datasource.
-            dataSourceSection = configuration.createSection("datasource");
-            if (type != null) {
-                dataSourceSection.set("type", type);
-            } else {
-                dataSourceSection.addDefault("type", "mysql");
-            }
-            dataSourceProperties = dataSourceSection.createSection("properties");
-        }
-        String dataType = dataSourceSection.getString("type", "mysql");
+    public static void createDefaultConfig(final ConfigurationNode dataSourceSection) throws SerializationException {
+        ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
+        String dataType = dataSourceSection.node("type").getString("mysql");
+        dataSourceSection.node("type").set(dataType);
         updateDataSourceProperties(dataType, dataSourceProperties);
     }
 
-    private static void updateDataSourceProperties(@Nullable final String type,
-                                                   final ConfigurationSection configuration) {
-        String test = type;
-        if (test == null) {
-            test = "mysql";
-        }
-        switch (test) {
-            case "mysql":
-                MySqlPrismDataSource.updateDefaultConfig(configuration);
-                break;
-            case "hikari":
-            default:
-                SqlPrismDataSource.updateDefaultConfig(configuration);
+    private static void updateDataSourceProperties(final String type,
+                                                   final ConfigurationNode configuration) {
+        try {
+            switch (type) {
+                case "mysql":
+                    MySqlPrismDataSource.updateDefaultConfig(configuration);
+                    break;
+                case "hikari":
+                default:
+                    SqlPrismDataSource.updateDefaultConfig(configuration);
+            }
+        }catch (SerializationException exception) {
+            PrismLogHandler.warn(exception.getMessage());
         }
     }
 
@@ -64,35 +48,15 @@ public class PrismDatabaseFactory {
     /**
      * Constuct Data source.
      *
-     * @param configuration ConfigurationSection
+     * @param dataSourceSection ConfigurationSection
      * @return PrismDataSource
      */
-    public static PrismDataSource createDataSource(ConfigurationSection configuration) {
+    public static PrismDataSource createDataSource(ConfigurationNode dataSourceSection) {
         PrismDataSource database;
-        if (configuration == null) {
-            return null;
-        }
-        String dataSource;
-        ConfigurationSection dataSourceProperties;
+        String dataSource = dataSourceSection.node("type").getString("mysql");
 
-        if (configuration.isConfigurationSection("datasource")) {
-            ConfigurationSection dataSourceSection = configuration.getConfigurationSection("datasource");
-            if (dataSourceSection != null) {  //in case they didnt update the config.
-                dataSource = dataSourceSection.getString("type");
-                dataSourceProperties = dataSourceSection.getConfigurationSection("properties");
-            } else {
-                //old config style
-                dataSource = configuration.getString("datasource");
-                dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
-            }
-        } else {
-            //old config style
-            dataSource = configuration.getString("datasource");
-            dataSourceProperties = configuration.getConfigurationSection("prism." + dataSource);
-        }
-        if (dataSource == null) {
-            return null;
-        }
+        ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
+
         switch (dataSource) {
             case "mysql":
                 PrismLogHandler.log("Attempting to configure datasource as mysql");

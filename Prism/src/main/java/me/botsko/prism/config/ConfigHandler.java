@@ -1,6 +1,7 @@
 package me.botsko.prism.config;
 
 import io.leangen.geantyref.TypeToken;
+import me.botsko.prism.database.PrismDatabaseFactory;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.NodeStyle;
@@ -29,6 +30,7 @@ public class ConfigHandler {
             main = loader.load();
             config = main.node("prism").get(TypeToken.get(PrismConfig.class),new PrismConfig());
             dataSourceConfig = main.node("datasource");
+            PrismDatabaseFactory.createDefaultConfig(dataSourceConfig);
         } catch (ConfigurateException e) {
             e.printStackTrace();
         }

@@ -9,6 +9,8 @@ import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.Random;
 
@@ -25,9 +27,13 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
      *
      * @param section Config
      */
-    public TestPrismDataSource(ConfigurationSection section) {
+    public TestPrismDataSource(ConfigurationNode section) {
         super(section);
-        updateDefaultConfig(section);
+        try {
+            updateDefaultConfig(section);
+        } catch (SerializationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

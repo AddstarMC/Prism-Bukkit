@@ -77,6 +77,7 @@ public enum ActionType {
     PRISM_ROLLBACK("prism-rollback"),
     SHEEP_EAT("sheep-eat"),
     SIGN_CHANGE("sign-change"),
+    PORTAL_CREATE("portal-create"),
     SPAWNEGG_USE("spawnegg-use"),
     TNT_EXPLODE("tnt-explode"),
     BED_EXPLODE("bed-explode"),

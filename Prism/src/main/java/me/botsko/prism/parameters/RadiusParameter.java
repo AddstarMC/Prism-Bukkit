@@ -6,6 +6,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.bridge.WorldEditBridge;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.utils.ChunkUtils;
 import me.botsko.prism.utils.MiscUtils;
 import me.botsko.prism.utils.TypeUtils;
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
+import java.sql.PreparedStatement;
 import java.util.regex.Pattern;
 
 public class RadiusParameter extends SimplePrismParameterHandler {
@@ -34,7 +36,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
 
         String inputValue = input;
 
-        final FileConfiguration config = Prism.config;
+        final PrismConfig config = Prism.getInstance().config;
 
         if (TypeUtils.isNumeric(inputValue) || (inputValue.contains(":") && inputValue.split(":").length >= 1
                 && TypeUtils.isNumeric(inputValue.split(":")[1]))) {
@@ -131,7 +133,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
                     } else {
 
                         // Load a selection from world edit as our area.
-                        if (!WorldEditBridge.getSelectedArea(Prism.getInstance(), player, query)) {
+                        if (!WorldEditBridge.getSelectedArea(Prism.getInstance().config, player, query)) {
                             throw new IllegalArgumentException(
                                     "Invalid region selected. Make sure you have a region selected,"
                                             + " and that it doesn't exceed the max radius.");
@@ -207,7 +209,7 @@ public class RadiusParameter extends SimplePrismParameterHandler {
         }
         if (sender instanceof Player) {
             if (!query.allowsNoRadius()) {
-                query.setRadius(Prism.config.getInt("prism.queries.default-radius"));
+                query.setRadius(Prism.getInstance().config.parameterConfig.defaultRadius);
                 query.addDefaultUsed("r:" + query.getRadius());
             }
         }

@@ -32,11 +32,11 @@ public class NearCommand implements SubHandler {
 
         // Build params
         final QueryParameters parameters = new QueryParameters();
-        parameters.setPerPage(plugin.getConfig().getInt("prism.queries.default-results-per-page"));
+        parameters.setPerPage(plugin.config.parameterConfig.defaultResultsPerPage);
         parameters.setWorld(call.getPlayer().getWorld().getName());
 
         // allow a custom near radius
-        int radius = plugin.getConfig().getInt("prism.near.default-radius");
+        int radius = plugin.config.nearCommandCondig.defaultRadius;
         if (call.getArgs().length == 2) {
             if (TypeUtils.isNumeric(call.getArg(1))) {
                 final int _tmp_radius = Integer.parseInt(call.getArg(1));
@@ -58,7 +58,7 @@ public class NearCommand implements SubHandler {
 
         parameters.setRadius(radius);
         parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
-        parameters.setLimit(plugin.getConfig().getInt("prism.near.max-results"));
+        parameters.setLimit(plugin.config.nearCommandCondig.maxResults);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
@@ -77,7 +77,7 @@ public class NearCommand implements SubHandler {
                     for (final Handler a : paginated) {
                         final ActionMessage am = new ActionMessage(a);
                         if (parameters.hasFlag(Flags.EXTENDED)
-                                || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
+                                || plugin.config.parameterConfig.alwaysShowExtended) {
                             am.showExtended();
                         }
                         am.setResultIndex(resultCount);

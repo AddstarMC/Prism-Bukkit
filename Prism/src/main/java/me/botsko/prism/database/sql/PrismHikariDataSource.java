@@ -7,6 +7,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
 import org.bukkit.configuration.ConfigurationSection;
+import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 
@@ -26,10 +27,10 @@ public abstract class PrismHikariDataSource extends SqlPrismDataSource {
     /**
      * Create a dataSource.
      *
-     * @param section Config
+     * @param node Config
      */
-    public PrismHikariDataSource(ConfigurationSection section) {
-        super(section);
+    public PrismHikariDataSource(ConfigurationNode node) {
+        super(node);
         name = "hikari";
     }
 

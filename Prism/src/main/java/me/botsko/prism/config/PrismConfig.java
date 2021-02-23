@@ -35,6 +35,9 @@ public class PrismConfig {
     @Setting("paste")
     public PasteConfig pasteConfig = new PasteConfig();
 
+    @Setting("allow-metrics")
+    public Boolean allowMetrics = null;
+
     @Setting("wand")
     public WandConfig wandConfig = new WandConfig();
 
@@ -63,7 +66,8 @@ public class PrismConfig {
     public TrackingConfig trackingConfig = new TrackingConfig();
 
     @Setting("do-not-track-commands")
-    public List<String> doNotTrackCommands = Arrays.asList("vanish","v","login","changepassword","register","unregister");
+    public List<String> doNotTrackCommands
+            = Arrays.asList("vanish","v","login","changepassword","register","unregister");
 
 
     @Setting("alerts")
@@ -87,13 +91,13 @@ public class PrismConfig {
     public static class WandConfig {
 
         @Setting("default-mode")
-        public WandMode default_mode = WandMode.HAND;
+        public WandMode defaultMode = WandMode.HAND;
 
         @Setting("default-mode-item")
-        public Material default_mode_item = Material.STICK;
+        public Material defaultModeItem = Material.STICK;
 
         @Setting("default-mode-block")
-        public Material default_mode_block = Material.SPRUCE_LOG;
+        public Material defaultModeBlock = Material.SPRUCE_LOG;
 
         @Setting("auto-equip")
         public boolean autoEquip = true;
@@ -189,7 +193,9 @@ public class PrismConfig {
 
 
         @Setting("allow-rollback-items-removed-from-container")
-        public boolean allowRollbackItemsRemovedFromContainer = true;        @Setting("rules")
+        public boolean allowRollbackItemsRemovedFromContainer = true;
+
+        @Setting("rules")
         public List<String> rules = Arrays.asList("before:8w", "a:water-flow before:4w");
 
         @Setting("batch-tick-delay")
@@ -235,6 +241,11 @@ public class PrismConfig {
         @Setting("hopper-item-events")
         public boolean hopperItemEvents = false;
 
+        @Setting("api-enabled")
+        public boolean apiEnabled = true;
+
+        @Setting("api-allowed-plugins")
+        public List<String> allowedPlugins = new ArrayList<>();
 
         protected TrackingConfig() {
             for (ActionType a:ActionType.values()) {
@@ -322,7 +333,7 @@ public class PrismConfig {
         public static class IllegalCommands extends AlertBase {
 
             @Setting("commands")
-            final List<String> illegalCommands = new ArrayList<>();
+            public List<String> illegalCommands = new ArrayList<>();
 
             public IllegalCommands() {
                 enabled = false;
@@ -354,6 +365,9 @@ public class PrismConfig {
             @Setting("item-break")
             public List<Material> breakItems = new ArrayList<>();
 
+            @Setting("ignore-staff")
+            public boolean ignoreStaff;
+
             public UsesConfig() {
                 monitorItems.add(Material.BEDROCK);
                 monitorItems.add(Material.STICKY_PISTON);
@@ -370,11 +384,14 @@ public class PrismConfig {
         @Setting("empty-tick-delay")
         public int emptyTickDelay = 3;
 
+        @Setting("max-failures-before-wait")
+        public int maxFailures = 5;
+
         @Setting("actions-per-insert-batch")
         public int actionsPerBatch = 1000;
 
         @Setting("force-write-queue-on-shutdown")
-        public boolean forceWriteOnClose= true;
+        public boolean forceWriteOnClose = true;
 
     }
 

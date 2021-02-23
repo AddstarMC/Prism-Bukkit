@@ -6,6 +6,7 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.api.Result;
 import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.config.PrismConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -42,21 +43,21 @@ public class MiscUtils {
      * @return integer
      */
     public static int clampRadius(Player player, int desiredRadius, PrismProcessType processType,
-                                  ConfigurationSection config) {
+                                  PrismConfig config) {
 
         if (desiredRadius <= 0) {
-            return config.getInt("prism.near.default-radius");
+            return config.nearCommandCondig.defaultRadius;
         }
 
         // Safety checks for max lookup radius
-        int maxLookupRadius = config.getInt("prism.queries.max-lookup-radius");
+        int maxLookupRadius = config.parameterConfig.maxLookupRadius;
         if (maxLookupRadius <= 0.99) {
             maxLookupRadius = 5;
             PrismLogHandler.log("Max lookup radius may not be lower than one. Using safe input of five.");
         }
 
         // Safety checks for max applier radius
-        int maxApplierRadius = config.getInt("prism.queries.max-applier-radius");
+        int maxApplierRadius = config.parameterConfig.maxApplierRadius;
         if (maxApplierRadius <= 0.99) {
             maxApplierRadius = 5;
             PrismLogHandler.log("Max applier radius may not be lower than one. Using safe input of five.");
@@ -146,7 +147,7 @@ public class MiscUtils {
 
         final String prismWebUrl = "https://paste.gg/";
 
-        if (!Prism.getInstance().getConfig().getBoolean("prism.paste.enable")) {
+        if (!Prism.getInstance().config.pasteConfig.enabled) {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerError(
                             Component.text("Paste.gg support is currently disabled by config.")));

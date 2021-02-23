@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class InspectorWand extends QueryWandBase {
 
@@ -76,8 +77,7 @@ public class InspectorWand extends QueryWandBase {
 
             // Ignoring any actions via config?
             if (params.getActionTypes().size() == 0) {
-                @SuppressWarnings("unchecked") final Collection<String> ignoreActions =
-                        (ArrayList<String>) plugin.getConfig().getList("prism.wands.inspect.ignore-actions");
+                final List<String> ignoreActions = plugin.config.wandConfig.wandInspectIgnoreActions;
                 if (ignoreActions != null && !ignoreActions.isEmpty()) {
                     for (final String ignore : ignoreActions) {
                         params.addActionType(ignore, MatchRule.EXCLUDE);
@@ -104,7 +104,7 @@ public class InspectorWand extends QueryWandBase {
                         .actions.Handler a : results.getPaginatedActionResults()) {
                     final ActionMessage am = new ActionMessage(a);
                     if (parameters.hasFlag(Flags.EXTENDED)
-                            || plugin.getConfig().getBoolean("prism.messenger.always-show-extended")) {
+                            || plugin.config.parameterConfig.alwaysShowExtended) {
                         am.showExtended();
                     }
                     Prism.messenger.sendMessage(player,

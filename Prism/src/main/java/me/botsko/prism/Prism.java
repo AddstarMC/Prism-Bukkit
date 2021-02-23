@@ -6,10 +6,12 @@ import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.Result;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
 import me.botsko.prism.config.ConfigHandler;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
@@ -63,8 +65,8 @@ public class Prism extends JavaPlugin implements PrismApi {
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private static final String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
     public static Messenger messenger;
-    private ConfigHandler configHandler;
-    public static me.botsko.prism.config.PrismConfig config;
+    protected ConfigHandler configHandler;
+    public PrismConfig config;
     public static boolean isPaper = true;
     protected static PrismLogHandler logHandler;
     protected PrismDataSource prismDataSource = null;
@@ -120,6 +122,21 @@ public class Prism extends JavaPlugin implements PrismApi {
     protected Prism(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
+    }
+
+    @Override
+    public void reloadConfig() {
+        configHandler.loadConfiguration(getDataFolder().toPath().resolve("config.yml"));
+    }
+
+    @Override
+    public void saveConfig() {
+        configHandler.saveConfiguration(getDataFolder().toPath().resolve("config.yml"));
+    }
+
+    @Override
+    public void saveDefaultConfig() {
+        //ignore
     }
 
     public static BukkitAudiences getAudiences() {
@@ -298,7 +315,8 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     @Override
     public void onEnable() {
-        debug = getConfig().getBoolean("prism.debug", false);
+        loadConfig();
+        debug = config.debug;
         logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
@@ -308,15 +326,13 @@ public class Prism extends JavaPlugin implements PrismApi {
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        if (!getConfig().getBoolean("prism.suppress-paper-message", false)) {
-            PaperLib.suggestPaper(this);
-        }
+        PaperLib.suggestPaper(this);
         isPaper = PaperLib.isPaper();
         if (isPaper) {
             PrismLogHandler.log("Optional Paper Events will be enabled.");
         }
         checkPluginDependencies();
-        if (getConfig().getBoolean("prism.paste.enable")) {
+        if (config.pasteConfig.enabled) {
             pasteKey = config.pasteConfig.apiKey;
             if (pasteKey != null && (pasteKey.startsWith("API key") || pasteKey.length() < 6)) {
                 pasteKey = null;
@@ -341,7 +357,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         }, 100, 200);
 
         Bukkit.getScheduler().runTaskAsynchronously(instance, () -> {
-            prismDataSource = PrismDatabaseFactory.createDataSource(config);
+            prismDataSource = PrismDatabaseFactory.createDataSource(configHandler.getDataSourceConfig());
             if (prismDataSource != null) {
                 StringBuilder builder = new StringBuilder();
                 if  (!prismDataSource.reportDataSource(builder,true)) {
@@ -416,7 +432,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         if (isEnabled()) {
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
-            ignore = new Ignore(this);
+            ignore = new Ignore(config);
             taskManager.run();
             // Assign event listeners
             getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
@@ -431,11 +447,11 @@ public class Prism extends JavaPlugin implements PrismApi {
             getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
 
             // InventoryMoveItem
-            if (getConfig().getBoolean("prism.track-hopper-item-events") && Prism.getIgnore().event("item-insert")) {
+            if (config.trackingConfig.hopperItemEvents && Prism.getIgnore().event(ActionType.ITEM_INSERT)) {
                 getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
             }
 
-            if (getConfig().getBoolean("prism.tracking.api.enabled")) {
+            if (config.trackingConfig.apiEnabled) {
                 getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
             }
 
@@ -489,11 +505,10 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Keep watch on db connections, other sanity
             launchInternalAffairs();
 
-            if (getConfig().getBoolean("prism.preload-materials")) {
-                getConfig().set("prism.preload-materials", false);
+            if (config.preloadMaterials) {
+                config.preloadMaterials = false;
                 saveConfig();
                 PrismLogHandler.log("Preloading materials - This will take a while!");
-
                 items.initAllMaterials();
                 PrismLogHandler.log("Preloading complete!");
             }
@@ -535,7 +550,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         // WorldEdit
         ApiHandler.hookWorldEdit();
         //bstats
-        if (getConfig().getBoolean("prism.allow-metrics")) {
+        if (config.allowMetrics != Boolean.FALSE) {
             int pluginId = 4365; // assigned by bstats.org
             try {
                 Metrics metrics = new Metrics(this, pluginId);
@@ -633,7 +648,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      * Schedule the RecorderTask async.
      */
     public void actionRecorderTask() {
-        int recorderTickDelay = getConfig().getInt("prism.queue-empty-tick-delay");
+        int recorderTickDelay = config.queueConfig.emptyTickDelay;
         if (recorderTickDelay < 1) {
             recorderTickDelay = 3;
         }
@@ -646,7 +661,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      * Schedule the Purge manager.
      */
     private void launchScheduledPurgeManager() {
-        final List<String> purgeRules = getConfig().getStringList("prism.db-records-purge-rules");
+        final List<String> purgeRules = config.purgeConfig.rules;
         purgeManager = new PurgeManager(this, purgeRules);
         schedulePool.scheduleAtFixedRate(purgeManager, 0, 12, TimeUnit.HOURS);
     }
@@ -666,7 +681,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     public void alertPlayers(Player player, Component msg) {
         for (final Player p : getServer().getOnlinePlayers()) {
-            if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
+            if (!p.equals(player) || config.alertConfig.alertPlayerAboutSelf) {
                 if (p.hasPermission("prism.alerts")) {
                     TextComponent prefix = Il8nHelper.getMessage("alert-prefix")
                             .color(NamedTextColor.RED)
@@ -704,7 +719,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public void onDisable() {
         taskManager.shutdown();
         Bukkit.getPluginManager().callEvent(EventHelper.createUnLoadEvent());
-        if (getConfig().getBoolean("prism.query.force-write-queue-on-shutdown")) {
+        if (config.queueConfig.forceWriteOnClose) {
             final QueueDrain drainer = new QueueDrain(this);
             drainer.forceDrainQueue();
         }

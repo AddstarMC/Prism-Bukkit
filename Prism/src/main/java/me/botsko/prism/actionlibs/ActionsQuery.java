@@ -6,6 +6,7 @@ import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commands.Flags;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.database.DeleteQuery;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
@@ -16,12 +17,14 @@ import org.bukkit.entity.Player;
 public class ActionsQuery {
 
     private final Prism plugin;
+    private final PrismConfig config;
     private final SelectQuery qb;
     private boolean shouldPauseDB = false;
 
     public ActionsQuery(Prism plugin) {
         this.plugin = plugin;
         this.qb = Prism.getInstance().getPrismDataSource().createSelectQuery();
+        this.config = Prism.config;
     }
 
     /**
@@ -55,7 +58,7 @@ public class ActionsQuery {
         boolean shouldGroup = false;
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             // What to default to
-            shouldGroup = plugin.getConfig().getBoolean("prism.queries.lookup-auto-group");
+            shouldGroup = config.parameterConfig.lookupAutoGroup;
             // Any overriding flags passed?
             if (parameters.hasFlag(Flags.NO_GROUP) || parameters.hasFlag(Flags.EXTENDED)) {
                 shouldGroup = false;

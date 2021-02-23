@@ -39,7 +39,7 @@ public class Rollback extends Preview {
 
         if (player != null) {
             // Remove any fire at this location
-            if (plugin.getConfig().getBoolean("prism.appliers.remove-fire-on-burn-rollback")
+            if (config.applierConfig.removeFireOnBurnRollback
                     && parameters.getActionTypes().containsKey("block-burn")) {
                 if (!parameters.hasFlag(Flags.NO_EXT)) {
                     final ArrayList<BlockStateChange> blockStateChanges = Utilities.extinguish(player.getLocation(),
@@ -52,8 +52,7 @@ public class Rollback extends Preview {
             }
 
             // Remove item drops in this radius
-            if (plugin.getConfig().getBoolean("prism.appliers.remove-drops-on-explode-rollback")
-                    && (parameters.getActionTypes().containsKey("tnt-explode")
+            if (config.applierConfig.removeDropsExplodeRollback && (parameters.getActionTypes().containsKey("tnt-explode")
                     || parameters.getActionTypes().containsKey("creeper-explode"))) {
                 if (!parameters.hasFlag(Flags.NO_ITEMCLEAR)) {
                     final int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());

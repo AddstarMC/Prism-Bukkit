@@ -200,8 +200,8 @@ public class ReportCommand extends AbstractCommand {
     private void blockSumReports(final CallInfo call) {
 
         // Process and validate all of the arguments
-        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
-              PrismProcessType.LOOKUP, 3, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+        final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getSender(), call.getArgs(),
+              PrismProcessType.LOOKUP, 3, !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
             Prism.getAudiences().sender(call.getSender())
                     .sendMessage(Identity.nil(),
@@ -243,9 +243,9 @@ public class ReportCommand extends AbstractCommand {
     private void actionTypeCountReport(final CallInfo call) {
 
         // Process and validate all of the arguments
-        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
+        final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getSender(), call.getArgs(),
               PrismProcessType.LOOKUP, 3,
-              !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+              !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
             return;
         }

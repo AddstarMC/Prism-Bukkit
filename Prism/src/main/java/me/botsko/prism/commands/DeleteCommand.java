@@ -9,6 +9,7 @@ import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
 import net.kyori.adventure.text.Component;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 public class DeleteCommand extends AbstractCommand {
 
     private final Prism plugin;
+    private final PrismConfig config;
     private BukkitTask deleteTask;
 
     /**
@@ -30,6 +32,7 @@ public class DeleteCommand extends AbstractCommand {
      */
     public DeleteCommand(Prism plugin) {
         this.plugin = plugin;
+        this.config = plugin.config;
     }
 
     @Override
@@ -66,8 +69,8 @@ public class DeleteCommand extends AbstractCommand {
         }
 
         // Process and validate all of the arguments
-        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(), call.getArgs(),
-                PrismProcessType.DELETE, 1, !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+        final QueryParameters parameters = PreprocessArgs.process(config, call.getSender(), call.getArgs(),
+                PrismProcessType.DELETE, 1, !config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
             return;
         }
@@ -84,7 +87,7 @@ public class DeleteCommand extends AbstractCommand {
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger
                     .playerHeaderMsg(Il8nHelper.getMessage("start-purge")));
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
+                int purgeTickDelay = config.purgeConfig.batchTickDelay;
                 if (purgeTickDelay < 1) {
                     purgeTickDelay = 20;
                 }

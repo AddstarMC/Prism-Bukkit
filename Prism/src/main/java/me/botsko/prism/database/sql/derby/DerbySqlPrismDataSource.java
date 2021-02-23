@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.database.*;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
 import org.bukkit.configuration.ConfigurationSection;
+import org.spongepowered.configurate.ConfigurationNode;
 
 import java.sql.*;
 import java.util.Collection;
@@ -20,10 +21,10 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
     /**
      * Constructor.
      *
-     * @param section Config
+     * @param node Config
      */
-    public DerbySqlPrismDataSource(ConfigurationSection section) {
-        super(section);
+    public DerbySqlPrismDataSource(ConfigurationNode node) {
+        super(node);
         name = "derby";
     }
 

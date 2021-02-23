@@ -12,6 +12,8 @@ import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import org.bukkit.configuration.ConfigurationSection;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -34,11 +36,11 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     /**
      * Create a dataSource.
      *
-     * @param section Config
+     * @param node Config
      */
-    public MySqlPrismDataSource(ConfigurationSection section) {
-        super(section);
-        nonStandardSql = this.section.getBoolean("useNonStandardSql", false);
+    public MySqlPrismDataSource(ConfigurationNode node) {
+        super(node);
+        nonStandardSql = this.section.node("useNonStandardSql").getBoolean();
         detectNonStandardSql();
         name = "mysql";
 
@@ -47,20 +49,20 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     /**
      * The adds the new requirements to an old configuration file.
      *
-     * @param section a {@link ConfigurationSection}
+     * @param node a {@link ConfigurationNode}
      */
-    public static void updateDefaultConfig(ConfigurationSection section) {
-        section.addDefault("hostname", "127.0.0.1");
-        section.addDefault("username", "prism");
-        section.addDefault("password", "prism");
-        section.addDefault("databaseName", "prism");
-        section.addDefault("prefix", "prism_");
-        section.addDefault("port", "3306");
-        section.addDefault("useNonStandardSql", true);
-        setupDefaultProperties(section);
+    public static void updateDefaultConfig(ConfigurationNode node)  throws SerializationException {
+        node.node("hostname").set("127.0.0.1");
+        node.node("username").set("prism");
+        node.node("password").set("prism");
+        node.node("databaseName").set("prism");
+        node.node("prefix").set("prism_");
+        node.node("port").set("3306");
+        node.node("useNonStandardSql").set(true);
+        setupDefaultProperties();
     }
 
-    private static void setupDefaultProperties(@Nonnull ConfigurationSection section) {
+    private static void setupDefaultProperties() {
         if (propFile.exists()) {
             PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             PrismLogHandler.debug("This file will not save the jdbcURL, username or password - these are loaded"
@@ -70,12 +72,10 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
             dbConfig = new HikariConfig(propFile.getPath());
         } else {
             dbConfig = new HikariConfig();
-            int maxPool = section.getInt("database.max-pool-connections", 10);
-            int minIdle = section.getInt("database.min-idle-connections", 2);
-            dbConfig.addDataSourceProperty("maximumPoolSize", maxPool);
-            dbConfig.addDataSourceProperty("minimumIdle", minIdle);
-            dbConfig.setMaximumPoolSize(maxPool);
-            dbConfig.setMinimumIdle(minIdle);
+            dbConfig.addDataSourceProperty("maximumPoolSize", 10);
+            dbConfig.addDataSourceProperty("minimumIdle", 2);
+            dbConfig.setMaximumPoolSize(10);
+            dbConfig.setMinimumIdle(2);
             dbConfig.addDataSourceProperty("cachePrepStmts",true);
             dbConfig.addDataSourceProperty("prepStmtCacheSize",250);
             dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit",2048);

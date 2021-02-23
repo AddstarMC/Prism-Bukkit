@@ -5,6 +5,7 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.BlockAction;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.MaterialTag;
@@ -61,8 +62,8 @@ public class PrismPlayerEvents implements Listener {
      */
     public PrismPlayerEvents(Prism plugin) {
         this.plugin = plugin;
-        illegalCommands = plugin.getConfig().getStringList("prism.alerts.illegal-commands.commands");
-        ignoreCommands = plugin.getConfig().getStringList("prism.do-not-track.commands");
+        illegalCommands = plugin.config.alertConfig.illegalCommands.illegalCommands;
+        ignoreCommands = plugin.config.doNotTrackCommands;
     }
 
     /**
@@ -79,7 +80,7 @@ public class PrismPlayerEvents implements Listener {
         final String[] cmdArgs = cmd.split(" ");
         final String primaryCmd = cmdArgs[0].substring(1);
 
-        if (plugin.getConfig().getBoolean("prism.alerts.illegal-commands.enabled")) {
+        if (plugin.config.alertConfig.illegalCommands.enabled) {
             if (illegalCommands.contains(primaryCmd)) {
                 final String msg = player.getName() + " attempted an illegal command: " + primaryCmd + ". Originally: "
                         + cmd;
@@ -89,17 +90,17 @@ public class PrismPlayerEvents implements Listener {
                 plugin.alertPlayers(null, send);
                 event.setCancelled(true);
                 // Log to console
-                if (plugin.getConfig().getBoolean("prism.alerts.illegal-commands.log-to-console")) {
-                    me.botsko.prism.PrismLogHandler.log(msg);
+                if (plugin.config.alertConfig.illegalCommands.logToConsole) {
+                    PrismLogHandler.log(msg);
                 }
 
                 // Log to commands
-                List<String> commands = plugin.getConfig().getStringList("prism.alerts.illegal-commands.log-commands");
+                List<String> commands = plugin.config.alertConfig.illegalCommands.logCommands;
                 MiscUtils.dispatchAlert(msg, commands);
             }
         }
 
-        if (!Prism.getIgnore().event("player-command", player)) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_COMMAND, player)) {
             return;
         }
 
@@ -123,8 +124,8 @@ public class PrismPlayerEvents implements Listener {
         final Player player = event.getPlayer();
         final UUID uuid = player.getUniqueId();
         final String name = player.getName();
-        final boolean trackIp = plugin.getConfig().getBoolean("prism.track-player-ip-on-join");
-        final boolean doNotTrackJoin = !Prism.getIgnore().event("player-join", player);
+        final boolean trackIp = plugin.config.trackingConfig.playerIpOnJoin;
+        final boolean doNotTrackJoin = !Prism.getIgnore().event(ActionType.PLAYER_JOIN, player);
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
             // Lookup player for cache reasons
             Prism.getInstance().getPlayerIdentifier().cachePrismPlayer(uuid, name);
@@ -154,7 +155,7 @@ public class PrismPlayerEvents implements Listener {
         plugin.getPlayerIdentifier().getPrismPlayers().remove(event.getPlayer().getUniqueId());
 
         // Track player quit
-        if (!Prism.getIgnore().event("player-quit", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_QUIT, event.getPlayer())) {
             return;
         }
 
@@ -176,7 +177,7 @@ public class PrismPlayerEvents implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerChat(final AsyncPlayerChatEvent event) {
 
-        if (!Prism.getIgnore().event("player-chat", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_CHAT, event.getPlayer())) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createPlayer("player-chat", event.getPlayer(), event.getMessage()));
@@ -189,7 +190,7 @@ public class PrismPlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerDropItem(final PlayerDropItemEvent event) {
-        if (!Prism.getIgnore().event("item-drop", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.ITEM_DROP, event.getPlayer())) {
             return;
         }
         if (event.getItemDrop().getItemStack().getType() == Material.AIR) {
@@ -207,7 +208,7 @@ public class PrismPlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR)
     public void onGameModeSwitch(PlayerGameModeChangeEvent event) {
-        if (!Prism.getIgnore().event("player-gamemodechange", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_GAMEMODECHANGE, event.getPlayer())) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange",
@@ -223,7 +224,7 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerPickupItem(final EntityPickupItemEvent event) {
         if (event.getEntity() instanceof Player) {
             Player p = (Player) event.getEntity();
-            if (!Prism.getIgnore().event("item-pickup", p)) {
+            if (!Prism.getIgnore().event(ActionType.ITEM_PICKUP, p)) {
                 return;
             }
             RecordingQueue.addToQueue(ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(),
@@ -238,7 +239,7 @@ public class PrismPlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerExpChangeEvent(final PlayerExpChangeEvent event) {
-        if (!Prism.getIgnore().event("xp-pickup", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.XP_PICKUP, event.getPlayer())) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createPlayer("xp-pickup", event.getPlayer(), "" + event.getAmount()));
@@ -253,12 +254,12 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerBucketEmpty(final PlayerBucketEmptyEvent event) {
 
         final Player player = event.getPlayer();
-        String cause;
+        ActionType cause;
         Material newMat;
         Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
         switch (event.getBucket()) {
             case LAVA_BUCKET:
-                cause = "lava-bucket";
+                cause = ActionType.LAVA_BUCKET;
                 newMat = Material.LAVA;
                 break;
             case TROPICAL_FISH_BUCKET:
@@ -266,7 +267,7 @@ public class PrismPlayerEvents implements Listener {
             case PUFFERFISH_BUCKET:
             case WATER_BUCKET:
             default:
-                cause = "water-bucket";
+                cause = ActionType.WATER_BUCKET;
                 newMat = Material.WATER;
                 break;
         }
@@ -292,14 +293,14 @@ public class PrismPlayerEvents implements Listener {
                 newData = wl.clone();
                 ((Waterlogged) newData).setWaterlogged(true);
 
-                cause = "water-bucket";
+                cause = ActionType.WATER_BUCKET;
             }
         }
 
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(), spot.getType(), oldData,
-                newMat, newData, player));
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause.name, spot.getLocation(),
+                spot.getType(), oldData, newMat, newData, player));
 
-        if (plugin.getConfig().getBoolean("prism.alerts.uses.lava") && event.getBucket() == Material.LAVA_BUCKET
+        if (plugin.config.alertConfig.uses.lava && event.getBucket() == Material.LAVA_BUCKET
                 && !player.hasPermission("prism.alerts.use.lavabucket.ignore")
                 && !player.hasPermission("prism.alerts.ignore")) {
             plugin.useMonitor.alertOnItemUse(player, "poured lava");
@@ -315,7 +316,7 @@ public class PrismPlayerEvents implements Listener {
     public void onPlayerBucketFill(final PlayerBucketFillEvent event) {
 
         final Player player = event.getPlayer();
-        if (!Prism.getIgnore().event("bucket-fill", player)) {
+        if (!Prism.getIgnore().event(ActionType.BUCKET_FILL, player)) {
             return;
         }
         final Block spot = event.getBlock();
@@ -347,7 +348,7 @@ public class PrismPlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
-        if (!Prism.getIgnore().event("player-teleport", event.getPlayer())) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_TELEPORT, event.getPlayer())) {
             return;
         }
         final TeleportCause c = event.getCause();
@@ -414,12 +415,12 @@ public class PrismPlayerEvents implements Listener {
         if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             String coordKey;
             if (MaterialTag.CONTAINERS.isTagged(block.getType())) {
-                if (!Prism.getIgnore().event("container-access", player)) {
+                if (!Prism.getIgnore().event(ActionType.CONTAINER_ACCESS, player)) {
                     return;
                 }
                 RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
             } else if (MaterialTag.USABLE.isTagged(block.getType())) {
-                if (!Prism.getIgnore().event("block-use", player)) {
+                if (!Prism.getIgnore().event(ActionType.BLOCK_USE, player)) {
                     return;
                 }
                 RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
@@ -445,7 +446,7 @@ public class PrismPlayerEvents implements Listener {
                         break;
                     case TNT:
                         if (hand.getType().equals(Material.FLINT_AND_STEEL)) {
-                            if (!Prism.getIgnore().event("tnt-prime", player)) {
+                            if (!Prism.getIgnore().event(ActionType.TNT_PRIME, player)) {
                                 return;
                             }
                             RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime",
@@ -482,14 +483,14 @@ public class PrismPlayerEvents implements Listener {
             }
         }
 
-        if (!plugin.getConfig().getBoolean("prism.tracking.crop-trample")) {
+        if (!plugin.config.trackingConfig.trackers.get(ActionType.CROP_TRAMPLE)) {
             return;
         }
 
         if (block != null && event.getAction() == Action.PHYSICAL) {
             if (block.getType() == Material.FARMLAND) { // They are stepping on
                 // soil
-                if (!Prism.getIgnore().event("crop-trample", player)) {
+                if (!Prism.getIgnore().event(ActionType.CROP_TRAMPLE, player)) {
                     return;
                 }
                 RecordingQueue
@@ -506,7 +507,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player Player
      */
     private void recordCocoaPlantEvent(Block block, ItemStack inhand, BlockFace clickedFace, Player player) {
-        if (!Prism.getIgnore().event("block-place", block)) {
+        if (!Prism.getIgnore().event(ActionType.BLOCK_PLACE, block)) {
             return;
         }
         if (block.getType() == Material.JUNGLE_LOG && inhand.getType() == Material.COCOA_BEANS) {
@@ -533,7 +534,7 @@ public class PrismPlayerEvents implements Listener {
      */
     private void recordBoneMealEvent(Block block, ItemStack inhand, Player player) {
         if (inhand.getType() == Material.BONE_MEAL) {
-            if (!Prism.getIgnore().event("bonemeal-use", block)) {
+            if (!Prism.getIgnore().event(ActionType.BONEMEAL_USE, block)) {
                 return;
             }
             RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", inhand.getType(), block, player));
@@ -548,7 +549,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player Player
      */
     private void recordMonsterEggUse(Block block, ItemStack inhand, Player player) {
-        if (!Prism.getIgnore().event("spawnegg-use", block)) {
+        if (!Prism.getIgnore().event(ActionType.SPAWNEGG_USE, block)) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use",
@@ -563,7 +564,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player Player
      */
     private void recordRocketLaunch(Block block, ItemStack inhand, Player player) {
-        if (!Prism.getIgnore().event("firework-launch", block)) {
+        if (!Prism.getIgnore().event(ActionType.FIREWORK_LAUNCH, block)) {
             return;
         }
         RecordingQueue.addToQueue(
@@ -577,7 +578,7 @@ public class PrismPlayerEvents implements Listener {
      * @param player Player
      */
     private void recordCakeEat(Block block, Player player) {
-        if (!Prism.getIgnore().event("cake-eat", block)) {
+        if (!Prism.getIgnore().event(ActionType.CAKE_EAT, block)) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createUse("cake-eat", Material.CAKE, block, player));
@@ -603,8 +604,8 @@ public class PrismPlayerEvents implements Listener {
 
             // Record currently playing disc
             final ItemStack i = new ItemStack(jukebox.getPlaying(), 1);
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
-                    block.getLocation(), player));
+            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i,
+                    i.getAmount(), 0, null,block.getLocation(), player));
 
         } else {
 

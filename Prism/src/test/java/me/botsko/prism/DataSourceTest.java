@@ -1,6 +1,7 @@
 package me.botsko.prism;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.testHelpers.TestPrismDataSource;
@@ -9,7 +10,13 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,20 +41,24 @@ public class DataSourceTest {
 
     @Test
     void createDataSource() {
-        ConfigurationSection section = new MemoryConfiguration();
-        section.set("type","derby");
-        section.set("prefix","prism_");
-        TestPrismDataSource.updateDefaultConfig(section);
-        PrismDataSource dataSource = new TestPrismDataSource(section);
-        dataSource.createDataSource();
-        ActionRegistry registry = new ActionRegistry();
-        dataSource.setupDatabase(registry);
-        Settings.setDataSource(dataSource);
-        Assertions.assertEquals(0,getClientDbSchemaVersion());
-        DatabaseUpdater updater = new DatabaseUpdater(dataSource);
-        updater.applyUpdates(dataSource);
-        Assertions.assertEquals(8,getClientDbSchemaVersion());
         try {
+            Path path  = Files.createTempFile("config",".yml");
+            ConfigHandler handler =new ConfigHandler();
+            handler.loadConfiguration(path);
+            ConfigurationNode dataConfig = handler.getDataSourceConfig();
+
+        dataConfig.node("type").set("derby");
+            dataConfig.node("prefix").set("prism_");
+        TestPrismDataSource.updateDefaultConfig(dataConfig);
+        PrismDataSource dataSource = new TestPrismDataSource(dataConfig);
+        dataSource.createDataSource();
+            ActionRegistry registry = new ActionRegistry();
+            dataSource.setupDatabase(registry);
+            Settings.setDataSource(dataSource);
+            Assertions.assertEquals(0,getClientDbSchemaVersion());
+            DatabaseUpdater updater = new DatabaseUpdater(dataSource);
+            updater.applyUpdates(dataSource);
+            Assertions.assertEquals(8,getClientDbSchemaVersion());
             DatabaseMetaData meta = dataSource.getDataSource().getConnection().getMetaData();
             String[] tbls = {"TABLE"};
             ResultSet set = meta.getTables(null,null,"PRISM_%",tbls);
@@ -83,6 +94,8 @@ public class DataSourceTest {
                 }
 
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }

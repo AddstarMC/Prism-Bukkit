@@ -11,6 +11,7 @@ import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.objects.ApplierResult;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.events.EventHelper;
 import me.botsko.prism.events.PrismRollBackEvent;
 import me.botsko.prism.text.ReplaceableTextComponent;
@@ -37,6 +38,7 @@ import java.util.List;
 public class Preview implements Previewable {
 
     protected final Prism plugin;
+    protected final PrismConfig config;
     protected final CommandSender sender;
     protected final Player player;
     protected final QueryParameters parameters;
@@ -62,6 +64,7 @@ public class Preview implements Previewable {
 
         this.processType = parameters.getProcessType();
         this.plugin = plugin;
+        this.config = plugin.config;
         this.sender = sender;
         this.parameters = parameters;
 
@@ -153,7 +156,7 @@ public class Preview implements Previewable {
                           .replace("<processType>", processType.name().toLowerCase())
                           .build());
                     // Inform staff
-                    if (plugin.getConfig().getBoolean("prism.alerts.alert-staff-to-applied-process")) {
+                    if (config.alertConfig.alertStaffToAppliedProcess) {
                         final String cmd = parameters.getOriginalCommand();
                         if (cmd != null) {
                             plugin.alertPlayers(player, ReplaceableTextComponent.builder("notify-staff")
@@ -179,7 +182,7 @@ public class Preview implements Previewable {
 
         worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
 
-            if (plugin.getConfig().getBoolean("prism.debug")) {
+            if (config.debug) {
                 PrismLogHandler.debug("World change queue size: " + worldChangeQueue.size());
             }
 
@@ -358,7 +361,7 @@ public class Preview implements Previewable {
         plugin.eventTimer.recordTimedEvent("applier function complete");
 
         // record timed events to log
-        if (plugin.getConfig().getBoolean("prism.debug")) {
+        if (config.debug) {
             // Flush timed data
             plugin.eventTimer.printTimeRecord();
             PrismLogHandler.debug("Changes: " + changesAppliedCount);

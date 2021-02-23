@@ -43,10 +43,10 @@ public class LookupCommand implements SubHandler {
     public void handle(final CallInfo call) {
 
         // Process and validate all of the arguments
-        final QueryParameters parameters = PreprocessArgs.process(plugin, call.getSender(),
+        final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getSender(),
                 call.getArgs(),
                 PrismProcessType.LOOKUP, 1,
-                !plugin.getConfig().getBoolean("prism.queries.never-use-defaults"));
+                !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
             return;
         }
@@ -117,8 +117,7 @@ public class LookupCommand implements SubHandler {
                         for (final Handler a : paginated) {
                             final ActionMessage am = new ActionMessage(a);
                             if (parameters.hasFlag(Flags.EXTENDED)
-                                    || plugin.getConfig()
-                                    .getBoolean("prism.messenger.always-show-extended")) {
+                                    || plugin.config.parameterConfig.alwaysShowExtended) {
                                 am.showExtended();
                             }
                             am.setResultIndex(resultCount);

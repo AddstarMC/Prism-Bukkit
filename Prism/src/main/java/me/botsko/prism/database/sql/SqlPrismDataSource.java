@@ -1,6 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
+import io.leangen.geantyref.TypeToken;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
@@ -16,6 +17,8 @@ import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.SettingsQuery;
 import org.bukkit.configuration.ConfigurationSection;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
@@ -35,7 +38,7 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
 
     protected static HikariDataSource database = null;
     protected String name = "unconfigured";
-    protected final ConfigurationSection section;
+    protected final ConfigurationNode section;
     private boolean paused; //when set the datasource will not allow insertions;
     private SettingsQuery settingsQuery = null;
     protected String prefix = "prism_";
@@ -45,19 +48,19 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
 
     /**
      * Constructor.
-     * @param section Config
+     * @param node Config
      */
-    public SqlPrismDataSource(ConfigurationSection section) {
-        this.section = section;
-        if (section == null) {
+    public SqlPrismDataSource(ConfigurationNode node) {
+        this.section = node;
+        if (node == null) {
             setPrefix("");
         } else {
-            setPrefix(section.getString("prefix"));
+            setPrefix(node.node("prefix").getString());
         }
     }
 
-    public static void updateDefaultConfig(ConfigurationSection section) {
-        section.addDefault("useNonStandardSql", false);
+    public static void updateDefaultConfig(ConfigurationNode section) throws SerializationException {
+        section.node("useNonStandardSql").set(false);
     }
 
     @Override

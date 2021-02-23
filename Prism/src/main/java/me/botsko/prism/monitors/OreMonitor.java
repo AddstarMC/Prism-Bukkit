@@ -47,7 +47,7 @@ public class OreMonitor {
      */
     public void processAlertsFromBlock(final Player player, final Block block) {
 
-        if (!plugin.getConfig().getBoolean("prism.alerts.ores.enabled")) {
+        if (!plugin.config.alertConfig.oreAlerts.enabled) {
             return;
         }
 
@@ -110,12 +110,12 @@ public class OreMonitor {
                         plugin.alertPlayers(null, component);
 
                         // Log to console
-                        if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
+                        if (plugin.config.alertConfig.oreAlerts.logToConsole) {
                             me.botsko.prism.PrismLogHandler.log(PlainComponentSerializer.plain().serialize(component));
                         }
 
                         // Log to commands
-                        List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
+                        List<String> commands = plugin.config.alertConfig.oreAlerts.logCommands;
                         MiscUtils.dispatchAlert(msg, commands);
                     }
                 });

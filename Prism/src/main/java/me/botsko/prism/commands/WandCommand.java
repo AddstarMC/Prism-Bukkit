@@ -4,6 +4,7 @@ import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.commandlibs.CallInfo;
+import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.InventoryUtils;
 import me.botsko.prism.utils.ItemUtils;
@@ -62,38 +63,34 @@ public class WandCommand extends AbstractCommand {
         Prism.playersWithActiveTools.remove(call.getPlayer().getName());
 
         // Determine default mode
-        String mode = plugin.getConfig().getString("prism.wands.default-mode");
+        PrismConfig.WandMode mode = plugin.config.wandConfig.defaultMode;
 
         // Check if the player has a personal override
-        if (plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
-            final String personalMode = Settings.getSetting("wand.mode", call.getPlayer());
+        boolean allowUserOveride = plugin.config.wandConfig.allowUserOverride;
+        if (allowUserOveride) {
+            final PrismConfig.WandMode personalMode = PrismConfig.WandMode.valueOf(Settings.getSetting("wand.mode", call.getPlayer()));
             if (personalMode != null) {
                 mode = personalMode;
             }
         }
 
         // Determine which item we're using.
-        String toolKey = null;
-        if ("item".equals(mode)) {
-            toolKey = plugin.getConfig().getString("prism.wands.default-item-mode-id");
-        } else if ("block".equals(mode)) {
-            toolKey = plugin.getConfig().getString("prism.wands.default-block-mode-id");
+        Material toolKey = null;
+        if (PrismConfig.WandMode.ITEM.equals(mode)) {
+            toolKey = plugin.config.wandConfig.defaultModeItem;
+        } else if (PrismConfig.WandMode.BLOCK.equals(mode)) {
+            toolKey = plugin.config.wandConfig.defaultModeBlock;
         }
 
         // Check if the player has a personal override
-        if (plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
-            final String personalToolKey = Settings.getSetting("wand.item", call.getPlayer());
+        if (allowUserOveride) {
+            final Material personalToolKey = Material.valueOf(Settings.getSetting("wand.item", call.getPlayer()));
             if (personalToolKey != null) {
                 toolKey = personalToolKey;
             }
         }
 
-        Material itemMaterial = null;
-
-        if (toolKey != null) {
-            itemMaterial = Material.matchMaterial(toolKey);
-        }
-
+        Material itemMaterial = toolKey;
         String wandOn = "";
         String itemName = "";
         StringBuilder parameters = new StringBuilder();
@@ -186,7 +183,7 @@ public class WandCommand extends AbstractCommand {
     }
 
     private void constructWand(CallInfo call, boolean enabled,
-                               final Material itemMaterial, String mode, Wand wand,
+                               final Material itemMaterial, PrismConfig.WandMode mode, Wand wand,
                                boolean isInspect,
                                Wand oldWand) {
         Material item = itemMaterial;
@@ -209,7 +206,7 @@ public class WandCommand extends AbstractCommand {
             PrismLogHandler.debug("Wand activated for player - mode: " + mode + " Item:" + item);
 
             // Move any existing item to the hand, otherwise give it to them
-            if (plugin.getConfig().getBoolean("prism.wands.auto-equip")) {
+            if (plugin.config.wandConfig.autoEquip) {
                 if (!InventoryUtils.moveItemToHand(inv, item)) {
                     // Store the item they're holding, if any
                     wand.setOriginallyHeldItem(inv.getItemInMainHand());

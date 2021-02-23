@@ -12,7 +12,8 @@ public class RecordingTask implements Runnable {
 
     private final Prism plugin;
     private static int actionsPerInsert;
-    private int maxFailures;
+    private final int maxFailures;
+    private int recordingTickDelay;
 
     public static void setActionsPerInsert(int adjust) {
         actionsPerInsert = adjust;
@@ -26,8 +27,10 @@ public class RecordingTask implements Runnable {
      */
     public RecordingTask(Prism plugin) {
         this.plugin = plugin;
-        actionsPerInsert = plugin.getConfig().getInt("prism.query.actions-per-insert-batch");
-        maxFailures = plugin.getConfig().getInt("prism.query.max-failures-before-wait");
+        actionsPerInsert = Prism.config.queueConfig.actionsPerBatch;
+        maxFailures = Prism.config.queueConfig.maxFailures;
+        recordingTickDelay = Prism.config.queueConfig.emptyTickDelay;
+
 
     }
 
@@ -78,7 +81,7 @@ public class RecordingTask implements Runnable {
                     PrismLogHandler.log(builder.toString());
                 }
                 RecordingManager.failedDbConnectionCount++;
-                if (RecordingManager.failedDbConnectionCount > maxFailures ) {
+                if (RecordingManager.failedDbConnectionCount > maxFailures) {
                     PrismLogHandler.log("Too many problems connecting. Giving up for a bit.");
                     scheduleNextRecording();
                 }
@@ -156,16 +159,14 @@ public class RecordingTask implements Runnable {
     private int getTickDelayForNextBatch() {
 
         // If we have too many rejected connections, increase the schedule
-        if (RecordingManager.failedDbConnectionCount > plugin.getConfig()
-                .getInt("prism.query.max-failures-before-wait")) {
+        if (RecordingManager.failedDbConnectionCount > maxFailures) {
             return RecordingManager.failedDbConnectionCount * 20;
         }
 
-        int recorderTickDelay = plugin.getConfig().getInt("prism.queue-empty-tick-delay");
-        if (recorderTickDelay < 1) {
-            recorderTickDelay = 3;
+        if (recordingTickDelay < 1) {
+            recordingTickDelay = 3;
         }
-        return recorderTickDelay;
+        return recordingTickDelay;
     }
 
     /**

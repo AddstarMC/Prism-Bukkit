@@ -75,7 +75,7 @@ public class PurgeTask implements Runnable {
         // We're chunking by IDs instead of using LIMIT because
         // that should be a lot better as far as required record lock counts
         // http://mysql.rjweb.org/doc.php/deletebig
-        int spread = plugin.getConfig().getInt("prism.purge.records-per-batch");
+        int spread = plugin.config.purgeConfig.recordsPerBatch;
         if (spread <= 1) {
             spread = 10000;
         }

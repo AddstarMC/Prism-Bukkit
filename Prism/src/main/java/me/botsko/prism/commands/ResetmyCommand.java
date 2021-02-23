@@ -40,7 +40,7 @@ public class ResetmyCommand extends AbstractCommand {
             return;
         }
 
-        if (!plugin.getConfig().getBoolean("prism.wands.allow-user-override")) {
+        if (!plugin.config.wandConfig.allowUserOverride) {
             Prism.messenger.sendMessage(call.getPlayer(),
                     Prism.messenger.playerError(Il8nHelper.getMessage("wand-personal-blocked")));
         }

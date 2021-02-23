@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.util.List;
@@ -30,19 +32,19 @@ public class PrismTestPlugin extends Prism {
     protected PrismTestPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
-        this.getConfig().set("prism.allow-metrics", false);
+        this.config.allowMetrics = false;
     }
 
     protected PrismTestPlugin(PrismDataSource source, JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         prismDataSource = source;
         instance = this;
-        this.getConfig().set("prism.allow-metrics", false);
+        this.config.allowMetrics = false;
     }
 
     @Override
     public void onEnable() {
-        debug = getConfig().getBoolean("prism.debug", false);
+        debug = this.config.debug;
         logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
@@ -51,8 +53,12 @@ public class PrismTestPlugin extends Prism {
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        ConfigurationSection data = config.getConfigurationSection("datasource");
-        data.set("type","derby");
+        ConfigurationNode dataSourceConfig = configHandler.getDataSourceConfig();
+        try {
+            dataSourceConfig.node("type").set("derby");
+        } catch (SerializationException exception) {
+            exception.printStackTrace();
+        }
         isPaper = PaperLib.isPaper();
         checkPluginDependencies();
         pasteKey = null;
@@ -68,8 +74,7 @@ public class PrismTestPlugin extends Prism {
         }, 100, 200);
         if (prismDataSource == null) {
             prismDataSource =
-                    new TestPrismDataSource(config.getConfigurationSection(
-                            "dataSource"));
+                    new TestPrismDataSource(dataSourceConfig);
         }
         StringBuilder builder = new StringBuilder();
         if (!prismDataSource.reportDataSource(builder,true)) {

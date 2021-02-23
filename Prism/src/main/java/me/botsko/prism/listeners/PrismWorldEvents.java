@@ -3,6 +3,7 @@ package me.botsko.prism.listeners;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.TreeType;
 import org.bukkit.block.BlockState;
@@ -23,10 +24,10 @@ public class PrismWorldEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onStructureGrow(final StructureGrowEvent event) {
-        String type = "tree-grow";
+        ActionType type = ActionType.TREE_GROW;
         final TreeType species = event.getSpecies();
         if (species.name().toLowerCase().contains("mushroom")) {
-            type = "mushroom-grow";
+            type = ActionType.MUSHROOM_GROW;
         }
         if (!Prism.getIgnore().event(type, event.getWorld())) {
             return;
@@ -34,9 +35,9 @@ public class PrismWorldEvents implements Listener {
         for (final BlockState block : event.getBlocks()) {
             if (Utilities.isGrowableStructure(block.getType())) {
                 if (event.getPlayer() != null) {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, event.getPlayer()));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, event.getPlayer()));
                 } else {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, "Environment"));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, "Environment"));
                 }
             }
         }
@@ -62,7 +63,7 @@ public class PrismWorldEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR,ignoreCancelled = true)
     public void onPortalCreate(final PortalCreateEvent event) {
-        String type = "portal-create";
+        ActionType type = ActionType.PORTAL_CREATE;
         if (!Prism.getIgnore().event(type, event.getWorld())) {
             return;
         }
@@ -71,13 +72,13 @@ public class PrismWorldEvents implements Listener {
                 Entity e = event.getEntity();
                 if (e != null) {
                     if (e instanceof Player) {
-                        RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, (Player) event.getEntity()));
+                        RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, (Player) event.getEntity()));
                     } else {
                         RecordingQueue.addToQueue(ActionFactory
-                                .createGrow(type, block, event.getEntity().getName().toLowerCase()));
+                                .createGrow(type.name, block, event.getEntity().getName().toLowerCase()));
                     }
                 } else {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, "Environment"));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, "Environment"));
                 }
             }
         }

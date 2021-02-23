@@ -42,7 +42,7 @@ public final class PurgeManager implements Runnable {
             for (final String purgeArgs : purgeRules) {
 
                 // Process and validate all of the arguments
-                final QueryParameters parameters = PreprocessArgs.process(plugin, null, purgeArgs.split(" "),
+                final QueryParameters parameters = PreprocessArgs.process(plugin.config, null, purgeArgs.split(" "),
                       PrismProcessType.DELETE, 0, false);
 
                 if (parameters == null) {
@@ -60,7 +60,7 @@ public final class PurgeManager implements Runnable {
             if (paramList.size() > 0) {
 
 
-                int purgeTickDelay = plugin.getConfig().getInt("prism.purge.batch-tick-delay");
+                int purgeTickDelay = plugin.config.purgeConfig.batchTickDelay;
                 if (purgeTickDelay < 1) {
                     purgeTickDelay = 20;
                 }
