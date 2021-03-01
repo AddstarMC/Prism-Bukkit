@@ -10,20 +10,18 @@ import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.config.PrismConfig;
-import me.botsko.prism.purge.PurgeTask;
 import me.botsko.prism.purge.SenderPurgeCallback;
 import net.kyori.adventure.text.Component;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
 import java.util.regex.Pattern;
 
 public class DeleteCommand extends AbstractCommand {
 
     private final Prism plugin;
     private final PrismConfig config;
-    private BukkitTask deleteTask;
 
     /**
      * Constructor.
@@ -40,10 +38,15 @@ public class DeleteCommand extends AbstractCommand {
 
         // Allow for canceling tasks
         if (call.getArgs().length > 1 && call.getArg(1).equals("cancel")) {
-            if (plugin.getPurgeManager().deleteTask != null) {
-                plugin.getPurgeManager().deleteTask.cancel();
-                Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerMsg(Il8nHelper.getMessage("cancel-purge")));
+            ScheduledFuture<?> task = plugin.getTaskManager().getPurgeManager().purgeTask;
+            if (task != null) {
+                if (plugin.getTaskManager().getPurgeManager().purgeTask.cancel(false)) {
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerMsg(Il8nHelper.getMessage("cancel-purge")));
+                } else {
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerMsg(Il8nHelper.getMessage("cancel-purge-error")));
+                }
             } else {
                 Prism.messenger.sendMessage(call.getSender(),
                         Prism.messenger.playerError(Il8nHelper.getMessage("no-purge-running")));
@@ -106,8 +109,8 @@ public class DeleteCommand extends AbstractCommand {
                 final long maxId = extents[1];
                 PrismLogHandler.log("Beginning prism database purge cycle. Will be performed in batches so "
                                 + "we don't tie up the db...");
-                deleteTask = plugin.getServer().getScheduler().runTaskAsynchronously(plugin,
-                        new PurgeTask(plugin, paramList, purgeTickDelay, minId, maxId, callback));
+                plugin.getTaskManager().getPurgeManager()
+                        .scheduleNewPurgeTaskOutOfCycle(paramList,purgeTickDelay,minId,maxId,callback);
             });
         } else {
             Prism.messenger.sendMessage(call.getSender(),

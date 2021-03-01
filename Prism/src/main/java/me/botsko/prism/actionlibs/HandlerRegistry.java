@@ -42,7 +42,7 @@ public class HandlerRegistry {
     public void registerCustomHandler(Plugin apiPlugin, Class<? extends Handler> handlerClass)
             throws InvalidActionException {
 
-        final List<String> allowedPlugins = Prism.config.getStringList("prism.tracking.api.allowed-plugins");
+        final List<String> allowedPlugins = Prism.getInstance().config.trackingConfig.allowedPlugins;
         if (!allowedPlugins.contains(apiPlugin.getName())) {
             throw new InvalidActionException("Registering action type not allowed. Plugin '" + apiPlugin.getName()
                     + "' is not in list of allowed plugins.");

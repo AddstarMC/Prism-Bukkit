@@ -5,11 +5,11 @@ import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.players.PlayerIdentification;
+import me.botsko.prism.settings.Settings;
 import me.botsko.prism.testHelpers.TestPrismDataSource;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPluginLoader;
@@ -32,27 +32,28 @@ public class PrismTestPlugin extends Prism {
     protected PrismTestPlugin(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         instance = this;
-        this.config.allowMetrics = false;
     }
 
     protected PrismTestPlugin(PrismDataSource source, JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         prismDataSource = source;
         instance = this;
-        this.config.allowMetrics = false;
     }
 
     @Override
     public void onEnable() {
-        debug = this.config.debug;
         logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
+        loadConfig();        // Load configuration, or install if new
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
+        taskManager = new TaskManager(Bukkit.getScheduler(),this);
+
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
-        loadConfig();        // Load configuration, or install if new
+        config.allowMetrics = false;
+        debug = config.debug = true;
         ConfigurationNode dataSourceConfig = configHandler.getDataSourceConfig();
         try {
             dataSourceConfig.node("type").set("derby");
@@ -73,8 +74,8 @@ public class PrismTestPlugin extends Prism {
             }
         }, 100, 200);
         if (prismDataSource == null) {
-            prismDataSource =
-                    new TestPrismDataSource(dataSourceConfig);
+            prismDataSource = new TestPrismDataSource(dataSourceConfig);
+            prismDataSource.createDataSource();
         }
         StringBuilder builder = new StringBuilder();
         if (!prismDataSource.reportDataSource(builder,true)) {
@@ -85,6 +86,7 @@ public class PrismTestPlugin extends Prism {
             return;
         }
         // Info needed for setup, init these here
+        Settings.setDataSource(prismDataSource);
         handlerRegistry = new HandlerRegistry();
         actionRegistry = new ActionRegistry();
         playerIdentifier = new PlayerIdentification(prismDataSource);

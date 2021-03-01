@@ -1,15 +1,21 @@
 package me.botsko.prism;
 
-import org.bukkit.plugin.Plugin;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import me.botsko.prism.actionlibs.InternalAffairs;
+import me.botsko.prism.actionlibs.RecordingTask;
+import me.botsko.prism.config.PrismConfig;
+import me.botsko.prism.purge.PurgeManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -23,11 +29,21 @@ import java.util.logging.Level;
  */
 public class TaskManager {
     public boolean active;
-    private final BukkitScheduler schedule;
-    private BukkitTask core;
-    private final ExecutorService service;
-    private final Plugin plugin;
+    private PrismConfig config;
+    private final BukkitScheduler scheduler;
+    private BukkitTask functionalTaskHandler;
+    private BukkitTask recordingTask;
+    private ScheduledFuture<?> purgeManagerFuture;
+    private ScheduledFuture<?> internalAffairsFuture;
+    private final ScheduledThreadPoolExecutor schedulePool;
+    private final Prism plugin;
     private final BlockingQueue<FunctionalBukkitTask<?>> tasks = new LinkedBlockingQueue<>();
+
+    public PurgeManager getPurgeManager() {
+        return purgeManager;
+    }
+
+    private PurgeManager purgeManager;
 
     /**
      * This class handles futures checking them for completion asynchronously and then running the supplied task
@@ -36,11 +52,34 @@ public class TaskManager {
      * @param schedule BukkitScheduler for synchronous execution
      * @param plugin   the plugin.
      */
-    public TaskManager(BukkitScheduler schedule, Plugin plugin) {
-        this.schedule = schedule;
+    public TaskManager(BukkitScheduler schedule, Prism plugin) {
+        this.scheduler = schedule;
         this.plugin = plugin;
-        service = Executors.newCachedThreadPool();
+        this.config = plugin.config;
+        ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("Prism-TaskManager-Thread-%d").build();
+        this.schedulePool = new ScheduledThreadPoolExecutor(1,factory);
         active = true;
+    }
+
+
+    public ScheduledThreadPoolExecutor getSchedulePool() {
+        return schedulePool;
+    }
+
+    /**
+     * Schedule the Purge manager.
+     */
+    protected void launchScheduledPurgeManager() {
+        final List<String> purgeRules = config.purgeConfig.rules;
+        purgeManager = new PurgeManager(plugin, purgeRules);
+        purgeManagerFuture = schedulePool.scheduleAtFixedRate(purgeManager, 0, 12, TimeUnit.HOURS);
+    }
+
+    /**
+     * Launch InternalAffairs - to monitor recording.
+     */
+    protected void launchInternalAffairs() {
+        internalAffairsFuture = schedulePool.scheduleAtFixedRate(new InternalAffairs(plugin), 0, 5, TimeUnit.MINUTES);
     }
 
     /**
@@ -66,9 +105,11 @@ public class TaskManager {
      */
     public boolean shutdown() {
         active = false;
+        purgeManagerFuture.cancel(false);
+        internalAffairsFuture.cancel(false);
+        functionalTaskHandler.cancel();
         try {
-            if (service.awaitTermination(100,TimeUnit.MILLISECONDS)) {
-                core.cancel();
+            if (schedulePool.awaitTermination(100,TimeUnit.MILLISECONDS)) {
                 tasks.clear();
                 return true;
             } else {
@@ -82,8 +123,11 @@ public class TaskManager {
     }
 
     private boolean fastShutdown() {
-        int failed = service.shutdownNow().size();
-        core.cancel();
+        if (purgeManagerFuture.cancel(true)) {
+            PrismLogHandler.warn("Task manager: forced PurgeManager to stop");
+        }
+        int failed = schedulePool.shutdownNow().size();
+        functionalTaskHandler.cancel();
         tasks.clear();
         if (failed > 0) {
             PrismLogHandler.warn("Task manager: " + failed + " tasks where force stopped.");
@@ -92,11 +136,32 @@ public class TaskManager {
         return  true;
     }
 
+    public void setRecordingTask(BukkitTask recordingTask) {
+        this.recordingTask = recordingTask;
+    }
+
+    public BukkitTask getRecordingTask() {
+        return recordingTask;
+    }
+
+
+    /**
+     * Schedule the RecorderTask async.
+     */
+    public void actionRecorderTask() {
+        int recorderTickDelay = plugin.config.queueConfig.emptyTickDelay;
+        if (recorderTickDelay < 1) {
+            recorderTickDelay = 3;
+        }
+        // we schedule it once, it will reschedule itself
+        setRecordingTask(scheduler.runTaskLaterAsynchronously(plugin, new RecordingTask(plugin), recorderTickDelay));
+    }
+
     /**
      * Start the task manager.
      */
     public void run() {
-        core = schedule.runTaskAsynchronously(plugin, () -> {
+        functionalTaskHandler = scheduler.runTaskAsynchronously(plugin, () -> {
             while (active) {
                 try {
                     FunctionalBukkitTask<?> next = tasks.poll(100, TimeUnit.MILLISECONDS);
@@ -142,9 +207,9 @@ public class TaskManager {
             try {
                 result = future.get();
                 if (async) {
-                    service.execute(() -> onCompletion.accept(result));
+                    schedulePool.execute(() -> onCompletion.accept(result));
                 } else {
-                    schedule.runTask(plugin, () -> onCompletion.accept(result));
+                    scheduler.runTask(plugin, () -> onCompletion.accept(result));
                 }
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();

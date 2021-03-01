@@ -6,6 +6,7 @@ import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.Action;
 import me.botsko.prism.api.actions.Handler;
+import me.botsko.prism.config.PrismConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,6 +22,9 @@ import java.util.UUID;
 public abstract class GenericAction implements Handler {
     private static final SimpleDateFormat date = new SimpleDateFormat("yy/MM/dd");
     private static final SimpleDateFormat time = new SimpleDateFormat("hh:mm:ssa");
+
+    protected static final PrismConfig config = Prism.getInstance().config;
+
     private boolean canceled = false;
     private Action type;
 

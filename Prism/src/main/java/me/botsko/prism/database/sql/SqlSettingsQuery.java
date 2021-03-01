@@ -96,7 +96,7 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
     }
 
     protected String getSelectQuery() {
-        return "SELECT v FROM " + prefix + "meta WHERE k = ? FETCH FIRST 1 row only;";
+        return "SELECT v FROM " + prefix + "meta WHERE k = ? FETCH FIRST 1 row only";
     }
 
     protected String getInsertQuery() {

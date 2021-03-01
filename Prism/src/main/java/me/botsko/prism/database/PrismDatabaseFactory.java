@@ -5,8 +5,6 @@ import me.botsko.prism.database.mysql.MySqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import me.botsko.prism.settings.Settings;
-import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
@@ -23,7 +21,7 @@ public class PrismDatabaseFactory {
      */
     public static void createDefaultConfig(final ConfigurationNode dataSourceSection) throws SerializationException {
         ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
-        String dataType = dataSourceSection.node("type").getString("mysql");
+        String dataType = dataSourceSection.node("type").getString("derby");
         dataSourceSection.node("type").set(dataType);
         updateDataSourceProperties(dataType, dataSourceProperties);
     }
@@ -53,10 +51,11 @@ public class PrismDatabaseFactory {
      */
     public static PrismDataSource createDataSource(ConfigurationNode dataSourceSection) {
         PrismDataSource database;
-        String dataSource = dataSourceSection.node("type").getString("mysql");
-
+        String dataSource = dataSourceSection.node("type").getString();
         ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
-
+        if(dataSource == null) {
+            dataSource = "null";
+        }
         switch (dataSource) {
             case "mysql":
                 PrismLogHandler.log("Attempting to configure datasource as mysql");

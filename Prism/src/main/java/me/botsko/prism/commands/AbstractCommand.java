@@ -2,7 +2,6 @@ package me.botsko.prism.commands;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
-import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.commandlibs.SubHandler;
 import org.bukkit.Bukkit;
@@ -32,8 +31,8 @@ public abstract class AbstractCommand implements SubHandler {
     @SuppressWarnings("WeakerAccess")
     protected static boolean checkRecorderActive(Prism plugin) {
         boolean recorderActive = false;
-        if (plugin.recordingTask != null) {
-            final int taskId = plugin.recordingTask.getTaskId();
+        if (plugin.getTaskManager().getRecordingTask() != null) {
+            final int taskId = plugin.getTaskManager().getRecordingTask().getTaskId();
             final BukkitScheduler scheduler = Bukkit.getScheduler();
             if (scheduler.isCurrentlyRunning(taskId) || scheduler.isQueued(taskId)) {
                 recorderActive = true;

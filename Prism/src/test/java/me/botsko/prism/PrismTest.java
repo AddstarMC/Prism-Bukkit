@@ -4,6 +4,7 @@ import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.testHelpers.TestHelper;
 import me.botsko.prism.utils.IntPair;
@@ -65,7 +66,7 @@ public class PrismTest {
     @Test
     void getIgnore() {
         assertNotNull(Prism.getIgnore());
-        assertFalse(Prism.getIgnore().event("craft-item"));
+        assertFalse(Prism.getIgnore().event(ActionType.CRAFT_ITEM));
     }
 
     @Test

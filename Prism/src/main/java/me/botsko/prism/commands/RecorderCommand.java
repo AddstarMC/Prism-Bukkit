@@ -33,8 +33,8 @@ public class RecorderCommand extends AbstractCommand {
         // Allow for canceling recorders
         if (call.getArg(1).equals("cancel")) {
             if (recorderActive) {
-                plugin.recordingTask.cancel();
-                plugin.recordingTask = null;
+                plugin.getTaskManager().getRecordingTask().cancel();
+                plugin.getTaskManager().setRecordingTask(null);
                 Prism.messenger.sendMessage(call.getSender(), Prism.messenger
                         .playerMsg(Il8nHelper.getMessage("recorder-stopped")));
                 Prism.messenger.sendMessage(call.getSender(), Prism.messenger
@@ -60,7 +60,7 @@ public class RecorderCommand extends AbstractCommand {
                             Prism.messenger.playerSuccess(Il8nHelper.getMessage("pool-valid-connection")));
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerMsg(Il8nHelper.getMessage("recorder-restarting")));
-                    plugin.actionRecorderTask();
+                    plugin.getTaskManager().actionRecorderTask();
                 } else {
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerError(Il8nHelper.getMessage("no-valid-database")));

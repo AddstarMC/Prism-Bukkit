@@ -1,7 +1,13 @@
 package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.actionlibs.*;
+import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.HandlerRegistry;
+import me.botsko.prism.actionlibs.Ignore;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actionlibs.QueueDrain;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
@@ -15,16 +21,35 @@ import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
-import me.botsko.prism.listeners.*;
+import me.botsko.prism.listeners.PaperListeners;
+import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismCustomEvents;
+import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismInventoryEvents;
+import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
+import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismVehicleEvents;
+import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.*;
+import me.botsko.prism.parameters.ActionParameter;
+import me.botsko.prism.parameters.BeforeParameter;
+import me.botsko.prism.parameters.BlockParameter;
+import me.botsko.prism.parameters.EntityParameter;
+import me.botsko.prism.parameters.FlagParameter;
+import me.botsko.prism.parameters.IdParameter;
+import me.botsko.prism.parameters.KeywordParameter;
+import me.botsko.prism.parameters.PlayerParameter;
+import me.botsko.prism.parameters.PrismParameterHandler;
+import me.botsko.prism.parameters.RadiusParameter;
+import me.botsko.prism.parameters.SinceParameter;
+import me.botsko.prism.parameters.WorldParameter;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
-import me.botsko.prism.purge.PurgeManager;
+import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.identity.Identity;
@@ -47,13 +72,22 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.java.JavaPluginLoader;
 import org.bukkit.scheduler.BukkitTask;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.*;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class Prism extends JavaPlugin implements PrismApi {
@@ -93,27 +127,15 @@ public class Prism extends JavaPlugin implements PrismApi {
      * block.
      */
     public final ConcurrentHashMap<String, String> preplannedBlockFalls = new ConcurrentHashMap<>();
-    private final ScheduledThreadPoolExecutor schedulePool = new ScheduledThreadPoolExecutor(1);
-    private final ScheduledExecutorService recordingMonitorTask = new ScheduledThreadPoolExecutor(1);
-
-    public TaskManager getTaskManager() {
-        return taskManager;
-    }
-
-    private TaskManager taskManager;
+    protected TaskManager taskManager;
     public boolean monitoring = false;
     public OreMonitor oreMonitor;
     public UseMonitor useMonitor;
     public TimeTaken eventTimer;
     public QueueStats queueStats;
-    public BukkitTask recordingTask;
-    public int totalRecordsAffected = 0;
-    public long maxCycleTime = 0;
     protected PlayerIdentification playerIdentifier;
     protected String pluginVersion;
     private PrismCommands commands = null;
-    // private ScheduledFuture<?> scheduledPurgeExecutor;
-    private PurgeManager purgeManager;
 
     public Prism() {
         instance = this;
@@ -137,6 +159,11 @@ public class Prism extends JavaPlugin implements PrismApi {
     @Override
     public void saveDefaultConfig() {
         //ignore
+    }
+
+
+    public TaskManager getTaskManager() {
+        return taskManager;
     }
 
     public static BukkitAudiences getAudiences() {
@@ -306,10 +333,6 @@ public class Prism extends JavaPlugin implements PrismApi {
         return playerIdentifier;
     }
 
-    public ScheduledThreadPoolExecutor getSchedulePool() {
-        return schedulePool;
-    }
-
     /**
      * Enables the plugin and activates our player listeners.
      */
@@ -372,7 +395,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 updating.cancel();
                 return;
             }
-
+            Settings.setDataSource(prismDataSource);
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
             actionRegistry = new ActionRegistry();
@@ -492,7 +515,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             useMonitor = new UseMonitor(instance);
 
             // Init async tasks
-            actionRecorderTask();
+            taskManager.actionRecorderTask();
 
             // Init scheduled events
             endExpiredQueryCaches();
@@ -500,10 +523,10 @@ public class Prism extends JavaPlugin implements PrismApi {
             removeExpiredLocations();
 
             // Delete old data based on config
-            launchScheduledPurgeManager();
+            taskManager.launchScheduledPurgeManager();
 
             // Keep watch on db connections, other sanity
-            launchInternalAffairs();
+            taskManager.launchInternalAffairs();
 
             if (config.preloadMaterials) {
                 config.preloadMaterials = false;
@@ -535,6 +558,11 @@ public class Prism extends JavaPlugin implements PrismApi {
         configHandler = new ConfigHandler();
         Path path = Paths.get(getDataFolder().getPath(),"config.yml");
         configHandler.loadConfiguration(path);
+        try {
+            PrismDatabaseFactory.createDefaultConfig(configHandler.getDataSourceConfig());
+        } catch (SerializationException e) {
+            PrismLogHandler.warn("Error creating database config",e);
+        }
         config = configHandler.getConfig();
         // Cache config arrays we check constantly
         illegalBlocks = config.applierConfig.neverPlace;
@@ -578,14 +606,6 @@ public class Prism extends JavaPlugin implements PrismApi {
         return ApiHandler.checkDependency(pluginName);
     }
 
-    /**
-     * PurgeManager.
-     *
-     * @return PurgeManager
-     */
-    public PurgeManager getPurgeManager() {
-        return purgeManager;
-    }
 
     /**
      * Clears the Query Cache.
@@ -642,36 +662,6 @@ public class Prism extends JavaPlugin implements PrismApi {
                 }
             }
         }, 1200L, 1200L);
-    }
-
-    /**
-     * Schedule the RecorderTask async.
-     */
-    public void actionRecorderTask() {
-        int recorderTickDelay = config.queueConfig.emptyTickDelay;
-        if (recorderTickDelay < 1) {
-            recorderTickDelay = 3;
-        }
-        // we schedule it once, it will reschedule itself
-        recordingTask = getServer().getScheduler().runTaskLaterAsynchronously(this, new RecordingTask(this),
-                recorderTickDelay);
-    }
-
-    /**
-     * Schedule the Purge manager.
-     */
-    private void launchScheduledPurgeManager() {
-        final List<String> purgeRules = config.purgeConfig.rules;
-        purgeManager = new PurgeManager(this, purgeRules);
-        schedulePool.scheduleAtFixedRate(purgeManager, 0, 12, TimeUnit.HOURS);
-    }
-
-    /**
-     * Launch InternalAffairs - to monitor recording.
-     */
-    private void launchInternalAffairs() {
-        final Runnable recordingMonitor = new InternalAffairs(this);
-        recordingMonitorTask.scheduleAtFixedRate(recordingMonitor, 0, 5, TimeUnit.MINUTES);
     }
 
     /**

@@ -23,8 +23,8 @@ public class ActionsQuery {
 
     public ActionsQuery(Prism plugin) {
         this.plugin = plugin;
-        this.qb = Prism.getInstance().getPrismDataSource().createSelectQuery();
-        this.config = Prism.config;
+        this.qb = plugin.getPrismDataSource().createSelectQuery();
+        this.config = plugin.config;
     }
 
     /**

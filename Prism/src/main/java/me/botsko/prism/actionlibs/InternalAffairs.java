@@ -2,7 +2,6 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class InternalAffairs implements Runnable {
@@ -16,26 +15,30 @@ public class InternalAffairs implements Runnable {
 
     @Override
     public void run() {
-
-        if (plugin.recordingTask != null) {
-
-            final int taskId = plugin.recordingTask.getTaskId();
-
-            final BukkitScheduler scheduler = Bukkit.getScheduler();
-
-            // is recording task running?
-            if (scheduler.isCurrentlyRunning(taskId) || scheduler.isQueued(taskId)) {
-                PrismLogHandler.debug("[InternalAffairs] Recorder is currently active. All is good.");
-                return;
-            }
+        if (reportStatusGood()) {
+            return;
         }
-
         PrismLogHandler.log("[InternalAffairs] Recorder is NOT active... checking database");
 
         StringBuilder result = new StringBuilder();
         if (Prism.getInstance().getPrismDataSource().reportDataSource(result)) {
-             PrismLogHandler.log("[Internal Affairs]" + result.toString());
-             plugin.actionRecorderTask();
+            PrismLogHandler.log("[Internal Affairs]" + result.toString());
+            plugin.getTaskManager().actionRecorderTask();
+            reportStatusGood();
+        } else {
+            PrismLogHandler.warn(result.toString());
         }
+    }
+
+    private boolean reportStatusGood() {
+        final BukkitScheduler scheduler = plugin.getServer().getScheduler();
+        if (plugin.getTaskManager().getRecordingTask() != null) {
+            final int taskId = plugin.getTaskManager().getRecordingTask().getTaskId();
+            if (scheduler.isCurrentlyRunning(taskId) || scheduler.isQueued(taskId)) {
+                PrismLogHandler.debug("[InternalAffairs] Recorder is currently active. All is good.");
+                return true;
+            }
+        }
+        return false;
     }
 }

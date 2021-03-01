@@ -2,12 +2,20 @@ package me.botsko.prism.database.sql.derby;
 
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PlayerIdentificationQuery;
+import me.botsko.prism.database.PrismDataSourceUpdater;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
-import org.bukkit.configuration.ConfigurationSection;
 import org.spongepowered.configurate.ConfigurationNode;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -38,9 +46,6 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
             ResultSet res = meta.getSchemas();
             Collection<String> tableNames = new HashSet<>();
             while (res.next()) {
-                String scheam = res.getString("TABLE_SCHEM");
-                String cat = res.getString("TABLE_CATALOG");
-
                 tableNames.add(name);
             }
             res.close();
@@ -52,7 +57,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
                             && setupTable5(st, tableNames)
                             && setupTable6(st, tableNames)
                             && setupTable7(st, tableNames)) {
-                setDatabaseSchemaVersion(8);
+                PrismLogHandler.log("Database Setup Complete");
             }
             // actions
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to

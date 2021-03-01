@@ -27,9 +27,9 @@ public class RecordingTask implements Runnable {
      */
     public RecordingTask(Prism plugin) {
         this.plugin = plugin;
-        actionsPerInsert = Prism.config.queueConfig.actionsPerBatch;
-        maxFailures = Prism.config.queueConfig.maxFailures;
-        recordingTickDelay = Prism.config.queueConfig.emptyTickDelay;
+        actionsPerInsert = plugin.config.queueConfig.actionsPerBatch;
+        maxFailures = plugin.config.queueConfig.maxFailures;
+        recordingTickDelay = plugin.config.queueConfig.emptyTickDelay;
 
 
     }
@@ -178,7 +178,7 @@ public class RecordingTask implements Runnable {
                             + " down the server, ignore me.");
             return;
         }
-        plugin.recordingTask = plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
-                this, getTickDelayForNextBatch());
+        plugin.getTaskManager().setRecordingTask(plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
+                this, getTickDelayForNextBatch()));
     }
 }

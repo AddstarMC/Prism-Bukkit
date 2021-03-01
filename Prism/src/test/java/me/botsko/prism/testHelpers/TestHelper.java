@@ -17,23 +17,41 @@ public class TestHelper {
 
     private PrismTestPlugin plugin;
 
+    public static boolean isEnabled(TestHelper helper) {
+        return helper.plugin.isEnabled();
+    }
+
+    public static void shutdownHelper(TestHelper helper) {
+        helper.shutdown();
+    }
+
     public ServerMock setup() {
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
         plugin = MockBukkit.load(PrismTestPlugin.class);
         server.getScheduler().performTicks(20);
-        
         return server;
     }
 
     public void shutdown() {
-        Path path = plugin.getDataFolder().toPath();
+        Path path = null;
+        if (plugin != null) {
+            path = plugin.getDataFolder().toPath();
+            plugin.onDisable();
+        }
         try {
             MockBukkit.unmock();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        if (path != null) {
+            cleanFileSystem(path);
+        }
+
+    }
+
+    private void cleanFileSystem(Path path) {
         try {
             Files.list(path).forEach(path1 -> {
                 try {
@@ -48,13 +66,5 @@ public class TestHelper {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    public static boolean isEnabled(TestHelper helper) {
-        return  helper.plugin.isEnabled();
-    }
-
-    public static void shutdownHelper(TestHelper helper) {
-        helper.shutdown();
     }
 }

@@ -191,10 +191,6 @@ public class PrismConfig {
     @ConfigSerializable
     public static class PurgeConfig {
 
-
-        @Setting("allow-rollback-items-removed-from-container")
-        public boolean allowRollbackItemsRemovedFromContainer = true;
-
         @Setting("rules")
         public List<String> rules = Arrays.asList("before:8w", "a:water-flow before:4w");
 
@@ -227,6 +223,9 @@ public class PrismConfig {
 
         @Setting("never-place-block")
         public EnumSet<Material> neverPlace = EnumSet.of(Material.LAVA,Material.WATER);
+
+        @Setting("allow-rollback-items-removed-from-container")
+        public boolean allowRollbackItemsRemovedFromContainer = true;
         
     }
 
@@ -317,6 +316,9 @@ public class PrismConfig {
             @Setting("blocks")
             public Map<Material, TextColor> oreBlocks = new LinkedHashMap<>();
 
+            /**
+             * Constructor.
+             */
             public OreAlerts() {
                 oreBlocks.put(Material.IRON_ORE, TextColor.fromCSSHexString("#444444"));
                 oreBlocks.put(Material.GOLD_ORE, TextColor.fromCSSHexString("#ffe17d"));
@@ -335,6 +337,9 @@ public class PrismConfig {
             @Setting("commands")
             public List<String> illegalCommands = new ArrayList<>();
 
+            /**
+             * Constructor.
+             */
             public IllegalCommands() {
                 enabled = false;
                 illegalCommands.add("op");
@@ -368,6 +373,9 @@ public class PrismConfig {
             @Setting("ignore-staff")
             public boolean ignoreStaff;
 
+            /**
+             * Constructor.
+             */
             public UsesConfig() {
                 monitorItems.add(Material.BEDROCK);
                 monitorItems.add(Material.STICKY_PISTON);

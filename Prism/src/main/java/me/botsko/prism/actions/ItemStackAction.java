@@ -1,6 +1,5 @@
 package me.botsko.prism.actions;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
@@ -18,23 +17,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Jukebox;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.ItemFrame;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class ItemStackAction extends GenericAction {
 
@@ -173,7 +163,7 @@ public class ItemStackAction extends GenericAction {
             return new ChangeResultImpl(ChangeResultType.PLANNED, null);
         }
 
-        if (Prism.config.getBoolean("prism.appliers.allow-rollback-items-removed-from-container")) {
+        if (config.applierConfig.allowRollbackItemsRemovedFromContainer) {
 
             final Block block = getWorld().getBlockAt(getLoc());
             Inventory inventory = null;
