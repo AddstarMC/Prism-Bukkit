@@ -13,12 +13,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created for the Prism-Bukkit Project.
@@ -55,6 +49,7 @@ public class DataSourceTest {
             DatabaseUpdater updater = new DatabaseUpdater(dataSource);
             updater.applyUpdates(dataSource);
             Assertions.assertEquals(8, getClientDbSchemaVersion());
+            /*  Designed to show the db data - not requird for testing
             DatabaseMetaData meta = dataSource.getDataSource().getConnection().getMetaData();
             String[] tbls = {"TABLE"};
             ResultSet set = meta.getTables(null, null, "PRISM_%", tbls);
@@ -89,10 +84,8 @@ public class DataSourceTest {
                     }
                 }
 
-            }
+            }*/
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
