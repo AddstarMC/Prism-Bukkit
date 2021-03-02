@@ -30,6 +30,10 @@ class ConfigHandlerTest {
             configHandler.saveConfiguration(path);
             File file = path.toFile();
             Assertions.assertTrue(file.exists());
+            ConfigHandler configHandler2 = new ConfigHandler();
+            configHandler2.loadConfiguration(path);
+            PrismConfig config2 = configHandler2.getConfig();
+            Assertions.assertEquals(config.applierConfig.additionalNotifyRadius,config2.applierConfig.additionalNotifyRadius);
         } catch (IOException e) {
             e.printStackTrace();
         }

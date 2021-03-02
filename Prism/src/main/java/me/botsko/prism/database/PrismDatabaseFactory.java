@@ -2,7 +2,6 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.mysql.MySqlPrismDataSource;
-import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import me.botsko.prism.settings.Settings;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -20,28 +19,9 @@ public class PrismDatabaseFactory {
      * @param dataSourceSection ConfigurationSection
      */
     public static void createDefaultConfig(final ConfigurationNode dataSourceSection) throws SerializationException {
-        ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
         String dataType = dataSourceSection.node("type").getString("derby");
         dataSourceSection.node("type").set(dataType);
-        updateDataSourceProperties(dataType, dataSourceProperties);
     }
-
-    private static void updateDataSourceProperties(final String type,
-                                                   final ConfigurationNode configuration) {
-        try {
-            switch (type) {
-                case "mysql":
-                    MySqlPrismDataSource.updateDefaultConfig(configuration);
-                    break;
-                case "hikari":
-                default:
-                    SqlPrismDataSource.updateDefaultConfig(configuration);
-            }
-        }catch (SerializationException exception) {
-            PrismLogHandler.warn(exception.getMessage());
-        }
-    }
-
 
     /**
      * Constuct Data source.

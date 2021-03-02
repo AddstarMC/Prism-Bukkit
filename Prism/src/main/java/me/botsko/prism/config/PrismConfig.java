@@ -7,15 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created for Prism.
@@ -219,10 +211,10 @@ public class PrismConfig {
         public boolean removeDropsExplodeRollback = true;
 
         @Setting("never-spawn-entity")
-        public EnumSet<EntityType> neverSpawn = EnumSet.of(EntityType.CREEPER);
+        public Set<EntityType> neverSpawn = EnumSet.of(EntityType.CREEPER);
 
         @Setting("never-place-block")
-        public EnumSet<Material> neverPlace = EnumSet.of(Material.LAVA,Material.WATER);
+        public Set<Material> neverPlace = EnumSet.of(Material.LAVA,Material.WATER);
 
         @Setting("allow-rollback-items-removed-from-container")
         public boolean allowRollbackItemsRemovedFromContainer = true;

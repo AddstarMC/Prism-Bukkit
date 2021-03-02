@@ -1,16 +1,22 @@
 package me.botsko.prism.database.sql.derby;
 
+import com.zaxxer.hikari.HikariConfig;
+import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.PlayerIdentificationQuery;
 import me.botsko.prism.database.PrismDataSourceUpdater;
 import me.botsko.prism.database.SelectIdQuery;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
+import me.botsko.prism.database.sql.PrismSqlConfig;
 import org.spongepowered.configurate.ConfigurationNode;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -24,8 +30,9 @@ import java.util.HashSet;
  *
  * @author Narimm
  */
-public class DerbySqlPrismDataSource extends PrismHikariDataSource {
+public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfig> {
 
+    private PrismSqlConfig config;
     /**
      * Constructor.
      *
@@ -34,6 +41,42 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource {
     public DerbySqlPrismDataSource(ConfigurationNode node) {
         super(node);
         name = "derby";
+        prefix = config.prefix;
+    }
+
+    @Override
+    protected void setUpHikariProperties() {
+        if (propFile == null) {
+            propFile = new File(Prism.getInstance().getDataFolder(), "hikari.properties");
+        }
+        if (propFile.exists()) {
+            PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
+            dbConfig = new HikariConfig(propFile.getPath());
+        } else {
+            String dbFile = propFile.getParent();
+            PrismLogHandler.log("You may need to adjust these settings for your setup.");
+            PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
+            dbConfig = new HikariConfig();
+            dbConfig.setJdbcUrl("jdbc:derby:" + dbFile + ";create=true");
+            dbConfig.setUsername("username");
+            dbConfig.setPassword("password");
+            HikariHelper.createPropertiesFile(propFile, dbConfig, false);
+        }
+    }
+
+    @Override
+    protected void setConfig() {
+        config = ConfigHandler.getDataSourceConfig(PrismSqlConfig.class,dataSourceConfig);
+    }
+
+    @Override
+    public PrismSqlConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public Class<PrismSqlConfig> getConfigurationClass() {
+        return PrismSqlConfig.class;
     }
 
     @Override

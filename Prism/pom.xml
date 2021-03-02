@@ -171,7 +171,7 @@
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
             <version>${derby.version}</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -219,7 +219,8 @@
                         <filter>
                             <artifact>*:*</artifact>
                             <excludes>
-                                <exclude>META-INF/MANIFEST.MF</exclude>
+                                <exclude>META-INF/*.MF</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
                             </excludes>
                         </filter>
                     </filters>
@@ -248,6 +249,11 @@
                         <relocation>
                             <pattern>net.kyori</pattern>
                             <shadedPattern>com.botsko.prism.libs</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>org.apache.derby</pattern>
+                            <shadedPattern>com.botsko.prism.libs</shadedPattern>
+
                         </relocation>
                     </relocations>
                 </configuration>

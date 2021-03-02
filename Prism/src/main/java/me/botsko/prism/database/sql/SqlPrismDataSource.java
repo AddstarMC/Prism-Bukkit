@@ -1,24 +1,11 @@
 package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariDataSource;
-import io.leangen.geantyref.TypeToken;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.ActionReportQuery;
-import me.botsko.prism.database.BlockReportQuery;
-import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.InsertQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.SettingsQuery;
-import org.bukkit.configuration.ConfigurationSection;
+import me.botsko.prism.database.*;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
@@ -34,11 +21,11 @@ import java.util.Map;
  * Created by benjamincharlton on 8/04/2019.
  */
 @SuppressWarnings("SqlResolve")
-public abstract class SqlPrismDataSource implements PrismDataSource {
+public abstract class SqlPrismDataSource<T> implements PrismDataSource<T> {
 
     protected static HikariDataSource database = null;
     protected String name = "unconfigured";
-    protected final ConfigurationNode section;
+    protected final  ConfigurationNode dataSourceConfig;
     private boolean paused; //when set the datasource will not allow insertions;
     private SettingsQuery settingsQuery = null;
     protected String prefix = "prism_";
@@ -51,17 +38,11 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
      * @param node Config
      */
     public SqlPrismDataSource(ConfigurationNode node) {
-        this.section = node;
-        if (node == null) {
-            setPrefix("");
-        } else {
-            setPrefix(node.node("prefix").getString());
-        }
+        this.dataSourceConfig = node;
+        setConfig();
     }
 
-    public static void updateDefaultConfig(ConfigurationNode section) throws SerializationException {
-        section.node("useNonStandardSql").set(false);
-    }
+    protected abstract void setConfig();
 
     @Override
     public boolean isPaused() {

@@ -39,7 +39,6 @@ public class DataSourceTest {
 
             dataConfig.node("type").set("derby");
             dataConfig.node("prefix").set("prism_");
-            TestPrismDataSource.updateDefaultConfig(dataConfig);
             PrismDataSource dataSource = new TestPrismDataSource(dataConfig);
             dataSource.createDataSource();
             ActionRegistry registry = new ActionRegistry();

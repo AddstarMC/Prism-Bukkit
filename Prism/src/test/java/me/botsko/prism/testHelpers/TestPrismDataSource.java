@@ -8,9 +8,7 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
-import org.bukkit.configuration.ConfigurationSection;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.Random;
 
@@ -22,6 +20,9 @@ import java.util.Random;
 public class TestPrismDataSource extends DerbySqlPrismDataSource {
 
     private static Random random = new Random();
+
+
+
     /**
      * Constructor.
      *
@@ -29,24 +30,23 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
      */
     public TestPrismDataSource(ConfigurationNode section) {
         super(section);
-        try {
-            updateDefaultConfig(section);
-        } catch (SerializationException e) {
-            e.printStackTrace();
-        }
+        setPrefix("prism_");
     }
 
     @Override
-    public PrismDataSource createDataSource() {
+    protected void setUpHikariProperties() {
         dbConfig = new HikariConfig();
         dbConfig.setUsername("prism");
         dbConfig.setPassword("password");
         dbConfig.setJdbcUrl("jdbc:derby:memory:test" + random.nextInt(100) + ";create=true");
-        setPrefix("prism_");
+        if (Prism.getInstance() != null) {
+            HikariHelper.createPropertiesFile(dbConfig,false);
+        }
+    }
+
+    @Override
+    public PrismDataSource<?> createDataSource() {
         try {
-            if (Prism.getInstance() != null) {
-                HikariHelper.createPropertiesFile(dbConfig,false);
-            }
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();
             return this;

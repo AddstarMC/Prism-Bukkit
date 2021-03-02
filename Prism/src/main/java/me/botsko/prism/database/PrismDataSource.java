@@ -11,9 +11,15 @@ import java.util.Map;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 5/04/2019.
  */
-public interface PrismDataSource {
+public interface PrismDataSource<T> {
 
     boolean isPaused();
+
+    T getConfig();
+
+    default Class<T> getConfigurationClass() {
+        return (Class<T>) getConfig().getClass();
+    }
 
     void setPaused(boolean paused);
 

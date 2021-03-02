@@ -7,24 +7,32 @@ import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.*;
+import me.botsko.prism.config.ConfigHandler;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PlayerIdentificationQuery;
+import me.botsko.prism.database.PrismDataSourceUpdater;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
-import org.bukkit.configuration.ConfigurationSection;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
 
-import javax.annotation.Nonnull;
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+import java.sql.Statement;
 import java.util.HashMap;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by Narimm on 5/04/2019.
  */
-public class MySqlPrismDataSource extends SqlPrismDataSource {
+public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
@@ -32,6 +40,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     private static final HashMap<String, String> dbInfo = new HashMap<>();
     private final Boolean nonStandardSql;
     private SettingsQuery settingsQuery;
+    private MySqlPrimConfig config;
 
     /**
      * Create a dataSource.
@@ -40,25 +49,10 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
      */
     public MySqlPrismDataSource(ConfigurationNode node) {
         super(node);
-        nonStandardSql = this.section.node("useNonStandardSql").getBoolean();
+        setConfig();
+        nonStandardSql = config.useNonStandardSql;
         detectNonStandardSql();
         name = "mysql";
-
-    }
-
-    /**
-     * The adds the new requirements to an old configuration file.
-     *
-     * @param node a {@link ConfigurationNode}
-     */
-    public static void updateDefaultConfig(ConfigurationNode node)  throws SerializationException {
-        node.node("hostname").set("127.0.0.1");
-        node.node("username").set("prism");
-        node.node("password").set("prism");
-        node.node("databaseName").set("prism");
-        node.node("prefix").set("prism_");
-        node.node("port").set("3306");
-        node.node("useNonStandardSql").set(true);
         setupDefaultProperties();
     }
 
@@ -223,14 +217,29 @@ public class MySqlPrismDataSource extends SqlPrismDataSource {
     }
 
     @Override
+    public MySqlPrimConfig getConfig() {
+        return config;
+    }
+
+    @Override
+    public Class<MySqlPrimConfig> getConfigurationClass() {
+        return MySqlPrimConfig.class;
+    }
+
+    @Override
+    protected void setConfig() {
+        this.config = ConfigHandler.getDataSourceConfig(MySqlPrimConfig.class,dataSourceConfig);
+    }
+
+    @Override
     public MySqlPrismDataSource createDataSource() {
         if (dbConfig.getJdbcUrl() == null) {
-            final String dns = "jdbc:mysql://" + this.section.getString("hostname") + ":"
-                    + this.section.getString("port") + "/" + this.section.getString("databaseName")
+            final String dns = "jdbc:mysql://" + this.config.hostName + ":"
+                    + this.config.port + "/" + this.config.database
                     + "?useUnicode=true&characterEncoding=UTF-8&useSSL=false";
             dbConfig.setJdbcUrl(dns);
-            dbConfig.setUsername(this.section.getString("username"));
-            dbConfig.setPassword(this.section.getString("password"));
+            dbConfig.setUsername(this.config.username);
+            dbConfig.setPassword(this.config.password);
         }
         dbConfig.addHealthCheckProperty("connectivityCheckTimeoutMs", "1000");
         dbConfig.addHealthCheckProperty("expected99thPercentileMs", "10");

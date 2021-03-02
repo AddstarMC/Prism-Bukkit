@@ -153,6 +153,9 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     @Override
     public void saveConfig() {
+        if(prismDataSource != null) {
+            configHandler.applyDataSourceConfig(prismDataSource);
+        }
         configHandler.saveConfiguration(getDataFolder().toPath().resolve("config.yml"));
     }
 
@@ -540,6 +543,8 @@ public class Prism extends JavaPlugin implements PrismApi {
             Bukkit.getScheduler().runTaskAsynchronously(instance,
                   () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
+        saveConfig();
+
     }
 
     /**
@@ -565,8 +570,8 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
         config = configHandler.getConfig();
         // Cache config arrays we check constantly
-        illegalBlocks = config.applierConfig.neverPlace;
-        illegalEntities = config.applierConfig.neverSpawn;
+        illegalBlocks = EnumSet.copyOf(config.applierConfig.neverPlace);
+        illegalEntities = EnumSet.copyOf(config.applierConfig.neverSpawn);
         alertedOres.clear();
         alertedOres.putAll(config.alertConfig.oreAlerts.oreBlocks);
         items = new MaterialAliases();
