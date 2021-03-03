@@ -21,19 +21,22 @@ import java.util.logging.SimpleFormatter;
  */
 public class PrismLogHandler implements Closeable {
 
-    protected static Logger prismLog;
+    private static Logger prismLog;
     private static boolean debug = false;
 
-    /**
-     * Class which handles all Prism Logging.
-     */
-    public PrismLogHandler() {
+    static {
         if (Prism.getInstance() != null) {
             prismLog = createPrismLogger();
             debug = Prism.isDebug();
         } else {
             prismLog = Logger.getAnonymousLogger();
         }
+    }
+
+    /**
+     * Class which handles all Prism Logging.
+     */
+    public PrismLogHandler() {
     }
 
 
@@ -59,9 +62,7 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void log(String message) {
-        Logger log = getLogger();
-        log.info("[" + getPrismName() + "] " + message);
-        log.info(message);
+        getLogger().info("[" + getPrismName() + "] " + message);
         prismLog.info(message);
     }
 
@@ -135,7 +136,7 @@ public class PrismLogHandler implements Closeable {
         debug("Location: " + loc.getX() + " " + loc.getY() + " " + loc.getZ());
     }
 
-    private Logger createPrismLogger() {
+    private static Logger createPrismLogger() {
         Logger result = Logger.getLogger("PrismLogger");
         result.setUseParentHandlers(false);
         for (Handler handler : result.getHandlers()) {

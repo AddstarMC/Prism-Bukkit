@@ -74,7 +74,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
             dbConfig.addDataSourceProperty("prepStmtCacheSize",250);
             dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit",2048);
             dbConfig.addDataSourceProperty("useServerPrepStmts",true);
-            HikariHelper.createPropertiesFile(propFile, dbConfig, true);
+            HikariHelper.saveHikariConfig(propFile, dbConfig, true);
         }
     }
 

@@ -60,7 +60,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
             dbConfig.setJdbcUrl("jdbc:derby:" + dbFile + ";create=true");
             dbConfig.setUsername("username");
             dbConfig.setPassword("password");
-            HikariHelper.createPropertiesFile(propFile, dbConfig, false);
+            HikariHelper.saveHikariConfig(propFile, dbConfig, false);
         }
     }
 

@@ -26,8 +26,14 @@ public class HikariHelper {
      * @param dbConfig HikariConfig
      * @param skipCoreValue if true skips the jbdcurl and username and password.
      */
-    public static void createPropertiesFile(File propFile, HikariConfig dbConfig, boolean skipCoreValue) {
+    public static boolean saveHikariConfig(File propFile, HikariConfig dbConfig, boolean skipCoreValue) {
         dbConfig.setPoolName("prism");
+        if (dbConfig.getMinimumIdle() < 0) {
+            dbConfig.setMinimumIdle(2);
+        }
+        if (dbConfig.getMaximumPoolSize() < 0) {
+            dbConfig.setMaximumPoolSize(10);
+        }
         Properties prop = new Properties();
         Set<String> keys = PropertyElf.getPropertyNames(HikariConfig.class);
         for (String k : keys) {
@@ -45,23 +51,22 @@ public class HikariHelper {
             }
         }
         Properties datasourceProps = dbConfig.getDataSourceProperties();
-        for (String name : datasourceProps.stringPropertyNames()) {
-            String val = datasourceProps.getProperty(name);
+        Set<Object> names = datasourceProps.keySet();
+        for (Object name : names) {
+            Object val = datasourceProps.get(name);
             if (val != null) {
-                prop.setProperty("dataSource." + name, val);
+                prop.setProperty("dataSource." + name, val.toString());
             }
         }
+        if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
+            PrismLogHandler.warn("Prism Directory couldn't be created");
+            return false;
+        }
         try {
-            if (!propFile.getParentFile().exists() && !propFile.getParentFile().mkdirs()) {
-                PrismLogHandler.log("Prism Directory couldn't be created");
-            }
-            OutputStream out = new FileOutputStream(propFile);
-            prop.store(out, "Prism Hikari Datasource Properties for"
-                    + " advanced database Configuration - Updated: "
-                    + DateFormat.getInstance().format(new Date()));
-            PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
+            return savePropertiesFile(prop, propFile);
         } catch (IOException e) {
-            PrismLogHandler.log("Could not save Hikari.properties - " + e.getMessage());
+            PrismLogHandler.warn("Error saving configuration file to " + propFile.getPath(),e);
+            return false;
         }
     }
 
@@ -77,6 +82,17 @@ public class HikariHelper {
             HikariConfig old = new HikariConfig(propFile.getPath());
             config.copyStateTo(old);
         }
-        createPropertiesFile(propFile,config,skipCoreValues);
+        saveHikariConfig(propFile,config,skipCoreValues);
     }
+
+    private static boolean savePropertiesFile(Properties prop, File propFile) throws IOException {
+        try (OutputStream out = new FileOutputStream(propFile)) {
+            prop.store(out, "Prism Hikari Datasource Properties for"
+                    + " advanced database Configuration - Updated: "
+                    + DateFormat.getInstance().format(new Date()));
+            PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
+            return true;
+        }
+    }
+
 }

@@ -9,7 +9,6 @@ import me.botsko.prism.database.PrismDataSource;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
-import java.sql.SQLException;
 
 
 /**
@@ -52,7 +51,7 @@ public abstract class PrismHikariDataSource<T> extends SqlPrismDataSource<T> {
             dbConfig.setJdbcUrl(jdbcUrl);
             dbConfig.setUsername("username");
             dbConfig.setPassword("password");
-            HikariHelper.createPropertiesFile(propFile, dbConfig, false);
+            HikariHelper.saveHikariConfig(propFile, dbConfig, false);
         }
     }
 
