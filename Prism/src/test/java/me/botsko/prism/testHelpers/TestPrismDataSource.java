@@ -42,6 +42,7 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
         if (Prism.getInstance() != null) {
             HikariHelper.createPropertiesFile(dbConfig,false);
         }
+        reportJdbcDrivers();
     }
 
     @Override

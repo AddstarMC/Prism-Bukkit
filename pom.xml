@@ -58,7 +58,7 @@
         <build.number/>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spigot.api.version>1.16</spigot.api.version>
-        <bukkit.version>1.16.4-R0.1-SNAPSHOT</bukkit.version>
+        <bukkit.version>1.16.5-R0.1-SNAPSHOT</bukkit.version>
         <junit.version>5.5.0</junit.version>
         <derby.version>10.14.2.0</derby.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
             <artifactId>MockBukkit-v1.16</artifactId>
-            <version>0.22.1</version>
+            <version>0.30.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

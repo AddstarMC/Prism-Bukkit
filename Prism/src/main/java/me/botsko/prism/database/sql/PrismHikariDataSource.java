@@ -9,6 +9,13 @@ import me.botsko.prism.database.PrismDataSource;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.EnumSet;
+import java.util.Enumeration;
+
+import static java.sql.DriverManager.getDrivers;
 
 
 /**
@@ -52,6 +59,16 @@ public abstract class PrismHikariDataSource<T> extends SqlPrismDataSource<T> {
             dbConfig.setUsername("username");
             dbConfig.setPassword("password");
             HikariHelper.saveHikariConfig(propFile, dbConfig, false);
+            reportJdbcDrivers();
+        }
+    }
+
+    protected void reportJdbcDrivers() {
+        PrismLogHandler.log("Available Drivers:");
+        Enumeration<Driver> set = getDrivers();
+        while (set.hasMoreElements()) {
+            Driver driver = set.nextElement();
+            PrismLogHandler.log("   " + driver.getClass().getName());
         }
     }
 

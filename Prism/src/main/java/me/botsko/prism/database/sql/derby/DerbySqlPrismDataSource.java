@@ -61,6 +61,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
             dbConfig.setUsername("username");
             dbConfig.setPassword("password");
             HikariHelper.saveHikariConfig(propFile, dbConfig, false);
+            reportJdbcDrivers();
         }
     }
 

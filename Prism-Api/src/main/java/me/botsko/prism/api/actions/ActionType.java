@@ -96,9 +96,9 @@ public enum ActionType {
     PLAYER_TRADE("player-trade"),
     ITEM_RECEIVE("item-receive");
 
-    private static Map<String, List<ActionType>> registeredShortNames = new HashMap<>();
-    private static Map<String, List<ActionType>> registeredFamilyNames = new HashMap<>();
-    private static EnumMap<ActionType, StringPair> names = new EnumMap<>(ActionType.class);
+    private static final Map<String, List<ActionType>> registeredShortNames = new HashMap<>();
+    private static final Map<String, List<ActionType>> registeredFamilyNames = new HashMap<>();
+    private static final EnumMap<ActionType, StringPair> names = new EnumMap<>(ActionType.class);
 
     public String name;
 
@@ -114,7 +114,7 @@ public enum ActionType {
                 String familyName = _tmp[0];
                 List<ActionType> familyType = registeredFamilyNames.getOrDefault(familyName, new ArrayList<>());
                 familyType.add(type);
-                registeredShortNames.put(familyName, familyType);
+                registeredFamilyNames.put(familyName, familyType);
                 names.put(type, new StringPair(familyName, shortName));
             }
         }
@@ -124,6 +124,9 @@ public enum ActionType {
         this.name = name;
     }
 
+    public static Set<ActionType> getTypes() {
+        return names.keySet();
+    }
     public String getFamilyName() {
         StringPair result = names.get(this);
         if (result == null) {

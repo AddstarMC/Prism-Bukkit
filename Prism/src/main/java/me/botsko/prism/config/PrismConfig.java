@@ -239,7 +239,8 @@ public class PrismConfig {
         public List<String> allowedPlugins = new ArrayList<>();
 
         protected TrackingConfig() {
-            for (ActionType a:ActionType.values()) {
+            Set<ActionType> actions = ActionType.getTypes();
+            for (ActionType a:actions) {
                 switch (a) {
                     case CRAFT_ITEM:
                     case ENCHANT_ITEM:
