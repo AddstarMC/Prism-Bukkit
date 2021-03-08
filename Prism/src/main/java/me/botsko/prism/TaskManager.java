@@ -109,7 +109,7 @@ public class TaskManager {
         internalAffairsFuture.cancel(false);
         functionalTaskHandler.cancel();
         try {
-            if (schedulePool.awaitTermination(100,TimeUnit.MILLISECONDS)) {
+            if (schedulePool.awaitTermination(350,TimeUnit.MILLISECONDS)) {
                 tasks.clear();
                 return true;
             } else {
@@ -130,7 +130,7 @@ public class TaskManager {
         functionalTaskHandler.cancel();
         tasks.clear();
         if (failed > 0) {
-            PrismLogHandler.warn("Task manager: " + failed + " tasks where force stopped.");
+            PrismLogHandler.warn("Task manager: " + failed + " tasks were force stopped.");
             return false;
         }
         return  true;

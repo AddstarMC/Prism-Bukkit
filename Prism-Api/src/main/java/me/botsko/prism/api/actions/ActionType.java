@@ -104,18 +104,17 @@ public enum ActionType {
 
     static {
         for (ActionType type:ActionType.values()) {
-            String name = type.name;
-            final String[] _tmp = name.toLowerCase().split("-(?!.*-.*)");
-            if (_tmp.length == 2) {
-                String shortName = _tmp[1];
+            StringPair pair = stringToName(type.name);
+            if (pair != null) {
+                String shortName = pair.shortName;
                 List<ActionType> shortType = registeredShortNames.getOrDefault(shortName,new ArrayList<>());
                 shortType.add(type);
                 registeredShortNames.put(shortName, shortType);
-                String familyName = _tmp[0];
+                String familyName = pair.familyName;
                 List<ActionType> familyType = registeredFamilyNames.getOrDefault(familyName, new ArrayList<>());
                 familyType.add(type);
                 registeredFamilyNames.put(familyName, familyType);
-                names.put(type, new StringPair(familyName, shortName));
+                names.put(type, pair);
             }
         }
     }
@@ -143,6 +142,13 @@ public enum ActionType {
         return result.shortName;
     }
 
+    public static ActionType getByName(String name) {
+        if(name.contains("-")) {
+            return ActionType.valueOf(name.replace('-', '_').toUpperCase());
+        } else
+            return ActionType.valueOf(name.toUpperCase());
+    }
+
     @NotNull
     public static List<ActionType> getByShortName(String name) {
         return registeredShortNames.getOrDefault(name,Collections.emptyList());
@@ -157,6 +163,20 @@ public enum ActionType {
     public static List<ActionType> getByFamilyName(String name) {
         return registeredFamilyNames.getOrDefault(name,Collections.emptyList());
     }
+
+    /**
+     *  Convert a String to a pair.
+     * @param name Paired name
+     * @return StringPair.
+     */
+    public static StringPair stringToName(String name) {
+        final String[] _tmp = name.toLowerCase().split("-(?!.*-.*)");
+        if (_tmp.length == 2) {
+            return new StringPair(_tmp[0],_tmp[1]);
+        }
+        return null;
+    }
+
 
     @Override
     public String toString() {

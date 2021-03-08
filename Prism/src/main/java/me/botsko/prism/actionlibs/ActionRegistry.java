@@ -66,7 +66,7 @@ public class ActionRegistry {
      */
     @Deprecated
     public ActionImpl getAction(String name) {
-        return getAction(ActionType.valueOf(name));
+        return getAction(ActionType.getByName(name));
     }
 
     /**
@@ -93,6 +93,14 @@ public class ActionRegistry {
         return actions;
     }
 
+    public ArrayList<ActionImpl> getActionsByFamilyName(String name) {
+        final ArrayList<ActionImpl> actions = new ArrayList<>();
+        List<ActionType> types = ActionType.getByFamilyName(name);
+        for (ActionType type : types) {
+            actions.add(registeredActions.get(type));
+        }
+        return actions;
+    }
     /**
      * List all.
      *

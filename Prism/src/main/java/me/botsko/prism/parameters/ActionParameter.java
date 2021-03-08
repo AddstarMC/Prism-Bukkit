@@ -3,12 +3,15 @@ package me.botsko.prism.parameters;
 import com.google.common.base.Joiner;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionImpl;
+import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.utils.LevenshteinDistance;
 import org.bukkit.command.CommandSender;
 
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -33,8 +36,21 @@ public class ActionParameter extends SimplePrismParameterHandler {
                 // Find all actions that match the action provided - whether the
                 // full name or
                 // short name.
-                final ArrayList<ActionImpl> actionTypes = Prism.getActionRegistry()
-                        .getActionsByShortName(action.replace("!", ""));
+                ActionRegistry reg = Prism.getActionRegistry();
+                ActionImpl type = reg.getAction(ActionType.getByName(action));
+                if (type != null) {
+                    if ((query.getProcessType().equals(PrismProcessType.ROLLBACK) && !type.canRollback())
+                            || (query.getProcessType().equals(PrismProcessType.RESTORE)
+                            && !type.canRestore())) {
+                        continue;
+                    }
+                    query.addActionType(type.getName());
+                    continue;
+                }
+                ArrayList<ActionImpl> actionTypes = reg.getActionsByShortName(action.replace("!", ""));
+                if (actionTypes.isEmpty()) {
+                    actionTypes = reg.getActionsByFamilyName(action.replace("!", ""));
+                }
                 if (!actionTypes.isEmpty()) {
                     List<String> noPermission = new ArrayList<>();
                     for (final ActionImpl actionType : actionTypes) {
