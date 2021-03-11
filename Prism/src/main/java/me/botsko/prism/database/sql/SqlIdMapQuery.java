@@ -6,12 +6,7 @@ import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.utils.IntPair;
 import org.apache.commons.lang.Validate;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -36,14 +31,14 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
     protected abstract String getUnauto();
 
     protected final String prefix;
-    private final PrismDataSource dataSource;
+    private final PrismDataSource<?> dataSource;
 
     /**
      * Constructor.
      *
      * @param dataSource PrismDataSource
      */
-    public SqlIdMapQuery(PrismDataSource dataSource) {
+    public SqlIdMapQuery(PrismDataSource<?> dataSource) {
         this.dataSource = dataSource;
         prefix = dataSource.getPrefix();
 
@@ -81,7 +76,7 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
-            PrismLogHandler.warn("Database connection error: ", e);
+            handleSqlExcetion(Integer.toString(blockId), e,failure);
         }
     }
 
@@ -120,6 +115,20 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                 }
             }
         } catch (final SQLException e) {
+            handleSqlExcetion(material, e,failure);
+        }
+    }
+
+    /**
+     * Handles a special case where a DERBY QUERY Fails.
+     * @param e Exception
+     * @param runnable Runnable
+     */
+    private void handleSqlExcetion(String material, SQLException e,Runnable runnable) {
+        if (e instanceof SQLSyntaxErrorException && e.getMessage().contains("EOF")) {
+            PrismLogHandler.log("Error thrown by ID:" + material + " Error:  " + e.getMessage());
+            runnable.run();
+        } else {
             PrismLogHandler.warn("Database connection error: ", e);
         }
     }
@@ -296,10 +305,12 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
 
                     return autoInc;
                 }
+            } catch (final SQLException e) {
+                PrismLogHandler.log("Failed id map: material=" + material + ", " + "state=" + state);
+                PrismLogHandler.warn("Database Statement error: " + e.getMessage());
             }
         } catch (final SQLException e) {
-            PrismLogHandler.warn("Database connection error: ", e);
-            e.printStackTrace();
+            dataSource.handleDataSourceException(e);
         }
 
         return 0;

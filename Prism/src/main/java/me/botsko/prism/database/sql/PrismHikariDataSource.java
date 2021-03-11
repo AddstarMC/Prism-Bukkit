@@ -10,9 +10,6 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.EnumSet;
 import java.util.Enumeration;
 
 import static java.sql.DriverManager.getDrivers;

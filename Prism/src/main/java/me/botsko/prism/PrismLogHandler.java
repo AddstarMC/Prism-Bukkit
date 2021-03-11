@@ -95,7 +95,7 @@ public class PrismLogHandler implements Closeable {
      */
     public static void warn(Level warning, String s, Exception e) {
         getLogger().log(warning, s, e);
-        prismLog.log(Level.WARNING, "[" + getPrismName() + "] " + s, e);
+        prismLog.log(Level.WARNING,s, e);
 
     }
 

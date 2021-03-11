@@ -1,8 +1,15 @@
 package me.botsko.prism.api.actions;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created for Prism.
@@ -100,14 +107,12 @@ public enum ActionType {
     private static final Map<String, List<ActionType>> registeredFamilyNames = new HashMap<>();
     private static final EnumMap<ActionType, StringPair> names = new EnumMap<>(ActionType.class);
 
-    public String name;
-
     static {
-        for (ActionType type:ActionType.values()) {
+        for (ActionType type : ActionType.values()) {
             StringPair pair = stringToName(type.name);
             if (pair != null) {
                 String shortName = pair.shortName;
-                List<ActionType> shortType = registeredShortNames.getOrDefault(shortName,new ArrayList<>());
+                List<ActionType> shortType = registeredShortNames.getOrDefault(shortName, new ArrayList<>());
                 shortType.add(type);
                 registeredShortNames.put(shortName, shortType);
                 String familyName = pair.familyName;
@@ -119,6 +124,8 @@ public enum ActionType {
         }
     }
 
+    public String name;
+
     ActionType(String name) {
         this.name = name;
     }
@@ -126,6 +133,53 @@ public enum ActionType {
     public static Set<ActionType> getTypes() {
         return names.keySet();
     }
+
+    /**
+     *  Returns the exact ActionType if one exists.
+     *
+     * @param name String
+     * @return ActionType or Null
+     */
+    public @Nullable static ActionType getByName(@NotNull String name) {
+        try {
+            if (name.contains("-")) {
+                return ActionType.valueOf(name.replace('-', '_').toUpperCase());
+            } else {
+                return ActionType.valueOf(name.toUpperCase());
+            }
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    @NotNull
+    public static List<ActionType> getByShortName(String name) {
+        return registeredShortNames.getOrDefault(name, Collections.emptyList());
+    }
+
+    public static Set<String> getShortNames() {
+        return registeredShortNames.keySet();
+    }
+
+    @NotNull
+    public static List<ActionType> getByFamilyName(String name) {
+        return registeredFamilyNames.getOrDefault(name, Collections.emptyList());
+    }
+
+    /**
+     * Convert a String to a pair.
+     *
+     * @param name Paired name
+     * @return StringPair.
+     */
+    public static StringPair stringToName(String name) {
+        final String[] _tmp = name.toLowerCase().split("-(?!.*-.*)");
+        if (_tmp.length == 2) {
+            return new StringPair(_tmp[0], _tmp[1]);
+        }
+        return null;
+    }
+
     public String getFamilyName() {
         StringPair result = names.get(this);
         if (result == null) {
@@ -141,42 +195,6 @@ public enum ActionType {
         }
         return result.shortName;
     }
-
-    public static ActionType getByName(String name) {
-        if(name.contains("-")) {
-            return ActionType.valueOf(name.replace('-', '_').toUpperCase());
-        } else
-            return ActionType.valueOf(name.toUpperCase());
-    }
-
-    @NotNull
-    public static List<ActionType> getByShortName(String name) {
-        return registeredShortNames.getOrDefault(name,Collections.emptyList());
-    }
-
-    public static Set<String> getShortNames() {
-        return registeredShortNames.keySet();
-    }
-
-
-    @NotNull
-    public static List<ActionType> getByFamilyName(String name) {
-        return registeredFamilyNames.getOrDefault(name,Collections.emptyList());
-    }
-
-    /**
-     *  Convert a String to a pair.
-     * @param name Paired name
-     * @return StringPair.
-     */
-    public static StringPair stringToName(String name) {
-        final String[] _tmp = name.toLowerCase().split("-(?!.*-.*)");
-        if (_tmp.length == 2) {
-            return new StringPair(_tmp[0],_tmp[1]);
-        }
-        return null;
-    }
-
 
     @Override
     public String toString() {

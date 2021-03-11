@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql.derby;
 
+import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import me.botsko.prism.utils.TypeUtils;
@@ -76,6 +77,20 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
 
         return query;
 
+    }
+
+    @Override
+    protected String limit() {
+        if (parameters == null) {
+            return "";
+        }
+        if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
+            final int limit = parameters.getLimit();
+            if (limit > 0) {
+                return " FETCH " + limit + " ROWS ONLY";
+            }
+        }
+        return "";
     }
 
 }

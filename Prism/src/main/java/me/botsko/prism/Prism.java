@@ -537,9 +537,9 @@ public class Prism extends JavaPlugin implements PrismApi {
                 PrismLogHandler.log("Preloading materials - This will take a while!");
                 items.initAllMaterials();
                 PrismLogHandler.log("Preloading complete!");
+            } else {
+                items.initMaterials(Material.DIRT);
             }
-
-            items.initMaterials(Material.DIRT);
             Bukkit.getScheduler().runTaskAsynchronously(instance,
                   () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }

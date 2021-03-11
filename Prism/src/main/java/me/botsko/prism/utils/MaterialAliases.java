@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 public class MaterialAliases {
     private static final int SUBID_WILDCARD = -1;
@@ -90,23 +91,43 @@ public class MaterialAliases {
      * @param materials Materials ...
      */
     public void initMaterials(Material... materials) {
+        if (Bukkit.isPrimaryThread()) {
+            internal_initMaterials(materials);
+        } else {
+            Bukkit.getScheduler().runTask(Prism.getInstance(), () -> internal_initMaterials(materials));
+        }
+    }
+
+    private void internal_initMaterials(Material... materials) {
+        final Map<Material, BlockData> data = new HashMap<>();
+        for (Material m: materials) {
+            try {
+                BlockData dataString = Bukkit.createBlockData(m);
+                data.put(m,dataString);
+            } catch (IllegalArgumentException e) {
+                //suppress
+            }
+        }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {
-            for (Material m : materials) {
-                String matName = m.name().toLowerCase(Locale.ENGLISH);
-                String dataString;
-
-                try {
-                    dataString = Utilities.dataString(Bukkit.createBlockData(m));
-                } catch (IllegalArgumentException e) {
-                    continue;
-                }
-
-                getQuery().findIds(m.name().toLowerCase(Locale.ENGLISH), dataString,
-                      (i, d) ->
-                        storeCache(m, dataString, i, d), () -> {
-                        int id = query.mapAutoId(matName, dataString);
-                        storeCache(m, dataString, id, 0);
-                      });
+            for (Map.Entry<Material, BlockData> entry : data.entrySet()) {
+                String dataString = Utilities.dataString(entry.getValue());
+                final Material m = entry.getKey();
+                final String matName = m.name().toLowerCase();
+                getQuery().findIds(matName, dataString,
+                        new BiConsumer<Integer, Integer>() {
+                            @Override
+                            public void accept(Integer i, Integer d) {
+                                MaterialAliases.this.storeCache(m, dataString, i, d);
+                            }
+                        }, new Runnable() {
+                            @Override
+                            public void run() {
+                                int id = query.mapAutoId(matName, dataString);
+                                if (id != 0) {
+                                    MaterialAliases.this.storeCache(m, dataString, id, 0);
+                                }
+                            }
+                        });
             }
         });
 

@@ -121,7 +121,7 @@ public abstract class SqlPrismDataSource<T> implements PrismDataSource<T> {
 
     @Override
     public void handleDataSourceException(SQLException e) {
-        // Attempt to rescue
+        PrismLogHandler.warn("Database connection error: " + e.getMessage());
         try {
             if (attemptToRescueConnection(e)) {
                 return;
@@ -129,7 +129,6 @@ public abstract class SqlPrismDataSource<T> implements PrismDataSource<T> {
         } catch (final SQLException ignored) {
             PrismLogHandler.warn("Database rescue was unsuccessful.");
         }
-        PrismLogHandler.warn("Database connection error: " + e.getMessage());
         if (e.getMessage().contains("marked as crashed")) {
             final String[] msg = new String[2];
             msg[0] = "If MySQL crashes during write it may corrupt it's indexes.";

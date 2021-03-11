@@ -5,23 +5,15 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.config.ConfigHandler;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSourceUpdater;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.*;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
 import me.botsko.prism.database.sql.PrismSqlConfig;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -42,6 +34,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
         super(node);
         name = "derby";
         prefix = config.prefix;
+
     }
 
     @Override
@@ -53,13 +46,19 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
             PrismLogHandler.log("Configuring Hikari from " + propFile.getName());
             dbConfig = new HikariConfig(propFile.getPath());
         } else {
-            String dbFile = propFile.getParent();
+            String dbFile = new File(propFile.getParent(),"derby").getPath() ;
             PrismLogHandler.log("You may need to adjust these settings for your setup.");
-            PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
             dbConfig = new HikariConfig();
-            dbConfig.setJdbcUrl("jdbc:derby:" + dbFile + ";create=true");
-            dbConfig.setUsername("username");
-            dbConfig.setPassword("password");
+            try {
+                Class.forName("org.apache.derby.jdbc.AutoloadedDriver");
+                dbConfig.setDriverClassName("org.apache.derby.jdbc.AutoloadedDriver");
+                dbConfig.setJdbcUrl("jdbc:derby:" + dbFile + ";create=true");
+            } catch (ClassNotFoundException e) {
+                PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
+                dbConfig.setJdbcUrl("");
+            }
+            dbConfig.setUsername("PRISM");
+            dbConfig.setPassword("PRISM");
             HikariHelper.saveHikariConfig(propFile, dbConfig, false);
             reportJdbcDrivers();
         }
@@ -87,12 +86,13 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
                 Statement st = conn.createStatement()
         ) {
             DatabaseMetaData meta = conn.getMetaData();
-            ResultSet res = meta.getSchemas();
+            ResultSet res = meta.getTables(null,"PRISM",null,new String[]{"TABLE"});
             Collection<String> tableNames = new HashSet<>();
             while (res.next()) {
-                tableNames.add(name);
+                tableNames.add(name.toUpperCase());
             }
             res.close();
+            PrismLogHandler.debug("Tables Names:" + Arrays.toString(tableNames.toArray(new String[0])));
             if (
                     setupTable1(st, tableNames)
                             && setupTable2(st, tableNames)
@@ -120,7 +120,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable1(Statement st, Collection<String> tableNames) throws SQLException {
         String table = prefix + "actions";
-        if (!tableNames.contains(table)) {
+        if (!tableNames.contains(table.toUpperCase())) {
             String query = "CREATE TABLE " + table + " ("
                     + "action_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
@@ -136,7 +136,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable2(Statement st, Collection<String> tableNames) throws SQLException {
         String table2 = prefix + "data";
-        if (!tableNames.contains(table2)) {
+        if (!tableNames.contains(table2.toUpperCase())) {
             String query = "CREATE TABLE " + table2 + " ("
                     + "id bigint NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
@@ -166,7 +166,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable3(Statement st, Collection<String> tableNames) throws SQLException {
         String table3 = prefix + "data_extra";
-        if (!tableNames.contains(table3)) {
+        if (!tableNames.contains(table3.toUpperCase())) {
             String query = "CREATE TABLE " + table3 + " ("
                     + "extra_id bigint NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
@@ -185,7 +185,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable4(Statement st, Collection<String> tableNames) throws SQLException {
         String table4 = prefix + "meta";
-        if (!tableNames.contains(table4)) {
+        if (!tableNames.contains(table4.toUpperCase())) {
             String query = "CREATE TABLE " + table4 + " ("
                     + "id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                     + "k varchar(25) NOT NULL,"
@@ -200,7 +200,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable5(Statement st, Collection<String> tableNames) throws SQLException {
         String table5 = prefix + "players";
-        if (!tableNames.contains(table5)) {
+        if (!tableNames.contains(table5.toUpperCase())) {
             String query = "CREATE TABLE " + table5 + " ("
                     + "player_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
@@ -215,7 +215,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable6(Statement st, Collection<String> tableNames) throws SQLException {
         String table6 = prefix + "worlds";
-        if (!tableNames.contains(table6)) {
+        if (!tableNames.contains(table6.toUpperCase())) {
             String query = "CREATE TABLE " + table6 + " ("
                     + "world_id int NOT NULL GENERATED ALWAYS AS "
                     + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
@@ -229,7 +229,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<PrismSqlConfi
 
     private boolean setupTable7(Statement st, Collection<String> tableNames) throws SQLException {
         String table7 = prefix + "id_map";
-        if (!tableNames.contains(table7)) {
+        if (!tableNames.contains(table7.toUpperCase())) {
             String query = "CREATE TABLE " + table7 + " ("
                     + "material varchar(63) NOT NULL,"
                     + "state varchar(255) NOT NULL,"
