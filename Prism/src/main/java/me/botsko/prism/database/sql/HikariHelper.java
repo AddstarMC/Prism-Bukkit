@@ -4,13 +4,10 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.util.PropertyElf;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.DateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Set;
 
@@ -88,8 +85,9 @@ public class HikariHelper {
     private static boolean savePropertiesFile(Properties prop, File propFile) throws IOException {
         try (OutputStream out = new FileOutputStream(propFile)) {
             prop.store(out, "Prism Hikari Datasource Properties for"
-                    + " advanced database Configuration - Updated: "
-                    + DateFormat.getInstance().format(new Date()));
+                    + " advanced database Configuration - "
+                    + " Username and Password in the primary config"
+                    + " overwrite values entered here.");
             PrismLogHandler.log("Database Configuration saved to - " + propFile.getPath());
             return true;
         }

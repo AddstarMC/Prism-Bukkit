@@ -33,7 +33,7 @@ public class PrismDatabaseFactory {
         PrismDataSource database;
         String dataSource = dataSourceSection.node("type").getString();
         ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
-        if(dataSource == null) {
+        if (dataSource == null) {
             dataSource = "null";
         }
         switch (dataSource) {
@@ -43,6 +43,7 @@ public class PrismDatabaseFactory {
                 break;
             case "sqlite":
                 PrismLogHandler.warn("ERROR: This version of Prism no longer supports SQLite.");
+            case "null":
                 database = new NullDataSource();
                 break;
             case "hikari":

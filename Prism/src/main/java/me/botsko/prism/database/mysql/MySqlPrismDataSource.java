@@ -229,6 +229,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
     @Override
     protected void setConfig() {
         this.config = ConfigHandler.getDataSourceConfig(MySqlPrimConfig.class,dataSourceConfig);
+        prefix = config.getPrefix();
     }
 
     @Override
