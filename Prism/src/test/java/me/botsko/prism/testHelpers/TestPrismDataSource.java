@@ -5,11 +5,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.derby.DerbySqlPrismDataSource;
 import org.spongepowered.configurate.ConfigurationNode;
-
 import java.util.Random;
 
 /**
@@ -19,9 +17,7 @@ import java.util.Random;
  */
 public class TestPrismDataSource extends DerbySqlPrismDataSource {
 
-    private static Random random = new Random();
-
-
+    private static final Random random = new Random();
 
     /**
      * Constructor.
@@ -46,7 +42,7 @@ public class TestPrismDataSource extends DerbySqlPrismDataSource {
     }
 
     @Override
-    public PrismDataSource<?> createDataSource() {
+    public TestPrismDataSource createDataSource() {
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();

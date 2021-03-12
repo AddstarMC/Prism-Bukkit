@@ -11,7 +11,7 @@ import me.botsko.prism.utils.TypeUtils;
  */
 public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
 
-    public DerbySelectQueryBuilder(PrismDataSource dataSource) {
+    public DerbySelectQueryBuilder(PrismDataSource<?> dataSource) {
         super(dataSource);
     }
 

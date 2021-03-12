@@ -14,12 +14,13 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
      *
      * @param dataSource PrismDataSource
      */
-    public DerbySqlIdMapQuery(PrismDataSource dataSource) {
+    public DerbySqlIdMapQuery(PrismDataSource<?> dataSource) {
         super(dataSource);
     }
 
     protected  String getToIds() {
-        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=? AND state=? FETCH FIRST ROW";
+        return "SELECT block_id, block_subid FROM "
+              + prefix + "id_map WHERE material=? AND state=? FETCH FIRST ROW ONLY";
     }
 
     protected  String getToAllIds() {
@@ -31,7 +32,8 @@ public class DerbySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToMat() {
-        return "SELECT material, state FROM " + prefix + "id_map WHERE block_id=? AND block_subid=? FETCH FIRST ROW";
+        return "SELECT material, state FROM "
+              + prefix + "id_map WHERE block_id=? AND block_subid=? FETCH FIRST ROW ONLY";
     }
 
     protected  String getMap() {

@@ -1,8 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.sql.PrismSqlConfig;
-
+import me.botsko.prism.database.sql.PrismSqlConfigImpl;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,20 +13,20 @@ import java.util.Map;
  * @author Narimm on 12/02/2021.
  * @since 2.1.8
  */
-public class NullDataSource implements PrismDataSource<PrismSqlConfig> {
+public class NullDataSource implements PrismDataSource<PrismSqlConfigImpl> {
     @Override
     public boolean isPaused() {
         return true;
     }
 
     @Override
-    public PrismSqlConfig getConfig() {
+    public PrismSqlConfigImpl getConfig() {
         return null;
     }
 
     @Override
-    public Class<PrismSqlConfig> getConfigurationClass() {
-        return PrismSqlConfig.class;
+    public Class<PrismSqlConfigImpl> getConfigurationClass() {
+        return PrismSqlConfigImpl.class;
     }
 
     @Override
@@ -41,7 +40,7 @@ public class NullDataSource implements PrismDataSource<PrismSqlConfig> {
     }
 
     @Override
-    public PrismDataSource createDataSource() {
+    public NullDataSource createDataSource() {
         return this;
     }
 

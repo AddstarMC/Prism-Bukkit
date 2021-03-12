@@ -4,9 +4,19 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.BlockReportQuery;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.InsertQuery;
+import me.botsko.prism.database.PlayerIdentificationQuery;
+import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.PrismSqlConfig;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
 import org.spongepowered.configurate.ConfigurationNode;
-
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -21,7 +31,7 @@ import java.util.Map;
  * Created by benjamincharlton on 8/04/2019.
  */
 @SuppressWarnings("SqlResolve")
-public abstract class SqlPrismDataSource<T> implements PrismDataSource<T> {
+public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements PrismDataSource<T> {
 
     protected static HikariDataSource database = null;
     protected String name = "unconfigured";

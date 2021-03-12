@@ -1,6 +1,6 @@
 package me.botsko.prism.database.mysql;
 
-import me.botsko.prism.database.sql.PrismSqlConfig;
+import me.botsko.prism.database.sql.PrismSqlConfigImpl;
 import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 import org.spongepowered.configurate.objectmapping.meta.Setting;
 
@@ -11,7 +11,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting;
  * @since 2.1.8
  */
 @ConfigSerializable
-public class MySqlPrimConfig extends PrismSqlConfig {
+public class MySqlPrimConfig extends PrismSqlConfigImpl {
 
     @Setting("hostname")
     public String hostName = "127.0.0.1";

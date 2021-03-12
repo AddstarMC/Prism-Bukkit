@@ -3,6 +3,7 @@ package me.botsko.prism.config;
 import io.leangen.geantyref.TypeToken;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.PrismSqlConfig;
 import net.kyori.adventure.serializer.configurate4.ConfigurateComponentSerializer;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
@@ -10,8 +11,6 @@ import org.spongepowered.configurate.ConfigurationOptions;
 import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
-
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.util.Date;
@@ -38,6 +37,10 @@ public class ConfigHandler {
         builder = YamlConfigurationLoader.builder().defaultOptions(options).nodeStyle(NodeStyle.BLOCK).indent(2);
     }
 
+    /**
+     * Load the Configuration from the provided path.
+     * @param path  Path
+     */
     public void loadConfiguration(Path path) {
         try {
             main = builder.path(path).build().load();
@@ -49,7 +52,12 @@ public class ConfigHandler {
         }
     }
 
-    public <T> void applyDataSourceConfig(PrismDataSource<T> dataSource) {
+    /**
+     * Applies the dataSource configuration to the configuration node.
+     * @param dataSource the DataSource.
+     * @param <T> an implementation of PrismSqlConfig.
+     */
+    public <T extends PrismSqlConfig> void applyDataSourceConfig(PrismDataSource<T> dataSource) {
         try {
             dataSourceConfig.set(TypeToken.get(dataSource.getConfigurationClass()),dataSource.getConfig());
         } catch (SerializationException e) {
@@ -57,6 +65,10 @@ public class ConfigHandler {
         }
     }
 
+    /**
+     * Save the Configuration to the provided path.
+     * @param path Path
+     */
     public void saveConfiguration(Path path) {
         YamlConfigurationLoader loader =  builder.path(path).build();
         try {
@@ -72,21 +84,25 @@ public class ConfigHandler {
         return dataSourceConfig;
     }
 
-    public static <T> T getDataSourceConfig(Class<T> clazz,ConfigurationNode dataSourceConfig) {
+    /**
+     * Load the PrismSQlConfig from the ConfigurationNode.
+     * @param clazz T extends PrismSQlConfig.class
+     * @param dataSourceConfig ConfigurationNode
+     * @param <T> PrismSQlConfig
+     * @return extends PrismSQlConfig
+     */
+    public static <T extends PrismSqlConfig> T getDataSourceConfig(Class<T> clazz, ConfigurationNode dataSourceConfig) {
+        T defaultObject = null;
         try {
-            T object = clazz.getDeclaredConstructor().newInstance();
-            return dataSourceConfig.get(TypeToken.get(clazz),object);
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-            PrismLogHandler.warn(e.getMessage(),e);
-            return null;
+            defaultObject = clazz.getDeclaredConstructor().newInstance();
+        } catch (ReflectiveOperationException e) {
+            PrismLogHandler.warn(e.getMessage());
+        }
+        try {
+            return dataSourceConfig.get(TypeToken.get(clazz),defaultObject);
         } catch (ConfigurateException e) {
-            PrismLogHandler.warn(e.getMessage(),e);
-            try {
-                return clazz.newInstance();
-            } catch (InstantiationException | IllegalAccessException instantiationException) {
-                PrismLogHandler.warn(e.getMessage(),e);
-                return null;
-            }
+            PrismLogHandler.warn(e.getMessage());
+            return defaultObject;
         }
     }
 

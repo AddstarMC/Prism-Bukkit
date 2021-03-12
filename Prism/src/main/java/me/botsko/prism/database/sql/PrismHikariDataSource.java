@@ -5,13 +5,11 @@ import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.PrismSqlConfig;
 import org.spongepowered.configurate.ConfigurationNode;
-
 import java.io.File;
 import java.sql.Driver;
 import java.util.Enumeration;
-
 import static java.sql.DriverManager.getDrivers;
 
 
@@ -19,7 +17,7 @@ import static java.sql.DriverManager.getDrivers;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 1/01/2021.
  */
-public abstract class PrismHikariDataSource<T> extends SqlPrismDataSource<T> {
+public abstract class PrismHikariDataSource<T extends PrismSqlConfig> extends SqlPrismDataSource<T> {
 
 
     protected File propFile;
@@ -70,7 +68,7 @@ public abstract class PrismHikariDataSource<T> extends SqlPrismDataSource<T> {
     }
 
     @Override
-    public PrismDataSource createDataSource() {
+    public PrismHikariDataSource<T> createDataSource() {
         try {
             database = new HikariDataSource(dbConfig);
             createSettingsQuery();

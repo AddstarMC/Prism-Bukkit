@@ -1,7 +1,6 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,7 +10,7 @@ import java.util.Map;
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 5/04/2019.
  */
-public interface PrismDataSource<T> {
+public interface PrismDataSource<T extends PrismSqlConfig> {
 
     boolean isPaused();
 
@@ -29,7 +28,7 @@ public interface PrismDataSource<T> {
         return "prism_";
     }
 
-    PrismDataSource createDataSource();
+    PrismDataSource<?> createDataSource();
 
     void setupDatabase(ActionRegistry actionRegistry);
 

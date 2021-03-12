@@ -7,12 +7,11 @@ import me.botsko.prism.database.sql.SqlSelectIdQueryBuilder;
 /**
  * Created for the Prism-Bukkit Project.
  *
- * @author Narimm on
- * 12/02/2021.
+ * @author Narimm on 12/02/2021
  */
 public class DerbySelectIdQueryBuilder extends SqlSelectIdQueryBuilder {
 
-    public DerbySelectIdQueryBuilder(PrismDataSource dataSource) {
+    public DerbySelectIdQueryBuilder(PrismDataSource<?> dataSource) {
         super(dataSource);
     }
 
@@ -24,10 +23,10 @@ public class DerbySelectIdQueryBuilder extends SqlSelectIdQueryBuilder {
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             final int limit = parameters.getLimit();
             if (limit == 1) {
-                return "FETCH FIRST ROW";
+                return "FETCH FIRST ROW ONLY";
             }
             if (limit > 1) {
-                return " FETCH NEXT " + limit + " ROWS";
+                return " FETCH NEXT " + limit + " ROWS ONLY";
             }
         }
         return "";
