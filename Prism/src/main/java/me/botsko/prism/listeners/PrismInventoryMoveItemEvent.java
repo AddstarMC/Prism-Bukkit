@@ -39,7 +39,7 @@ public class PrismInventoryMoveItemEvent implements Listener {
 
             String invName = event.getSource().getType().name().toLowerCase();
 
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-insert", event.getItem(),
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_INSERT, event.getItem(),
                     event.getItem().getAmount(), 0, null, containerLoc, invName));
         }
 
@@ -60,7 +60,7 @@ public class PrismInventoryMoveItemEvent implements Listener {
 
             String invName = event.getDestination().getType().name().toLowerCase();
 
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", event.getItem(),
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, event.getItem(),
                     event.getItem().getAmount(), 0, null, containerLoc, invName));
         }
     }

@@ -205,15 +205,15 @@ public class Preview implements Previewable {
                     if (iterationCount >= 1000) {
                         break;
                     }
-                    if (processType.equals(PrismProcessType.ROLLBACK) && !a.getActionType().canRollback()) {
-                        PrismLogHandler.debug(a.getActionType().getName() + " (" + a.getId()
+                    if (processType.equals(PrismProcessType.ROLLBACK) && !a.getAction().canRollback()) {
+                        PrismLogHandler.debug(a.getAction().getName() + " (" + a.getId()
                                 + ") cannot be rolled back - preview Skipping");
                         iterator.remove();
                         continue;
                     }
 
-                    if (processType.equals(PrismProcessType.RESTORE) && !a.getActionType().canRestore()) {
-                        PrismLogHandler.debug(a.getActionType().getName() + " (" + a.getId()
+                    if (processType.equals(PrismProcessType.RESTORE) && !a.getAction().canRestore()) {
+                        PrismLogHandler.debug(a.getAction().getName() + " (" + a.getId()
                                 + ") cannot be restored - preview Skipping");
                         iterator.remove();
                         continue;

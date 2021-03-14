@@ -52,7 +52,7 @@ public class ActionMessage {
      * @return String
      */
     public String getRawMessage() {
-        Action action = handler.getActionType();
+        Action action = handler.getAction();
         return PlainComponentSerializer.plain().serialize(getMainMessage(action, format1));
     }
 
@@ -102,7 +102,7 @@ public class ActionMessage {
      * @return String[]
      */
     public TextComponent getMessage() {
-        Action action = handler.getActionType();
+        Action action = handler.getAction();
         TextComponent out = getMainMessage(action, format2line1);
         if (showExtended) {
             out = out.append(Component.newline());
@@ -183,8 +183,8 @@ public class ActionMessage {
     }
 
     private TextComponent.Builder getPosNegPrefix() {
-        if (handler.getActionType().doesCreateBlock() || handler.getActionType().getName().equals("item-insert")
-                || handler.getActionType().getName().equals("sign-change")) {
+        if (handler.getAction().doesCreateBlock() || handler.getAction().getName().equals("item-insert")
+                || handler.getAction().getName().equals("sign-change")) {
             return Component.text().content("+").color(NamedTextColor.GREEN);
         } else {
             return Component.text().content("-").color(NamedTextColor.RED);

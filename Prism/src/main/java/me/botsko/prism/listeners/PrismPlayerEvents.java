@@ -1,5 +1,6 @@
 package me.botsko.prism.listeners;
 
+import io.papermc.paper.event.player.AsyncChatEvent;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionFactory;
@@ -14,6 +15,7 @@ import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,7 +32,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -109,7 +110,7 @@ public class PrismPlayerEvents implements Listener {
             return;
         }
 
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-command", player, event.getMessage()));
+        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.PLAYER_COMMAND, player, event.getMessage()));
 
     }
 
@@ -137,7 +138,7 @@ public class PrismPlayerEvents implements Listener {
                 if (trackIp && player.getAddress() != null) { //player may have disconnected.
                     ip = player.getAddress().getAddress().getHostAddress();
                 }
-                RecordingQueue.addToQueue(ActionFactory.createPlayer("player-join", player, ip));
+                RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.PLAYER_JOIN, player, ip));
             });
         });
 
@@ -159,7 +160,7 @@ public class PrismPlayerEvents implements Listener {
             return;
         }
 
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-quit", event.getPlayer(), null));
+        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.PLAYER_QUIT, event.getPlayer(), null));
 
         // Remove any active wands for this player
         Prism.playersWithActiveTools.remove(event.getPlayer().getName());
@@ -169,19 +170,6 @@ public class PrismPlayerEvents implements Listener {
         plugin.playerActivePreviews.remove(event.getPlayer().getName());
     }
 
-    /**
-     * AsyncPlayerChatEvent.
-     *
-     * @param event AsyncPlayerChatEvent
-     */
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerChat(final AsyncPlayerChatEvent event) {
-
-        if (!Prism.getIgnore().event(ActionType.PLAYER_CHAT, event.getPlayer())) {
-            return;
-        }
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-chat", event.getPlayer(), event.getMessage()));
-    }
 
     /**
      * PlayerDropItemEvent.
@@ -196,7 +184,7 @@ public class PrismPlayerEvents implements Listener {
         if (event.getItemDrop().getItemStack().getType() == Material.AIR) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createItemStack("item-drop", event.getItemDrop().getItemStack(),
+        RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(),
                 event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(),
                 event.getPlayer()));
     }
@@ -211,7 +199,7 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event(ActionType.PLAYER_GAMEMODECHANGE, event.getPlayer())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("player-gamemodechange",
+        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.PLAYER_GAMEMODECHANGE,
                 event.getPlayer(), event.getNewGameMode().toString()));
     }
 
@@ -227,7 +215,7 @@ public class PrismPlayerEvents implements Listener {
             if (!Prism.getIgnore().event(ActionType.ITEM_PICKUP, p)) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(),
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_PICKUP, event.getItem().getItemStack(),
                     event.getItem().getItemStack().getAmount(), -1, null, p.getLocation(), p));
         }
     }
@@ -242,7 +230,7 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event(ActionType.XP_PICKUP, event.getPlayer())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createPlayer("xp-pickup", event.getPlayer(), "" + event.getAmount()));
+        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.XP_PICKUP, event.getPlayer(), "" + event.getAmount()));
     }
 
     /**
@@ -297,7 +285,7 @@ public class PrismPlayerEvents implements Listener {
             }
         }
 
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause.name, spot.getLocation(),
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(cause, spot.getLocation(),
                 spot.getType(), oldData, newMat, newData, player));
 
         if (plugin.config.alertConfig.uses.lava && event.getBucket() == Material.LAVA_BUCKET
@@ -330,7 +318,7 @@ public class PrismPlayerEvents implements Listener {
             liquidType = "lava";
         }
 
-        final Handler pa = ActionFactory.createPlayer("bucket-fill", player, liquidType);
+        final Handler pa = ActionFactory.createPlayer(ActionType.BUCKET_FILL, player, liquidType);
 
         // Override the location with the area taken
         pa.setX(spot.getX());
@@ -354,7 +342,7 @@ public class PrismPlayerEvents implements Listener {
         final TeleportCause c = event.getCause();
         if (c.equals(TeleportCause.END_PORTAL) || c.equals(TeleportCause.NETHER_PORTAL)
                 || c.equals(TeleportCause.ENDER_PEARL)) {
-            RecordingQueue.addToQueue(ActionFactory.createEntityTravel("player-teleport", event.getPlayer(),
+            RecordingQueue.addToQueue(ActionFactory.createEntityTravel(ActionType.PLAYER_TELEPORT, event.getPlayer(),
                     event.getFrom(), event.getTo(), event.getCause()));
         }
     }
@@ -418,12 +406,12 @@ public class PrismPlayerEvents implements Listener {
                 if (!Prism.getIgnore().event(ActionType.CONTAINER_ACCESS, player)) {
                     return;
                 }
-                RecordingQueue.addToQueue(ActionFactory.createBlock("container-access", block, player));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.CONTAINER_ACCESS, block, player));
             } else if (MaterialTag.USABLE.isTagged(block.getType())) {
                 if (!Prism.getIgnore().event(ActionType.BLOCK_USE, player)) {
                     return;
                 }
-                RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", block, player));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_USE, block, player));
             } else if (MaterialTag.GROWABLE.isTagged(block.getType())) {
                 recordBoneMealEvent(block, hand, player);
             } else {
@@ -449,7 +437,7 @@ public class PrismPlayerEvents implements Listener {
                             if (!Prism.getIgnore().event(ActionType.TNT_PRIME, player)) {
                                 return;
                             }
-                            RecordingQueue.addToQueue(ActionFactory.createUse("tnt-prime",
+                            RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.TNT_PRIME,
                                     hand.getType(), block, player));
                         }
                         break;
@@ -479,7 +467,7 @@ public class PrismPlayerEvents implements Listener {
         if (block != null && event.getAction() == Action.LEFT_CLICK_BLOCK) {
             final Block above = block.getRelative(BlockFace.UP);
             if (above.getType().equals(Material.FIRE)) {
-                RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", above, player));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_BREAK, above, player));
             }
         }
 
@@ -494,7 +482,7 @@ public class PrismPlayerEvents implements Listener {
                     return;
                 }
                 RecordingQueue
-                        .addToQueue(ActionFactory.createBlock("crop-trample", block.getRelative(BlockFace.UP), player));
+                        .addToQueue(ActionFactory.createBlock(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player));
             }
         }
     }
@@ -515,7 +503,7 @@ public class PrismPlayerEvents implements Listener {
             final Block actualBlock = block.getWorld().getBlockAt(newLoc);
             // This is a lame way to do this
             final BlockAction action = new BlockAction();
-            action.setActionType("block-place");
+            action.setActionType(ActionType.BLOCK_PLACE);
             action.setPlayer(player);
             action.setUuid(player.getUniqueId());
             action.setLoc(actualBlock.getLocation());
@@ -537,7 +525,7 @@ public class PrismPlayerEvents implements Listener {
             if (!Prism.getIgnore().event(ActionType.BONEMEAL_USE, block)) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createUse("bonemeal-use", inhand.getType(), block, player));
+            RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.BONEMEAL_USE, inhand.getType(), block, player));
         }
     }
 
@@ -552,7 +540,7 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event(ActionType.SPAWNEGG_USE, block)) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createUse("spawnegg-use",
+        RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.SPAWNEGG_USE,
                 inhand.getType(), block, player));
     }
 
@@ -568,7 +556,7 @@ public class PrismPlayerEvents implements Listener {
             return;
         }
         RecordingQueue.addToQueue(
-                ActionFactory.createItemStack("firework-launch", inhand, null, block.getLocation(), player));
+                ActionFactory.createItemStack(ActionType.FIREWORK_LAUNCH, inhand, null, block.getLocation(), player));
     }
 
     /**
@@ -581,7 +569,7 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event(ActionType.CAKE_EAT, block)) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createUse("cake-eat", Material.CAKE, block, player));
+        RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.CAKE_EAT, Material.CAKE, block, player));
     }
 
     /**
@@ -604,14 +592,14 @@ public class PrismPlayerEvents implements Listener {
 
             // Record currently playing disc
             final ItemStack i = new ItemStack(jukebox.getPlaying(), 1);
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-remove", i,
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, i,
                     i.getAmount(), 0, null,block.getLocation(), player));
 
         } else {
 
             // Record the insert
             RecordingQueue.addToQueue(
-                    ActionFactory.createItemStack("item-insert", hand, 1, 0, null, block.getLocation(), player));
+                    ActionFactory.createItemStack(ActionType.ITEM_INSERT, hand, 1, 0, null, block.getLocation(), player));
 
         }
     }

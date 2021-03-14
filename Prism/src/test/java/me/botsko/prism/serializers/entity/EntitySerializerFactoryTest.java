@@ -22,7 +22,7 @@ class EntitySerializerFactoryTest {
     @BeforeEach
     public void setUp() {
         helper = new TestHelper();
-        ServerMock server = helper.setup();
+        //ServerMock server = helper.setup();
     }
 
     @Test

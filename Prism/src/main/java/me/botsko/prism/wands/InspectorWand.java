@@ -5,6 +5,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionMessage;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.commands.Flags;
 import me.botsko.prism.text.ReplaceableTextComponent;
@@ -77,9 +78,9 @@ public class InspectorWand extends QueryWandBase {
 
             // Ignoring any actions via config?
             if (params.getActionTypes().size() == 0) {
-                final List<String> ignoreActions = plugin.config.wandConfig.wandInspectIgnoreActions;
+                final List<ActionType> ignoreActions = plugin.config.wandConfig.wandInspectIgnoreActions;
                 if (ignoreActions != null && !ignoreActions.isEmpty()) {
-                    for (final String ignore : ignoreActions) {
+                    for (final ActionType ignore : ignoreActions) {
                         params.addActionType(ignore, MatchRule.EXCLUDE);
                     }
                 }

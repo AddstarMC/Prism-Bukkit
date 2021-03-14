@@ -34,9 +34,9 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
         }
 
         if (shouldGroup) {
-            columns.add("AVG(x)");
-            columns.add("AVG(y)");
-            columns.add("AVG(z)");
+            columns.add("AVG(x) as x");
+            columns.add("AVG(y) as y");
+            columns.add("AVG(z) as z");
         } else {
             columns.add("x");
             columns.add("y");
@@ -44,11 +44,11 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
         }
 
         if (shouldGroup) {
-            columns.add("MIN(block_id) block_id");
-            columns.add("MIN(block_subid) block_subid");
-            columns.add("MIN(old_block_id) old_block_id");
-            columns.add("MIN(old_block_subid) old_block_subid");
-            columns.add("MIN(data) data");
+            columns.add("MIN(block_id) AS block_id");
+            columns.add("MIN(block_subid) AS block_subid");
+            columns.add("MIN(old_block_id) AS old_block_id");
+            columns.add("MIN(old_block_subid) AS old_block_subid");
+            columns.add("MIN('') AS data");
             columns.add("MIN(player_uuid) AS uuid");
         } else {
             columns.add("block_id");
@@ -60,7 +60,8 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
         }
 
         if (shouldGroup) {
-            columns.add("COUNT(*) counted");
+            columns.add("COUNT(*) AS counted");
+            columns.add("DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, " + tableNameData + ".epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) }) as epochDate");
         }
 
         // Append all columns
@@ -80,6 +81,16 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
     }
 
     @Override
+    protected String group() {
+        if (shouldGroup) {
+            return " GROUP BY " + tableNameData + ".action_id, " + tableNameData + ".player_id, " + tableNameData
+                    + ".block_id, DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, " + tableNameData
+                    + ".epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) })";
+        }
+        return "";
+    }
+
+    @Override
     protected String limit() {
         if (parameters == null) {
             return "";
@@ -87,7 +98,7 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             final int limit = parameters.getLimit();
             if (limit > 0) {
-                return " FETCH " + limit + " ROWS ONLY";
+                return " FETCH NEXT " + limit + " ROWS ONLY";
             }
         }
         return "";

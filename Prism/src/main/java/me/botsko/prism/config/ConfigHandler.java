@@ -59,7 +59,9 @@ public class ConfigHandler {
      */
     public <T extends PrismSqlConfig> void applyDataSourceConfig(PrismDataSource<T> dataSource) {
         try {
-            dataSourceConfig.set(TypeToken.get(dataSource.getConfigurationClass()),dataSource.getConfig());
+            dataSourceConfig.node("type").set(dataSource.getName());
+            dataSourceConfig.node("properties")
+                    .set(TypeToken.get(dataSource.getConfigurationClass()),dataSource.getConfig());
         } catch (SerializationException e) {
             PrismLogHandler.warn(e.getMessage(),e);
         }

@@ -1,8 +1,9 @@
 package me.botsko.prism.database.sql;
 
-import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.PrismProcessAction;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.SelectProcessActionQuery;
 import me.botsko.prism.measurement.TimeTaken;
@@ -54,7 +55,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
     protected String where() {
         if (getLastID) {
             //bit hacky here we are using the id parameter which should generally refer to a player.
-            final int action_id = Prism.prismActions.get("prism-process");
+            final int action_id = ActionRegistry.prismActions.get(ActionType.PRISM_PROCESS);
             String playerName = parameters.getKeyword();
             return "WHERE action_id = " + action_id + " AND p.player = " + playerName;
         }

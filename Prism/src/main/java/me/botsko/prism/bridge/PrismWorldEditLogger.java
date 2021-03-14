@@ -42,7 +42,7 @@ public class PrismWorldEditLogger extends AbstractDelegateExtent {
             Block oldBlock = loc.getBlock();
             Material newMaterial = BukkitAdapter.adapt(newBlock.getBlockType());
             BlockData newData = BukkitAdapter.adapt(newBlock);
-            RecordingQueue.addToQueue(ActionFactory.createBlockChange("world-edit", loc, oldBlock.getType(),
+            RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.WORLD_EDIT, loc, oldBlock.getType(),
                     oldBlock.getBlockData(), newMaterial, newData, Bukkit.getPlayer(player.getUniqueId())));
         }
         return super.setBlock(pt, newBlock);

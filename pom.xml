@@ -64,6 +64,7 @@
         <mockbukkit.version>0.31.1</mockbukkit.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <mockbukkit.version>0.31.1</mockbukkit.version>
     </properties>
     <dependencies>
         <dependency>

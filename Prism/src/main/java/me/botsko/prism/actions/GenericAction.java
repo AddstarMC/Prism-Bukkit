@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionImpl;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.Action;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.config.PrismConfig;
 import org.bukkit.Bukkit;
@@ -14,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AnimalTamer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.SimpleDateFormat;
@@ -165,7 +167,7 @@ public abstract class GenericAction implements Handler {
      * @see me.botsko.prism.actions.Handler#getType()
      */
     @Override
-    public Action getActionType() {
+    public Action getAction() {
         return type;
     }
 
@@ -173,11 +175,20 @@ public abstract class GenericAction implements Handler {
      * Set Action Type from a String.
      *
      * @param actionType String
+     * @deprecated use {@link this#setActionType(ActionType)}
      */
-    public void setActionType(String actionType) {
-        if (actionType != null) {
-            setActionType(Prism.getActionRegistry().getAction(actionType));
-        }
+    @Deprecated
+    public void setActionType(@NotNull String actionType) {
+            setAction(Prism.getActionRegistry().getAction(actionType));
+    }
+
+    /**
+     * Set Action Type from a String.
+     *
+     * @param actionType String
+     */
+    public void setActionType(@NotNull ActionType actionType) {
+        setAction(Prism.getActionRegistry().getAction(actionType));
     }
 
     /**
@@ -186,7 +197,7 @@ public abstract class GenericAction implements Handler {
      * @param type {@link ActionImpl}
      */
     @Override
-    public void setActionType(Action type) {
+    public void setAction(Action type) {
         this.type = type;
     }
 

@@ -37,14 +37,15 @@ public class ActionParameter extends SimplePrismParameterHandler {
                 // full name or
                 // short name.
                 ActionRegistry reg = Prism.getActionRegistry();
-                ActionImpl type = reg.getAction(ActionType.getByName(action));
-                if (type != null) {
+                ActionType aType = ActionType.getByName(action);
+                if (aType != null) {
+                    ActionImpl type = reg.getAction(aType);
                     if ((query.getProcessType().equals(PrismProcessType.ROLLBACK) && !type.canRollback())
                             || (query.getProcessType().equals(PrismProcessType.RESTORE)
                             && !type.canRestore())) {
                         continue;
                     }
-                    query.addActionType(type.getName());
+                    query.addActionType(type.getActionType());
                     continue;
                 }
                 ArrayList<ActionImpl> actionTypes = reg.getActionsByShortName(action.replace("!", ""));
@@ -74,7 +75,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
                             continue;
                         }
 
-                        query.addActionType(actionType.getName(), match);
+                        query.addActionType(actionType.getActionType(), match);
                     }
 
                     if (!noPermission.isEmpty()) {

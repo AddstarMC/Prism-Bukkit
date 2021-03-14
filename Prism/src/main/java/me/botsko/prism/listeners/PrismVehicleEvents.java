@@ -59,7 +59,7 @@ public class PrismVehicleEvents implements Listener {
             if (!Prism.getIgnore().event(ActionType.VEHICLE_PLACE, loc.getWorld(), player.getUniqueId())) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createVehicle("vehicle-place", vehicle, player));
+            RecordingQueue.addToQueue(ActionFactory.createVehicle(ActionType.VEHICLE_PLACE, vehicle, player));
         }
     }
 
@@ -121,12 +121,12 @@ public class PrismVehicleEvents implements Listener {
             if (!Prism.getIgnore().event(customCheck, ((Player) entity))) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createVehicle(action.name, vehicle, (Player) entity));
+            RecordingQueue.addToQueue(ActionFactory.createVehicle(action, vehicle, (Player) entity));
         } else {
             if (!Prism.getIgnore().event(customCheck, entity.getWorld())) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createVehicle(action.name, vehicle,
+            RecordingQueue.addToQueue(ActionFactory.createVehicle(action, vehicle,
                     entity.getType().name().toLowerCase()));
         }
     }

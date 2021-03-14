@@ -4,6 +4,8 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
+import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.DeleteQuery;
@@ -22,7 +24,9 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.Map;
 
@@ -151,50 +155,60 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
 
     /**
      * Add action to db.
-     * @param actionName String
+     * @param action String
      */
-    public void addActionName(String actionName) {
+    public void addActionName(ActionType action) {
 
-        if (Prism.prismActions.containsKey(actionName)) {
+        if (ActionRegistry.prismActions.containsKey(action)) {
             return;
         }
+        PrismLogHandler.log(action.name + " not found in cache - inserting.");
         try (
                 Connection conn = database.getConnection();
                 PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "actions (action) VALUES (?)",
                         Statement.RETURN_GENERATED_KEYS)
         ) {
-            s.setString(1, actionName);
+            s.setString(1, action.name);
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
+
                 PrismLogHandler.log("Registering new action type to the database/cache: "
-                        + actionName + " " + rs.getInt(1));
-                Prism.prismActions.put(actionName, rs.getInt(1));
+                        + action.name + " " + rs.getInt(1));
+                ActionRegistry.prismActions.put(action, rs.getInt(1));
             } else {
-                throw new SQLException("Insert statement failed - no generated key obtained.");
+                throw new SQLDataException("Insert statement failed - no generated key obtained.");
             }
             rs.close();
-        } catch (final SQLException e) {
+        } catch (SQLIntegrityConstraintViolationException | SQLDataException e) {
+            PrismLogHandler.warn("Action : " + action.name +" / " + e.getMessage());
+        }
+        catch (final SQLException e) {
             handleDataSourceException(e);
-
         }
     }
 
     protected void cacheActionPrimaryKeys() {
 
         try (
-                Connection conn = getConnection();
+                Connection conn = getConnection()
+        ) {
+            try (
                 PreparedStatement s = conn.prepareStatement(
                         "SELECT action_id, action FROM " + prefix + "actions");
                 ResultSet rs = s.executeQuery()
                 ) {
-            while (rs.next()) {
-                PrismLogHandler.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
-                Prism.prismActions.put(rs.getString(2), rs.getInt(1));
+                while (rs.next()) {
+                    PrismLogHandler.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
+                    ActionType type = ActionType.getByName(rs.getString(2));
+                    if (type != null) {
+                        ActionRegistry.prismActions.put(type, rs.getInt(1));
+                    }
+                }
+                PrismLogHandler.debug("Loaded " + ActionRegistry.prismActions.size() + " actions into the cache.");
+            } catch (SQLException e) {
+                PrismLogHandler.warn(e.getMessage(),e);
             }
-
-            PrismLogHandler.debug("Loaded " + Prism.prismActions.size() + " actions into the cache.");
-
         } catch (final SQLException e) {
             handleDataSourceException(e);
         }

@@ -1,6 +1,8 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.api.actions.ActionType;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -45,7 +47,7 @@ public interface PrismDataSource<T extends PrismSqlConfig> {
 
     void addWorldName(String worldName);
 
-    void addActionName(String actionName);
+    void addActionName(ActionType actionName);
 
     void dispose();
 

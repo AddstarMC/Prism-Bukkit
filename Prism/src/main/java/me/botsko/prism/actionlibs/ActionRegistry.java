@@ -9,6 +9,7 @@ import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -17,6 +18,7 @@ import static me.botsko.prism.api.actions.ActionType.*;
 
 public class ActionRegistry {
 
+    public static final HashMap<ActionType, Integer> prismActions = new HashMap<>();
     private final TreeMap<ActionType, ActionImpl> registeredActions = new TreeMap<>();
 
     public ActionRegistry() {
@@ -49,7 +51,7 @@ public class ActionRegistry {
         if (TypeUtils.subStrOccurences(actionType.getName(), "-") != 2) {
             throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.");
         }
-        Prism.getInstance().getPrismDataSource().addActionName(actionType.getName());
+        Prism.getInstance().getPrismDataSource().addActionName(actionType.getActionType());
         registeredActions.put(actionType.getActionType(), actionType);
     }
 

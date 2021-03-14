@@ -252,7 +252,7 @@ public interface PrismParameters {
      *
      * @return the Action Type
      */
-    Map<String, MatchRule> getActionTypes();
+    Map<ActionType, MatchRule> getActionTypes();
 
     /**
      * Get a set of actions to match with a match rules.
@@ -261,14 +261,14 @@ public interface PrismParameters {
      * @deprecated use getActionTypes()
      */
     @Deprecated
-    Map<String, MatchRule> getActionTypeNames();
+    Map<ActionType, MatchRule> getActionTypeNames();
 
     /**
      * Add action type to the filter with include rule.
      *
      * @param actionType the action_type to set
      */
-    void addActionType(String actionType);
+    void addActionType(ActionType actionType);
 
     /**
      * Remove an action Type.

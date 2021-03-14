@@ -29,7 +29,7 @@ import java.util.logging.Level;
  */
 public class TaskManager {
     public boolean active;
-    private PrismConfig config;
+    private final PrismConfig config;
     private final BukkitScheduler scheduler;
     private BukkitTask functionalTaskHandler;
     private BukkitTask recordingTask;

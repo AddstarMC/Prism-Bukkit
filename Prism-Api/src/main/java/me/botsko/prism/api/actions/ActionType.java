@@ -29,7 +29,7 @@ public enum ActionType {
     BLOCK_SHIFT("block-shift"),
     BLOCK_SPREAD("block-spread"),
     BLOCK_USE("block-use"),
-    BONEMEAL_USE("bonemean-use"),
+    BONEMEAL_USE("bonemeal-use"),
     BUCKET_FILL("bucket-fill"),
     CAKE_EAT("cake-eat"),
     CONTAINER_ACCESS("container-access"),
@@ -47,7 +47,7 @@ public enum ActionType {
     ENTITY_FORM("entity-form"),
     ENTITY_SPAWN("entity-spawn"),
     ENTITY_KILL("entity-kill"),
-    ENTITY_LEASH("entity-lease"),
+    ENTITY_LEASH("entity-leash"),
     ENTITY_SHEAR("entity-shear"),
     ENTITY_UNLEASH("entity-unleash"),
     FIREBALL("fireball"),
@@ -82,6 +82,9 @@ public enum ActionType {
     PRISM_EXTINGUISH("prism-extinguish"),
     PRISM_PROCESS("prism-process"),
     PRISM_ROLLBACK("prism-rollback"),
+    PRISM_RESTORE("prism-restore"),
+    PRISM_UNDO("prism-undo"),
+    PRISM_DELETE("prism-delete"),
     SHEEP_EAT("sheep-eat"),
     SIGN_CHANGE("sign-change"),
     PORTAL_CREATE("portal-create"),
@@ -101,7 +104,8 @@ public enum ActionType {
     XP_PICKUP("xp-pickup"),
     TARGET_HIT("target-hit"),
     PLAYER_TRADE("player-trade"),
-    ITEM_RECEIVE("item-receive");
+    ITEM_RECEIVE("item-receive"),
+    CUSTOM_ACTION("custom-action");
 
     private static final Map<String, List<ActionType>> registeredShortNames = new HashMap<>();
     private static final Map<String, List<ActionType>> registeredFamilyNames = new HashMap<>();

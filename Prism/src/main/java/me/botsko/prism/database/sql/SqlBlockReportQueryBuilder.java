@@ -4,6 +4,7 @@ import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.database.PrismDataSource;
@@ -48,7 +49,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     @Override
     protected String select() {
-        parameters.addActionType("block-place");
+        parameters.addActionType(ActionType.BLOCK_PLACE);
 
         // block-place query
         StringBuilder sql = new StringBuilder();
@@ -61,7 +62,7 @@ public class SqlBlockReportQueryBuilder extends SqlSelectQueryBuilder implements
                 + where() + " GROUP BY block_id) ");
         conditions.clear();
         parameters.getActionTypes().clear();
-        parameters.addActionType("block-break");
+        parameters.addActionType(ActionType.BLOCK_BREAK);
         sql.append(" UNION ( SELECT block_id,"
                 + " 0 AS placed,"
                 + " count(id) AS broken FROM "

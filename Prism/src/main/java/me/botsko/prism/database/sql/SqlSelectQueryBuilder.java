@@ -4,8 +4,10 @@ import com.google.gson.JsonSyntaxException;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionImpl;
+import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.RecordingManager;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.api.actions.PrismProcessType;
@@ -34,7 +36,7 @@ import java.util.Map.Entry;
 
 public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
-    public SqlSelectQueryBuilder(PrismDataSource dataSource) {
+    public SqlSelectQueryBuilder(PrismDataSource<?> dataSource) {
         super(dataSource);
     }
 
@@ -137,23 +139,28 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void worldCondition() {
         if (parameters.getWorld() != null) {
-            addCondition(
-                    String.format("world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
-                            parameters.getWorld()));
+            int world_id = Prism.prismWorlds.get(parameters.getWorld());
+            if(world_id != 0) {
+                addCondition("world_id = "+world_id);
+            } else {
+                addCondition(
+                        String.format("world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
+                                parameters.getWorld()));
+            }
         }
     }
 
     private void actionCondition() {
         // Action type
-        final Map<String, MatchRule> action_types = parameters.getActionTypes();
+        final Map<ActionType, MatchRule> action_types = parameters.getActionTypes();
         boolean containsPrismProcessType = false;
 
         // Build IDs for prism process actions
         final Collection<String> prismActionIds = new ArrayList<>();
-        for (final Entry<String, Integer> entry : Prism.prismActions.entrySet()) {
-            if (entry.getKey().contains("prism")) {
+        for (final Entry<ActionType, Integer> entry : ActionRegistry.prismActions.entrySet()) {
+            if (entry.getKey().name.contains("prism")) {
                 containsPrismProcessType = true;
-                prismActionIds.add("" + Prism.prismActions.get(entry.getKey()));
+                prismActionIds.add("" + ActionRegistry.prismActions.get(entry.getKey()));
             }
         }
 
@@ -162,12 +169,18 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
             final Collection<String> includeIds = new ArrayList<>();
             final Collection<String> excludeIds = new ArrayList<>();
-            for (final Entry<String, MatchRule> entry : action_types.entrySet()) {
+            for (final Entry<ActionType, MatchRule> entry : action_types.entrySet()) {
+                Integer id = ActionRegistry.prismActions.get(entry.getKey());
+                if (id == null) {
+                    // null id means the action isnt registered.
+                    PrismLogHandler.debug("Ignoring" + entry.getKey() + " as Action not registered.");
+                    continue;
+                }
                 if (entry.getValue().equals(MatchRule.INCLUDE)) {
-                    includeIds.add("" + Prism.prismActions.get(entry.getKey()));
+                    includeIds.add("" + id);
                 }
                 if (entry.getValue().equals(MatchRule.EXCLUDE)) {
-                    excludeIds.add("" + Prism.prismActions.get(entry.getKey()));
+                    excludeIds.add("" + id);
                 }
             }
             // Include IDs
@@ -181,7 +194,9 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         } else {
             // exclude internal stuff
             if (!containsPrismProcessType && !parameters.getProcessType().equals(PrismProcessType.DELETE)) {
-                addCondition("action_id NOT IN (" + TypeUtils.join(prismActionIds, ",") + ")");
+                if (prismActionIds.size() > 0) {
+                    addCondition("action_id NOT IN (" + TypeUtils.join(prismActionIds, ",") + ")");
+                }
             }
         }
     }
@@ -485,15 +500,15 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 // and the cache data should always be available
                 int actionId = rs.getInt(3);
 
-                String actionName = "";
-                for (final Entry<String, Integer> entry : Prism.prismActions.entrySet()) {
+                ActionType actionName = null;
+                for (final Entry<ActionType, Integer> entry : ActionRegistry.prismActions.entrySet()) {
                     if (entry.getValue() == actionId) {
                         actionName = entry.getKey();
                     }
                 }
-                if (actionName.isEmpty()) {
+                if (actionName == null) {
                     PrismLogHandler.warn("Record contains action ID that doesn't exist in cache: " + actionId
-                            + ", cacheSize=" + Prism.prismActions.size());
+                            + ", cacheSize=" + ActionRegistry.prismActions.size());
                     continue;
                 }
 
@@ -515,16 +530,15 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                     // table joins
                     rowId = rs.getLong(1);
                     // Set all shared values
-                    baseHandler.setActionType(actionType);
+                    baseHandler.setAction(actionType);
                     baseHandler.setId(rowId);
                     baseHandler.setUnixEpoch(rs.getLong(2));
 
                     String worldName = worldsInverse.getOrDefault(rs.getInt(5), "");
-                    baseHandler.setWorld(Bukkit.getWorld(worldName));
+                    baseHandler.setWorld(Bukkit.getWorld(worldName));//todo Async BukkitAPI?
                     baseHandler.setX(rs.getInt(6));
                     baseHandler.setY(rs.getInt(7));
                     baseHandler.setZ(rs.getInt(8));
-
                     int blockId = rs.getInt(9);
                     int blockSubId = rs.getInt(10);
 

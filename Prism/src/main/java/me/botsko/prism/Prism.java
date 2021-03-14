@@ -94,7 +94,6 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     public static final ConcurrentHashMap<String, Wand> playersWithActiveTools = new ConcurrentHashMap<>();
     public static final HashMap<String, Integer> prismWorlds = new HashMap<>();
-    public static final HashMap<String, Integer> prismActions = new HashMap<>();
     private static final Map<Material, TextColor> alertedOres = new HashMap<>();
     private static final HashMap<String, PrismParameterHandler> paramHandlers = new HashMap<>();
     private static final String baseUrl = "https://prism-bukkit.readthedocs.io/en/latest/";
@@ -103,7 +102,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     public PrismConfig config;
     public static boolean isPaper = true;
     protected static PrismLogHandler logHandler;
-    protected PrismDataSource prismDataSource = null;
+    protected PrismDataSource<?> prismDataSource = null;
     protected static String pluginName;
     protected static String pasteKey;
     protected static ActionRegistry actionRegistry;

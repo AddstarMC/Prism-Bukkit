@@ -111,13 +111,13 @@ public class PrismBlockEvents extends BaseListener {
 
     private void logBlockRelationshipsForBlock(Player player, Block block) {
         relatedBlockCallback(block, b -> RecordingQueue.addToQueue(
-                ActionFactory.createBlock("block-break", b, player)), s -> plugin.preplannedBlockFalls.put(
+                ActionFactory.createBlock(ActionType.BLOCK_BREAK, b, player)), s -> plugin.preplannedBlockFalls.put(
                         s, player.getUniqueId().toString()));
     }
 
     void logBlockRelationshipsForBlock(String nonPlayer, Block block) {
         relatedBlockCallback(block, b -> RecordingQueue.addToQueue(
-                ActionFactory.createBlock("block-break", b, nonPlayer)), s -> plugin.preplannedBlockFalls.put(
+                ActionFactory.createBlock(ActionType.BLOCK_BREAK, b, nonPlayer)), s -> plugin.preplannedBlockFalls.put(
                         s, nonPlayer));
     }
 
@@ -207,7 +207,7 @@ public class PrismBlockEvents extends BaseListener {
         // properly
         // logItemRemoveFromDestroyedContainer( player, block );
         forEachItem(block, (i, s) -> RecordingQueue.addToQueue(
-                ActionFactory.createItemStack("item-remove", i, i.getAmount(), 0, null,
+                ActionFactory.createItemStack(ActionType.ITEM_REMOVE, i, i.getAmount(), 0, null,
                 block.getLocation(), player)));
 
         // Change handling a bit if it's a long block
@@ -220,7 +220,7 @@ public class PrismBlockEvents extends BaseListener {
          * block = sibling; }
          */
 
-        RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", block, player));
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_BREAK, block, player));
 
         // check for block relationships
         logBlockRelationshipsForBlock(player, block);
@@ -230,7 +230,7 @@ public class PrismBlockEvents extends BaseListener {
             final ArrayList<Block> blocks = Utilities.findConnectedBlocksOfType(Material.NETHER_PORTAL, block, null);
             if (!blocks.isEmpty()) {
                 // Only log 1 portal break, we don't need all 8
-                RecordingQueue.addToQueue(ActionFactory.createBlock("block-break", blocks.get(0), player));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_BREAK, blocks.get(0), player));
             }
         }
 
@@ -262,7 +262,7 @@ public class PrismBlockEvents extends BaseListener {
         final BlockState s = event.getBlockReplacedState();
 
         // TODO: old and new appear flipped compared to other actions... check
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-place", block.getLocation(), s.getType(),
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.BLOCK_PLACE, block.getLocation(), s.getType(),
                 s.getBlockData(), block.getType(), block.getBlockData(), player));
 
         // Pass to the placement alerter
@@ -279,12 +279,12 @@ public class PrismBlockEvents extends BaseListener {
     public void onBlockSpread(final BlockSpreadEvent event) {
 
         // If fire, do we track fire spread? If not, do we track block-spread
-        String type = "block-spread";
+        ActionType type = ActionType.BLOCK_SPREAD;
         if (event.getNewState().getType().equals(Material.FIRE)) {
             if (!Prism.getIgnore().event(ActionType.FIRE_SPREAD)) {
                 return;
             }
-            type = "fire-spread";
+            type = ActionType.FIRE_SPREAD;
         } else {
             if (!Prism.getIgnore().event(ActionType.BLOCK_SPREAD, event.getBlock())) {
                 return;
@@ -310,7 +310,7 @@ public class PrismBlockEvents extends BaseListener {
         final Block b = event.getBlock();
         final BlockState s = event.getNewState();
 
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-form", b.getLocation(), b.getType(),
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.BLOCK_FORM, b.getLocation(), b.getType(),
                 b.getBlockData(), s.getType(), s.getBlockData(), "Environment"));
     }
 
@@ -329,7 +329,7 @@ public class PrismBlockEvents extends BaseListener {
         }
         final BlockState s = event.getNewState();
 
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange("block-fade", b.getLocation(), b.getType(),
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.BLOCK_FADE, b.getLocation(), b.getType(),
                 b.getBlockData(), s.getType(), s.getBlockData(), "Environment"));
     }
 
@@ -342,7 +342,7 @@ public class PrismBlockEvents extends BaseListener {
         if (!Prism.getIgnore().event(ActionType.LEAF_DECAY, event.getBlock())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createBlock("leaf-decay", event.getBlock(),
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.LEAF_DECAY, event.getBlock(),
                 "Environment"));
     }
 
@@ -363,8 +363,8 @@ public class PrismBlockEvents extends BaseListener {
         String source;
         source = playerBed.player.getName();
         List<Block> affected = event.blockList();
-        RecordingQueue.addToQueue(ActionFactory.createBlock("bed-explode", playerBed.bed, playerBed.player));
-        contructBlockEvent("bed-explode", source, affected);
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BED_EXPLODE, playerBed.bed, playerBed.player));
+        contructBlockEvent(ActionType.BED_EXPLODE, source, affected);
         weakCache.invalidate(event.getBlock().getLocation());
     }
 
@@ -383,7 +383,7 @@ public class PrismBlockEvents extends BaseListener {
         if (!Prism.getIgnore().event(ActionType.BLOCK_USE, enterEvent.getBed())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createBlock("block-use", enterEvent.getBed(), enterEvent.getPlayer()));
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_USE, enterEvent.getBed(), enterEvent.getPlayer()));
     }
 
     /**
@@ -396,7 +396,7 @@ public class PrismBlockEvents extends BaseListener {
             return;
         }
         Block block = event.getBlock();
-        RecordingQueue.addToQueue(ActionFactory.createBlock("block-burn", block, "Environment"));
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_BURN, block, "Environment"));
 
         // Change handling a bit if it's a long block
         final Block sibling = Utilities.getSiblingForDoubleLengthBlock(block);
@@ -421,7 +421,7 @@ public class PrismBlockEvents extends BaseListener {
         }
         if (event.getBlock().getState() instanceof Sign) {
             RecordingQueue.addToQueue(
-                    ActionFactory.createSign("sign-change", event.getBlock(), event.getLines(), event.getPlayer()));
+                    ActionFactory.createSign(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer()));
         }
     }
 
@@ -457,18 +457,18 @@ public class PrismBlockEvents extends BaseListener {
             final Player player = event.getPlayer();
 
             if (player != null) {
-                if ((cause.equals("lighter") || cause.equals("fireball"))
+                if ((cause.equals(ActionType.LIGHTER) || cause.equals(ActionType.FIREBALL))
                         && plugin.config.alertConfig.uses.lighter
                         && !player.hasPermission("prism.alerts.use.lighter.ignore")
                         && !player.hasPermission("prism.alerts.ignore")) {
-                    plugin.useMonitor.alertOnItemUse(player, "used a " + cause);
+                    plugin.useMonitor.alertOnItemUse(player, "used a " + cause.name);
                 }
             }
 
             if (player != null) {
-                RecordingQueue.addToQueue(ActionFactory.createBlock(cause.name, event.getBlock(), player));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(cause, event.getBlock(), player));
             } else {
-                RecordingQueue.addToQueue(ActionFactory.createBlock(cause.name, event.getBlock(), "Environment"));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(cause, event.getBlock(), "Environment"));
             }
 
         }
@@ -483,7 +483,7 @@ public class PrismBlockEvents extends BaseListener {
         if (!Prism.getIgnore().event(ActionType.BLOCK_DISPENSE)) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createItemStack("block-dispense", event.getItem(),
+        RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.BLOCK_DISPENSE, event.getItem(),
                 event.getItem().getAmount(), -1, null, event.getBlock().getLocation(), "dispenser"));
     }
 
@@ -523,7 +523,7 @@ public class PrismBlockEvents extends BaseListener {
                 // there it shows as air.
                 // We should record the from coords, to coords, and block
                 // replaced, as well as the block moved.
-                RecordingQueue.addToQueue(ActionFactory.createBlockShift("block-shift", block,
+                RecordingQueue.addToQueue(ActionFactory.createBlockShift(ActionType.BLOCK_SHIFT, block,
                         block.getRelative(event.getDirection()).getLocation(), "Piston"));
 
             }
@@ -550,7 +550,7 @@ public class PrismBlockEvents extends BaseListener {
             if (block.getType().equals(Material.AIR)) {
                 continue;
             }
-            RecordingQueue.addToQueue(ActionFactory.createBlockShift("block-shift", block,
+            RecordingQueue.addToQueue(ActionFactory.createBlockShift(ActionType.BLOCK_SHIFT, block,
                     block.getRelative(facing).getLocation(), "Piston"));
         }
     }
@@ -574,11 +574,11 @@ public class PrismBlockEvents extends BaseListener {
         if (Utilities.canFlowBreakMaterial(to.getType())) {
             if (from.getType() == Material.WATER) {
                 if (Prism.getIgnore().event(ActionType.WATER_BREAK, event.getBlock())) {
-                    RecordingQueue.addToQueue(ActionFactory.createBlock("water-break", event.getToBlock(), "Water"));
+                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.WATER_BREAK, event.getToBlock(), "Water"));
                 }
             } else if (from.getType() == Material.LAVA) {
                 if (Prism.getIgnore().event(ActionType.LAVA_BREAK, event.getBlock())) {
-                    RecordingQueue.addToQueue(ActionFactory.createBlock("lava-break", event.getToBlock(), "Lava"));
+                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.LAVA_BREAK, event.getToBlock(), "Lava"));
                 }
             }
         }
@@ -586,14 +586,14 @@ public class PrismBlockEvents extends BaseListener {
         // Record water flow
         if (from.getType() == Material.WATER) {
             if (Prism.getIgnore().event(ActionType.WATER_FLOW, event.getBlock())) {
-                RecordingQueue.addToQueue(ActionFactory.createBlock("water-flow", event.getBlock(), "Water"));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.WATER_FLOW, event.getBlock(), "Water"));
             }
         }
 
         // Record lava flow
         if (from.getType() == Material.LAVA) {
             if (Prism.getIgnore().event(ActionType.LAVA_FLOW, event.getBlock())) {
-                RecordingQueue.addToQueue(ActionFactory.createBlock("lava-flow", event.getBlock(), "Lava"));
+                RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.LAVA_FLOW, event.getBlock(), "Lava"));
             }
         }
     }

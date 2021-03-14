@@ -35,9 +35,9 @@ public class PrismWorldEvents implements Listener {
         for (final BlockState block : event.getBlocks()) {
             if (Utilities.isGrowableStructure(block.getType())) {
                 if (event.getPlayer() != null) {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, event.getPlayer()));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, event.getPlayer()));
                 } else {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, "Environment"));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, "Environment"));
                 }
             }
         }
@@ -72,13 +72,13 @@ public class PrismWorldEvents implements Listener {
                 Entity e = event.getEntity();
                 if (e != null) {
                     if (e instanceof Player) {
-                        RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, (Player) event.getEntity()));
+                        RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, (Player) event.getEntity()));
                     } else {
                         RecordingQueue.addToQueue(ActionFactory
-                                .createGrow(type.name, block, event.getEntity().getName().toLowerCase()));
+                                .createGrow(type, block, event.getEntity().getName().toLowerCase()));
                     }
                 } else {
-                    RecordingQueue.addToQueue(ActionFactory.createGrow(type.name, block, "Environment"));
+                    RecordingQueue.addToQueue(ActionFactory.createGrow(type, block, "Environment"));
                 }
             }
         }

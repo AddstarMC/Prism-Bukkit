@@ -6,7 +6,6 @@ import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.commands.Flags;
 import me.botsko.prism.events.BlockStateChangeImpl;
@@ -211,7 +210,7 @@ public class BlockAction extends GenericAction {
         if (blockActionData.customName != null) {
             name += ChatColor.RESET + " (" + blockActionData.customName + ChatColor.RESET + ") ";
         }
-        if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
+        if (getAction().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
         }
         return name;
@@ -219,7 +218,7 @@ public class BlockAction extends GenericAction {
 
     @Override
     public String getCustomDesc() {
-        if (getActionType().getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
+        if (getAction().getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
             return "waterlogged";
         }
 
@@ -229,7 +228,7 @@ public class BlockAction extends GenericAction {
     @Override
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        if (getActionType().doesCreateBlock()) {
+        if (getAction().doesCreateBlock()) {
             return removeBlock(player, parameters, isPreview, block);
         } else {
             return placeBlock(player, parameters, isPreview, block, false);
@@ -239,7 +238,7 @@ public class BlockAction extends GenericAction {
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        if (getActionType().doesCreateBlock()) {
+        if (getAction().doesCreateBlock()) {
             return placeBlock(player, parameters, isPreview, block, false);
         } else {
             return removeBlock(player, parameters, isPreview, block);
@@ -271,8 +270,8 @@ public class BlockAction extends GenericAction {
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
 
-        final boolean cancelIfBadPlace = !getActionType().requiresHandler(BlockChangeAction.class)
-                && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flags.OVERWRITE);
+        final boolean cancelIfBadPlace = !getAction().requiresHandler(BlockChangeAction.class)
+                && !getAction().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flags.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
             PrismLogHandler.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());

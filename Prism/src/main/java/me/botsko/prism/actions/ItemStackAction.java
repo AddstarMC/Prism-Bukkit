@@ -169,7 +169,7 @@ public class ItemStackAction extends GenericAction {
             Inventory inventory = null;
 
             // Item drop/pickup from player inventories
-            if (getActionType().getName().equals("item-drop") || getActionType().getName().equals("item-pickup")) {
+            if (getAction().getName().equals("item-drop") || getAction().getName().equals("item-pickup")) {
 
                 // Is player online?
                 final Player onlinePlayer = Bukkit.getServer().getPlayer(getUuid());
@@ -234,9 +234,9 @@ public class ItemStackAction extends GenericAction {
                                 }
                                 // Prism.log("Using frame: " + frame.getFacing());
 
-                                if ((getActionType().getName().equals("item-remove")
+                                if ((getAction().getName().equals("item-remove")
                                         && parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
-                                        || (getActionType().getName().equals("item-insert")
+                                        || (getAction().getName().equals("item-insert")
                                         && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
                                     if (frame.getItem().getType() == Material.AIR) {
                                         frame.setItem(item);
@@ -259,9 +259,9 @@ public class ItemStackAction extends GenericAction {
 
                                 ItemStack atPoint = InventoryUtils.getEquipment(stand.getEquipment(), eSlot);
 
-                                if ((getActionType().getName().equals("item-remove")
+                                if ((getAction().getName().equals("item-remove")
                                         && parameters.getProcessType().equals(PrismProcessType.ROLLBACK))
-                                        || (getActionType().getName().equals("item-insert")
+                                        || (getAction().getName().equals("item-insert")
                                         && parameters.getProcessType().equals(PrismProcessType.RESTORE))) {
                                     if (atPoint.getType() == Material.AIR) {
                                         InventoryUtils.setEquipment(stand.getEquipment(), actualSlot, item);
@@ -282,7 +282,7 @@ public class ItemStackAction extends GenericAction {
             if (inventory != null) {
 
                 final PrismProcessType pt = parameters.getProcessType();
-                final String n = getActionType().getName();
+                final String n = getAction().getName();
 
                 int iSlot = -1;
 

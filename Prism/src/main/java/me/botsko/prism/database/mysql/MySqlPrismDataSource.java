@@ -7,6 +7,7 @@ import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.PlayerIdentificationQuery;
@@ -186,8 +187,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
             // actions
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
             // populate db
-            final String[] actions = actionRegistry.listAll();
-            for (final String a : actions) {
+            final ActionType[] actions = ActionType.values();
+            for (final ActionType a : actions) {
                 addActionName(a);
             }
 

@@ -19,7 +19,7 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public String getNiceName() {
         String name;
-        if (this.getActionType().getName().equals("block-fade")) {
+        if (this.getAction().getName().equals("block-fade")) {
             name = Prism.getItems().getAlias(getOldMaterial(), getOldBlockData());
         } else {
             name = super.getNiceName();
@@ -30,28 +30,28 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyDeferred(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getActionType().getName(), getOldMaterial(), getOldBlockData(),
+        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, true);
     }
 

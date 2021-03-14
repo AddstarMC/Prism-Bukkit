@@ -117,14 +117,14 @@ public class MaterialAliases {
                         new BiConsumer<Integer, Integer>() {
                             @Override
                             public void accept(Integer i, Integer d) {
-                                MaterialAliases.this.storeCache(m, dataString, i, d);
+                                storeCache(m, dataString, i, d);
                             }
                         }, new Runnable() {
                             @Override
                             public void run() {
                                 int id = query.mapAutoId(matName, dataString);
                                 if (id != 0) {
-                                    MaterialAliases.this.storeCache(m, dataString, id, 0);
+                                    storeCache(m, dataString, id, 0);
                                 }
                             }
                         });
@@ -150,7 +150,6 @@ public class MaterialAliases {
 
         matCache.put(idKey, matKey);
         idCache.put(matKey, idKey);
-
         getIdsOf(material).add(new IntPair(blockId, blockSubid));
     }
 

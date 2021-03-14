@@ -1,6 +1,7 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.serializers.SerializationHelper;
 
@@ -47,8 +48,8 @@ public class PrismProcessAction extends GenericAction {
      * Get Type.
      * @return String
      */
-    public String getProcessChildActionType() {
-        return Prism.getActionRegistry().getAction("prism-" + actionData.processType).getName();
+    public ActionType getProcessChildActionType() {
+        return ActionType.getByName("prism-" + actionData.processType);
     }
 
     /**

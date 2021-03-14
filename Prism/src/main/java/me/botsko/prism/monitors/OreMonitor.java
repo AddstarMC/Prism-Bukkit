@@ -5,6 +5,7 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -97,7 +98,7 @@ public class OreMonitor {
                     final PrismParameters params = new QueryParameters();
                     params.setWorld(player.getWorld().getName());
                     params.addSpecificBlockLocation(block.getLocation());
-                    params.addActionType("block-place");
+                    params.addActionType(ActionType.BLOCK_PLACE);
 
                     final ActionsQuery aq = new ActionsQuery(plugin);
                     final QueryResult results = aq.lookup(params, player);

@@ -34,9 +34,9 @@ public class PrismInventoryEvents implements Listener {
     private boolean trackingInsert;
     private boolean trackingRemove;
     private boolean trackingBreaks;
-    private static final String INSERT = "item-insert";
-    private static final String REMOVE = "item-remove";
-    private static final String BREAK = "item-break";
+    private static final ActionType INSERT = ActionType.ITEM_INSERT;
+    private static final ActionType REMOVE = ActionType.ITEM_REMOVE;
+    private static final ActionType BREAK = ActionType.ITEM_BREAK;
     private final Prism plugin;
 
     /**
@@ -68,7 +68,7 @@ public class PrismInventoryEvents implements Listener {
 
         // If hopper
         if (event.getInventory().getType().equals(InventoryType.HOPPER)) {
-            RecordingQueue.addToQueue(ActionFactory.createItemStack("item-pickup", event.getItem().getItemStack(),
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_PICKUP, event.getItem().getItemStack(),
                     event.getItem().getItemStack().getAmount(), -1, null, event.getItem().getLocation(), "hopper"));
         }
     }
@@ -116,7 +116,7 @@ public class PrismInventoryEvents implements Listener {
                         ? 0 : stack.getAmount();
                 int amount = entry.getValue().getAmount() - slotViewAmount;
 
-                RecordingQueue.addToQueue(ActionFactory.createItemStack(INSERT, entry.getValue(), amount,
+                RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_INSERT, entry.getValue(), amount,
                         rawSlot, null, containerLoc, player));
             }
         }
@@ -133,7 +133,7 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
         final Player player = event.getEnchanter();
-        RecordingQueue.addToQueue(ActionFactory.createItemStack("enchant-item", event.getItem(),
+        RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ENCHANT_ITEM, event.getItem(),
                 event.getEnchantsToAdd(), event.getEnchantBlock().getLocation(), player));
     }
 
@@ -172,7 +172,7 @@ public class PrismInventoryEvents implements Listener {
         }
         final ItemStack item = event.getRecipe().getResult();
         RecordingQueue.addToQueue(
-                ActionFactory.createItemStack("craft-item", item, 1, -1, null, player.getLocation(), player));
+                ActionFactory.createItemStack(ActionType.CRAFT_ITEM, item, 1, -1, null, player.getLocation(), player));
     }
 
     /**
@@ -413,7 +413,7 @@ public class PrismInventoryEvents implements Listener {
         }
     }
 
-    private int recordDeductTransfer(String act, int size, int amount, ItemStack heldItem, Location containerLoc,
+    private int recordDeductTransfer(ActionType act, int size, int amount, ItemStack heldItem, Location containerLoc,
                                      int slotLocation, Player player, InventoryClickEvent event) {
         int transferred = Math.min(size, amount);
         int newAmount = amount - transferred;

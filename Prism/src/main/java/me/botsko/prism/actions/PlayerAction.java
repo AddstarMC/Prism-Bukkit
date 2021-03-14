@@ -10,7 +10,7 @@ public class PlayerAction extends GenericAction {
     @Override
     public String getNiceName() {
         if (extraInfo != null && !extraInfo.isEmpty()) {
-            switch (getActionType().getName()) {
+            switch (getAction().getName()) {
                 case "player-join":
                     return "from " + extraInfo;
 

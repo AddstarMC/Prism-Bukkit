@@ -1,6 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.sql.PrismSqlConfigImpl;
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -80,7 +81,7 @@ public class NullDataSource implements PrismDataSource<PrismSqlConfigImpl> {
     }
 
     @Override
-    public void addActionName(String actionName) {
+    public void addActionName(ActionType actionName) {
 
     }
 

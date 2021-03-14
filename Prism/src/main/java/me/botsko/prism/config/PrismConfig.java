@@ -98,8 +98,8 @@ public class PrismConfig {
         public boolean allowUserOverride = true;
 
         @Setting("inspect-ignore-actions")
-        public List<String> wandInspectIgnoreActions = Arrays.asList("player-chat","player-command",
-                "player-join","player-quit");
+        public List<ActionType> wandInspectIgnoreActions = Arrays.asList(ActionType.PLAYER_CHAT,
+                ActionType.PLAYER_COMMAND,ActionType.PLAYER_JOIN,ActionType.PLAYER_QUIT);
 
     }
 

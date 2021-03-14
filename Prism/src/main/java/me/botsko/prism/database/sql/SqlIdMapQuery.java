@@ -74,9 +74,11 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                         failure.run();
                     }
                 }
+            } catch (final SQLException e) {
+                handleSqlException(Integer.toString(blockId), e, failure);
             }
-        } catch (final SQLException e) {
-            handleSqlExcetion(Integer.toString(blockId), e,failure);
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
         }
     }
 
@@ -113,9 +115,11 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                         failure.run();
                     }
                 }
+            } catch (final SQLException e) {
+                handleSqlException(material, e, failure);
             }
-        } catch (final SQLException e) {
-            handleSqlExcetion(material, e,failure);
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
         }
     }
 
@@ -124,7 +128,7 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
      * @param e Exception
      * @param runnable Runnable
      */
-    private void handleSqlExcetion(String material, SQLException e,Runnable runnable) {
+    private void handleSqlException(String material, SQLException e,Runnable runnable) {
         if (e instanceof SQLSyntaxErrorException && e.getMessage().contains("EOF")) {
             PrismLogHandler.log("Error thrown by ID:" + material + " Error:  " + e.getMessage());
             runnable.run();
@@ -183,10 +187,12 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                 st.setString(1, material);
                 st.setString(2, stateLike);
                 handleIdResult(st, success, failure);
+            } catch (final SQLException e) {
+                PrismLogHandler.warn("Database connection error: ", e);
+                e.printStackTrace();
             }
-        } catch (final SQLException e) {
-            PrismLogHandler.warn("Database connection error: ", e);
-            e.printStackTrace();
+        } catch (SQLException e) {
+            dataSource.handleDataSourceException(e);
         }
     }
 
@@ -218,8 +224,6 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
     public void map(String material, String state, int blockId, int blockSubid) {
         Validate.notNull(material, "Material cannot be null");
         Validate.notNull(state, "State cannot be null");
-
-
         if (state.equals("0")) {
             state = "";
         }
@@ -233,7 +237,6 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                     st.setInt(1, blockId);
                     st.setInt(2, blockSubid);
                     st.setInt(3, autoId);
-
                     st.executeUpdate();
                 }
 
@@ -242,7 +245,6 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
                 // Don't attempt to run in that case
                 try (PreparedStatement st = conn.prepareStatement(getUnauto())) {
                     st.setInt(1, autoId);
-
                     st.executeUpdate();
                 }
             } catch (final SQLException e) {

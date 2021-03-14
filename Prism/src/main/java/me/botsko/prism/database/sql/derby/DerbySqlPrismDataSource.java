@@ -4,6 +4,7 @@ import com.zaxxer.hikari.HikariConfig;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.IdMapQuery;
 import me.botsko.prism.database.PlayerIdentificationQuery;
@@ -54,6 +55,13 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
             dbConfig = new HikariConfig(propFile.getPath());
             dbConfig.setUsername(config.userName);
             dbConfig.setPassword(config.password);
+            if (!dbConfig.getDriverClassName().isEmpty()) {
+                try {
+                    Class.forName(dbConfig.getDriverClassName()); //force load the driver.
+                } catch (ClassNotFoundException e) {
+                    PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
+                }
+            }
         } else {
             PrismLogHandler.log("You may need to adjust these settings for your setup.");
             dbConfig = new HikariConfig();
@@ -95,29 +103,34 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
               Connection conn = getConnection();
               Statement st = conn.createStatement()
         ) {
-            DatabaseMetaData meta = conn.getMetaData();
-            ResultSet res = meta.getTables(null, "PRISM", null, new String[] {"TABLE"});
             Collection<String> tableNames = new HashSet<>();
-            while (res.next()) {
-                tableNames.add(name.toUpperCase());
+           // DatabaseMetaData meta = conn.getMetaData();
+           // ResultSet res = meta.getTables(null, "PRISM", null, new String[] {"TABLE"});
+           // Collection<String> tableNames = new HashSet<>();
+            //while (res.next()) {
+            //    tableNames.add(name.toUpperCase());
+            //}
+            //res.close();
+            //PrismLogHandler.debug("Tables Names:" + Arrays.toString(tableNames.toArray(new String[0])));
+            try {
+                if (
+                        setupTable1(st, tableNames)
+                                && setupTable2(st, tableNames)
+                                && setupTable3(st, tableNames)
+                                && setupTable4(st, tableNames)
+                                && setupTable5(st, tableNames)
+                                && setupTable6(st, tableNames)
+                                && setupTable7(st, tableNames)) {
+                    PrismLogHandler.log("Database Setup Complete");
+                }
+            } catch (SQLException e) {
+                PrismLogHandler.warn(e.getMessage());
             }
-            res.close();
-            PrismLogHandler.debug("Tables Names:" + Arrays.toString(tableNames.toArray(new String[0])));
-            if (
-                  setupTable1(st, tableNames)
-                        && setupTable2(st, tableNames)
-                        && setupTable3(st, tableNames)
-                        && setupTable4(st, tableNames)
-                        && setupTable5(st, tableNames)
-                        && setupTable6(st, tableNames)
-                        && setupTable7(st, tableNames)) {
-                PrismLogHandler.log("Database Setup Complete");
-            }
-            // actions
+            /* actions */
             cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
             // populate db
-            final String[] actions = actionRegistry.listAll();
-            for (final String a : actions) {
+            final ActionType[] actions = ActionType.values();
+            for (final ActionType a : actions) {
                 addActionName(a);
             }
         } catch (final SQLException e) {
