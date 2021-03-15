@@ -38,7 +38,6 @@ public class UndoCommand implements SubHandler {
 
     @Override
     public void handle(CallInfo call) {
-        final Audience audience = Prism.getAudiences().player(call.getPlayer());
         if (call.getArgs().length > 1) {
 
             final ActionsQuery aq = new ActionsQuery(plugin);

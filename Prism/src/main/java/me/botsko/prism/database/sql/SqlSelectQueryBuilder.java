@@ -513,9 +513,9 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 }
 
                 // Get the action handler
-                final ActionImpl actionType = Prism.getActionRegistry().getAction(actionName);
+                final ActionImpl action = Prism.getActionRegistry().getAction(actionName);
 
-                if (actionType == null) {
+                if (action == null) {
                     continue;
                 }
 
@@ -523,14 +523,14 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
                 try {
 
-                    final Handler baseHandler = Prism.getHandlerRegistry().create(actionType.getHandler());
+                    final Handler baseHandler = Prism.getHandlerRegistry().create(action.getHandler());
 
                     // Convert world ID to name
                     // Performance-wise this is typically a lot faster than
                     // table joins
                     rowId = rs.getLong(1);
                     // Set all shared values
-                    baseHandler.setAction(actionType);
+                    baseHandler.setAction(action);
                     baseHandler.setId(rowId);
                     baseHandler.setUnixEpoch(rs.getLong(2));
 

@@ -153,7 +153,7 @@ public class TeleportCommand implements SubHandler {
                     Il8nHelper.getMessage("teleport-complete")
                             .replaceText("<actionType>",
                                     Component.text(
-                                            destinationAction.getAction().getName()).color(NamedTextColor.WHITE))
+                                            destinationAction.getAction().getActionType().name).color(NamedTextColor.WHITE))
                             .replaceText("<source>",
                                     Component.text(destinationAction.getSourceName()).color(NamedTextColor.WHITE))
                             .replaceText("<timeSince>",

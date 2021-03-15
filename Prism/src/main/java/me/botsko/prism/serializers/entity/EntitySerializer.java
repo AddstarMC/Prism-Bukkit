@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.slf4j.ILoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -137,17 +138,18 @@ public class EntitySerializer<T extends Entity> implements EntitySerializerInter
         }
         format = format.replace("<type>", MiscUtils.niceName(entityName));
         if (customName != null) {
+            format = format.replace("<named>", Il8nHelper.getRawMessage("named"));
             format = format.replace("<customName>", customName);
         }
         AtomicReference<String> name = new AtomicReference<>(format);
         niceName(name);
         format = name.get()
-                .replace("<isAdult>", "")
-                .replace("<colour>", "")
+                .replace(" <isAdult>", "")
+                .replace(" <colour>", "")
                 .replace("<owner>", "")
-                .replace("<prefix>", "")
-                .replace("<suffix>", "")
-                .replace("<customName>", "");
+                .replace(" <prefix>", "")
+                .replace(" <suffix>", "")
+                .replace(" <named> <customName>", "");
         return format;
     }
 

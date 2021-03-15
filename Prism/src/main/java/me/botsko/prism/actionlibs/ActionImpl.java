@@ -89,7 +89,7 @@ public class ActionImpl implements Action {
     }
 
     public String getName() {
-        return type.toString();
+        return type.name();
     }
 
     /**
