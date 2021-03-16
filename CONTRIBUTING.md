@@ -22,6 +22,6 @@ Please note we have a code of conduct, please follow it in all your interactions
 This may change if our needs to, but currently:
 
   - All non-urgent development towards the next release is done on `master`
-  - We tag the repo for each release type.
+  - We tag the repo for each release type and there may be branch created for the release to allow hot fixes to be easily applied.
   - Urgent bug fixes are applied to branches made from a release's tag. For example, 1.1 was tagged and released. Urgent bug fixes for 1.1.1 we're done on the branch `1.1`.
   - Work planned for each release are tracked by milestones matching the release numbers.

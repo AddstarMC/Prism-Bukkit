@@ -168,7 +168,7 @@ public class MiscUtils {
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerSuccess("Successfully pasted results: "
                             + prismWebUrl
-                            + paste.getId()));
+                            + paste.getId()).clickEvent(ClickEvent.openUrl(prismWebUrl)));
         } else {
             String message = result.getMessage().isPresent() ? result.getMessage().get() : "";
             Prism.messenger.sendMessage(sender,
@@ -257,7 +257,7 @@ public class MiscUtils {
                 continue;
             }
             String processedCommand = command.replace("<alert>", cleanMessage);
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand);
+            Bukkit.getScheduler().runTask(Prism.getInstance(), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand));
         }
     }
 
@@ -265,7 +265,7 @@ public class MiscUtils {
      * FInd a nice name for entity.
      *
      * @param entity Entity
-     * @return SDtring
+     * @return String
      */
     public static String getEntityName(Entity entity) {
         if (entity == null) {

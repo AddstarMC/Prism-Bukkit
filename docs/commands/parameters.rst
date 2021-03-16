@@ -14,7 +14,7 @@ Like ``a:break,place``
 A common complaint has been that players get the error:
 ``You're missing valid actions. Use /prism ? for assistance.``
 
-Please apply the permissions node: ``prism.parameters.action.required`` - set this as negated - ie false. for the
+Please apply the permissions node: ``prism.parameters.action.required`` - set this as negated - ie |:x:|. for the
 player in question.
 
 Parameter List
@@ -47,78 +47,392 @@ Actions List
 
 Short actions are simply the words after the hyphen. For example ``break`` would apply to everything that ends in ``*-break``
 
-- block-break
-- block-burn
-- block-dispense
-- block-fade
-- block-fall
-- block-form
-- block-place
-- block-shift
-- block-spread
-- block-use
-- bucket-fill
-- bonemeal-use
-- container-access
-- cake-eat
-- craft-item
-- creeper-explode
-- crop-trample
-- dragon-eat
-- enchant-item
-- enderman-pickup
-- enderman-place
-- entity-break
-- entity-dye
-- entity-explode
-- entity-follow
-- entity-form
-- entity-kill
-- entity-leash
-- entity-shear
-- entity-spawn
-- entity-unleash
-- fireball
-- fire-spread
-- firework-launch
-- hangingitem-break
-- hangingitem-place
-- item-drop
-- item-insert
-- item-pickup
-- item-remove
-- item-rotate
-- lava-break
-- lava-bucket
-- lava-flow
-- lava-ignite
-- leaf-decay
-- lighter
-- lightning
-- mushroom-grow
-- player-chat
-- player-command
-- player-death
-- player-join
-- player-kill
-- player-quit
-- player-teleport
-- potion-splash
-- sheep-eat
-- sign-change
-- spawnegg-use
-- tnt-explode
-- tnt-prime
-- tree-grow
-- vehicle-break
-- vehicle-enter
-- vehicle-exit
-- vehicle-place
-- water-break
-- water-bucket
-- water-flow
-- world-edit
-- xp-pickup
+.. list-table:: Action List
+  :widths: auto
+  :header-rows: 1
+  :align: center
+
+  * - Action
+    - Rollback
+    - Restore
+    - Description
+    - Perm State
+  * - block-break
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Any broken block.
+    - |:heavy_check_mark:|
+  * - block-burn
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Any burnt block.
+    - |:heavy_check_mark:|
+  * - block-dispense
+    - |:x:|
+    - |:x:|
+    - Dispenses an item from a block
+    - |:heavy_check_mark:|
+  * - block-fade
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - | A block that fades ie snow melts.
+      | Leaves fade if disconnected.
+    - |:heavy_check_mark:|
+  * - block-fall
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - ie Sand falling
+    - |:heavy_check_mark:|
+  * - block-form
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Cobble Forming or Ice forming.
+    - |:heavy_check_mark:|
+  * - block-place
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Any block placed.
+    - |:heavy_check_mark:|
+  * - block-shift
+    - |:x:|
+    - |:x:|
+    - Blocks shifted by Pistons etc.
+    - |:heavy_check_mark:|
+  * - block-spread
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Blocks spreading organically - ie grass
+    - |:heavy_check_mark:|
+  * - block-use
+    - |:x:|
+    - |:x:|
+    - Using a block ie Crafting table.
+    - |:heavy_check_mark:|
+  * - bucket-fill
+    - |:x:|
+    - |:x:|
+    - Filling a bucket.
+    - |:heavy_check_mark:|
+  * - bonemeal-use
+    - |:x:|
+    - |:x:|
+    - Using bone meal.
+    - |:heavy_check_mark:|
+  * - container-access
+    - |:x:|
+    - |:x:|
+    - Using a container.
+    - |:heavy_check_mark:|
+  * - cake-eat
+    - |:x:|
+    - |:x:|
+    - Eating cake
+    - |:heavy_check_mark:|
+  * - craft-item
+    - |:x:|
+    - |:x:|
+    - Crafting an item
+    - |:x:|
+  * - creeper-explode
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Creeper exploding
+    - |:heavy_check_mark:|
+  * - crop-trample
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Crop Damage
+    - |:heavy_check_mark:|
+  * - dragon-eat
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Dragon eating blocks.
+    - |:heavy_check_mark:|
+  * - enchant-item
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Creeper exploding
+    - |:x:|
+  * - enderman-pickup
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Enderman picking up blocks.
+    - |:heavy_check_mark:|
+  * - enderman-place
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Enderman placing a block.
+    - |:heavy_check_mark:|
+  * - entity-break
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Entity breaks a block?
+    - |:heavy_check_mark:|
+  * - entity-dye
+    - |:x:|
+    - |:x:|
+    - Dying something.
+    - |:x:|
+  * - entity-explode
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - As per creeper.
+    - |:heavy_check_mark:|
+  * - entity-follow
+    - |:x:|
+    - |:x:|
+    - Entity follows a player.
+    - |:heavy_check_mark:|
+  * - entity-form
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Entity created.
+    - |:heavy_check_mark:|
+  * - entity-kill
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Entity killed.
+    - |:heavy_check_mark:|
+  * - entity-leash
+    - |:x:|
+    - |:x:|
+    - Entity is leashed.
+    - |:heavy_check_mark:|
+  * - entity-shear
+    - |:x:|
+    - |:x:|
+    - Entity is shawn
+    - |:heavy_check_mark:|
+  * - entity-spawn
+    - |:x:|
+    - |:x:|
+    - Entity is spawned.
+    - |:heavy_check_mark:|
+  * - entity-unleash
+    - |:x:|
+    - |:x:|
+    - Entity is unleashed,.
+    - |:heavy_check_mark:|
+  * - fireball
+    - |:x:|
+    - |:x:|
+    - Firball ignited.
+    - |:heavy_check_mark:|
+  * - fire-spread
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Fire spreading
+    - |:heavy_check_mark:|
+  * - firework-launch
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Firework launching
+    - |:heavy_check_mark:|
+  * - hangingitem-break
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Painting etc Broken
+    - |:heavy_check_mark:|
+  * - hangingitem-place
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Painting etc placed.
+    - |:heavy_check_mark:|
+  * - item-drop
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Items dropped.
+    - |:heavy_check_mark:|
+  * - item-insert
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Item inserted into chest etc.
+    - |:heavy_check_mark:|
+  * - item-pickup
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Item picked up off the ground.
+    - |:heavy_check_mark:|
+  * - item-remove
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Painting etc placed.
+    - |:heavy_check_mark:|
+  * - item-rotate
+    - |:x:|
+    - |:x:|
+    - Item frame rotated.
+    - |:heavy_check_mark:|
+  * - lava-break
+    - |:x:|
+    - |:x:|
+    - Lava broke a block
+    - |:heavy_check_mark:|
+  * - lava-bucket
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Lava collected
+    - |:heavy_check_mark:|
+  * - lava-flow
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Lava flows.
+    - |:heavy_check_mark:|
+  * - lava-ignite
+    - |:x:|
+    - |:x:|
+    - lava ignites surrounding squares
+    - |:heavy_check_mark:|
+  * - leaf-decay
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Painting etc placed.
+    - |:heavy_check_mark:|
+  * - lighter
+    - |:x:|
+    - |:x:|
+    - Using a lighter
+    - |:heavy_check_mark:|
+  * - lightning
+    - |:x:|
+    - |:x:|
+    - Lightning strike
+    - |:heavy_check_mark:|
+  * - mushroom-grow
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Painting etc placed.
+    - |:heavy_check_mark:|
+  * - player-chat
+    - |:x:|
+    - |:x:|
+    - Chat
+    - |:x:|
+  * - player-command
+    - |:x:|
+    - |:x:|
+    - A player command
+    - |:x:|
+  * - player-death
+    - |:x:|
+    - |:x:|
+    - A player death
+    - |:heavy_check_mark:|
+  * - player-join
+    - |:x:|
+    - |:x:|
+    - Joining a server
+    - |:x:|
+  * - player-kill
+    - |:heavy_check_mark:|
+    - |:x:|
+    - A player kill
+    - |:x:|
+  * - player-quit
+    - |:x:|
+    - |:x:|
+    - Leaving a server
+    - |:x:|
+  * - player-teleport
+    - |:x:|
+    - |:x:|
+    - Teleporting
+    - |:x:|
+  * - potion-splash
+    - |:x:|
+    - |:x:|
+    - A potion splash occurs
+    - |:heavy_check_mark:|
+  * - sheep-eat
+    - |:x:|
+    - |:x:|
+    - Sheep eating grass
+    - |:heavy_check_mark:|
+  * - sign-
+    - |:x:|
+    - |:heavy_check_mark:|
+    - Teleporting
+    - |:heavy_check_mark:|
+  * - spawnegg-use
+    - |:x:|
+    - |:x:|
+    - Using a spawn egg
+    - |:heavy_check_mark:|
+  * - tnt-explode
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Using TNT
+    - |:heavy_check_mark:|
+  * - tnt-prime
+    - |:x:|
+    - |:x:|
+    - Priming TNT
+    - |:x:|
+  * - tree-grow
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Tree grows
+    - |:heavy_check_mark:|
+  * - vehicle-break
+    - |:heavy_check_mark:|
+    - |:x:|
+    - Vehicle Breaks
+    - |:heavy_check_mark:|
+  * - vehicle-enter
+    - |:x:|
+    - |:x:|
+    - Vehicle is entered
+    - |:heavy_check_mark:|
+  * - vehicle-exit
+    - |:x:|
+    - |:x:|
+    - Vehicle is exit
+    - |:heavy_check_mark:|
+  * - vehicle-place
+    - |:x:|
+    - |:x:|
+    - Vehicle Placed
+    - |:heavy_check_mark:|
+  * - water-break
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Water Breaks blocks
+    - |:heavy_check_mark:|
+  * - water-bucket
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Bucket Used
+    - |:heavy_check_mark:|
+  * - water-flow
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Water flowing
+    - |:x:|
+  * - world-edit
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - Make a world edit
+    - |:x:|
+  * - xp-pickup
+    - |:x:|
+    - |:x:|
+    - Xp Collected
+    - |:x:|
+  * - target-hit
+    - |:x:|
+    - |:x:|
+    - A Target block struck by Arrow
+    - |:x:|
+  * - player-trade
+    - |:x:|
+    - |:x:|
+    - Player trades with villager
+    - |:x:|
+  * - item-receive
+    - |:heavy_check_mark:|
+    - |:heavy_check_mark:|
+    - An item is received.
+    - |:x:|
 
 Understanding Action Relationships
 ==================================

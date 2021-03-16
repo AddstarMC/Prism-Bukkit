@@ -30,6 +30,8 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -62,11 +64,23 @@ public class DebugCommand implements SubHandler {
 
     private String getFile(Path file) {
         try {
-            return new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            String out = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            out = removePatterns("hostname: (.*)",out,"**secret.host**");
+            out = removePatterns("username: (.*)",out,"**username**");
+            return removePatterns("password: (.*)",out,"**password**");
         } catch (IOException e) {
             return ExceptionUtils.getFullStackTrace(e);
         }
 
+    }
+
+    private String removePatterns(String patten, String haystack, String replacement) {
+        Pattern p = Pattern.compile(patten);
+        Matcher matcher = p.matcher(haystack);
+        while (matcher.find()) {
+            haystack = haystack.replaceFirst(matcher.group(1),replacement);
+        }
+        return haystack;
     }
 
     private String getMainInfo() {

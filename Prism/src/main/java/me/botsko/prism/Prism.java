@@ -351,10 +351,11 @@ public class Prism extends JavaPlugin implements PrismApi {
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         loadConfig();        // Load configuration, or install if new
-        PaperLib.suggestPaper(this);
         isPaper = PaperLib.isPaper();
         if (isPaper) {
             PrismLogHandler.log("Optional Paper Events will be enabled.");
+        } else {
+                PrismLogHandler.log("Paper not detected - Optional Paper Events will NOT be enabled.");
         }
         checkPluginDependencies();
         if (config.pasteConfig.enabled) {

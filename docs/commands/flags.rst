@@ -21,6 +21,10 @@ Unless you've enabled extended logs in the config, we don't show you the extra i
 But you may want it.
 Use ``-extended`` to see the extended logs.
 
+.. image:: ../_images/prism_extended_display.png
+   :width: 600
+   :alt: Prism Extended Display.
+
 No Group
 ^^^^^^^^
 

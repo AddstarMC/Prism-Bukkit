@@ -25,10 +25,15 @@ Lookup Command
   | /prism lookup <params> <flags>
   | /pr l <params> <flags>
 
+
 When the inspector and near commands aren't enough you have the power to query essentially any results from the database.
 Use ``/prism l`` (params) to do a search of information. See Understanding Parameters By using any arrangement of the parameters you can easily filter through records and find out exactly what you need.
 Lookup queries can be local to you, or even global if you so desire. Need to see only all item-pickup actions by player nasonfish within ten blocks? Or how about where player YeaItsMe last placed a chest in the entire server.
 It's almost limitless.
+
+.. image:: ../_images/prism_standard_display.png
+   :width: 600
+   :alt: Prism Standard Display.
 
 Inspector (Wand)
 ----------------
