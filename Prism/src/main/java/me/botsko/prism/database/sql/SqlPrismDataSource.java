@@ -181,9 +181,8 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
             }
             rs.close();
         } catch (SQLIntegrityConstraintViolationException | SQLDataException e) {
-            PrismLogHandler.warn("Action : " + action.name +" / " + e.getMessage());
-        }
-        catch (final SQLException e) {
+            PrismLogHandler.warn("Action : " + action.name + " / " + e.getMessage());
+        } catch (final SQLException e) {
             handleDataSourceException(e);
         }
     }
@@ -194,9 +193,9 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
                 Connection conn = getConnection()
         ) {
             try (
-                PreparedStatement s = conn.prepareStatement(
-                        "SELECT action_id, action FROM " + prefix + "actions");
-                ResultSet rs = s.executeQuery()
+                    PreparedStatement s = conn.prepareStatement("SELECT action_id, action FROM " + prefix
+                            + "actions");
+                    ResultSet rs = s.executeQuery()
                 ) {
                 while (rs.next()) {
                     PrismLogHandler.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));

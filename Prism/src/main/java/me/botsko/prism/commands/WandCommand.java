@@ -25,7 +25,6 @@ import org.jetbrains.annotations.PropertyKey;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 public class WandCommand extends AbstractCommand {
 
@@ -68,7 +67,8 @@ public class WandCommand extends AbstractCommand {
         // Check if the player has a personal override
         boolean allowUserOveride = plugin.config.wandConfig.allowUserOverride;
         if (allowUserOveride) {
-            final PrismConfig.WandMode personalMode = PrismConfig.WandMode.valueOf(Settings.getSetting("wand.mode", call.getPlayer()));
+            final PrismConfig.WandMode personalMode = PrismConfig.WandMode.valueOf(
+                    Settings.getSetting("wand.mode", call.getPlayer()));
             if (personalMode != null) {
                 mode = personalMode;
             }
@@ -107,8 +107,9 @@ public class WandCommand extends AbstractCommand {
             final String itemNameFinal = itemName;
             Prism.messenger.sendMessage(call.getPlayer(),
                     Prism.messenger.playerError(Il8nHelper.getMessage("wand-bad")
-                            .replaceText(Pattern.compile("<itemName>"),
-                                  builder -> Component.text().content(itemNameFinal))));
+                            .replaceText(builder -> builder.match("<itemName>").replacement(
+                                    Component.text(itemNameFinal))))
+            );
             return;
         }
 
@@ -191,7 +192,7 @@ public class WandCommand extends AbstractCommand {
         if (enabled) {
 
             if (item == null) {
-                if (Objects.equals(mode, "block")) {
+                if (Objects.equals(mode, PrismConfig.WandMode.BLOCK)) {
                     item = Material.SPRUCE_LOG;
                 } else if (Objects.equals(mode, "item")) {
                     item = Material.STICK;
@@ -257,15 +258,13 @@ public class WandCommand extends AbstractCommand {
         }
         TextComponent out = Prism.messenger
                 .playerHeaderMsg(Il8nHelper.getMessage(wandStatusMessageKey)
-                        .replaceText(Pattern.compile("<status>"),
-                              builder -> Component.text().append(state)));
+                        .replaceText(builder -> builder.match("<status").replacement(state))
+                );
         if (status) {
-            out.append(Component.newline())
-                    .append(Il8nHelper.getMessage("wand-item-type")
-                            .replaceText(Pattern.compile("<itemType>"),
-                                  builder -> Component.text().content(wandType))
-                            .replaceText(Pattern.compile("<parameters"),
-                                  builder -> Component.text().content(parameters)));
+            out = out.append(Component.newline()).append(Il8nHelper.getMessage("wand-item-type")
+                            .replaceText(builder -> builder.match("<itemType>").replacement(wandType).once())
+                            .replaceText(builder -> builder.match("<parameters>").replacement(parameters))
+                    );
         }
         Prism.messenger.sendMessage(sender, out);
 

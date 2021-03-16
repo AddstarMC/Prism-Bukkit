@@ -6,7 +6,7 @@ import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.settings.Settings;
-import me.botsko.prism.testHelpers.TestPrismDataSource;
+import me.botsko.prism.testhelpers.TestPrismDataSource;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -34,7 +34,8 @@ public class PrismTestPlugin extends Prism {
         instance = this;
     }
 
-    protected PrismTestPlugin(PrismDataSource source, JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
+    protected PrismTestPlugin(PrismDataSource source, JavaPluginLoader loader, PluginDescriptionFile description,
+                              File dataFolder, File file) {
         super(loader, description, dataFolder, file);
         prismDataSource = source;
         instance = this;

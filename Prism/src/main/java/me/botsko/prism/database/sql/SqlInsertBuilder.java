@@ -12,8 +12,6 @@ import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Location;
 
-import javax.print.attribute.standard.PrinterLocation;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -94,13 +92,14 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
                 if (a.hasExtraData()) {
                     String serialData = a.serialize();
                     if (serialData != null && !serialData.isEmpty()) {
-                        if(serialData.length() > 32000) {
+                        if (serialData.length() > 32000) {
                             PrismLogHandler.debug("Large SerialData Details: Loc: "
                                     + a.getLoc().toString()
                                     + " Action:" + a.getAction().getActionType().name
                                     + " Block:" + a.getMaterial().name());
                             PrismLogHandler.debug("    SerialData: " + serialData);
-                            throw new SQLDataException("Extra Data value to large for database (max 32000) " + serialData.length() );
+                            throw new SQLDataException("Extra Data value to large for database (max 32000) "
+                                    + serialData.length());
                         }
                         try (
                                 PreparedStatement s2 = con.prepareStatement(getExtraDataQuery(),
@@ -204,7 +203,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
      * @param keys ResultSet
      * @throws SQLException SQLException.
      */
-    private void processExtraData(ResultSet keys) throws SQLException {
+    private void processExtraData(ResultSet keys) {
         if (extraDataQueue.isEmpty()) {
             return;
         }

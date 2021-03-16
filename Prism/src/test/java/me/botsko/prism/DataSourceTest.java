@@ -4,7 +4,7 @@ import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.settings.Settings;
-import me.botsko.prism.testHelpers.TestPrismDataSource;
+import me.botsko.prism.testhelpers.TestPrismDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

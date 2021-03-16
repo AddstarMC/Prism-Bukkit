@@ -42,7 +42,8 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
             columns.add("MIN(data) AS data");
             columns.add("MIN(player_uuid) AS uuid");
             columns.add("COUNT(*) AS counted");
-            columns.add("MIN(DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) })) AS epochdate");
+            columns.add("MIN(DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) }))"
+                    + " AS epochdate");
         } else {
             columns.add("id");
             columns.add("epoch");

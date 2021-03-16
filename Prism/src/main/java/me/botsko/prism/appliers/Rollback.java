@@ -4,6 +4,7 @@ import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.api.BlockStateChange;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.commands.Flags;
 import me.botsko.prism.utils.EntityUtils;
@@ -52,8 +53,9 @@ public class Rollback extends Preview {
             }
 
             // Remove item drops in this radius
-            if (config.applierConfig.removeDropsExplodeRollback && (parameters.getActionTypes().containsKey("tnt-explode")
-                    || parameters.getActionTypes().containsKey("creeper-explode"))) {
+            if (config.applierConfig.removeDropsExplodeRollback && (
+                    parameters.getActionTypes().containsKey(ActionType.TNT_EXPLODE)
+                    || parameters.getActionTypes().containsKey(ActionType.CREEPER_EXPLODE))) {
                 if (!parameters.hasFlag(Flags.NO_ITEMCLEAR)) {
                     final int removed = EntityUtils.removeNearbyItemDrops(player, parameters.getRadius());
                     if (removed > 0) {

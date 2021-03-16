@@ -107,7 +107,11 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                 process = new PrismProcessAction();
                 // Set all shared values
                 process.setId(rs.getLong("id"));
-                process.setActionType(rs.getString("action"));
+                ActionType type = ActionType.getByName(rs.getString("action"));
+                if (type == null) {
+                    // todo throw Exception but this should be async.
+                }
+                process.setActionType(type);
                 process.setUnixEpoch(rs.getLong("epoch"));
                 process.setWorld(Bukkit.getWorld(rs.getString("world")));
                 process.setSourceName(rs.getString("player"));

@@ -30,7 +30,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -169,16 +168,18 @@ public class DebugCommand implements SubHandler {
             String pasteUrl = "https://paste.gg/" + result.getPaste().get().getId();
             Prism.messenger.sendMessage(sender,
                     Prism.messenger.playerMsg(Il8nHelper.getMessage("paste-output")
-                            .replaceFirstText(Pattern.compile("<pasteUrl>"), builder ->
-                                    Component.text()
-                                            .content(pasteUrl)
-                                            .clickEvent(ClickEvent.openUrl(pasteUrl)))));
+                            .replaceText(builder -> builder.match("<pasteUrl>")
+                                    .replacement(Component.text(pasteUrl).clickEvent(ClickEvent.openUrl(pasteUrl))))
+                    )
+            );
             PrismLogHandler.log("Paste Created : " + pasteUrl);
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                       Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(Il8nHelper.getMessage("delete-key")
-                              .replaceFirstText(Pattern.compile("<deletekey>"), builder ->
-                                      Component.text().content(s).clickEvent(ClickEvent.copyToClipboard(s)))));
+                              .replaceText(builder -> builder.match("<deleteKey>").replacement(Component.text(s)
+                                      .clickEvent(ClickEvent.copyToClipboard(s))))
+                              )
+                      );
                       PrismLogHandler.log("Deletion Key:" + s);
                   }
             );

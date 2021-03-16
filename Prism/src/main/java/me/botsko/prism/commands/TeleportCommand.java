@@ -151,13 +151,16 @@ public class TeleportCommand implements SubHandler {
         if (success) {
             Prism.messenger.sendMessage(player, Prism.messenger.playerSubduedHeaderMsg(
                     Il8nHelper.getMessage("teleport-complete")
-                            .replaceText("<actionType>",
-                                    Component.text(
-                                            destinationAction.getAction().getActionType().name).color(NamedTextColor.WHITE))
-                            .replaceText("<source>",
-                                    Component.text(destinationAction.getSourceName()).color(NamedTextColor.WHITE))
-                            .replaceText("<timeSince>",
-                                    Component.text(destinationAction.getTimeSince()).color(NamedTextColor.WHITE))));
+                            .replaceText(builder -> builder.match("<actionType>").replacement(Component.text(
+                                    destinationAction.getAction().getActionType().name)
+                                    .color(NamedTextColor.WHITE)).once())
+                            .replaceText(builder -> builder.match("<source>").replacement(Component.text(
+                                    destinationAction.getSourceName()).color(NamedTextColor.WHITE)).once())
+                            .replaceText(builder -> builder.match("<timeSince").replacement(
+                                    Component.text(destinationAction.getTimeSince()).color(NamedTextColor.WHITE))
+                            )
+                    )
+            );
         } else {
             Prism.messenger.sendMessage(player,
                     Prism.messenger.playerError(Il8nHelper.getMessage("teleport-failed")));

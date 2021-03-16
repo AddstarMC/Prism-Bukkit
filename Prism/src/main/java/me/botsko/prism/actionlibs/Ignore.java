@@ -1,10 +1,8 @@
 package me.botsko.prism.actionlibs;
 
-import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.PrismConfig;
-import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -63,11 +61,11 @@ public class Ignore {
      *
      * @param actionTypeName type to ignore.
      * @param world          world to check.
-     * @param playerUUID     player to check
+     * @param playerUuid     player to check
      * @return boolean.
      */
-    public boolean event(ActionType actionTypeName, World world, UUID playerUUID) {
-        return event(actionTypeName, world) && playerIisIgnored(playerUUID);
+    public boolean event(ActionType actionTypeName, World world, UUID playerUuid) {
+        return event(actionTypeName, world) && playerIisIgnored(playerUuid);
     }
 
     /**
@@ -83,6 +81,7 @@ public class Ignore {
         ActionType type = ActionType.valueOf(actionType);
         return event(type,player);
     }
+
     /**
      * Check whether an action should be ignored.
      *
@@ -138,10 +137,6 @@ public class Ignore {
         return true;
     }
 
-    private boolean playerIisIgnored(UUID playerUUID) {
-        return ignorePlayers.contains(playerUUID) && !ignorePlayersWhiteList;
-    }
-
     /**
      * Check whether an action should be ignored.
      *
@@ -170,5 +165,9 @@ public class Ignore {
 
         return event(actionTypeName);
 
+    }
+
+    private boolean playerIisIgnored(UUID playerUuid) {
+        return ignorePlayers.contains(playerUuid) && !ignorePlayersWhiteList;
     }
 }

@@ -6,13 +6,19 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.IdMapQuery;
+import me.botsko.prism.database.PlayerIdentificationQuery;
+import me.botsko.prism.database.PrismDataSourceUpdater;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Collection;
@@ -52,7 +58,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
                 try {
                     Class.forName(dbConfig.getDriverClassName()); //force load the driver.
                 } catch (ClassNotFoundException e) {
-                    PrismLogHandler.log("You will need to provide the required jar libraries that support your database.");
+                    PrismLogHandler.log("You will need to provide the required jar libs that support your database.");
                 }
             }
         } else {
@@ -97,14 +103,11 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
               Statement st = conn.createStatement()
         ) {
             Collection<String> tableNames = new HashSet<>();
-           // DatabaseMetaData meta = conn.getMetaData();
-           // ResultSet res = meta.getTables(null, "PRISM", null, new String[] {"TABLE"});
-           // Collection<String> tableNames = new HashSet<>();
-            //while (res.next()) {
-            //    tableNames.add(name.toUpperCase());
-            //}
-            //res.close();
-            //PrismLogHandler.debug("Tables Names:" + Arrays.toString(tableNames.toArray(new String[0])));
+            ResultSet rs = st.executeQuery("SHOW TABLES IN " + config.userName);
+            while (rs.next()) {
+                tableNames.add(rs.getString("TABLE_NAME"));
+            }
+            rs.close();
             try {
                 if (
                         setupTable1(st, tableNames)

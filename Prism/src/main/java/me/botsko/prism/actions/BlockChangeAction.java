@@ -5,6 +5,7 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.appliers.ChangeResultImpl;
 import me.botsko.prism.commands.Flags;
@@ -30,32 +31,32 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
-                getMaterial(), getBlockData(), block, false);
+        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(),
+                getOldBlockData(), getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
-                getMaterial(), getBlockData(), block, false);
+        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(),
+                getOldBlockData(), getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
+        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(), getOldBlockData(),
                 getMaterial(), getBlockData(), block, false);
     }
 
     @Override
     public ChangeResult applyDeferred(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getAction().getName(), getOldMaterial(), getOldBlockData(),
-                getMaterial(), getBlockData(), block, true);
+        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(),
+                getOldBlockData(), getMaterial(), getBlockData(), block, true);
     }
 
-    private ChangeResult placeBlock(Player player, PrismParameters parameters, boolean isPreview, String type,
+    private ChangeResult placeBlock(Player player, PrismParameters parameters, boolean isPreview, ActionType type,
                                     Material oldMat, BlockData oldData, Material newMat,
                                     BlockData newData, Block block, boolean isDeferred) {
 

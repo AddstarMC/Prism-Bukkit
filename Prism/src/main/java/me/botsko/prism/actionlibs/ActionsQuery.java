@@ -21,6 +21,10 @@ public class ActionsQuery {
     private final SelectQuery qb;
     private boolean shouldPauseDB = false;
 
+    /**
+     * Constructor.
+     * @param plugin plugin.
+     */
     public ActionsQuery(Prism plugin) {
         this.plugin = plugin;
         this.qb = plugin.getPrismDataSource().createSelectQuery();
@@ -94,13 +98,13 @@ public class ActionsQuery {
     /**
      * Get the Users last process id.
      *
-     * @param playername player.
+     * @param playerName player.
      * @return long
      */
-    public long getUsersLastPrismProcessId(String playername) {
+    public long getUsersLastPrismProcessId(String playerName) {
         SelectProcessActionQuery q = Prism.getInstance().getPrismDataSource().createProcessQuery();
         PrismParameters parameters = new QueryParameters();
-        parameters.setKeyword(playername);
+        parameters.setKeyword(playerName);
         q.setParameters(parameters);
         q.setShouldGroup(false);
         q.isLastProcessID();

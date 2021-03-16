@@ -1,6 +1,5 @@
 package me.botsko.prism.listeners;
 
-import io.papermc.paper.event.player.AsyncChatEvent;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionFactory;
@@ -15,7 +14,6 @@ import me.botsko.prism.wands.ProfileWand;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -184,9 +182,9 @@ public class PrismPlayerEvents implements Listener {
         if (event.getItemDrop().getItemStack().getType() == Material.AIR) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_DROP, event.getItemDrop().getItemStack(),
-                event.getItemDrop().getItemStack().getAmount(), -1, null, event.getPlayer().getLocation(),
-                event.getPlayer()));
+        RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_DROP,
+                event.getItemDrop().getItemStack(),event.getItemDrop().getItemStack().getAmount(), -1,
+                null, event.getPlayer().getLocation(),event.getPlayer()));
     }
 
     /**
@@ -215,8 +213,9 @@ public class PrismPlayerEvents implements Listener {
             if (!Prism.getIgnore().event(ActionType.ITEM_PICKUP, p)) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_PICKUP, event.getItem().getItemStack(),
-                    event.getItem().getItemStack().getAmount(), -1, null, p.getLocation(), p));
+            RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_PICKUP,
+                    event.getItem().getItemStack(), event.getItem().getItemStack().getAmount(), -1,
+                    null, p.getLocation(), p));
         }
     }
 
@@ -230,7 +229,8 @@ public class PrismPlayerEvents implements Listener {
         if (!Prism.getIgnore().event(ActionType.XP_PICKUP, event.getPlayer())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.XP_PICKUP, event.getPlayer(), "" + event.getAmount()));
+        RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.XP_PICKUP, event.getPlayer(), ""
+                + event.getAmount()));
     }
 
     /**
@@ -482,7 +482,8 @@ public class PrismPlayerEvents implements Listener {
                     return;
                 }
                 RecordingQueue
-                        .addToQueue(ActionFactory.createBlock(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP), player));
+                        .addToQueue(ActionFactory.createBlock(ActionType.CROP_TRAMPLE, block.getRelative(BlockFace.UP),
+                                player));
             }
         }
     }
@@ -525,7 +526,8 @@ public class PrismPlayerEvents implements Listener {
             if (!Prism.getIgnore().event(ActionType.BONEMEAL_USE, block)) {
                 return;
             }
-            RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.BONEMEAL_USE, inhand.getType(), block, player));
+            RecordingQueue.addToQueue(ActionFactory.createUse(ActionType.BONEMEAL_USE, inhand.getType(), block,
+                    player));
         }
     }
 
@@ -599,7 +601,8 @@ public class PrismPlayerEvents implements Listener {
 
             // Record the insert
             RecordingQueue.addToQueue(
-                    ActionFactory.createItemStack(ActionType.ITEM_INSERT, hand, 1, 0, null, block.getLocation(), player));
+                    ActionFactory.createItemStack(ActionType.ITEM_INSERT, hand, 1, 0, null,
+                            block.getLocation(), player));
 
         }
     }

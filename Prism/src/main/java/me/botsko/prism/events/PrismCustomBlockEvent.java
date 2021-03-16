@@ -31,7 +31,7 @@ public class PrismCustomBlockEvent extends Event {
     public PrismCustomBlockEvent(Plugin plugin, String actionTypeName, Player player, Block block, String message) {
         this.pluginName = plugin.getName();
         ActionType type = ActionType.getByName(actionTypeName);
-        if(type == null ) {
+        if (type == null) {
             actionType = ActionType.CUSTOM_ACTION;
             customTypeName = actionTypeName;
         } else {

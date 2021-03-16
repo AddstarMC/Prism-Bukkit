@@ -1,4 +1,4 @@
-package me.botsko.prism.testHelpers;
+package me.botsko.prism.testhelpers;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
@@ -25,6 +25,10 @@ public class TestHelper {
         helper.shutdown();
     }
 
+    /**
+     * Setup for mocking.
+     * @return ServerMock.
+     */
     public ServerMock setup() {
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
@@ -34,6 +38,9 @@ public class TestHelper {
         return server;
     }
 
+    /**
+     * Shutdown.
+     */
     public void shutdown() {
         Path path = null;
         if (plugin != null) {

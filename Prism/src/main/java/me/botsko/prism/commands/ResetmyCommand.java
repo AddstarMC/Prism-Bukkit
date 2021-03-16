@@ -71,8 +71,8 @@ public class ResetmyCommand extends AbstractCommand {
                     }
                 }
             }, false);
-            manager.addTask(Settings.deleteSettingAsync("wand.mode", call.getPlayer()), aBoolean -> {
-                if (aBoolean) {
+            manager.addTask(Settings.deleteSettingAsync("wand.mode", call.getPlayer()), success -> {
+                if (success) {
                     Prism.messenger.sendMessage(call.getPlayer(),
                             Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("wand-mode-reset")));
                 }

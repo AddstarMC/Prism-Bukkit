@@ -6,7 +6,7 @@ import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.testHelpers.TestHelper;
+import me.botsko.prism.testhelpers.TestHelper;
 import me.botsko.prism.utils.IntPair;
 import me.botsko.prism.utils.MaterialAliases;
 import org.bukkit.Material;
@@ -22,7 +22,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -118,9 +121,10 @@ public class PrismTest {
         String out = query.getQuery(parameters,false);
         executeQuery(out);
         try {
-            DatabaseMetaData meta = Prism.getInstance().getPrismDataSource().getDataSource().getConnection().getMetaData();
+            DatabaseMetaData meta = Prism.getInstance().getPrismDataSource().getDataSource().getConnection()
+                    .getMetaData();
             ResultSet set = meta.getTables(null,null,"",null);
-            while(set.next()){
+            while (set.next()) {
                 int count = set.getMetaData().getColumnCount();
                 for (int i = 0; i < count; i++) {
                     String data = set.getString(i);
@@ -129,14 +133,15 @@ public class PrismTest {
 
                 }
             }
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private ResultSet executeQuery(String query) {
         try {
-            PreparedStatement statement = Prism.getInstance().getPrismDataSource().getDataSource().getConnection().prepareStatement(query);
+            PreparedStatement statement = Prism.getInstance().getPrismDataSource().getDataSource().getConnection()
+                    .prepareStatement(query);
             return statement.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();

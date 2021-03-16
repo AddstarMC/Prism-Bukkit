@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class PrismLogHandler implements Closeable {
 
-    private static Logger prismLog;
+    private static final  Logger prismLog;
     private static boolean debug = false;
 
     static {

@@ -8,7 +8,6 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.commandlibs.SubHandler;
@@ -87,19 +86,22 @@ public class LookupCommand implements SubHandler {
                             .playerHeaderMsg(
                                     Il8nHelper.getMessage("lookup-share-message")
                                             .color(NamedTextColor.GOLD)
-                                            .replaceText(Pattern.compile("<sender>"), builder ->
-                                                    Component.text().content(call.getSender().getName())
-                                                            .color(NamedTextColor.YELLOW)
+                                            .replaceText(builder -> builder.match("<sender>").replacement(
+                                                    Component.text(call.getSender().getName())
+                                            .color(NamedTextColor.YELLOW)
                                                             .decoration(TextDecoration.ITALIC,
-                                                                    TextDecoration.State.TRUE), 1)));
+                                                                    TextDecoration.State.TRUE)))
+                            )
+                    );
                 } else if (sharingWithPlayers.length() > 0) {
                     Component component = Il8nHelper.getMessage("lookup-share-to-message")
                             .color(NamedTextColor.GOLD)
-                            .replaceText(Pattern.compile("<players>"), builder ->
-                                    Component.text().content(playersList)
-                                            .color(NamedTextColor.YELLOW)
-                                            .decoration(TextDecoration.ITALIC,
-                                                    TextDecoration.State.TRUE), 1);
+                            .replaceText(builder -> builder.match("<players>")
+                            .replacement(Component.text(playersList)
+                                    .color(NamedTextColor.YELLOW)
+                                    .decoration(TextDecoration.ITALIC,
+                                            TextDecoration.State.TRUE))
+                            );
                     Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerHeaderMsg(component));
                 }
                 if (!results.getActionResults().isEmpty()) {

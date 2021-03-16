@@ -16,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledFuture;
-import java.util.regex.Pattern;
 
 public class DeleteCommand extends AbstractCommand {
 
@@ -84,9 +83,10 @@ public class DeleteCommand extends AbstractCommand {
 
             Prism.messenger.sendMessage(call.getSender(),
                     Prism.messenger.playerSubduedHeaderMsg(Il8nHelper.getMessage("purge-data")
-                            .replaceFirstText(Pattern.compile("<defaults>"), builder ->
-                                    Component.text()
-                                            .content(defaultsReminder.toString()))));
+                            .replaceText(builder -> builder.match("<defaults>")
+                                    .replacement(Component.text(defaultsReminder.toString())).once())
+                    )
+            );
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger
                     .playerHeaderMsg(Il8nHelper.getMessage("start-purge")));
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {

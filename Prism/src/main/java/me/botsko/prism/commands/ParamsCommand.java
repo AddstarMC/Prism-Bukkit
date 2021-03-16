@@ -6,6 +6,7 @@ import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 
@@ -76,6 +77,7 @@ public class ParamsCommand implements SubHandler {
 
     private static Component colourParamHelp(Component message) {
         Pattern pattern = Pattern.compile("([abtrkpew]|id|since|before){1}:([\\[,<,a-z,0-9,>,|,:,\\],#]*)");
-        return message.replaceText(pattern, builder -> builder.color(NamedTextColor.LIGHT_PURPLE));
+        return message.replaceText(TextReplacementConfig.builder().match(pattern)
+                .replacement(builder -> builder.color(NamedTextColor.LIGHT_PURPLE)).build());
     }
 }

@@ -12,7 +12,7 @@ import java.nio.file.Path;
  * Created for Prism.
  *
  * @author Narimm on 23/02/2021
- * @since
+ * @since 2.1.8
  */
 class ConfigHandlerTest {
 
@@ -33,7 +33,8 @@ class ConfigHandlerTest {
             ConfigHandler configHandler2 = new ConfigHandler();
             configHandler2.loadConfiguration(path);
             PrismConfig config2 = configHandler2.getConfig();
-            Assertions.assertEquals(config.applierConfig.additionalNotifyRadius,config2.applierConfig.additionalNotifyRadius);
+            Assertions.assertEquals(config.applierConfig.additionalNotifyRadius,
+                    config2.applierConfig.additionalNotifyRadius);
         } catch (IOException e) {
             e.printStackTrace();
         }

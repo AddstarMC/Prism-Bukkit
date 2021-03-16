@@ -2,7 +2,7 @@ package me.botsko.prism.utils;
 
 import be.seeseemelk.mockbukkit.ServerMock;
 import me.botsko.prism.Prism;
-import me.botsko.prism.testHelpers.TestHelper;
+import me.botsko.prism.testhelpers.TestHelper;
 import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Material;
 import org.junit.jupiter.api.AfterAll;

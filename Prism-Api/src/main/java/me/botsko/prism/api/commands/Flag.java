@@ -4,7 +4,7 @@ import org.bukkit.permissions.Permissible;
 
 public interface Flag {
 
-    String getDescription() ;
+    String getDescription();
 
     /**
      * Get usage for flag.
@@ -12,7 +12,7 @@ public interface Flag {
      */
     String getUsage();
 
-    String getPermission() ;
+    String getPermission();
 
     boolean hasPermission(Permissible permissible);
 

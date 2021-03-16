@@ -31,8 +31,8 @@ public class PrismMiscEvents implements Listener {
         if (!blockStateChanges.isEmpty()) {
 
             // Create an entry for the rollback as a whole
-            final Handler primaryAction = ActionFactory.createPrismProcess(ActionType.PRISM_PROCESS, PrismProcessType.DRAIN,
-                    event.onBehalfOf(), "" + event.getRadius());
+            final Handler primaryAction = ActionFactory.createPrismProcess(ActionType.PRISM_PROCESS,
+                    PrismProcessType.DRAIN, event.onBehalfOf(), "" + event.getRadius());
             final long id = RecordingTask.insertActionIntoDatabase(primaryAction);
             if (id == 0) {
                 return;
@@ -44,7 +44,8 @@ public class PrismMiscEvents implements Listener {
 
                 // Build the action
                 RecordingQueue.addToQueue(
-                        ActionFactory.createPrismRollback(ActionType.PRISM_DRAIN, orig, newBlock, event.onBehalfOf(), id));
+                        ActionFactory.createPrismRollback(ActionType.PRISM_DRAIN, orig, newBlock, event.onBehalfOf(),
+                                id));
 
             }
             // ActionQueue.save();
@@ -63,8 +64,8 @@ public class PrismMiscEvents implements Listener {
         if (!blockStateChanges.isEmpty()) {
 
             // Create an entry for the rollback as a whole
-            final Handler primaryAction = ActionFactory.createPrismProcess(ActionType.PRISM_PROCESS, PrismProcessType.EXTINGUISH,
-                    event.onBehalfOf(), "" + event.getRadius());
+            final Handler primaryAction = ActionFactory.createPrismProcess(ActionType.PRISM_PROCESS,
+                    PrismProcessType.EXTINGUISH, event.onBehalfOf(), "" + event.getRadius());
             final long id = RecordingTask.insertActionIntoDatabase(primaryAction);
             if (id == 0) {
                 return;
@@ -76,7 +77,8 @@ public class PrismMiscEvents implements Listener {
 
                 // Build the action
                 RecordingQueue.addToQueue(
-                        ActionFactory.createPrismRollback(ActionType.PRISM_EXTINGUISH, orig, newBlock, event.onBehalfOf(), id));
+                        ActionFactory.createPrismRollback(ActionType.PRISM_EXTINGUISH, orig, newBlock,
+                                event.onBehalfOf(), id));
 
             }
             // ActionQueue.save();

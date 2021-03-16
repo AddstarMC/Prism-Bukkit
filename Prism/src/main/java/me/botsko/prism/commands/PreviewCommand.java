@@ -81,8 +81,8 @@ public class PreviewCommand extends AbstractCommand {
             if (call.getArg(1).equalsIgnoreCase("rollback") || call.getArg(1).equalsIgnoreCase("restore")
                     || call.getArg(1).equalsIgnoreCase("rb") || call.getArg(1).equalsIgnoreCase("rs")) {
 
-                final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getPlayer(), call.getArgs(),
-                        PrismProcessType.ROLLBACK, 2,
+                final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getPlayer(),
+                        call.getArgs(), PrismProcessType.ROLLBACK, 2,
                         !plugin.config.parameterConfig.neverUseDefaults);
                 if (parameters == null) {
                     return;

@@ -31,8 +31,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
@@ -139,12 +144,13 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void worldCondition() {
         if (parameters.getWorld() != null) {
-            int world_id = Prism.prismWorlds.get(parameters.getWorld());
-            if(world_id != 0) {
-                addCondition("world_id = "+world_id);
+            int worldId = Prism.prismWorlds.get(parameters.getWorld());
+            if (worldId != 0) {
+                addCondition("world_id = " + worldId);
             } else {
                 addCondition(
-                        String.format("world_id = ( SELECT w.world_id FROM " + prefix + "worlds w WHERE w.world = '%s')",
+                        String.format("world_id = ( SELECT w.world_id FROM " + prefix
+                                        + "worlds w WHERE w.world = '%s')",
                                 parameters.getWorld()));
             }
         }

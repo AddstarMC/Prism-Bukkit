@@ -27,7 +27,7 @@ public class PrismCustomPlayerActionEvent extends Event {
     public PrismCustomPlayerActionEvent(Plugin plugin, String actionTypeName, Player player, String message) {
         this.pluginName = plugin.getName();
         ActionType type = ActionType.getByName(actionTypeName);
-        if(type == null ) {
+        if (type == null) {
             type = ActionType.CUSTOM_ACTION;
             customTypeName = actionTypeName;
         }

@@ -1,4 +1,4 @@
-package me.botsko.prism.testHelpers;
+package me.botsko.prism.testhelpers;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

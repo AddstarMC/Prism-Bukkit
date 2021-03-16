@@ -262,11 +262,12 @@ public class PrismBlockEvents extends BaseListener {
         final BlockState s = event.getBlockReplacedState();
 
         // TODO: old and new appear flipped compared to other actions... check
-        RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.BLOCK_PLACE, block.getLocation(), s.getType(),
-                s.getBlockData(), block.getType(), block.getBlockData(), player));
+        RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.BLOCK_PLACE, block.getLocation(),
+                s.getType(), s.getBlockData(), block.getType(), block.getBlockData(), player));
 
         // Pass to the placement alerter
-        if (!player.hasPermission("prism.alerts.use.place.ignore") && !player.hasPermission("prism.alerts.ignore")) {
+        if (!player.hasPermission("prism.alerts.use.place.ignore")
+                && !player.hasPermission("prism.alerts.ignore")) {
             plugin.useMonitor.alertOnBlockPlacement(player, block);
         }
     }
@@ -364,7 +365,7 @@ public class PrismBlockEvents extends BaseListener {
         source = playerBed.player.getName();
         List<Block> affected = event.blockList();
         RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BED_EXPLODE, playerBed.bed, playerBed.player));
-        contructBlockEvent(ActionType.BED_EXPLODE, source, affected);
+        constructBlockEvent(ActionType.BED_EXPLODE, source, affected);
         weakCache.invalidate(event.getBlock().getLocation());
     }
 
@@ -383,7 +384,8 @@ public class PrismBlockEvents extends BaseListener {
         if (!Prism.getIgnore().event(ActionType.BLOCK_USE, enterEvent.getBed())) {
             return;
         }
-        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_USE, enterEvent.getBed(), enterEvent.getPlayer()));
+        RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.BLOCK_USE, enterEvent.getBed(),
+                enterEvent.getPlayer()));
     }
 
     /**
@@ -421,7 +423,8 @@ public class PrismBlockEvents extends BaseListener {
         }
         if (event.getBlock().getState() instanceof Sign) {
             RecordingQueue.addToQueue(
-                    ActionFactory.createSign(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(), event.getPlayer()));
+                    ActionFactory.createSign(ActionType.SIGN_CHANGE, event.getBlock(), event.getLines(),
+                            event.getPlayer()));
         }
     }
 
@@ -574,11 +577,13 @@ public class PrismBlockEvents extends BaseListener {
         if (Utilities.canFlowBreakMaterial(to.getType())) {
             if (from.getType() == Material.WATER) {
                 if (Prism.getIgnore().event(ActionType.WATER_BREAK, event.getBlock())) {
-                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.WATER_BREAK, event.getToBlock(), "Water"));
+                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.WATER_BREAK, event.getToBlock(),
+                            "Water"));
                 }
             } else if (from.getType() == Material.LAVA) {
                 if (Prism.getIgnore().event(ActionType.LAVA_BREAK, event.getBlock())) {
-                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.LAVA_BREAK, event.getToBlock(), "Lava"));
+                    RecordingQueue.addToQueue(ActionFactory.createBlock(ActionType.LAVA_BREAK, event.getToBlock(),
+                            "Lava"));
                 }
             }
         }

@@ -47,8 +47,8 @@ public class SqlSettingsQuery extends AbstractSettingsQuery implements SettingsQ
     @Override
     public boolean saveSetting(String key, String value, Player player) {
         if (!deleteSetting(key,player)) {
-            PrismLogHandler.debug("Setting " +key + " was not found - DELETE failed");
-        };
+            PrismLogHandler.debug("Setting " + key + " was not found - DELETE failed");
+        }
         String finalKey = key;
         if (player != null) {
             finalKey = getPlayerKey(player, key);

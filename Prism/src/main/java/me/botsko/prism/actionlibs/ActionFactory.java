@@ -27,7 +27,11 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.AnimalTamer;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Hanging;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -124,7 +128,7 @@ public class ActionFactory {
      * @param oldData    old data
      * @param newMat     new
      * @param newData    new data
-     * @param nonPlayer  nonplayer.
+     * @param nonPlayer  non player.
      * @return Handler.
      */
     public static Handler createBlockChange(ActionType actionType, Location loc, Material oldMat, BlockData oldData,
@@ -242,12 +246,12 @@ public class ActionFactory {
      * GrowHandler.
      *
      * @param actionType type
-     * @param blockstate state
-     * @param nonPlayer  nonplayer
+     * @param blockState BlockState
+     * @param nonPlayer  non player
      * @return Handler
      */
-    public static Handler createGrow(ActionType actionType, BlockState blockstate, String nonPlayer) {
-        final Handler a = createGrow(actionType, blockstate, (OfflinePlayer) null);
+    public static Handler createGrow(ActionType actionType, BlockState blockState, String nonPlayer) {
+        final Handler a = createGrow(actionType, blockState, (OfflinePlayer) null);
         a.setSourceName(nonPlayer);
         return a;
     }

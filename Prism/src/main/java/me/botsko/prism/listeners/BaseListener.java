@@ -12,8 +12,6 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.event.Listener;
 
-import java.util.List;
-
 /**
  * Created for the Prism-Bukkit Project.
  * Created by Narimm on 4/09/2020.
@@ -26,7 +24,8 @@ public abstract class BaseListener implements Listener {
         this.plugin = plugin;
     }
 
-    protected void contructBlockEvent(final ActionType parentAction, final String cause, final Iterable<Block> blockList) {
+    protected void constructBlockEvent(final ActionType parentAction, final String cause,
+                                       final Iterable<Block> blockList) {
         final PrismBlockEvents be = new PrismBlockEvents(plugin); //todo is this necessary?
         for (Block block : blockList) {
             // don't bother record upper doors.

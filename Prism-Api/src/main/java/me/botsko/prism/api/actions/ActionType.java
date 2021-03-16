@@ -17,6 +17,7 @@ import java.util.Set;
  * @author Narimm on 22/02/2021
  * @since 2.1.8
  */
+@SuppressWarnings("ALL")
 public enum ActionType {
 
     BLOCK_BREAK("block-break"),
@@ -184,6 +185,10 @@ public enum ActionType {
         return null;
     }
 
+    /**
+     * Returns the family name  ie block-break (block).
+     * @return String
+     */
     public String getFamilyName() {
         StringPair result = names.get(this);
         if (result == null) {
@@ -192,6 +197,10 @@ public enum ActionType {
         return result.familyName;
     }
 
+    /**
+     * Returns the short name  ie block-break (break).
+     * @return String
+     */
     public String getShortName() {
         StringPair result = names.get(this);
         if (result == null) {

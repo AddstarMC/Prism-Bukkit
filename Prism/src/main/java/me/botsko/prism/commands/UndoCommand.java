@@ -11,14 +11,12 @@ import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.appliers.Previewable;
 import me.botsko.prism.appliers.PrismApplierCallback;
 import me.botsko.prism.appliers.Undo;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.TypeUtils;
-import net.kyori.adventure.audience.Audience;
 import org.bukkit.ChatColor;
 
 import java.util.List;
@@ -71,7 +69,7 @@ public class UndoCommand implements SubHandler {
             }
 
             // We only support this for drains
-            if (!process.getProcessChildActionType().equals("prism-drain")) {
+            if (!process.getProcessChildActionType().equals(ActionType.PRISM_DRAIN)) {
                 Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerError("You can't currently undo anything other than a drain process."));
                 return;
@@ -111,8 +109,6 @@ public class UndoCommand implements SubHandler {
             parameters.addActionType(ActionType.PRISM_PROCESS);
             parameters.addPlayerName(call.getPlayer().getName());
             parameters.setLimit(5); // @todo config this, and move the logic
-            // to queryparams
-
             final ActionsQuery aq = new ActionsQuery(plugin);
             final QueryResult results = aq.lookup(parameters, call.getPlayer());
             if (!results.getActionResults().isEmpty()) {

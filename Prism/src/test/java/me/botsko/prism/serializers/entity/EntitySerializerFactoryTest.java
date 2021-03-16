@@ -1,7 +1,6 @@
 package me.botsko.prism.serializers.entity;
 
-import be.seeseemelk.mockbukkit.ServerMock;
-import me.botsko.prism.testHelpers.TestHelper;
+import me.botsko.prism.testhelpers.TestHelper;
 import org.bukkit.entity.EntityType;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;

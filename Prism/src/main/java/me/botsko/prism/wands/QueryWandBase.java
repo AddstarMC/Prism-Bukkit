@@ -49,7 +49,8 @@ public abstract class QueryWandBase extends WandBase {
         final PrismProcessType processType = this instanceof RollbackWand ? PrismProcessType.ROLLBACK
                 : this instanceof RestoreWand ? PrismProcessType.RESTORE : PrismProcessType.LOOKUP;
 
-        final QueryParameters params = PreprocessArgs.process(plugin.config, sender, args, processType, argStart, false, true);
+        final QueryParameters params = PreprocessArgs.process(plugin.config, sender, args, processType, argStart,
+                false, true);
         if (params == null) {
             return false;
         } else {

@@ -1,8 +1,8 @@
 package me.botsko.prism.listeners;
 
 import io.papermc.paper.event.block.TargetHitEvent;
-import io.papermc.paper.event.player.PlayerTradeEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import io.papermc.paper.event.player.PlayerTradeEvent;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
@@ -54,7 +54,7 @@ public class PaperListeners implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerTrade(PlayerTradeEvent event) {
         Player player = event.getPlayer();
-        if (!Prism.getIgnore().event("player-trade", player)) {
+        if (!Prism.getIgnore().event(ActionType.PLAYER_TRADE, player)) {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createEntity(ActionType.PLAYER_TRADE,event.getVillager(),player));

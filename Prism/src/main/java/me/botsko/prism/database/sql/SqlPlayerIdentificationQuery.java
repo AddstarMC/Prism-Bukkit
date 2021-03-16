@@ -232,7 +232,8 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
                             rs.getString(2));
                     PrismLogHandler.debug("Loaded player " + rs.getString(2)
                             + ", id: " + rs.getInt(1) + " into the cache.");
-                    Prism.getInstance().getPlayerIdentifier().getPrismPlayers().put(UUID.fromString(rs.getString(2)), prismPlayer);
+                    Prism.getInstance().getPlayerIdentifier().getPrismPlayers().put(
+                            UUID.fromString(rs.getString(2)), prismPlayer);
                 }
                 rs.close();
             } catch (SQLException e) {

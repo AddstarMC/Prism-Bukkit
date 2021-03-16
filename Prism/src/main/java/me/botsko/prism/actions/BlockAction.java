@@ -15,12 +15,28 @@ import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
-import org.bukkit.*;
-import org.bukkit.block.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
+import org.bukkit.Nameable;
+import org.bukkit.Tag;
+import org.bukkit.block.Banner;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.CommandBlock;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.ShulkerBox;
+import org.bukkit.block.Sign;
+import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.block.data.*;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Rotatable;
+import org.bukkit.block.data.Waterlogged;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
@@ -29,9 +45,25 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import static org.bukkit.Material.*;
+import static org.bukkit.Material.AIR;
+import static org.bukkit.Material.CHEST;
+import static org.bukkit.Material.COMMAND_BLOCK;
+import static org.bukkit.Material.FARMLAND;
+import static org.bukkit.Material.FIRE;
+import static org.bukkit.Material.JUKEBOX;
+import static org.bukkit.Material.NETHER_PORTAL;
+import static org.bukkit.Material.OBSIDIAN;
+import static org.bukkit.Material.PLAYER_HEAD;
+import static org.bukkit.Material.PLAYER_WALL_HEAD;
+import static org.bukkit.Material.SPAWNER;
+import static org.bukkit.Material.TRAPPED_CHEST;
+import static org.bukkit.Material.WATER;
 
 
 public class BlockAction extends GenericAction {
@@ -280,7 +312,8 @@ public class BlockAction extends GenericAction {
 
         // On the blacklist (except an undo)
         if ((Prism.getIllegalBlocks().contains(getMaterial())
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flags.OVERWRITE)) {
+                && !parameters.getProcessType().equals(PrismProcessType.UNDO))
+                && !parameters.hasFlag(Flags.OVERWRITE)) {
             PrismLogHandler.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
                     + getMaterial().toString());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);

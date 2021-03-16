@@ -152,7 +152,7 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     @Override
     public void saveConfig() {
-        if(prismDataSource != null) {
+        if (prismDataSource != null) {
             configHandler.applyDataSourceConfig(prismDataSource);
         }
         configHandler.saveConfiguration(getDataFolder().toPath().resolve("config.yml"));
