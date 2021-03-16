@@ -4,6 +4,8 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
@@ -46,7 +48,7 @@ public class OreMonitor {
      */
     public void processAlertsFromBlock(final Player player, final Block block) {
 
-        if (!plugin.getConfig().getBoolean("prism.alerts.ores.enabled")) {
+        if (!plugin.config.alertConfig.oreAlerts.enabled) {
             return;
         }
 
@@ -93,10 +95,10 @@ public class OreMonitor {
                     boolean wasplaced = false;
 
                     // Build params
-                    final QueryParameters params = new QueryParameters();
+                    final PrismParameters params = new QueryParameters();
                     params.setWorld(player.getWorld().getName());
                     params.addSpecificBlockLocation(block.getLocation());
-                    params.addActionType("block-place");
+                    params.addActionType(ActionType.BLOCK_PLACE);
 
                     final ActionsQuery aq = new ActionsQuery(plugin);
                     final QueryResult results = aq.lookup(params, player);
@@ -109,12 +111,12 @@ public class OreMonitor {
                         plugin.alertPlayers(null, component);
 
                         // Log to console
-                        if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
-                            Prism.log(PlainComponentSerializer.plain().serialize(component));
+                        if (plugin.config.alertConfig.oreAlerts.logToConsole) {
+                            me.botsko.prism.PrismLogHandler.log(PlainComponentSerializer.plain().serialize(component));
                         }
 
                         // Log to commands
-                        List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
+                        List<String> commands = plugin.config.alertConfig.oreAlerts.logCommands;
                         MiscUtils.dispatchAlert(msg, commands);
                     }
                 });

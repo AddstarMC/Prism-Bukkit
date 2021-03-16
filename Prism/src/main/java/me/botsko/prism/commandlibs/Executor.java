@@ -24,7 +24,7 @@ public class Executor implements CommandExecutor, TabCompleter {
      * plugin watches for. SubCommand mode allows it to watch for commands that are
      * secondary to the primary command it's assigned to.
      */
-    public String mode;
+    public final String mode;
 
     private final String defaultSubCommand = "default";
 

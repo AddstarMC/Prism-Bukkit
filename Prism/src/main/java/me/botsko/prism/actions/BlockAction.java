@@ -1,13 +1,16 @@
 package me.botsko.prism.actions;
 
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.ChangeResult;
 import me.botsko.prism.api.ChangeResultType;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.appliers.ChangeResultImpl;
+import me.botsko.prism.commands.Flags;
 import me.botsko.prism.events.BlockStateChangeImpl;
+import me.botsko.prism.serializers.SerializationHelper;
+import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MaterialTag;
 import me.botsko.prism.utils.TypeUtils;
@@ -23,6 +26,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.block.CreatureSpawner;
+import org.bukkit.block.ShulkerBox;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.banner.Pattern;
@@ -38,9 +42,11 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -130,8 +136,7 @@ public class BlockAction extends GenericAction {
                     final Sign sign = (Sign) state;
                     signActionData.lines = sign.getLines();
                     actionData = signActionData;
-                }
-                if (Tag.BANNERS.isTagged(state.getType())) {
+                } else if (Tag.BANNERS.isTagged(state.getType())) {
                     final BannerActionData bannerActionData = new BannerActionData();
                     final Banner banner = (Banner) state;
                     bannerActionData.patterns = new HashMap<>();
@@ -140,6 +145,16 @@ public class BlockAction extends GenericAction {
                     banner.getPatterns().forEach(pattern ->
                             bannerActionData.patterns.put(pattern.getPattern().name(), pattern.getColor().name()));
                     actionData = bannerActionData;
+                } else if (Tag.SHULKER_BOXES.isTagged(state.getType())) {
+                    InventoryHolder box = (InventoryHolder) state;
+                    ShulkerActionData shulkerActionData = new ShulkerActionData();
+                    box.getInventory().forEach(itemStack -> {
+                        if (itemStack != null && itemStack.getType() != AIR) {
+                            ItemStackSerializer serializer = ItemStackSerializer.createItemStackSerialized(itemStack);
+                            shulkerActionData.items.add(serializer);
+                        }
+                    });
+                    actionData = shulkerActionData;
                 }
                 break;
         }
@@ -169,25 +184,26 @@ public class BlockAction extends GenericAction {
 
     @Override
     public String serialize() {
-        return gson().toJson(actionData);
+        return SerializationHelper.gson().toJson(actionData);
     }
 
     @Override
     public void deserialize(String data) {
         if (data != null && data.startsWith("{")) {
             if (Tag.BANNERS.isTagged(getMaterial())) {
-                actionData = gson().fromJson(data, BannerActionData.class);
+                actionData = SerializationHelper.gson().fromJson(data, BannerActionData.class);
             } else if (getMaterial() == PLAYER_HEAD || getMaterial() == PLAYER_WALL_HEAD) {
-                actionData = gson().fromJson(data, SkullActionData.class);
+                actionData = SerializationHelper.gson().fromJson(data, SkullActionData.class);
             } else if (getMaterial() == SPAWNER) {
-                actionData = gson().fromJson(data, SpawnerActionData.class);
+                actionData = SerializationHelper.gson().fromJson(data, SpawnerActionData.class);
             } else if (Tag.SIGNS.isTagged(getMaterial())) {
-                actionData = gson().fromJson(data, SignActionData.class);
+                actionData = SerializationHelper.gson().fromJson(data, SignActionData.class);
             } else if (getMaterial() == COMMAND_BLOCK) {
-                actionData = new CommandActionData();
-                ((CommandActionData) actionData).command = data;
+                actionData = SerializationHelper.gson().fromJson(data,CommandActionData.class);
+            } else if (Tag.SHULKER_BOXES.isTagged(getMaterial())) {
+                actionData = SerializationHelper.gson().fromJson(data,ShulkerActionData.class);
             } else {
-                actionData = gson().fromJson(data, BlockActionData.class);
+                actionData = SerializationHelper.gson().fromJson(data, BlockActionData.class);
             }
         }
     }
@@ -226,7 +242,7 @@ public class BlockAction extends GenericAction {
         if (blockActionData.customName != null) {
             name += ChatColor.RESET + " (" + blockActionData.customName + ChatColor.RESET + ") ";
         }
-        if (getActionType().getName().equals("crop-trample") && getMaterial() == AIR) {
+        if (getAction().getName().equals("crop-trample") && getMaterial() == AIR) {
             return "empty soil";
         }
         return name;
@@ -234,7 +250,7 @@ public class BlockAction extends GenericAction {
 
     @Override
     public String getCustomDesc() {
-        if (getActionType().getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
+        if (getAction().getName().equals("water-bucket") && getBlockData() instanceof Waterlogged) {
             return "waterlogged";
         }
 
@@ -244,7 +260,7 @@ public class BlockAction extends GenericAction {
     @Override
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        if (getActionType().doesCreateBlock()) {
+        if (getAction().doesCreateBlock()) {
             return removeBlock(player, parameters, isPreview, block);
         } else {
             return placeBlock(player, parameters, isPreview, block, false);
@@ -254,7 +270,7 @@ public class BlockAction extends GenericAction {
     @Override
     public ChangeResult applyRestore(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        if (getActionType().doesCreateBlock()) {
+        if (getAction().doesCreateBlock()) {
             return placeBlock(player, parameters, isPreview, block, false);
         } else {
             return removeBlock(player, parameters, isPreview, block);
@@ -286,18 +302,19 @@ public class BlockAction extends GenericAction {
         // Ensure block action is allowed to place a block here.
         // (essentially liquid/air).
 
-        final boolean cancelIfBadPlace = !getActionType().requiresHandler(BlockChangeAction.class)
-                && !getActionType().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flag.OVERWRITE);
+        final boolean cancelIfBadPlace = !getAction().requiresHandler(BlockChangeAction.class)
+                && !getAction().requiresHandler(PrismRollbackAction.class) && !parameters.hasFlag(Flags.OVERWRITE);
 
         if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(block.getType())) {
-            Prism.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
+            PrismLogHandler.debug("Block skipped due to being unacceptable for block place: " + block.getType().name());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
 
         // On the blacklist (except an undo)
         if ((Prism.getIllegalBlocks().contains(getMaterial())
-                && !parameters.getProcessType().equals(PrismProcessType.UNDO)) && !parameters.hasFlag(Flag.OVERWRITE)) {
-            Prism.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
+                && !parameters.getProcessType().equals(PrismProcessType.UNDO))
+                && !parameters.hasFlag(Flags.OVERWRITE)) {
+            PrismLogHandler.debug("Block skipped because it's not allowed to be placed unless its an UNDO: "
                     + getMaterial().toString());
             return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
         }
@@ -377,6 +394,9 @@ public class BlockAction extends GenericAction {
                     && blockActionData instanceof SkullActionData) {
                 return handleSkulls(block, blockActionData, originalBlock);
             }
+            if (Tag.SHULKER_BOXES.isTagged(getMaterial()) && blockActionData instanceof ShulkerActionData) {
+                return handleShulkers(block, (ShulkerActionData) blockActionData,originalBlock);
+            }
             if (Tag.BANNERS.isTagged(getMaterial()) && blockActionData instanceof BannerActionData) {
                 return handleBanners(block, blockActionData, originalBlock);
             }
@@ -419,7 +439,7 @@ public class BlockAction extends GenericAction {
                 }
             }
         } else {
-            Prism.debug("BlockAction Data was null with " + parameters.toString());
+            PrismLogHandler.debug("BlockAction Data was null with " + parameters.toString());
         }
         // -----------------------------
         // Sibling logic marker
@@ -432,7 +452,7 @@ public class BlockAction extends GenericAction {
             sibling = block.getRelative(BlockFace.DOWN).getState();
 
             if (cancelIfBadPlace && !MaterialTag.SOIL_CANDIDATES.isTagged(sibling.getType())) {
-                Prism.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
+                PrismLogHandler.debug(parameters.getProcessType().name() + " skipped due to lack of soil for "
                         + getMaterial().name());
                 return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
@@ -447,7 +467,8 @@ public class BlockAction extends GenericAction {
                 sibling = s.getState();
 
                 if (cancelIfBadPlace && !Utilities.isAcceptableForBlockPlace(sibling.getType())) {
-                    Prism.debug(parameters.getProcessType().name() + " skipped due to lack of wrong sibling type for "
+                    PrismLogHandler.debug(parameters.getProcessType().name()
+                            + " skipped due to lack of wrong sibling type for "
                             + getMaterial().name());
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
@@ -468,7 +489,7 @@ public class BlockAction extends GenericAction {
             }
         }
 
-        boolean physics = !parameters.hasFlag(Flag.NO_PHYS);
+        boolean physics = !parameters.hasFlag(Flags.NO_PHYS);
 
         newState.update(true, physics);
 
@@ -476,6 +497,21 @@ public class BlockAction extends GenericAction {
             sibling.update(true, physics);
         }
         return new ChangeResultImpl(ChangeResultType.APPLIED, new BlockStateChangeImpl(originalBlock, state));
+    }
+
+    private ChangeResultImpl handleShulkers(Block block, ShulkerActionData blockActionData, BlockState originalBlock) {
+        block.setType(getMaterial());
+        ShulkerBox state = (ShulkerBox) block.getState();
+        if (blockActionData.items.size() > 0) {
+            blockActionData.items.forEach(itemStackSerializer -> {
+                if (itemStackSerializer != null) {
+                    state.getInventory().addItem(itemStackSerializer.toBukkit());
+                }
+            });
+        }
+        state.update();
+        return new ChangeResultImpl(ChangeResultType.APPLIED,new BlockStateChangeImpl(originalBlock,state));
+
     }
 
     private ChangeResultImpl handleBanners(Block block, BlockActionData blockActionData, BlockState originalBlock) {
@@ -538,7 +574,7 @@ public class BlockAction extends GenericAction {
             // Ensure it's acceptable to remove the current block
             if (!Utilities.isAcceptableForBlockPlace(block.getType())
                     && !Utilities.areBlockIdsSameCoreItem(block.getType(), getMaterial())
-                    && !parameters.hasFlag(Flag.OVERWRITE)) {
+                    && !parameters.hasFlag(Flags.OVERWRITE)) {
                 return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
             }
             // Capture the block before we change it
@@ -641,6 +677,10 @@ public class BlockAction extends GenericAction {
 
     public static class BannerActionData extends RotatableActionData {
         Map<String, String> patterns;
+    }
+
+    public static class ShulkerActionData extends BlockActionData {
+        final Collection<ItemStackSerializer> items = new ArrayList<>();
     }
 
 }

@@ -1,7 +1,6 @@
 package me.botsko.prism.utils;
 
 import com.sk89q.worldedit.util.formatting.text.serializer.plain.PlainComponentSerializer;
-import me.botsko.prism.Prism;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -93,7 +92,7 @@ public class TypeUtils {
             }
         }
         if (hex.length() != 7 && !hex.startsWith("#")) {
-            Prism.log("Could not decode as hex:" + hex);
+            me.botsko.prism.PrismLogHandler.log("Could not decode as hex:" + hex);
             TextColor color = NamedTextColor.NAMES.value(hex);
             if (color != null) {
                 return color;
@@ -125,7 +124,7 @@ public class TypeUtils {
      * @param delimiter String
      * @return String
      */
-    public static String join(Collection<String> s, String delimiter) {
+    public static String join(Iterable<String> s, String delimiter) {
         StringBuilder buffer = new StringBuilder();
         Iterator<?> iter = s.iterator();
         while (iter.hasNext()) {
