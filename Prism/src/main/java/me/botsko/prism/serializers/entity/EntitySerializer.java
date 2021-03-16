@@ -24,16 +24,15 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class EntitySerializer<T extends Entity> implements EntitySerializerInterface<T> {
     protected static final transient String NAME_FORMAT = Il8nHelper.getRawMessage("entity-name-format");
-    //@todo remove alternates after 2.1.7 release
     protected Boolean isAdult = null;
     protected Boolean sitting = null;
-    @SerializedName(value = "entityName", alternate = "entity_name")
+    @SerializedName(value = "entityName")
     protected String entityName = null;
     @SerializedName(value = "equipment")
     protected final Map<String, ItemStackSerializer> equipment = new HashMap<>();
-    @SerializedName(value = "customName", alternate = "custom_name")
+    @SerializedName(value = "customName")
     protected String customName = null;
-    @SerializedName(value = "customDesc", alternate = "custom_desc")
+    @SerializedName(value = "customDesc")
     protected String customDesc = null;
 
     public final String getEntityName() {
@@ -128,8 +127,7 @@ public class EntitySerializer<T extends Entity> implements EntitySerializerInter
 
     @Override
     public String toString() {
-        String format = NAME_FORMAT;
-        return format(format);
+        return format(NAME_FORMAT);
     }
 
     protected String format(String format) {

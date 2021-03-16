@@ -345,7 +345,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
-        taskManager = new TaskManager(Bukkit.getScheduler(),this);
+        taskManager = new TaskManager(Bukkit.getScheduler(), this);
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
         PrismLogHandler.log("Initializing Prism " + pluginVersion
@@ -355,7 +355,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         if (isPaper) {
             PrismLogHandler.log("Optional Paper Events will be enabled.");
         } else {
-                PrismLogHandler.log("Paper not detected - Optional Paper Events will NOT be enabled.");
+            PrismLogHandler.log("Paper not detected - Optional Paper Events will NOT be enabled.");
         }
         checkPluginDependencies();
         if (config.pasteConfig.enabled) {
@@ -386,7 +386,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             prismDataSource = PrismDatabaseFactory.createDataSource(configHandler.getDataSourceConfig());
             if (prismDataSource != null) {
                 StringBuilder builder = new StringBuilder();
-                if  (!prismDataSource.reportDataSource(builder,true)) {
+                if (!prismDataSource.reportDataSource(builder, true)) {
                     notifyDisabled();
                     Bukkit.getScheduler().runTask(instance, () -> instance.enableFailedDatabase());
                     updating.cancel();
@@ -541,7 +541,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 items.initMaterials(Material.DIRT);
             }
             Bukkit.getScheduler().runTaskAsynchronously(instance,
-                  () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
+                    () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
         saveConfig();
 
@@ -561,12 +561,12 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     public void loadConfig() {
         configHandler = new ConfigHandler();
-        Path path = Paths.get(getDataFolder().getPath(),"config.yml");
+        Path path = Paths.get(getDataFolder().getPath(), "config.yml");
         configHandler.loadConfiguration(path);
         try {
             PrismDatabaseFactory.createDefaultConfig(configHandler.getDataSourceConfig());
         } catch (SerializationException e) {
-            PrismLogHandler.warn("Error creating database config",e);
+            PrismLogHandler.warn("Error creating database config", e);
         }
         config = configHandler.getConfig();
         // Cache config arrays we check constantly

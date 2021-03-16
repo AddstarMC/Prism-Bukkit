@@ -107,7 +107,7 @@ public class ApiHandler {
     }
 
     static boolean disable() {
-        return disableDripReporterHook() && disableDripReporterHook();
+        return disableDripReporterHook() && disableWorldEditHook();
     }
 
 }
