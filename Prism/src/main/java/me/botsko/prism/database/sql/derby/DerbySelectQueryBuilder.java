@@ -27,19 +27,22 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
         String query = "";
         query += "SELECT ";
         if (shouldGroup) {
-            query += "r.id as id,r.epoch as epoch,r.action_id as action_id,r.player as player,"
-                    + "r.world_id as world_id,r.x as x,r.y as y,r.z as z,r.block_id as block_id,"
-                    + "r.block_subid as block_subid,r.old_block_id as old_block_id,"
-                    + "r.old_block_subid as old_block_subid,ex.DATA as data,r.uuid as uuid,"
-                    + "r.counted as counted FROM (SELECT MIN(id) id,MIN(epoch) epoch,"
-                    + "MIN(action_id) AS action_id,MIN(player) player,MIN(world_id) world_id,"
-                    + "AVG(x) as x,AVG(y) as y,AVG(z) as z,MIN(block_id) AS block_id, "
-                    + "MIN(block_subid) AS block_subid,MIN(old_block_id) AS old_block_id,"
-                    + "MIN(old_block_subid) AS old_block_subid,MIN(player_uuid) AS uuid,"
-                    + "COUNT(*) AS counted,DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, " + tableNameData
-                    + ".epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) }) as epochDate "
-                    + "FROM " + tableNameData + " INNER JOIN " + prefix
-                    + "players p ON p.player_id = " + tableNameData + ".player_id";
+            columns.add("MIN(id) AS id");
+            columns.add("MIN(epoch) AS epoch");
+            columns.add("MIN(action_id) AS action_id");
+            columns.add("MIN(player) AS player");
+            columns.add("MIN(world_id) AS world_id");
+            columns.add("AVG(x) as x");
+            columns.add("AVG(y) AS y");
+            columns.add("AVG(z) AS z");
+            columns.add("MIN(block_id) AS block_id");
+            columns.add("MIN(block_subid) AS block_subid");
+            columns.add("MIN(old_block_id) AS old_block_id");
+            columns.add("MIN(old_block_subid) AS old_block_subid");
+            columns.add("MIN(data) AS data");
+            columns.add("MIN(player_uuid) AS uuid");
+            columns.add("COUNT(*) AS counted");
+            columns.add("MIN(DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) })) AS epochdate");
         } else {
             columns.add("id");
             columns.add("epoch");
@@ -55,11 +58,19 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
             columns.add("old_block_subid");
             columns.add("data");
             columns.add("player_uuid AS uuid");
-            query += TypeUtils.join(columns, ", ");
-            query += " FROM " + tableNameData + " ";
-            query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
-            query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
         }
+
+        // Append all columns
+        if (columns.size() > 0) {
+            query += TypeUtils.join(columns, ", ");
+        }
+
+        // From
+        query += " FROM " + tableNameData + " ";
+
+        // Joins
+        query += "INNER JOIN " + prefix + "players p ON p.player_id = " + tableNameData + ".player_id ";
+        query += "LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = " + tableNameData + ".id ";
 
         return query;
 
@@ -69,7 +80,7 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
     protected String group() {
         if (shouldGroup) {
             return " GROUP BY " + tableNameData + ".action_id, " + tableNameData + ".player_id, " + tableNameData
-                    + ".block_id, DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, " + tableNameData
+                    + ".block_id, ex.data, DATE({fn TIMESTAMPADD(SQL_TSI_SECOND, " + tableNameData
                     + ".epoch, TIMESTAMP('1970-01-01-00.00.00.000000')) })";
         }
         return "";
@@ -78,32 +89,15 @@ public class DerbySelectQueryBuilder extends SqlSelectQueryBuilder {
     @Override
     protected String limit() {
         if (parameters == null) {
-            if (shouldGroup) {
-                return ") as r LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = r.id";
-            } else {
-                return "";
-            }
+            return "";
         }
         if (parameters.getProcessType().equals(PrismProcessType.LOOKUP)) {
             final int limit = parameters.getLimit();
             if (limit > 0) {
-                if (shouldGroup) {
-                    return " FETCH NEXT " + limit + " ROWS ONLY) as r LEFT JOIN "
-                            + tableNameDataExtra + " ex ON ex.data_id = r.id";
-                } else {
-                    return " FETCH NEXT " + limit + " ROWS ONLY";
-                }
-            } else {
-                if (shouldGroup) {
-                    return ") as r LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = r.id";
-                }
+                return " FETCH NEXT " + limit + " ROWS ONLY";
             }
         }
-        if (shouldGroup) {
-            return ") as r LEFT JOIN " + tableNameDataExtra + " ex ON ex.data_id = r.id";
-        } else {
-            return "";
-        }
+        return "";
     }
 
 }

@@ -6,22 +6,15 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistry;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSourceUpdater;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.*;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.PrismHikariDataSource;
 import org.spongepowered.configurate.ConfigurationNode;
+
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -195,8 +188,8 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
                   + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
                   + "data_id bigint NOT NULL CONSTRAINT " + prefix
                   + "data_extra_ibfk_1 REFERENCES " + prefix + "data" + " (id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-                  + "data long varchar,"
-                  + "te_data long varchar"
+                  + "data varchar(32000), "
+                  + "te_data varchar(32000)"
                   + ")";
             st.executeUpdate(query);
             return true;
