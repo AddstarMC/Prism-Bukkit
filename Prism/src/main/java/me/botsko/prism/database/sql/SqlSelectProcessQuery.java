@@ -103,7 +103,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                 PreparedStatement s = conn.prepareStatement(query);
                 ResultSet rs = s.executeQuery()
         ) {
-            if (rs.first()) {
+            if (rs.next()) {
                 process = new PrismProcessAction();
                 // Set all shared values
                 process.setId(rs.getLong("id"));
@@ -133,7 +133,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                     PreparedStatement s = conn.prepareStatement(query);
                     ResultSet rs = s.executeQuery()
             ) {
-                if (rs.first()) {
+                if (rs.next()) {
                     id = rs.getLong("id");
                 }
             } catch (SQLException e) {
