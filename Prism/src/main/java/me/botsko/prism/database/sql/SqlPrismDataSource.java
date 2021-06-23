@@ -182,7 +182,12 @@ public abstract class SqlPrismDataSource implements PrismDataSource {
             // extra prism data table (check if it exists first, so we can avoid
             // re-adding foreign key stuff)
             final DatabaseMetaData metadata = conn.getMetaData();
-            ResultSet resultSet = metadata.getTables(conn.getCatalog(), conn.getSchema(), prefix + "data_extra", new String[]{"TABLE"});
+            ResultSet resultSet = metadata.getTables(
+                    conn.getCatalog(),
+                    conn.getSchema(),
+                    prefix + "data_extra",
+                    new String[]{"TABLE"}
+            );
             if (!resultSet.next()) {
 
                 // extra data
