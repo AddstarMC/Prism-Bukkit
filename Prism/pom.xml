@@ -31,6 +31,7 @@
             <artifactId>Prism-Api</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+	<!-- Useless comment to test Codacy -->
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
