@@ -7,7 +7,6 @@ import me.botsko.prism.utils.block.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -80,11 +79,7 @@ public class PrismWorldEvents implements Listener {
                         // We have to do this because the database only records changes per second, not tick or instant,
                         // which can result in the fire being recorded after the nether portal blocks.
                         Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
-                            if (e instanceof Player) {
-                                RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, (Player) event.getEntity()));
-                            } else {
-                                RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, e.getName().toLowerCase()));
-                            }
+                            recordCreatePortal(event, type, newBlock, e, oldBlock);
                         }, 20);
                     }
                 }
@@ -100,21 +95,22 @@ public class PrismWorldEvents implements Listener {
                         // We have to do this because the database only records changes per second, not tick or instant,
                         // which can result in the fire being recorded after the nether portal blocks.
                         Bukkit.getScheduler().runTaskLater(Prism.getInstance(), () -> {
-                            if (e instanceof Player) {
-                                RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, (Player) event.getEntity()));
-                            } else {
-                                RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, e.getName().toLowerCase()));
-                            }
+                            recordCreatePortal(event, type, newBlock, e, oldBlock);
                         }, 20);
                     } else {
-                        if (e instanceof Player) {
-                            RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, (Player) event.getEntity()));
-                        } else {
-                            RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, e.getName().toLowerCase()));
-                        }
+                        recordCreatePortal(event, type, newBlock, e, oldBlock);
                     }
                 }
             }
+        }
+    }
+
+    private void recordCreatePortal(PortalCreateEvent event, String type, BlockState newBlock, Entity e,
+                                    BlockState oldBlock) {
+        if (e instanceof Player) {
+            RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, (Player) event.getEntity()));
+        } else {
+            RecordingQueue.addToQueue(ActionFactory.createPortal(type, newBlock, oldBlock, e.getName().toLowerCase()));
         }
     }
 }
