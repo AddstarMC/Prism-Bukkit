@@ -41,10 +41,12 @@ public class OreMonitor {
 
     /**
      * Process alerts.
-     * @param player Player
-     * @param block Block
+     *
+     * @param player    Player
+     * @param block     Block
+     * @param alertPerm Players with this permission will receive the alert
      */
-    public void processAlertsFromBlock(final Player player, final Block block) {
+    public void processAlertsFromBlock(final Player player, final Block block, final String alertPerm) {
 
         if (!plugin.getConfig().getBoolean("prism.alerts.ores.enabled")) {
             return;
@@ -63,23 +65,10 @@ public class OreMonitor {
             final ArrayList<Block> foundores = findNeighborBlocks(block.getType(), block, matchingBlocks);
             if (!foundores.isEmpty()) {
 
-                // Determine light level
-                int light = 0;
-                final BlockFace[] blockFaces =
-                        new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
-                              BlockFace.UP, BlockFace.DOWN};
-                for (BlockFace blockFace : blockFaces) {
-                    light = Math.max(light, block.getRelative(blockFace).getLightLevel());
-                    if (light >= 15) {
-                        break;
-                    }
-                }
-                light = light * 100 / 15;
-
                 // Create alert message
                 final String count = foundores.size() + (foundores.size() >= thresholdMax ? "+" : "");
                 final String msg = player.getName() + " found " + count + " "
-                        + getOreNiceName(block) + " " + light + "% light";
+                        + getOreNiceName(block) + " " + getLightLevel(block) + "% light";
                 final TextComponent component =
                         Component.text().content(msg)
                                 .color(getOreColor(block))
@@ -89,9 +78,7 @@ public class OreMonitor {
                                                         block.getType().getKey().toString()), 1)))
                                 .build();
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-                    // check if block placed
-                    boolean wasplaced = false;
-
+                    // Check if block placed
                     // Build params
                     final QueryParameters params = new QueryParameters();
                     params.setWorld(player.getWorld().getName());
@@ -100,19 +87,13 @@ public class OreMonitor {
 
                     final ActionsQuery aq = new ActionsQuery(plugin);
                     final QueryResult results = aq.lookup(params, player);
-                    if (!results.getActionResults().isEmpty()) {
-                        wasplaced = true;
-                    }
-
-                    if (!wasplaced) {
-                        // Alert staff
-                        plugin.alertPlayers(null, component);
-
+                    if (results.getActionResults().isEmpty()) {
+                        // Block was not placed - Alert staff
+                        plugin.alertPlayers(null, component, alertPerm);
                         // Log to console
                         if (plugin.getConfig().getBoolean("prism.alerts.ores.log-to-console")) {
                             Prism.log(PlainComponentSerializer.plain().serialize(component));
                         }
-
                         // Log to commands
                         List<String> commands = plugin.getConfig().getStringList("prism.alerts.ores.log-commands");
                         MiscUtils.dispatchAlert(msg, commands);
@@ -120,6 +101,26 @@ public class OreMonitor {
                 });
             }
         }
+    }
+
+    /**
+     * Get light level.
+     *
+     * @param block Block
+     * @return int
+     */
+    private int getLightLevel(Block block) {
+        int light = 0;
+        final BlockFace[] blockFaces =
+                new BlockFace[] {BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST,
+                      BlockFace.UP, BlockFace.DOWN};
+        for (BlockFace blockFace : blockFaces) {
+            light = Math.max(light, block.getRelative(blockFace).getLightLevel());
+            if (light >= 15) {
+                break;
+            }
+        }
+        return light * 100 / 15;
     }
 
     /**
