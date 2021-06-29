@@ -224,7 +224,7 @@ public class PrismConfig extends ConfigBase {
         config.addDefault("prism.alerts.ores.log-commands", Collections.singletonList("examplecommand <alert>"));
         // Ore blocks
         final Map<String, String> oreBlocks = new LinkedHashMap<>();
-        oreBlocks.put(Material.IRON_ORE.name().toLowerCase(), "#444444");
+        oreBlocks.put(Material.IRON_ORE.name().toLowerCase(), "#808080");
         oreBlocks.put(Material.GOLD_ORE.name().toLowerCase(), "#ffe17d");
         oreBlocks.put(Material.LAPIS_ORE.name().toLowerCase(), "#0670cc");
         oreBlocks.put(Material.DIAMOND_ORE.name().toLowerCase(), "#04babd");
@@ -255,6 +255,7 @@ public class PrismConfig extends ConfigBase {
 
         // Use Alerts
         config.addDefault("prism.alerts.uses.enabled", true);
+        config.addDefault("prism.alerts.uses.ignore-staff", false);
         config.addDefault("prism.alerts.uses.log-to-console", true);
         config.addDefault("prism.alerts.uses.log-commands", Collections.singletonList("examplecommand <alert>"));
         config.addDefault("prism.alerts.uses.lighter", true);

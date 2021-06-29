@@ -777,19 +777,20 @@ public class Prism extends JavaPlugin implements PrismApi {
     }
 
     /**
-     * Send an alert to a player.
+     * Send an alert to players.
      *
-     * @param msg String
+     * @param player    Player which caused the alert
+     * @param msg       Alert message
+     * @param alertPerm Players with this permission (or prism.alerts) will receive the alert
      */
-    public void alertPlayers(Player player, Component msg) {
+    public void alertPlayers(Player player, Component msg, String alertPerm) {
         for (final Player p : getServer().getOnlinePlayers()) {
-            if (!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self")) {
-                if (p.hasPermission("prism.alerts")) {
-                    TextComponent prefix = Il8nHelper.getMessage("alert-prefix")
+            if ((!p.equals(player) || getConfig().getBoolean("prism.alerts.alert-player-about-self"))
+                  && (p.hasPermission("prism.alerts") || (alertPerm != null && p.hasPermission(alertPerm)))) {
+                TextComponent prefix = Il8nHelper.getMessage("alert-prefix")
                             .color(NamedTextColor.RED)
                             .append(msg);
-                    audiences.player(p).sendMessage(Identity.nil(), prefix);
-                }
+                audiences.player(p).sendMessage(Identity.nil(), prefix);
             }
         }
     }

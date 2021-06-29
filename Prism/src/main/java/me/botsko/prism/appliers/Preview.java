@@ -160,7 +160,7 @@ public class Preview implements Previewable {
                                     .replace("<processType>", processType.name().toLowerCase())
                                     .replace("<originalCommand>", parameters.getOriginalCommand(),
                                             Style.style(NamedTextColor.GRAY))
-                                    .build().colorIfAbsent(NamedTextColor.WHITE));
+                                    .build().colorIfAbsent(NamedTextColor.WHITE), null);
                         }
                     }
                 }
