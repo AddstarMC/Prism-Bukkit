@@ -68,6 +68,9 @@ public class VehicleAction extends GenericAction {
     public ChangeResult applyRollback(Player player, PrismParameters parameters, boolean isPreview) {
         Entity vehicle = null;
         switch (vehicleName) {
+            case "command block minecart":
+                vehicle = getWorld().spawn(getLoc(), CommandMinecart.class);
+                break;
             case "powered minecart":
                 vehicle = getWorld().spawn(getLoc(), PoweredMinecart.class);
                 break;
