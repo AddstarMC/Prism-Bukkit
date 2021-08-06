@@ -91,7 +91,7 @@ public class InspectorWand extends QueryWandBase {
                 final String blockname = Prism.getItems().getAlias(block.getType(), block.getBlockData());
                 Prism.messenger.sendMessage(player,
                         Prism.messenger.playerHeaderMsg(ReplaceableTextComponent.builder("inspector-wand-header")
-                                .replace("<block>",blockname)
+                                .replace("<blockname>",blockname)
                                 .replace("<x>",loc.getBlockX())
                                 .replace("<y>",loc.getBlockY())
                                 .replace("<z>",loc.getBlockY())
