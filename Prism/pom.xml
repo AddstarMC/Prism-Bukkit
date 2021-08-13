@@ -16,7 +16,7 @@
         <test.mysql.user>prism</test.mysql.user>
         <test.mysql.password>prism</test.mysql.password>
         <test.mysql.database>prism</test.mysql.database>
-        <adventure.version>4.5.0</adventure.version>
+        <adventure.version>4.8.1</adventure.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.4.3</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.kitteh</groupId>

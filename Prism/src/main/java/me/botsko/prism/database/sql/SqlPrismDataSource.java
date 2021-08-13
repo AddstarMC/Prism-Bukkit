@@ -73,7 +73,6 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
     }
 
     @Override
-
     public String getPrefix() {
         return prefix;
     }
