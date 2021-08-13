@@ -61,7 +61,7 @@ public class SqlSelectIdQueryBuilder extends SqlSelectQueryBuilder implements Se
                         ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
                 ResultSet rs = s.executeQuery()
         ) {
-            if (rs.first()) {
+            if (rs.next()) {
                 id1 = rs.getLong(1);
                 if (pair) {
                     id2 = rs.getLong(2);

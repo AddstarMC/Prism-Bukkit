@@ -4,7 +4,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.database.ActionReportQuery;
 import me.botsko.prism.database.BlockReportQuery;
@@ -73,7 +73,6 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
     }
 
     @Override
-
     public String getPrefix() {
         return prefix;
     }
@@ -159,7 +158,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
      */
     public void addActionName(ActionType action) {
 
-        if (ActionRegistry.prismActions.containsKey(action)) {
+        if (ActionRegistryImpl.prismActions.containsKey(action)) {
             return;
         }
         PrismLogHandler.log(action.name + " not found in cache - inserting.");
@@ -175,7 +174,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
 
                 PrismLogHandler.log("Registering new action type to the database/cache: "
                         + action.name + " " + rs.getInt(1));
-                ActionRegistry.prismActions.put(action, rs.getInt(1));
+                ActionRegistryImpl.prismActions.put(action, rs.getInt(1));
             } else {
                 throw new SQLDataException("Insert statement failed - no generated key obtained.");
             }
@@ -201,10 +200,10 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
                     PrismLogHandler.debug("Loaded " + rs.getString(2) + ", id:" + rs.getInt(1));
                     ActionType type = ActionType.getByName(rs.getString(2));
                     if (type != null) {
-                        ActionRegistry.prismActions.put(type, rs.getInt(1));
+                        ActionRegistryImpl.prismActions.put(type, rs.getInt(1));
                     }
                 }
-                PrismLogHandler.debug("Loaded " + ActionRegistry.prismActions.size() + " actions into the cache.");
+                PrismLogHandler.debug("Loaded " + ActionRegistryImpl.prismActions.size() + " actions into the cache.");
             } catch (SQLException e) {
                 PrismLogHandler.warn(e.getMessage(),e);
             }

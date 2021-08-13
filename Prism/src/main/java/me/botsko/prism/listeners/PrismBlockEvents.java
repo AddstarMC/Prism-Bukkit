@@ -195,7 +195,7 @@ public class PrismBlockEvents extends BaseListener {
 
         // Run ore find alerts
         if (!player.hasPermission("prism.alerts.ores.ignore") && !player.hasPermission("prism.alerts.ignore")) {
-            plugin.oreMonitor.processAlertsFromBlock(player, block);
+            plugin.oreMonitor.processAlertsFromBlock(player, block, "prism.alerts.ores");
         }
 
         if (!Prism.getIgnore().event(ActionType.BLOCK_BREAK, player)) {
@@ -237,7 +237,7 @@ public class PrismBlockEvents extends BaseListener {
         // Pass to the break alerter
         if (!player.hasPermission("prism.alerts.use.break.ignore")
                 && !player.hasPermission("prism.alerts.ignore")) {
-            plugin.useMonitor.alertOnBlockBreak(player, event.getBlock());
+            plugin.useMonitor.alertOnBlockBreak(player, event.getBlock(), "prism.alerts.use.break");
         }
     }
 
@@ -268,7 +268,7 @@ public class PrismBlockEvents extends BaseListener {
         // Pass to the placement alerter
         if (!player.hasPermission("prism.alerts.use.place.ignore")
                 && !player.hasPermission("prism.alerts.ignore")) {
-            plugin.useMonitor.alertOnBlockPlacement(player, block);
+            plugin.useMonitor.alertOnBlockPlacement(player, block, "prism.alerts.use.place");
         }
     }
 
@@ -464,7 +464,7 @@ public class PrismBlockEvents extends BaseListener {
                         && plugin.config.alertConfig.uses.lighter
                         && !player.hasPermission("prism.alerts.use.lighter.ignore")
                         && !player.hasPermission("prism.alerts.ignore")) {
-                    plugin.useMonitor.alertOnItemUse(player, "used a " + cause.name);
+                    plugin.useMonitor.alertOnItemUse(player, "used a " + cause.name, "prism.alerts.use.lighter");
                 }
             }
 
@@ -504,7 +504,7 @@ public class PrismBlockEvents extends BaseListener {
                 final Location loc = pl.getLocation();
                 if (loc.getBlockX() == noPlayer.getX() && loc.getBlockY() == noPlayer.getY()
                         && loc.getBlockZ() == noPlayer.getZ()) {
-                    plugin.useMonitor.alertOnVanillaXray(pl, "possibly used a vanilla piston/xray trick");
+                    plugin.useMonitor.alertOnVanillaXray(pl, "possibly used a vanilla piston/xray trick", null);
                     break;
                 }
             }

@@ -1,18 +1,14 @@
 package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.actionlibs.ActionsQuery;
-import me.botsko.prism.actionlibs.HandlerRegistry;
-import me.botsko.prism.actionlibs.Ignore;
-import me.botsko.prism.actionlibs.QueryParameters;
-import me.botsko.prism.actionlibs.QueryResult;
-import me.botsko.prism.actionlibs.QueueDrain;
+import me.botsko.prism.actionlibs.*;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.Result;
+import me.botsko.prism.api.actions.ActionRegistry;
 import me.botsko.prism.api.actions.ActionType;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.appliers.PreviewSession;
 import me.botsko.prism.commands.PrismCommands;
 import me.botsko.prism.commands.WhatCommand;
@@ -52,7 +48,6 @@ import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.settings.Settings;
 import me.botsko.prism.utils.MaterialAliases;
 import me.botsko.prism.wands.Wand;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -105,7 +100,7 @@ public class Prism extends JavaPlugin implements PrismApi {
     protected PrismDataSource<?> prismDataSource = null;
     protected static String pluginName;
     protected static String pasteKey;
-    protected static ActionRegistry actionRegistry;
+    protected static ActionRegistryImpl actionRegistry;
     protected static HandlerRegistry handlerRegistry;
     protected static Prism instance;
     protected static boolean debug = false;
@@ -201,7 +196,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         }
     }
 
-    public PrismDataSource getPrismDataSource() {
+    public PrismDataSource<?> getPrismDataSource() {
         return this.prismDataSource;
     }
 
@@ -254,12 +249,26 @@ public class Prism extends JavaPlugin implements PrismApi {
         return items;
     }
 
+    @Override
+    public ActionRegistry getActionRegistry() {
+        return Prism.getActionRegistryImpl();
+    }
+
+    @Override
+    public void handleCustomAction(Handler handler) {
+        if (handler.getAction().getActionType() == ActionType.CUSTOM_ACTION) {
+            if (actionRegistry.getCustomAction(handler.getAction().getName()) != null) {
+                RecordingQueue.addToQueue(handler);
+            }
+        }
+    }
+
     /**
      * Get the Action Registry.
      *
-     * @return ActionRegistry
+     * @return ActionRegistryImpl
      */
-    public static ActionRegistry getActionRegistry() {
+    public static ActionRegistryImpl getActionRegistryImpl() {
         return actionRegistry;
     }
 
@@ -401,7 +410,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             Settings.setDataSource(prismDataSource);
             // Info needed for setup, init these here
             handlerRegistry = new HandlerRegistry();
-            actionRegistry = new ActionRegistry();
+            actionRegistry = new ActionRegistryImpl();
             playerIdentifier = new PlayerIdentification(Prism.getInstance().getPrismDataSource());
 
             // Setup databases
@@ -541,7 +550,7 @@ public class Prism extends JavaPlugin implements PrismApi {
                 items.initMaterials(Material.DIRT);
             }
             Bukkit.getScheduler().runTaskAsynchronously(instance,
-                    () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
+                  () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
         saveConfig();
 
@@ -670,19 +679,18 @@ public class Prism extends JavaPlugin implements PrismApi {
     }
 
     /**
-     * Send an alert to a player.
+     * Send an alert to players.
      *
-     * @param msg String
+     * @param player    Player which caused the alert
+     * @param msg       Alert message
+     * @param alertPerm Players with this permission (or prism.alerts) will receive the alert
      */
-    public void alertPlayers(Player player, Component msg) {
+    public void alertPlayers(Player player, Component msg, String alertPerm) {
         for (final Player p : getServer().getOnlinePlayers()) {
-            if (!p.equals(player) || config.alertConfig.alertPlayerAboutSelf) {
-                if (p.hasPermission("prism.alerts")) {
-                    TextComponent prefix = Il8nHelper.getMessage("alert-prefix")
-                            .color(NamedTextColor.RED)
-                            .append(msg);
-                    audiences.player(p).sendMessage(Identity.nil(), prefix);
-                }
+            if ((!p.equals(player) || config.alertConfig.alertPlayerAboutSelf)
+                    && (p.hasPermission("prism.alerts") || (alertPerm != null && p.hasPermission(alertPerm)))) {
+                TextComponent message = Il8nHelper.getMessage("alert-prefix").color(NamedTextColor.RED).append(msg);
+                Prism.messenger.sendMessage(p,message);
             }
         }
     }

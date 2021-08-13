@@ -1,6 +1,6 @@
 package me.botsko.prism.database.sql;
 
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.api.actions.ActionType;
@@ -55,7 +55,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
     protected String where() {
         if (getLastID) {
             //bit hacky here we are using the id parameter which should generally refer to a player.
-            final int action_id = ActionRegistry.prismActions.get(ActionType.PRISM_PROCESS);
+            final int action_id = ActionRegistryImpl.prismActions.get(ActionType.PRISM_PROCESS);
             String playerName = parameters.getKeyword();
             return "WHERE action_id = " + action_id + " AND p.player = " + playerName;
         }
@@ -103,7 +103,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                 PreparedStatement s = conn.prepareStatement(query);
                 ResultSet rs = s.executeQuery()
         ) {
-            if (rs.first()) {
+            if (rs.next()) {
                 process = new PrismProcessAction();
                 // Set all shared values
                 process.setId(rs.getLong("id"));
@@ -137,7 +137,7 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                     PreparedStatement s = conn.prepareStatement(query);
                     ResultSet rs = s.executeQuery()
             ) {
-                if (rs.first()) {
+                if (rs.next()) {
                     id = rs.getLong("id");
                 }
             } catch (SQLException e) {

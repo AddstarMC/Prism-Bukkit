@@ -2,7 +2,7 @@ package me.botsko.prism.database.sql;
 
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.database.InsertQuery;
 import me.botsko.prism.database.PrismDataSource;
@@ -47,8 +47,8 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
     }
 
     private int getActionId(Handler a) {
-        if (ActionRegistry.prismActions.containsKey(a.getAction().getActionType())) {
-            return ActionRegistry.prismActions.get(a.getAction().getActionType());
+        if (ActionRegistryImpl.prismActions.containsKey(a.getAction().getActionType())) {
+            return ActionRegistryImpl.prismActions.get(a.getAction().getActionType());
         }
         return 0;
     }

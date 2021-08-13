@@ -2,6 +2,7 @@ package me.botsko.prism.actionlibs;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actions.BlockAction;
 import me.botsko.prism.actions.BlockChangeAction;
 import me.botsko.prism.actions.BlockShiftAction;
@@ -17,14 +18,20 @@ import me.botsko.prism.actions.PrismRollbackAction;
 import me.botsko.prism.actions.SignAction;
 import me.botsko.prism.actions.UseAction;
 import me.botsko.prism.actions.VehicleAction;
+import me.botsko.prism.api.actions.Action;
+import me.botsko.prism.api.actions.ActionRegistry;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.exceptions.InvalidActionException;
 import me.botsko.prism.utils.TypeUtils;
 import org.bukkit.plugin.Plugin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
@@ -45,6 +52,7 @@ import static me.botsko.prism.api.actions.ActionType.CONTAINER_ACCESS;
 import static me.botsko.prism.api.actions.ActionType.CRAFT_ITEM;
 import static me.botsko.prism.api.actions.ActionType.CREEPER_EXPLODE;
 import static me.botsko.prism.api.actions.ActionType.CROP_TRAMPLE;
+import static me.botsko.prism.api.actions.ActionType.CUSTOM_ACTION;
 import static me.botsko.prism.api.actions.ActionType.DRAGON_EAT;
 import static me.botsko.prism.api.actions.ActionType.ENCHANT_ITEM;
 import static me.botsko.prism.api.actions.ActionType.ENDERMAN_PICKUP;
@@ -109,47 +117,85 @@ import static me.botsko.prism.api.actions.ActionType.WATER_FLOW;
 import static me.botsko.prism.api.actions.ActionType.WORLD_EDIT;
 import static me.botsko.prism.api.actions.ActionType.XP_PICKUP;
 
-public class ActionRegistry {
+public class ActionRegistryImpl implements ActionRegistry {
 
     public static final HashMap<ActionType, Integer> prismActions = new HashMap<>();
-    private final TreeMap<ActionType, ActionImpl> registeredActions = new TreeMap<>();
+    private final TreeMap<ActionType, List<Action>> registeredActions = new TreeMap<>();
 
-    public ActionRegistry() {
+    private final Map<String,Action> customRegisteredActions = new HashMap<>();
+
+
+    public ActionRegistryImpl() {
         registerPrismDefaultActions();
     }
 
     /**
      * Register a new action type for event recording, lookups, etc.
      *
-     * @param action action.
+     * @param action ActionImpl.
      */
-    private void registerAction(ActionImpl action) {
-        registeredActions.put(action.getActionType(), action);
+    private void registerAction(Action action) {
+        List<Action> actions = registeredActions.get(action.getActionType());
+        if (actions == null) {
+            actions = Collections.singletonList(action);
+        } else {
+            actions.add(action);
+        }
+        registeredActions.put(action.getActionType(), actions);
     }
 
     /**
-     * Register a new action type for event recording, lookups, etc.  Actions must have a name with
+     * Register a new action for event recording, lookups, etc.  Actions must have a name with
      * 2 hyphens.  And the plugin must be on the allowed list of plugins.
      *
-     * @param actionType type
+     * @param apiPlugin Plugin
+     * @param action    Action
      * @throws InvalidActionException if action not allowed.
      */
     @SuppressWarnings("unused")
-    public void registerCustomAction(Plugin apiPlugin, ActionImpl actionType) throws InvalidActionException {
+    @Override
+    public void registerCustomAction(Plugin apiPlugin, Action action) throws InvalidActionException {
         final List<String> allowedPlugins = Prism.getInstance().config.trackingConfig.allowedPlugins;
         if (!allowedPlugins.contains(apiPlugin.getName())) {
             throw new InvalidActionException("Registering action type not allowed. Plugin '" + apiPlugin.getName()
                     + "' is not in list of allowed plugins.");
         }
-        if (TypeUtils.subStrOccurences(actionType.getName(), "-") != 2) {
-            throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.");
+        if (action.getActionType() != CUSTOM_ACTION) {
+            throw new InvalidActionException("Invalid action type. To register a new action you must assign it"
+                    + " the TYPE - CUSTOM_ACTION see help docs");
+
+
         }
-        Prism.getInstance().getPrismDataSource().addActionName(actionType.getActionType());
-        registeredActions.put(actionType.getActionType(), actionType);
+        if (TypeUtils.subStrOccurences(action.getName(), "-") != 2) {
+            throw new InvalidActionException("Invalid action type. Custom actions must contain two hyphens.=>"
+                    + action.getName());
+        }
+        String[] splitter = action.getName().split("-");
+        if (splitter[1].equalsIgnoreCase("custom") || splitter[2].equalsIgnoreCase("action")) {
+            throw new InvalidActionException("Invalid action type. Custom actions must start with custom-action-"
+                    + " followed by a unique name");
+        }
+
+        Prism.getInstance().getPrismDataSource().addActionName(action.getActionType());
+        List<Action> actions = registeredActions.get(action.getActionType());
+        if (actions == null) {
+            actions = Collections.singletonList(action);
+        } else {
+            for (Action a : actions) {
+                if (a.getName().equals(action.getName())) {
+                    throw new InvalidActionException("Invalid action type. Custom actions must have a unique name: "
+                            + action.getName());
+                }
+            }
+            actions.add(action);
+        }
+        registeredActions.put(action.getActionType(), actions);
+        customRegisteredActions.put(action.getName(),action);
     }
 
-    public TreeMap<ActionType, ActionImpl> getRegisteredAction() {
-        return registeredActions;
+    @Deprecated
+    public Map<ActionType, List<Action>> getRegisteredAction() {
+        return getRegisteredActions();
     }
 
     /**
@@ -160,17 +206,48 @@ public class ActionRegistry {
      * @deprecated use {@link this#getAction(ActionType)}
      */
     @Deprecated
-    public ActionImpl getAction(String name) {
+    public Action getAction(String name) {
         return getAction(ActionType.getByName(name));
     }
 
     /**
      * Get the Action for the type.
+     *
      * @param name ActionType
      * @return Action
      */
-    public ActionImpl getAction(ActionType name) {
-        return registeredActions.get(name);
+    public Action getAction(ActionType name) {
+        List<Action> actions = registeredActions.get(name);
+        if (actions == null) {
+            return null;
+        } else {
+            if (name == CUSTOM_ACTION) {
+                PrismLogHandler.warn("Call to ActionType using CUSTOM ACTION is unlikely"
+                        + "to return the correct action");
+            }
+            return actions.get(0);
+        }
+    }
+
+    @Override
+    @Nullable
+    public Action getCustomAction(@Nonnull String name) {
+        Action actions = customRegisteredActions.get(name);
+        if (actions == null) {
+            PrismLogHandler.warn("Custom action " + name + " not found");
+        }
+        return actions;
+    }
+
+    @Override
+    public Map<ActionType, List<Action>> getRegisteredActions() {
+        return registeredActions;
+    }
+
+    @Deprecated
+    @Override
+    public Action getActionByName(String name) {
+        return getAction(ActionType.getByName(name));
     }
 
     /**
@@ -179,39 +256,40 @@ public class ActionRegistry {
      * @param name to search by
      * @return {@code List<ActionType>}
      */
-    public ArrayList<ActionImpl> getActionsByShortName(String name) {
-        final ArrayList<ActionImpl> actions = new ArrayList<>();
+    public ArrayList<Action> getActionsByShortName(String name) {
+        final ArrayList<Action> actions = new ArrayList<>();
         List<ActionType> types = ActionType.getByShortName(name);
         for (ActionType type : types) {
-            actions.add(registeredActions.get(type));
+            actions.addAll(registeredActions.get(type));
         }
         return actions;
     }
 
     /**
      * Get the Actions by Action family name.
+     *
      * @param name String.
      * @return List
      */
-    public ArrayList<ActionImpl> getActionsByFamilyName(String name) {
-        final ArrayList<ActionImpl> actions = new ArrayList<>();
+    public ArrayList<Action> getActionsByFamilyName(String name) {
+        final ArrayList<Action> actions = new ArrayList<>();
         List<ActionType> types = ActionType.getByFamilyName(name);
         for (ActionType type : types) {
-            actions.add(registeredActions.get(type));
+            actions.addAll(registeredActions.get(type));
         }
         return actions;
     }
 
     /**
-     * List all.
+     * List all Action Types.
      *
      * @return list
      */
     public String[] listAll() {
         final String[] names = new String[registeredActions.size()];
         int i = 0;
-        for (final Entry<ActionType, ActionImpl> entry : registeredActions.entrySet()) {
-            names[i] = entry.getKey().toString();
+        for (final Entry<ActionType, List<Action>> entry : registeredActions.entrySet()) {
+            names[i] = entry.getKey().name();
             i++;
         }
         return names;
@@ -222,12 +300,14 @@ public class ActionRegistry {
      *
      * @return list
      */
-    @SuppressWarnings("unused")
     public ArrayList<String> listActionsThatAllowRollback() {
         final ArrayList<String> names = new ArrayList<>();
-        for (final Entry<ActionType, ActionImpl> entry : registeredActions.entrySet()) {
-            if (entry.getValue().canRollback()) {
-                names.add(entry.getKey().toString());
+        for (final Entry<ActionType, List<Action>> entry : registeredActions.entrySet()) {
+            if (entry.getValue() != null) {
+                entry.getValue().forEach(action -> {
+                    action.canRollback();
+                    names.add(action.getName());
+                });
             }
         }
         return names;
@@ -241,15 +321,17 @@ public class ActionRegistry {
     @SuppressWarnings("unused")
     public ArrayList<String> listActionsThatAllowRestore() {
         final ArrayList<String> names = new ArrayList<>();
-        for (final Entry<ActionType, ActionImpl> entry : registeredActions.entrySet()) {
-            if (entry.getValue().canRestore()) {
-                names.add(entry.getKey().toString());
+        for (final Entry<ActionType, List<Action>> entry : registeredActions.entrySet()) {
+            if (entry.getValue() != null) {
+                entry.getValue().forEach(action -> {
+                    action.canRestore();
+                    names.add(action.getName());
+                });
             }
         }
         return names;
     }
 
-    @SuppressWarnings("DuplicatedCode")
     private void registerPrismDefaultActions() {
 
         registerAction(new ActionImpl(BLOCK_BREAK, false, true, true,

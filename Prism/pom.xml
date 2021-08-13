@@ -16,7 +16,7 @@
         <test.mysql.user>prism</test.mysql.user>
         <test.mysql.password>prism</test.mysql.password>
         <test.mysql.database>prism</test.mysql.database>
-        <adventure.version>4.5.0</adventure.version>
+        <adventure.version>4.8.1</adventure.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -44,6 +44,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-api</artifactId>
+            <version>4.8.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.checkerframework</groupId>
@@ -65,6 +66,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-serializer-configurate4</artifactId>
+            <version>${adventure.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.spongepowered</groupId>
@@ -81,6 +83,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-plain</artifactId>
+            <version>${adventure.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -148,7 +151,7 @@
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.4.3</version>
+            <version>4.0.3</version>
         </dependency>
         <dependency>
             <groupId>org.kitteh</groupId>
@@ -167,12 +170,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>5.1.42</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <version>${derby.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -179,7 +179,7 @@ public abstract class GenericAction implements Handler {
      */
     @Deprecated
     public void setActionType(@NotNull String actionType) {
-        setAction(Prism.getActionRegistry().getAction(actionType));
+        setAction(Prism.getActionRegistryImpl().getActionByName(actionType));
     }
 
     /**
@@ -188,7 +188,7 @@ public abstract class GenericAction implements Handler {
      * @param actionType String
      */
     public void setActionType(@NotNull ActionType actionType) {
-        setAction(Prism.getActionRegistry().getAction(actionType));
+        setAction(Prism.getActionRegistryImpl().getAction(actionType));
     }
 
     /**

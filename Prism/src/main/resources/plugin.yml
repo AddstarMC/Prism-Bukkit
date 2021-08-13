@@ -55,6 +55,16 @@ permissions:
         default: op
     prism.alerts:
         default: op
+    prism.alerts.ores:
+        default: false
+    prism.alerts.use.place:
+        default: false
+    prism.alerts.use.break:
+        default: false
+    prism.alerts.use.lighter:
+        default: false
+    prism.alerts.use.lavabucket:
+        default: false
     prism.bypass-use-alerts:
         default: false
     prism.alerts.ores.ignore:

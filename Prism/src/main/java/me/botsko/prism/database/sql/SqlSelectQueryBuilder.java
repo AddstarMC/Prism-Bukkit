@@ -3,14 +3,10 @@ package me.botsko.prism.database.sql;
 import com.google.gson.JsonSyntaxException;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionImpl;
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actionlibs.RecordingManager;
-import me.botsko.prism.api.actions.ActionType;
-import me.botsko.prism.api.actions.Handler;
-import me.botsko.prism.api.actions.MatchRule;
-import me.botsko.prism.api.actions.PrismProcessType;
+import me.botsko.prism.api.actions.*;
 import me.botsko.prism.api.objects.MaterialState;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.QueryBuilder;
@@ -31,13 +27,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
@@ -163,10 +154,10 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
         // Build IDs for prism process actions
         final Collection<String> prismActionIds = new ArrayList<>();
-        for (final Entry<ActionType, Integer> entry : ActionRegistry.prismActions.entrySet()) {
+        for (final Entry<ActionType, Integer> entry : ActionRegistryImpl.prismActions.entrySet()) {
             if (entry.getKey().name.contains("prism")) {
                 containsPrismProcessType = true;
-                prismActionIds.add("" + ActionRegistry.prismActions.get(entry.getKey()));
+                prismActionIds.add("" + ActionRegistryImpl.prismActions.get(entry.getKey()));
             }
         }
 
@@ -176,7 +167,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             final Collection<String> includeIds = new ArrayList<>();
             final Collection<String> excludeIds = new ArrayList<>();
             for (final Entry<ActionType, MatchRule> entry : action_types.entrySet()) {
-                Integer id = ActionRegistry.prismActions.get(entry.getKey());
+                Integer id = ActionRegistryImpl.prismActions.get(entry.getKey());
                 if (id == null) {
                     // null id means the action isnt registered.
                     PrismLogHandler.debug("Ignoring" + entry.getKey() + " as Action not registered.");
@@ -507,19 +498,19 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                 int actionId = rs.getInt(3);
 
                 ActionType actionName = null;
-                for (final Entry<ActionType, Integer> entry : ActionRegistry.prismActions.entrySet()) {
+                for (final Entry<ActionType, Integer> entry : ActionRegistryImpl.prismActions.entrySet()) {
                     if (entry.getValue() == actionId) {
                         actionName = entry.getKey();
                     }
                 }
                 if (actionName == null) {
                     PrismLogHandler.warn("Record contains action ID that doesn't exist in cache: " + actionId
-                            + ", cacheSize=" + ActionRegistry.prismActions.size());
+                            + ", cacheSize=" + ActionRegistryImpl.prismActions.size());
                     continue;
                 }
 
                 // Get the action handler
-                final ActionImpl action = Prism.getActionRegistry().getAction(actionName);
+                final Action action = Prism.getActionRegistryImpl().getAction(actionName);
 
                 if (action == null) {
                     continue;

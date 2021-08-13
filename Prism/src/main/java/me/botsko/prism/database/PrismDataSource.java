@@ -1,6 +1,6 @@
 package me.botsko.prism.database;
 
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.ActionType;
 
 import javax.sql.DataSource;
@@ -32,7 +32,7 @@ public interface PrismDataSource<T extends PrismSqlConfig> {
 
     PrismDataSource<?> createDataSource();
 
-    void setupDatabase(ActionRegistry actionRegistry);
+    void setupDatabase(ActionRegistryImpl actionRegistry);
 
     Connection getConnection();
 

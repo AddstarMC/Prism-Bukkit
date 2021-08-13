@@ -14,7 +14,7 @@ public class ActionImpl implements Action {
     private final ActionType type;
 
     /**
-     * Create An ActionType. -  it cant be restored rolled back and doesnt create a block.
+     * Create An Action. -  it cant be restored rolled back and doesnt create a block.
      *
      * @param type            Name
      * @param handler         Handler
@@ -26,7 +26,7 @@ public class ActionImpl implements Action {
     }
 
     /**
-     * Create An ActionType.
+     * Create An Action.
      *
      * @param type            Name
      * @param doesCreateBlock true if creates a block
@@ -96,7 +96,7 @@ public class ActionImpl implements Action {
      * Get the Class family name.
      * @return String
      */
-    String getFamilyName() {
+    public String getFamilyName() {
         return this.getActionType().getFamilyName();
     }
 

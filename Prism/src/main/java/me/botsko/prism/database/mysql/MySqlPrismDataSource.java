@@ -6,7 +6,7 @@ import com.zaxxer.hikari.pool.HikariPool;
 import me.botsko.prism.ApiHandler;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.actionlibs.ActionRegistry;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
 import me.botsko.prism.database.IdMapQuery;
@@ -113,7 +113,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
      *
      * @param actionRegistry ActionReg.
      */
-    public void setupDatabase(ActionRegistry actionRegistry) {
+    public void setupDatabase(ActionRegistryImpl actionRegistry) {
         try (
                 Connection conn = getConnection();
                 Statement st = conn.createStatement()
