@@ -52,9 +52,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
         super(node);
         setConfig();
         nonStandardSql = config.useNonStandardSql;
-        detectNonStandardSql();
-        name = "mysql";
         setupDefaultProperties();
+
+        name = "mysql";
     }
 
     private static void setupDefaultProperties() {
@@ -184,14 +184,6 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
                     + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
             st.executeUpdate(query);
 
-            // actions
-            cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
-            // populate db
-            final ActionType[] actions = ActionType.values();
-            for (final ActionType a : actions) {
-                addActionName(a);
-            }
-
             // id map
             query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` (" + "`material` varchar(63) NOT NULL,"
                     + "`state` varchar(255) NOT NULL," + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
@@ -202,13 +194,20 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
             DatabaseMetaData meta = conn.getMetaData();
             ResultSet set = meta.getIndexInfo(null, null, prefix + "data", true, false);
             while (set.next()) {
-                String columnName = resultSet.getString("COLUMN_NAME");
+                String columnName = set.getString("COLUMN_NAME");
                 if ("player_id".equals(columnName)) {
-                    String indexName = resultSet.getString("INDEX_NAME");
+                    String indexName = set.getString("INDEX_NAME");
                     if ("player".equals(indexName)) {
                         setDatabaseSchemaVersion(8);
                     }
                 }
+            }
+            // actions
+            cacheActionPrimaryKeys(); // Pre-cache, so we know if we need to
+            // populate db
+            final ActionType[] actions = ActionType.values();
+            for (final ActionType a : actions) {
+                addActionName(a);
             }
         } catch (final SQLException e) {
             handleDataSourceException(e);
@@ -252,8 +251,9 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
         } else {
             PrismLogHandler.log("No metric recorder found to hook into Hikari.");
         }
-        try {
+     try {
             database = new HikariDataSource(dbConfig);
+            detectNonStandardSql();
             createSettingsQuery();
             return this;
         } catch (HikariPool.PoolInitializationException e) {
@@ -299,7 +299,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
         } catch (SQLNonTransientConnectionException e) {
             PrismLogHandler.warn(e.getMessage());
         } catch (SQLException e) {
-            PrismLogHandler.log("You are not able to use non standard Sql");
+            PrismLogHandler.log("You are not able to use non standard Sql - extended SQL available is MySQL based servers");
             if (nonStandardSql) {
                 PrismLogHandler.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");

@@ -18,11 +18,11 @@ public class MySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToIds() {
-        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=? AND state=? LIMIT 1;";
+        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=? AND state=? LIMIT 1";
     }
 
     protected  String getToAllIds() {
-        return "SELECT block_id, block_subid FROM" + prefix + "id_map WHERE material=?;";
+        return "SELECT block_id, block_subid FROM " + prefix + "id_map WHERE material=?";
     }
 
     protected  String getPartialToAllIds() {
@@ -30,7 +30,7 @@ public class MySqlIdMapQuery extends SqlIdMapQuery {
     }
 
     protected  String getToMat() {
-        return "SELECT material, state FROM " + prefix + "id_map WHERE block_id=? AND block_subid=? LIMIT 1;";
+        return "SELECT material, state FROM " + prefix + "id_map WHERE block_id=? AND block_subid=? LIMIT 1";
     }
 
     protected  String getMap() {

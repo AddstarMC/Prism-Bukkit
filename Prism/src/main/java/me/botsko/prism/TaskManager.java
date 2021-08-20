@@ -105,9 +105,15 @@ public class TaskManager {
      */
     public boolean shutdown() {
         active = false;
-        purgeManagerFuture.cancel(false);
-        internalAffairsFuture.cancel(false);
-        functionalTaskHandler.cancel();
+        if(purgeManagerFuture != null) {
+            purgeManagerFuture.cancel(false);
+        }
+        if(internalAffairsFuture != null) {
+            internalAffairsFuture.cancel(false);
+        }
+        if(functionalTaskHandler != null) {
+            functionalTaskHandler.cancel();
+        }
         try {
             if (schedulePool.awaitTermination(350,TimeUnit.MILLISECONDS)) {
                 tasks.clear();
@@ -123,16 +129,19 @@ public class TaskManager {
     }
 
     private boolean fastShutdown() {
-        if (purgeManagerFuture.cancel(true)) {
+        if (purgeManagerFuture != null && purgeManagerFuture.cancel(true)) {
             PrismLogHandler.warn("Task manager: forced PurgeManager to stop");
         }
         int failed = schedulePool.shutdownNow().size();
-        functionalTaskHandler.cancel();
+        if(functionalTaskHandler != null) {
+            functionalTaskHandler.cancel();
+        }
         tasks.clear();
         if (failed > 0) {
             PrismLogHandler.warn("Task manager: " + failed + " tasks were force stopped.");
             return false;
         }
+        PrismLogHandler.warn("Task manager: fast shutdown complete");
         return  true;
     }
 

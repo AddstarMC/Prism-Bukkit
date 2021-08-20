@@ -1,5 +1,6 @@
 package me.botsko.prism.utils;
 
+import com.google.common.collect.Sets;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.api.objects.MaterialState;
@@ -42,7 +43,7 @@ public class MaterialAliases {
         FileConfiguration items = null;
         InputStream defConfigStream = this.getClass().getResourceAsStream("/items.yml");
         if (defConfigStream != null) {
-            System.out.println("Elixr: Loaded items directory");
+            PrismLogHandler.log("Elixr: Loaded items directory");
             items = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
         }
 
@@ -141,7 +142,7 @@ public class MaterialAliases {
 
         getQuery().findAllIds(material.name().toLowerCase(Locale.ENGLISH), list -> allIdsCache.put(
                 material, new HashSet<>(list)));
-        return allIdsCache.getOrDefault(material,Collections.emptySet());
+        return allIdsCache.getOrDefault(material, Sets.newHashSet());
     }
 
     private void storeCache(Material material, String state, int blockId, int blockSubid) {

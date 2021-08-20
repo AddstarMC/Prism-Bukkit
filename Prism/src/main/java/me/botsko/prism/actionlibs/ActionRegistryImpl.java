@@ -1,5 +1,6 @@
 package me.botsko.prism.actionlibs;
 
+import com.google.common.collect.Lists;
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
@@ -137,7 +138,7 @@ public class ActionRegistryImpl implements ActionRegistry {
     private void registerAction(Action action) {
         List<Action> actions = registeredActions.get(action.getActionType());
         if (actions == null) {
-            actions = Collections.singletonList(action);
+            actions = Lists.newArrayList(action);
         } else {
             actions.add(action);
         }

@@ -62,8 +62,8 @@
         <junit.version>5.5.0</junit.version>
         <derby.version>10.14.2.0</derby.version>
         <mockbukkit.version>0.31.1</mockbukkit.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>16</maven.compiler.source>
+        <maven.compiler.target>16</maven.compiler.target>
         <mockbukkit.version>0.31.1</mockbukkit.version>
     </properties>
     <dependencies>

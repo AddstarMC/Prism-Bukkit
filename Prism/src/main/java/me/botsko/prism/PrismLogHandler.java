@@ -138,18 +138,24 @@ public class PrismLogHandler implements Closeable {
 
     private static Logger createPrismLogger() {
         Logger result = Logger.getLogger("PrismLogger");
-        result.setUseParentHandlers(false);
-        for (Handler handler : result.getHandlers()) {
-            result.removeHandler(handler);
-        }
         try {
             File prismFileLog = Prism.getInstance().getDataFolder().toPath().resolve("prism.log").toFile();
-
+            if(!prismFileLog.getParentFile().exists()) {
+                prismFileLog.getParentFile().mkdirs();
+            }
             FileHandler handler = new PrismFileHandler(prismFileLog);
+            result.setUseParentHandlers(false);
+            for (Handler h : result.getHandlers()) {
+                result.removeHandler(h);
+            }
             result.addHandler(handler);
             result.setLevel(Level.CONFIG);
+
         } catch (IOException e) {
-            e.printStackTrace();
+            if(debug){
+                e.printStackTrace();
+            }
+            result.log(Level.WARNING,e.getMessage(),e);
         }
         return result;
     }
@@ -176,7 +182,7 @@ public class PrismLogHandler implements Closeable {
                     if (mt) {
                         thread = "[M]";
                     } else {
-                        thread = "[" + lr.getThreadID() + "]";
+                        thread = "[" + Long.toString(lr.getLongThreadID()) + "]";
                     }
                     String thrown;
                     if (lr.getThrown() == null) {

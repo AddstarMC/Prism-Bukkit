@@ -17,32 +17,13 @@ import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
-import me.botsko.prism.listeners.PaperListeners;
-import me.botsko.prism.listeners.PrismBlockEvents;
-import me.botsko.prism.listeners.PrismCustomEvents;
-import me.botsko.prism.listeners.PrismEntityEvents;
-import me.botsko.prism.listeners.PrismInventoryEvents;
-import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
-import me.botsko.prism.listeners.PrismPlayerEvents;
-import me.botsko.prism.listeners.PrismVehicleEvents;
-import me.botsko.prism.listeners.PrismWorldEvents;
+import me.botsko.prism.listeners.*;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.ActionParameter;
-import me.botsko.prism.parameters.BeforeParameter;
-import me.botsko.prism.parameters.BlockParameter;
-import me.botsko.prism.parameters.EntityParameter;
-import me.botsko.prism.parameters.FlagParameter;
-import me.botsko.prism.parameters.IdParameter;
-import me.botsko.prism.parameters.KeywordParameter;
-import me.botsko.prism.parameters.PlayerParameter;
-import me.botsko.prism.parameters.PrismParameterHandler;
-import me.botsko.prism.parameters.RadiusParameter;
-import me.botsko.prism.parameters.SinceParameter;
-import me.botsko.prism.parameters.WorldParameter;
+import me.botsko.prism.parameters.*;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.settings.Settings;
@@ -72,14 +53,8 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -359,7 +334,6 @@ public class Prism extends JavaPlugin implements PrismApi {
         messenger = new Messenger(pluginName, Prism.getAudiences());
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
-        loadConfig();        // Load configuration, or install if new
         isPaper = PaperLib.isPaper();
         if (isPaper) {
             PrismLogHandler.log("Optional Paper Events will be enabled.");
@@ -453,10 +427,13 @@ public class Prism extends JavaPlugin implements PrismApi {
                 commands = new PrismCommands(this, true);
                 command.setExecutor(commands);
                 command.setTabCompleter(commands);
+                taskManager.active = false;
+                taskManager.shutdown();
             } else {
                 PrismLogHandler.warn("Command Executor Error: Check plugin.yml");
                 Bukkit.getPluginManager().disablePlugin(instance);
             }
+            saveConfig();
         }
     }
 
