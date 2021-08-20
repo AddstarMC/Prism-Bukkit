@@ -61,9 +61,9 @@ public class ActionMessage {
                 .replaceFirstText(Pattern.compile("<prefix>"),
                         builder -> getPosNegPrefix().decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.FALSE))
                 .replaceFirstText(Pattern.compile("<index>"),
-                        builder -> builder.content("[" + index + "]  ").color(NamedTextColor.GRAY).decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.FALSE))
+                        builder -> builder.content("[" + index + "] ").color(NamedTextColor.GRAY).decoration(TextDecoration.STRIKETHROUGH, TextDecoration.State.FALSE))
                 .replaceFirstText(Pattern.compile("<target>"),
-                        builder -> Component.text().content(handler.getSourceName() + " ").color(highlight))
+                        builder -> Component.text().content(" " + handler.getSourceName() + " ").color(highlight))
                 .replaceFirstText(Pattern.compile("<description>"),
                         builder -> Component.text().content(getDescription((ActionTypeImpl)action)+ " ")
                                 .color(NamedTextColor.WHITE))

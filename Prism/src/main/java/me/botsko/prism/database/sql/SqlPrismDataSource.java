@@ -3,7 +3,16 @@ package me.botsko.prism.database.sql;
 import com.zaxxer.hikari.HikariDataSource;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionRegistry;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.ActionReportQuery;
+import me.botsko.prism.database.BlockReportQuery;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.InsertQuery;
+import me.botsko.prism.database.PrismDataSource;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.UpdateQuery;
 import org.bukkit.configuration.ConfigurationSection;
 
 import javax.annotation.Nonnull;

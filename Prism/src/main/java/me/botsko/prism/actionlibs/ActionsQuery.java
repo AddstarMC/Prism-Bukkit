@@ -1,13 +1,16 @@
 package me.botsko.prism.actionlibs;
 
-
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.api.PrismParameters;
 import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
-import me.botsko.prism.database.*;
+import me.botsko.prism.database.DeleteQuery;
+import me.botsko.prism.database.SelectIdQuery;
+import me.botsko.prism.database.SelectProcessActionQuery;
+import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.UpdateQuery;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
