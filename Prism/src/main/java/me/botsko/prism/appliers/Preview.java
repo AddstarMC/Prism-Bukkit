@@ -19,6 +19,7 @@ import me.botsko.prism.wands.RollbackWand;
 import me.botsko.prism.wands.Wand;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
@@ -26,13 +27,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Preview implements Previewable {
 
@@ -221,12 +216,10 @@ public class Preview implements Previewable {
                             if (processType.equals(PrismProcessType.ROLLBACK)) {
                                 result = action.applyRollback(player, parameters, isPreview);
                                 action.setRollbacked(true);
-                                aq.updateRollbacked(action);
                             }
                             if (processType.equals(PrismProcessType.RESTORE)) {
                                 result = action.applyRestore(player, parameters, isPreview);
                                 action.setRollbacked(false);
-                                aq.updateRollbacked(action);
                             }
                             if (processType.equals(PrismProcessType.UNDO)) {
                                 result = action.applyUndo(player, parameters, isPreview);
@@ -255,6 +248,7 @@ public class Preview implements Previewable {
                         if (!isPreview) {
                             iterator.remove();
                         }
+                        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> aq.updateRollbacked(worldChangeQueue.toArray(new Handler[0])));
                     } catch (final Exception e) {
                         String msg = e.getMessage() == null ? "unknown cause" : e.getMessage();
                         Prism.log(String.format("Applier error: %s (ID: %d)", msg, a.getId()));

@@ -185,10 +185,10 @@ public class ActionsQuery {
     /**
      * Update action.
      *
-     * @param handler the handler need to update.
+     * @param handlers the handlers need to update.
      */
-    public void updateRollbacked(Handler handler) {
+    public void updateRollbacked(Handler... handlers) {
         final UpdateQuery updateQuery = Prism.getPrismDataSource().createUpdateQuery();
-        updateQuery.updateRollbacked(handler);
+        updateQuery.updateRollbacked(handlers);
     }
 }
