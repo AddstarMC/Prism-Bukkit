@@ -2,6 +2,7 @@ package me.botsko.prism.appliers;
 
 import me.botsko.prism.Il8nHelper;
 import me.botsko.prism.Prism;
+import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actions.GenericAction;
 import me.botsko.prism.api.BlockStateChange;
@@ -191,6 +192,7 @@ public class Preview implements Previewable {
             int iterationCount = 0;
             final int currentQueueOffset = blockChangesRead;
             if (currentQueueOffset < worldChangeQueue.size()) {
+                final ActionsQuery aq = new ActionsQuery(plugin);
                 for (final Iterator<Handler> iterator = worldChangeQueue.listIterator(currentQueueOffset);
                       iterator.hasNext();) {
                     final Handler a = iterator.next();
@@ -218,9 +220,13 @@ public class Preview implements Previewable {
                             GenericAction action = (GenericAction) a;
                             if (processType.equals(PrismProcessType.ROLLBACK)) {
                                 result = action.applyRollback(player, parameters, isPreview);
+                                action.setRollbacked(true);
+                                aq.updateRollbacked(action);
                             }
                             if (processType.equals(PrismProcessType.RESTORE)) {
                                 result = action.applyRestore(player, parameters, isPreview);
+                                action.setRollbacked(false);
+                                aq.updateRollbacked(action);
                             }
                             if (processType.equals(PrismProcessType.UNDO)) {
                                 result = action.applyUndo(player, parameters, isPreview);

@@ -4,12 +4,10 @@ package me.botsko.prism.actionlibs;
 import me.botsko.prism.Prism;
 import me.botsko.prism.actions.PrismProcessAction;
 import me.botsko.prism.api.PrismParameters;
+import me.botsko.prism.api.actions.Handler;
 import me.botsko.prism.api.actions.PrismProcessType;
 import me.botsko.prism.api.commands.Flag;
-import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
+import me.botsko.prism.database.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -179,5 +177,15 @@ public class ActionsQuery {
         dqb.setShouldGroup(false);//make it clear that we dont want to group for deletes
         dqb.setShouldPause(shouldPauseDB); //will stop recording queue
         return dqb.execute();
+    }
+
+    /**
+     * Update action.
+     *
+     * @param handler the handler need to update.
+     */
+    public void updateRollbacked(Handler handler) {
+        final UpdateQuery updateQuery = Prism.getPrismDataSource().createUpdateQuery();
+        updateQuery.updateRollbacked(handler);
     }
 }
