@@ -183,7 +183,7 @@ public class ActionsQuery {
     }
 
     /**
-     * Update action.
+     * Update the rollbacked state of actions.
      *
      * @param handlers the handlers need to update.
      */
