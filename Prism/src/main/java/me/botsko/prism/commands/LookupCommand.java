@@ -19,7 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class LookupCommand implements SubHandler {
 
@@ -57,7 +56,7 @@ public class LookupCommand implements SubHandler {
             final List<String> defaultsUsed = parameters.getDefaultsUsed();
             StringBuilder defaultsReminder = new StringBuilder();
             if (!defaultsUsed.isEmpty()) {
-                String prefix = Il8nHelper.getRawMessage("queryparameter-defaults-prefix");
+                String prefix = Il8nHelper.getRawMessage("params-defaults-prefix");
                 defaultsReminder.append(prefix);
                 for (final String d : defaultsUsed) {
                     defaultsReminder.append(" ").append(d);

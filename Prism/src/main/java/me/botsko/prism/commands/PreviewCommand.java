@@ -97,7 +97,7 @@ public class PreviewCommand extends AbstractCommand {
                 StringBuilder defaultsReminder = checkIfDefaultUsed(parameters);
                 Prism.messenger.sendMessage(call.getPlayer(),Prism.messenger
                         .playerSubduedHeaderMsg(
-                                Il8nHelper.getMessage("queryparameter-defaults-prefix",
+                                Il8nHelper.getMessage("params-defaults-prefix",
                                         defaultsReminder.toString())));
                 plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 
