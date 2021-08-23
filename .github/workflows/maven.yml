@@ -14,10 +14,18 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java-version }}
+    - name: Restore Maven Cache
+      uses: skjolber/maven-cache-github-action@v1
+      with:
+        step: restore
     - name: Build with Maven
       run: mvn -B verify --file pom.xml
     - name: Run codacy-coverage-reporter
       uses: codacy/codacy-coverage-reporter-action@master
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        coverage-reports: target/site/jacoco/jacoco.xml
+        coverage-reports: Prism/target/site/jacoco/jacoco.xml
+    - name: Save Maven Cache
+      uses: skjolber/maven-cache-github-action@v1
+      with:
+        step: save
