@@ -66,6 +66,7 @@ public class Il8nHelper {
         if (resourceBundle == null) {
             return Component.text(key);
         }
+
         try {
             String format = resourceBundle.getString(key);
             String out = String.format(format, args);

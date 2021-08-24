@@ -70,7 +70,6 @@ public class PrismConfig {
     public List<String> doNotTrackCommands
             = Arrays.asList("vanish","v","login","changepassword","register","unregister");
 
-
     @Setting("alerts")
     public AlertConfig alertConfig =  new AlertConfig();
 

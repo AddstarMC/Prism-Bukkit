@@ -351,12 +351,6 @@ public class Prism extends JavaPlugin implements PrismApi {
         } else {
             pasteKey = null;
         }
-        final List<String> worldNames = getServer().getWorlds().stream()
-                .map(World::getName).collect(Collectors.toList());
-
-        final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
-                .map(Player::getName).toArray(String[]::new);
-
         // init db async then call back to complete enable.
         final BukkitTask updating = Bukkit.getScheduler().runTaskTimerAsynchronously(instance, () -> {
             if (!isEnabled()) {
@@ -389,17 +383,6 @@ public class Prism extends JavaPlugin implements PrismApi {
 
             // Setup databases
             prismDataSource.setupDatabase(actionRegistry);
-
-            // Cache world IDs
-            prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
-            prismDataSource.getPlayerIdHelper().cacheOnlinePlayerPrimaryKeys(playerNames);
-
-            // ensure current worlds are added
-            for (final String w : worldNames) {
-                if (!Prism.prismWorlds.containsKey(w)) {
-                    prismDataSource.addWorldName(w);
-                }
-            }
             // Apply any updates
             final DatabaseUpdater up = new DatabaseUpdater(prismDataSource);
             up.applyUpdates(prismDataSource);
@@ -438,10 +421,25 @@ public class Prism extends JavaPlugin implements PrismApi {
     }
 
     /**
-     * Enable post run.
+     * Enable post run. must be run sync
      */
     public void enabled() {
         if (isEnabled()) {
+            // Cache world IDs
+            final List<String> worldNames = getServer().getWorlds().stream()
+                    .map(World::getName).collect(Collectors.toList());
+
+            final String[] playerNames = Bukkit.getServer().getOnlinePlayers().stream()
+                    .map(Player::getName).toArray(String[]::new);
+            prismDataSource.cacheWorldPrimaryKeys(prismWorlds);
+            prismDataSource.getPlayerIdHelper().cacheOnlinePlayerPrimaryKeys(playerNames);
+
+            // ensure current worlds are added
+            for (final String w : worldNames) {
+                if (!Prism.prismWorlds.containsKey(w)) {
+                    prismDataSource.addWorldName(w);
+                }
+            }
             eventTimer = new TimeTaken(this);
             queueStats = new QueueStats();
             ignore = new Ignore(config);

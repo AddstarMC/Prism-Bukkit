@@ -61,39 +61,32 @@ public class ReportCommand extends AbstractCommand {
                   Prism.messenger.playerError(Il8nHelper.getMessage("report-error")));
             return;
         }
+        switch(call.getArg(1)){
+            case "queue":
+                queueReport(call.getSender());
+                break;
+            case "db":
+                queueReport(call.getSender());
+                break;
+            case "sum":
+                if (call.getArgs().length < 3) {
+                    Prism.messenger.sendMessage(call.getSender(),
+                            Prism.messenger.playerError(Il8nHelper.getMessage("report-sum-error")));
+                    return;
+                }
+                switch(call.getArg(2)){
+                    case "blocks":
+                        blockSumReports(call);
+                        break;
+                    case "actions":
+                        actionTypeCountReport(call);
+                        break;
+                    default:
+                        Prism.messenger.sendMessage(call.getSender(),
+                                Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
+                        return;
+                }
 
-        // /prism report queue
-        if (call.getArg(1).equals("queue")) {
-            queueReport(call.getSender());
-        }
-
-        // /prism report db
-        if (call.getArg(1).equals("db")) {
-            databaseReport(call.getSender());
-        }
-
-        // /prism report queue
-        if (call.getArg(1).equals("sum")) {
-
-            if (call.getArgs().length < 3) {
-                Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8nHelper.getMessage("report-sum-error")));
-                return;
-            }
-
-            if (call.getArgs().length < 4) {
-                Prism.messenger.sendMessage(call.getSender(),
-                        Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
-                return;
-            }
-
-            if (call.getArg(2).equals("blocks")) {
-                blockSumReports(call);
-            }
-
-            if (call.getArg(2).equals("actions")) {
-                actionTypeCountReport(call);
-            }
         }
     }
 
@@ -113,7 +106,9 @@ public class ReportCommand extends AbstractCommand {
 
     @Override
     public String[] getHelp() {
-        return new String[]{Il8nHelper.getRawMessage("help-report-queue"),
+        return new String[]{
+                Il8nHelper.getRawMessage("help-report-args"),
+                Il8nHelper.getRawMessage("help-report-queue"),
                 Il8nHelper.getRawMessage("help-report-db"),
                 Il8nHelper.getRawMessage("help-report-player")
         };
@@ -203,9 +198,7 @@ public class ReportCommand extends AbstractCommand {
         final QueryParameters parameters = PreprocessArgs.process(plugin.config, call.getSender(), call.getArgs(),
               PrismProcessType.LOOKUP, 3, !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
-            Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Identity.nil(),
-                          Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
+            Prism.messenger.sendMessage(call.getSender(),Il8nHelper.getMessage("report-blocks-error"));
             return;
         }
         // No actions
@@ -219,14 +212,13 @@ public class ReportCommand extends AbstractCommand {
           Run the lookup itself in an async task so the lookup query isn't done on the
           main thread
          */
+        Prism.messenger.sendMessage(call.getSender(),Il8nHelper.getMessage("report-generating"));
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> reportQuery.report(call.getSender()));
     }
 
     private boolean checkParams(PrismParameters parameters, CallInfo call) {
         if (!parameters.getActionTypes().isEmpty()) {
-            Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Identity.nil(),
-                            Prism.messenger.playerError(
+            Prism.messenger.sendMessage(call.getSender(),Prism.messenger.playerError(
                                     Il8nHelper.getMessage("report-actions-invalid")));
             return true;
         }
@@ -247,6 +239,9 @@ public class ReportCommand extends AbstractCommand {
               PrismProcessType.LOOKUP, 3,
               !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
+            Prism.getAudiences().sender(call.getSender())
+                    .sendMessage(Identity.nil(),
+                            Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
             return;
         }
 

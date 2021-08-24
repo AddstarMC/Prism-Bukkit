@@ -50,8 +50,10 @@ public class DebugCommand implements SubHandler {
                 case "off":
                     Prism.setDebug(false);
                     break;
-                default: //toggle.
+                case "toggle":
                     Prism.setDebug(!Prism.isDebug());
+                default:
+                    Prism.messenger.sendMessage(call.getSender(),Il8nHelper.getMessage("debug-help"));
                     break;
             }
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
@@ -78,7 +80,9 @@ public class DebugCommand implements SubHandler {
         Pattern p = Pattern.compile(patten);
         Matcher matcher = p.matcher(haystack);
         while (matcher.find()) {
-            haystack = haystack.replaceFirst(matcher.group(1),replacement);
+           haystack =  new StringBuilder(haystack)
+                   .replace(matcher.start(1),matcher.end(1),replacement)
+                   .toString();
         }
         return haystack;
     }
@@ -147,7 +151,7 @@ public class DebugCommand implements SubHandler {
         Path hikariProps = dataPath.resolve("hikari.properties");
         List<String> logs = new ArrayList<>();
         try {
-            Files.find(dataPath, 1, (path, basicFileAttributes) -> path.toFile().getName().matches("prism.log*"))
+            Files.find(dataPath, 1, (path, basicFileAttributes) -> path.toFile().getName().matches("prism.log(\\.?)(\\d*)"))
                     .forEach(path -> {
                         String pLog;
                         if (path.toFile().length() < 2000000L) {
@@ -158,7 +162,7 @@ public class DebugCommand implements SubHandler {
                         logs.add(pLog);
                     });
         } catch (IOException e) {
-            //suppress.
+            PrismLogHandler.warn("IOException accessing logs",e);
         }
         PasteBuilder pasteBuilder = new PasteBuilder().name("Prism Debug Output")
                 .visibility(Visibility.UNLISTED)
@@ -190,7 +194,7 @@ public class DebugCommand implements SubHandler {
             result.getPaste().get().getDeletionKey().ifPresent(
                   s -> {
                       Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(Il8nHelper.getMessage("delete-key")
-                              .replaceText(builder -> builder.match("<deleteKey>").replacement(Component.text(s)
+                              .replaceText(builder -> builder.match("<deletekey>").replacement(Component.text(s)
                                       .clickEvent(ClickEvent.copyToClipboard(s))))
                               )
                       );
@@ -210,7 +214,7 @@ public class DebugCommand implements SubHandler {
 
     @Override
     public String[] getHelp() {
-        return new String[]{"Debug Help"};
+        return new String[]{Il8nHelper.getRawMessage("debug-help")};
     }
 
     @Override

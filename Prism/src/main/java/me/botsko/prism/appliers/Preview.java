@@ -258,20 +258,16 @@ public class Preview implements Previewable {
                             iterator.remove();
                         }
                     } catch (final Exception e) {
-                        String line = "Applier error:";
-                        String message = e.getMessage();
-
-                        if (message != null) {
-                            line += (' ' + message);
-                        }
-
-                        PrismLogHandler.log(line);
-                        e.printStackTrace();
-
+                        String msg = e.getMessage() == null ? "unknown cause" : e.getMessage();
+                        PrismLogHandler.warn(String.format("Applier error: %s (ID: %d)", msg, a.getId()),e);
+                        PrismLogHandler.log(String.format("Block type: %s (old %s)", a.getMaterial(), a.getOldMaterial()));
+                        PrismLogHandler.log(String.format("Block location: %d, %d, %d",
+                                a.getLoc().getBlockX(),
+                                a.getLoc().getBlockY(),
+                                a.getLoc().getBlockZ()));
                         // Count as skipped, remove from queue
                         skippedBlockCount++;
                         iterator.remove();
-
                     }
                 }
             }
