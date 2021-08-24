@@ -22,6 +22,7 @@ jobs:
       run: mvn -B verify --file pom.xml
     - name: Run codacy-coverage-reporter
       uses: codacy/codacy-coverage-reporter-action@master
+      continue-on-error: true
       with:
         project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
         coverage-reports: Prism/target/site/jacoco/jacoco.xml
