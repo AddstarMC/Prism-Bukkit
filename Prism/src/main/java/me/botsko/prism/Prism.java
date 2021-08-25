@@ -179,7 +179,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     public static void setDebug(boolean debug) {
         Prism.debug = debug;
-        PrismLogHandler.setDebug(true);
+        PrismLogHandler.setDebug(debug);
         if (debug && (debugWatcher == null || debugWatcher.isCancelled())) {
             PrismLogHandler.debug("ALERT : Prism has debug mode enabled - LOGS will rapidly grow!!!");
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {

@@ -37,7 +37,7 @@ public class PlayerIdentification {
         prismPlayer = getPrismPlayer(uuid, name);
         if (prismPlayer != null) {
             comparePlayerToCache(name, uuid, prismPlayer);
-            PrismLogHandler.debug("Loaded player " + name + ", id: " + uuid + " into the cache.");
+            PrismLogHandler.debug("Saving player " + name + ", id: " + uuid + " into the cache.");
             prismPlayers.put(uuid, prismPlayer);
             return;
         }
@@ -55,7 +55,7 @@ public class PlayerIdentification {
         if (prismPlayer != null) {
             // prismPlayer = comparePlayerToCache( player, prismPlayer );
             PrismLogHandler.debug("Loaded player " + prismPlayer.getName() + ", id: "
-                    + prismPlayer.getId() + " into the cache.");
+                    + prismPlayer.getId() + " from the cache.");
             // Prism.prismPlayers.put( player.getUniqueId(), prismPlayer );
             return prismPlayer;
         }

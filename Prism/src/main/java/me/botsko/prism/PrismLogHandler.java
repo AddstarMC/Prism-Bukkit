@@ -66,8 +66,7 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void warn(String message) {
-        Logger log = getLogger();
-        log.warning("[" + name + "] " + message);
+        getLogger().warning("[" + name + "] " + message);
         prismLog.warning(message);
     }
 
@@ -118,6 +117,24 @@ public class PrismLogHandler implements Closeable {
             String m = "- Debug - " + message;
             //log(m);
             prismLog.info(m);
+        }
+    }
+
+    /**
+     * Log a debug message that occurs with an exception
+     * @param message
+     * @param e
+     */
+    public static void debug(String message, Exception e) {
+        if (debug) {
+            String m = "- Debug - " + message;
+            prismLog.log(Level.WARNING,m,e);
+            prismLog.warning(e.getClass().toString()+e.getMessage());
+            StackTraceElement[] stack = e.getStackTrace();
+            for (StackTraceElement s: stack) {
+                prismLog.log(Level.WARNING, "  at " + s.getClassName() + "." + s.getMethodName() + "("
+                        + s.getFileName() + ":" + s.getLineNumber() + ")");
+            }
         }
     }
 
@@ -176,7 +193,7 @@ public class PrismLogHandler implements Closeable {
                     if (mt) {
                         thread = "[M]";
                     } else {
-                        thread = "[" + Long.toString(lr.getLongThreadID()) + "]";
+                        thread = "[" + lr.getLongThreadID() + "]";
                     }
                     String thrown;
                     if (lr.getThrown() == null) {
