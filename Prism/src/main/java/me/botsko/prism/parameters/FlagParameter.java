@@ -30,7 +30,16 @@ public class FlagParameter implements PrismParameterHandler {
 
     @Override
     public boolean applicable(String parameter, CommandSender sender) {
-        return Pattern.compile("(-)([^\\s]+)?").matcher(parameter).matches();
+        if (Pattern.compile("(-)([^\\s]+)?").matcher(parameter).matches()) {
+            final String[] flagComponents = parameter.substring(1).split("=");
+            try {
+                Flag flag = Flags.valueOf(flagComponents[0].replace("-", "_").toUpperCase());
+                return true;
+            } catch (final IllegalArgumentException ex) {
+                return false;
+            }
+        }
+        return false;
     }
 
     @Override
