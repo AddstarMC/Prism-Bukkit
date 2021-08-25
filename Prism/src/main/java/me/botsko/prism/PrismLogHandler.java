@@ -21,6 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class PrismLogHandler implements Closeable {
 
+    private static String name;
     private static final  Logger prismLog;
     private static boolean debug = false;
 
@@ -31,6 +32,7 @@ public class PrismLogHandler implements Closeable {
         } else {
             prismLog = Logger.getAnonymousLogger();
         }
+        name = (Prism.getInstance() == null) ? "[Test Prism]" : Prism.getPrismName();
     }
 
     /**
@@ -48,21 +50,13 @@ public class PrismLogHandler implements Closeable {
         return Logger.getLogger("Minecraft");
     }
 
-    private static String getPrismName() {
-        if (Prism.getInstance() == null) {
-            return "[TEST PRISM]";
-        } else {
-            return Prism.getPrismName();
-        }
-    }
-
     /**
      * Log a message at {@link Level} info.
      *
      * @param message String
      */
     public static void log(String message) {
-        getLogger().info("[" + getPrismName() + "] " + message);
+        getLogger().info("[" + name + "] " + message);
         prismLog.info(message);
     }
 
@@ -73,7 +67,7 @@ public class PrismLogHandler implements Closeable {
      */
     public static void warn(String message) {
         Logger log = getLogger();
-        log.warning("[" + getPrismName() + "] " + message);
+        log.warning("[" + name + "] " + message);
         prismLog.warning(message);
     }
 
@@ -83,7 +77,7 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void warn(String message, Exception e) {
-        warn(Level.WARNING, "[" + getPrismName() + "] " + message, e);
+        warn(Level.WARNING, "[" + name + "] " + message, e);
     }
 
     /**

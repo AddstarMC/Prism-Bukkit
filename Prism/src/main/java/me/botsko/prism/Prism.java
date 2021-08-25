@@ -1,7 +1,14 @@
 package me.botsko.prism;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.actionlibs.*;
+import me.botsko.prism.actionlibs.ActionRegistryImpl;
+import me.botsko.prism.actionlibs.ActionsQuery;
+import me.botsko.prism.actionlibs.HandlerRegistry;
+import me.botsko.prism.actionlibs.Ignore;
+import me.botsko.prism.actionlibs.QueryParameters;
+import me.botsko.prism.actionlibs.QueryResult;
+import me.botsko.prism.actionlibs.QueueDrain;
+import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.actions.ActionMeter;
 import me.botsko.prism.api.PrismApi;
 import me.botsko.prism.api.PrismParameters;
@@ -17,13 +24,32 @@ import me.botsko.prism.config.PrismConfig;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.database.PrismDatabaseFactory;
 import me.botsko.prism.events.EventHelper;
-import me.botsko.prism.listeners.*;
+import me.botsko.prism.listeners.PaperListeners;
+import me.botsko.prism.listeners.PrismBlockEvents;
+import me.botsko.prism.listeners.PrismCustomEvents;
+import me.botsko.prism.listeners.PrismEntityEvents;
+import me.botsko.prism.listeners.PrismInventoryEvents;
+import me.botsko.prism.listeners.PrismInventoryMoveItemEvent;
+import me.botsko.prism.listeners.PrismPlayerEvents;
+import me.botsko.prism.listeners.PrismVehicleEvents;
+import me.botsko.prism.listeners.PrismWorldEvents;
 import me.botsko.prism.listeners.self.PrismMiscEvents;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.measurement.TimeTaken;
 import me.botsko.prism.monitors.OreMonitor;
 import me.botsko.prism.monitors.UseMonitor;
-import me.botsko.prism.parameters.*;
+import me.botsko.prism.parameters.ActionParameter;
+import me.botsko.prism.parameters.BeforeParameter;
+import me.botsko.prism.parameters.BlockParameter;
+import me.botsko.prism.parameters.EntityParameter;
+import me.botsko.prism.parameters.FlagParameter;
+import me.botsko.prism.parameters.IdParameter;
+import me.botsko.prism.parameters.KeywordParameter;
+import me.botsko.prism.parameters.PlayerParameter;
+import me.botsko.prism.parameters.PrismParameterHandler;
+import me.botsko.prism.parameters.RadiusParameter;
+import me.botsko.prism.parameters.SinceParameter;
+import me.botsko.prism.parameters.WorldParameter;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.players.PrismPlayer;
 import me.botsko.prism.settings.Settings;
@@ -159,8 +185,10 @@ public class Prism extends JavaPlugin implements PrismApi {
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.hasPermission("prism.debug")) {
-                        p.sendMessage("ALERT : Prism has debug mode enabled - "
-                                + " LOGS will rapidly grow!!!");
+                        if(Prism.messenger != null) {
+                            Prism.messenger.sendMessage(p, Component.text("ALERT : Prism has debug mode enabled - "
+                                    + " LOGS will rapidly grow!!!").color(NamedTextColor.RED));
+                        }
                     }
                 }
             }, 500, 4000);
@@ -324,11 +352,11 @@ public class Prism extends JavaPlugin implements PrismApi {
      */
     @Override
     public void onEnable() {
-        loadConfig();
-        debug = config.debug;
-        logHandler = new PrismLogHandler();
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
+        logHandler = new PrismLogHandler();
+        loadConfig();
+        debug = config.debug;
         taskManager = new TaskManager(Bukkit.getScheduler(), this);
         audiences = BukkitAudiences.create(this);
         messenger = new Messenger(pluginName, Prism.getAudiences());
@@ -544,6 +572,7 @@ public class Prism extends JavaPlugin implements PrismApi {
      * Load configuration and language files.
      */
     public void loadConfig() {
+        PrismLogHandler.log("Loading Config...");
         configHandler = new ConfigHandler();
         Path path = Paths.get(getDataFolder().getPath(), "config.yml");
         configHandler.loadConfiguration(path);
@@ -559,6 +588,11 @@ public class Prism extends JavaPlugin implements PrismApi {
         alertedOres.clear();
         alertedOres.putAll(config.alertConfig.oreAlerts.oreBlocks);
         items = new MaterialAliases();
+        setDebug(config.debug);
+        PrismLogHandler.log("Config Loaded");
+        PrismLogHandler.debug("Debug Mode Active");
+        PrismLogHandler.debug(config.toString());
+
     }
 
     protected void checkPluginDependencies() {

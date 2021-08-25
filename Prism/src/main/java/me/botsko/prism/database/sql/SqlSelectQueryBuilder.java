@@ -135,8 +135,8 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
 
     private void worldCondition() {
         if (parameters.getWorld() != null) {
-            int worldId = Prism.prismWorlds.get(parameters.getWorld());
-            if (worldId != 0) {
+            Integer worldId = Prism.prismWorlds.get(parameters.getWorld());
+            if (worldId != null && worldId != 0) {
                 addCondition("world_id = " + worldId);
             } else {
                 addCondition(
