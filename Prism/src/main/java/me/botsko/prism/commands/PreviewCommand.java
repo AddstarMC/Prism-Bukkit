@@ -27,7 +27,7 @@ public class PreviewCommand extends AbstractCommand {
     private final List<String> secondaries;
 
     /**
-     * Contructor.
+     * Constructor.
      *
      * @param plugin Prism
      */

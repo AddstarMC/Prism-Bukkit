@@ -23,11 +23,12 @@ public class PrismDatabaseFactory {
     }
 
     /**
-     * Constuct Data source.
+     * Construct Data source.
      *
      * @param dataSourceSection ConfigurationSection
      * @return PrismDataSource
      */
+    @SuppressWarnings("CheckStyle")
     public static PrismDataSource createDataSource(ConfigurationNode dataSourceSection) {
         PrismDataSource database;
         String dataSource = dataSourceSection.node("type").getString();

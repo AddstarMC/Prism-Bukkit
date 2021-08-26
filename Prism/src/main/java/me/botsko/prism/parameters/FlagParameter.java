@@ -119,17 +119,12 @@ public class FlagParameter implements PrismParameterHandler {
                 partialName = value.substring(end + 1);
                 prefix = prefix + value.substring(0, end) + ",";
             }
-            partialName = partialName.toLowerCase();
-            final List<String> completions = new ArrayList<>();
-            for (final Player player : Bukkit.getOnlinePlayers()) {
-                if (player.getName().toLowerCase().startsWith(partialName)) {
-                    completions.add(prefix + player.getName());
-                }
-            }
-            return completions;
+            return getPlayerNameCompletions(prefix, partialName);
         }
         return null;
     }
+
+
 
     @Override
     public boolean hasPermission(String parameter, Permissible permissible) {

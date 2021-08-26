@@ -13,18 +13,14 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.kitteh.pastegg.Paste;
-import org.kitteh.pastegg.PasteBuilder;
-import org.kitteh.pastegg.PasteContent;
-import org.kitteh.pastegg.PasteFile;
-import org.kitteh.pastegg.Visibility;
+import org.kitteh.pastegg.*;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -45,7 +41,7 @@ public class MiscUtils {
                                   PrismConfig config) {
 
         if (desiredRadius <= 0) {
-            return config.nearCommandCondig.defaultRadius;
+            return config.nearCommandConfig.defaultRadius;
         }
 
         // Safety checks for max lookup radius
@@ -251,13 +247,14 @@ public class MiscUtils {
      * @param commands the commands
      */
     public static void dispatchAlert(String msg, Iterable<String> commands) {
-        String cleanMessage = PlainComponentSerializer.plain().deserialize(msg).content();
+        String cleanMessage = PlainTextComponentSerializer.plainText().deserialize(msg).content();
         for (String command : commands) {
             if ("examplecommand <alert>".equals(command)) {
                 continue;
             }
             String processedCommand = command.replace("<alert>", cleanMessage);
-            Bukkit.getScheduler().runTask(Prism.getInstance(), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand));
+            Bukkit.getScheduler().runTask(Prism.getInstance(),
+                    () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), processedCommand));
         }
     }
 

@@ -45,8 +45,8 @@ public class BlockChangeAction extends BlockAction {
     @Override
     public ChangeResult applyUndo(Player player, PrismParameters parameters, boolean isPreview) {
         final Block block = getWorld().getBlockAt(getLoc());
-        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(), getOldBlockData(),
-                getMaterial(), getBlockData(), block, false);
+        return placeBlock(player, parameters, isPreview, getAction().getActionType(), getOldMaterial(),
+                getOldBlockData(), getMaterial(), getBlockData(), block, false);
     }
 
     @Override

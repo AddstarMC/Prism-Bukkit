@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created for Prism
+ * Created for Prism.
  *
  * @author Narimm on 16/08/2021
  * @since 2.1.8-SNAPSHOT

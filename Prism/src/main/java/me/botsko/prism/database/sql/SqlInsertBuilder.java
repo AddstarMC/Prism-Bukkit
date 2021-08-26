@@ -179,15 +179,10 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             int line = 0;
             for (int i : results) {
                 switch (i) {
-                    case Statement.EXECUTE_FAILED:
-                        PrismLogHandler.log(name + "Item " + line + " / " + inserts + " failed to execute");
-                        break;
-                    case Statement.SUCCESS_NO_INFO:
-                        PrismLogHandler.log(name + "Item " + line + " / "
-                                + inserts + " was successful but no info was returned.");
-                        break;
-                    default:
-                        actual = actual + i;
+                    case Statement.EXECUTE_FAILED -> PrismLogHandler.log(name + "Item " + line + " / " + inserts + " failed to execute");
+                    case Statement.SUCCESS_NO_INFO -> PrismLogHandler.log(name + "Item " + line + " / "
+                            + inserts + " was successful but no info was returned.");
+                    default -> actual = actual + i;
                 }
                 line++;
             }
@@ -201,7 +196,6 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
      * Process any extra data associated with the ResultSet.
      *
      * @param keys ResultSet
-     * @throws SQLException SQLException.
      */
     private void processExtraData(ResultSet keys) {
         if (extraDataQueue.isEmpty()) {

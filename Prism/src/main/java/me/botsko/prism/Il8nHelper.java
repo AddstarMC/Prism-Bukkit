@@ -34,7 +34,7 @@ public class Il8nHelper {
      */
     public static TextComponent getMessage(@PropertyKey(resourceBundle = "languages.message") String key,
                                            String extra) {
-        return Component.text(getRawMessage(key + extra));
+        return Component.text(getRawMessage(key) + " " + extra);
     }
 
     /**

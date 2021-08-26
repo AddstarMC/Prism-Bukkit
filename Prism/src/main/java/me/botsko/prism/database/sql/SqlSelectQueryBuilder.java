@@ -169,7 +169,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
             for (final Entry<ActionType, MatchRule> entry : action_types.entrySet()) {
                 Integer id = ActionRegistryImpl.prismActions.get(entry.getKey());
                 if (id == null) {
-                    // null id means the action isnt registered.
+                    // null id means the action isn't registered.
                     PrismLogHandler.debug("Ignoring" + entry.getKey() + " as Action not registered.");
                     continue;
                 }

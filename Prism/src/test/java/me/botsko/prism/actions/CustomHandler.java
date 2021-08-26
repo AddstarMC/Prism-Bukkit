@@ -11,7 +11,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 /**
- * Created for Prism
+ * An example of a custom handler.
+ * Created for Prism.
  *
  * @author Narimm on 18/08/2021
  * @since 2.1.8

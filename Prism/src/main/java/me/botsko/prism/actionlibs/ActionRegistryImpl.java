@@ -419,6 +419,7 @@ public class ActionRegistryImpl implements ActionRegistry {
                 ItemStackAction.class, Il8nHelper.getRawMessage("broke")));
         registerAction(new ActionImpl(ITEM_ROTATE, false, false, false,
                 UseAction.class, Il8nHelper.getRawMessage("turned-item")));
+        //noinspection DuplicatedCode
         registerAction(new ActionImpl(LAVA_BREAK, false, true, true,
                 BlockAction.class, Il8nHelper.getRawMessage("broke")));
         registerAction(new ActionImpl(LAVA_BUCKET, true, true, true,

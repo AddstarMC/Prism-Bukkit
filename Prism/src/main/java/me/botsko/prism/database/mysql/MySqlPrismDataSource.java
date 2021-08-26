@@ -37,8 +37,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
 
     private static final File propFile = new File(Prism.getInstance().getDataFolder(),
             "hikari.properties");
-    private static HikariConfig dbConfig;
     private static final HashMap<String, String> dbInfo = new HashMap<>();
+    private static HikariConfig dbConfig;
     private final Boolean nonStandardSql;
     private SettingsQuery settingsQuery;
     private MySqlPrimConfig config;
@@ -71,10 +71,10 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
             dbConfig.addDataSourceProperty("minimumIdle", 2);
             dbConfig.setMaximumPoolSize(10);
             dbConfig.setMinimumIdle(2);
-            dbConfig.addDataSourceProperty("cachePrepStmts",true);
-            dbConfig.addDataSourceProperty("prepStmtCacheSize",250);
-            dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit",2048);
-            dbConfig.addDataSourceProperty("useServerPrepStmts",true);
+            dbConfig.addDataSourceProperty("cachePrepStmts", true);
+            dbConfig.addDataSourceProperty("prepStmtCacheSize", 250);
+            dbConfig.addDataSourceProperty("prepStmtCacheSqlLimit", 2048);
+            dbConfig.addDataSourceProperty("useServerPrepStmts", true);
             HikariHelper.saveHikariConfig(propFile, dbConfig, true);
         }
     }
@@ -228,7 +228,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
 
     @Override
     protected void setConfig() {
-        this.config = ConfigHandler.getDataSourceConfig(MySqlPrimConfig.class,dataSourceConfig);
+        this.config = ConfigHandler.getDataSourceConfig(MySqlPrimConfig.class, dataSourceConfig);
         prefix = config.getPrefix();
     }
 
@@ -251,7 +251,7 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
         } else {
             PrismLogHandler.log("No metric recorder found to hook into Hikari.");
         }
-     try {
+        try {
             database = new HikariDataSource(dbConfig);
             detectNonStandardSql();
             createSettingsQuery();
@@ -299,7 +299,8 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
         } catch (SQLNonTransientConnectionException e) {
             PrismLogHandler.warn(e.getMessage());
         } catch (SQLException e) {
-            PrismLogHandler.log("You are not able to use non standard Sql - extended SQL available is MySQL based servers");
+            PrismLogHandler.log("You are not able to use non standard Sql -"
+                    + "extended SQL available is MySQL based servers");
             if (nonStandardSql) {
                 PrismLogHandler.log("This sounds like a configuration error.  If you have database access"
                         + "errors please set nonStandardSql to false");

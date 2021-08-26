@@ -7,19 +7,19 @@ package me.botsko.prism.api.actions;
 public interface Action {
 
     /**
-     * Get Action Type of an action
+     * Get Action Type of an action.
      * @return {@link ActionType}
      */
     ActionType getActionType();
 
     /**
-     * True if this Action can rollback
+     * True if this Action can rollback.
      * @return {@code boolean}
      */
     boolean canRollback();
 
     /**
-     * True if this Action can restore
+     * True if this Action can restore.
      * @return {@code boolean}
      */
     boolean canRestore();
@@ -34,7 +34,7 @@ public interface Action {
     boolean requiresHandler(Class<? extends Handler> handler);
 
     /**
-     * True if this Action can create a block
+     * True if this Action can create a block.
      * @return {@code boolean}
      */
     boolean doesCreateBlock();

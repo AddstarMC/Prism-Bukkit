@@ -7,7 +7,6 @@ import me.botsko.prism.actionlibs.ActionsQuery;
 import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.actions.Handler;
-import me.botsko.prism.api.commands.Flag;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.SubHandler;
 import me.botsko.prism.utils.MiscUtils;
@@ -36,7 +35,7 @@ public class NearCommand implements SubHandler {
         parameters.setWorld(call.getPlayer().getWorld().getName());
 
         // allow a custom near radius
-        int radius = plugin.config.nearCommandCondig.defaultRadius;
+        int radius = plugin.config.nearCommandConfig.defaultRadius;
         if (call.getArgs().length == 2) {
             if (TypeUtils.isNumeric(call.getArg(1))) {
                 final int _tmp_radius = Integer.parseInt(call.getArg(1));
@@ -58,7 +57,7 @@ public class NearCommand implements SubHandler {
 
         parameters.setRadius(radius);
         parameters.setMinMaxVectorsFromPlayerLocation(call.getPlayer().getLocation());
-        parameters.setLimit(plugin.config.nearCommandCondig.maxResults);
+        parameters.setLimit(plugin.config.nearCommandConfig.maxResults);
 
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
 

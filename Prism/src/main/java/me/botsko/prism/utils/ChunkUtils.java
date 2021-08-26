@@ -67,6 +67,7 @@ public class ChunkUtils {
      * @param y height
      * @return List of Blocks
      */
+    @SuppressWarnings("DuplicatedCode")
     public static ArrayList<Block> getBoundingBlocksAtY(Chunk chunk, int y) {
 
         int blockMinX = chunk.getX() * 16;

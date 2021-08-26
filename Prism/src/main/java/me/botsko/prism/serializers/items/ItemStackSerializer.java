@@ -95,24 +95,20 @@ public class ItemStackSerializer {
         if (meta != null) {
             data.name = meta.getDisplayName();
         }
-        if (meta instanceof LeatherArmorMeta) {
-            final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
+        if (meta instanceof final LeatherArmorMeta lam) {
             data.color = lam.getColor().asRGB();
-        } else if (meta instanceof SkullMeta) {
-            final SkullMeta skull = (SkullMeta) meta;
+        } else if (meta instanceof final SkullMeta skull) {
             if (skull.hasOwner()) {
                 data.owner = Objects.requireNonNull(skull.getOwningPlayer()).getUniqueId().toString();
             }
-        } else if (meta instanceof PotionMeta) {
-            final PotionMeta potion = (PotionMeta) meta;
+        } else if (meta instanceof final PotionMeta potion) {
             data.potionType = potion.getBasePotionData().getType().toString().toLowerCase();
             data.potionExtended = potion.getBasePotionData().isExtended();
             data.potionUpgraded = potion.getBasePotionData().isUpgraded();
         }
 
         // Written books
-        if (meta instanceof BookMeta) {
-            final BookMeta bookMeta = (BookMeta) meta;
+        if (meta instanceof final BookMeta bookMeta) {
             data.by = bookMeta.getAuthor();
             data.title = bookMeta.getTitle();
             data.content = bookMeta.getPages().toArray(new String[0]);
@@ -133,8 +129,7 @@ public class ItemStackSerializer {
                 i++;
             }
             data.enchs = enchs;
-        } else if (meta instanceof EnchantmentStorageMeta) {
-            final EnchantmentStorageMeta bookEnchantments = (EnchantmentStorageMeta) meta;
+        } else if (meta instanceof final EnchantmentStorageMeta bookEnchantments) {
             if (bookEnchantments.hasStoredEnchants()) {
                 if (bookEnchantments.getStoredEnchants().size() > 0) {
                     final String[] enchs = new String[bookEnchantments.getStoredEnchants().size()];
@@ -240,16 +235,13 @@ public class ItemStackSerializer {
             }
         }
         // Leather color
-        if (meta instanceof LeatherArmorMeta && color > 0) {
-            final LeatherArmorMeta lam = (LeatherArmorMeta) meta;
+        if (meta instanceof final LeatherArmorMeta lam && color > 0) {
             lam.setColor(Color.fromRGB(color));
             item.setItemMeta(lam);
-        } else if (meta instanceof SkullMeta && owner != null) {
-            final SkullMeta skull = (SkullMeta) meta;
+        } else if (meta instanceof final SkullMeta skull && owner != null) {
             skull.setOwningPlayer(Bukkit.getOfflinePlayer(EntityUtils.uuidOf(owner)));
             item.setItemMeta(skull);
-        } else if (meta instanceof BookMeta) {
-            final BookMeta bookMeta = (BookMeta) meta;
+        } else if (meta instanceof final BookMeta bookMeta) {
             bookMeta.setAuthor(by);
             bookMeta.setTitle(title);
             bookMeta.setPages(content);
@@ -274,9 +266,8 @@ public class ItemStackSerializer {
                 }
             });
             ((BannerMeta) meta).setPatterns(patterns);
-        } else if (meta instanceof PotionMeta) {
+        } else if (meta instanceof final PotionMeta potionMeta) {
             final PotionType potionType = PotionType.valueOf(this.potionType.toUpperCase());
-            final PotionMeta potionMeta = (PotionMeta) meta;
             potionMeta.setBasePotionData(new PotionData(potionType, potionExtended,
                     potionUpgraded));
         }

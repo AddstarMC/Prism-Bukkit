@@ -350,7 +350,7 @@ public interface PrismParameters {
     Set<String> getFoundArgs();
 
     /**
-     * Set the Set of arguements.
+     * Set the Set of arguments.
      *
      * @param foundArgs the foundArgs to set
      */

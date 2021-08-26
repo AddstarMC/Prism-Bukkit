@@ -46,7 +46,7 @@ public class PrismConfig {
     public ParameterConfig parameterConfig = new ParameterConfig();
 
     @Setting("near")
-    public CommandDefault nearCommandCondig = new CommandDefault(5,100,100);
+    public CommandDefault nearCommandConfig = new CommandDefault(5,100,100);
 
     @Setting("drain")
     public CommandDefault drainCommandConfig = new CommandDefault();
@@ -250,26 +250,10 @@ public class PrismConfig {
             Set<ActionType> actions = ActionType.getTypes();
             for (ActionType a:actions) {
                 switch (a) {
-                    case CRAFT_ITEM:
-                    case ENCHANT_ITEM:
-                    case ENTITY_DYE:
-                    case FIRE_SPREAD:
-                    case ITEM_BREAK:
-                    case PLAYER_CHAT:
-                    case PLAYER_COMMAND:
-                    case PLAYER_GAMEMODECHANGE:
-                    case PLAYER_JOIN:
-                    case PLAYER_QUIT:
-                    case PLAYER_TRADE:
-                    case PLAYER_TELEPORT:
-                    case TARGET_HIT:
-                    case WATER_FLOW:
-                    case WORLD_EDIT:
-                    case XP_PICKUP:
-                        trackers.put(a,false);
-                        break;
-                    default:
-                        trackers.put(a,true);
+                    case CRAFT_ITEM, ENCHANT_ITEM, ENTITY_DYE, FIRE_SPREAD, ITEM_BREAK, PLAYER_CHAT, PLAYER_COMMAND,
+                            PLAYER_GAMEMODECHANGE, PLAYER_JOIN, PLAYER_QUIT, PLAYER_TRADE, PLAYER_TELEPORT, TARGET_HIT,
+                            WATER_FLOW, WORLD_EDIT, XP_PICKUP -> trackers.put(a, false);
+                    default -> trackers.put(a, true);
                 }
             }
         }

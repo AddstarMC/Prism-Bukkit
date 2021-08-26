@@ -128,7 +128,7 @@ public class SetmyCommand extends AbstractCommand {
                     return;
                 }
 
-                Settings.saveSetting("wand.item", wandString, call.getPlayer());
+                Settings.saveSettingAsync("wand.item", wandString, call.getPlayer());
                 Prism.messenger.sendMessage(call.getPlayer(), Prism.messenger.playerHeaderMsg(
                         ReplaceableTextComponent.builder("wand-item-change").replace("<itemName>", wandString)
                                 .build()));

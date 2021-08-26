@@ -462,7 +462,7 @@ public class QueryParameters implements PrismParameters, Cloneable {
     }
 
     /**
-     * Set the Set of arguements.
+     * Set the Set of arguments.
      * @param foundArgs the foundArgs to set
      */
     public void setFoundArgs(Set<String> foundArgs) {
@@ -543,7 +543,7 @@ public class QueryParameters implements PrismParameters, Cloneable {
     }
 
     /**
-     * Get Defaukts.
+     * Get Defaults.
      * @return List
      */
     public List<String> getDefaultsUsed() {

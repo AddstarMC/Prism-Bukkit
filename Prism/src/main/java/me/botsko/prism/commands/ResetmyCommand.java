@@ -36,7 +36,7 @@ public class ResetmyCommand extends AbstractCommand {
 
         if (setType != null && !setType.equalsIgnoreCase("wand")) {
             Prism.messenger.sendMessage(call.getPlayer(),
-                    Prism.messenger.playerError(Il8nHelper.getMessage("invalid-arguments")));
+                    Prism.messenger.playerError(Il8nHelper.formatMessage("invalid-arguments",setType)));
             return;
         }
 

@@ -94,7 +94,7 @@ class PurgeTask implements Runnable {
 
         }
 
-        long cycleTime = (System.nanoTime() - startTime) / 1000000L; // msec
+        long cycleTime = (System.nanoTime() - startTime) / 1000000L; //ms
         plugin.getTaskManager().getPurgeManager().setMaxCycleTime(cycleTime);
         PrismLogHandler.debug("------------------- ");
         PrismLogHandler.debug("params: " + param.getOriginalCommand());

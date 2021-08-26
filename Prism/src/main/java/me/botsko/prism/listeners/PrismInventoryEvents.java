@@ -201,8 +201,7 @@ public class PrismInventoryEvents implements Listener {
         final Player player = (Player) event.getWhoClicked();
 
         // Ignore all item move events where players modify their own inventory
-        if (event.getInventory().getHolder() instanceof Player) {
-            Player other = (Player) event.getInventory().getHolder();
+        if (event.getInventory().getHolder() instanceof Player other) {
 
             if (other.equals(player)) {
                 return;

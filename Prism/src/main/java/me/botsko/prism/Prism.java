@@ -79,8 +79,14 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -185,7 +191,7 @@ public class Prism extends JavaPlugin implements PrismApi {
             debugWatcher = Bukkit.getScheduler().runTaskTimerAsynchronously(Prism.getInstance(), () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (p.hasPermission("prism.debug")) {
-                        if(Prism.messenger != null) {
+                        if (Prism.messenger != null) {
                             Prism.messenger.sendMessage(p, Component.text("ALERT : Prism has debug mode enabled - "
                                     + " LOGS will rapidly grow!!!").color(NamedTextColor.RED));
                         }

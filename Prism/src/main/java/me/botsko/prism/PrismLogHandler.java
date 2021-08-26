@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class PrismLogHandler implements Closeable {
 
-    private static String name;
+    private static final String name;
     private static final  Logger prismLog;
     private static boolean debug = false;
 
@@ -121,15 +121,15 @@ public class PrismLogHandler implements Closeable {
     }
 
     /**
-     * Log a debug message that occurs with an exception
-     * @param message
-     * @param e
+     * Log a debug message that occurs with an exception.
+     * @param message String the message
+     * @param e {@link Throwable}
      */
-    public static void debug(String message, Exception e) {
+    public static void debug(String message, Throwable e) {
         if (debug) {
             String m = "- Debug - " + message;
             prismLog.log(Level.WARNING,m,e);
-            prismLog.warning(e.getClass().toString()+e.getMessage());
+            prismLog.warning(e.getClass().toString() + e.getMessage());
             StackTraceElement[] stack = e.getStackTrace();
             for (StackTraceElement s: stack) {
                 prismLog.log(Level.WARNING, "  at " + s.getClassName() + "." + s.getMethodName() + "("
@@ -151,7 +151,7 @@ public class PrismLogHandler implements Closeable {
         Logger result = Logger.getLogger("PrismLogger");
         try {
             File prismFileLog = Prism.getInstance().getDataFolder().toPath().resolve("prism.log").toFile();
-            if(!prismFileLog.getParentFile().exists()) {
+            if (!prismFileLog.getParentFile().exists()) {
                 prismFileLog.getParentFile().mkdirs();
             }
             FileHandler handler = new PrismFileHandler(prismFileLog);
@@ -163,7 +163,7 @@ public class PrismLogHandler implements Closeable {
             result.setLevel(Level.CONFIG);
 
         } catch (IOException e) {
-            if(debug){
+            if (debug) {
                 e.printStackTrace();
             }
             result.log(Level.WARNING,e.getMessage(),e);

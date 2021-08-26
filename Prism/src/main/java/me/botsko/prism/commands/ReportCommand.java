@@ -61,32 +61,26 @@ public class ReportCommand extends AbstractCommand {
                   Prism.messenger.playerError(Il8nHelper.getMessage("report-error")));
             return;
         }
-        switch(call.getArg(1)){
-            case "queue":
-                queueReport(call.getSender());
-                break;
-            case "db":
-                queueReport(call.getSender());
-                break;
-            case "sum":
+        switch (call.getArg(1)) {
+            case "queue" -> queueReport(call.getSender());
+            case "db" -> queueReport(call.getSender());
+            case "sum" -> {
                 if (call.getArgs().length < 3) {
                     Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerError(Il8nHelper.getMessage("report-sum-error")));
                     return;
                 }
-                switch(call.getArg(2)){
-                    case "blocks":
-                        blockSumReports(call);
-                        break;
-                    case "actions":
-                        actionTypeCountReport(call);
-                        break;
-                    default:
+                switch (call.getArg(2)) {
+                    case "blocks" -> blockSumReports(call);
+                    case "actions" -> actionTypeCountReport(call);
+                    default -> {
                         Prism.messenger.sendMessage(call.getSender(),
                                 Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
                         return;
+                    }
                 }
-
+            }
+            default -> Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerError(Il8nHelper.formatMessage("invalid-arguments",call.getArg(1))));
         }
     }
 
@@ -157,8 +151,7 @@ public class ReportCommand extends AbstractCommand {
               Prism.messenger.playerMsg(ReplaceableTextComponent.builder("report-actions-queue")
                     .replace("<size>", RecordingQueue.getQueueSize())
                     .build()));
-        if (Prism.getInstance().getPrismDataSource().getDataSource() instanceof HikariDataSource) {
-            HikariDataSource ds = (HikariDataSource) Prism.getInstance().getPrismDataSource().getDataSource();
+        if (Prism.getInstance().getPrismDataSource().getDataSource() instanceof HikariDataSource ds) {
             Prism.messenger.sendMessage(sender, Prism.messenger.playerMsg(ReplaceableTextComponent
                   .builder("report-hikari-props")
                   .replace("<total>", ds.getHikariPoolMXBean().getTotalConnections())

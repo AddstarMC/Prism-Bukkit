@@ -5,14 +5,15 @@ import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.Handler;
 
 /**
- * Created for Prism
+ * An example of a custom action.
+ * Created for Prism.
  *
  * @author Narimm on 18/08/2021
  * @since 2.1.8
  */
 public class CustomAction implements Action {
 
-    private Handler customHandler;
+    private final Handler customHandler;
 
     public CustomAction() {
         this.customHandler = new CustomHandler();

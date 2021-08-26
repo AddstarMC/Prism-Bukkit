@@ -79,8 +79,7 @@ public class PrismBlockEvents extends BaseListener {
             callback.accept(i, 0);
             return;
         }
-        if (block.getState() instanceof InventoryHolder) {
-            InventoryHolder container = (InventoryHolder) block.getState();
+        if (block.getState() instanceof InventoryHolder container) {
 
             if (container instanceof DoubleChest) {
                 if (((Chest) block.getBlockData()).getType() == Type.LEFT) {
@@ -437,19 +436,12 @@ public class PrismBlockEvents extends BaseListener {
 
         ActionType cause = null;
         switch (event.getCause()) {
-            case FIREBALL:
-                cause = ActionType.FIREBALL;
-                break;
-            case FLINT_AND_STEEL:
-                cause = ActionType.LIGHTER;
-                break;
-            case LAVA:
-                cause = ActionType.LAVA_IGNITE;
-                break;
-            case LIGHTNING:
-                cause = ActionType.LIGHTNING;
-                break;
-            default:
+            case FIREBALL -> cause = ActionType.FIREBALL;
+            case FLINT_AND_STEEL -> cause = ActionType.LIGHTER;
+            case LAVA -> cause = ActionType.LAVA_IGNITE;
+            case LIGHTNING -> cause = ActionType.LIGHTNING;
+            default -> {
+            }
         }
         if (cause != null) {
 

@@ -208,8 +208,7 @@ public class PrismPlayerEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerPickupItem(final EntityPickupItemEvent event) {
-        if (event.getEntity() instanceof Player) {
-            Player p = (Player) event.getEntity();
+        if (event.getEntity() instanceof Player p) {
             if (!Prism.getIgnore().event(ActionType.ITEM_PICKUP, p)) {
                 return;
             }
@@ -246,18 +245,14 @@ public class PrismPlayerEvents implements Listener {
         Material newMat;
         Block spot = event.getBlockClicked().getRelative(event.getBlockFace());
         switch (event.getBucket()) {
-            case LAVA_BUCKET:
+            case LAVA_BUCKET -> {
                 cause = ActionType.LAVA_BUCKET;
                 newMat = Material.LAVA;
-                break;
-            case TROPICAL_FISH_BUCKET:
-            case SALMON_BUCKET:
-            case PUFFERFISH_BUCKET:
-            case WATER_BUCKET:
-            default:
+            }
+            default -> {
                 cause = ActionType.WATER_BUCKET;
                 newMat = Material.WATER;
-                break;
+            }
         }
 
         if (!Prism.getIgnore().event(cause, player)) {
@@ -270,8 +265,7 @@ public class PrismPlayerEvents implements Listener {
         BlockData clickedData = event.getBlockClicked().getBlockData();
 
         // TODO If "Lavalogged" blocks become a thing, please revisit.
-        if (clickedData instanceof Waterlogged && event.getBucket() != Material.LAVA) {
-            Waterlogged wl = (Waterlogged) clickedData;
+        if (clickedData instanceof Waterlogged wl && event.getBucket() != Material.LAVA) {
 
             if (!wl.isWaterlogged()) {
                 spot = event.getBlockClicked();

@@ -49,8 +49,7 @@ public class RestoreCommand extends AbstractCommand {
                         Prism.messenger.playerHeaderMsg(Il8nHelper.getMessage("restore-start")));
 
                 // Inform nearby players
-                if (call.getSender() instanceof Player) {
-                    final Player player = (Player) call.getSender();
+                if (call.getSender() instanceof final Player player) {
                     plugin.notifyNearby(player, parameters.getRadius(), ReplaceableTextComponent
                             .builder("block-changes-near")
                             .replace("<player>", player.getDisplayName())
