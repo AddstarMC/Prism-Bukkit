@@ -25,7 +25,7 @@ public class RecordingQueue {
             return;
         }
         if (a.getSourceName() == null || a.getSourceName().trim().isEmpty()) {
-            PrismLogHandler.debug("Handler dropped Source empty - " + a.toString());
+            PrismLogHandler.debug("Handler dropped Source empty - " + a);
             return;
         }
         queue.add(a);

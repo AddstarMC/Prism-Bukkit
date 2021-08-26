@@ -68,7 +68,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int actionId = getActionId(a);
         int playerId = getPlayerId(a);
         if (worldId == 0 || actionId == 0 || playerId == 0) {
-            PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
+            PrismLogHandler.debug("Sql data error: Handler:" + a);
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));
@@ -139,7 +139,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int actionId = getActionId(a);
         int playerId = getPlayerId(a);
         if (worldId == 0 || actionId == 0 || playerId == 0) {
-            PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
+            PrismLogHandler.debug("Sql data error: Handler:" + a);
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));

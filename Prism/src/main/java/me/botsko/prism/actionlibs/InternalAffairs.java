@@ -22,7 +22,7 @@ public class InternalAffairs implements Runnable {
 
         StringBuilder result = new StringBuilder();
         if (Prism.getInstance().getPrismDataSource().reportDataSource(result)) {
-            PrismLogHandler.log("[Internal Affairs]" + result.toString());
+            PrismLogHandler.log("[Internal Affairs]" + result);
             plugin.getTaskManager().actionRecorderTask();
             reportStatusGood();
         } else {

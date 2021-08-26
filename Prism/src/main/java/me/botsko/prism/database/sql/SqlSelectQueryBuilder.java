@@ -571,7 +571,7 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                             } catch (IllegalArgumentException e) {
                                 // This exception occurs, for example, with "ItemStack{DIAMOND_LEGGINGS x 1}"
                                 PrismLogHandler.debug("IllegalArgumentException for record #" + rowId
-                                        + " calling createBlockData for " + item.toString());
+                                        + " calling createBlockData for " + item);
                                 newData = null;
                             }
 

@@ -378,7 +378,7 @@ public class PrismBlockEvents extends BaseListener {
             weakCache.put(enterEvent.getBed().getLocation(), new PlayerBed(enterEvent.getPlayer(),
                     enterEvent.getBed().getState()));
             PrismLogHandler.log("Player attempted to enter bed: " + enterEvent.getPlayer().getName()
-                    + " @ " + enterEvent.getBed().getLocation().toString());
+                    + " @ " + enterEvent.getBed().getLocation());
         }
         if (!Prism.getIgnore().event(ActionType.BLOCK_USE, enterEvent.getBed())) {
             return;

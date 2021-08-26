@@ -155,7 +155,7 @@ public class PrismInventoryEvents implements Listener {
         }).collect(Collectors.toList());
         if (recordable.size() > 0) {
             //todo
-            PrismLogHandler.debug("PrepareCraftEvent: " + prepareItemCraftEvent.toString());
+            PrismLogHandler.debug("PrepareCraftEvent: " + prepareItemCraftEvent);
         }
 
     }
@@ -217,7 +217,7 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
         PrismLogHandler.debug("HELD:" + ((heldItem != null) ? heldItem.toString() : "NULL"));
-        PrismLogHandler.debug("SLOT:" +  slotItem.toString());
+        PrismLogHandler.debug("SLOT:" + slotItem);
 
         switch (event.getClick()) {
             // IGNORE BOTTOM

@@ -65,7 +65,7 @@ public class ActionsCommand implements SubHandler {
         Arrays.stream(ActionType.values()).sorted()
                 .filter(s -> s.name.contains("prism"))
                 .distinct()
-                .forEach(s -> fullActionList.append(s.toString()).append(", "));
+                .forEach(s -> fullActionList.append(s).append(", "));
         fullActionList.delete(fullActionList.lastIndexOf(","),fullActionList.length());
         Prism.messenger.sendMessage(sender, Prism.messenger
                 .playerMsg(Il8nHelper.getMessage("full-action-alias", ": ")
