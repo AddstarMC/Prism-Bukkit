@@ -41,7 +41,7 @@ public interface Action {
 
     /**
      * Gets the name of the Action Type.
-     * @return
+     * @return the Action Name.
      */
     String getName();
 
