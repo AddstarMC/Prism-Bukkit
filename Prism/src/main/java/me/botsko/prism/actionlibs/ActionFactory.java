@@ -519,7 +519,7 @@ public class ActionFactory {
      *
      * @param actionType type
      * @param vehicle    vehicle
-     * @param nonPlayer  nonplayer
+     * @param nonPlayer  Non Player
      * @return Handler
      */
     public static Handler createVehicle(ActionType actionType, Vehicle vehicle, String nonPlayer) {

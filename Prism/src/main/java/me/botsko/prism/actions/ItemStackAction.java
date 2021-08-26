@@ -233,8 +233,7 @@ public class ItemStackAction extends GenericAction {
                         }
 
                         if (block.getLocation().distanceSquared(loc) < 0.25) {
-                            if (e instanceof ItemFrame) {
-                                final ItemFrame frame = (ItemFrame) e;
+                            if (e instanceof final ItemFrame frame) {
 
                                 // if we have a pseudo-slot try to use that
                                 if (fSlot != null && fSlot != frame.getAttachedFace()) {

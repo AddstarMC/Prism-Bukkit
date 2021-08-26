@@ -107,8 +107,7 @@ public class BlockAction extends GenericAction {
             case PLAYER_WALL_HEAD:
             case PLAYER_HEAD:
                 SkullActionData headActionData = new SkullActionData();
-                if (state instanceof Skull) {
-                    Skull skull = ((Skull) state);
+                if (state instanceof Skull skull) {
                     if (skull.getOwningPlayer() != null) {
                         headActionData.owner = skull.getOwningPlayer().getUniqueId().toString();
                     }
@@ -167,8 +166,7 @@ public class BlockAction extends GenericAction {
     }
 
     private void setBlockRotation(BlockState block, RotatableActionData rotatableActionData) {
-        if (block.getBlockData() instanceof Rotatable) {
-            final Rotatable r = (Rotatable) block.getBlockData();
+        if (block.getBlockData() instanceof final Rotatable r) {
             rotatableActionData.rotation = r.getRotation().toString();
         } else {
             final Directional d = (Directional) block.getBlockData();
@@ -218,11 +216,9 @@ public class BlockAction extends GenericAction {
         String name = "";
         BlockActionData blockActionData = getActionData();
         if (blockActionData != null) {
-            if (blockActionData instanceof SkullActionData) {
-                final SkullActionData ad = (SkullActionData) blockActionData;
+            if (blockActionData instanceof final SkullActionData ad) {
                 name += ad.skullType + " ";
-            } else if (blockActionData instanceof SpawnerActionData) {
-                final SpawnerActionData ad = (SpawnerActionData) blockActionData;
+            } else if (blockActionData instanceof final SpawnerActionData ad) {
                 name += ad.entityType + " ";
             }
         }
@@ -230,13 +226,11 @@ public class BlockAction extends GenericAction {
         if (blockActionData == null) {
             return name;
         }
-        if (blockActionData instanceof SignActionData) {
-            final SignActionData ad = (SignActionData) blockActionData;
+        if (blockActionData instanceof final SignActionData ad) {
             if (ad.lines != null && ad.lines.length > 0) {
                 name += " (" + TypeUtils.join(ad.lines, ", ") + ")";
             }
-        } else if (blockActionData instanceof CommandActionData) {
-            final CommandActionData ad = (CommandActionData) blockActionData;
+        } else if (blockActionData instanceof final CommandActionData ad) {
             name += " (" + ad.command + ")";
         }
         if (blockActionData.customName != null) {
@@ -358,7 +352,7 @@ public class BlockAction extends GenericAction {
         // If lily pad, check that block below is water. Be sure
         // it's set to stationary water so the lily pad will sit
         switch (getMaterial()) {
-            case LILY_PAD:
+            case LILY_PAD -> {
                 final Block below = block.getRelative(BlockFace.DOWN);
                 if (below.getType().equals(WATER) || below.getType().equals(AIR)) {
                     below.setType(WATER);
@@ -366,8 +360,8 @@ public class BlockAction extends GenericAction {
                     // Prism.debug("Lilypad skipped because no water exists below.");
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
-                break;
-            case NETHER_PORTAL: // Only way is to set the portal on fire.
+            }
+            case NETHER_PORTAL -> { // Only way is to set the portal on fire.
                 final Block obsidian = Utilities.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
                 if (obsidian != null) {
                     final Block above = obsidian.getRelative(BlockFace.UP);
@@ -376,13 +370,10 @@ public class BlockAction extends GenericAction {
                         return new ChangeResultImpl(ChangeResultType.APPLIED, null);
                     }
                 }
-                break;
-            case JUKEBOX:
-                setBlockData(Bukkit.createBlockData(JUKEBOX));
-                break;
-            default:
-                break;
-
+            }
+            case JUKEBOX -> setBlockData(Bukkit.createBlockData(JUKEBOX));
+            default -> {
+            }
         }
         state.setType(getMaterial());
         state.setBlockData(getBlockData());
@@ -400,9 +391,7 @@ public class BlockAction extends GenericAction {
             if (Tag.BANNERS.isTagged(getMaterial()) && blockActionData instanceof BannerActionData) {
                 return handleBanners(block, blockActionData, originalBlock);
             }
-            if (getMaterial() == SPAWNER && blockActionData instanceof SpawnerActionData) {
-
-                final SpawnerActionData s = (SpawnerActionData) blockActionData;
+            if (getMaterial() == SPAWNER && blockActionData instanceof final SpawnerActionData s) {
 
                 // Set spawner data
                 ((CreatureSpawner) newState).setDelay(s.getDelay());
@@ -411,8 +400,7 @@ public class BlockAction extends GenericAction {
             }
 
             if (getMaterial() == COMMAND_BLOCK
-                    && blockActionData instanceof CommandActionData) {
-                final CommandActionData c = (CommandActionData) blockActionData;
+                    && blockActionData instanceof final CommandActionData c) {
                 ((CommandBlock) newState).setCommand(c.command);
             }
             if (newState instanceof Nameable && blockActionData.customName != null
@@ -421,9 +409,8 @@ public class BlockAction extends GenericAction {
             }
             if (parameters.getProcessType() == PrismProcessType.ROLLBACK
                     && Tag.SIGNS.isTagged(getMaterial())
-                    && blockActionData instanceof SignActionData) {
+                    && blockActionData instanceof final SignActionData s) {
 
-                final SignActionData s = (SignActionData) blockActionData;
                 // Verify block is sign. Rarely, if the block somehow pops off
                 // or fails
                 // to set it causes ClassCastException:
@@ -537,8 +524,7 @@ public class BlockAction extends GenericAction {
     }
 
     private void setBlockRotatable(BlockState state, RotatableActionData actionData) {
-        if (state.getBlockData() instanceof Rotatable) {
-            final Rotatable r = (Rotatable) state.getBlockData();
+        if (state.getBlockData() instanceof final Rotatable r) {
             r.setRotation(actionData.getRotation());
             state.setBlockData(r);
         } else {

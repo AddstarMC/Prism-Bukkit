@@ -10,12 +10,12 @@ New Features
 - Bed Explosions should be tracked
 - Help message provide clickable links to this wiki.
 - Improved entity serializations.  this is a major change and will need testing
-- Save shukler box content - (watch for very large contents that might exceed db storage max (32000 bytes)
+- Save shulker box content - (watch for very large contents that might exceed db storage max (32000 bytes)
 - These docs!
 - New Paper specific event handlers.
 - Add Hikari db connector
 - Major db structure rewrite.
-- Add suport for Apache Derby
+- Add support for Apache Derby
 - Create new Prism-Api
 - Paste results are clickable
 - Added testing framework and integration framework

@@ -51,13 +51,13 @@ public class TestHelper {
             Files.list(path).forEach(path1 -> {
                 try {
                     Files.delete(path1);
-                    System.out.println("Deleting " + path1.toString());
+                    System.out.println("Deleting " + path1);
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
             });
             Files.delete(path);
-            System.out.println("Deleting " + path.toString());
+            System.out.println("Deleting " + path);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

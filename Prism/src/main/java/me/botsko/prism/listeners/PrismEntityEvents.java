@@ -85,12 +85,11 @@ public class PrismEntityEvents extends BaseListener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {
 
-        if (!(event.getDamager() instanceof Player)) {
+        if (!(event.getDamager() instanceof final Player player)) {
             return;
         }
 
         final Entity entity = event.getEntity();
-        final Player player = (Player) event.getDamager();
 
         // Cancel the event if a wand is in use
         if (WandUtils.playerUsesWandOnClick(player, entity.getLocation())) {
@@ -131,8 +130,7 @@ public class PrismEntityEvents extends BaseListener {
                 String name = entity.getType().name().toLowerCase();
 
                 // Inventory
-                if (entity instanceof InventoryHolder) {
-                    final InventoryHolder holder = (InventoryHolder) entity;
+                if (entity instanceof final InventoryHolder holder) {
 
                     for (final ItemStack i : holder.getInventory().getContents()) {
                         if (checkNotNullorAir(i)) {
@@ -194,8 +192,7 @@ public class PrismEntityEvents extends BaseListener {
             }
 
             // Create handlers
-            if (entitySource instanceof Player) {
-                Player player = (Player) entitySource;
+            if (entitySource instanceof Player player) {
 
                 if (!Prism.getIgnore().event(ActionType.PLAYER_KILL, player)) {
                     return;
@@ -320,9 +317,8 @@ public class PrismEntityEvents extends BaseListener {
             return;
         }
 
-        if (e instanceof ArmorStand) {
+        if (e instanceof ArmorStand stand) {
             Vector at = event.getClickedPosition();
-            ArmorStand stand = (ArmorStand) e;
 
             if (hand.getType() != Material.AIR) {
                 EquipmentSlot target = InventoryUtils.getTargetArmorSlot(hand.getType());
@@ -390,8 +386,7 @@ public class PrismEntityEvents extends BaseListener {
             return;
         }
 
-        if (e instanceof ItemFrame) {
-            final ItemFrame frame = (ItemFrame) e;
+        if (e instanceof final ItemFrame frame) {
 
             // If held item doesn't equal existing item frame object type
             if (!frame.getItem().getType().equals(Material.AIR)) {
@@ -503,11 +498,9 @@ public class PrismEntityEvents extends BaseListener {
         final ProjectileSource source = event.getPotion().getShooter();
 
         // Ignore from non-players for the time being
-        if (!(source instanceof Player)) {
+        if (!(source instanceof final Player player)) {
             return;
         }
-
-        final Player player = (Player) source;
 
         if (!Prism.getIgnore().event(ActionType.POTION_SPLASH, player)) {
             return;
@@ -599,8 +592,7 @@ public class PrismEntityEvents extends BaseListener {
         }
 
         // If an item frame, track it's contents
-        if (e instanceof ItemFrame) {
-            final ItemFrame frame = (ItemFrame) e;
+        if (e instanceof final ItemFrame frame) {
             if (frame.getItem() != null) {
                 if (player != null) {
                     RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, frame.getItem(),
@@ -649,8 +641,7 @@ public class PrismEntityEvents extends BaseListener {
             return;
         }
         // If an item frame, track it's contents
-        if (entity instanceof ItemFrame) {
-            final ItemFrame frame = (ItemFrame) entity;
+        if (entity instanceof final ItemFrame frame) {
             if (frame.getItem() != null && frame.getItem().getType() != Material.AIR) {
                 RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, frame.getItem(),
                         frame.getItem().getAmount(), -1, null, frame.getLocation(), breakingName));
@@ -723,8 +714,7 @@ public class PrismEntityEvents extends BaseListener {
         final Location loc = block.getLocation();
         final BlockState newState = event.getNewState();
 
-        if (event.getEntity() instanceof Player) {
-            final Player player = (Player) event.getEntity();
+        if (event.getEntity() instanceof final Player player) {
             RecordingQueue.addToQueue(ActionFactory.createBlockChange(ActionType.ENTITY_FORM, loc, block.getType(),
                     block.getBlockData(), newState.getType(), newState.getBlockData(), player));
         } else {

@@ -28,10 +28,7 @@ public class PrismInventoryMoveItemEvent implements Listener {
             // Get container
             final InventoryHolder ih = event.getDestination().getHolder();
             Location containerLoc = null;
-            if (ih instanceof BlockState) {
-                final BlockState eventChest = (BlockState) ih;
-                containerLoc = eventChest.getLocation();
-            }
+            if (ih instanceof final BlockState eventChest) containerLoc = eventChest.getLocation();
 
             if (containerLoc == null) {
                 return;
@@ -49,8 +46,7 @@ public class PrismInventoryMoveItemEvent implements Listener {
             // Get container
             final InventoryHolder ih = event.getSource().getHolder();
             Location containerLoc = null;
-            if (ih instanceof BlockState) {
-                final BlockState eventChest = (BlockState) ih;
+            if (ih instanceof final BlockState eventChest) {
                 containerLoc = eventChest.getLocation();
             }
 

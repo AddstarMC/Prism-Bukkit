@@ -135,11 +135,10 @@ public class SignAction extends GenericAction {
             }
 
             // Set the content
-            if (block.getState() instanceof org.bukkit.block.Sign) {
+            if (block.getState() instanceof final org.bukkit.block.Sign sign) {
 
                 // Set sign data
                 final String[] lines = getLines();
-                final org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
                 int i = 0;
                 if (lines != null && lines.length > 0) {
                     for (final String line : lines) {

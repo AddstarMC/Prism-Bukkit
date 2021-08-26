@@ -17,15 +17,15 @@ public class SettingCommands extends AbstractCommand {
     public void handle(CallInfo call) {
         if (call.getArgs().length > 1) {
             switch (call.getArg(0).toLowerCase()) {
-                case "batchsize":
+                case "batchsize" -> {
                     int actions = Integer.parseInt(call.getArg(1));
                     RecordingTask.setActionsPerInsert(actions);
                     Prism.messenger.sendMessage(call.getSender(),
-                            Il8nHelper.formatMessage("settings-batch-insert",actions));
+                            Il8nHelper.formatMessage("settings-batch-insert", actions));
                     return;
-                default:
-                    Prism.messenger.sendMessage(call.getSender(),
-                            Il8nHelper.getMessage("invalid-command"));
+                }
+                default -> Prism.messenger.sendMessage(call.getSender(),
+                        Il8nHelper.getMessage("invalid-command"));
             }
         }
         //todo add feedback

@@ -155,7 +155,7 @@ public class PrismInventoryEvents implements Listener {
         }).collect(Collectors.toList());
         if (recordable.size() > 0) {
             //todo
-            PrismLogHandler.debug("PrepareCraftEvent: " + prepareItemCraftEvent.toString());
+            PrismLogHandler.debug("PrepareCraftEvent: " + prepareItemCraftEvent);
         }
 
     }
@@ -201,8 +201,7 @@ public class PrismInventoryEvents implements Listener {
         final Player player = (Player) event.getWhoClicked();
 
         // Ignore all item move events where players modify their own inventory
-        if (event.getInventory().getHolder() instanceof Player) {
-            Player other = (Player) event.getInventory().getHolder();
+        if (event.getInventory().getHolder() instanceof Player other) {
 
             if (other.equals(player)) {
                 return;
@@ -218,7 +217,7 @@ public class PrismInventoryEvents implements Listener {
             return;
         }
         PrismLogHandler.debug("HELD:" + ((heldItem != null) ? heldItem.toString() : "NULL"));
-        PrismLogHandler.debug("SLOT:" +  slotItem.toString());
+        PrismLogHandler.debug("SLOT:" + slotItem);
 
         switch (event.getClick()) {
             // IGNORE BOTTOM

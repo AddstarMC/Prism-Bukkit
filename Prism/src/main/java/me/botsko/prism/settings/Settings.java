@@ -61,9 +61,8 @@ public class Settings {
      * @param key String
      * @param value String
      * @param player Player
-     * @deprecated Use {@link Settings#saveSettingAsync(String, String,Player)}
      */
-    public static boolean saveSetting(String key, String value, Player player) {
+    private static boolean saveSetting(String key, String value, Player player) {
         if (dataSource == null) {
             throw new NullPointerException("You did not define a Settings Datasource.");
         }

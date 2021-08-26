@@ -39,9 +39,7 @@ public class DeathUtils {
         Entity killer = null;
 
         // If was damaged by an entity
-        if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-            EntityDamageByEntityEvent entityDamageByEntityEvent = (EntityDamageByEntityEvent) entity
-                    .getLastDamageCause();
+        if (entity.getLastDamageCause() instanceof EntityDamageByEntityEvent entityDamageByEntityEvent) {
             // Arrow?
             if (entityDamageByEntityEvent.getDamager() instanceof Arrow) {
                 Projectile arrow = (Arrow) entityDamageByEntityEvent.getDamager();
@@ -54,9 +52,7 @@ public class DeathUtils {
             }
         }
 
-        if (entity instanceof Player) {
-
-            Player player = (Player) entity;
+        if (entity instanceof Player player) {
 
             // Detect additional suicide. For example, when you potion
             // yourself with instant damage it doesn't show as suicide.
@@ -73,25 +69,16 @@ public class DeathUtils {
         }
 
         // Causes of death for either entities or players
-        switch (damageCause) {
-            case ENTITY_ATTACK:
-                return "mob";
-            case PROJECTILE:
-                return "skeleton";
-            case ENTITY_EXPLOSION:
-                return "creeper";
-            case CONTACT:
-                return "cactus";
-            case BLOCK_EXPLOSION:
-                return "tnt";
-            case FIRE:
-            case FIRE_TICK:
-                return "fire";
-            case MAGIC:
-                return "potion";
-            default:
-                return damageCause.name().toLowerCase();
-        }
+        return switch (damageCause) {
+            case ENTITY_ATTACK -> "mob";
+            case PROJECTILE -> "skeleton";
+            case ENTITY_EXPLOSION -> "creeper";
+            case CONTACT -> "cactus";
+            case BLOCK_EXPLOSION -> "tnt";
+            case FIRE, FIRE_TICK -> "fire";
+            case MAGIC -> "potion";
+            default -> damageCause.name().toLowerCase();
+        };
     }
 
     /**
@@ -169,8 +156,7 @@ public class DeathUtils {
                 ((EntityDamageByEntityEvent) event.getEntity().getLastDamageCause());
         if (e != null) {
             Entity killer = e.getDamager();
-            if (killer instanceof Wolf) {
-                Wolf wolf = (Wolf) killer;
+            if (killer instanceof Wolf wolf) {
                 if (wolf.isTamed()) {
                     if (wolf.getOwner() instanceof Player) {
                         owner = ((Player) wolf.getOwner()).getName();

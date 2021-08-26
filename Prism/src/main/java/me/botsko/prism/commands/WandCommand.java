@@ -119,8 +119,7 @@ public class WandCommand extends AbstractCommand {
           Inspector wand
          */
         switch (type.toLowerCase()) {
-            case "i":
-            case "inpect":
+            case "i", "inpect" -> {
                 if (checkNoPermissions(call.getPlayer(), "prism.lookup", "prism.wand.inspect")) {
                     return;
                 }
@@ -131,9 +130,8 @@ public class WandCommand extends AbstractCommand {
                     sendWandStatus(call.getPlayer(), "wand-inspection", true, wandOn, parameters.toString());
                     enabled = true;
                 }
-                break;
-            case "p":
-            case "profile":
+            }
+            case "p", "profile" -> {
                 if (checkNoPermissions(call.getPlayer(), "prism.lookup", "prism.wand.profile")) {
                     return;
                 }
@@ -144,9 +142,8 @@ public class WandCommand extends AbstractCommand {
                     enabled = true;
                     sendWandStatus(call.getPlayer(), "wand-profile", true, wandOn, parameters.toString());
                 }
-                break;
-            case "rollback":
-            case "rb":
+            }
+            case "rollback", "rb" -> {
                 if (checkNoPermissions(call.getSender(), "prism.rollback", "prism.wand.rollback")) {
                     return;
                 }
@@ -157,9 +154,8 @@ public class WandCommand extends AbstractCommand {
                     sendWandStatus(call.getPlayer(), "wand-rollback", true, wandOn, parameters.toString());
                     enabled = true;
                 }
-                break;
-            case "restore":
-            case "rs":
+            }
+            case "restore", "rs" -> {
                 if (checkNoPermissions(call.getPlayer(), "prism.restore", "prism.wand.restore")) {
                     return;
                 }
@@ -171,14 +167,13 @@ public class WandCommand extends AbstractCommand {
                     enabled = true;
                     sendWandStatus(call.getPlayer(), "wand-restore", true, wandOn, parameters.toString());
                 }
-                break;
-            case "off":
-                sendWandStatus(call.getPlayer(), "wand-current", false, wandOn, parameters.toString());
-                break;
-            default:
+            }
+            case "off" -> sendWandStatus(call.getPlayer(), "wand-current", false, wandOn, parameters.toString());
+            default -> {
                 Prism.messenger.sendMessage(call.getPlayer(),
                         Prism.messenger.playerError(Il8nHelper.getMessage("wand-invalid")));
                 return;
+            }
         }
         constructWand(call, enabled, itemMaterial, mode, wand, isInspect, oldWand);
     }

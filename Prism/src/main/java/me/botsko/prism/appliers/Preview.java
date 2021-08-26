@@ -222,8 +222,7 @@ public class Preview implements Previewable {
                     ChangeResult result = null;
 
                     try {
-                        if (a instanceof GenericAction) {
-                            GenericAction action = (GenericAction) a;
+                        if (a instanceof GenericAction action) {
                             if (processType.equals(PrismProcessType.ROLLBACK)) {
                                 result = action.applyRollback(player, parameters, isPreview);
                             }
@@ -260,7 +259,8 @@ public class Preview implements Previewable {
                     } catch (final Exception e) {
                         String msg = e.getMessage() == null ? "unknown cause" : e.getMessage();
                         PrismLogHandler.warn(String.format("Applier error: %s (ID: %d)", msg, a.getId()),e);
-                        PrismLogHandler.log(String.format("Block type: %s (old %s)", a.getMaterial(), a.getOldMaterial()));
+                        PrismLogHandler.log(
+                                String.format("Block type: %s (old %s)", a.getMaterial(), a.getOldMaterial()));
                         PrismLogHandler.log(String.format("Block location: %d, %d, %d",
                                 a.getLoc().getBlockX(),
                                 a.getLoc().getBlockY(),

@@ -68,7 +68,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int actionId = getActionId(a);
         int playerId = getPlayerId(a);
         if (worldId == 0 || actionId == 0 || playerId == 0) {
-            PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
+            PrismLogHandler.debug("Sql data error: Handler:" + a);
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));
@@ -139,7 +139,7 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
         int actionId = getActionId(a);
         int playerId = getPlayerId(a);
         if (worldId == 0 || actionId == 0 || playerId == 0) {
-            PrismLogHandler.debug("Sql data error: Handler:" + a.toString());
+            PrismLogHandler.debug("Sql data error: Handler:" + a);
         }
         IntPair newIds = Prism.getItems().materialToIds(a.getMaterial(),
                 Utilities.dataString(a.getBlockData()));
@@ -179,15 +179,10 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
             int line = 0;
             for (int i : results) {
                 switch (i) {
-                    case Statement.EXECUTE_FAILED:
-                        PrismLogHandler.log(name + "Item " + line + " / " + inserts + " failed to execute");
-                        break;
-                    case Statement.SUCCESS_NO_INFO:
-                        PrismLogHandler.log(name + "Item " + line + " / "
-                                + inserts + " was successful but no info was returned.");
-                        break;
-                    default:
-                        actual = actual + i;
+                    case Statement.EXECUTE_FAILED -> PrismLogHandler.log(name + "Item " + line + " / " + inserts + " failed to execute");
+                    case Statement.SUCCESS_NO_INFO -> PrismLogHandler.log(name + "Item " + line + " / "
+                            + inserts + " was successful but no info was returned.");
+                    default -> actual = actual + i;
                 }
                 line++;
             }
@@ -201,7 +196,6 @@ public class SqlInsertBuilder extends QueryBuilder implements InsertQuery {
      * Process any extra data associated with the ResultSet.
      *
      * @param keys ResultSet
-     * @throws SQLException SQLException.
      */
     private void processExtraData(ResultSet keys) {
         if (extraDataQueue.isEmpty()) {

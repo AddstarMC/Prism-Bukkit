@@ -44,17 +44,10 @@ public class DebugCommand implements SubHandler {
         if (call.getArgs().length == 2) {
             String arg = call.getArg(1);
             switch (arg.toLowerCase()) {
-                case "on":
-                    Prism.setDebug(true);
-                    break;
-                case "off":
-                    Prism.setDebug(false);
-                    break;
-                case "toggle":
-                    Prism.setDebug(!Prism.isDebug());
-                default:
-                    Prism.messenger.sendMessage(call.getSender(),Il8nHelper.getMessage("debug-help"));
-                    break;
+                case "on" -> Prism.setDebug(true);
+                case "off" -> Prism.setDebug(false);
+                case "toggle" -> Prism.setDebug(!Prism.isDebug());
+                default -> Prism.messenger.sendMessage(call.getSender(), Il8nHelper.getMessage("debug-help"));
             }
             Prism.messenger.sendMessage(call.getSender(), Prism.messenger.playerMsg(
                     Component.text(Il8nHelper.getRawMessage("debug-msg") + " " + Prism.isDebug())));
@@ -66,7 +59,7 @@ public class DebugCommand implements SubHandler {
 
     private String getFile(Path file) {
         try {
-            String out = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+            String out = Files.readString(file,StandardCharsets.UTF_8);
             out = removePatterns("hostname: (.*)",out,"**secret.host**");
             out = removePatterns("username: (.*)",out,"**username**");
             return removePatterns("password: (.*)",out,"**password**");
@@ -80,7 +73,7 @@ public class DebugCommand implements SubHandler {
         Pattern p = Pattern.compile(patten);
         Matcher matcher = p.matcher(haystack);
         while (matcher.find()) {
-           haystack =  new StringBuilder(haystack)
+             haystack =  new StringBuilder(haystack)
                    .replace(matcher.start(1),matcher.end(1),replacement)
                    .toString();
         }
@@ -109,8 +102,7 @@ public class DebugCommand implements SubHandler {
         StringBuilder out = new StringBuilder();
         String name = dataSource.getClass().getName();
         out.append("DataSource Name: ").append(name).append(System.lineSeparator());
-        if (dataSource.getDataSource() instanceof HikariDataSource) {
-            HikariDataSource ds = (HikariDataSource) dataSource.getDataSource();
+        if (dataSource.getDataSource() instanceof HikariDataSource ds) {
             out.append("Running: ").append(ds.isRunning())
                     .append("Total Connections: ")
                     .append(ds.getHikariPoolMXBean().getTotalConnections())
@@ -151,7 +143,8 @@ public class DebugCommand implements SubHandler {
         Path hikariProps = dataPath.resolve("hikari.properties");
         List<String> logs = new ArrayList<>();
         try {
-            Files.find(dataPath, 1, (path, basicFileAttributes) -> path.toFile().getName().matches("prism.log(\\.?)(\\d*)"))
+            Files.find(dataPath, 1, (path, basicFileAttributes) ->
+                            path.toFile().getName().matches("prism.log(\\.?)(\\d*)"))
                     .forEach(path -> {
                         String pLog;
                         if (path.toFile().length() < 2000000L) {

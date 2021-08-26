@@ -6,17 +6,12 @@ import me.botsko.prism.serializers.items.ItemStackSerializer;
 import me.botsko.prism.utils.EntityUtils;
 import me.botsko.prism.utils.MiscUtils;
 import org.bukkit.Material;
-import org.bukkit.entity.Ageable;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Sittable;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.slf4j.ILoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -77,12 +72,11 @@ public class EntitySerializer<T extends Entity> implements EntitySerializerInter
         EntityDamageEvent damageEvent = entity.getLastDamageCause();
 
         // Saves us the null check
-        if (damageEvent instanceof EntityDamageByEntityEvent && !damageEvent.isCancelled()
+        if (damageEvent instanceof EntityDamageByEntityEvent e && !damageEvent.isCancelled()
                 && damageEvent.getDamage() > ((LivingEntity) entity).getHealth()) {
-            EntityDamageByEntityEvent e = (EntityDamageByEntityEvent) damageEvent;
 
-            if (e.getDamager() instanceof Projectile) {
-                customDesc = EntityUtils.getCustomProjectileDescription((Projectile) e.getDamager());
+            if (e.getDamager() instanceof Projectile projectile) {
+                customDesc = EntityUtils.getCustomProjectileDescription(projectile);
             }
         }
     }
@@ -109,8 +103,7 @@ public class EntitySerializer<T extends Entity> implements EntitySerializerInter
         }
 
         // Get animal age
-        if (entity instanceof Ageable) {
-            final Ageable age = (Ageable) entity;
+        if (entity instanceof final Ageable age) {
             if (Boolean.FALSE.equals(isAdult)) {
                 age.setBaby();
             } else {

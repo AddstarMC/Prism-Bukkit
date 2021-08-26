@@ -8,7 +8,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyFormat;
 
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -226,9 +225,7 @@ public class TypeUtils {
         }
         StringBuilder sb = new StringBuilder();
         int rest = desiredLength - str.length();
-        for (int i = 1; i < rest; i++) {
-            sb.append(" ");
-        }
-        return str + sb.toString();
+        sb.append(" ".repeat(rest - 1));
+        return str + sb;
     }
 }
