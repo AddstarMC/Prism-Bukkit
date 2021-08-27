@@ -128,7 +128,7 @@ public class ActionMessage {
 
     private TextComponent getExtendedInfo() {
         if (showExtended && (handler.getMaterial() != Material.AIR)) {
-            return Component.text(handler.getMaterial() + Utilities.dataString(handler.getBlockData()));
+            return Component.text(handler.getMaterial() + Utilities.dataString(handler.getBlockData()) + " ");
         }
         return Component.empty();
     }
@@ -156,7 +156,7 @@ public class ActionMessage {
 
     private TextComponent getCount() {
         if (handler.getAggregateCount() > 1) {
-            return Component.text(" x" + handler.getAggregateCount());
+            return Component.text("x" + handler.getAggregateCount() + " ");
         }
         return Component.empty();
     }

@@ -138,11 +138,12 @@ public class EnchantmentUtils {
             enchantName = enchantment.getKey().getKey().toLowerCase().replace("_", " ");
         }
         switch (level) {
+            case 1 -> enchantName += " I";
             case 2 -> enchantName += " II";
             case 3 -> enchantName += " III";
             case 4 -> enchantName += " IV";
             case 5 -> enchantName += " V";
-            default -> enchantName += " I";
+            default -> enchantName += " " + level;
         }
         return enchantName;
 

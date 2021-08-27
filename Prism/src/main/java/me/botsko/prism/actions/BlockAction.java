@@ -217,7 +217,7 @@ public class BlockAction extends GenericAction {
         BlockActionData blockActionData = getActionData();
         if (blockActionData != null) {
             if (blockActionData instanceof final SkullActionData ad) {
-                name += ad.skullType + " ";
+                name += ad.owner + " ";
             } else if (blockActionData instanceof final SpawnerActionData ad) {
                 name += ad.entityType + " ";
             }

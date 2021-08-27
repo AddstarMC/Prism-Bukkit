@@ -593,7 +593,7 @@ public class PrismEntityEvents extends BaseListener {
 
         // If an item frame, track it's contents
         if (e instanceof final ItemFrame frame) {
-            if (frame.getItem() != null) {
+            if (!checkNotNullorAir(frame.getItem())) {
                 if (player != null) {
                     RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, frame.getItem(),
                             frame.getItem().getAmount(), -1, null, e.getLocation(), player));
@@ -642,7 +642,7 @@ public class PrismEntityEvents extends BaseListener {
         }
         // If an item frame, track it's contents
         if (entity instanceof final ItemFrame frame) {
-            if (frame.getItem() != null && frame.getItem().getType() != Material.AIR) {
+            if (!checkNotNullorAir(frame.getItem())) {
                 RecordingQueue.addToQueue(ActionFactory.createItemStack(ActionType.ITEM_REMOVE, frame.getItem(),
                         frame.getItem().getAmount(), -1, null, frame.getLocation(), breakingName));
             }
