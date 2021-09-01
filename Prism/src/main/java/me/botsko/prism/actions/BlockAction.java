@@ -647,7 +647,6 @@ public class BlockAction extends GenericAction {
     public static class SkullActionData extends RotatableActionData {
 
         String owner;
-        String skullType;
 
     }
 

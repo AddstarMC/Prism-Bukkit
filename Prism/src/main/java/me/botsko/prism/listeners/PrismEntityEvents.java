@@ -80,7 +80,7 @@ public class PrismEntityEvents extends BaseListener {
     /**
      * EntityDamageByEntityEvent.
      *
-     * @param event EntityDamageByEntityEvent
+     * @param event EntityDamageByEntityEventI
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityDamageEvent(final EntityDamageByEntityEvent event) {

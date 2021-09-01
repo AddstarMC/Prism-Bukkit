@@ -83,7 +83,7 @@ public class Executor implements CommandExecutor, TabCompleter {
             return true;
         } else if ((currentMode.equals("subcommand") && (args.length - 1) < sub.getMinArgs())
                 || (currentMode.equals("command") && (args.length) < sub.getMinArgs())) {
-            Prism.messenger.sendMessage(sender, Il8nHelper.formatMessage("invalid-arguments",args));
+            Prism.messenger.sendMessage(sender, Il8nHelper.formatMessage("invalid-arguments", String.join(" ",args)));
             return true;
         }
         // Ensure command allows console

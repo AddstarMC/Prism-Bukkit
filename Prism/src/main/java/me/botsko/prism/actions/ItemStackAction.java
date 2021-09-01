@@ -63,6 +63,7 @@ public class ItemStackAction extends GenericAction {
     }
 
     @Override
+    @Deprecated
     public short getDurability() {
         if (actionData != null) {
             return actionData.durability;

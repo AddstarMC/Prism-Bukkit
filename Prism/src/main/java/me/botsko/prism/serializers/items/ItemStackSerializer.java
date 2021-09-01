@@ -244,7 +244,9 @@ public class ItemStackSerializer {
         } else if (meta instanceof final BookMeta bookMeta) {
             bookMeta.setAuthor(by);
             bookMeta.setTitle(title);
-            bookMeta.setPages(content);
+            if (content != null) {
+                bookMeta.setPages(content);
+            }
             item.setItemMeta(bookMeta);
         } else if (meta instanceof FireworkEffectMeta && effectColors != null
                 && effectColors.length > 0) {

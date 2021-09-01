@@ -483,7 +483,6 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
         // Build conditions based off final args
         final String query = getQuery(parameters, shouldGroup);
         eventTimer.recordTimedEvent("query started");
-
         try (
                 Connection conn = Prism.getInstance().getPrismDataSource().getDataSource().getConnection();
                 PreparedStatement s = conn.prepareStatement(query);
@@ -645,8 +644,10 @@ public class SqlSelectQueryBuilder extends QueryBuilder implements SelectQuery {
                         if (Prism.isDebug()) {
                             PrismLogHandler.warn("Deserialization Error: " + e.getLocalizedMessage(), e);
                         }
+                    } catch (NullPointerException e) {
+                        //this should not happen log it out
+                        PrismLogHandler.warn("Deserialization Error  (NPE): Row" + rowId + " " + e.getLocalizedMessage(), e);
                     }
-
                     // player
                     baseHandler.setSourceName(rs.getString(4));
 

@@ -358,6 +358,7 @@ public abstract class GenericAction implements Handler {
     }
 
     @Override
+    @Deprecated
     public short getDurability() {
         return 0;
     }
