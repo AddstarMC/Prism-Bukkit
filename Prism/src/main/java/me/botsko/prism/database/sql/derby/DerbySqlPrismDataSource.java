@@ -18,6 +18,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -103,9 +104,26 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
               Statement st = conn.createStatement()
         ) {
             Collection<String> tableNames = new HashSet<>();
-            ResultSet rs = st.executeQuery("SHOW TABLES IN " + config.userName);
+            DatabaseMetaData metaDataForDatabaseConnection = conn.getMetaData();
+            ResultSet schemas = metaDataForDatabaseConnection.getSchemas();
+            boolean prism_exists = false;
+            while (schemas.next()) {
+                if (schemas.getString(1).equals("PRISM")) {
+                    prism_exists = true;
+                }
+            }
+            schemas.close();
+            if (!prism_exists) {
+                st.execute("CREATE SCHEMA PRISM AUTHORIZATION " + dbConfig.getUsername());
+            }
+            st.execute("SET CURRENT SCHEMA PRISM");
+            ResultSet rs = metaDataForDatabaseConnection
+                    .getTables(null, "PRISM",
+                            null, new String[]{"TABLE"});
+
+            //ResultSet rs = st.executeQuery("SHOW TABLES IN " + config.userName);
             while (rs.next()) {
-                tableNames.add(rs.getString("TABLE_NAME"));
+                tableNames.add(rs.getString(3));
             }
             rs.close();
             try {

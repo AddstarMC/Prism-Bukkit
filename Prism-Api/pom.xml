@@ -12,8 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Prism-Api</artifactId>
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+
     </properties>
     <build>
         <plugins>

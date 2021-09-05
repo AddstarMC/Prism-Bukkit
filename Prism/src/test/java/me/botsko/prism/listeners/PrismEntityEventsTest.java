@@ -48,13 +48,11 @@ class PrismEntityEventsTest {
         TestHelper.shutdownHelper(helper);
     }
 
-    @Test
     void onCreatureSpawn() {
         WorldMock world = (WorldMock) server.getWorld("Normal");
         server.addPlayer("Mock");
         assertNotNull(world);
         Prism.setDebug(true);
-
         Zombie z = (Zombie) world.spawnEntity(world.getSpawnLocation(),EntityType.ZOMBIE);
         server.getPluginManager().callEvent(new CreatureSpawnEvent(z, CreatureSpawnEvent.SpawnReason.NATURAL));
         server.getScheduler().performTicks(100);
