@@ -7,7 +7,7 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.actionlibs.ActionFactory;
 import me.botsko.prism.actionlibs.RecordingQueue;
 import me.botsko.prism.api.actions.ActionType;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -76,7 +76,7 @@ public class PaperListeners implements Listener {
             return;
         }
         RecordingQueue.addToQueue(ActionFactory.createPlayer(ActionType.PLAYER_CHAT, event.getPlayer(),
-                PlainTextComponentSerializer.plainText().serialize(event.message())));
+                PlainComponentSerializer.plain().serialize(event.message())));
     }
 
 }

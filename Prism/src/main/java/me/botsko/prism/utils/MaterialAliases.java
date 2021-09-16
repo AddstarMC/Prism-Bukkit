@@ -105,8 +105,10 @@ public class MaterialAliases {
             try {
                 BlockData dataString = Bukkit.createBlockData(m);
                 data.put(m,dataString);
-            } catch (IllegalArgumentException e) {
-                //suppress
+            } catch (RuntimeException e) {
+                if (!(e instanceof IllegalArgumentException)){
+                    PrismLogHandler.warn(e.getMessage());
+                }
             }
         }
         Bukkit.getScheduler().runTaskAsynchronously(Prism.getInstance(), () -> {

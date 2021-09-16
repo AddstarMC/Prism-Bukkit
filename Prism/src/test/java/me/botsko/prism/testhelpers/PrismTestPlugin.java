@@ -1,12 +1,16 @@
-package me.botsko.prism;
+package me.botsko.prism.testhelpers;
 
 import io.papermc.lib.PaperLib;
+import me.botsko.prism.DatabaseUpdater;
+import me.botsko.prism.Messenger;
+import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
+import me.botsko.prism.TaskManager;
 import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.database.PrismDataSource;
 import me.botsko.prism.players.PlayerIdentification;
 import me.botsko.prism.settings.Settings;
-import me.botsko.prism.testhelpers.TestPrismDataSource;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -54,6 +58,7 @@ public class PrismTestPlugin extends Prism {
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         config.allowMetrics = false;
+        config.preloadMaterials = false;
         debug = config.debug = true;
         ConfigurationNode dataSourceConfig = configHandler.getDataSourceConfig();
         try {

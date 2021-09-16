@@ -13,7 +13,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -247,7 +247,7 @@ public class MiscUtils {
      * @param commands the commands
      */
     public static void dispatchAlert(String msg, Iterable<String> commands) {
-        String cleanMessage = PlainTextComponentSerializer.plainText().deserialize(msg).content();
+        String cleanMessage = PlainComponentSerializer.plain().deserialize(msg).content();
         for (String command : commands) {
             if ("examplecommand <alert>".equals(command)) {
                 continue;

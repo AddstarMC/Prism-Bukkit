@@ -48,6 +48,7 @@ class PrismEntityEventsTest {
         TestHelper.shutdownHelper(helper);
     }
 
+    @Test
     void onCreatureSpawn() {
         WorldMock world = (WorldMock) server.getWorld("Normal");
         server.addPlayer("Mock");

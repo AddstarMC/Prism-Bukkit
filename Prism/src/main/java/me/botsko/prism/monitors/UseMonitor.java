@@ -6,7 +6,7 @@ import me.botsko.prism.utils.MiscUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -59,7 +59,7 @@ public class UseMonitor {
         if (count <= 5) {
             plugin.alertPlayers(null, out,alertPerm);
             if (plugin.config.alertConfig.uses.logToConsole) {
-                PrismLogHandler.log(PlainTextComponentSerializer.plainText().serialize(out));
+                PrismLogHandler.log(PlainComponentSerializer.plain().serialize(out));
             }
             // Log to commands
             List<String> commands = plugin.config.alertConfig.uses.logCommands;

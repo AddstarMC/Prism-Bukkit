@@ -13,7 +13,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -94,7 +94,7 @@ public class OreMonitor {
                         plugin.alertPlayers(null, component, alertPerm);
                         // Log to console
                         if (plugin.config.alertConfig.oreAlerts.logToConsole) {
-                            me.botsko.prism.PrismLogHandler.log(PlainTextComponentSerializer.plainText().serialize(component));
+                            me.botsko.prism.PrismLogHandler.log(PlainComponentSerializer.plain().serialize(component));
                         }
                         // Log to commands
                         List<String> commands = plugin.config.alertConfig.oreAlerts.logCommands;

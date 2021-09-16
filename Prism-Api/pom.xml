@@ -11,9 +11,6 @@
     <packaging>jar</packaging>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Prism-Api</artifactId>
-    <properties>
-
-    </properties>
     <build>
         <plugins>
             <plugin>

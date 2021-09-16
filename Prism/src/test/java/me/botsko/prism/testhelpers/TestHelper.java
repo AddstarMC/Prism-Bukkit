@@ -2,9 +2,13 @@ package me.botsko.prism.testhelpers;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
-import me.botsko.prism.PrismTestPlugin;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.PluginDescriptionFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,11 +34,22 @@ public class TestHelper {
      * @return ServerMock.
      */
     public ServerMock setup() {
+        System.out.println("Loading Server");
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
-        plugin = MockBukkit.load(PrismTestPlugin.class);
-        server.getScheduler().performTicks(20);
+        System.out.println("Loading Test Plugin");
+        File pluginDescriptorFile = new File("src/test/resources/plugin.yml");
+        try {
+            FileReader reader = new FileReader(pluginDescriptorFile);
+            PluginDescriptionFile file = new PluginDescriptionFile(reader);
+            plugin = MockBukkit.loadWith(PrismTestPlugin.class,file);
+            System.out.println("--- Loaded ---");
+            server.getScheduler().performTicks(20);
+            System.out.println("Ticked 20");
+        } catch (FileNotFoundException | InvalidDescriptionException e) {
+            e.printStackTrace();
+        }
         return server;
     }
 
@@ -47,11 +62,11 @@ public class TestHelper {
             path = plugin.getDataFolder().toPath();
             plugin.onDisable();
         }
-        try {
-            MockBukkit.unmock();
-        } catch (Exception e) {
+       /* try {
+        MockBukkit.unmock();
+       } catch (Exception e) {
             System.out.println(e.getMessage());
-        }
+        }*/
         if (path != null) {
             cleanFileSystem(path);
         }

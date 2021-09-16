@@ -10,7 +10,7 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -51,7 +51,7 @@ public class ActionMessage {
      */
     public String getRawMessage() {
         Action action = handler.getAction();
-        return PlainTextComponentSerializer.plainText().serialize(getMainMessage(action, format1));
+        return PlainComponentSerializer.plain().serialize(getMainMessage(action, format1));
     }
 
     private Component getMainMessage(Action action, String format) {

@@ -60,30 +60,21 @@
         <spigot.api.version>1.16</spigot.api.version>
         <bukkit.version>1.16.5-R0.1-SNAPSHOT</bukkit.version>
         <junit.version>5.5.0</junit.version>
-        <derby.version>10.14.2.0</derby.version>
-        <mockbukkit.version>0.31.1</mockbukkit.version>
         <maven.compiler.source>16</maven.compiler.source>
         <maven.compiler.target>16</maven.compiler.target>
-        <mockbukkit.version>1.5.0</mockbukkit.version>
     </properties>
     <dependencies>
         <dependency>
             <!-- we dont use runtime features-->
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>19.0.0</version>
+            <version>21.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.16</artifactId>
-            <version>${mockbukkit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
