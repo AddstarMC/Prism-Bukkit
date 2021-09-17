@@ -191,7 +191,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-v1.17_Addstar</artifactId>
+            <artifactId>MockBukkit-1.17_Addstar</artifactId>
             <version>${mockbukkit.version}</version>
             <scope>test</scope>
         </dependency>
