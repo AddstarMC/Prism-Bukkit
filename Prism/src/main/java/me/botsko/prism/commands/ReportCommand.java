@@ -16,7 +16,6 @@ import me.botsko.prism.database.BlockReportQuery;
 import me.botsko.prism.measurement.QueueStats;
 import me.botsko.prism.text.ReplaceableTextComponent;
 import me.botsko.prism.utils.MiscUtils;
-import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -232,8 +231,7 @@ public class ReportCommand extends AbstractCommand {
               PrismProcessType.LOOKUP, 3,
               !plugin.config.parameterConfig.neverUseDefaults);
         if (parameters == null) {
-            Prism.getAudiences().sender(call.getSender())
-                    .sendMessage(Identity.nil(),
+            Prism.messenger.sendMessage(call.getSender(),
                             Prism.messenger.playerError(Il8nHelper.getMessage("report-player-error")));
             return;
         }

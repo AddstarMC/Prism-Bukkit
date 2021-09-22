@@ -33,6 +33,12 @@
     </dependencyManagement>
     <dependencies>
         <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>${bukkit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.3</version>
@@ -293,9 +299,11 @@
                 <configuration>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
+                    <classpathDependencyExcludes>
+                        <classpathDependencyExclude>io.papermc:paper-api</classpathDependencyExclude>
+                    </classpathDependencyExcludes>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
     <profiles>

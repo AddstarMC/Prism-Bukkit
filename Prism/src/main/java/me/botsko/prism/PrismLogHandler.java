@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class PrismLogHandler implements Closeable {
 
-    private static final String name;
+    private static String name;
     private static final  Logger prismLog;
     private static boolean debug = false;
 
@@ -32,15 +32,19 @@ public class PrismLogHandler implements Closeable {
         } else {
             prismLog = Logger.getAnonymousLogger();
         }
-        name = (Prism.getInstance() == null) ? "[Test Prism]" : Prism.getPrismName();
+        name = (Prism.getInstance() == null && Prism.getPrismName() == null) ? "[Test Prism]" : Prism.getPrismName();
     }
 
     /**
      * Class which handles all Prism Logging.
      */
     public PrismLogHandler() {
+        name = (Prism.getInstance() == null && Prism.getPrismName() == null) ? "[Test Prism]" : Prism.getPrismName();
     }
 
+    protected void setName(String n){
+       name = n;
+    }
 
     public static void setDebug(boolean debug) {
         PrismLogHandler.debug = debug;

@@ -9,7 +9,6 @@ import me.botsko.prism.events.EventHelper;
 import me.botsko.prism.events.PrismExtinguishEvent;
 import me.botsko.prism.utils.TypeUtils;
 import me.botsko.prism.utils.block.Utilities;
-import net.kyori.adventure.identity.Identity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +68,8 @@ public class ExtinguishCommand implements SubHandler {
             plugin.getServer().getPluginManager().callEvent(event);
 
         } else {
-            Prism.getAudiences().player(call.getPlayer())
-                    .sendMessage(Identity.nil(),
-                            Prism.messenger.playerError(Il8nHelper.getMessage("no-fires-found")));
+            Prism.messenger.sendMessage(call.getPlayer(),
+                    Prism.messenger.playerError(Il8nHelper.getMessage("no-fires-found")));
         }
     }
 

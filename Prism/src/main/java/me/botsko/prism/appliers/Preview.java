@@ -180,7 +180,7 @@ public class Preview implements Previewable {
 
         blockChangesRead = 0;
 
-        worldChangeQueueTaskId = plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        worldChangeQueueTaskId = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
 
             if (config.debug) {
                 PrismLogHandler.debug("World change queue size: " + worldChangeQueue.size());
@@ -281,7 +281,7 @@ public class Preview implements Previewable {
                     postProcess();
                 }
             }
-        }, 2L, 2L);
+        }, 2L, 2L).getTaskId();
     }
 
     private void postProcessPreview() {

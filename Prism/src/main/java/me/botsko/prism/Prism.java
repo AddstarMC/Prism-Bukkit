@@ -111,7 +111,6 @@ public class Prism extends JavaPlugin implements PrismApi {
     protected static HandlerRegistry handlerRegistry;
     protected static Prism instance;
     protected static boolean debug = false;
-    protected static BukkitAudiences audiences;
     private static EnumSet<Material> illegalBlocks;
     private static EnumSet<EntityType> illegalEntities;
     private static MaterialAliases items;
@@ -168,10 +167,6 @@ public class Prism extends JavaPlugin implements PrismApi {
 
     public TaskManager getTaskManager() {
         return taskManager;
-    }
-
-    public static BukkitAudiences getAudiences() {
-        return audiences;
     }
 
     public static boolean isDebug() {
@@ -364,8 +359,7 @@ public class Prism extends JavaPlugin implements PrismApi {
         loadConfig();
         debug = config.debug;
         taskManager = new TaskManager(Bukkit.getScheduler(), this);
-        audiences = BukkitAudiences.create(this);
-        messenger = new Messenger(pluginName, Prism.getAudiences());
+        messenger = new Messenger(pluginName, BukkitAudiences.create(this));
         PrismLogHandler.log("Initializing Prism " + pluginVersion
                 + ". Originally by Viveleroi; maintained by the AddstarMC Network");
         isPaper = PaperLib.isPaper();

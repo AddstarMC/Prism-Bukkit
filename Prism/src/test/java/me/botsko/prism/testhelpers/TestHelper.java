@@ -34,19 +34,19 @@ public class TestHelper {
      * @return ServerMock.
      */
     public ServerMock setup() {
-        System.out.println("Loading Server");
+        //System.out.println("Loading Server");
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
         Metrics metrics = null;
-        System.out.println("Loading Test Plugin");
+        //System.out.println("Loading Test Plugin");
         File pluginDescriptorFile = new File("src/test/resources/plugin.yml");
         try {
             FileReader reader = new FileReader(pluginDescriptorFile);
             PluginDescriptionFile file = new PluginDescriptionFile(reader);
             plugin = MockBukkit.loadWith(PrismTestPlugin.class,file);
-            System.out.println("--- Loaded ---");
+            //System.out.println("--- Loaded ---");
             server.getScheduler().performTicks(20);
-            System.out.println("Ticked 20");
+            //System.out.println("Ticked 20");
         } catch (FileNotFoundException | InvalidDescriptionException e) {
             e.printStackTrace();
         }
@@ -78,13 +78,13 @@ public class TestHelper {
             Files.list(path).forEach(path1 -> {
                 try {
                     Files.delete(path1);
-                    System.out.println("Deleting " + path1.toString());
+                    //System.out.println("Deleting " + path1.toString());
                 } catch (IOException e) {
                     System.out.println(e.getMessage());
                 }
             });
             Files.delete(path);
-            System.out.println("Deleting " + path.toString());
+            //System.out.println("Deleting " + path.toString());
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

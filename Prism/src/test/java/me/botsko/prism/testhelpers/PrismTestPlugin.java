@@ -51,8 +51,7 @@ public class PrismTestPlugin extends Prism {
         pluginName = this.getDescription().getName();
         pluginVersion = this.getDescription().getVersion();
         loadConfig();        // Load configuration, or install if new
-        audiences = BukkitAudiences.create(this);
-        messenger = new Messenger(pluginName, Prism.getAudiences());
+        messenger = new Messenger(pluginName, BukkitAudiences.create(this));
         taskManager = new TaskManager(Bukkit.getScheduler(),this);
 
         PrismLogHandler.log("Initializing Prism " + pluginVersion

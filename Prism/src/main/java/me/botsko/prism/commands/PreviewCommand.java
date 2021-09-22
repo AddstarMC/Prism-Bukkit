@@ -7,15 +7,10 @@ import me.botsko.prism.actionlibs.QueryParameters;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.api.Result;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.appliers.PreviewSession;
-import me.botsko.prism.appliers.Previewable;
-import me.botsko.prism.appliers.PrismApplierCallback;
-import me.botsko.prism.appliers.Restore;
-import me.botsko.prism.appliers.Rollback;
+import me.botsko.prism.appliers.*;
 import me.botsko.prism.commandlibs.CallInfo;
 import me.botsko.prism.commandlibs.PreprocessArgs;
 import me.botsko.prism.utils.MiscUtils;
-import net.kyori.adventure.audience.Audience;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +39,6 @@ public class PreviewCommand extends AbstractCommand {
 
     @Override
     public void handle(final CallInfo call) {
-        final Audience audience = Prism.getAudiences().sender(call.getPlayer());
         if (call.getArgs().length >= 2) {
 
             if (call.getArg(1).equalsIgnoreCase("apply")) {
@@ -108,12 +102,12 @@ public class PreviewCommand extends AbstractCommand {
                     // Rollback
                     if (call.getArg(1).equalsIgnoreCase("rollback")
                             || call.getArg(1).equalsIgnoreCase("rb")) {
-                        handleRollBack(call, parameters, results, audience);
+                        handleRollBack(call, parameters, results);
                     }
                     // Restore
                     if (call.getArg(1).equalsIgnoreCase("restore")
                             || call.getArg(1).equalsIgnoreCase("rs")) {
-                        handleRestore(call, parameters, results, audience);
+                        handleRestore(call, parameters, results);
                     }
                 });
                 return;
@@ -123,7 +117,7 @@ public class PreviewCommand extends AbstractCommand {
         }
     }
 
-    private void handleRestore(CallInfo call, QueryParameters parameters, Result results, Audience audience) {
+    private void handleRestore(CallInfo call, QueryParameters parameters, Result results) {
         parameters.setProcessType(PrismProcessType.RESTORE);
         if (!results.getActionResults().isEmpty()) {
 
@@ -145,11 +139,10 @@ public class PreviewCommand extends AbstractCommand {
 
 
     private void handleRollBack(final CallInfo call, final QueryParameters parameters,
-                                final Result results, final Audience audience) {
+                                final Result results) {
         parameters.setProcessType(PrismProcessType.ROLLBACK);
         if (!results.getActionResults().isEmpty()) {
-
-            audience.sendMessage(Prism.messenger.playerHeaderMsg(
+            Prism.messenger.sendMessage(call.getSender(),Prism.messenger.playerHeaderMsg(
                     Il8nHelper.getMessage("preview-apply-start")));
 
             // Perform preview on the main thread
