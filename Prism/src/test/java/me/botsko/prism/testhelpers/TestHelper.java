@@ -37,6 +37,7 @@ public class TestHelper {
         //System.out.println("Loading Server");
         ServerMock server = MockBukkit.getOrCreateMock();
         server.addSimpleWorld("Normal");
+        @SuppressWarnings("unused")
         Metrics metrics = null;
         //System.out.println("Loading Test Plugin");
         File pluginDescriptorFile = new File("src/test/resources/plugin.yml");

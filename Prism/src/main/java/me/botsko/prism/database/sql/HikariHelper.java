@@ -34,17 +34,11 @@ public class HikariHelper {
         Properties prop = new Properties();
         Set<String> keys = PropertyElf.getPropertyNames(HikariConfig.class);
         for (String k : keys) {
-            if (skipCoreValue) {
-                if ("jbdcUrl".equals(k) || "username".equals(k) || "password".equals(k)) {
-                    continue;
+            if(checkConfigValueSave(k,skipCoreValue)){
+                Object out = PropertyElf.getProperty(k, dbConfig);
+                if (out != null) {
+                    prop.setProperty(k, out.toString());
                 }
-            }
-            if ("dataSourceProperties".equals(k) || "healthCheckProperties".equals(k)) {
-                continue;
-            }
-            Object out = PropertyElf.getProperty(k, dbConfig);
-            if (out != null) {
-                prop.setProperty(k, out.toString());
             }
         }
         Properties datasourceProps = dbConfig.getDataSourceProperties();
@@ -66,6 +60,23 @@ public class HikariHelper {
             return false;
         }
     }
+
+    private static boolean checkConfigValueSave(String value,boolean skipCoreValue){
+        switch (value){
+            case "dataSourceProperties":
+            case "healthCheckProperties":
+                return false;
+            case "jbdcUrl":
+            case "username":
+            case "password":
+                if(skipCoreValue){
+                    return false;
+                }
+            default:
+                return true;
+        }
+    }
+
 
     /**
      * Saves the config to the default dataFolder.

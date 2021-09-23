@@ -25,22 +25,22 @@ public class CustomHandler implements Handler {
 
     @Override
     public long getId() {
-        return 0;
+        return id;
     }
 
     @Override
     public void setId(long id) {
-
+        this.id = id;
     }
 
     @Override
     public long getUnixEpoch() {
-        return 0;
+        return epoch;
     }
 
     @Override
     public void setUnixEpoch(long epoch) {
-
+        this.epoch = epoch;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class CustomHandler implements Handler {
 
     @Override
     public void setAction(Action type) {
-
+        //todo
     }
 
     @Override

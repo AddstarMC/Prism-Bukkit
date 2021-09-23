@@ -38,12 +38,15 @@ public class TaskManager {
     private final ScheduledThreadPoolExecutor schedulePool;
     private final Prism plugin;
     private final BlockingQueue<FunctionalBukkitTask<?>> tasks = new LinkedBlockingQueue<>();
+    private PurgeManager purgeManager;
 
+    /**
+     * Get the purge manager.
+     * @return PurgeManager
+     */
     public PurgeManager getPurgeManager() {
         return purgeManager;
     }
-
-    private PurgeManager purgeManager;
 
     /**
      * This class handles futures checking them for completion asynchronously and then running the supplied task
@@ -94,7 +97,7 @@ public class TaskManager {
         if (active) {
             tasks.put(new FunctionalBukkitTask<>(future, task, async));
         } else {
-            throw new RuntimeException("TaskManager inactive.");
+            throw new IllegalStateException("TaskManager inactive.");
         }
 
     }

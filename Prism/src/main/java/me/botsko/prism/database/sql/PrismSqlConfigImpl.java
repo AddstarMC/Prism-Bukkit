@@ -12,6 +12,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable;
 @ConfigSerializable
 public class PrismSqlConfigImpl implements PrismSqlConfig {
 
+    public String prefix = "prism_";
+
     public PrismSqlConfigImpl() {
     }
 
@@ -19,6 +21,5 @@ public class PrismSqlConfigImpl implements PrismSqlConfig {
         return prefix;
     }
 
-    public String prefix = "prism_";
 
 }

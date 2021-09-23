@@ -69,15 +69,16 @@ public class DebugCommand implements SubHandler {
 
     }
 
-    private String removePatterns(String patten, String haystack, String replacement) {
+    private String removePatterns(final String patten, final String haystack, final String replacement) {
+        String result = haystack;
         Pattern p = Pattern.compile(patten);
         Matcher matcher = p.matcher(haystack);
         while (matcher.find()) {
-             haystack =  new StringBuilder(haystack)
+             result =  new StringBuilder(haystack)
                    .replace(matcher.start(1),matcher.end(1),replacement)
                    .toString();
         }
-        return haystack;
+        return result;
     }
 
     private String getMainInfo() {

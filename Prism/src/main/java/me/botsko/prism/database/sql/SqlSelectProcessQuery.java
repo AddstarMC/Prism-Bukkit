@@ -1,5 +1,6 @@
 package me.botsko.prism.database.sql;
 
+import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.actionlibs.QueryResult;
 import me.botsko.prism.actions.PrismProcessAction;
@@ -103,23 +104,28 @@ public class SqlSelectProcessQuery extends SqlSelectQueryBuilder implements Sele
                 PreparedStatement s = conn.prepareStatement(query);
                 ResultSet rs = s.executeQuery()
         ) {
-            if (rs.next()) {
-                process = new PrismProcessAction();
-                // Set all shared values
-                process.setId(rs.getLong("id"));
-                ActionType type = ActionType.getByName(rs.getString("action"));
-                if (type == null) {
-                    // todo throw Exception but this should be async.
+            try {
+                if (rs.next()) {
+                    process = new PrismProcessAction();
+                    // Set all shared values
+                    process.setId(rs.getLong("id"));
+                    String a = rs.getString("action");
+                    ActionType type = ActionType.getByName(a);
+                    if (type == null) {
+                        throw new IllegalArgumentException("Action for column does not exist: "+ a);
+                    }
+                    process.setActionType(type);
+                    process.setUnixEpoch(rs.getLong("epoch"));
+                    process.setWorld(Bukkit.getWorld(rs.getString("world")));
+                    process.setSourceName(rs.getString("player"));
+                    process.setUuid(UUID.fromString(rs.getString("player_uuid")));
+                    process.setX(rs.getInt("x"));
+                    process.setY(rs.getInt("y"));
+                    process.setZ(rs.getInt("z"));
+                    process.deserialize(rs.getString("data"));
                 }
-                process.setActionType(type);
-                process.setUnixEpoch(rs.getLong("epoch"));
-                process.setWorld(Bukkit.getWorld(rs.getString("world")));
-                process.setSourceName(rs.getString("player"));
-                process.setUuid(UUID.fromString(rs.getString("player_uuid")));
-                process.setX(rs.getInt("x"));
-                process.setY(rs.getInt("y"));
-                process.setZ(rs.getInt("z"));
-                process.deserialize(rs.getString("data"));
+            }catch (IllegalArgumentException a){
+                PrismLogHandler.warn(a.getMessage(),a);
             }
         } catch (SQLException e) {
             dataSource.handleDataSourceException(e);

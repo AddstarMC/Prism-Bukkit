@@ -56,7 +56,7 @@ public class DeleteCommand extends AbstractCommand {
         // Allow for wiping live queue
         if (call.getArgs().length > 1 && call.getArg(1).equals("queue")) {
             if (RecordingQueue.getQueue().size() > 0) {
-                me.botsko.prism.PrismLogHandler.log("User " + call.getSender().getName()
+                PrismLogHandler.log("User " + call.getSender().getName()
                         + " wiped the live queue before it could be written to the database. "
                         + RecordingQueue.getQueue().size() + " events lost.");
                 RecordingQueue.getQueue().clear();

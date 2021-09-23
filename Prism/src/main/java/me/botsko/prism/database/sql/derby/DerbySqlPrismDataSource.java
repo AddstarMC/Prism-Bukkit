@@ -205,12 +205,6 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable5(Statement st, Collection<String> tableNames) throws SQLException {
         String table5 = prefix + "players";
         if (!tableNames.contains(table5.toUpperCase())) {
-            String query = "CREATE TABLE " + table5 + " ("
-                  + "player_id int NOT NULL GENERATED ALWAYS AS "
-                  + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "player varchar(255) NOT NULL UNIQUE,"
-                  + "player_uuid char(32) NOT NULL UNIQUE"
-                  + ")";
             st.executeUpdate(getFormattedSql("derby_create_player"));
             return true;
         }
