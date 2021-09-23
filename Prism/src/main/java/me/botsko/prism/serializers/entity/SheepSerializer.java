@@ -6,11 +6,11 @@ import org.bukkit.entity.Sheep;
 
 public class SheepSerializer extends EntitySerializer<Sheep> {
 
+    protected String color = null;
+
     public void setColor(DyeColor color) {
         this.color = color.name().toLowerCase();
     }
-
-    protected String color = null;
 
     @Override
     public void serialize(Sheep entity) {

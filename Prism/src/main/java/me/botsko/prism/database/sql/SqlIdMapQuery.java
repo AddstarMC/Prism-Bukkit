@@ -20,6 +20,9 @@ import java.util.function.Consumer;
 
 public abstract class SqlIdMapQuery implements IdMapQuery {
 
+    protected final String prefix;
+    private final PrismDataSource<?> dataSource;
+
     protected abstract String getToIds();
 
     protected abstract String getToAllIds();
@@ -35,9 +38,6 @@ public abstract class SqlIdMapQuery implements IdMapQuery {
     protected abstract String getRepair();
 
     protected abstract String getUnauto();
-
-    protected final String prefix;
-    private final PrismDataSource<?> dataSource;
 
     /**
      * Constructor.

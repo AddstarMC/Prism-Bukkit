@@ -472,46 +472,9 @@ public class Prism extends JavaPlugin implements PrismApi {
             queueStats = new QueueStats();
             ignore = new Ignore(config);
             taskManager.run();
-            // Assign event listeners
-            getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
-            getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
-            getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
-            getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
-            if (isPaper) {
-                //register listeners that only work with paper.
-                getServer().getPluginManager().registerEvents(new PaperListeners(this), this);
-            }
-            getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
-            getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
-
-            // InventoryMoveItem
-            if (config.trackingConfig.hopperItemEvents && Prism.getIgnore().event(ActionType.ITEM_INSERT)) {
-                getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
-            }
-
-            if (config.trackingConfig.apiEnabled) {
-                getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
-            }
-
-            getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
-
+            registerEvents();
             // Add commands
-            PluginCommand command = getCommand("prism");
-            if (command != null) {
-                commands = new PrismCommands(this, false);
-                command.setExecutor(commands);
-                command.setTabCompleter(commands);
-            } else {
-                PrismLogHandler.warn("Command Executor Error: Check plugin.yml");
-                Bukkit.getPluginManager().disablePlugin(instance);
-                return;
-            }
-            PluginCommand commandAlt = getCommand("what");
-            if (commandAlt != null) {
-                commandAlt.setExecutor(new WhatCommand(this));
-            } else {
-                PrismLogHandler.log("Command Executor Error: Check plugin.yml - what command not found ");
-            }
+            registerCommands();
             // Register official parameters
             registerParameter(new ActionParameter());
             registerParameter(new BeforeParameter());
@@ -543,20 +506,68 @@ public class Prism extends JavaPlugin implements PrismApi {
             // Keep watch on db connections, other sanity
             taskManager.launchInternalAffairs();
 
-            if (config.preloadMaterials) {
-                config.preloadMaterials = false;
-                saveConfig();
-                PrismLogHandler.log("Preloading materials - This will take a while!");
-                items.initAllMaterials();
-                PrismLogHandler.log("Preloading complete!");
-            } else {
-                items.initMaterials(Material.DIRT);
-            }
+            checkAndPreloadMaterials();
             Bukkit.getScheduler().runTaskAsynchronously(instance,
                   () -> Bukkit.getPluginManager().callEvent(EventHelper.createLoadEvent(Prism.getInstance())));
         }
         saveConfig();
 
+    }
+
+    private void checkAndPreloadMaterials(){
+        if (config.preloadMaterials) {
+            config.preloadMaterials = false;
+            saveConfig();
+            PrismLogHandler.log("Preloading materials - This will take a while!");
+            items.initAllMaterials();
+            PrismLogHandler.log("Preloading complete!");
+        } else {
+            items.initMaterials(Material.DIRT);
+        }
+    }
+
+    private void registerEvents(){
+        // Assign event listeners
+        getServer().getPluginManager().registerEvents(new PrismBlockEvents(this), this);
+        getServer().getPluginManager().registerEvents(new PrismEntityEvents(this), this);
+        getServer().getPluginManager().registerEvents(new PrismWorldEvents(), this);
+        getServer().getPluginManager().registerEvents(new PrismPlayerEvents(this), this);
+        if (isPaper) {
+            //register listeners that only work with paper.
+            getServer().getPluginManager().registerEvents(new PaperListeners(this), this);
+        }
+        getServer().getPluginManager().registerEvents(new PrismInventoryEvents(this), this);
+        getServer().getPluginManager().registerEvents(new PrismVehicleEvents(this), this);
+
+        // InventoryMoveItem
+        if (config.trackingConfig.hopperItemEvents && Prism.getIgnore().event(ActionType.ITEM_INSERT)) {
+            getServer().getPluginManager().registerEvents(new PrismInventoryMoveItemEvent(), this);
+        }
+
+        if (config.trackingConfig.apiEnabled) {
+            getServer().getPluginManager().registerEvents(new PrismCustomEvents(this), this);
+        }
+
+        getServer().getPluginManager().registerEvents(new PrismMiscEvents(), this);
+    }
+
+    private void registerCommands(){
+        PluginCommand command = getCommand("prism");
+        if (command != null) {
+            commands = new PrismCommands(this, false);
+            command.setExecutor(commands);
+            command.setTabCompleter(commands);
+        } else {
+            PrismLogHandler.warn("Command Executor Error: Check plugin.yml");
+            Bukkit.getPluginManager().disablePlugin(instance);
+            return;
+        }
+        PluginCommand commandAlt = getCommand("what");
+        if (commandAlt != null) {
+            commandAlt.setExecutor(new WhatCommand(this));
+        } else {
+            PrismLogHandler.log("Command Executor Error: Check plugin.yml - what command not found ");
+        }
     }
 
     /**

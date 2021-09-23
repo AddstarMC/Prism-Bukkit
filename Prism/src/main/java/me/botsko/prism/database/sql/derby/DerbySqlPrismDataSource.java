@@ -158,12 +158,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable1(Statement st, Collection<String> tableNames) throws SQLException {
         String table = prefix + "actions";
         if (!tableNames.contains(table.toUpperCase())) {
-            String query = "CREATE TABLE " + table + " ("
-                  + "action_id int NOT NULL GENERATED ALWAYS AS "
-                  + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "action varchar(25) NOT NULL UNIQUE"
-                  + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_actions"));
             return true;
         } else {
             PrismLogHandler.debug(table + " already exists.");
@@ -174,22 +169,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable2(Statement st, Collection<String> tableNames) throws SQLException {
         String table2 = prefix + "data";
         if (!tableNames.contains(table2.toUpperCase())) {
-            String query = "CREATE TABLE " + table2 + " ("
-                  + "id bigint NOT NULL GENERATED ALWAYS AS "
-                  + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "epoch int NOT NULL,"
-                  + "action_id int NOT NULL,"
-                  + "player_id int NOT NULL,"
-                  + "world_id int NOT NULL,"
-                  + "x int NOT NULL,"
-                  + "y int NOT NULL,"
-                  + "z int NOT NULL,"
-                  + "block_id int DEFAULT NULL,"
-                  + "block_subid int DEFAULT NULL,"
-                  + "old_block_id int DEFAULT NULL,"
-                  + "old_block_subid int DEFAULT NULL"
-                  + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_data"));
             st.executeUpdate("CREATE INDEX epoch ON " + table2 + " (epoch)");
             st.executeUpdate("CREATE INDEX location ON " + table2 + " (world_id, x, z, y, action_id)");
             st.executeUpdate("CREATE INDEX player ON " + table2 + " (player_id)");
@@ -204,15 +184,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable3(Statement st, Collection<String> tableNames) throws SQLException {
         String table3 = prefix + "data_extra";
         if (!tableNames.contains(table3.toUpperCase())) {
-            String query = "CREATE TABLE " + table3 + " ("
-                  + "extra_id bigint NOT NULL GENERATED ALWAYS AS "
-                  + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "data_id bigint NOT NULL CONSTRAINT " + prefix
-                  + "data_extra_ibfk_1 REFERENCES " + prefix + "data" + " (id) ON DELETE CASCADE ON UPDATE NO ACTION,"
-                  + "data varchar(32000), "
-                  + "te_data varchar(32000)"
-                  + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_extra_data"));
             return true;
         } else {
             PrismLogHandler.debug(table3 + " already exists.");
@@ -223,12 +195,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable4(Statement st, Collection<String> tableNames) throws SQLException {
         String table4 = prefix + "meta";
         if (!tableNames.contains(table4.toUpperCase())) {
-            String query = "CREATE TABLE " + table4 + " ("
-                  + "id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "k varchar(25) NOT NULL,"
-                  + "v varchar(255) NOT NULL"
-                  + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_meta"));
             return true;
         }
         return false;
@@ -244,7 +211,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
                   + "player varchar(255) NOT NULL UNIQUE,"
                   + "player_uuid char(32) NOT NULL UNIQUE"
                   + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_player"));
             return true;
         }
         return false;
@@ -253,12 +220,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable6(Statement st, Collection<String> tableNames) throws SQLException {
         String table6 = prefix + "worlds";
         if (!tableNames.contains(table6.toUpperCase())) {
-            String query = "CREATE TABLE " + table6 + " ("
-                  + "world_id int NOT NULL GENERATED ALWAYS AS "
-                  + "IDENTITY (START WITH 1, INCREMENT BY 1) PRIMARY KEY,"
-                  + "world varchar(255) NOT NULL UNIQUE"
-                  + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_worlds"));
             return true;
         }
         return false;
@@ -267,14 +229,7 @@ public class DerbySqlPrismDataSource extends PrismHikariDataSource<DerbySqlConfi
     private boolean setupTable7(Statement st, Collection<String> tableNames) throws SQLException {
         String table7 = prefix + "id_map";
         if (!tableNames.contains(table7.toUpperCase())) {
-            String query = "CREATE TABLE " + table7 + " ("
-                  + "material varchar(63) NOT NULL,"
-                  + "state varchar(255) NOT NULL,"
-                  + "block_id int NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
-                  + "block_subid int NOT NULL DEFAULT 0,"
-                  + "PRIMARY KEY (material, state),"
-                  + "UNIQUE (block_id, block_subid)" + ")";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("derby_create_id_map"));
             return true;
         }
         return false;

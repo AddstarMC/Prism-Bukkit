@@ -9,24 +9,14 @@ import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.config.ConfigHandler;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSourceUpdater;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.*;
 import me.botsko.prism.database.sql.HikariHelper;
 import me.botsko.prism.database.sql.SqlPrismDataSource;
 import me.botsko.prism.database.sql.SqlSelectQueryBuilder;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.SQLNonTransientConnectionException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashMap;
 
 /**
@@ -118,78 +108,28 @@ public class MySqlPrismDataSource extends SqlPrismDataSource<MySqlPrimConfig> {
                 Connection conn = getConnection();
                 Statement st = conn.createStatement()
         ) {
-            String query = "CREATE TABLE IF NOT EXISTS `" + prefix + "actions` ("
-                    + "`action_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`action` varchar(25) NOT NULL,"
-                    + "PRIMARY KEY (`action_id`)," + "UNIQUE KEY `action` (`action`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
-            // data
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data` ("
-                    + "`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT," + "`epoch` int(10) unsigned NOT NULL,"
-                    + "`action_id` int(10) unsigned NOT NULL," + "`player_id` int(10) unsigned NOT NULL,"
-                    + "`world_id` int(10) unsigned NOT NULL," + "`x` int(11) NOT NULL," + "`y` int(11) NOT NULL,"
-                    + "`z` int(11) NOT NULL," + "`block_id` mediumint(5) DEFAULT NULL,"
-                    + "`block_subid` mediumint(5) DEFAULT NULL," + "`old_block_id` mediumint(5) DEFAULT NULL,"
-                    + "`old_block_subid` mediumint(5) DEFAULT NULL," + "PRIMARY KEY (`id`),"
-                    + "INDEX `epoch` (`epoch`),"
-                    + "INDEX  `location` (`world_id`, `x`, `z`, `y`, `action_id`),"
-                    + "INDEX  `player` (`player_id`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("mysql_actions"));
+            st.executeUpdate(getFormattedSql("mysql_data"));
 
             // extra prism data table (check if it exists first, so we can avoid
             // re-adding foreign key stuff)
             final DatabaseMetaData metadata = conn.getMetaData();
             ResultSet resultSet;
-            resultSet = metadata.getTables(null, null, "" + prefix + "data_extra", null);
+            resultSet = metadata.getTables(null, null, "" + prefix + "_data_extra", null);
             if (!resultSet.next()) {
-
                 // extra data
-                query = "CREATE TABLE IF NOT EXISTS `" + prefix + "data_extra` ("
-                        + "`extra_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,"
-                        + "`data_id` bigint(20) unsigned NOT NULL,"
-                        + "`data` text NULL,"
-                        + "`te_data` text NULL,"
-                        + "PRIMARY KEY (`extra_id`),"
-                        + "INDEX `data_id` (`data_id`)"
-                        + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-                st.executeUpdate(query);
-
+                st.executeUpdate(getFormattedSql("mysql_data_extra"));
                 // add extra data delete cascade
-                query = "ALTER TABLE `" + prefix + "data_extra` ADD CONSTRAINT `" + prefix
-                        + "data_extra_ibfk_1` FOREIGN KEY (`data_id`) REFERENCES `" + prefix
-                        + "data` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;";
-                st.executeUpdate(query);
+                st.executeUpdate(getFormattedSql("mysql_alter_data_extra"));
             }
-
             // meta
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "meta` ("
-                    + "`id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`k` varchar(25) NOT NULL,"
-                    + "`v` varchar(255) NOT NULL," + "PRIMARY KEY (`id`)" + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
+            st.executeUpdate(getFormattedSql("mysql_create_meta"));
             // players
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "players` ("
-                    + "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`player` varchar(255) NOT NULL,"
-                    + "`player_uuid` binary(16) NOT NULL," + "PRIMARY KEY (`player_id`),"
-                    + "UNIQUE KEY `player` (`player`)," + "UNIQUE KEY `player_uuid` (`player_uuid`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
+            st.executeUpdate(getFormattedSql("mysql_create_players"));
             // worlds
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "worlds` ("
-                    + "`world_id` int(10) unsigned NOT NULL AUTO_INCREMENT," + "`world` varchar(255) NOT NULL,"
-                    + "PRIMARY KEY (`world_id`)," + "UNIQUE KEY `world` (`world`)"
-                    + ") ENGINE=InnoDB  DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
-
+            st.executeUpdate(getFormattedSql("mysql_create_worlds"));
             // id map
-            query = "CREATE TABLE IF NOT EXISTS `" + prefix + "id_map` (" + "`material` varchar(63) NOT NULL,"
-                    + "`state` varchar(255) NOT NULL," + "`block_id` mediumint(5) NOT NULL AUTO_INCREMENT,"
-                    + "`block_subid` mediumint(5) NOT NULL DEFAULT 0," + "PRIMARY KEY (`material`, `state`),"
-                    + "UNIQUE KEY (`block_id`, `block_subid`)" + ") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            st.executeUpdate(query);
+            st.executeUpdate(getFormattedSql("mysql_id_map"));
             //finally check if this is a true setup and we are up to date.
             DatabaseMetaData meta = conn.getMetaData();
             ResultSet set = meta.getIndexInfo(null, null, prefix + "data", true, false);

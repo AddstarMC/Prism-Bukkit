@@ -6,29 +6,17 @@ import me.botsko.prism.Prism;
 import me.botsko.prism.PrismLogHandler;
 import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.api.actions.ActionType;
-import me.botsko.prism.database.ActionReportQuery;
-import me.botsko.prism.database.BlockReportQuery;
-import me.botsko.prism.database.DeleteQuery;
-import me.botsko.prism.database.IdMapQuery;
-import me.botsko.prism.database.InsertQuery;
-import me.botsko.prism.database.PlayerIdentificationQuery;
-import me.botsko.prism.database.PrismDataSource;
-import me.botsko.prism.database.PrismSqlConfig;
-import me.botsko.prism.database.SelectIdQuery;
-import me.botsko.prism.database.SelectProcessActionQuery;
-import me.botsko.prism.database.SelectQuery;
-import me.botsko.prism.database.SettingsQuery;
+import me.botsko.prism.database.*;
+import org.jetbrains.annotations.PropertyKey;
 import org.spongepowered.configurate.ConfigurationNode;
+
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLDataException;
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.*;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Created for use for the Add5tar MC Minecraft server
@@ -45,6 +33,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
     protected String prefix = "prism_";
     protected PlayerIdentificationQuery playerIdHelper;
     protected IdMapQuery idMapQuery;
+    protected Properties sqlStatements;
 
 
     /**
@@ -54,6 +43,20 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
     public SqlPrismDataSource(ConfigurationNode node) {
         this.dataSourceConfig = node;
         setConfig();
+        loadSqlStatements();
+    }
+
+    private void loadSqlStatements(){
+        this.sqlStatements = new Properties();
+        String file = "sql.properties";
+        InputStream input = getClass().getClassLoader().getResourceAsStream(file);
+        if (input != null){
+            try {
+                sqlStatements.load(input);
+            } catch (IOException e) {
+                PrismLogHandler.warn(e.getMessage());
+            }
+        }
     }
 
     protected abstract void setConfig();
@@ -127,6 +130,15 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
         return false;
     }
 
+    /**
+     * Get a formatted Sql String with the prefix already replaced.
+     * @param key
+     * @return
+     */
+    protected String getFormattedSql(@PropertyKey(resourceBundle = "sql") String key){
+        return String.format(sqlStatements.getProperty(key),prefix);
+    }
+
     @Override
     public DataSource getDataSource() {
         return database;
@@ -162,16 +174,15 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
             return;
         }
         PrismLogHandler.log(action.name + " not found in cache - inserting.");
+        String query = getFormattedSql("action_insert");
         try (
                 Connection conn = database.getConnection();
-                PreparedStatement s = conn.prepareStatement("INSERT INTO " + prefix + "actions (action) VALUES (?)",
-                        Statement.RETURN_GENERATED_KEYS)
+                PreparedStatement s = conn.prepareStatement(query,Statement.RETURN_GENERATED_KEYS)
         ) {
             s.setString(1, action.name);
             s.executeUpdate();
             ResultSet rs = s.getGeneratedKeys();
             if (rs.next()) {
-
                 PrismLogHandler.log("Registering new action type to the database/cache: "
                         + action.name + " " + rs.getInt(1));
                 ActionRegistryImpl.prismActions.put(action, rs.getInt(1));
@@ -192,8 +203,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
                 Connection conn = getConnection()
         ) {
             try (
-                    PreparedStatement s = conn.prepareStatement("SELECT action_id, action FROM " + prefix
-                            + "actions");
+                    PreparedStatement s = conn.prepareStatement(getFormattedSql("action_cache_select"));
                     ResultSet rs = s.executeQuery()
                 ) {
                 while (rs.next()) {
@@ -212,7 +222,6 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
         }
     }
 
-
     /**
      * Cache the world keys.
      * @param prismWorlds Map
@@ -222,8 +231,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
 
         try (
                 Connection conn = getConnection();
-                PreparedStatement s = conn.prepareStatement(
-                        "SELECT world_id, world FROM " + prefix + "worlds");
+                PreparedStatement s = conn.prepareStatement(getFormattedSql("world_cache_insert"));
                 ResultSet rs = s.executeQuery()
         ) {
             while (rs.next()) {
@@ -243,7 +251,7 @@ public abstract class SqlPrismDataSource<T extends PrismSqlConfig> implements Pr
         if (Prism.prismWorlds.containsKey(worldName)) {
             return;
         }
-        String query = "INSERT INTO " + prefix + "worlds (world) VALUES (?)";
+        String query = getFormattedSql("world_insert");
         try (
                 Connection conn = database.getConnection();
                 PreparedStatement s = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
