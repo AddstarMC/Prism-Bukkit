@@ -13,10 +13,10 @@ import me.botsko.prism.api.actions.Handler;
  */
 public class CustomAction implements Action {
 
-    private final Handler customHandler;
+    //private final Handler customHandler;
 
     public CustomAction() {
-        this.customHandler = new CustomHandler();
+        //this.customHandler = new CustomHandler();
     }
 
     @Override

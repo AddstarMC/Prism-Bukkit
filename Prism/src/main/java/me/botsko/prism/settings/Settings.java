@@ -7,7 +7,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class Settings {
 
-    private static PrismDataSource dataSource;
+    private static PrismDataSource<?> dataSource;
 
 
     /**
@@ -16,7 +16,7 @@ public class Settings {
      * @param key String
      */
     public static CompletableFuture<Boolean> deleteSettingAsync(String key) {
-        return  CompletableFuture.supplyAsync(() -> deleteSetting(key, null));
+        return  deleteSettingAsync(key,null);
     }
     
     /**
@@ -25,6 +25,10 @@ public class Settings {
      * @param key String
      */
     public static CompletableFuture<Boolean> deleteSettingAsync(String key,Player player) {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not configured - "
+                    + "could not delete settings");
+        }
         return  CompletableFuture.supplyAsync(() -> deleteSetting(key, player));
     }
 
@@ -32,9 +36,8 @@ public class Settings {
      * Delete the setting.
      * @param key String
      * @param player Player
-     * @deprecated Use {@link Settings#deleteSettingAsync(String, Player)}
      */
-    public static boolean deleteSetting(String key, Player player) {
+    private static boolean deleteSetting(String key, Player player) {
         return dataSource.createSettingsQuery().deleteSetting(key, player);
     }
 
@@ -53,6 +56,10 @@ public class Settings {
      * @param value String.
      */
     public static CompletableFuture<Boolean> saveSettingAsync(String key, String value, Player player) {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not configured - "
+                    + "could not save settings");
+        }
         return CompletableFuture.supplyAsync(() -> saveSetting(key, value, player));
     }
 
@@ -63,9 +70,6 @@ public class Settings {
      * @param player Player
      */
     private static boolean saveSetting(String key, String value, Player player) {
-        if (dataSource == null) {
-            throw new NullPointerException("You did not define a Settings Datasource.");
-        }
         return dataSource.createSettingsQuery().saveSetting(key, value, player);
     }
 
@@ -88,7 +92,7 @@ public class Settings {
         return dataSource.createSettingsQuery().getSetting(key, player);
     }
 
-    public static void setDataSource(PrismDataSource dataSource) {
+    public static void setDataSource(PrismDataSource<?> dataSource) {
         Settings.dataSource = dataSource;
     }
 }

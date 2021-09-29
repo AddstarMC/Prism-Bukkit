@@ -17,7 +17,7 @@
         <test.mysql.password>prism</test.mysql.password>
         <test.mysql.database>prism</test.mysql.database>
         <adventure.version>4.9.1</adventure.version>
-        <mockbukkit.version>1.7.1</mockbukkit.version>
+        <mockbukkit.version>1.10.1</mockbukkit.version>
         <derby.version>10.14.2.0</derby.version>
     </properties>
     <dependencyManagement>
@@ -191,7 +191,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.seeseemelk</groupId>
-            <artifactId>MockBukkit-1.17_Addstar</artifactId>
+            <artifactId>MockBukkit-v1.17</artifactId>
             <version>${mockbukkit.version}</version>
             <scope>test</scope>
         </dependency>

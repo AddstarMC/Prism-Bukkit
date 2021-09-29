@@ -8,7 +8,7 @@ import me.botsko.prism.api.actions.Action;
 import me.botsko.prism.api.actions.ActionType;
 import me.botsko.prism.api.actions.MatchRule;
 import me.botsko.prism.api.actions.PrismProcessType;
-import me.botsko.prism.utils.LevenshteinDistance;
+import me.botsko.prism.utils.LevenshteinDistanceHelper;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public class ActionParameter extends SimplePrismParameterHandler {
                                 Prism.messenger.playerError("Ignoring action '"
                                         + action.replace("!", "")
                                         + "' because it's unrecognized. Did you mean '"
-                                        + LevenshteinDistance.getClosestAction(action)
+                                        + LevenshteinDistanceHelper.getClosestAction(action)
                                         + "'? Type '/prism params' for help."));
                     }
                 }

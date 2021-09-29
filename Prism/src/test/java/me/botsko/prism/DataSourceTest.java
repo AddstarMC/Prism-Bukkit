@@ -22,11 +22,9 @@ import java.nio.file.Path;
  */
 public class DataSourceTest {
 
-    private static PrismLogHandler logHandler;
-
     @BeforeAll
     static void beforeAll() {
-        logHandler = new PrismLogHandler();
+        new PrismLogHandler();
     }
 
     @Test
@@ -48,7 +46,7 @@ public class DataSourceTest {
             DatabaseUpdater updater = new DatabaseUpdater(dataSource);
             updater.applyUpdates(dataSource);
             Assertions.assertEquals(8, getClientDbSchemaVersion());
-            /*  Designed to show the db data - not requird for testing
+            /*  Designed to show the db data - not required for testing
             DatabaseMetaData meta = dataSource.getDataSource().getConnection().getMetaData();
             String[] tbls = {"TABLE"};
             ResultSet set = meta.getTables(null, null, "PRISM_%", tbls);
