@@ -1,6 +1,7 @@
 package me.botsko.prism.database;
 
 import me.botsko.prism.players.PrismPlayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -18,6 +19,7 @@ public interface PlayerIdentificationQuery {
 
     PrismPlayer lookupByName(String playerName);
 
+    @Nullable
     PrismPlayer lookupByUuid(UUID uuid);
 
     void updatePlayer(PrismPlayer prismPlayer);

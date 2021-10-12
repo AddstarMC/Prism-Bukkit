@@ -30,8 +30,8 @@ public class PrismDatabaseFactory {
      * @return PrismDataSource
      */
     @SuppressWarnings("CheckStyle")
-    public static PrismDataSource createDataSource(ConfigurationNode dataSourceSection) {
-        PrismDataSource database;
+    public static PrismDataSource<?> createDataSource(ConfigurationNode dataSourceSection) {
+        PrismDataSource<?> database;
         String dataSource = dataSourceSection.node("type").getString();
         ConfigurationNode dataSourceProperties = dataSourceSection.node("properties");
         if (dataSource == null) {

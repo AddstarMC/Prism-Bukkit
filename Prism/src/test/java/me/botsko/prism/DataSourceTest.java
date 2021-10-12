@@ -37,6 +37,7 @@ public class DataSourceTest {
 
             dataConfig.node("type").set("derby");
             dataConfig.node("prefix").set("prism_");
+            PrismLogHandler.setSuppressLogging(true);
             PrismDataSource dataSource = new TestPrismDataSource(dataConfig);
             dataSource.createDataSource();
             ActionRegistryImpl registry = new ActionRegistryImpl();

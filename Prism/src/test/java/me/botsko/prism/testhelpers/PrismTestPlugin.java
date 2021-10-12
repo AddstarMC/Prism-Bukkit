@@ -1,11 +1,7 @@
 package me.botsko.prism.testhelpers;
 
 import io.papermc.lib.PaperLib;
-import me.botsko.prism.DatabaseUpdater;
-import me.botsko.prism.Messenger;
-import me.botsko.prism.Prism;
-import me.botsko.prism.PrismLogHandler;
-import me.botsko.prism.TaskManager;
+import me.botsko.prism.*;
 import me.botsko.prism.actionlibs.ActionRegistryImpl;
 import me.botsko.prism.actionlibs.HandlerRegistry;
 import me.botsko.prism.database.PrismDataSource;
@@ -43,6 +39,12 @@ public class PrismTestPlugin extends Prism {
         super(loader, description, dataFolder, file);
         prismDataSource = source;
         instance = this;
+    }
+
+    public void setMocking(boolean bool){
+        if(bool){
+            prismDataSource = new MockDataSource().getDataSource();
+        }
     }
 
     @Override

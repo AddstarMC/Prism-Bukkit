@@ -41,9 +41,6 @@ public class PrismTest {
     static void setUpAll() {
         helper = new TestHelper();
         server = helper.setup();
-        if (Prism.getInstance().getPrismDataSource().getDataSource() != null) {
-            integrationTesting = true;
-        }
     }
 
     @AfterAll

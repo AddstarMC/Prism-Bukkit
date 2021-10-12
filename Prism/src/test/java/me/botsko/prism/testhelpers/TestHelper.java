@@ -2,9 +2,13 @@ package me.botsko.prism.testhelpers;
 
 import be.seeseemelk.mockbukkit.MockBukkit;
 import be.seeseemelk.mockbukkit.ServerMock;
+import me.botsko.prism.Prism;
+import me.botsko.prism.PrismLogHandler;
+import me.botsko.prism.database.PrismDatabaseFactory;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.mockito.MockedStatic;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +23,8 @@ import java.nio.file.Path;
  */
 public class TestHelper {
 
-    private PrismTestPlugin plugin;
+    private Prism plugin;
+    private MockedStatic<PrismDatabaseFactory> staticFactory;
 
     public static boolean isEnabled(TestHelper helper) {
         return helper.plugin.isEnabled();
@@ -44,6 +49,7 @@ public class TestHelper {
         try {
             FileReader reader = new FileReader(pluginDescriptorFile);
             PluginDescriptionFile file = new PluginDescriptionFile(reader);
+            PrismLogHandler.setSuppressLogging(true);
             plugin = MockBukkit.loadWith(PrismTestPlugin.class,file);
             //System.out.println("--- Loaded ---");
             server.getScheduler().performTicks(20);
@@ -58,6 +64,7 @@ public class TestHelper {
      * Shutdown.
      */
     public void shutdown() {
+
         Path path = null;
         if (plugin != null) {
             path = plugin.getDataFolder().toPath();

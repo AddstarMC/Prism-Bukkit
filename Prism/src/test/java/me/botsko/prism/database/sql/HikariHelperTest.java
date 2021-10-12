@@ -1,6 +1,7 @@
 package me.botsko.prism.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
+import me.botsko.prism.PrismLogHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -21,6 +22,7 @@ class HikariHelperTest {
     @Test
     void createPropertiesFileTest() {
         HikariConfig config = new HikariConfig();
+        PrismLogHandler.setSuppressLogging(true);
         config.addDataSourceProperty("maximumPoolSize", 10);
         config.addDataSourceProperty("minimumIdle", 2);
         Assertions.assertEquals(2,config.getDataSourceProperties().get("minimumIdle"));

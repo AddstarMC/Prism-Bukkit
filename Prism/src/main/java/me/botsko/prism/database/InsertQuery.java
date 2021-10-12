@@ -2,6 +2,8 @@ package me.botsko.prism.database;
 
 import me.botsko.prism.api.actions.Handler;
 
+import java.sql.SQLException;
+
 /**
  * Created for use for the Add5tar MC Minecraft server
  * Created by benjamincharlton on 1/06/2019.
@@ -16,7 +18,7 @@ public interface InsertQuery {
 
     void createBatch() throws Exception;
 
-    boolean addInsertionToBatch(Handler a) throws Exception;
+    boolean addInsertionToBatch(Handler a) throws SQLException;
 
     void processBatch() throws Exception;
 

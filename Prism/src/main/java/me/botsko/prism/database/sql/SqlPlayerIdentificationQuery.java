@@ -27,6 +27,7 @@ public abstract class SqlPlayerIdentificationQuery implements PlayerIdentificati
     /**
      * Loads `prism_players` ID for a player from the database.
      */
+    @Nullable
     public PrismPlayer lookupByUuid(UUID uuid) {
         PrismPlayer prismPlayer = null;
         try (

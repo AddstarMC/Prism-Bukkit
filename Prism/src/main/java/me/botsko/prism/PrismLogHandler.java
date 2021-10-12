@@ -24,6 +24,7 @@ public class PrismLogHandler implements Closeable {
     private static String name;
     private static final  Logger prismLog;
     private static boolean debug = false;
+    private static boolean suppressLogging = false;
 
     static {
         if (Prism.getInstance() != null) {
@@ -40,6 +41,10 @@ public class PrismLogHandler implements Closeable {
      */
     public PrismLogHandler() {
         name = (Prism.getInstance() == null && Prism.getPrismName() == null) ? "[Test Prism]" : Prism.getPrismName();
+    }
+
+    public static void setSuppressLogging(boolean suppressLogging) {
+        PrismLogHandler.suppressLogging = suppressLogging;
     }
 
     protected void setName(String n){
@@ -60,6 +65,9 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void log(String message) {
+        if(suppressLogging){
+            return;
+        }
         getLogger().info("[" + name + "] " + message);
         prismLog.info(message);
     }
@@ -70,6 +78,9 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void warn(String message) {
+        if(suppressLogging){
+            return;
+        }
         getLogger().warning("[" + name + "] " + message);
         prismLog.warning(message);
     }
@@ -91,6 +102,9 @@ public class PrismLogHandler implements Closeable {
      * @param e       Exception
      */
     public static void warn(Level warning, String s, Exception e) {
+        if(suppressLogging){
+            return;
+        }
         getLogger().log(warning, s, e);
         prismLog.log(Level.WARNING,s, e);
 
@@ -102,6 +116,9 @@ public class PrismLogHandler implements Closeable {
      * @param messages String[]
      */
     public static void logSection(String[] messages) {
+        if(suppressLogging){
+            return;
+        }
         if (messages.length > 0) {
             log("--------------------- ## Important ## ---------------------");
             for (final String msg : messages) {
@@ -117,6 +134,9 @@ public class PrismLogHandler implements Closeable {
      * @param message String
      */
     public static void debug(String message) {
+        if(suppressLogging){
+            return;
+        }
         if (debug) {
             String m = "- Debug - " + message;
             //log(m);
@@ -130,6 +150,9 @@ public class PrismLogHandler implements Closeable {
      * @param e {@link Throwable}
      */
     public static void debug(String message, Throwable e) {
+        if(suppressLogging){
+            return;
+        }
         if (debug) {
             String m = "- Debug - " + message;
             prismLog.log(Level.WARNING,m,e);

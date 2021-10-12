@@ -1,12 +1,17 @@
 package me.botsko.prism.config;
 
+import me.botsko.prism.database.PrismDatabaseFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Created for Prism.
@@ -36,6 +41,13 @@ class ConfigHandlerTest {
             Assertions.assertTrue(config2.debug);
             Assertions.assertEquals(config.applierConfig.additionalNotifyRadius,
                     config2.applierConfig.additionalNotifyRadius);
+            assertFalse(configHandler.getDataSourceConfig().hasChild("type"));
+            try {
+                PrismDatabaseFactory.createDefaultConfig(configHandler.getDataSourceConfig());
+            }catch (SerializationException e){
+                Assertions.fail(e.getMessage());
+            }
+            assertTrue(configHandler.getDataSourceConfig().hasChild("type"));
         } catch (IOException e) {
             e.printStackTrace();
         }
