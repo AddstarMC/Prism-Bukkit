@@ -413,7 +413,7 @@ public class PrismPlayerEvents implements Listener {
         // as of 1.4
         if (block != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
             String coordKey;
-            if (MaterialTag.CONTAINERS.isTagged(block.getType())) {
+            if (MaterialTag.CONTAINERS.isTagged(block.getType()) || MaterialTag.SHULKER_BOXES.isTagged(block.getType())) {
                 if (!Prism.getIgnore().event("container-access", player)) {
                     return;
                 }
