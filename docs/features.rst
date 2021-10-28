@@ -1,7 +1,7 @@
 Tracked Actions
 ===============
 
-The following list of actions can be tacked and or ignored via config.  To ensure they are tracked add the option to your configuration file. Any item NOT in the list will be set as false.
+The following list of actions can be tracked and or ignored via config. To ensure they are tracked add the option to your configuration file. Any item NOT in the list will be set as false.
 
 e.g.
 
@@ -31,7 +31,7 @@ Ore Alerts
 ----------
 
 This system alerts you when a player discovers a natural (non-placed) vein of ores.
-It reports the ore type and the lighting levLw:els (not always indicative of xray due to brightness differences).
+It reports the ore type and the lighting levels (not always indicative of xray due to brightness differences).
 The ore type messages are colored for easy recognition.
 
 We've found this extremely effective at spotting xray. Players who show very clear patterns are very easy to identify.
