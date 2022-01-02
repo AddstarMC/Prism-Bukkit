@@ -96,11 +96,9 @@ public class InspectorWand extends QueryWandBase {
                                 .replace("<y>",loc.getBlockY())
                                 .replace("<z>",loc.getBlockY())
                                 .build().colorIfAbsent(NamedTextColor.GOLD)));
-                if (results.getActionResults().size() > 5) {
-                    Prism.messenger.sendMessage(player,
-                            Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup.result.header",
-                                    results.getTotalResults(), 1, results.getTotalPages())));
-                }
+                Prism.messenger.sendMessage(player,
+                        Prism.messenger.playerHeaderMsg(Il8nHelper.formatMessage("lookup-header-message",
+                                results.getTotalResults(), 1, results.getTotalPages())));
                 int resultCount = results.getIndexOfFirstResult();
                 for (final me.botsko.prism.api
                         .actions.Handler a : results.getPaginatedActionResults()) {
