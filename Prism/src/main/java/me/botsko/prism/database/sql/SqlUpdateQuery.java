@@ -37,9 +37,10 @@ public class SqlUpdateQuery implements UpdateQuery {
                 notRollbacked.add(handler);
             }
         }
-        try {
-            Connection conn = dataSource.getConnection();
-            Statement s = conn.createStatement();
+        try (
+                Connection conn = dataSource.getConnection();
+                Statement s = conn.createStatement()
+        ) {
             String sql = buildRollbackedSql(rollbacked, true);
             if (sql != null) {
                 s.executeUpdate(sql);
@@ -48,8 +49,6 @@ public class SqlUpdateQuery implements UpdateQuery {
             if (sql != null) {
                 s.executeUpdate(sql);
             }
-            s.close();
-            conn.close();
         } catch (SQLException e) {
             dataSource.handleDataSourceException(e);
         }
