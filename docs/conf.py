@@ -18,10 +18,10 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Prism for Bukkit'
-copyright = '2020, AddstarMC,'
+copyright = '2022, AddstarMC,'
 author = 'Narimm'
 
-version = '2.1.8-SNAPSHOT'
+version = '2.2.0-SNAPSHOT'
 # The full version, including alpha/beta/rc tags
 release = version
 
