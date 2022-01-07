@@ -96,7 +96,7 @@ First, add the repository:
         <dependency>
             <groupId>me.botsko</groupId>
             <artifactId>Prism-Api</artifactId>
-            <version>2.1.8-SNAPSHOT</version>
+            <version>2.2.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -105,5 +105,5 @@ First, add the repository:
       .. code:: groovy
 
          dependencies {
-            provided "me.botsko:Prism-Api:2.1.8-SNAPSHOT"
+            provided "me.botsko:Prism-Api:2.2.0-SNAPSHOT"
          }
