@@ -201,7 +201,7 @@ Short actions are simply the words after the hyphen. For example ``break`` would
   * - entity-shear
     - |:x:|
     - |:x:|
-    - Entity is shawn
+    - Entity is shorn
     - |:heavy_check_mark:|
   * - entity-spawn
     - |:x:|
@@ -256,7 +256,7 @@ Short actions are simply the words after the hyphen. For example ``break`` would
   * - item-remove
     - |:heavy_check_mark:|
     - |:heavy_check_mark:|
-    - Painting etc placed.
+    - Painting etc picked up
     - |:heavy_check_mark:|
   * - item-rotate
     - |:x:|
@@ -301,7 +301,7 @@ Short actions are simply the words after the hyphen. For example ``break`` would
   * - mushroom-grow
     - |:heavy_check_mark:|
     - |:heavy_check_mark:|
-    - Painting etc placed.
+    - Mushroom grows
     - |:heavy_check_mark:|
   * - player-chat
     - |:x:|
@@ -351,7 +351,7 @@ Short actions are simply the words after the hyphen. For example ``break`` would
   * - sign-
     - |:x:|
     - |:heavy_check_mark:|
-    - Teleporting
+    - Sign is placed
     - |:heavy_check_mark:|
   * - spawnegg-use
     - |:x:|
@@ -401,7 +401,7 @@ Short actions are simply the words after the hyphen. For example ``break`` would
   * - water-bucket
     - |:heavy_check_mark:|
     - |:heavy_check_mark:|
-    - Bucket Used
+    - Water Bucket Used
     - |:heavy_check_mark:|
   * - water-flow
     - |:heavy_check_mark:|

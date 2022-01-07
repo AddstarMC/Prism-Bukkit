@@ -2,7 +2,7 @@
 Welcome to Prism
 ################
 
-Prism is a powerful, high performance grief management (rollbacks, restores, etc) plugin for your server. It's amazingly fast,versatile, and so easy to use. Never let griefing ruin the fun again!
+Prism is a powerful, high performance grief management (rollbacks, restores, etc) plugin for your server. It's amazingly fast, versatile, and so easy to use. Never let griefing ruin the fun again!
 
 Support
 =======
