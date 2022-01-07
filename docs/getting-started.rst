@@ -42,5 +42,5 @@ Please see the relevant configuration section for your database type:
 
 Recommendations
 ---------------
-If you're concerned about disk space or if you have a busy server, we recommend leaving off water-flow and turning off lava-flow tracking. These events not only occur with extreme frequency,   but Bukkit also fires these events multiple times per block location. They can very quickly   saturate your database. It's relatively easy to use /prism drain instead.  However, Prism tracks lava/water-break events even if flow is disabled, so you can still rollback the items broken by the liquid.
+If you're concerned about disk space or if you have a busy server, we recommend leaving off water-flow and turning off lava-flow tracking. These events not only occur with extreme frequency, but Bukkit also fires these events multiple times per block location. They can very quickly saturate your database. It's relatively easy to use /prism drain instead.  However, Prism tracks lava/water-break events even if flow is disabled, so you can still rollback the items broken by the liquid.
 
