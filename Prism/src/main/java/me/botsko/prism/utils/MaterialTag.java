@@ -54,9 +54,9 @@ public class MaterialTag implements Tag<Material> {
             Material.SMITHING_TABLE,Material.BREWING_STAND,Material.ENCHANTING_TABLE,Material.SMOKER,Material.FURNACE,
             Material.BLAST_FURNACE);
     public static final MaterialTag CONTAINERS = new MaterialTag(CRAFTING).append(
-            Material.CHEST,Material.BARREL,Material.ENDER_CHEST,Material.TRAPPED_CHEST,Material.CHEST_MINECART,
-            Material.DROPPER,Material.DISPENSER, Material.HOPPER,Material.HOPPER_MINECART
-    );
+            Material.CHEST, Material.BARREL, Material.ENDER_CHEST, Material.TRAPPED_CHEST, Material.CHEST_MINECART,
+            Material.DROPPER, Material.DISPENSER, Material.HOPPER, Material.HOPPER_MINECART)
+            .append(Tag.SHULKER_BOXES);
     public static final MaterialTag USABLE = new MaterialTag(Tag.BUTTONS).append(Tag.DOORS).append(Tag.TRAPDOORS)
             .append(Material.LEVER).append(Tag.FENCE_GATES);
     // Affected by bone meal.
