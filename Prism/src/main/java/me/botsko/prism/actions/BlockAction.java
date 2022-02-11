@@ -204,7 +204,7 @@ public class BlockAction extends GenericAction {
         if (blockActionData != null) {
             if (blockActionData instanceof SkullActionData) {
                 final SkullActionData ad = (SkullActionData) blockActionData;
-                name += ad.skullType + " ";
+                name += ad.owner + " ";
             } else if (blockActionData instanceof SpawnerActionData) {
                 final SpawnerActionData ad = (SpawnerActionData) blockActionData;
                 name += ad.entityType + " ";
@@ -338,10 +338,18 @@ public class BlockAction extends GenericAction {
     private @NotNull ChangeResult handleApply(final Block block, final BlockState originalBlock,
                                                   final PrismParameters parameters, final boolean cancelIfBadPlace) {
         BlockState state = block.getState();
-        // If lily pad, check that block below is water. Be sure
-        // it's set to stationary water so the lily pad will sit
+
+        // We always track the FOOT of the bed when broken, regardless of which block is broken.
+        // But we always need to destroy the HEAD of the bed otherwise Minecraft drops a bed item.
+        // So this will ensure the head of the bed is broken when removing the bed during rollback.
+        if (MaterialTag.BEDS.isTagged(state.getType())) {
+            state = Utilities.getSiblingForDoubleLengthBlock(state).getState();
+        }
+
         switch (getMaterial()) {
             case LILY_PAD:
+                // If restoring a lily pad, check that block below is water.
+                // Be sure it's set to stationary water so the lily pad will stay
                 final Block below = block.getRelative(BlockFace.DOWN);
                 if (below.getType().equals(WATER) || below.getType().equals(AIR)) {
                     below.setType(WATER);
@@ -350,7 +358,8 @@ public class BlockAction extends GenericAction {
                     return new ChangeResultImpl(ChangeResultType.SKIPPED, null);
                 }
                 break;
-            case NETHER_PORTAL: // Only way is to set the portal on fire.
+            case NETHER_PORTAL:
+                // Only way to restore a nether portal is to set it on fire.
                 final Block obsidian = Utilities.getFirstBlockOfMaterialBelow(OBSIDIAN, block.getLocation());
                 if (obsidian != null) {
                     final Block above = obsidian.getRelative(BlockFace.UP);
@@ -625,7 +634,6 @@ public class BlockAction extends GenericAction {
     public static class SkullActionData extends RotatableActionData {
 
         String owner;
-        String skullType;
 
     }
 
