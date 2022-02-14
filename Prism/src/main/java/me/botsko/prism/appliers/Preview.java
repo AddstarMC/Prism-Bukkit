@@ -220,13 +220,17 @@ public class Preview implements Previewable {
                             GenericAction action = (GenericAction) a;
                             if (processType.equals(PrismProcessType.ROLLBACK)) {
                                 result = action.applyRollback(player, parameters, isPreview);
-                                action.setRollbacked(true);
-                                updateRollbackedList.add(action);
+                                if (result.getType() == ChangeResultType.APPLIED) {
+                                    action.setRollbacked(true);
+                                    updateRollbackedList.add(action);
+                                }
                             }
                             if (processType.equals(PrismProcessType.RESTORE)) {
                                 result = action.applyRestore(player, parameters, isPreview);
-                                action.setRollbacked(false);
-                                updateRollbackedList.add(action);
+                                if (result.getType() == ChangeResultType.APPLIED) {
+                                    action.setRollbacked(false);
+                                    updateRollbackedList.add(action);
+                                }
                             }
                             if (processType.equals(PrismProcessType.UNDO)) {
                                 result = action.applyUndo(player, parameters, isPreview);
