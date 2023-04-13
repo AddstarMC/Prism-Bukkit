@@ -23,7 +23,7 @@ Parameter List
 - ``a:[action]`` - Like "block-break" (See below for full list). Default is now all.
 - ``r:[radius]`` - How many blocks near you the action happened, i.e. ``r:20``. Default radius set in config.
 - ``r:global`` - Instructs Prism to not limit results to a location. Requires special configuration or permissions to be used for lookups/rollbacks/restores.
-- ``r:we`` - Uses a WorldEdit selection to limit all res5ults - lookups/restores/rollbacks. Works for anything that supports the ``r`` parameter. Player must have WorldEdit selection permissions.
+- ``r:we`` - Uses a WorldEdit selection to limit all results - lookups/restores/rollbacks. Works for anything that supports the ``r`` parameter. Player must have WorldEdit selection permissions.
 - ``r:player:[radius]`` Base a radius off of another online player.
 - ``r:x,y,z:[radius]`` - Allow a radius around coordinates x,y,z
 - ``r:world`` - No radius, but limited to the current world or the world specificed by the `w:` parameter.
