@@ -23,13 +23,13 @@ List of Prism permissions:
 - ``prism.parameters.world``
 - ``prism.parameters.flag.*``
 - ``prism.parameters.flag.drain``
-- ``prism.parameters.flag.drain``-lava
-- ``prism.parameters.flag.drain``-water
+- ``prism.parameters.flag.drain-lava``
+- ``prism.parameters.flag.drain-water``
 - ``prism.parameters.flag.extended``
-- ``prism.parameters.flag.no``-ext
-- ``prism.parameters.flag.no``-itemclear
-- ``prism.parameters.flag.per``-page
-- ``prism.parameters.flag.no``-group
+- ``prism.parameters.flag.no-ext``
+- ``prism.parameters.flag.no-itemclear``
+- ``prism.parameters.flag.per-page``
+- ``prism.parameters.flag.no-group``
 - ``prism.parameters.flag.overwrite``
 - ``prism.parameters.flag.share``
 - ``prism.parameters.flag.paste``
@@ -50,8 +50,8 @@ List of Prism permissions:
 - ``prism.alerts.use.lavabucket.ignore`` - Player with this perm will not trigger a lava bucket placement alert.
 - ``prism.alerts.ignore`` - Parent node for all alerts
 - ``prism.bypass``-use-alerts - Trusted players will be ignored for use alert feature.
-- ``prism.override``-max-lookup-radius - Allows a user to override the max lookup radius. Defaults to off, so it must explicitly be set.
-- ``prism.override``-max-applier-radius - Allows a user to override the max applier radius. Defaults to off, so it must explicitly be set.
+- ``prism.override-max-lookup-radius`` - Allows a user to override the max lookup radius. Defaults to off, so it must explicitly be set.
+- ``prism.override-max-applier-radius`` - Allows a user to override the max applier radius. Defaults to off, so it must explicitly be set.
 - ``prism.ignore.tracking.`` (action-type) - Ignore an action type for a specific group.
 - ``prism.view`` - Use the view commands
 - ``prism.*`` - Grants all permissions. Warning: Includes all of the ignore tracking permission nodes.
